@@ -16,7 +16,7 @@
     {
       "id":"AdaGrad optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.037 seconds",
+      "duration":"0.038 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

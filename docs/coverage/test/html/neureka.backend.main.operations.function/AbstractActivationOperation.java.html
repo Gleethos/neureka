@@ -36,83 +36,93 @@ abstract class AbstractActivationOperation extends AbstractOperation {
 <span class="fc" id="L36">                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
 <span class="fc" id="L37">                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))</span>
 <span class="fc" id="L38">                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L39">                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L40">                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L41">                        .get()</span>
+<span class="fc" id="L39">                        .with(Fun.I64ToI64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L40">                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L41">                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L42">                        .with(Fun.BoolToBool.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L43">                        .with(Fun.CharToChar.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L44">                        .with(Fun.ObjToObj.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L45">                        .get()</span>
                 )
-<span class="fc" id="L43">                .setImplementationFor(</span>
+<span class="fc" id="L47">                .setImplementationFor(</span>
                     OpenCLDevice.class,
-<span class="fc" id="L45">                    Activation.implementationForGPU( this.getIdentifier() )</span>
-<span class="fc" id="L46">                            .with( _activationCode() )</span>
-<span class="fc" id="L47">                            .and( _derivationCode() )</span>
+<span class="fc" id="L49">                    Activation.implementationForGPU( this.getIdentifier() )</span>
+<span class="fc" id="L50">                            .with( _activationCode() )</span>
+<span class="fc" id="L51">                            .and( _derivationCode() )</span>
                 )
         );
 
-<span class="fc" id="L51">        setAlgorithm(</span>
-<span class="fc" id="L52">            new ScalarBroadcast(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L53">            .setAutogradModeFor(</span>
+<span class="fc" id="L55">        setAlgorithm(</span>
+<span class="fc" id="L56">            new ScalarBroadcast(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L57">            .setAutogradModeFor(</span>
                     call -&gt; call
-<span class="nc" id="L55">                            .validate().allNotNullHaveSame(NDimensional::shape)</span>
-<span class="nc" id="L56">                            .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
-<span class="nc" id="L57">                            .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
+<span class="nc" id="L59">                            .validate().allNotNullHaveSame(NDimensional::shape)</span>
+<span class="nc" id="L60">                            .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
+<span class="nc" id="L61">                            .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
             )
-<span class="pc" id="L59">            .setDeviceExecution( (context, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )</span>
-<span class="fc" id="L60">            .buildFunAlgorithm()</span>
-<span class="fc" id="L61">            .setImplementationFor(</span>
+<span class="pc" id="L63">            .setDeviceExecution( (context, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )</span>
+<span class="fc" id="L64">            .buildFunAlgorithm()</span>
+<span class="fc" id="L65">            .setImplementationFor(</span>
                 CPU.class,
-<span class="fc" id="L63">                ScalarBroadcast.implementationForCPU()</span>
-<span class="fc" id="L64">                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L65">                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L66">                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L67">                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L68">                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L69">                        .get()</span>
+<span class="fc" id="L67">                ScalarBroadcast.implementationForCPU()</span>
+<span class="fc" id="L68">                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L69">                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L70">                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L71">                        .with(Fun.I64ToI64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L72">                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L73">                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L74">                        .with(Fun.BoolToBool.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L75">                        .with(Fun.CharToChar.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L76">                        .get()</span>
             )
         );
 
-<span class="fc" id="L73">        setAlgorithm(</span>
-<span class="fc" id="L74">            new ScalarActivation(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L75">            .setAutogradModeFor(</span>
+<span class="fc" id="L80">        setAlgorithm(</span>
+<span class="fc" id="L81">            new ScalarActivation(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L82">            .setAutogradModeFor(</span>
                 call -&gt; call
-<span class="nc" id="L77">                        .validate().allNotNullHaveSame(NDimensional::shape)</span>
-<span class="nc" id="L78">                        .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
-<span class="nc" id="L79">                        .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
+<span class="nc" id="L84">                        .validate().allNotNullHaveSame(NDimensional::shape)</span>
+<span class="nc" id="L85">                        .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
+<span class="nc" id="L86">                        .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
             )
-<span class="pc" id="L81">            .setDeviceExecution( (context, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )</span>
-<span class="fc" id="L82">            .buildFunAlgorithm()</span>
-<span class="fc" id="L83">            .setImplementationFor(</span>
+<span class="pc" id="L88">            .setDeviceExecution( (context, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )</span>
+<span class="fc" id="L89">            .buildFunAlgorithm()</span>
+<span class="fc" id="L90">            .setImplementationFor(</span>
                 CPU.class,
-<span class="fc" id="L85">                ScalarActivation.implementationForCPU()</span>
-<span class="fc" id="L86">                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L87">                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L88">                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L89">                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L90">                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))</span>
-<span class="fc" id="L91">                        .get()</span>
+<span class="fc" id="L92">                ScalarActivation.implementationForCPU()</span>
+<span class="fc" id="L93">                        .with(Fun.F64ToF64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L94">                        .with(Fun.F32ToF32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L95">                        .with(Fun.I32ToI32.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L96">                        .with(Fun.I64ToI64.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L97">                        .with(Fun.I8ToI8.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L98">                        .with(Fun.I16ToI16.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L99">                        .with(Fun.BoolToBool.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L100">                        .with(Fun.CharToChar.pair(this::_activate, this::_derive))</span>
+<span class="fc" id="L101">                        .get()</span>
             )
         );
-<span class="fc" id="L94">    }</span>
+<span class="fc" id="L104">    }</span>
 
     @Override
     public final String stringify( String[] children ) {
-<span class="fc" id="L98">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L99" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return getIdentifier() + expression;</span>
-<span class="fc" id="L100">        return getIdentifier() + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L108">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L109" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return getIdentifier() + expression;</span>
+<span class="fc" id="L110">        return getIdentifier() + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public final double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="fc bfc" id="L105" title="All 2 branches covered.">        boolean derive = d &gt;= 0;</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">        double inner = ( !derive ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
-<span class="fc" id="L107">        return calculate( src[ 0 ].call( inputs, j ),  derive ) * inner;</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        boolean derive = d &gt;= 0;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        double inner = ( !derive ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
+<span class="fc" id="L117">        return calculate( src[ 0 ].call( inputs, j ),  derive ) * inner;</span>
     }
 
     @Contract(pure = true)
     private double calculate(double input, boolean derive ) {
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        if ( !derive )</span>
-<span class="fc" id="L113">            return _activate( input );</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if ( !derive )</span>
+<span class="fc" id="L123">            return _activate( input );</span>
         else
-<span class="fc" id="L115">            return _derive( input ) ;</span>
+<span class="fc" id="L125">            return _derive( input ) ;</span>
     }
 
     protected abstract String _activationCode();
@@ -123,21 +133,37 @@ abstract class AbstractActivationOperation extends AbstractOperation {
 
     protected abstract double _derive(double x);
 
-<span class="fc" id="L126">    protected float _activate(float x) { return (float) _activate( (double) x ); }</span>
+<span class="fc" id="L136">    protected float _activate(float x) { return (float) _activate( (double) x ); }</span>
 
-<span class="nc" id="L128">    protected float _derive(float x) { return (float) _derive( (double) x ); }</span>
+<span class="nc" id="L138">    protected float _derive(float x) { return (float) _derive( (double) x ); }</span>
 
-<span class="fc" id="L130">    protected int _activate(int x) { return (int) Math.round( _activate( (double) x ) ); }</span>
+<span class="fc" id="L140">    protected int _activate(int x) { return (int) Math.round( _activate( (double) x ) ); }</span>
 
-<span class="fc" id="L132">    protected int _derive(int x) { return (int) Math.round( _derive( (double) x ) ); }</span>
+<span class="fc" id="L142">    protected int _derive(int x) { return (int) Math.round( _derive( (double) x ) ); }</span>
 
-<span class="fc" id="L134">    protected byte _activate(byte x) { return (byte) Math.round( _activate( (double) x ) ); }</span>
+<span class="nc" id="L144">    protected long _activate(long x) { return Math.round( _activate( (double) x ) ); }</span>
 
-<span class="nc" id="L136">    protected byte _derive(byte x) { return (byte) Math.round( _derive( (double) x ) ); }</span>
+<span class="nc" id="L146">    protected long _derive(long x) { return Math.round( _derive( (double) x ) ); }</span>
 
-<span class="fc" id="L138">    protected short _activate(short x) { return (short) Math.round( _activate( (double) x ) ); }</span>
+<span class="fc" id="L148">    protected byte _activate(byte x) { return (byte) Math.round( _activate( (double) x ) ); }</span>
 
-<span class="nc" id="L140">    protected short _derive(short x) { return (short) Math.round( _derive( (double) x ) ); }</span>
+<span class="nc" id="L150">    protected byte _derive(byte x) { return (byte) Math.round( _derive( (double) x ) ); }</span>
+
+<span class="fc" id="L152">    protected short _activate(short x) { return (short) Math.round( _activate( (double) x ) ); }</span>
+
+<span class="nc" id="L154">    protected short _derive(short x) { return (short) Math.round( _derive( (double) x ) ); }</span>
+
+<span class="nc bnc" id="L156" title="All 4 branches missed.">    protected boolean _activate(boolean x) { return Math.round( _activate( x ? 1 : 0 ) ) != 0; } // Some default behaviors, it might make sense to override this for some activations.</span>
+
+<span class="nc bnc" id="L158" title="All 4 branches missed.">    protected boolean _derive(boolean x) { return Math.round( _derive( x ? 1 : 0 ) ) != 0; } // Some default behaviors, it might make sense to override this for some activations.</span>
+
+<span class="nc" id="L160">    protected char _activate(char x) { return (char) Math.round( _activate( (int) x ) ); } // Some default behaviors, it might make sense to override this for some activations.</span>
+
+<span class="nc" id="L162">    protected char _derive(char x) { return (char) Math.round( _derive( (int) x ) ); } // Some default behaviors, it might make sense to override this for some activations.</span>
+
+<span class="nc" id="L164">    protected Object _activate(Object x) { throw new IllegalStateException(&quot;Not implemented for operation &quot;+getClass().getSimpleName()); }</span>
+
+<span class="nc" id="L166">    protected Object _derive(Object x) { throw new IllegalStateException(&quot;Not implemented for operation &quot;+getClass().getSimpleName()); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

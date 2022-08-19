@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.158 seconds"
+    "duration":"0.074 seconds"
   },
   "headers":["    \n            <p>\n                This unit test specification covers the expected state of newly instantiated tensors.\n                Certain properties must have their expected default values.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A tensor can be instantiated from a target type and nested lists.",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Tensors as String can be formatted on an entry based level.",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"Numeric tensors as String can be formatted on an entry based level.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"Tensors as String can be formatted depending on shape.",
       "result":"PASS",
-      "duration":"0.038 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +98,7 @@
     {
       "id":"Newly instantiated and unmodified scalar tensor has expected state.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -115,7 +115,7 @@
     {
       "id":"Tensor created from shape and datatype has expected state.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -130,7 +130,7 @@
     {
       "id":"The data and the value of a tensor a 2 different things!",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

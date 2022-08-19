@@ -34,6 +34,7 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.DataArray;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
@@ -41,12 +42,9 @@ import neureka.backend.api.Operation;
 import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.*;
 import neureka.framing.Relation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 
 /**
  *  This is the abstract precursor class providing
@@ -62,14 +60,14 @@ import java.util.Arrays;
  *
  * @param &lt;V&gt; The most common super type for all tensors storable on this device.
  */
-public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt;
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt;</span>
 {
-<span class="fc" id="L67">    private static final DeviceCleaner _CLEANER = new CustomDeviceCleaner();</span>
+<span class="fc" id="L65">    private static final DeviceCleaner _CLEANER = new CustomDeviceCleaner();</span>
 
     protected Logger _log;
 
 
-<span class="fc" id="L72">    protected AbstractDevice() { _log = LoggerFactory.getLogger( getClass() ); }</span>
+<span class="fc" id="L70">    protected AbstractDevice() { _log = LoggerFactory.getLogger( getClass() ); }</span>
 
     /**
      *  This method is the internal approval routine called by it's public counterpart
@@ -87,27 +85,27 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
 
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
-<span class="fc" id="L90">        Tsr&lt;V&gt; oldOwner = changeRequest.getOldOwner();</span>
-<span class="fc" id="L91">        Tsr&lt;V&gt; newOwner = changeRequest.getNewOwner();</span>
-<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if ( changeRequest.type() == IsBeing.REPLACED ) _swap( oldOwner, newOwner );</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        else if ( changeRequest.type() == IsBeing.ADDED ) {</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">            if ( newOwner.has( Relation.class ) ) {</span>
-<span class="fc" id="L95">                Relation&lt;V&gt; relation = newOwner.get(Relation.class);</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">                if ( relation.hasParent() ) { // Root needs to be found ! :</span>
-<span class="fc" id="L97">                    Tsr&lt;V&gt; root = relation.findRootTensor();</span>
-<span class="pc bpc" id="L98" title="1 of 4 branches missed.">                    if (!this.has(root) || !root.isOutsourced())</span>
-<span class="fc" id="L99">                        throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
+<span class="fc" id="L88">        Tsr&lt;V&gt; oldOwner = changeRequest.getOldOwner();</span>
+<span class="fc" id="L89">        Tsr&lt;V&gt; newOwner = changeRequest.getNewOwner();</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if ( changeRequest.type() == IsBeing.REPLACED ) _swap( oldOwner, newOwner );</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        else if ( changeRequest.type() == IsBeing.ADDED ) {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            if ( newOwner.has( Relation.class ) ) {</span>
+<span class="fc" id="L93">                Relation&lt;V&gt; relation = newOwner.get(Relation.class);</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">                if ( relation.hasParent() ) { // Root needs to be found ! :</span>
+<span class="fc" id="L95">                    Tsr&lt;V&gt; root = relation.findRootTensor();</span>
+<span class="pc bpc" id="L96" title="1 of 4 branches missed.">                    if (!this.has(root) || !root.isOutsourced())</span>
+<span class="fc" id="L97">                        throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
                 }
             }
-<span class="fc" id="L102">            Device&lt;V&gt; found = newOwner.getDevice();</span>
-<span class="fc bfc" id="L103" title="All 4 branches covered.">            if ( found != null &amp;&amp; found != this ) {</span>
-<span class="fc" id="L104">                found.restore( newOwner );</span>
+<span class="fc" id="L100">            Device&lt;V&gt; found = newOwner.getDevice();</span>
+<span class="fc bfc" id="L101" title="All 4 branches covered.">            if ( found != null &amp;&amp; found != this ) {</span>
+<span class="fc" id="L102">                found.restore( newOwner );</span>
             }
         }
-<span class="fc" id="L107">        return true;</span>
+<span class="fc" id="L105">        return true;</span>
     }
 
-<span class="fc" id="L110">    protected void _cleaning( Object o, Runnable action ) { _CLEANER.register( o, action ); }</span>
+<span class="fc" id="L108">    protected void _cleaning( Object o, Runnable action ) { _CLEANER.register( o, action ); }</span>
 
     /**
      *  &lt;b&gt;This method plays an important role in approving a provided {@link ExecutionCall}.&lt;/b&gt;
@@ -120,41 +118,40 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
     @Override
     public Device&lt;V&gt; approve( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
     {
-<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if ( !_approveExecutionOf( call.inputs(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {</span>
-<span class="nc" id="L124">            throw new IllegalArgumentException(&quot;Provided execution call has not been approved by this device.&quot;);</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if ( !_approveExecutionOf( call.inputs(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {</span>
+<span class="nc" id="L122">            throw new IllegalArgumentException(&quot;Provided execution call has not been approved by this device.&quot;);</span>
         }
-<span class="fc" id="L126">        return this;</span>
+<span class="fc" id="L124">        return this;</span>
     }
 
     @Override
     public &lt;T extends V&gt; Storage&lt;V&gt; store( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L131">        tensor.set( (Component) this ); // This way we move the storing procedure to the update function!</span>
-<span class="fc" id="L132">        return this;</span>
+<span class="fc" id="L129">        tensor.set( (Component) this ); // This way we move the storing procedure to the update function!</span>
+<span class="fc" id="L130">        return this;</span>
     }
 
     @Override
     public &lt;T extends V&gt; Access&lt;T&gt; access( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L137">        return new Access&lt;T&gt;() {</span>
+<span class="fc" id="L135">        return new Access&lt;T&gt;() {</span>
             @Override public Writer write(T item) {
-<span class="fc" id="L139">                return new Writer() {</span>
-<span class="fc" id="L140">                    @Override public void intoRange(int start, int limit) { _writeItem( tensor, item, start, limit-start ); }</span>
-<span class="nc" id="L141">                    @Override public void fully() { _writeItem( tensor, item, 0, tensor.size() ); }</span>
+<span class="fc" id="L137">                return new Writer() {</span>
+<span class="fc" id="L138">                    @Override public void intoRange(int start, int limit) { _writeItem( tensor, item, start, limit-start ); }</span>
+<span class="nc" id="L139">                    @Override public void fully() { _writeItem( tensor, item, 0, tensor.size() ); }</span>
                 };
             }
             @Override public Writer writeFrom( Object array, int offset ) {
-<span class="fc" id="L145">                return new Writer() {</span>
-<span class="fc" id="L146">                    @Override public void intoRange( int start, int limit ) { _writeArray( tensor, array, offset, start, limit-start ); }</span>
-<span class="fc" id="L147">                    @Override public void fully() { _writeArray( tensor, array, offset, 0, tensor.size() ); }</span>
+<span class="fc" id="L143">                return new Writer() {</span>
+<span class="fc" id="L144">                    @Override public void intoRange( int start, int limit ) { _writeArray( tensor, array, offset, start, limit-start ); }</span>
+<span class="fc" id="L145">                    @Override public void fully() { _writeArray( tensor, array, offset, 0, tensor.size() ); }</span>
                 };
             }
-<span class="fc" id="L150">            @Override public T readAt( int index ) { return _readItem( tensor, index ); }</span>
-<span class="fc" id="L151">            @Override public &lt;A&gt; A readArray( Class&lt;A&gt; arrayType, int start, int size ) { return _readArray( tensor, arrayType, start, size ); }</span>
-<span class="fc" id="L152">            @Override public Object readAll( boolean clone ) { return _readAll( tensor, clone ); }</span>
-<span class="fc" id="L153">            @Override public int getDataSize() { return _sizeOccupiedBy( tensor ); }</span>
-<span class="fc" id="L154">            @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }</span>
-<span class="fc" id="L155">            @Override public void updateNDConf() { _updateNDConf( tensor ); }</span>
-<span class="fc" id="L156">            @Override public Object allocate( int size ) { return _allocate( tensor.getDataType(), size ); }</span>
-<span class="fc" id="L157">            @Override public Object actualize() { return _actualize( tensor ); }</span>
+<span class="fc" id="L148">            @Override public T readAt( int index ) { return _readItem( tensor, index ); }</span>
+<span class="fc" id="L149">            @Override public &lt;A&gt; A readArray( Class&lt;A&gt; arrayType, int start, int size ) { return _readArray( tensor, arrayType, start, size ); }</span>
+<span class="fc" id="L150">            @Override public Object readAll( boolean clone ) { return _readAll( tensor, clone ); }</span>
+<span class="fc" id="L151">            @Override public int getDataSize() { return _sizeOccupiedBy( tensor ); }</span>
+<span class="fc" id="L152">            @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }</span>
+<span class="fc" id="L153">            @Override public void updateNDConf() { _updateNDConf( tensor ); }</span>
+<span class="fc" id="L154">            @Override public DataArray actualize() { return _actualize( tensor ); }</span>
         };
     }
 
@@ -181,8 +178,15 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
 
     protected abstract &lt;T extends V&gt; void _writeArray( Tsr&lt;T&gt; tensor, Object array, int offset, int start, int size );
 
-    protected abstract Object _allocate( DataType&lt;?&gt; dataType, int size );
+    protected abstract DataArray _actualize( Tsr&lt;?&gt; tensor );
 
-    protected abstract Object _actualize( Tsr&lt;?&gt; tensor );
+    protected DataArray _dataArrayOf( Object data ) {
+<span class="pc bpc" id="L184" title="3 of 6 branches missed.">        assert data == null || !(data instanceof DataArray);</span>
+<span class="fc" id="L185">        return new DataArray() {</span>
+<span class="nc" id="L186">            @Override public Device&lt;?&gt; getDevice() { return AbstractDevice.this; }</span>
+<span class="fc" id="L187">            @Override public Object get() { return data; }</span>
+        };
+    }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

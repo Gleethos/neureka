@@ -707,11 +707,11 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  <br>
      * @param tensor The tensor whose identity should be stolen.
      */
-    private void _become(TsrImpl<V> tensor)
+    private void _become( TsrImpl<V> tensor )
     {
         if ( tensor == null ) return;
         _setDataType( tensor.getDataType() );
-        _setData( tensor.getUnsafe().getData() );
+        _setData( tensor.getUnsafe().getDataArray() );
         _setNDConf( tensor.getNDConf() );
         _flags = tensor._flags;
         _transferFrom( tensor );
@@ -753,8 +753,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             @Override
             public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
             @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
+            @Override public DataArray getDataArray() { return _getData(); }
             @Override public <D> D getData(Class<D> dataType) {
-                Object data = _getData();
+                Object data = _getRawData();
                 if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
                     throw new IllegalArgumentException("Provided data type '"+dataType+"' is not assignable from '"+data.getClass()+"'.");
                 return (D) data;
@@ -771,7 +772,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
 
             @Override
-            public Tsr<V> setData(Object data) {
+            public Tsr<V> setDataArray(DataArray data) {
                 TsrImpl.this._setData( data );
                 return TsrImpl.this;
             }
@@ -1143,7 +1144,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         }
         if ( this.isVirtual() ) {
             if ( this.isOutsourced() ) return null;
-            else return getDevice().access(this).actualize();
+            else return getDevice().access(this).actualize().get();
         }
         else if ( this.getNDConf().isSimple() && !this.isSlice() )
             return getData();
@@ -1170,7 +1171,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 _checkRankForImageConversion(type, Number.class, 0, 0, 3);
                 // We expect a tensor of shape (height x width x 3)!
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                byte[] data = DataConverter.get().convert( _getData(), byte[].class);
+                byte[] data = DataConverter.get().convert( _getRawData(), byte[].class);
                 _writeImgData(new DataBufferByte(data, data.length), image);
                 return image;
             }
@@ -1179,14 +1180,14 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             {
                 _checkRankForImageConversion(type, Number.class, 0, 0, 4);
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                byte[] data = DataConverter.get().convert( _getData(), byte[].class);
+                byte[] data = DataConverter.get().convert( _getRawData(), byte[].class);
                 _writeImgData(new DataBufferByte(data, data.length), image);
                 return image;
             }
             case BufferedImage.TYPE_INT_ARGB: {
                 _checkRankForImageConversion(type, Number.class, 0, 0, 1);
                 BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);
-                int[] data = DataConverter.get().convert( _getData(), int[].class);
+                int[] data = DataConverter.get().convert( _getRawData(), int[].class);
                 _writeImgData(new DataBufferInt(data, data.length), image);
                 return image;
             }
@@ -1310,7 +1311,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             Object newData = _convertedDataOfType( typeClass );
             _setData( null );
             _setDataType( DataType.of( typeClass ) );
-            _setData( newData );
+            _setData( TsrConstructor.dataArrayOnCPUFor(newData) );
         }
         forComponent( TsrImpl.class, gradient -> gradient._toType( typeClass ) );
         return (Tsr<T>) this;

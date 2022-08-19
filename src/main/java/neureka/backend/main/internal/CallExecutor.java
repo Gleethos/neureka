@@ -7,7 +7,7 @@ import neureka.devices.Device;
 
 /**
  *  Used in a recursion as final execution call by implementations of the {@link RecursiveExecutor}
- *  interface within the {@link AlgoUtil}
+ *  interface within the {@link AbstractDeviceAlgorithm}
  *  in order to execute (and break down) chained operators pairwise!
  */
 public interface CallExecutor {

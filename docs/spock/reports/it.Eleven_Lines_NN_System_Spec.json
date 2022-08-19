@@ -5,18 +5,18 @@
   "subjects":["neureka.Tsr"],
   "statistics":{
     "runs":"5",
-    "successRate":"80.0%",
-    "failures":"1",
+    "successRate":"100.0%",
+    "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"3.001 seconds"
+    "duration":"2.094 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"One can write a simple neural network with custom back-prop in 11 lines of code!",
       "result":"PASS",
-      "duration":"1.697 seconds",
+      "duration":"1.285 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
     {
       "id":"One can write a simple neural network in less than 11 lines of code!",
       "result":"PASS",
-      "duration":"0.333 seconds",
+      "duration":"0.296 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,8 +45,8 @@
   
     {
       "id":"One can write a simple float based neural network in less than 11 lines of java like code!",
-      "result":"FAIL",
-      "duration":"0.639 seconds",
+      "result":"PASS",
+      "duration":"0.220 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,13 +55,13 @@
 
         {"kind":"expect","text":"","code":["W1.unsafe.data == RESULT_W1_F32 as float[]","W2.unsafe.data == RESULT_W2_F32 as float[]"]}
       ],
-      "problems":{"dataValues":["[]"], "errors":["[Condition not satisfied:\n\nW1.unsafe.data == RESULT_W1_F32 as float[]\n|  |      |    |  |\n|  |      |    |  [-0.91154915, -2.8053195, -0.25180107, -1.3116925, -0.6594293, 2.5123818, -1.0514474, -1.2928098, 1.3971564, 2.2039096, -0.67828107, 2.738544]\n|  |      |    false\n|  |      [-0.91114354, -2.7919915, -0.24743028, -1.295323, -0.660923, 2.4983246, -1.0443954, -1.2966887, 1.3960396, 2.1994212, -0.6808678, 2.7272298]\n|  <neureka.TsrImpl$1@65a397ab this$0=(3x4):[\n|     [ -0.91114, -2.79199, -0.24743, -1.29532 ],\n|     [ -0.66092, 2.49832, -1.0444, -1.29669 ],\n|     [ 1.39604, 2.19942, -0.68086, 2.72723 ]\n|  ]:g:[null]>\n(3x4):[\n   [ -0.91114, -2.79199, -0.24743, -1.29532 ],\n   [ -0.66092, 2.49832, -1.0444, -1.29669 ],\n   [ 1.39604, 2.19942, -0.68086, 2.72723 ]\n]:g:[null]\n]"]}
+      "problems":{"dataValues":[], "errors":[]}
     },
   
     {
       "id":"One can write a simple double based neural network in less than 11 lines of java like code using the \"@\" operator!",
       "result":"PASS",
-      "duration":"0.239 seconds",
+      "duration":"0.196 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

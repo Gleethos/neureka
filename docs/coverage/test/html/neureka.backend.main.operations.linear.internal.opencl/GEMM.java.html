@@ -8,11 +8,11 @@ import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.function.Supplier;
 
-<span class="pc bpc" id="L11" title="1 of 2 branches missed.">public class GEMM implements ImplementationFor&lt;OpenCLDevice&gt; {</span>
-
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">public class GEMM implements ImplementationFor&lt;OpenCLDevice&gt;</span>
+{
     @Override
-    public Tsr&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
-
+    public Tsr&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call)
+    {
 <span class="fc" id="L16">            Tsr&lt;Float&gt; c = call.input(Float.class, 0);</span>
 <span class="fc" id="L17">            Tsr&lt;Float&gt; a = call.input(Float.class, 1);</span>
 <span class="fc" id="L18">            Tsr&lt;Float&gt; b = call.input(Float.class, 2);</span>
@@ -87,18 +87,16 @@ import java.util.function.Supplier;
                     &quot;           C[ batch * N * MT + ( nc * NW + n ) * MT + mt ] += *( (floatMW*) CT[n] );               \n&quot; +
                     &quot;   }}                                                                                                &quot;;
 
-            //return new KernelCode(kernelName, code);
-
         KernelCaller caller =
-<span class="pc bpc" id="L93" title="1 of 2 branches missed.">             call.getDevice().hasAdHocKernel(kernelName)</span>
-<span class="nc" id="L94">                 ? call.getDevice().getAdHocKernel(kernelName)</span>
-<span class="fc" id="L95">                 : call.getDevice().compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">             call.getDevice().hasAdHocKernel(kernelName)</span>
+<span class="nc" id="L92">                 ? call.getDevice().getAdHocKernel(kernelName)</span>
+<span class="fc" id="L93">                 : call.getDevice().compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);</span>
 
-<span class="fc" id="L97">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
-<span class="fc" id="L98">        long[] global = new long[]{(long) Math.floor(M/MW), (long) Math.floor(N/NW), 1 };</span>
+<span class="fc" id="L95">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
+<span class="fc" id="L96">        long[] global = new long[]{(long) Math.floor(M/MW), (long) Math.floor(N/NW), 1 };</span>
 
-<span class="fc" id="L100">        caller.pass( a ).pass( b ).pass( c ).call( global, local );</span>
-<span class="fc" id="L101">        return call.input(0);</span>
+<span class="fc" id="L98">        caller.pass( a ).pass( b ).pass( c ).call( global, local );</span>
+<span class="fc" id="L99">        return call.input(0);</span>
     }
 
 }

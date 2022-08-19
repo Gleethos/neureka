@@ -327,7 +327,7 @@ import java.util.function.Function;
     private void _stringifyAllValues()
     {
 <span class="fc" id="L329">        int max = _rowLimit;</span>
-<span class="fc bfc" id="L330" title="All 2 branches covered.">        Object data = ( _tensor.getUnsafe().getData() == null ? _tensor.getData() : _tensor.getUnsafe().getData() );</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">        Object data = ( _tensor.isOutsourced() ? _tensor.getData() : _tensor.getUnsafe().getData() );</span>
 <span class="fc" id="L331">        ValStringifier getter = _createValStringifierAndFormatter( data );</span>
 <span class="fc" id="L332">        int size = _tensor.size();</span>
 <span class="fc" id="L333">        int trim = ( size - max );</span>

@@ -32,12 +32,21 @@ public interface Fun
         }
     }
 
+    interface I64ToI64 extends Fun
+    {
+        long invoke( long x );
+
+        static FunTuple&lt;I64ToI64&gt; pair(I64ToI64 activation, I64ToI64 derivation ) {
+<span class="fc" id="L40">            return new FunPair&lt;&gt;( activation, derivation );</span>
+        }
+    }
+
     interface I8ToI8 extends Fun
     {
         byte invoke( byte x );
 
         static FunTuple&lt;I8ToI8&gt; pair(I8ToI8 activation, I8ToI8 derivation ) {
-<span class="fc" id="L40">            return new FunPair&lt;&gt;( activation, derivation );</span>
+<span class="fc" id="L49">            return new FunPair&lt;&gt;( activation, derivation );</span>
         }
     }
 
@@ -46,7 +55,25 @@ public interface Fun
         short invoke( short x );
 
         static FunTuple&lt;I16ToI16&gt; pair(I16ToI16 activation, I16ToI16 derivation ) {
-<span class="fc" id="L49">            return new FunPair&lt;&gt;( activation, derivation );</span>
+<span class="fc" id="L58">            return new FunPair&lt;&gt;( activation, derivation );</span>
+        }
+    }
+
+    interface BoolToBool extends Fun
+    {
+        boolean invoke( boolean x );
+
+        static FunTuple&lt;BoolToBool&gt; pair(BoolToBool activation, BoolToBool derivation ) {
+<span class="fc" id="L67">            return new FunPair&lt;&gt;( activation, derivation );</span>
+        }
+    }
+
+    interface CharToChar extends Fun
+    {
+        char invoke( char x );
+
+        static FunTuple&lt;CharToChar&gt; pair(CharToChar activation, CharToChar derivation ) {
+<span class="fc" id="L76">            return new FunPair&lt;&gt;( activation, derivation );</span>
         }
     }
 
@@ -55,7 +82,7 @@ public interface Fun
         Object invoke( Object x );
 
         static FunTuple&lt;ObjToObj&gt; pair(ObjToObj activation, ObjToObj derivation ) {
-<span class="nc" id="L58">            return new FunPair&lt;&gt;( activation, derivation );</span>
+<span class="fc" id="L85">            return new FunPair&lt;&gt;( activation, derivation );</span>
         }
     }
 
@@ -68,11 +95,11 @@ public interface Fun
                 ObjObjToObj derivation,
                 ObjObjToObj derivation2
         ) {
-<span class="nc" id="L71">            return new Operator.FunTriple&lt;&gt;( activation, derivation, derivation2 );</span>
+<span class="nc" id="L98">            return new Operator.FunTriple&lt;&gt;( activation, derivation, derivation2 );</span>
         }
 
         static FunTuple&lt;ObjObjToObj&gt; of(ObjObjToObj activation ) {
-<span class="fc" id="L75">            return new Operator.FunTriple&lt;&gt;( activation, null, null );</span>
+<span class="fc" id="L102">            return new Operator.FunTriple&lt;&gt;( activation, null, null );</span>
         }
     }
 
@@ -85,11 +112,11 @@ public interface Fun
                 F64F64ToF64 derivation1,
                 F64F64ToF64 derivation2
         ) {
-<span class="fc" id="L88">            return new Operator.FunTriple&lt;&gt;(activation, derivation1, derivation2);</span>
+<span class="fc" id="L115">            return new Operator.FunTriple&lt;&gt;(activation, derivation1, derivation2);</span>
         }
 
         static FunTuple&lt;F64F64ToF64&gt; of(F64F64ToF64 activation ) {
-<span class="fc" id="L92">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
+<span class="fc" id="L119">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
         }
     }
 
@@ -102,11 +129,11 @@ public interface Fun
                 F32F32ToF32 derivation1,
                 F32F32ToF32 derivation2
         ) {
-<span class="fc" id="L105">            return new Operator.FunTriple&lt;&gt;(activation, derivation1, derivation2);</span>
+<span class="fc" id="L132">            return new Operator.FunTriple&lt;&gt;(activation, derivation1, derivation2);</span>
         }
 
         static FunTuple&lt;F32F32ToF32&gt; of(F32F32ToF32 activation ) {
-<span class="fc" id="L109">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
+<span class="fc" id="L136">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
         }
     }
 
@@ -115,7 +142,7 @@ public interface Fun
         int invoke( int x, int y );
 
         static FunTuple&lt;I32I32ToI32&gt; of(I32I32ToI32 activation ) {
-<span class="fc" id="L118">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
+<span class="fc" id="L145">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
         }
 
         static FunTuple&lt;I32I32ToI32&gt; triple(
@@ -123,7 +150,24 @@ public interface Fun
                 I32I32ToI32 derivation1,
                 I32I32ToI32 derivation2
         ) {
-<span class="fc" id="L126">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
+<span class="fc" id="L153">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
+        }
+    }
+
+    interface I64I64ToI64 extends Fun
+    {
+        long invoke( long x, long y );
+
+        static FunTuple&lt;I64I64ToI64&gt; of(I64I64ToI64 activation ) {
+<span class="nc" id="L162">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
+        }
+
+        static FunTuple&lt;I64I64ToI64&gt; triple(
+                I64I64ToI64 activation,
+                I64I64ToI64 derivation1,
+                I64I64ToI64 derivation2
+        ) {
+<span class="fc" id="L170">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
         }
     }
 
@@ -132,7 +176,7 @@ public interface Fun
         byte invoke( byte x, byte y );
 
         static FunTuple&lt;I8I8ToI8&gt; of(I8I8ToI8 activation ) {
-<span class="fc" id="L135">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
+<span class="fc" id="L179">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
         }
 
         static FunTuple&lt;I8I8ToI8&gt; triple(
@@ -140,7 +184,41 @@ public interface Fun
                 I8I8ToI8 derivation1,
                 I8I8ToI8 derivation2
         ) {
-<span class="nc" id="L143">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
+<span class="nc" id="L187">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
+        }
+    }
+
+    interface BoolBoolToBool extends Fun
+    {
+        boolean invoke( boolean x, boolean y );
+
+        static FunTuple&lt;BoolBoolToBool&gt; of(BoolBoolToBool activation ) {
+<span class="fc" id="L196">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
+        }
+
+        static FunTuple&lt;BoolBoolToBool&gt; triple(
+                BoolBoolToBool activation,
+                BoolBoolToBool derivation1,
+                BoolBoolToBool derivation2
+        ) {
+<span class="fc" id="L204">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
+        }
+    }
+
+    interface CharCharToChar extends Fun
+    {
+        char invoke( char x, char y );
+
+        static FunTuple&lt;CharCharToChar&gt; of(CharCharToChar activation ) {
+<span class="fc" id="L213">            return new Operator.FunTriple&lt;&gt;(activation, null, null);</span>
+        }
+
+        static FunTuple&lt;CharCharToChar&gt; triple(
+                CharCharToChar activation,
+                CharCharToChar derivation1,
+                CharCharToChar derivation2
+        ) {
+<span class="fc" id="L221">            return new Operator.FunTriple&lt;&gt;( activation, derivation1, derivation2 );</span>
         }
     }
 }

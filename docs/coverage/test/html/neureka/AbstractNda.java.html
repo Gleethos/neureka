@@ -44,6 +44,7 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.Filler;
+import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
 
@@ -57,7 +58,7 @@ import java.util.Arrays;
  *  {@link TsrImpl} inherits from {@link AbstractNda} which inherits from {@link AbstractComponentOwner}.
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
- *  The above mentioned classes are implementation details covered by
+ *  The above-mentioned classes are implementation details covered by
  *  the {@link Nda} and {@link Tsr} interfaces, which define various
  *  default methods spanning a rich API with good interoperability with
  *  different JVM languages...
@@ -65,7 +66,7 @@ import java.util.Arrays;
  * @param &lt;C&gt; The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
  * @param &lt;V&gt; The value type of the individual items stored within this nd-array.
  */
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">abstract class AbstractNda&lt;C, V&gt; extends AbstractComponentOwner&lt;Tsr&lt;V&gt;&gt; implements Tsr&lt;V&gt;</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">abstract class AbstractNda&lt;C, V&gt; extends AbstractComponentOwner&lt;Tsr&lt;V&gt;&gt; implements Tsr&lt;V&gt;</span>
 {
     protected static Logger _LOG;
 
@@ -78,11 +79,11 @@ import java.util.Arrays;
     /**
      *  The data type instance wrapping and representing the actual value type class.
      */
-<span class="fc" id="L81">    private DataType&lt;?&gt; _dataType = DataType.of( Neureka.get().settings().dtype().getDefaultDataTypeClass() );</span>
+<span class="fc" id="L82">    private DataType&lt;?&gt; _dataType = DataType.of( Neureka.get().settings().dtype().getDefaultDataTypeClass() );</span>
     /**
      *  The heart and sole of the nd-array / tensor: its underlying data array.
      */
-    private Object _data;
+    private DataArray _data;
 
     /**
      *  This integer represents the version of the data (accessible through {@link #getData()})
@@ -96,12 +97,12 @@ import java.util.Arrays;
      *  The corresponding getter returns the version of the data (accessible through {@link #getData()})
      *  stored within this tensor.
      */
-<span class="fc" id="L99">    protected int _version = 0;</span>
+<span class="fc" id="L100">    protected int _version = 0;</span>
 
 
-<span class="fc" id="L102">    protected final void _guardGet( String varName ) { _guard(&quot;Trying to access the &quot;+varName+&quot; of an already deleted tensor.&quot; ); }</span>
-<span class="fc" id="L103">    protected final void _guardSet( String varName ) { _guard(&quot;Trying to set the &quot;+varName+&quot; of an already deleted tensor.&quot; ); }</span>
-<span class="fc" id="L104">    protected final void _guardMod( String varName ) { _guard(&quot;Trying to modify the &quot;+varName+&quot; of an already deleted tensor.&quot; ); }</span>
+<span class="fc" id="L103">    protected final void _guardGet( String varName ) { _guard(&quot;Trying to access the &quot;+varName+&quot; of an already deleted tensor.&quot; ); }</span>
+<span class="fc" id="L104">    protected final void _guardSet( String varName ) { _guard(&quot;Trying to set the &quot;+varName+&quot; of an already deleted tensor.&quot; ); }</span>
+<span class="fc" id="L105">    protected final void _guardMod( String varName ) { _guard(&quot;Trying to modify the &quot;+varName+&quot; of an already deleted tensor.&quot; ); }</span>
 
     /**
      *  This method will guard the state of deleted tensors by throwing an {@link IllegalAccessError}
@@ -111,33 +112,36 @@ import java.util.Arrays;
      * @param message The message explaining to the outside which kind of access violation just occurred.
      */
     private void _guard( String message ) {
-<span class="fc bfc" id="L114" title="All 2 branches covered.">        if ( this.isDeleted() ) {</span>
-<span class="fc" id="L115">            _LOG.error( message );</span>
-<span class="fc" id="L116">            throw new IllegalAccessError( message );</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( this.isDeleted() ) {</span>
+<span class="fc" id="L116">            _LOG.error( message );</span>
+<span class="fc" id="L117">            throw new IllegalAccessError( message );</span>
         }
-<span class="fc" id="L118">    }</span>
+<span class="fc" id="L119">    }</span>
 
     /** {@inheritDoc} */
     @Override
-<span class="fc" id="L122">    public NDConfiguration getNDConf() { _guardGet(&quot;ND-Configuration&quot;); return _NDConf; }</span>
+<span class="fc" id="L123">    public NDConfiguration getNDConf() { _guardGet(&quot;ND-Configuration&quot;); return _NDConf; }</span>
 
     /** {@inheritDoc} */
      @Override
-<span class="fc" id="L126">    public DataType&lt;V&gt; getDataType() { _guardGet(&quot;data type&quot;); return (DataType&lt;V&gt;) _dataType; }</span>
+<span class="fc" id="L127">    public DataType&lt;V&gt; getDataType() { _guardGet(&quot;data type&quot;); return (DataType&lt;V&gt;) _dataType; }</span>
 
-<span class="fc" id="L128">    protected Object _getData() { _guardGet(&quot;data object&quot;); return _data; }</span>
+<span class="fc" id="L129">    protected final DataArray _getData() { _guardGet(&quot;data object&quot;); return _data; }</span>
 
+    protected final Object _getRawData() {
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        return  _getData() == null ? null : _getData().get();</span>
+    }
 
     /** {@inheritDoc} */
     @Override
     public Class&lt;V&gt; getItemType() {
-<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        _guardGet(&quot;data type class&quot;); return ( _dataType != null ? (Class&lt;V&gt;) _dataType.getItemTypeClass() : null );</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        _guardGet(&quot;data type class&quot;); return ( _dataType != null ? (Class&lt;V&gt;) _dataType.getItemTypeClass() : null );</span>
     }
 
     /** {@inheritDoc} */
      @Override
     public Class&lt;?&gt; getRepresentativeItemClass() {
-<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        _guardGet(&quot;representative data type class&quot;); return ( _dataType != null ? _dataType.getRepresentativeType() : null );</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        _guardGet(&quot;representative data type class&quot;); return ( _dataType != null ? _dataType.getRepresentativeType() : null );</span>
     }
 
     /**
@@ -152,92 +156,97 @@ import java.util.Arrays;
      */
     protected C _setDataType( DataType&lt;?&gt; dataType )
     {
-<span class="fc" id="L155">        _guardSet( &quot;data type&quot; );</span>
-<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        if ( _data != null ) {</span>
-<span class="nc" id="L157">            String message = &quot;Data type of tensor can only be set when data attribute is null!\n&quot; +</span>
-                             &quot;This is due to construction-consistency reasons.\n&quot;;
-<span class="nc" id="L159">            throw new IllegalStateException( message );</span>
-        }
-<span class="fc" id="L161">        _dataType = dataType;</span>
-<span class="fc" id="L162">        return (C) this;</span>
+<span class="fc" id="L159">        _guardSet( &quot;data type&quot; );</span>
+        //if ( _data != null ) {
+        //    String message = &quot;Data type of tensor can only be set when data attribute is null!\n&quot; +
+        //                     &quot;This is due to construction-consistency reasons.\n&quot;;
+        //    throw new IllegalStateException( message );
+        //}
+<span class="fc" id="L165">        _dataType = dataType;</span>
+<span class="fc" id="L166">        return (C) this;</span>
     }
 
     /**
-     * @param data The data object which ought to be set for this array.
+     * @param array The data array managing the underlying data of this tensor/nd-array.
      *             This will be the same instance returned by {@link #_getData()}.
      */
-    protected final void _setData( Object data )
+    protected final void _setData( DataArray array )
     {
-<span class="fc" id="L171">        _guardSet( &quot;data object&quot; );</span>
-<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if ( _dataType == null ) {</span>
-<span class="nc" id="L173">            String message = &quot;Trying to set data in a tensor which does not have a DataTyp instance.&quot;;</span>
-<span class="nc" id="L174">            _LOG.error( message );</span>
-<span class="nc" id="L175">            throw new IllegalStateException( message );</span>
+<span class="fc" id="L175">        _guardSet( &quot;data object&quot; );</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        Object data = array == null ? null : array.get();</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if ( _dataType == null ) {</span>
+<span class="nc" id="L178">            String message = &quot;Trying to set data in a tensor which does not have a DataTyp instance.&quot;;</span>
+<span class="nc" id="L179">            _LOG.error( message );</span>
+<span class="nc" id="L180">            throw new IllegalStateException( message );</span>
         }
-<span class="fc bfc" id="L177" title="All 4 branches covered.">        if ( data != null &amp;&amp; _dataType.typeClassImplements( NumericType.class ) ) {</span>
-<span class="fc" id="L178">            NumericType&lt;?,?,?,?&gt; numericType = (NumericType&lt;?,?,?,?&gt;) _dataType.getTypeClassInstance(NumericType.class);</span>
-<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            if ( numericType.targetArrayType() != data.getClass() ) {</span>
-<span class="nc" id="L180">                String message = &quot;Cannot set data whose type does not match what is defined by the DataType instance.\n&quot; +</span>
-<span class="nc" id="L181">                        &quot;Current type '&quot;+numericType.targetArrayType().getSimpleName()+&quot;' does not match '&quot;+ data.getClass().getSimpleName()+&quot;'.\n&quot;;</span>
-<span class="nc" id="L182">                _LOG.error( message );</span>
-<span class="nc" id="L183">                throw new IllegalStateException( message );</span>
+<span class="fc bfc" id="L182" title="All 4 branches covered.">        if ( data != null &amp;&amp; _dataType.typeClassImplements( NumericType.class ) ) {</span>
+<span class="fc" id="L183">            NumericType&lt;?,?,?,?&gt; numericType = (NumericType&lt;?,?,?,?&gt;) _dataType.getTypeClassInstance(NumericType.class);</span>
+<span class="pc bpc" id="L184" title="1 of 4 branches missed.">            if ( data.getClass().isArray() &amp;&amp; numericType.targetArrayType() != data.getClass() ) {</span>
+<span class="nc" id="L185">                String message = &quot;Cannot set data whose type does not match what is defined by the DataType instance.\n&quot; +</span>
+<span class="nc" id="L186">                                 &quot;Current type '&quot;+numericType.targetArrayType().getSimpleName()+&quot;' does not match '&quot;+ data.getClass().getSimpleName()+&quot;'.\n&quot;;</span>
+<span class="nc" id="L187">                _LOG.error( message );</span>
+<span class="nc" id="L188">                throw new IllegalStateException( message );</span>
             }
         }
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-<span class="fc bfc" id="L187" title="All 4 branches covered.">        if ( _data != data &amp;&amp; data != null ) _version++; // Autograd must be warned!</span>
-<span class="fc" id="L188">        _data = data;</span>
-<span class="fc" id="L189">    }</span>
+<span class="pc bpc" id="L192" title="2 of 8 branches missed.">        if ( _data != null &amp;&amp; _data.get() != data &amp;&amp; data != null &amp;&amp; _data.get() != null ) {</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">            boolean isProbablyDeviceTransfer = ( _data.get().getClass().isArray() != data.getClass().isArray() );</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            if ( !isProbablyDeviceTransfer)</span>
+<span class="fc" id="L195">                _version++; // Autograd must be warned!</span>
+        }
+<span class="fc" id="L197">        _data = array;</span>
+<span class="fc" id="L198">    }</span>
 
     protected &lt;T&gt; void _initData( Filler&lt;T&gt; filler )
     {
-<span class="fc" id="L193">        CPU.JVMExecutor executor = CPU.get().getExecutor();</span>
-<span class="fc" id="L194">        Object data = _getData();</span>
-<span class="fc bfc" id="L195" title="All 2 branches covered.">        if ( data instanceof double[] )</span>
-<span class="fc" id="L196">            executor.threaded( ( (double[]) data ).length, ( start, end ) -&gt; {</span>
-<span class="fc bfc" id="L197" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
-<span class="fc" id="L198">                    ( (double[]) data )[i] = (Double) filler.init( i, _NDConf.indicesOfIndex(i) );</span>
-<span class="fc" id="L199">            });</span>
-<span class="fc bfc" id="L200" title="All 2 branches covered.">        else if ( data instanceof float[] )</span>
-<span class="fc" id="L201">            executor.threaded( ( (float[]) data ).length, (start, end) -&gt; {</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
-<span class="fc" id="L203">                    ( (float[]) data )[ i ] = (Float) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
-<span class="fc" id="L204">            });</span>
-<span class="fc bfc" id="L205" title="All 2 branches covered.">        else if ( data instanceof int[] )</span>
-<span class="fc" id="L206">            executor.threaded( ( (int[]) data ).length, (start, end) -&gt; {</span>
-<span class="fc bfc" id="L207" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
-<span class="fc" id="L208">                    ( (int[]) data )[ i ] = (Integer) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
-<span class="fc" id="L209">            });</span>
-<span class="fc bfc" id="L210" title="All 2 branches covered.">        else if ( data instanceof short[] )</span>
-<span class="fc" id="L211">            executor.threaded( ( (short[]) data ).length, (start, end) -&gt; {</span>
-<span class="fc bfc" id="L212" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
-<span class="fc" id="L213">                    ( (short[]) data )[ i ] = (Short) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
-<span class="fc" id="L214">            });</span>
-<span class="fc bfc" id="L215" title="All 2 branches covered.">        else if ( data instanceof byte[] )</span>
-<span class="fc" id="L216">            executor.threaded( ( (byte[]) data ).length, (start, end) -&gt; {</span>
-<span class="fc bfc" id="L217" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
-<span class="fc" id="L218">                    ( (byte[]) data )[ i ] = (Byte) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
-<span class="fc" id="L219">            });</span>
-<span class="fc bfc" id="L220" title="All 2 branches covered.">        else if ( data instanceof long[] )</span>
-<span class="fc" id="L221">            executor.threaded( ( (long[]) data ).length, (start, end) -&gt; {</span>
-<span class="fc bfc" id="L222" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
-<span class="fc" id="L223">                    ( (long[]) data )[ i ] = (Long) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
-<span class="fc" id="L224">            });</span>
-<span class="fc bfc" id="L225" title="All 2 branches covered.">        else if ( data instanceof boolean[] )</span>
-<span class="fc" id="L226">            executor.threaded( ( (boolean[]) data ).length, (start, end) -&gt; {</span>
-<span class="fc bfc" id="L227" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
-<span class="fc" id="L228">                    ( (boolean[]) data )[ i ] = (Boolean) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
-<span class="fc" id="L229">            });</span>
-<span class="fc bfc" id="L230" title="All 2 branches covered.">        else if ( data instanceof char[] )</span>
-<span class="fc" id="L231">            executor.threaded( ( (char[]) data ).length, (start, end) -&gt; {</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
-<span class="fc" id="L233">                    ( (char[]) data )[ i ] = (Character) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
-<span class="fc" id="L234">            });</span>
+<span class="fc" id="L202">        CPU.JVMExecutor executor = CPU.get().getExecutor();</span>
+<span class="fc" id="L203">        Object data = _getData().get();</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        if ( data instanceof double[] )</span>
+<span class="fc" id="L205">            executor.threaded( ( (double[]) data ).length, ( start, end ) -&gt; {</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
+<span class="fc" id="L207">                    ( (double[]) data )[i] = (Double) filler.init( i, _NDConf.indicesOfIndex(i) );</span>
+<span class="fc" id="L208">            });</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        else if ( data instanceof float[] )</span>
+<span class="fc" id="L210">            executor.threaded( ( (float[]) data ).length, (start, end) -&gt; {</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
+<span class="fc" id="L212">                    ( (float[]) data )[ i ] = (Float) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc" id="L213">            });</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        else if ( data instanceof int[] )</span>
+<span class="fc" id="L215">            executor.threaded( ( (int[]) data ).length, (start, end) -&gt; {</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
+<span class="fc" id="L217">                    ( (int[]) data )[ i ] = (Integer) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc" id="L218">            });</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        else if ( data instanceof short[] )</span>
+<span class="fc" id="L220">            executor.threaded( ( (short[]) data ).length, (start, end) -&gt; {</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
+<span class="fc" id="L222">                    ( (short[]) data )[ i ] = (Short) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc" id="L223">            });</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        else if ( data instanceof byte[] )</span>
+<span class="fc" id="L225">            executor.threaded( ( (byte[]) data ).length, (start, end) -&gt; {</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
+<span class="fc" id="L227">                    ( (byte[]) data )[ i ] = (Byte) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc" id="L228">            });</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        else if ( data instanceof long[] )</span>
+<span class="fc" id="L230">            executor.threaded( ( (long[]) data ).length, (start, end) -&gt; {</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
+<span class="fc" id="L232">                    ( (long[]) data )[ i ] = (Long) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc" id="L233">            });</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        else if ( data instanceof boolean[] )</span>
+<span class="fc" id="L235">            executor.threaded( ( (boolean[]) data ).length, (start, end) -&gt; {</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
+<span class="fc" id="L237">                    ( (boolean[]) data )[ i ] = (Boolean) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc" id="L238">            });</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">        else if ( data instanceof char[] )</span>
+<span class="fc" id="L240">            executor.threaded( ( (char[]) data ).length, (start, end) -&gt; {</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
+<span class="fc" id="L242">                    ( (char[]) data )[ i ] = (Character) filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc" id="L243">            });</span>
         else
-<span class="fc" id="L236">            executor.threaded( ( (Object[]) data ).length, (start, end) -&gt; {</span>
-<span class="fc bfc" id="L237" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
-<span class="fc" id="L238">                    ( (Object[]) data )[ i ] = filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
-<span class="fc" id="L239">            });</span>
-<span class="fc" id="L240">    }</span>
+<span class="fc" id="L245">            executor.threaded( ( (Object[]) data ).length, (start, end) -&gt; {</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
+<span class="fc" id="L247">                    ( (Object[]) data )[ i ] = filler.init( i, _NDConf.indicesOfIndex( i )  );</span>
+<span class="fc" id="L248">            });</span>
+<span class="fc" id="L249">    }</span>
 
     /**
      *  This method is responsible for allocating the data of this nd-array.
@@ -249,7 +258,7 @@ import java.util.Arrays;
      *
      * @param size The size of the data array which ought to be allocated.
      */
-<span class="fc" id="L252">    protected final void _allocate( int size ) { _data = getDevice().access( this ).allocate( size ); }</span>
+<span class="nc" id="L261">    protected final void _allocate( int size ) { _data = getDevice().allocate( this.getDataType(), size ); }</span>
 
     /**
      *  The internal implementation handling {@link #setIsVirtual(boolean)}.
@@ -267,19 +276,19 @@ import java.util.Arrays;
      *
      * @return An {@link TsrConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
      */
-    protected TsrConstructor createConstructionAPI()
+    protected TsrConstructor constructFor( Device&lt;?&gt; targetDevice, NDConstructor ndConstructor )
     {
-<span class="fc" id="L272">        AbstractNda&lt;C, ?&gt; nda = this;</span>
-<span class="fc" id="L273">        return new TsrConstructor(</span>
-<span class="fc" id="L274">                    new TsrConstructor.API() {</span>
-<span class="fc" id="L275">                        @Override public void setType( DataType&lt;?&gt; type        ) { nda.getUnsafe().setDataType( type ); }</span>
-<span class="fc" id="L276">                        @Override public void setConf( NDConfiguration conf    ) { nda.getUnsafe().setNDConf( conf ); }</span>
-<span class="fc" id="L277">                        @Override public void setData( Object o                ) { nda._setData( o ); }</span>
-<span class="fc" id="L278">                        @Override public void allocate( int size               ) { nda._allocate( size ); }</span>
-<span class="fc" id="L279">                        @Override public Object getData()                        { return nda._getData(); }</span>
-<span class="fc" id="L280">                        @Override public void setIsVirtual( boolean isVirtual )  { nda._setIsVirtual( isVirtual ); }</span>
-                    }
-                );
+<span class="fc" id="L281">        AbstractNda&lt;C, ?&gt; nda = this;</span>
+<span class="fc" id="L282">        return</span>
+            new TsrConstructor(
+                targetDevice, ndConstructor,
+<span class="fc" id="L285">                new TsrConstructor.API() {</span>
+<span class="fc" id="L286">                    @Override public void   setType( DataType&lt;?&gt; type       ) { nda.getUnsafe().setDataType( type ); }</span>
+<span class="fc" id="L287">                    @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }</span>
+<span class="fc" id="L288">                    @Override public void   setData( DataArray o            ) { nda._setData( o ); }</span>
+<span class="fc" id="L289">                    @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }</span>
+                }
+            );
     }
 
     /**
@@ -291,7 +300,7 @@ import java.util.Arrays;
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  &lt;br&gt;
      */
-<span class="fc" id="L294">    protected final void _virtualize() { _data = _dataType.virtualize( _data ); }</span>
+<span class="fc" id="L303">    protected final void _virtualize() { _data = _dataType.virtualize( _data ); }</span>
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. &lt;br&gt;
@@ -303,21 +312,21 @@ import java.util.Arrays;
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... &lt;br&gt;
      */
-<span class="fc" id="L306">    protected final void _actualize() { _data = getDevice().access(this).actualize(); }</span>
+<span class="fc" id="L315">    protected final void _actualize() { _data = getDevice().access(this).actualize(); }</span>
 
     protected Object _convertedDataOfType( Class&lt;?&gt; typeClass )
     {
-<span class="fc" id="L310">        DataType&lt;?&gt; newDT = DataType.of( typeClass );</span>
-<span class="fc" id="L311">        if (</span>
-<span class="pc bpc" id="L312" title="1 of 2 branches missed.">            newDT.typeClassImplements( NumericType.class )</span>
+<span class="fc" id="L319">        DataType&lt;?&gt; newDT = DataType.of( typeClass );</span>
+<span class="fc" id="L320">        if (</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">            newDT.typeClassImplements( NumericType.class )</span>
                     &amp;&amp;
-<span class="pc bpc" id="L314" title="1 of 2 branches missed.">            getDataType().typeClassImplements( NumericType.class )</span>
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">            getDataType().typeClassImplements( NumericType.class )</span>
         ) {
-<span class="fc" id="L316">            NumericType&lt;?,Object, ?, Object&gt; targetType  = (NumericType&lt;?, Object,?, Object&gt;) newDT.getTypeClassInstance(NumericType.class);</span>
-<span class="fc" id="L317">            return targetType.readForeignDataFrom( iterator(), this.size() );</span>
+<span class="fc" id="L325">            NumericType&lt;?,Object, ?, Object&gt; targetType  = (NumericType&lt;?, Object,?, Object&gt;) newDT.getTypeClassInstance(NumericType.class);</span>
+<span class="fc" id="L326">            return targetType.readForeignDataFrom( iterator(), this.size() );</span>
         }
         else
-<span class="nc" id="L320">            return DataConverter.get().convert( _getData(), newDT.getRepresentativeType() );</span>
+<span class="nc" id="L329">            return DataConverter.get().convert( _getRawData(), newDT.getRepresentativeType() );</span>
     }
 
     /**
@@ -325,8 +334,8 @@ import java.util.Arrays;
      */
      @Override
     public boolean is( Class&lt;?&gt; typeClass ) {
-<span class="fc" id="L328">        DataType&lt;?&gt; type = DataType.of( typeClass );</span>
-<span class="fc bfc" id="L329" title="All 2 branches covered.">        return type == _dataType;</span>
+<span class="fc" id="L337">        DataType&lt;?&gt; type = DataType.of( typeClass );</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">        return type == _dataType;</span>
     }
 
     /**
@@ -338,17 +347,17 @@ import java.util.Arrays;
      */
     protected C _setNDConf( NDConfiguration ndConfiguration )
     {
-<span class="fc" id="L341">        _guardSet( &quot;ND-Configuration&quot; );</span>
-<span class="fc bfc" id="L342" title="All 4 branches covered.">        if ( _NDConf != null &amp;&amp; ndConfiguration != null ) {</span>
-<span class="fc" id="L343">            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
-<span class="fc" id="L344">            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
-<span class="pc bpc" id="L345" title="2 of 4 branches missed.">            assert s1 == s2;</span>
+<span class="fc" id="L350">        _guardSet( &quot;ND-Configuration&quot; );</span>
+<span class="fc bfc" id="L351" title="All 4 branches covered.">        if ( _NDConf != null &amp;&amp; ndConfiguration != null ) {</span>
+<span class="fc" id="L352">            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
+<span class="fc" id="L353">            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
+<span class="pc bpc" id="L354" title="2 of 4 branches missed.">            assert s1 == s2;</span>
         }
-<span class="fc" id="L347">        _NDConf = ndConfiguration;</span>
-<span class="fc bfc" id="L348" title="All 2 branches covered.">        if ( this.has( Device.class ) )</span>
-<span class="fc" id="L349">            this.get(Device.class).access((Tsr) this).updateNDConf();</span>
+<span class="fc" id="L356">        _NDConf = ndConfiguration;</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">        if ( this.has( Device.class ) )</span>
+<span class="fc" id="L358">            this.get(Device.class).access(this).updateNDConf();</span>
 
-<span class="fc" id="L351">        return (C) this;</span>
+<span class="fc" id="L360">        return (C) this;</span>
     }
 
 }

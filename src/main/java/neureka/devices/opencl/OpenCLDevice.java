@@ -48,6 +48,7 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
+import neureka.DataArray;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ImplementationFor;
@@ -426,7 +427,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         _tensors.add( tensor );
 
-        tensor.getUnsafe().setData( newClt );
+        tensor.getUnsafe().setDataArray( _dataArrayOf(newClt) );
         migration.run(); // TODO: REMOVE
 
         // When tensors get stored on this device,
@@ -511,7 +512,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if (clt == null) return this;
         _tensors.remove(tensor);
         tensor.setIsOutsourced(false);
-        tensor.getUnsafe().setData(null);
+        tensor.getUnsafe().setDataArray(null);
         return this;
     }
 
@@ -536,22 +537,22 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Object allocate( DataType<?> dataType, int size ) {
+    public DataArray allocate( DataType<?> dataType, int size ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    public <V> Object allocate(DataType<V> dataType, int size, V initialValue) {
+    public <V> DataArray allocate(DataType<V> dataType, int size, V initialValue) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    public Object allocate(Object jvmData, int desiredSize) {
+    public DataArray allocate(Object jvmData, int desiredSize) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    protected Object _actualize( Tsr<?> tensor ) {
+    protected DataArray _actualize(Tsr<?> tensor ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
@@ -576,8 +577,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     protected final <T extends Number> void _swap(Tsr<T> former, Tsr<T> replacement) {
         cl_tsr<Number, T> clTsr = former.getUnsafe().getData(cl_tsr.class);
-        former.getUnsafe().setData(null);
-        replacement.getUnsafe().setData(clTsr);
+        former.getUnsafe().setDataArray(null);
+        replacement.getUnsafe().setDataArray( _dataArrayOf(clTsr) );
         _tensors.remove(former);
         _tensors.add( replacement.getUnsafe().upcast(Number.class) );
     }

@@ -83,7 +83,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     /**
      *  The heart and sole of the nd-array / tensor: its underlying data array.
      */
-    private Object _data;
+    private DataArray _data;
 
     /**
      *  This integer represents the version of the data (accessible through {@link #getData()})
@@ -126,8 +126,11 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      @Override
     public DataType<V> getDataType() { _guardGet("data type"); return (DataType<V>) _dataType; }
 
-    protected Object _getData() { _guardGet("data object"); return _data; }
+    protected final DataArray _getData() { _guardGet("data object"); return _data; }
 
+    protected final Object _getRawData() {
+        return  _getData() == null ? null : _getData().get();
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -164,12 +167,13 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     }
 
     /**
-     * @param data The data object which ought to be set for this array.
+     * @param array The data array managing the underlying data of this tensor/nd-array.
      *             This will be the same instance returned by {@link #_getData()}.
      */
-    protected final void _setData( Object data )
+    protected final void _setData( DataArray array )
     {
         _guardSet( "data object" );
+        Object data = array == null ? null : array.get();
         if ( _dataType == null ) {
             String message = "Trying to set data in a tensor which does not have a DataTyp instance.";
             _LOG.error( message );
@@ -185,18 +189,18 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             }
         }
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-        if ( _data != data && data != null && _data != null ) {
-            boolean isProbablyDeviceTransfer = ( _data.getClass().isArray() != data.getClass().isArray() );
+        if ( _data != null && _data.get() != data && data != null && _data.get() != null ) {
+            boolean isProbablyDeviceTransfer = ( _data.get().getClass().isArray() != data.getClass().isArray() );
             if ( !isProbablyDeviceTransfer)
                 _version++; // Autograd must be warned!
         }
-        _data = data;
+        _data = array;
     }
 
     protected <T> void _initData( Filler<T> filler )
     {
         CPU.JVMExecutor executor = CPU.get().getExecutor();
-        Object data = _getData();
+        Object data = _getData().get();
         if ( data instanceof double[] )
             executor.threaded( ( (double[]) data ).length, ( start, end ) -> {
                 for (int i = start; i < end; i++)
@@ -281,7 +285,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
                 new TsrConstructor.API() {
                     @Override public void   setType( DataType<?> type       ) { nda.getUnsafe().setDataType( type ); }
                     @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }
-                    @Override public void   setData( Object o               ) { nda._setData( o ); }
+                    @Override public void   setData( DataArray o            ) { nda._setData( o ); }
                     @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                 }
             );
@@ -322,7 +326,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             return targetType.readForeignDataFrom( iterator(), this.size() );
         }
         else
-            return DataConverter.get().convert( _getData(), newDT.getRepresentativeType() );
+            return DataConverter.get().convert( _getRawData(), newDT.getRepresentativeType() );
     }
 
     /**

@@ -36,7 +36,9 @@ SOFTWARE.
 package neureka.dtype;
 
 
+import neureka.DataArray;
 import neureka.common.utility.LogUtil;
+import neureka.devices.host.CPU;
 import neureka.dtype.custom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,8 +149,10 @@ public final class DataType<Type>
             return Object[].class;
     }
 
-    public <T> T virtualize( T value )
+    public DataArray virtualize( DataArray dataArray )
     {
+        Object value = dataArray == null ? null : dataArray.get();
+        assert value != null;
         Object newValue;
         if ( _typeClass == F64.class )
             newValue = ( ( (double[]) value ).length <= 1 ) ? value : new double[]{ ( (double[]) value )[ 0 ] };
@@ -165,7 +169,7 @@ public final class DataType<Type>
         else
             newValue = ( ( (Object[]) value ).length <= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };
 
-        return (T) newValue;
+        return CPU.get().allocate(newValue, 1);
     }
 
     public boolean equals(final Object o) {

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.284 seconds"
+    "duration":"0.644 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The GEMM implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"1.279 seconds",
+      "duration":"0.641 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

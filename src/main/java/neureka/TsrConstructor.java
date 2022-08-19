@@ -4,6 +4,7 @@ import neureka.backend.main.operations.other.Randomization;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
@@ -32,7 +33,7 @@ final class TsrConstructor
     public interface API {
         void   setType( DataType<?> type );
         void   setConf( NDConfiguration conf );
-        void   setData( Object o );
+        void   setData( DataArray o );
         void   setIsVirtual(  boolean isVirtual );
     }
 
@@ -79,7 +80,7 @@ final class TsrConstructor
         LogUtil.nullArgCheck( dataType, "dataType", DataType.class );
         if ( trusted ) {
             _API.setType( dataType );
-            _API.setData( data );
+            _API.setData(dataArrayOnCPUFor(data));
             _API.setConf( _ndConstructor.produceNDC( false ) );
             return;
         }
@@ -103,9 +104,9 @@ final class TsrConstructor
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
 
-        data = _targetDevice.allocate( data, size );
+        DataArray array = _targetDevice.allocate( data, size );
         newUnpopulated( false, false, dataType );
-        _API.setData( data );
+        _API.setData( array );
     }
 
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
@@ -123,13 +124,23 @@ final class TsrConstructor
         int size = _ndConstructor.getSize();
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
-        data = _constructAllFromOne( _ndConstructor.getSize(), data, type );
-        _API.setData( data );
+        DataArray array = _constructAllFromOne( _ndConstructor.getSize(), data, type );
+        _API.setData( array );
         _API.setConf( _ndConstructor.produceNDC() );
         return data != null;
     }
 
-    private Object _constructAllFromOne( int size, Object data, Class<?> type )
+    public static DataArray dataArrayOnCPUFor( Object data ) {
+        if ( data instanceof DataArray )
+            System.out.printf("");
+        assert data == null || !(data instanceof DataArray);
+        return new DataArray() {
+            @Override public Device<?> getDevice() { return CPU.get(); }
+            @Override public Object get() { return data; }
+        };
+    }
+
+    private DataArray _constructAllFromOne( int size, Object data, Class<?> type )
     {
         if ( type == Double   .class ) { return _constructAll( size, data, type ); }
         if ( type == Float    .class ) { return _constructAll( size, data, type ); }
@@ -148,7 +159,7 @@ final class TsrConstructor
         return null;
     }
 
-    private Object _constructAll( int size, Object value, Class<?> typeClass )
+    private DataArray _constructAll( int size, Object value, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
         return _targetDevice.allocate( dataType, Math.min(size, 1), value );
@@ -157,8 +168,9 @@ final class TsrConstructor
     public <V> void newSeeded( Class<V> valueType, Object seed )
     {
         int size = _ndConstructor.getSize();
-        Object data = _targetDevice.allocate( DataType.of( valueType ), size );
-        data = Randomization.fillRandomly( data, seed.toString() );
+        DataArray data = _targetDevice.allocate( DataType.of( valueType ), size );
+        Object out = Randomization.fillRandomly( data.get(), seed.toString() );
+        assert out == data.get();
         newUnpopulated( false, false, DataType.of(valueType) );
         _API.setData( data );
     }

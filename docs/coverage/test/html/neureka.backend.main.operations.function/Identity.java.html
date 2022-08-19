@@ -23,5 +23,21 @@ public final class Identity extends AbstractActivationOperation
 
 <span class="nc" id="L24">    @Override protected float _derive(float x) { return 1; }</span>
 
+<span class="fc" id="L26">    @Override protected int _activate(int x) { return x; }</span>
+
+<span class="nc" id="L28">    @Override protected int _derive(int x) { return 1; }</span>
+
+<span class="fc" id="L30">    @Override protected long _activate(long x) { return x; }</span>
+
+<span class="nc" id="L32">    @Override protected long _derive(long x) { return 1; }</span>
+
+<span class="fc" id="L34">    @Override protected boolean _activate(boolean x) { return x; }</span>
+
+<span class="fc" id="L36">    @Override protected char _activate(char x) { return x; }</span>
+
+<span class="fc" id="L38">    protected Object _activate(Object x) { return x; }</span>
+
+<span class="nc" id="L40">    protected Object _derive(Object x) { return null; }</span>
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

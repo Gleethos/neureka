@@ -74,7 +74,7 @@ import neureka.dtype.custom.UI16;
 import neureka.dtype.custom.UI32;
 import neureka.dtype.custom.UI8;
 import neureka.fluent.building.NdaBuilder;
-import neureka.fluent.building.states.IterByOrIterFromOrAll;
+import neureka.fluent.building.states.IterByOrIterFromOrAllTsr;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
 import neureka.fluent.slicing.states.AxisOrGetTsr;
@@ -717,10 +717,10 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @param &lt;V&gt; The type parameter defining the value type of the provided as well as returned tensor.
      * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
      */
-    static &lt;V&gt; IterByOrIterFromOrAll&lt;V&gt; like(Tsr&lt;V&gt; template ) {
-<span class="nc" id="L721">        return of( template.getDataType().getItemTypeClass() )</span>
-<span class="nc" id="L722">                .on( template.getDevice() )</span>
-<span class="nc" id="L723">                .withShape( template.getNDConf().shape() );</span>
+    static &lt;V&gt; IterByOrIterFromOrAllTsr&lt;V&gt; like(Tsr&lt;V&gt; template ) {
+<span class="fc" id="L721">        return of( template.getDataType().getItemTypeClass() )</span>
+<span class="fc" id="L722">                .on( template.getDevice() )</span>
+<span class="fc" id="L723">                .withShape( template.getNDConf().shape() );</span>
     }
 
     /*==================================================================================================================
@@ -777,12 +777,14 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
     Tsr&lt;V&gt; setIsOutsourced( boolean isOutsourced );
 
     /**
-     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance.
+     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance which is not the {@link CPU}.
      *
-     * @return The truth value determining if the data of this tensor is not actually stored inside of it
+     * @return The truth value determining if the data of this tensor is not actually stored inside it
      *         in the form of a traditional primitive JVM array!
      */
-    boolean isOutsourced();
+    default boolean isOutsourced() {
+<span class="fc bfc" id="L786" title="All 2 branches covered.">        return !(this.getDevice() instanceof CPU);</span>
+    }
 
     /**
      *  A Virtual tensor is a tensor whose underlying data array is of size 1, holding only a single value. &lt;br&gt;
@@ -837,7 +839,7 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      *
      * @return The truth value determining if this tensor has data.
      */
-<span class="fc bfc" id="L840" title="All 4 branches covered.">    default boolean isEmpty() { return getUnsafe().getData() == null &amp;&amp; !this.isOutsourced(); }</span>
+<span class="pc bpc" id="L842" title="1 of 4 branches missed.">    default boolean isEmpty() { return getUnsafe().getData() == null &amp;&amp; !this.isOutsourced(); }</span>
 
     /**
      *  A tensor is &quot;undefined&quot; if it has either no {@link NDConfiguration} implementation instance
@@ -846,27 +848,27 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      *
      * @return The truth value determining if this tensor has an {@link NDConfiguration} stored internally.
      */
-<span class="pc bpc" id="L849" title="2 of 4 branches missed.">    default boolean isUndefined() { return getNDConf() == null || getNDConf().shape() == null; }</span>
+<span class="pc bpc" id="L851" title="2 of 4 branches missed.">    default boolean isUndefined() { return getNDConf() == null || getNDConf().shape() == null; }</span>
 
     /** {@inheritDoc} */
     @Override
     default boolean isSlice() {
-<span class="fc" id="L854">        Relation&lt;V&gt; child = get( Relation.class );</span>
-<span class="fc bfc" id="L855" title="All 4 branches covered.">        return ( child != null &amp;&amp; child.hasParent() );</span>
+<span class="fc" id="L856">        Relation&lt;V&gt; child = get( Relation.class );</span>
+<span class="fc bfc" id="L857" title="All 4 branches covered.">        return ( child != null &amp;&amp; child.hasParent() );</span>
     }
 
     /** {@inheritDoc} */
     @Override
     default int sliceCount() {
-<span class="fc" id="L861">        Relation&lt;V&gt; child = this.get( Relation.class );</span>
-<span class="pc bpc" id="L862" title="1 of 2 branches missed.">        return ( child != null ) ? child.childCount() : 0;</span>
+<span class="fc" id="L863">        Relation&lt;V&gt; child = this.get( Relation.class );</span>
+<span class="pc bpc" id="L864" title="1 of 2 branches missed.">        return ( child != null ) ? child.childCount() : 0;</span>
     }
 
     /** {@inheritDoc} */
     @Override
     default boolean isSliceParent() {
-<span class="fc" id="L868">        Relation&lt;V&gt; parent = this.get( Relation.class );</span>
-<span class="pc bpc" id="L869" title="1 of 4 branches missed.">        return ( parent != null &amp;&amp; parent.hasChildren() );</span>
+<span class="fc" id="L870">        Relation&lt;V&gt; parent = this.get( Relation.class );</span>
+<span class="pc bpc" id="L871" title="1 of 4 branches missed.">        return ( parent != null &amp;&amp; parent.hasChildren() );</span>
     }
 
     /**
@@ -879,7 +881,7 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      *
      * @return The truth value determining if this tensor belongs to a recorded computation graph.
      */
-<span class="fc" id="L882">    default boolean belongsToGraph() { return this.has( GraphNode.class ); }</span>
+<span class="fc" id="L884">    default boolean belongsToGraph() { return this.has( GraphNode.class ); }</span>
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -891,7 +893,7 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      *
      * @return The truth value determining if this tensor is attached to a computation graph as leave node.
      */
-<span class="pc bpc" id="L894" title="1 of 4 branches missed.">    default boolean isLeave() { return (!this.belongsToGraph() || getGraphNode().isLeave()); }</span>
+<span class="pc bpc" id="L896" title="1 of 4 branches missed.">    default boolean isLeave() { return (!this.belongsToGraph() || getGraphNode().isLeave()); }</span>
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -903,7 +905,7 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      *
      * @return The truth value determining if this tensor is attached to a computation graph as branch node.
      */
-<span class="fc bfc" id="L906" title="All 2 branches covered.">     default boolean isBranch() { return !this.isLeave(); }</span>
+<span class="fc bfc" id="L908" title="All 2 branches covered.">     default boolean isBranch() { return !this.isLeave(); }</span>
 
     /**
      *  Tensors can be components of other tensors which makes the
@@ -911,7 +913,7 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      *
      * @return The truth value determining if this tensor has another tensor attached to it (which is its gradient).
      */
-<span class="fc" id="L914">    default boolean hasGradient() { return this.has( Tsr.class ); }</span>
+<span class="fc" id="L916">    default boolean hasGradient() { return this.has( Tsr.class ); }</span>
 
     /**
      *  This flag works alongside two autograd features which can be enables inside the library settings.
@@ -962,22 +964,22 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      */
     @Override
     default boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
-<span class="fc bfc" id="L965" title="All 2 branches covered.">        if ( changeRequest.type() == IsBeing.ADDED ) {</span>
-<span class="fc" id="L966">            if (</span>
-<span class="pc bpc" id="L967" title="1 of 2 branches missed.">                changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||</span>
-<span class="pc bpc" id="L968" title="1 of 2 branches missed.">                Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )</span>
+<span class="fc bfc" id="L967" title="All 2 branches covered.">        if ( changeRequest.type() == IsBeing.ADDED ) {</span>
+<span class="fc" id="L968">            if (</span>
+<span class="pc bpc" id="L969" title="1 of 2 branches missed.">                changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||</span>
+<span class="pc bpc" id="L970" title="1 of 2 branches missed.">                Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )</span>
             ) {
-<span class="nc" id="L970">                throw new IllegalArgumentException(</span>
+<span class="nc" id="L972">                throw new IllegalArgumentException(</span>
                         &quot;Trying to attach a tensor as gradient component to a tensor with different shape.&quot;
                 );
             }
         }
-<span class="fc" id="L975">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
+<span class="fc" id="L977">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
         // If the change request type is set to &quot;REPLACED&quot; then
         // this is means that this tensor is a gradient that is being
         // transferred to another tensor to serve as gradient...
         // No update task needs to occur. (This might change in the future...)
-<span class="fc" id="L980">        return true;</span>
+<span class="fc" id="L982">        return true;</span>
     }
 
     /*==================================================================================================================
@@ -1061,7 +1063,7 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      */
     Tsr&lt;V&gt; to( Device&lt;?&gt; device );
 
-<span class="fc" id="L1064">    default Tsr&lt;V&gt; to( String deviceType ) { return this.to(Device.get(deviceType)); }</span>
+<span class="fc" id="L1066">    default Tsr&lt;V&gt; to( String deviceType ) { return this.to(Device.get(deviceType)); }</span>
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1074,15 +1076,15 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The tensor on which this method was called. (factory pattern)
      */
     default Tsr&lt;V&gt; backward( Tsr&lt;V&gt; error ) {
-<span class="fc" id="L1077">        LogUtil.nullArgCheck(error, &quot;error&quot;, Tsr.class, &quot;Cannot back-propagate 'null'!&quot;);</span>
-<span class="fc bfc" id="L1078" title="All 2 branches covered.">        if ( this.isOutsourced() )</span>
-<span class="fc" id="L1079">            error = error.deepCopy().to(this.getDevice());</span>
+<span class="fc" id="L1079">        LogUtil.nullArgCheck(error, &quot;error&quot;, Tsr.class, &quot;Cannot back-propagate 'null'!&quot;);</span>
+<span class="fc bfc" id="L1080" title="All 2 branches covered.">        if ( this.isOutsourced() )</span>
+<span class="fc" id="L1081">            error = error.deepCopy().to(this.getDevice());</span>
 
-<span class="fc" id="L1081">        Tsr&lt;V&gt; finalError = error;</span>
-<span class="fc bfc" id="L1082" title="All 4 branches covered.">        if ( !forComponent( GraphNode.class, node -&gt; node.backward(finalError) ) &amp;&amp; this.rqsGradient() ) {</span>
-<span class="fc" id="L1083">            addToGradient( error );</span>
+<span class="fc" id="L1083">        Tsr&lt;V&gt; finalError = error;</span>
+<span class="fc bfc" id="L1084" title="All 4 branches covered.">        if ( !forComponent( GraphNode.class, node -&gt; node.backward(finalError) ) &amp;&amp; this.rqsGradient() ) {</span>
+<span class="fc" id="L1085">            addToGradient( error );</span>
         }
-<span class="fc" id="L1085">        return this;</span>
+<span class="fc" id="L1087">        return this;</span>
     }
 
 
@@ -1102,8 +1104,8 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The tensor on which this method was called. (factory pattern)
      */
     default Tsr&lt;V&gt; backward( double value ) {
-<span class="fc" id="L1105">        backward( Tsr.of( this.getItemType(), getNDConf().shape(), value ) );</span>
-<span class="fc" id="L1106">        return this;</span>
+<span class="fc" id="L1107">        backward( Tsr.of( this.getItemType(), getNDConf().shape(), value ) );</span>
+<span class="fc" id="L1108">        return this;</span>
     }
 
     /**
@@ -1120,14 +1122,14 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The tensor on which this method was called. (factory pattern)
      */
     default Tsr&lt;V&gt; backward() {
-<span class="fc" id="L1123">        backward( 1 ); // By default we back-propagate a base factor of 1.</span>
-<span class="fc" id="L1124">        return this;</span>
+<span class="fc" id="L1125">        backward( 1 ); // By default we back-propagate a base factor of 1.</span>
+<span class="fc" id="L1126">        return this;</span>
     }
 
     /**
      * @return The gradient of this tensor which is internally stored as component.
      */
-<span class="fc" id="L1130">    default Tsr&lt;V&gt; getGradient() { return this.get( Tsr.class ); }</span>
+<span class="fc" id="L1132">    default Tsr&lt;V&gt; getGradient() { return this.get( Tsr.class ); }</span>
 
     /**
      *  If this tensor owns a gradient tensor as component, then it can be applied by this method. &lt;br&gt;
@@ -1140,47 +1142,50 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
            has been put on hold by saving the pending graph nodes inside the component. &lt;br&gt;
            This is because the gradient most likely has not yet been fully calculated.
          */
-<span class="fc" id="L1143">        forComponent( JITProp.class, JITProp::execute );</span>
+<span class="fc" id="L1145">        forComponent( JITProp.class, JITProp::execute );</span>
         // Afterwards the JITProp component is not needed anymore! So we remove it.
-<span class="fc" id="L1145">        remove( JITProp.class );</span>
+<span class="fc" id="L1147">        remove( JITProp.class );</span>
         // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class as key).
-<span class="fc" id="L1147">        forComponent(</span>
+<span class="fc" id="L1149">        forComponent(</span>
                 Tsr.class,
                 g -&gt; {
                     // If an optimizer is present then we also optimize the gradient first!
-<span class="fc bfc" id="L1151" title="All 2 branches covered.">                    if ( this.has( Optimizer.class ) )</span>
-<span class="fc" id="L1152">                        g = this.get(Optimizer.class).optimize( this );</span>
+<span class="fc bfc" id="L1153" title="All 2 branches covered.">                    if ( this.has( Optimizer.class ) )</span>
+<span class="fc" id="L1154">                        g = this.get(Optimizer.class).optimize( this );</span>
                     // And then we remove the gradient because it is no longer needed.
-<span class="fc" id="L1154">                    remove( Tsr.class );</span>
+<span class="fc" id="L1156">                    remove( Tsr.class );</span>
                     // We are now ready to apply the gradient to the tensor. This is an inline operation!
                     // Therefore, we need to turn off the inline operation safety net:
-<span class="fc" id="L1157">                    boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();</span>
-<span class="pc bpc" id="L1158" title="1 of 2 branches missed.">                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );</span>
+<span class="fc" id="L1159">                    boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();</span>
+<span class="pc bpc" id="L1160" title="1 of 2 branches missed.">                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );</span>
                     // INLINE OPERATION :
-<span class="fc" id="L1160">                    Neureka.get().backend().getFunction().plusAssign().call( this, g ); //-&gt; Finally applying the gradient!</span>
+<span class="fc" id="L1162">                    Neureka.get().backend().getFunction().plusAssign().call( this, g ); //-&gt; Finally applying the gradient!</span>
                     // INLINE END ! -&gt; We can now revert to the previous setting:
-<span class="pc bpc" id="L1162" title="1 of 2 branches missed.">                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );</span>
-<span class="fc" id="L1163">                }</span>
+<span class="pc bpc" id="L1164" title="1 of 2 branches missed.">                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );</span>
+<span class="fc" id="L1165">                }</span>
         );
-<span class="fc" id="L1165">    }</span>
+<span class="fc" id="L1167">    }</span>
 
     /**
      * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
      */
     default Device&lt;V&gt; getDevice() {
-<span class="fc bfc" id="L1171" title="All 2 branches covered.">        if ( this.isOutsourced() ) return this.get( Device.class );</span>
-<span class="fc" id="L1172">        return (Device&lt;V&gt;) CPU.get();</span>
+<span class="fc" id="L1173">        Device device = this.get( Device.class );</span>
+<span class="fc bfc" id="L1174" title="All 2 branches covered.">        if ( device == null )</span>
+<span class="fc" id="L1175">            return (Device&lt;V&gt;) CPU.get();</span>
+        else
+<span class="fc" id="L1177">            return device;</span>
     }
 
     /**
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
-<span class="fc" id="L1178">    default GraphNode&lt;V&gt; getGraphNode() { return get( GraphNode.class ); }</span>
+<span class="fc" id="L1183">    default GraphNode&lt;V&gt; getGraphNode() { return get( GraphNode.class ); }</span>
 
     /**
      * @return An instance of the {@link NDFrame} component if present.
      */
-<span class="fc" id="L1183">    default NDFrame&lt;V&gt; frame() { return get( NDFrame.class ); }</span>
+<span class="fc" id="L1188">    default NDFrame&lt;V&gt; frame() { return get( NDFrame.class ); }</span>
 
     /**
      *  &lt;b&gt;This method returns a new tensor detached from any underlying computation-graph
@@ -1193,9 +1198,9 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return This very instance in order to allows for a more streamline usage of this method.
      */
     default Tsr&lt;V&gt; detached() {
-<span class="fc bfc" id="L1196" title="All 2 branches covered.">        if ( this.has( GraphNode.class ) )</span>
-<span class="fc" id="L1197">            return this.shallowCopy().remove( GraphNode.class );</span>
-<span class="fc" id="L1198">        return this;</span>
+<span class="fc bfc" id="L1201" title="All 2 branches covered.">        if ( this.has( GraphNode.class ) )</span>
+<span class="fc" id="L1202">            return this.shallowCopy().remove( GraphNode.class );</span>
+<span class="fc" id="L1203">        return this;</span>
     }
 
     /**
@@ -1216,8 +1221,8 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return This tensor (method chaining).
      */
     default Tsr&lt;V&gt; label( String[][] labels ) {
-<span class="fc" id="L1219">        label( null, labels );</span>
-<span class="fc" id="L1220">        return this;</span>
+<span class="fc" id="L1224">        label( null, labels );</span>
+<span class="fc" id="L1225">        return this;</span>
     }
 
     /**
@@ -1332,13 +1337,13 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The sum of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     default Tsr&lt;V&gt; plus( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1335">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot add 'null' to a tensor!&quot;);</span>
-<span class="fc" id="L1336">        return Neureka.get().backend().getAutogradFunction().plus().call( this, other );</span>
+<span class="fc" id="L1340">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot add 'null' to a tensor!&quot;);</span>
+<span class="fc" id="L1341">        return Neureka.get().backend().getAutogradFunction().plus().call( this, other );</span>
     }
 
     default Tsr&lt;V&gt; plusAssign( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1340">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot add-assign 'null' to a tensor!&quot;);</span>
-<span class="fc" id="L1341">        return Neureka.get().backend().getFunction().plusAssign().call( this, other );</span>
+<span class="fc" id="L1345">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot add-assign 'null' to a tensor!&quot;);</span>
+<span class="fc" id="L1346">        return Neureka.get().backend().getFunction().plusAssign().call( this, other );</span>
     }
 
     /**
@@ -1351,7 +1356,7 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @param value The right operand of the addition.
      * @return The sum between this instance as the left and the passed double as right operand.
      */
-<span class="fc" id="L1354">    default Tsr&lt;V&gt; plus( V value ) { return plus( of( itemType(), this.shape(), value ) ); }</span>
+<span class="fc" id="L1359">    default Tsr&lt;V&gt; plus( V value ) { return plus( of( itemType(), this.shape(), value ) ); }</span>
 
     /**
      *  This method will perform subtraction on
@@ -1370,36 +1375,36 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     default Tsr&lt;V&gt; minus( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1373">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot subtract 'null' from a tensor!&quot;);</span>
-<span class="fc" id="L1374">        return Neureka.get().backend().getAutogradFunction().minus().call( this, other );</span>
+<span class="fc" id="L1378">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot subtract 'null' from a tensor!&quot;);</span>
+<span class="fc" id="L1379">        return Neureka.get().backend().getAutogradFunction().minus().call( this, other );</span>
     }
 
     default Tsr&lt;V&gt; minus( V other ) {
-<span class="fc" id="L1378">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot subtract 'null' from a tensor!&quot;);</span>
-<span class="fc" id="L1379">        return minus(</span>
-<span class="fc" id="L1380">                of( this.getDataType().getItemTypeClass() )</span>
-<span class="fc" id="L1381">                        .withShape(this.getNDConf().shape())</span>
-<span class="fc" id="L1382">                        .all(other)</span>
+<span class="fc" id="L1383">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot subtract 'null' from a tensor!&quot;);</span>
+<span class="fc" id="L1384">        return minus(</span>
+<span class="fc" id="L1385">                of( this.getDataType().getItemTypeClass() )</span>
+<span class="fc" id="L1386">                        .withShape(this.getNDConf().shape())</span>
+<span class="fc" id="L1387">                        .all(other)</span>
         );
     }
     default Tsr&lt;V&gt; minusAssign( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1386">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot subtract-assign 'null' from a tensor!&quot;);</span>
-<span class="fc" id="L1387">        return Neureka.get().backend().getFunction().minusAssign().call( this, other );</span>
+<span class="fc" id="L1391">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot subtract-assign 'null' from a tensor!&quot;);</span>
+<span class="fc" id="L1392">        return Neureka.get().backend().getFunction().minusAssign().call( this, other );</span>
     }
 
 
     default Tsr&lt;V&gt; minusAssign( V other ) {
-<span class="fc" id="L1392">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot subtract-assign 'null' from a tensor!&quot;);</span>
-<span class="fc" id="L1393">        return minusAssign(</span>
-<span class="fc" id="L1394">                of( this.getDataType().getItemTypeClass() )</span>
-<span class="fc" id="L1395">                        .withShape(this.getNDConf().shape())</span>
-<span class="fc" id="L1396">                        .all(other)</span>
+<span class="fc" id="L1397">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot subtract-assign 'null' from a tensor!&quot;);</span>
+<span class="fc" id="L1398">        return minusAssign(</span>
+<span class="fc" id="L1399">                of( this.getDataType().getItemTypeClass() )</span>
+<span class="fc" id="L1400">                        .withShape(this.getNDConf().shape())</span>
+<span class="fc" id="L1401">                        .all(other)</span>
         );
     }
     /**
      * @return A clone of this tensor where the signs of all elements are flipped.
      */
-<span class="fc" id="L1402">    default Tsr&lt;V&gt; negative() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }</span>
+<span class="fc" id="L1407">    default Tsr&lt;V&gt; negative() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }</span>
 
     /**
      *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
@@ -1407,18 +1412,18 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
     default Tsr&lt;V&gt; T() {
-<span class="pc bpc" id="L1410" title="1 of 2 branches missed.">        if ( this.rank() == 1 ) return this;</span>
-<span class="fc bfc" id="L1411" title="All 2 branches covered.">        else if ( this.rank() == 2 ) {</span>
-<span class="fc" id="L1412">            boolean wasIntermediate = this.isIntermediate();</span>
-<span class="fc" id="L1413">            this.getUnsafe().setIsIntermediate(false);</span>
-<span class="fc" id="L1414">            Tsr&lt;V&gt; result = Neureka.get().backend().getFunction().transpose2D().call( this );</span>
-<span class="fc" id="L1415">            this.getUnsafe().setIsIntermediate(wasIntermediate);</span>
-<span class="fc" id="L1416">            return result;</span>
+<span class="pc bpc" id="L1415" title="1 of 2 branches missed.">        if ( this.rank() == 1 ) return this;</span>
+<span class="fc bfc" id="L1416" title="All 2 branches covered.">        else if ( this.rank() == 2 ) {</span>
+<span class="fc" id="L1417">            boolean wasIntermediate = this.isIntermediate();</span>
+<span class="fc" id="L1418">            this.getUnsafe().setIsIntermediate(false);</span>
+<span class="fc" id="L1419">            Tsr&lt;V&gt; result = Neureka.get().backend().getFunction().transpose2D().call( this );</span>
+<span class="fc" id="L1420">            this.getUnsafe().setIsIntermediate(wasIntermediate);</span>
+<span class="fc" id="L1421">            return result;</span>
         }
-<span class="fc" id="L1418">        StringBuilder operation = new StringBuilder();</span>
-<span class="fc bfc" id="L1419" title="All 4 branches covered.">        for ( int i = rank() - 1; i &gt;= 0; i-- ) operation.append( i ).append( i == 0 ? &quot;&quot; : &quot;, &quot; );</span>
-<span class="fc" id="L1420">        operation = new StringBuilder( &quot;[&quot; + operation + &quot;]:(I[ 0 ])&quot; );</span>
-<span class="fc" id="L1421">        return Function.of( operation.toString(), true ).call( this );</span>
+<span class="fc" id="L1423">        StringBuilder operation = new StringBuilder();</span>
+<span class="fc bfc" id="L1424" title="All 4 branches covered.">        for ( int i = rank() - 1; i &gt;= 0; i-- ) operation.append( i ).append( i == 0 ? &quot;&quot; : &quot;, &quot; );</span>
+<span class="fc" id="L1425">        operation = new StringBuilder( &quot;[&quot; + operation + &quot;]:(I[ 0 ])&quot; );</span>
+<span class="fc" id="L1426">        return Function.of( operation.toString(), true ).call( this );</span>
     }
 
     /**
@@ -1430,25 +1435,25 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return A scalar tensor which is the mean value of all values of this very tensor.
      */
     default Tsr&lt;V&gt; mean() {
-<span class="fc" id="L1433">        Functions functions = Neureka.get().backend().getAutogradFunction();</span>
-<span class="fc" id="L1434">        Tsr&lt;V&gt; sum = this.sum();</span>
-<span class="fc" id="L1435">        Tsr&lt;V&gt; result = functions.div().call( sum, of( this.getItemType(), new int[]{1}, this.size() ) );</span>
-<span class="fc" id="L1436">        sum.getUnsafe().delete();</span>
-<span class="fc" id="L1437">        return result;</span>
+<span class="fc" id="L1438">        Functions functions = Neureka.get().backend().getAutogradFunction();</span>
+<span class="fc" id="L1439">        Tsr&lt;V&gt; sum = this.sum();</span>
+<span class="fc" id="L1440">        Tsr&lt;V&gt; result = functions.div().call( sum, of( this.getItemType(), new int[]{1}, this.size() ) );</span>
+<span class="fc" id="L1441">        sum.getUnsafe().delete();</span>
+<span class="fc" id="L1442">        return result;</span>
     }
 
     default Tsr&lt;V&gt; sum() {
-<span class="fc" id="L1441">        Functions functions = Neureka.get().backend().getAutogradFunction();</span>
-<span class="fc" id="L1442">        Tsr&lt;V&gt; ones = of( this.getItemType(), this.getNDConf().shape(), 1 );</span>
-<span class="fc" id="L1443">        Tsr&lt;V&gt; sum = functions.conv().call( this, ones );</span>
-<span class="pc bpc" id="L1444" title="1 of 4 branches missed.">        if ( !ones.belongsToGraph() || !ones.getGraphNode().isUsedAsDerivative() )</span>
-<span class="fc" id="L1445">            ones.getUnsafe().delete();</span>
-<span class="pc bpc" id="L1446" title="1 of 2 branches missed.">        if ( sum == null )</span>
-<span class="nc" id="L1447">            throw new IllegalStateException(</span>
+<span class="fc" id="L1446">        Functions functions = Neureka.get().backend().getAutogradFunction();</span>
+<span class="fc" id="L1447">        Tsr&lt;V&gt; ones = of( this.getItemType(), this.getNDConf().shape(), 1 );</span>
+<span class="fc" id="L1448">        Tsr&lt;V&gt; sum = functions.conv().call( this, ones );</span>
+<span class="pc bpc" id="L1449" title="1 of 4 branches missed.">        if ( !ones.belongsToGraph() || !ones.getGraphNode().isUsedAsDerivative() )</span>
+<span class="fc" id="L1450">            ones.getUnsafe().delete();</span>
+<span class="pc bpc" id="L1451" title="1 of 2 branches missed.">        if ( sum == null )</span>
+<span class="nc" id="L1452">            throw new IllegalStateException(</span>
                 &quot;Failed to calculate sum using convolution! Shapes: &quot;+
-<span class="nc" id="L1449">                Arrays.toString(this.getNDConf().shape())+&quot;x&quot;+Arrays.toString(ones.getNDConf().shape())</span>
+<span class="nc" id="L1454">                Arrays.toString(this.getNDConf().shape())+&quot;x&quot;+Arrays.toString(ones.getNDConf().shape())</span>
             );
-<span class="fc" id="L1451">        return sum;</span>
+<span class="fc" id="L1456">        return sum;</span>
     }
 
     /**
@@ -1459,22 +1464,22 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return A new tensor which is the dot product of this tensor and the passed one.
      */
     default Tsr&lt;V&gt; convDot( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1462">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class);</span>
-<span class="fc" id="L1463">        Tsr&lt;V&gt; a = this;</span>
-<span class="fc" id="L1464">        int[][] fitter = NDUtil.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );</span>
-<span class="fc" id="L1465">        boolean doReshape = false;</span>
-<span class="fc bfc" id="L1466" title="All 6 branches covered.">        for ( int i = 0; i &lt; fitter[ 0 ].length &amp;&amp; !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;</span>
-<span class="pc bpc" id="L1467" title="1 of 6 branches missed.">        for ( int i = 0; i &lt; fitter[ 1 ].length &amp;&amp; !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;</span>
-<span class="fc bfc" id="L1468" title="All 2 branches covered.">        if ( doReshape ) {</span>
-<span class="fc" id="L1469">            a = Function.of( NDUtil.shapeString( fitter[ 0 ] ) + &quot;:(I[ 0 ])&quot; ).call( a );</span>
-<span class="fc" id="L1470">            other = Function.of( NDUtil.shapeString( fitter[ 1 ] ) + &quot;:(I[ 0 ])&quot; ).call( other );</span>
+<span class="fc" id="L1467">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class);</span>
+<span class="fc" id="L1468">        Tsr&lt;V&gt; a = this;</span>
+<span class="fc" id="L1469">        int[][] fitter = NDUtil.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );</span>
+<span class="fc" id="L1470">        boolean doReshape = false;</span>
+<span class="fc bfc" id="L1471" title="All 6 branches covered.">        for ( int i = 0; i &lt; fitter[ 0 ].length &amp;&amp; !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;</span>
+<span class="pc bpc" id="L1472" title="1 of 6 branches missed.">        for ( int i = 0; i &lt; fitter[ 1 ].length &amp;&amp; !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;</span>
+<span class="fc bfc" id="L1473" title="All 2 branches covered.">        if ( doReshape ) {</span>
+<span class="fc" id="L1474">            a = Function.of( NDUtil.shapeString( fitter[ 0 ] ) + &quot;:(I[ 0 ])&quot; ).call( a );</span>
+<span class="fc" id="L1475">            other = Function.of( NDUtil.shapeString( fitter[ 1 ] ) + &quot;:(I[ 0 ])&quot; ).call( other );</span>
         }
-<span class="fc" id="L1472">        return Neureka.get()</span>
-<span class="fc" id="L1473">                .backend()</span>
-<span class="fc" id="L1474">                .getAutogradFunction()</span>
-<span class="fc" id="L1475">                .conv()</span>
-<span class="fc" id="L1476">                .call( a, other )</span>
-<span class="fc" id="L1477">                .dimtrim();</span>
+<span class="fc" id="L1477">        return Neureka.get()</span>
+<span class="fc" id="L1478">                .backend()</span>
+<span class="fc" id="L1479">                .getAutogradFunction()</span>
+<span class="fc" id="L1480">                .conv()</span>
+<span class="fc" id="L1481">                .call( a, other )</span>
+<span class="fc" id="L1482">                .dimtrim();</span>
     }
 
     /**
@@ -1487,10 +1492,10 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return A new tensor which is the dot product of this tensor and the passed one.
      */
     default Tsr&lt;V&gt; dot( Tsr&lt;V&gt; other ) {
-<span class="nc" id="L1490">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform dot operation when second operand is 'null'!&quot;);</span>
-<span class="nc bnc" id="L1491" title="All 4 branches missed.">        if ( this.rank() != 2 &amp;&amp; other.rank() != 2 )</span>
-<span class="nc" id="L1492">            throw new IllegalStateException(&quot;Not yet implemented!&quot;); // This is not yet available in the backend!</span>
-<span class="nc" id="L1493">        return this.matMul( other );</span>
+<span class="nc" id="L1495">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform dot operation when second operand is 'null'!&quot;);</span>
+<span class="nc bnc" id="L1496" title="All 4 branches missed.">        if ( this.rank() != 2 &amp;&amp; other.rank() != 2 )</span>
+<span class="nc" id="L1497">            throw new IllegalStateException(&quot;Not yet implemented!&quot;); // This is not yet available in the backend!</span>
+<span class="nc" id="L1498">        return this.matMul( other );</span>
     }
 
     /**
@@ -1502,14 +1507,14 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The matrix product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     default Tsr&lt;V&gt; matMul( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1505">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform matrix multiplication operation when second operand is 'null'!&quot;);</span>
-<span class="pc bpc" id="L1506" title="2 of 4 branches missed.">        if ( this.rank() != 2 || other.rank() != 2 )</span>
-<span class="nc" id="L1507">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L1510">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform matrix multiplication operation when second operand is 'null'!&quot;);</span>
+<span class="pc bpc" id="L1511" title="2 of 4 branches missed.">        if ( this.rank() != 2 || other.rank() != 2 )</span>
+<span class="nc" id="L1512">            throw new IllegalArgumentException(</span>
                     &quot;Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n&quot; +
-<span class="nc" id="L1509">                    &quot;Encountered ranks: &quot; + this.rank() + &quot;, &quot; + other.rank() + &quot;;&quot;</span>
+<span class="nc" id="L1514">                    &quot;Encountered ranks: &quot; + this.rank() + &quot;, &quot; + other.rank() + &quot;;&quot;</span>
                 );
 
-<span class="fc" id="L1512">        return Neureka.get().backend().getAutogradFunction().matMul().call( this, other );</span>
+<span class="fc" id="L1517">        return Neureka.get().backend().getAutogradFunction().matMul().call( this, other );</span>
     }
 
     /**
@@ -1522,7 +1527,7 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      *
      * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
      */
-<span class="fc" id="L1525">    default Tsr&lt;V&gt; dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }</span>
+<span class="fc" id="L1530">    default Tsr&lt;V&gt; dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }</span>
 
     /**
      *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
@@ -1530,7 +1535,7 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      *
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
-<span class="fc" id="L1533">    default Tsr&lt;V&gt; getT() { return this.T(); } // Transposed</span>
+<span class="fc" id="L1538">    default Tsr&lt;V&gt; getT() { return this.T(); } // Transposed</span>
 
     /**
      *  This method name translates to the &quot;in&quot; keyword in Groovy!
@@ -1553,8 +1558,8 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
      */
     default boolean contains( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1556">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform 'contains' operation when second operand is 'null'!&quot;);</span>
-<span class="fc" id="L1557">        return this.isCase( other );</span>
+<span class="fc" id="L1561">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform 'contains' operation when second operand is 'null'!&quot;);</span>
+<span class="fc" id="L1562">        return this.isCase( other );</span>
     }
 
     /**
@@ -1575,8 +1580,8 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     default Tsr&lt;V&gt; multiply( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1578">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
-<span class="fc" id="L1579">        return Neureka.get().backend().getAutogradFunction().mul().call( this, other );</span>
+<span class="fc" id="L1583">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
+<span class="fc" id="L1584">        return Neureka.get().backend().getAutogradFunction().mul().call( this, other );</span>
     }
 
     /**
@@ -1584,11 +1589,11 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
     default Tsr&lt;V&gt; multiply( V other ) {
-<span class="fc" id="L1587">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
-<span class="fc" id="L1588">        return multiply(</span>
-<span class="fc" id="L1589">                of( this.getDataType().getItemTypeClass() )</span>
-<span class="fc" id="L1590">                        .withShape( this.getNDConf().shape() )</span>
-<span class="fc" id="L1591">                        .all( other )</span>
+<span class="fc" id="L1592">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
+<span class="fc" id="L1593">        return multiply(</span>
+<span class="fc" id="L1594">                of( this.getDataType().getItemTypeClass() )</span>
+<span class="fc" id="L1595">                        .withShape( this.getNDConf().shape() )</span>
+<span class="fc" id="L1596">                        .all( other )</span>
         );
     }
 
@@ -1610,8 +1615,8 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     default Tsr&lt;V&gt; times( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1613">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
-<span class="fc" id="L1614">        return multiply( other );</span>
+<span class="fc" id="L1618">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
+<span class="fc" id="L1619">        return multiply( other );</span>
     }
 
     /**
@@ -1619,16 +1624,16 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
     default Tsr&lt;V&gt; times( V other ) {
-<span class="fc" id="L1622">        LogUtil.nullArgCheck(other, &quot;other&quot;, getItemType(), &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
-<span class="fc" id="L1623">        return multiply( other );</span>
+<span class="fc" id="L1627">        LogUtil.nullArgCheck(other, &quot;other&quot;, getItemType(), &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
+<span class="fc" id="L1628">        return multiply( other );</span>
     }
     /**
      * @param other The tensor whose elements ought to be multiplied and assigned to elements in this tensor.
      * @return This instance where each value element was multiplied by the corresponding element in the provided tensor.
      */
     default Tsr&lt;V&gt; timesAssign( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1630">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot multiply-assign 'null' to a tensor!&quot;);</span>
-<span class="fc" id="L1631">        return Neureka.get().backend().getFunction().mulAssign().call( this, other );</span>
+<span class="fc" id="L1635">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot multiply-assign 'null' to a tensor!&quot;);</span>
+<span class="fc" id="L1636">        return Neureka.get().backend().getFunction().mulAssign().call( this, other );</span>
     }
 
     /**
@@ -1636,14 +1641,14 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return This instance where each value element was multiplied by the provided element.
      */
     default Tsr&lt;V&gt; timesAssign( V other ) {
-<span class="fc" id="L1639">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot multiply-assign 'null' to a tensor!&quot;);</span>
-<span class="fc" id="L1640">        return this.timesAssign( of( getItemType(), getNDConf().shape(), other ) );</span>
+<span class="fc" id="L1644">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot multiply-assign 'null' to a tensor!&quot;);</span>
+<span class="fc" id="L1645">        return this.timesAssign( of( getItemType(), getNDConf().shape(), other ) );</span>
     }
     /**
      * @param value The value which should be broadcast to all elements of a clone of this tensor.
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
      */
-<span class="fc" id="L1646">    default Tsr&lt;V&gt; multiply( double value ) { return multiply( of( getItemType(), getNDConf().shape(), value ) ); }</span>
+<span class="fc" id="L1651">    default Tsr&lt;V&gt; multiply( double value ) { return multiply( of( getItemType(), getNDConf().shape(), value ) ); }</span>
 
     /**
      *  The {@link #div(Tsr)} method will produce the quotient of
@@ -1662,14 +1667,14 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The quotient of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     default Tsr&lt;V&gt; div( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1665">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot divide a tensor by 'null' (In any sense of the word)!&quot;);</span>
-<span class="fc" id="L1666">        return Neureka.get().backend().getAutogradFunction().div().call( this, other );</span>
+<span class="fc" id="L1670">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot divide a tensor by 'null' (In any sense of the word)!&quot;);</span>
+<span class="fc" id="L1671">        return Neureka.get().backend().getAutogradFunction().div().call( this, other );</span>
     }
-<span class="fc" id="L1668">    default Tsr&lt;V&gt; div( V value ) { return div( of( getItemType(), getNDConf().shape(), value ) ); }</span>
+<span class="fc" id="L1673">    default Tsr&lt;V&gt; div( V value ) { return div( of( getItemType(), getNDConf().shape(), value ) ); }</span>
 
     default Tsr&lt;V&gt; divAssign( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1671">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot divide-assign a tensor by 'null' (In any sense of the word)!&quot;);</span>
-<span class="fc" id="L1672">        return Neureka.get().backend().getFunction().divAssign().call( this, other );</span>
+<span class="fc" id="L1676">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot divide-assign a tensor by 'null' (In any sense of the word)!&quot;);</span>
+<span class="fc" id="L1677">        return Neureka.get().backend().getFunction().divAssign().call( this, other );</span>
     }
 
     /**
@@ -1689,20 +1694,20 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The modulus of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     default Tsr&lt;V&gt; mod( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1692">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform tensor modulo 'null'!&quot;);</span>
-<span class="fc" id="L1693">        return Neureka.get().backend().getAutogradFunction().mod().call( this, other );</span>
+<span class="fc" id="L1697">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform tensor modulo 'null'!&quot;);</span>
+<span class="fc" id="L1698">        return Neureka.get().backend().getAutogradFunction().mod().call( this, other );</span>
     }
 
-<span class="fc" id="L1696">    default Tsr&lt;V&gt; mod( int other ) { return mod(of(getItemType(), getNDConf().shape(), other)); }</span>
+<span class="fc" id="L1701">    default Tsr&lt;V&gt; mod( int other ) { return mod(of(getItemType(), getNDConf().shape(), other)); }</span>
 
     /**
      *  This method is synonymous to the {@link #mod(int)} method.
      */
-<span class="fc" id="L1701">    default Tsr&lt;V&gt; rem( int other ) { return this.mod(other); }</span>
+<span class="fc" id="L1706">    default Tsr&lt;V&gt; rem( int other ) { return this.mod(other); }</span>
 
     default Tsr&lt;V&gt; modAssign( Tsr&lt;V&gt; other ) {
-<span class="nc" id="L1704">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform tensor modulo 'null'!&quot;);</span>
-<span class="nc" id="L1705">        return Neureka.get().backend().getFunction().modAssign().call( this, other );</span>
+<span class="nc" id="L1709">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform tensor modulo 'null'!&quot;);</span>
+<span class="nc" id="L1710">        return Neureka.get().backend().getFunction().modAssign().call( this, other );</span>
     }
 
     /**
@@ -1722,26 +1727,26 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
      * @return The power of this instance as the left and the passed {@link Tsr} instance as right operand.
      */
     default Tsr&lt;V&gt; power( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L1725">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot raise a tensor to the power of 'null'!&quot;);</span>
-<span class="fc" id="L1726">        return Neureka.get().backend().getAutogradFunction().pow().call( this, other );</span>
+<span class="fc" id="L1730">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot raise a tensor to the power of 'null'!&quot;);</span>
+<span class="fc" id="L1731">        return Neureka.get().backend().getAutogradFunction().pow().call( this, other );</span>
     }
 
     default Tsr&lt;V&gt; power( V value ) {
-<span class="fc" id="L1730">        return power( of( this.itemType(), this.shape(), value ) );</span>
+<span class="fc" id="L1735">        return power( of( this.itemType(), this.shape(), value ) );</span>
     }
 
     /**
      *  This method is synonymous to the {@link #power(Tsr)} method.
      */
     default Tsr&lt;V&gt; xor( Tsr&lt;V&gt; other ) {
-<span class="nc" id="L1737">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot raise a tensor to the power of 'null'!&quot;);</span>
-<span class="nc" id="L1738">        return Neureka.get().backend().getAutogradFunction().pow().call( this, other );</span>
+<span class="nc" id="L1742">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot raise a tensor to the power of 'null'!&quot;);</span>
+<span class="nc" id="L1743">        return Neureka.get().backend().getAutogradFunction().pow().call( this, other );</span>
     }
 
     /**
      *  This method is synonymous to the {@link #power(Tsr)} method.
      */
-<span class="nc" id="L1744">    default Tsr&lt;V&gt; xor( double value ) { return xor( of( this.itemType(), this.shape(), value ) ); }</span>
+<span class="nc" id="L1749">    default Tsr&lt;V&gt; xor( double value ) { return xor( of( this.itemType(), this.shape(), value ) ); }</span>
 
     /*==================================================================================================================
     |
@@ -1760,39 +1765,39 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
     /** {@inheritDoc} */
     @Override
     default Tsr&lt;V&gt; getAt( Number i ) {
-<span class="fc" id="L1763">        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );</span>
+<span class="fc" id="L1768">        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );</span>
     }
 
     /** {@inheritDoc} */
     @Override
-<span class="fc" id="L1768">    default Tsr&lt;V&gt; get( int... indices ) { return getAt( indices ); }</span>
+<span class="fc" id="L1773">    default Tsr&lt;V&gt; get( int... indices ) { return getAt( indices ); }</span>
 
     /** {@inheritDoc} */
     @Override
     default Tsr&lt;V&gt; getAt( Object... args ) {
-<span class="fc" id="L1773">        List&lt;Object&gt; argsList = Arrays.asList( args );</span>
-<span class="fc" id="L1774">        return getAt( argsList );</span>
+<span class="fc" id="L1778">        List&lt;Object&gt; argsList = Arrays.asList( args );</span>
+<span class="fc" id="L1779">        return getAt( argsList );</span>
     }
 
     /** {@inheritDoc} */
     @Override
-<span class="fc" id="L1779">    default Tsr&lt;V&gt; get( Object... args ) { return getAt( args ); }</span>
+<span class="fc" id="L1784">    default Tsr&lt;V&gt; get( Object... args ) { return getAt( args ); }</span>
 
     /** {@inheritDoc} */
     @Override
-<span class="fc" id="L1783">    default Tsr&lt;V&gt; getAt( int i ) { return getAt( indicesOfIndex(i) ); }</span>
+<span class="fc" id="L1788">    default Tsr&lt;V&gt; getAt( int i ) { return getAt( indicesOfIndex(i) ); }</span>
 
     /** {@inheritDoc} */
     @Override
-<span class="fc" id="L1787">    default Tsr&lt;V&gt; get( int i ) { return getAt( i ); }</span>
+<span class="fc" id="L1792">    default Tsr&lt;V&gt; get( int i ) { return getAt( i ); }</span>
 
     /** {@inheritDoc} */
     @Override
-<span class="nc" id="L1791">    default Tsr&lt;V&gt; get( Number i ) { return getAt( i ); }</span>
+<span class="nc" id="L1796">    default Tsr&lt;V&gt; get( Number i ) { return getAt( i ); }</span>
 
     /** {@inheritDoc} */
     @Override
-<span class="nc" id="L1795">    default Tsr&lt;V&gt; get( Object key ) { return getAt( key ); }</span>
+<span class="nc" id="L1800">    default Tsr&lt;V&gt; get( Object key ) { return getAt( key ); }</span>
 
     /** {@inheritDoc} */
     @Override
@@ -1808,23 +1813,23 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
 
     /** {@inheritDoc} */
     @Override
-<span class="fc" id="L1811">    default Tsr&lt;V&gt; set( int[] indices, V value ) { return putAt( indices, value ); }</span>
+<span class="fc" id="L1816">    default Tsr&lt;V&gt; set( int[] indices, V value ) { return putAt( indices, value ); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L1814">    @Override default Tsr&lt;V&gt; putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }</span>
+<span class="fc" id="L1819">    @Override default Tsr&lt;V&gt; putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L1817">    @Override default Tsr&lt;V&gt; set( int index, V value ) { return putAt( index, value ); }</span>
+<span class="fc" id="L1822">    @Override default Tsr&lt;V&gt; set( int index, V value ) { return putAt( index, value ); }</span>
 
     /** {@inheritDoc} */
     @Override Tsr&lt;V&gt; putAt( List&lt;?&gt; key, Nda&lt;V&gt; value );
 
     /** {@inheritDoc} */
     @Override default Tsr&lt;V&gt; putAt( List&lt;?&gt; indices, V value ) {
-<span class="pc bpc" id="L1824" title="1 of 2 branches missed.">        if ( indices.stream().allMatch( i -&gt; i instanceof Number ) )</span>
-<span class="fc" id="L1825">            return setItemAt( indexOfIndices(indices.stream().mapToInt( i -&gt; ((Number)i).intValue() ).toArray()), value );</span>
+<span class="pc bpc" id="L1829" title="1 of 2 branches missed.">        if ( indices.stream().allMatch( i -&gt; i instanceof Number ) )</span>
+<span class="fc" id="L1830">            return setItemAt( indexOfIndices(indices.stream().mapToInt( i -&gt; ((Number)i).intValue() ).toArray()), value );</span>
         else
-<span class="nc" id="L1827">            return this.putAt( indices, of( this.getItemType(), shape(), value ) );</span>
+<span class="nc" id="L1832">            return this.putAt( indices, of( this.getItemType(), shape(), value ) );</span>
     }
 
     /** {@inheritDoc} */
@@ -1845,83 +1850,83 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
         Class&lt;T&gt; typeClass,
         java.util.function.Function&lt;V,T&gt; mapper
     ) {
-<span class="pc bpc" id="L1848" title="1 of 2 branches missed.">        if ( this.isEmpty() )</span>
-<span class="nc" id="L1849">            throw new IllegalArgumentException(&quot;Trying to map an empty tensor!&quot;);</span>
+<span class="pc bpc" id="L1853" title="1 of 2 branches missed.">        if ( this.isEmpty() )</span>
+<span class="nc" id="L1854">            throw new IllegalArgumentException(&quot;Trying to map an empty tensor!&quot;);</span>
         /*
            The provided lambda cannot be executed anywhere but the CPU (Note: Maybe we should consider Aparapi here)
            This is a problem if this tensor here lives somewhere other than the JVM.
            So, therefore, we invite it back home for dinner!
          */
-<span class="fc" id="L1855">        return CPU.get() // This little API will temporarily migrate this to the JVM.</span>
-<span class="fc" id="L1856">                .borrow( (Tsr&lt;Object&gt;) this )</span>
-<span class="fc" id="L1857">                .in( () -&gt; {</span>
-<span class="fc" id="L1858">                    Object data = getUnsafe().getData();</span>
-<span class="fc" id="L1859">                    DataConverter.ForTensor map = new DataConverter.ForTensor( this );</span>
-<span class="pc bpc" id="L1860" title="1 of 2 branches missed.">                    if ( data == null ) {</span>
-<span class="nc bnc" id="L1861" title="All 2 branches missed.">                        if ( this.isOutsourced() )</span>
-<span class="nc" id="L1862">                            throw new IllegalStateException(&quot;Encountered an outsourced tensor! Only local tensors stored in RAM can be mapped.&quot;);</span>
+<span class="fc" id="L1860">        return CPU.get() // This little API will temporarily migrate this to the JVM.</span>
+<span class="fc" id="L1861">                .borrow( (Tsr&lt;Object&gt;) this )</span>
+<span class="fc" id="L1862">                .in( () -&gt; {</span>
+<span class="fc" id="L1863">                    Object data = getUnsafe().getData();</span>
+<span class="fc" id="L1864">                    DataConverter.ForTensor map = new DataConverter.ForTensor( this );</span>
+<span class="pc bpc" id="L1865" title="1 of 2 branches missed.">                    if ( data == null ) {</span>
+<span class="nc bnc" id="L1866" title="All 2 branches missed.">                        if ( this.isOutsourced() )</span>
+<span class="nc" id="L1867">                            throw new IllegalStateException(&quot;Encountered an outsourced tensor! Only local tensors stored in RAM can be mapped.&quot;);</span>
                         else
-<span class="nc" id="L1864">                            throw new IllegalStateException(&quot;Invalid tensor state encountered! Cannot map a tensor without data.&quot;);</span>
+<span class="nc" id="L1869">                            throw new IllegalStateException(&quot;Invalid tensor state encountered! Cannot map a tensor without data.&quot;);</span>
                     }
                     Object newData;
-<span class="fc" id="L1867">                    String failMessage = &quot;Conversion to type &quot;+typeClass+&quot; not yet supported.&quot;;</span>
-<span class="fc bfc" id="L1868" title="All 2 branches covered.">                    if ( Number.class.isAssignableFrom(typeClass) ) {</span>
+<span class="fc" id="L1872">                    String failMessage = &quot;Conversion to type &quot;+typeClass+&quot; not yet supported.&quot;;</span>
+<span class="fc bfc" id="L1873" title="All 2 branches covered.">                    if ( Number.class.isAssignableFrom(typeClass) ) {</span>
                         java.util.function.Function&lt;Integer, Number&gt; access;
-<span class="fc bfc" id="L1870" title="All 2 branches covered.">                        if ( this.getItemType() == Integer.class ) {</span>
-<span class="fc" id="L1871">                            int[] sourceData = (int[]) getUnsafe().getData();</span>
-<span class="fc" id="L1872">                            access = (i -&gt; (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));</span>
-<span class="fc bfc" id="L1873" title="All 2 branches covered.">                        } else if (this.getItemType() == Double.class) {</span>
-<span class="fc" id="L1874">                            double[] sourceData = (double[]) getUnsafe().getData();</span>
-<span class="fc" id="L1875">                            access = (i -&gt; (Number) mapper.apply((V) Double.valueOf(sourceData[i])));</span>
-<span class="fc bfc" id="L1876" title="All 2 branches covered.">                        } else if (this.getItemType() == Float.class) {</span>
-<span class="fc" id="L1877">                            float[] sourceData = (float[]) getUnsafe().getData();</span>
-<span class="fc" id="L1878">                            access = (i -&gt; (Number) mapper.apply((V) Float.valueOf(sourceData[i])));</span>
-<span class="fc bfc" id="L1879" title="All 2 branches covered.">                        } else if (this.getItemType() == Short.class) {</span>
-<span class="fc" id="L1880">                            short[] sourceData = (short[]) getUnsafe().getData();</span>
-<span class="fc" id="L1881">                            access = (i -&gt; (Number) mapper.apply((V) Short.valueOf(sourceData[i])));</span>
-<span class="pc bpc" id="L1882" title="1 of 2 branches missed.">                        } else if (this.getItemType() == Byte.class) {</span>
-<span class="fc" id="L1883">                            byte[] sourceData = (byte[]) getUnsafe().getData();</span>
-<span class="fc" id="L1884">                            access = (i -&gt; (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));</span>
-<span class="fc" id="L1885">                        } else</span>
-<span class="nc" id="L1886">                            throw new IllegalArgumentException(failMessage);</span>
+<span class="fc bfc" id="L1875" title="All 2 branches covered.">                        if ( this.getItemType() == Integer.class ) {</span>
+<span class="fc" id="L1876">                            int[] sourceData = (int[]) getUnsafe().getData();</span>
+<span class="fc" id="L1877">                            access = (i -&gt; (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L1878" title="All 2 branches covered.">                        } else if (this.getItemType() == Double.class) {</span>
+<span class="fc" id="L1879">                            double[] sourceData = (double[]) getUnsafe().getData();</span>
+<span class="fc" id="L1880">                            access = (i -&gt; (Number) mapper.apply((V) Double.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L1881" title="All 2 branches covered.">                        } else if (this.getItemType() == Float.class) {</span>
+<span class="fc" id="L1882">                            float[] sourceData = (float[]) getUnsafe().getData();</span>
+<span class="fc" id="L1883">                            access = (i -&gt; (Number) mapper.apply((V) Float.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L1884" title="All 2 branches covered.">                        } else if (this.getItemType() == Short.class) {</span>
+<span class="fc" id="L1885">                            short[] sourceData = (short[]) getUnsafe().getData();</span>
+<span class="fc" id="L1886">                            access = (i -&gt; (Number) mapper.apply((V) Short.valueOf(sourceData[i])));</span>
+<span class="pc bpc" id="L1887" title="1 of 2 branches missed.">                        } else if (this.getItemType() == Byte.class) {</span>
+<span class="fc" id="L1888">                            byte[] sourceData = (byte[]) getUnsafe().getData();</span>
+<span class="fc" id="L1889">                            access = (i -&gt; (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));</span>
+<span class="fc" id="L1890">                        } else</span>
+<span class="nc" id="L1891">                            throw new IllegalArgumentException(failMessage);</span>
 
-<span class="fc bfc" id="L1888" title="All 2 branches covered.">                        if (typeClass == Double.class) newData = map.toDoubleArray(access);</span>
-<span class="fc bfc" id="L1889" title="All 2 branches covered.">                        else if ( typeClass == Integer.class ) newData = map.toIntArray(access);</span>
-<span class="fc bfc" id="L1890" title="All 2 branches covered.">                        else if ( typeClass == Long.class    ) newData = map.toLongArray(access);</span>
-<span class="fc bfc" id="L1891" title="All 2 branches covered.">                        else if ( typeClass == Byte.class    ) newData = map.toByteArray(access);</span>
-<span class="fc bfc" id="L1892" title="All 2 branches covered.">                        else if ( typeClass == Float.class   ) newData = map.toFloatArray(access);</span>
-<span class="pc bpc" id="L1893" title="1 of 2 branches missed.">                        else if ( typeClass == Short.class   ) newData = map.toShortArray(access);</span>
+<span class="fc bfc" id="L1893" title="All 2 branches covered.">                        if (typeClass == Double.class) newData = map.toDoubleArray(access);</span>
+<span class="fc bfc" id="L1894" title="All 2 branches covered.">                        else if ( typeClass == Integer.class ) newData = map.toIntArray(access);</span>
+<span class="fc bfc" id="L1895" title="All 2 branches covered.">                        else if ( typeClass == Long.class    ) newData = map.toLongArray(access);</span>
+<span class="fc bfc" id="L1896" title="All 2 branches covered.">                        else if ( typeClass == Byte.class    ) newData = map.toByteArray(access);</span>
+<span class="fc bfc" id="L1897" title="All 2 branches covered.">                        else if ( typeClass == Float.class   ) newData = map.toFloatArray(access);</span>
+<span class="pc bpc" id="L1898" title="1 of 2 branches missed.">                        else if ( typeClass == Short.class   ) newData = map.toShortArray(access);</span>
                         else
-<span class="nc" id="L1895">                            throw new IllegalArgumentException(failMessage);</span>
-<span class="fc" id="L1896">                    } else {</span>
-<span class="fc" id="L1897">                        java.util.function.Function&lt;Integer, Object&gt; access = null;</span>
-<span class="fc bfc" id="L1898" title="All 2 branches covered.">                        if ( this.getItemType() == Integer.class ) {</span>
-<span class="fc" id="L1899">                            int[] sourceData = (int[]) getUnsafe().getData();</span>
-<span class="fc" id="L1900">                            access = (i -&gt; mapper.apply((V) Integer.valueOf(sourceData[i])));</span>
-<span class="fc bfc" id="L1901" title="All 2 branches covered.">                        } else if ( this.getItemType() == Double.class ) {</span>
-<span class="fc" id="L1902">                            double[] sourceData = (double[]) getUnsafe().getData();</span>
-<span class="fc" id="L1903">                            access = (i -&gt; mapper.apply((V) Double.valueOf(sourceData[i])));</span>
-<span class="fc bfc" id="L1904" title="All 2 branches covered.">                        } else if ( this.getItemType() == Float.class ) {</span>
-<span class="fc" id="L1905">                            float[] sourceData = (float[]) getUnsafe().getData();</span>
-<span class="fc" id="L1906">                            access = (i -&gt; mapper.apply((V) Float.valueOf(sourceData[i])));</span>
-<span class="fc bfc" id="L1907" title="All 2 branches covered.">                        } else if ( this.getItemType() == Short.class ) {</span>
-<span class="fc" id="L1908">                            short[] sourceData = (short[]) getUnsafe().getData();</span>
-<span class="fc" id="L1909">                            access = (i -&gt; mapper.apply((V) Short.valueOf(sourceData[i])));</span>
-<span class="pc bpc" id="L1910" title="1 of 2 branches missed.">                        } else if ( this.getItemType() == Byte.class ) {</span>
-<span class="fc" id="L1911">                            byte[] sourceData = (byte[]) getUnsafe().getData();</span>
-<span class="fc" id="L1912">                            access = (i -&gt; mapper.apply((V) Byte.valueOf(sourceData[i])));</span>
-<span class="fc" id="L1913">                        } else</span>
-<span class="nc" id="L1914">                            throw new IllegalArgumentException(failMessage);</span>
+<span class="nc" id="L1900">                            throw new IllegalArgumentException(failMessage);</span>
+<span class="fc" id="L1901">                    } else {</span>
+<span class="fc" id="L1902">                        java.util.function.Function&lt;Integer, Object&gt; access = null;</span>
+<span class="fc bfc" id="L1903" title="All 2 branches covered.">                        if ( this.getItemType() == Integer.class ) {</span>
+<span class="fc" id="L1904">                            int[] sourceData = (int[]) getUnsafe().getData();</span>
+<span class="fc" id="L1905">                            access = (i -&gt; mapper.apply((V) Integer.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L1906" title="All 2 branches covered.">                        } else if ( this.getItemType() == Double.class ) {</span>
+<span class="fc" id="L1907">                            double[] sourceData = (double[]) getUnsafe().getData();</span>
+<span class="fc" id="L1908">                            access = (i -&gt; mapper.apply((V) Double.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L1909" title="All 2 branches covered.">                        } else if ( this.getItemType() == Float.class ) {</span>
+<span class="fc" id="L1910">                            float[] sourceData = (float[]) getUnsafe().getData();</span>
+<span class="fc" id="L1911">                            access = (i -&gt; mapper.apply((V) Float.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L1912" title="All 2 branches covered.">                        } else if ( this.getItemType() == Short.class ) {</span>
+<span class="fc" id="L1913">                            short[] sourceData = (short[]) getUnsafe().getData();</span>
+<span class="fc" id="L1914">                            access = (i -&gt; mapper.apply((V) Short.valueOf(sourceData[i])));</span>
+<span class="pc bpc" id="L1915" title="1 of 2 branches missed.">                        } else if ( this.getItemType() == Byte.class ) {</span>
+<span class="fc" id="L1916">                            byte[] sourceData = (byte[]) getUnsafe().getData();</span>
+<span class="fc" id="L1917">                            access = (i -&gt; mapper.apply((V) Byte.valueOf(sourceData[i])));</span>
+<span class="fc" id="L1918">                        } else</span>
+<span class="nc" id="L1919">                            throw new IllegalArgumentException(failMessage);</span>
 
-<span class="fc" id="L1916">                        newData = map.toObjectArray(access);</span>
+<span class="fc" id="L1921">                        newData = map.toObjectArray(access);</span>
                     }
-<span class="fc" id="L1918">                    return Tsr.of( typeClass, this.getNDConf().shape(), newData );</span>
+<span class="fc" id="L1923">                    return Tsr.of( typeClass, this.getNDConf().shape(), newData );</span>
                 });
     }
 
     /** {@inheritDoc} */
     @Override default Tsr&lt;V&gt; map( java.util.function.Function&lt;V,V&gt; mapper ) {
-<span class="fc" id="L1924">        return mapTo( this.getItemType(), mapper );</span>
+<span class="fc" id="L1929">        return mapTo( this.getItemType(), mapper );</span>
     }
 
     /**
@@ -1950,24 +1955,24 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
     &lt;T&gt; T asType( Class&lt;T&gt; typeClass );
 
     default String toString( String conf ) {
-<span class="pc bpc" id="L1953" title="1 of 2 branches missed.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
-<span class="pc bpc" id="L1954" title="1 of 2 branches missed.">        else if ( this.isEmpty() ) return &quot;empty&quot;;</span>
-<span class="pc bpc" id="L1955" title="1 of 2 branches missed.">        else if ( this.isUndefined() ) return &quot;undefined&quot;;</span>
-<span class="fc" id="L1956">        return NdaAsString.representing( this ).withConfig( conf ).toString();</span>
+<span class="pc bpc" id="L1958" title="1 of 2 branches missed.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="pc bpc" id="L1959" title="1 of 2 branches missed.">        else if ( this.isEmpty() ) return &quot;empty&quot;;</span>
+<span class="pc bpc" id="L1960" title="1 of 2 branches missed.">        else if ( this.isUndefined() ) return &quot;undefined&quot;;</span>
+<span class="fc" id="L1961">        return NdaAsString.representing( this ).withConfig( conf ).toString();</span>
     }
 
     /** {@inheritDoc} */
     @Override default String toString( NDPrintSettings config ) {
-<span class="fc bfc" id="L1961" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
-<span class="pc bpc" id="L1962" title="1 of 2 branches missed.">        else if ( this.isEmpty() ) return &quot;empty&quot;;</span>
-<span class="pc bpc" id="L1963" title="1 of 2 branches missed.">        else if ( this.isUndefined() ) return &quot;undefined&quot;;</span>
-<span class="fc" id="L1964">        return Nda.super.toString( config );</span>
+<span class="fc bfc" id="L1966" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="pc bpc" id="L1967" title="1 of 2 branches missed.">        else if ( this.isEmpty() ) return &quot;empty&quot;;</span>
+<span class="pc bpc" id="L1968" title="1 of 2 branches missed.">        else if ( this.isUndefined() ) return &quot;undefined&quot;;</span>
+<span class="fc" id="L1969">        return Nda.super.toString( config );</span>
     }
 
     /** {@inheritDoc} */
     @Override default String toString( Consumer&lt;NDPrintSettings&gt; configurator ) {
-<span class="fc bfc" id="L1969" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
-<span class="fc" id="L1970">        return Nda.super.toString( configurator );</span>
+<span class="fc bfc" id="L1974" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="fc" id="L1975">        return Nda.super.toString( configurator );</span>
     }
 
     /** {@inheritDoc} */
@@ -1975,41 +1980,41 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
 
     /** {@inheritDoc} */
     @Override default Tsr&lt;V&gt; shallowCopy() {
-<span class="pc bpc" id="L1978" title="1 of 4 branches missed.">        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...</span>
-<span class="fc" id="L1979">        return slice().detached();</span>
+<span class="pc bpc" id="L1983" title="1 of 4 branches missed.">        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...</span>
+<span class="fc" id="L1984">        return slice().detached();</span>
     }
 
     /**
      * @return A shallow copy of this tensor with autograd support.
      */
     default Tsr&lt;V&gt; shallowClone() {
-<span class="pc bpc" id="L1986" title="2 of 4 branches missed.">        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...</span>
-<span class="fc" id="L1987">        return slice().get();</span>
+<span class="pc bpc" id="L1991" title="2 of 4 branches missed.">        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...</span>
+<span class="fc" id="L1992">        return slice().get();</span>
     }
 
-<span class="fc" id="L1990">    enum ImageType</span>
+<span class="fc" id="L1995">    enum ImageType</span>
     {
-<span class="fc" id="L1992">        RGB_1INT(1, UI32.class, 1),</span>
-<span class="fc" id="L1993">        ARGB_1INT(2, UI32.class, 1),</span>
-<span class="fc" id="L1994">        ARGB_PRE_1INT(3, UI32.class, 1),</span>
-<span class="fc" id="L1995">        BGR_1INT(4, UI32.class, 1),</span>
-<span class="fc" id="L1996">        BGR_3BYTE(5, UI8.class, 3),</span>
-<span class="fc" id="L1997">        ABGR_4BYTE(6, UI8.class, 4),</span>
-<span class="fc" id="L1998">        ABGR_PRE_4BYTE(7, UI8.class, 4),</span>
-<span class="fc" id="L1999">        RGB_565_USHORT(8, UI16.class, 1),</span>
-<span class="fc" id="L2000">        RGB_555_USHORT(9, UI16.class, 1),</span>
-<span class="fc" id="L2001">        GRAY_BYTE(0, UI8.class, 1),</span>
-<span class="fc" id="L2002">        GRAY_USHORT(1, UI16.class, 1);</span>
+<span class="fc" id="L1997">        RGB_1INT(1, UI32.class, 1),</span>
+<span class="fc" id="L1998">        ARGB_1INT(2, UI32.class, 1),</span>
+<span class="fc" id="L1999">        ARGB_PRE_1INT(3, UI32.class, 1),</span>
+<span class="fc" id="L2000">        BGR_1INT(4, UI32.class, 1),</span>
+<span class="fc" id="L2001">        BGR_3BYTE(5, UI8.class, 3),</span>
+<span class="fc" id="L2002">        ABGR_4BYTE(6, UI8.class, 4),</span>
+<span class="fc" id="L2003">        ABGR_PRE_4BYTE(7, UI8.class, 4),</span>
+<span class="fc" id="L2004">        RGB_565_USHORT(8, UI16.class, 1),</span>
+<span class="fc" id="L2005">        RGB_555_USHORT(9, UI16.class, 1),</span>
+<span class="fc" id="L2006">        GRAY_BYTE(0, UI8.class, 1),</span>
+<span class="fc" id="L2007">        GRAY_USHORT(1, UI16.class, 1);</span>
 
         public final int bufferType;
         public final DataType&lt;?&gt; dataType;
         public final int numberOfChannels;
 
-<span class="fc" id="L2008">        ImageType( int bufferType, Class&lt;?&gt; valueTypeClass, int numberOfChannels ) {</span>
-<span class="fc" id="L2009">            this.bufferType = bufferType;</span>
-<span class="fc" id="L2010">            this.dataType = DataType.of( valueTypeClass );</span>
-<span class="fc" id="L2011">            this.numberOfChannels = numberOfChannels;</span>
-<span class="fc" id="L2012">        }</span>
+<span class="fc" id="L2013">        ImageType( int bufferType, Class&lt;?&gt; valueTypeClass, int numberOfChannels ) {</span>
+<span class="fc" id="L2014">            this.bufferType = bufferType;</span>
+<span class="fc" id="L2015">            this.dataType = DataType.of( valueTypeClass );</span>
+<span class="fc" id="L2016">            this.numberOfChannels = numberOfChannels;</span>
+<span class="fc" id="L2017">        }</span>
     }
 
     /**
@@ -2133,7 +2138,13 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
          *
          * @return The raw data object underlying this tensor.
          */
-        Object getData();
+        default Object getData() {
+<span class="fc" id="L2142">            return getData(Object.class);</span>
+        }
+
+        DataArray getDataArray();
+
+        &lt;D&gt; D getData( Class&lt;D&gt; dataType );
 
         &lt;A&gt; A getDataAs( Class&lt;A&gt; arrayTypeClass );
 
@@ -2145,6 +2156,8 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
          * @return This very tensor in order to enable method chaining.
          */
         Tsr&lt;T&gt; setDataAt( int i, T o );
+
+        Tsr&lt;T&gt; setDataArray(DataArray data );
 
         /**
          *  Use this to access the underlying writable data of this tensor if
@@ -2158,17 +2171,17 @@ public interface Tsr&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tsr&lt;V&gt;&gt
          * @return The underlying data array of this tensor.
          */
         default &lt;A&gt; A getDataForWriting( Class&lt;A&gt; arrayTypeClass ) {
-<span class="fc" id="L2161">            LogUtil.nullArgCheck( arrayTypeClass, &quot;arrayTypeClass&quot;, Class.class, &quot;Array type must not be null!&quot; );</span>
-<span class="pc bpc" id="L2162" title="1 of 2 branches missed.">            if ( !arrayTypeClass.isArray() )</span>
-<span class="nc" id="L2163">                throw new IllegalArgumentException(&quot;Provided type is not an array type.&quot;);</span>
-<span class="fc" id="L2164">            Object data = Unsafe.this.getData();</span>
-<span class="pc bpc" id="L2165" title="1 of 2 branches missed.">            if ( data == null )</span>
-<span class="nc" id="L2166">                throw new IllegalStateException(&quot;Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).&quot;);</span>
+<span class="fc" id="L2174">            LogUtil.nullArgCheck( arrayTypeClass, &quot;arrayTypeClass&quot;, Class.class, &quot;Array type must not be null!&quot; );</span>
+<span class="pc bpc" id="L2175" title="1 of 2 branches missed.">            if ( !arrayTypeClass.isArray() )</span>
+<span class="nc" id="L2176">                throw new IllegalArgumentException(&quot;Provided type is not an array type.&quot;);</span>
+<span class="fc" id="L2177">            Object data = Unsafe.this.getData();</span>
+<span class="pc bpc" id="L2178" title="1 of 2 branches missed.">            if ( data == null )</span>
+<span class="nc" id="L2179">                throw new IllegalStateException(&quot;Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).&quot;);</span>
 
-<span class="pc bpc" id="L2168" title="1 of 2 branches missed.">            if ( !arrayTypeClass.isAssignableFrom(data.getClass()) )</span>
-<span class="nc" id="L2169">                throw new IllegalStateException(&quot;The data of this tensor does not match the expect type! Expected '&quot;+arrayTypeClass+&quot;' but got '&quot;+data.getClass()+&quot;'.&quot;);</span>
+<span class="pc bpc" id="L2181" title="1 of 2 branches missed.">            if ( !arrayTypeClass.isAssignableFrom(data.getClass()) )</span>
+<span class="nc" id="L2182">                throw new IllegalStateException(&quot;The data of this tensor does not match the expect type! Expected '&quot;+arrayTypeClass+&quot;' but got '&quot;+data.getClass()+&quot;'.&quot;);</span>
 
-<span class="fc" id="L2171">            return (A) data;</span>
+<span class="fc" id="L2184">            return (A) data;</span>
         }
 
         /**

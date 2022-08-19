@@ -34,6 +34,7 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.DataArray;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
@@ -150,7 +151,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public int getDataSize() { return _sizeOccupiedBy( tensor ); }
             @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
-            @Override public Object actualize() { return _actualize( tensor ); }
+            @Override public DataArray actualize() { return _actualize( tensor ); }
         };
     }
 
@@ -177,5 +178,14 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
 
-    protected abstract Object _actualize( Tsr<?> tensor );
+    protected abstract DataArray _actualize( Tsr<?> tensor );
+
+    protected DataArray _dataArrayOf( Object data ) {
+        assert data == null || !(data instanceof DataArray);
+        return new DataArray() {
+            @Override public Device<?> getDevice() { return AbstractDevice.this; }
+            @Override public Object get() { return data; }
+        };
+    }
+
 }

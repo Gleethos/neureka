@@ -54,7 +54,7 @@
     {
       "id":"Gradient of tensor is being applies regardless of the tensor requiring gradient or not",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

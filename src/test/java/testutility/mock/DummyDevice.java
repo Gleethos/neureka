@@ -1,5 +1,6 @@
 package testutility.mock;
 
+import neureka.DataArray;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
@@ -45,13 +46,13 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Collection<Tsr<Object>> getTensors() { return null; }
 
     @Override
-    public Object allocate(DataType<?> dataType, int size) { return null; }
+    public DataArray allocate(DataType<?> dataType, int size) { return null; }
 
     @Override
-    public <V> Object allocate(DataType<V> dataType, int size, V initialValue) { return null; }
+    public <V> DataArray allocate(DataType<V> dataType, int size, V initialValue) { return null; }
 
     @Override
-    public Object allocate(Object jvmData, int desiredSize) { return null; }
+    public DataArray allocate(Object jvmData, int desiredSize) { return null; }
 
     @Override
     public Operation optimizedOperationOf(Function function, String name) {

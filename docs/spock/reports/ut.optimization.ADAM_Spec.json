@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.100 seconds"
+    "duration":"0.119 seconds"
   },
   "headers":["\n                <h2> ADAM Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the ADAM class.        \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"ADAM optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.049 seconds",
+      "duration":"0.058 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"Equations used by ADAM return expected result.",
       "result":"PASS",
-      "duration":"0.020 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -36,6 +36,7 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.DataArray;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.BackendContext;
@@ -194,11 +195,11 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     Collection<Tsr<V>> getTensors();
 
-    Object allocate( DataType<?> dataType, int size );
+    DataArray allocate( DataType<?> dataType, int size );
 
-    <V> Object allocate( DataType<V> dataType, int size, V initialValue );
+    <V> DataArray allocate(DataType<V> dataType, int size, V initialValue );
 
-    Object allocate( Object jvmData, int desiredSize );
+    DataArray allocate( Object jvmData, int desiredSize );
 
     /**
      *  This method tries to allow this device to produce an optimized {@link Operation}
@@ -361,7 +362,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          */
         void updateNDConf();
 
-        Object actualize();
+        DataArray actualize();
     }
 
     /**
