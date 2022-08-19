@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.016 seconds"
+    "duration":"0.013 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -31,7 +31,7 @@
     {
       "id":"An array of any type of object may be converted to a array of primitives.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

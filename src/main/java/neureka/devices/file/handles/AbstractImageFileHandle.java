@@ -159,7 +159,6 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
             _LOG.error(message, e);
             throw new IllegalStateException(message);
         }
-        tensor.setIsOutsourced( true );
         tensor.getUnsafe().setDataType( DataType.of( _type.targetedValueType() ) );
         return this;
     }

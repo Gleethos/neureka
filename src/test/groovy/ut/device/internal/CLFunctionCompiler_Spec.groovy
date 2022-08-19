@@ -94,9 +94,6 @@ class CLFunctionCompiler_Spec extends Specification
             t1.to(mockDevice)
             t2.to(mockDevice)
             t3.to(mockDevice)
-            t1.setIsOutsourced(true)
-            t2.setIsOutsourced(true)
-            t3.setIsOutsourced(true)
 
         then : """
                 This will require the mocked OpenCLDevice to notify the tensors that they are not already members.

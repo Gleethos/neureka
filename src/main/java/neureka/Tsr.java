@@ -777,12 +777,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     Tsr<V> setIsOutsourced( boolean isOutsourced );
 
     /**
-     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance.
+     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance which is not the {@link CPU}.
      *
-     * @return The truth value determining if the data of this tensor is not actually stored inside of it
+     * @return The truth value determining if the data of this tensor is not actually stored inside it
      *         in the form of a traditional primitive JVM array!
      */
-    boolean isOutsourced();
+    default boolean isOutsourced() {
+        return !(this.getDevice() instanceof CPU);
+    }
 
     /**
      *  A Virtual tensor is a tensor whose underlying data array is of size 1, holding only a single value. <br>
@@ -1168,8 +1170,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
      */
     default Device<V> getDevice() {
-        if ( this.isOutsourced() ) return this.get( Device.class );
-        return (Device<V>) CPU.get();
+        Device device = this.get( Device.class );
+        if ( device == null )
+            return (Device<V>) CPU.get();
+        else
+            return device;
     }
 
     /**

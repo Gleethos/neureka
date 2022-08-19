@@ -429,8 +429,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         tensor.getUnsafe().setData( newClt );
         migration.run(); // TODO: REMOVE
 
-        tensor.setIsOutsourced( true );
-
         // When tensors get stored on this device,
         // they are implicitly converted to a float tensor:
         if ( Neureka.get().backend().get(CLContext.class).getSettings().isAutoConvertToFloat() )

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.204 seconds"
+    "duration":"0.712 seconds"
   },
   "headers":["\n                    This specification covers the behavior of the \"FileDevice\"\n                    class, which enables the persistence of tensor data.      \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A file device stores tensors in idx files by default.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.159 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,7 +45,7 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.103 seconds",
+      "duration":"0.334 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -80,7 +80,7 @@
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.024 seconds",
+      "duration":"0.079 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

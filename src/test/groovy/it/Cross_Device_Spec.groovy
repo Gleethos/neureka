@@ -130,7 +130,7 @@ class Cross_Device_Spec extends Specification
                 new SimpleNNSystemTest(SimpleNNSystemTest.Mode.MAT_MUL).on(device)
 
         where :
-            device << [new DummyDevice(), Device.get('first gpu')]
+            device << [CPU.get(), Device.get('first gpu')]
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
@@ -151,17 +151,14 @@ class Cross_Device_Spec extends Specification
             g.toString().contains("[2x2]:(1.0, 1.0, 1.0, 1.0)")
             t.toString().contains("[2x2]:(4.0, 4.0, 4.0, 4.0):g:(1.0, 1.0, 1.0, 1.0)")
         and :
-            t.isOutsourced() == !(device instanceof DummyDevice)
-            g.isOutsourced() == !(device instanceof DummyDevice)
+            t.isOutsourced() == !(device instanceof CPU)
+            g.isOutsourced() == !(device instanceof CPU)
         and :
-            t.device == device || (device instanceof DummyDevice && !t.isOutsourced())
-            g.device == device || (device instanceof DummyDevice && !t.isOutsourced())
-            //t.setIsOutsourced(false)
-            //!g.isOutsourced()
+            t.device == device
+            g.device == device
 
         where :
-            device << [new DummyDevice(), Device.get('first gpu')]
-
+            device << [new DummyDevice(), Device.get('first gpu'), CPU.get()]
     }
 
 

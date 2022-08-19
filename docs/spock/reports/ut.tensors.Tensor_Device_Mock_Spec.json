@@ -4,19 +4,19 @@
   "narrative":"",
   "subjects":[],
   "statistics":{
-    "runs":"4",
+    "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.087 seconds"
+    "duration":"0.036 seconds"
   },
   "headers":["    \n            <h2>Tensor Device Mock Tests</h2>\n            <p>\n                This unit test specification covers \n                the expected behavior of tensors when interacting\n                with instances of implementations of the Device interface.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors try to migrate themselves to a device that is being added to them as component.",
       "result":"PASS",
-      "duration":"0.031 seconds",
+      "duration":"0.014 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,35 +35,16 @@
     },
   
     {
-      "id":"Tensors try to remove themselves from their device when \"setIsOutsourced(false)\" is being called.",
-      "result":"PASS",
-      "duration":"0.008 seconds",
-      "iterations":{
-      "tags":{},"see":[],"extraInfo":[]
-      },
-      "blocks":[
-        {"kind":"given","text":"A simple tensor instance with a mock device as component.","code":["def device = Mock(Device)","device.has(_) >>> [false, true, true, false]","device.update(_) >> true","Tsr t = Tsr.of(2).to(device)"]},
-
-        {"kind":"when","text":"The \"isOutsourced\" property is being set to false...","code":["t.isOutsourced = false"]},
-
-        {"kind":"then","text":"...the tensor should try to remove itself from the given device.","code":["(1.._) * device.restore( t )"]},
-
-        {"kind":"and","text":"The device should not be a tensor component anymore.","code":["!t.has(Device.class)"]}
-      ],
-      "problems":{"dataValues":[], "errors":[]}
-    },
-  
-    {
       "id":"The device of a tensor can be accessed via the \"device()\" method.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A simple tensor having a device as component","code":["def device = Mock(Device)","device.has(_) >>> [false, true, true]","Tsr t = Tsr.of(1)"]},
 
-        {"kind":"when","text":"","code":["t.to(device)","t.setIsOutsourced(true)"]},
+        {"kind":"when","text":"","code":["t.to(device)"]},
 
         {"kind":"then","text":"","code":["1 * device.update({","    Component.OwnerChangeRequest request -> request.executeChange()","})"]},
 
@@ -81,7 +62,7 @@
     {
       "id":"When creating slices of tensors then this should trigger a \"parent - child\" relation noticeable to the device!",
       "result":"PASS",
-      "duration":"0.024 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

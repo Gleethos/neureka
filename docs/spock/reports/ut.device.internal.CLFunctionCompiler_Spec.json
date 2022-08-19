@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.455 seconds"
+    "duration":"0.271 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.391 seconds",
+      "duration":"0.236 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,7 +55,7 @@
 
         {"kind":"then","text":"\n                This will lead to an exception because these tensors are not members of the mocked OpenCLDevice instance.\n                All of them are still residing in RAM without being member of any device...\n                Therefore in order for this to work we need to fake the membership of these tensors!\n        ","code":["var exception = thrown(IllegalStateException)","exception.message == \"No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'.\""]},
 
-        {"kind":"when","text":"We set the mocked device as components of our three scalar tensors...","code":["t1.to(mockDevice)","t2.to(mockDevice)","t3.to(mockDevice)","t1.setIsOutsourced(true)","t2.setIsOutsourced(true)","t3.setIsOutsourced(true)"]},
+        {"kind":"when","text":"We set the mocked device as components of our three scalar tensors...","code":["t1.to(mockDevice)","t2.to(mockDevice)","t3.to(mockDevice)"]},
 
         {"kind":"then","text":"\n                This will require the mocked OpenCLDevice to notify the tensors that they are not already members.\n                This will cause the tensor to add themselves to the device after which\n                the tensors will ask the device again if they are now their members!\n        ","code":["(0.._) * mockDevice.has(t1) >>> [false, true]","(0.._) * mockDevice.has(t2) >>> [false, true]","(0.._) * mockDevice.has(t3) >>> [false, true]"]},
 
@@ -75,7 +75,7 @@
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.056 seconds",
+      "duration":"0.030 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

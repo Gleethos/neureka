@@ -59,24 +59,6 @@ class Tensor_Device_Mock_Spec extends Specification
             t.has(Device.class)
     }
 
-    def 'Tensors try to remove themselves from their device when "setIsOutsourced(false)" is being called.'()
-    {
-        given : 'A simple tensor instance with a mock device as component.'
-            def device = Mock(Device)
-            device.has(_) >>> [false, true, true, false]
-            device.update(_) >> true
-            Tsr t = Tsr.of(2).to(device)
-
-        when : 'The "isOutsourced" property is being set to false...'
-            t.isOutsourced = false
-
-        then : '...the tensor should try to remove itself from the given device.'
-            (1.._) * device.restore( t )
-
-        and : 'The device should not be a tensor component anymore.'
-            !t.has(Device.class)
-    }
-
     def 'The device of a tensor can be accessed via the "device()" method.'()
     {
         given : 'A simple tensor having a device as component'
@@ -86,7 +68,6 @@ class Tensor_Device_Mock_Spec extends Specification
 
         when :
             t.to(device)
-            t.setIsOutsourced(true)
 
         then :
             1 * device.update({

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.589 seconds"
+    "duration":"0.104 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test integration broadly.",
       "result":"PASS",
-      "duration":"0.490 seconds",
+      "duration":"0.099 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

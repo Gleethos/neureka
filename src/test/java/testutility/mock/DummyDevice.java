@@ -6,6 +6,7 @@ import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 
 import java.util.Collection;
@@ -17,7 +18,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
 
     @Override
     public <T> Access<T> access(Tsr<T> tensor) {
-        return null;
+        return CPU.get().access(tensor);
     }
 
     @Override

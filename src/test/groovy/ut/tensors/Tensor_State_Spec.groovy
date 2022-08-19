@@ -210,59 +210,7 @@ class Tensor_State_Spec extends Specification
             t.getDataAs( float[].class  ) == [6] as float[]
             t.unsafe.data == [6] as double[]
             t.items == [6] as double[]
-
-        when: 'The flag "isOutsourced" is being set to false...'
-            t.setIsOutsourced( true )
-            t.unsafe.setData(null)
-        then: 'The tensor is now outsourced and its data is gone. (garbage collected)'
-            t.isOutsourced()
-            !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
-            t.getItemsAs( double[].class ) == null
-            t.getItemsAs( float[].class  ) == null
-            t.getDataAs( double[].class ) == null
-            t.getDataAs( float[].class  ) == null
-            t.unsafe.data == null
-            t.items == null
-        when: 'The "isOutsourced" flag is set to its original state...'
-            t.setIsOutsourced( false )
-        then: 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
-            t.getItemsAs( double[].class ) == [0] as double[]
-            t.getItemsAs( float[].class  ) == [0] as float[]
-            t.getDataAs( double[].class ) == [0] as double[]
-            t.getDataAs( float[].class  ) == [0] as float[]
-            t.unsafe.data == [0] as double[]
-            t.items == [0] as double[]
-            t.isVirtual()
-
     }
-
-    def 'Newly instantiated and unmodified vector tensor has expected state.'()
-    {
-        given : 'A new vector tensor is being instantiated.'
-            Tsr t = Tsr.of( new int[]{ 2 }, 5 )
-        expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
-            !t.isOutsourced()
-        when : 'The flag "isOutsourced" is being set to false...'
-            t.setIsOutsourced( true )
-            t.unsafe.setData(null)
-        then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
-            t.isOutsourced()
-            !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
-            t.dataType.getRepresentativeType() == Neureka.get().settings().dtype().defaultDataTypeClass
-            t.getItemsAs( double[].class ) == null
-            t.getItemsAs( float[].class ) == null
-            t.unsafe.data == null
-            t.items == null
-        when : 'The "isOutsourced" flag is set to its original state...'
-            t.setIsOutsourced( false )
-        then : 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
-            t.getItemsAs( double[].class ) == [0, 0] as double[]
-            t.getItemsAs( float[].class ) == [0, 0] as float[]
-            t.unsafe.data == [0] as double[]
-            t.items == [0, 0] as double[]
-            t.isVirtual()
-    }
-
 
     def 'Tensor created from shape and datatype has expected state.'()
     {
@@ -270,25 +218,6 @@ class Tensor_State_Spec extends Specification
             Tsr t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )
         expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
-            t.getItemsAs( double[].class ) == [0, 0] as double[]
-            t.getItemsAs( float[].class ) == [0, 0] as float[]
-            t.unsafe.data == [0] as byte[]
-            t.items == [0, 0] as byte[]
-            t.isVirtual()
-        when : 'The flag "isOutsourced" is being set to false...'
-            t.setIsOutsourced( true )
-            t.unsafe.setData(null)
-        then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
-            t.isOutsourced()
-            !(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])
-            t.dataType.getRepresentativeType() == I8.class
-            t.getItemsAs( double[].class ) == null
-            t.getItemsAs( float[].class ) == null
-            t.unsafe.data == null
-            t.items == null
-        when : 'The "isOutsourced" flag is set to its original state...'
-            t.setIsOutsourced( false )
-        then : 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
             t.getItemsAs( double[].class ) == [0, 0] as double[]
             t.getItemsAs( float[].class ) == [0, 0] as float[]
             t.unsafe.data == [0] as byte[]

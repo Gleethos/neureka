@@ -4,19 +4,19 @@
   "narrative":"This specification defines the expected states of freshly instantiated\n    and initialized tensors.\n    After a tensor was created successfully we expect it \n    to have certain properties like a shape, rank, type nnd data array\n    among other things.",
   "subjects":[],
   "statistics":{
-    "runs":"8",
+    "runs":"7",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.123 seconds"
+    "duration":"0.158 seconds"
   },
   "headers":["    \n            <p>\n                This unit test specification covers the expected state of newly instantiated tensors.\n                Certain properties must have their expected default values.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A tensor can be instantiated from a target type and nested lists.",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Tensors as String can be formatted on an entry based level.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"Numeric tensors as String can be formatted on an entry based level.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"Tensors as String can be formatted depending on shape.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.038 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +98,7 @@
     {
       "id":"Newly instantiated and unmodified scalar tensor has expected state.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -107,38 +107,7 @@
 
         {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()"]},
 
-        {"kind":"and","text":"The tensor contains the expected data.","code":["t.getItemsAs( double[].class ) == [6] as double[]","t.getItemsAs( float[].class  ) == [6] as float[]","t.getDataAs( double[].class ) == [6] as double[]","t.getDataAs( float[].class  ) == [6] as float[]","t.unsafe.data == [6] as double[]","t.items == [6] as double[]"]},
-
-        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )","t.unsafe.setData(null)"]},
-
-        {"kind":"then","text":"The tensor is now outsourced and its data is gone. (garbage collected)","code":["t.isOutsourced()","!(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])","t.getItemsAs( double[].class ) == null","t.getItemsAs( float[].class  ) == null","t.getDataAs( double[].class ) == null","t.getDataAs( float[].class  ) == null","t.unsafe.data == null","t.items == null"]},
-
-        {"kind":"when","text":"The \"isOutsourced\" flag is set to its original state...","code":["t.setIsOutsourced( false )"]},
-
-        {"kind":"then","text":"Internally the tensor reallocates an array of adequate size. (dependent on \"isVirtual\")","code":["t.getItemsAs( double[].class ) == [0] as double[]","t.getItemsAs( float[].class  ) == [0] as float[]","t.getDataAs( double[].class ) == [0] as double[]","t.getDataAs( float[].class  ) == [0] as float[]","t.unsafe.data == [0] as double[]","t.items == [0] as double[]","t.isVirtual()"]}
-      ],
-      "problems":{"dataValues":[], "errors":[]}
-    },
-  
-    {
-      "id":"Newly instantiated and unmodified vector tensor has expected state.",
-      "result":"PASS",
-      "duration":"0.006 seconds",
-      "iterations":{
-      "tags":{},"see":[],"extraInfo":[]
-      },
-      "blocks":[
-        {"kind":"given","text":"A new vector tensor is being instantiated.","code":["Tsr t = Tsr.of( new int[]{ 2 }, 5 )"]},
-
-        {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()"]},
-
-        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )","t.unsafe.setData(null)"]},
-
-        {"kind":"then","text":"The tensor is now outsourced and its data is gone. (garbage collected)","code":["t.isOutsourced()","!(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])","t.dataType.getRepresentativeType() == Neureka.get().settings().dtype().defaultDataTypeClass","t.getItemsAs( double[].class ) == null","t.getItemsAs( float[].class ) == null","t.unsafe.data == null","t.items == null"]},
-
-        {"kind":"when","text":"The \"isOutsourced\" flag is set to its original state...","code":["t.setIsOutsourced( false )"]},
-
-        {"kind":"then","text":"Internally the tensor reallocates an array of adequate size. (dependent on \"isVirtual\")","code":["t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as double[]","t.items == [0, 0] as double[]","t.isVirtual()"]}
+        {"kind":"and","text":"The tensor contains the expected data.","code":["t.getItemsAs( double[].class ) == [6] as double[]","t.getItemsAs( float[].class  ) == [6] as float[]","t.getDataAs( double[].class ) == [6] as double[]","t.getDataAs( float[].class  ) == [6] as float[]","t.unsafe.data == [6] as double[]","t.items == [6] as double[]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -146,22 +115,14 @@
     {
       "id":"Tensor created from shape and datatype has expected state.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A new vector tensor is being instantiated.","code":["Tsr t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )"]},
 
-        {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()","t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as byte[]","t.items == [0, 0] as byte[]","t.isVirtual()"]},
-
-        {"kind":"when","text":"The flag \"isOutsourced\" is being set to false...","code":["t.setIsOutsourced( true )","t.unsafe.setData(null)"]},
-
-        {"kind":"then","text":"The tensor is now outsourced and its data is gone. (garbage collected)","code":["t.isOutsourced()","!(t.unsafe.data instanceof double[]) && !(t.unsafe.data instanceof float[])","t.dataType.getRepresentativeType() == I8.class","t.getItemsAs( double[].class ) == null","t.getItemsAs( float[].class ) == null","t.unsafe.data == null","t.items == null"]},
-
-        {"kind":"when","text":"The \"isOutsourced\" flag is set to its original state...","code":["t.setIsOutsourced( false )"]},
-
-        {"kind":"then","text":"Internally the tensor reallocates an array of adequate size. (dependent on \"isVirtual\")","code":["t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as byte[]","t.items == [0, 0] as byte[]","t.isVirtual()"]}
+        {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()","t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data == [0] as byte[]","t.items == [0, 0] as byte[]","t.isVirtual()"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -169,7 +130,7 @@
     {
       "id":"The data and the value of a tensor a 2 different things!",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -110,11 +110,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  in a targeted bit inside the {@link #_flags} variable.
      */
     private static final byte RQS_GRADIENT_MASK       = 1;
-    private static final byte IS_OUTSOURCED_MASK      = 2;
-    private static final byte IS_VIRTUAL_MASK         = 4;
-    private static final byte GRADIENT_APPLY_RQD_MASK = 8;
-    private static final byte IS_DELETED_MASK         = 16;
-    private static final byte IS_INTERMEDIATE_MASK    = 32;
+    private static final byte IS_VIRTUAL_MASK         = 2;
+    private static final byte GRADIENT_APPLY_RQD_MASK = 4;
+    private static final byte IS_DELETED_MASK         = 8;
+    private static final byte IS_INTERMEDIATE_MASK    = 16;
 
     /*==================================================================================================================
     |
@@ -337,7 +336,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      */
     @Override
     public Tsr<V> setIsOutsourced( boolean isOutsourced ) {
-        _setIsOutsourced( isOutsourced );
         if ( !isOutsourced && !forComponent(
                 Device.class,
                 device -> {
@@ -377,19 +375,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             _allocate( 1 ); // Only a single value representing the rest.
         }
         return this;
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isOutsourced() { return ( _flags & IS_OUTSOURCED_MASK ) == IS_OUTSOURCED_MASK; }
-
-    private void _setIsOutsourced(boolean isOutsourced) {
-        if ( isOutsourced() != isOutsourced ) {
-            if ( isOutsourced ) _flags += IS_OUTSOURCED_MASK;
-            else                _flags -= IS_OUTSOURCED_MASK;
-        }
     }
 
     /**
