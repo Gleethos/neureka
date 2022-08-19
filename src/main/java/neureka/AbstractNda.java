@@ -73,7 +73,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     /**
      *  An instance of an implementation of the {@link NDConfiguration} interface defining
      *  the dimensionality of this {@link AbstractNda} in terms of certain index properties
-     *  which imply individual access patterns for the underlying {@link #_data}.
+     *  which imply individual access patterns for the underlying {@link #_dataArray}.
      */
     private NDConfiguration _NDConf;
     /**
@@ -83,7 +83,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     /**
      *  The heart and sole of the nd-array / tensor: its underlying data array.
      */
-    private DataArray _data;
+    private DataArray _dataArray;
 
     /**
      *  This integer represents the version of the data (accessible through {@link #getData()})
@@ -126,7 +126,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      @Override
     public DataType<V> getDataType() { _guardGet("data type"); return (DataType<V>) _dataType; }
 
-    protected final DataArray _getData() { _guardGet("data object"); return _data; }
+    protected final DataArray _getData() { _guardGet("data object"); return _dataArray; }
 
     protected final Object _getRawData() {
         return  _getData() == null ? null : _getData().get();
@@ -189,12 +189,12 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             }
         }
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-        if ( _data != null && _data.get() != data && data != null && _data.get() != null ) {
-            boolean isProbablyDeviceTransfer = ( _data.get().getClass().isArray() != data.getClass().isArray() );
+        if ( _dataArray != null && _dataArray.get() != data && data != null && _dataArray.get() != null ) {
+            boolean isProbablyDeviceTransfer = ( _dataArray.get().getClass().isArray() != data.getClass().isArray() );
             if ( !isProbablyDeviceTransfer)
                 _version++; // Autograd must be warned!
         }
-        _data = array;
+        _dataArray = array;
     }
 
     protected <T> void _initData( Filler<T> filler )
@@ -258,7 +258,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @param size The size of the data array which ought to be allocated.
      */
-    protected final void _allocate( int size ) { _data = getDevice().allocate( this.getDataType(), size ); }
+    protected final void _allocate( int size ) { _dataArray = getDevice().allocate( this.getDataType(), size ); }
 
     /**
      *  The internal implementation handling {@link #setIsVirtual(boolean)}.
@@ -300,7 +300,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  <br>
      */
-    protected final void _virtualize() { _data = _dataType.virtualize( _data ); }
+    protected final void _virtualize() { _dataArray = _dataType.virtualize(_dataArray); }
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. <br>
@@ -312,7 +312,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... <br>
      */
-    protected final void _actualize() { _data = getDevice().access(this).actualize(); }
+    protected final void _actualize() { _dataArray = getDevice().access(this).actualize(); }
 
     protected Object _convertedDataOfType( Class<?> typeClass )
     {
