@@ -45,6 +45,7 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.common.composition.Component;
+import neureka.common.utility.LogUtil;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
@@ -116,6 +117,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @return The found {@link Device} instance or simply {@code null} by default.
      */
     static Device<Object> get( String... searchKeys ) {
+        LogUtil.nullArgCheck( searchKeys, "searchKeys", String.class );
         return get( Device.class, searchKeys );
     }
 
@@ -129,7 +131,11 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @param <D> The device type parameter.
      * @return The found {@link Device} instance or null if nothing was found which matches the provided search hints well enough.
      */
-    static <T, D extends Device<T>> D get( Class<D> deviceType, String... searchKeys ) { return Query.query( deviceType, searchKeys ); }
+    static <T, D extends Device<T>> D get( Class<D> deviceType, String... searchKeys ) {
+        LogUtil.nullArgCheck( deviceType, "deviceType", Class.class );
+        LogUtil.nullArgCheck( searchKeys, "searchKeys", String.class );
+        return Query.query( deviceType, searchKeys );
+    }
 
     /**
      *  This method signals the device to get ready for garbage collection.
@@ -224,6 +230,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @return An instance of the optimized function.
      */
     default Function optimizedFunctionOf( Function function, String name ) {
+        LogUtil.nullArgCheck( function, "function", Function.class );
+        LogUtil.nullArgCheck( name, "name", String.class );
+
         Operation optimizedOperation = optimizedOperationOf( function, name );
         BackendContext currentContext = Neureka.get().backend();
         if ( !currentContext.hasOperation( optimizedOperation ) )
@@ -231,9 +240,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
 
         return new FunctionParser( currentContext )
                             .parse(
-                                    optimizedOperation,
-                                    function.numberOfArgs(),
-                                    function.isDoingAD()
+                                optimizedOperation,
+                                function.numberOfArgs(),
+                                function.isDoingAD()
                             );
     }
 
@@ -252,6 +261,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      *         tensors back to their original devices!
      */
     default In borrow( Tsr<V> first, Tsr<V>... rest ) {
+        LogUtil.nullArgCheck( first, "first", Tsr.class );
+        LogUtil.nullArgCheck( rest, "rest", Tsr[].class );
         List<Tsr<V>> tensors = new ArrayList<>();
         if ( first != null ) tensors.add( first );
         if ( rest.length > 0 )
@@ -287,22 +298,14 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         <R> R in( Supplier<R> lambda );
     }
 
-    /**
-     *  Implementations of this represent the access to tensors stored on a device
-     *  in order to read from or write to said tensor. <br>
-     *  <b>Warning: This API exposes the true underlying data of a tensor
-     *  which does not take into account slice, reshape or stride information...</b>
-     *
-     * @param <V> The type parameter of the tensor accessed by an instance of this.
-     */
-    interface Access<V>
+    interface Data<V>
     {
         /**
          *  Use this to write a single scalar item into the accessed tensor at
          *  one or more positions within the tensor.
          *
          * @param item The item which should be written to the tensor.
-         * @return A {@link Writer} implementation which expects the type of writing to be specified.
+         * @return A {@link Device.Writer} implementation which expects the type of writing to be specified.
          */
         Writer write( V item );
         /**
@@ -310,7 +313,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          *
          * @param array The data array whose data should be britten from.
          * @param offset The start index offset within the provided data array.
-         * @return A {@link Writer} implementation which expects the type of writing to be specified.
+         * @return A {@link Device.Writer} implementation which expects the type of writing to be specified.
          */
         Writer writeFrom( Object array, int offset );
         /**
@@ -349,6 +352,20 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @return The size of the underlying data array of the accessed tensor.
          */
         int getDataSize();
+
+    }
+
+
+    /**
+     *  Implementations of this represent the access to tensors stored on a device
+     *  in order to read from or write to said tensor. <br>
+     *  <b>Warning: This API exposes the true underlying data of a tensor
+     *  which does not take into account slice, reshape or stride information...</b>
+     *
+     * @param <V> The type parameter of the tensor accessed by an instance of this.
+     */
+    interface Access<V> extends Data<V>
+    {
         /**
          *  Use this to perform some custom memory cleanup for when the accessed {@link Tsr} gets garbage collected.   <br><br>
          *

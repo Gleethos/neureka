@@ -94,8 +94,10 @@ public class CPU extends AbstractDevice<Object>
     public CPU restore( Tsr<Object> tensor ) { return this; }
 
     @Override
-    public <T> CPU store(Tsr<T> tensor ) {
-        //super.store(tensor);
+    public <T> CPU store( Tsr<T> tensor ) {
+        if ( !this.has( tensor ) )
+            ((Device<T>)tensor.getUnsafe().getDataArray().owner()).restore( tensor );
+
         _tensors.add( (Tsr<Object>) tensor);
         return this;
     }
@@ -444,8 +446,8 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     public final <T> CPU store( Tsr<T> tensor, Tsr<T> parent ) {
-        _tensors.add( (Tsr<Object>) tensor);
-        _tensors.add( (Tsr<Object>) parent);
+        this.store( tensor );
+        this.store( parent );
         return this;
     }
 

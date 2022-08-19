@@ -2,7 +2,7 @@ package ut.device.internal
 
 import neureka.Neureka
 import neureka.devices.opencl.CLContext
-import neureka.devices.opencl.Data
+import neureka.devices.opencl.JVMData
 import spock.lang.Specification
 
 class OpenCL_Data_Spec extends Specification
@@ -25,8 +25,8 @@ class OpenCL_Data_Spec extends Specification
             if ( Neureka.get().backend.has(CLContext) )
                 Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = false
         and : 'We create 2 different data objects, a full and a partial/sliced array.'
-            var full = Data.of(data)
-            var slice = Data.of(data, size, start)
+            var full = JVMData.of(data)
+            var slice = JVMData.of(data, size, start)
         and : 'An expected array based on the previous slice indices!'
             var expected2 = expected[start..(start+size-1)]
 
@@ -77,9 +77,9 @@ class OpenCL_Data_Spec extends Specification
     ) {
         given :
             array = array.asType(arrayType)
-            var data1 = Data.of(array, size, offset)
-            var data2 = Data.of(type, size)
-            var data3 = Data.of(array)
+            var data1 = JVMData.of(array, size, offset)
+            var data2 = JVMData.of(type, size)
+            var data3 = JVMData.of(array)
 
         expect :
             data1.array == array[offset..(offset+size-1)].asType(arrayType)

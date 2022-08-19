@@ -10,6 +10,10 @@ import java.util.List;
  *  This class is similar to the cleaner class introduced in JDK 11, however the minimal version compatibility target
  *  for Neureka is Java 8, which means that this cleaner class introduced in Java 11 is not available here!
  *  That is why a custom cleaner implementation is being defined below.<br>
+ *  <br> <br>
+ *  <b>Warning: This is an internal class, meaning it should not be used
+ *  anywhere but within this library. <br>
+ *  This class or its public methods might change or get removed in future versions!</b>
  */
 final class CustomDeviceCleaner implements DeviceCleaner, Runnable
 {

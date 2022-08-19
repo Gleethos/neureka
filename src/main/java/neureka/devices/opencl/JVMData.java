@@ -10,17 +10,17 @@ import java.util.Arrays;
 
 /**
  *  This defines a representation of some basic primitive numeric array based JVM data
- *  which may be stored on an {@link OpenCLDevice}.
+ *  which may be stored on an {@link OpenCLDevice} eventually.
  *  <br> <br>
  *  <b>Warning: This is an internal class, meaning it should not be used
  *  anywhere but within this library. <br>
  *  This class or its public methods might change or get removed in future versions!</b>
  */
-class Data
+class JVMData
 {
     private final Object _data;
 
-    public static Data of(Class<?> type, int size) {
+    public static JVMData of( Class<?> type, int size ) {
         Object data = null;
         if      ( type == Float.class   ) data = new float[size];
         else if ( type == Double.class  ) data = new double[size];
@@ -36,15 +36,15 @@ class Data
         return of(data);
     }
 
-    public static Data of( Object data ) {
-        return new Data( data, 0, lengthOf(data) );
+    public static JVMData of( Object data ) {
+        return new JVMData( data, 0, lengthOf(data) );
     }
 
-    public static Data of( Object data, int size, int start ) {
-        return new Data( data, start, size );
+    public static JVMData of( Object data, int size, int start ) {
+        return new JVMData( data, start, size );
     }
 
-    private Data( Object data, int start, int size ) {
+    private JVMData( Object data, int start, int size ) {
         _data = _preprocess( data, start, size );
     }
 

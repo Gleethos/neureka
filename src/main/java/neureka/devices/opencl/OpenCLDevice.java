@@ -51,7 +51,6 @@ package neureka.devices.opencl;
 import neureka.DataArray;
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.*;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.calculus.Function;
@@ -352,7 +351,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             throw new IllegalArgumentException(message);
         }
 
-        Object value  = _value(Data.of(tensor.itemType(), tensor.isVirtual() ? 1 : tensor.size()), tensor, 0).getArray();
+        Object value  = _read(JVMData.of(tensor.itemType(), tensor.isVirtual() ? 1 : tensor.size()), tensor, 0).getArray();
 
         Class<?> arrayType = Objects.requireNonNull(tensor.getDataType().getTypeClassInstance(NumericType.class)).holderArrayType();
 
@@ -471,14 +470,14 @@ public class OpenCLDevice extends AbstractDevice<Number>
             Tsr<Number> tensor,
             cl_tsr<?, ?> newClTsr
     ) {
-        Data data = Data.of( tensor.getUnsafe().getData() );
-        newClTsr.value.size = (int) data.getLength();
-        newClTsr.dtype = data.getType();
+        JVMData jvmData = JVMData.of( tensor.getUnsafe().getData() );
+        newClTsr.value.size = (int) jvmData.getLength();
+        newClTsr.dtype = jvmData.getType();
         //VALUE TRANSFER:
         cl_mem mem = clCreateBuffer(
                 _platform.getContext(),
                 CL_MEM_READ_WRITE,
-                (long) data.getItemSize() * data.getLength(),
+                (long) jvmData.getItemSize() * jvmData.getLength(),
                 null,
                 null
         );
@@ -486,8 +485,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
         clEnqueueWriteBuffer(
                 _queue, mem,
                 CL_TRUE, 0,
-                (long) data.getItemSize() * data.getLength(),
-                data.getPointer(), 0, null, null
+                (long) jvmData.getItemSize() * jvmData.getLength(),
+                jvmData.getPointer(), 0, null, null
         );
     }
 
@@ -527,22 +526,22 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected final <T extends Number> T _readItem( Tsr<T> tensor, int index ) {
-        return (T) _value(Data.of(tensor.itemType(), 1), tensor.getUnsafe().upcast(Number.class), index).getElementAt(0);
+        return (T) _read(JVMData.of(tensor.itemType(), 1), tensor.getUnsafe().upcast(Number.class), index).getElementAt(0);
     }
 
     @Override
     protected final <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size ) {
-        return (A) _value(Data.of(tensor.itemType(), size), tensor.getUnsafe().upcast(Number.class), start).getArray();
+        return (A) _read(JVMData.of(tensor.itemType(), size), tensor.getUnsafe().upcast(Number.class), start).getArray();
     }
 
     @Override
     protected final <T extends Number> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
-        _overwrite( tensor, start, Data.of(item, size, 0) );
+        _overwrite( tensor, start, JVMData.of(item, size, 0) );
     }
 
     @Override
     protected final <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size ) {
-        _overwrite( tensor, start, Data.of(array, size, offset) );
+        _overwrite( tensor, start, JVMData.of(array, size, offset) );
     }
 
     @Override
@@ -566,19 +565,19 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     private void _overwrite(
-            Tsr<?> tensor, long offset, Data data
+            Tsr<?> tensor, long offset, JVMData jvmData
     ) {
-        if ( data.getLength() == 0 ) return;
+        if ( jvmData.getLength() == 0 ) return;
         cl_tsr<?, ?> clt = tensor.getUnsafe().getData(cl_tsr.class);
 
         if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
         clt.value.event = new cl_event();
-        long start = offset * data.getItemSize();
-        long size  = data.getItemSize() * data.getLength();
+        long start = offset * jvmData.getItemSize();
+        long size  = jvmData.getItemSize() * jvmData.getLength();
         clEnqueueWriteBuffer(
                 _queue, clt.value.data, CL_TRUE,
                 start, size,
-                data.getPointer(), 0, null,
+                jvmData.getPointer(), 0, null,
                 clt.value.event
         );
     }
@@ -639,20 +638,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
         else _add(newOwner, null, migration);
     }
 
-    private Data _value( Data data, Tsr<Number> tensor, int offset ) {
+    private JVMData _read(JVMData jvmData, Tsr<Number> tensor, int offset ) {
         cl_tsr<?, ?> clt = tensor.getUnsafe().getData(cl_tsr.class);
         clEnqueueReadBuffer(
                 _queue,
                 clt.value.data,
                 CL_TRUE,
-                (long) offset * data.getItemSize(), // one double == eight byte
-                (long) data.getItemSize() * data.getLength(),
-                data.getPointer(),
+                (long) offset * jvmData.getItemSize(), // one double == eight byte
+                (long) jvmData.getItemSize() * jvmData.getLength(),
+                jvmData.getPointer(),
                 0,
                 null,
                 null
         );
-        return data;
+        return jvmData;
     }
 
     /**

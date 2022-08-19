@@ -11,6 +11,10 @@ import java.util.stream.Stream;
 /**
  *  An internal class which queries the backend for {@link Device} instances based on a provided device
  *  type and an array of search keys!
+ *  <br> <br>
+ *  <b>Warning: This is an internal class, meaning it should not be used
+ *  anywhere but within this library. <br>
+ *  This class or its public methods might change or get removed in future versions!</b>
  */
 final class Query
 {

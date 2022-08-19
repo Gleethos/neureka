@@ -131,7 +131,6 @@ implements DeviceAlgorithm<C>
             );
 
         Device<?> device = call.getDevice();
-        device.approve( call );
 
         Algorithm algorithm = call.getAlgorithm();
         if ( algorithm == null ) {
@@ -146,7 +145,10 @@ implements DeviceAlgorithm<C>
                 _LOG.error( message );
                 throw new IllegalStateException( message );
             }
-            else return implementation.run( (ExecutionCall<Device<?>>) call );
+            else {
+                device.approve( call );
+                return implementation.run( (ExecutionCall<Device<?>>) call );
+            }
         }
     }
 
@@ -453,7 +455,7 @@ implements DeviceAlgorithm<C>
         });
     }
 
-    public static <R> R executeOnCommonDevice(ExecutionCall<?> call, Supplier<R> execution ) {
+    public static <R> R executeOnCommonDevice( ExecutionCall<?> call, Supplier<R> execution ) {
         Device<Object> device = call.getDeviceFor(Object.class);
 
         Consumer<Tsr<?>>[] rollbacks = new Consumer[ call.arity() ];
@@ -470,7 +472,7 @@ implements DeviceAlgorithm<C>
         if ( result == null )
             throw new IllegalStateException( "Execution of " + call + " failed!" );
 
-        for ( int i = 0; i < call.arity(); i++ )
+        for ( int i = 0; i < rollbacks.length; i++ )
             if ( call.input( i ) != null && !call.input( i ).isDeleted() && !call.input( i ).isUndefined() )
                 rollbacks[ i ].accept( call.input( i ) );
 

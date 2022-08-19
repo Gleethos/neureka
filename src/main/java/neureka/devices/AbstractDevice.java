@@ -41,7 +41,6 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
-import neureka.dtype.DataType;
 import neureka.framing.Relation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,7 @@ import org.slf4j.LoggerFactory;
  *
  *  - A Cleaner instance used for freeing resources of the device.
  *
- *  - An component update implementations which simply calls the swap method of the device.
+ *  - A component update implementation which simply calls the swap method of the device.
  *
  *  - An implementation for the execution method which calls the underlying calculus backend.
  *
