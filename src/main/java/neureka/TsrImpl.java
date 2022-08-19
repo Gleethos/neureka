@@ -335,52 +335,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setIsOutsourced( boolean isOutsourced ) {
-        if ( !isOutsourced && !forComponent(
-                Device.class,
-                device -> {
-                    try {
-                        if ( device.has( this ) ) device.restore( this );
-                    } catch ( Exception exception ) {
-                        _LOG.error(
-                            "Tensor could not be restored from device component when trying to migrate it back to RAM.",
-                            exception
-                        );
-                        throw exception;
-                    }
-                    this.remove( Device.class );
-                    forComponent(
-                        TsrImpl.class,
-                        gradient ->
-                            ( (TsrImpl<V>) gradient ).forComponent(
-                                Device.class,
-                                gradDevice -> {
-                                    try {
-                                        if ( gradDevice.has( gradient ) ) gradDevice.restore( gradient );
-                                    }
-                                    catch ( Exception exception ) {
-                                        _LOG.error(
-                                            "Gradient could not be restored from device component when trying to migrate it back to RAM.",
-                                            exception
-                                        );
-                                        throw exception;
-                                    }
-                                    gradient.remove( Device.class );
-                                })
-                    );
-                }
-            )
-        ) {
-            _setIsVirtual( true );
-            _allocate( 1 ); // Only a single value representing the rest.
-        }
-        return this;
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
     public boolean isVirtual() { return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK; }
 
     /**

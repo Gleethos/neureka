@@ -764,19 +764,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     boolean isIntermediate();
 
     /**
-     *  This method informs this tensor if it's data is supposed to be kept in RAM
-     *  or if it has already been migrated somewhere else.
-     *  In the latter case, the tensor will nullify the reference to it's
-     *  underlying data array to make it elegable for garbage collection.
-     *  Otherwise, if {@code isOutsourced} is set to true, the method might
-     *  allocate a new data array if none is present.
-     *
-     * @param isOutsourced The truth value which determines if this tensor should live in RAM or somewhere else.
-     * @return This very instance to allow for method chaining.
-     */
-    Tsr<V> setIsOutsourced( boolean isOutsourced );
-
-    /**
      *  Outsourced means that the tensor is stored on a {@link Device} implementation instance which is not the {@link CPU}.
      *
      * @return The truth value determining if the data of this tensor is not actually stored inside it

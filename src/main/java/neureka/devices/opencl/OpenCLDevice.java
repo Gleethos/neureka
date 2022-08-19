@@ -467,21 +467,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return clf;
     }
 
-    /**
-     * This method checks if the passed tensor
-     * is stored on this very OpenCLDevice instance.
-     * "Stored" means that the data of the tensor is represented as
-     * cl_mem objects which are referenced inside tensors as components...
-     *
-     * @param tensor The tensor in question.
-     * @return The truth value of the fact that the provided tensor is on this device.
-     */
-    @Override
-    public <T extends Number> boolean has( Tsr<T> tensor ) {
-        return _tensors.contains(tensor);
-    }
-
-
     private void _store(
             Tsr<Number> tensor,
             cl_tsr<?, ?> newClTsr
@@ -511,8 +496,32 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_tsr<?, ?> clt = tensor.getUnsafe().getData(cl_tsr.class);
         if (clt == null) return this;
         _tensors.remove(tensor);
-        tensor.setIsOutsourced(false);
         tensor.getUnsafe().setDataArray(null);
+        tensor.forComponent(
+            Device.class,
+            device -> {
+                tensor.remove( Device.class );
+                tensor.forComponent(
+                    Tsr.class,
+                    gradient ->
+                        ( (Tsr<Number>) gradient ).forComponent(
+                            Device.class,
+                            gradDevice -> {
+                                try {
+                                    if ( _tensors.contains( gradient ) ) gradDevice.restore( gradient );
+                                }
+                                catch ( Exception exception ) {
+                                    _LOG.error(
+                                        "Gradient could not be restored from device component when trying to migrate it back to RAM.",
+                                        exception
+                                    );
+                                    throw exception;
+                                }
+                                gradient.remove( Device.class );
+                            })
+                );
+            }
+        );
         return this;
     }
 

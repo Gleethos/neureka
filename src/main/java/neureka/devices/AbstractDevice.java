@@ -141,8 +141,8 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public <T extends V> boolean has(Tsr<T> tensor) {
-        return tensor.getUnsafe().getDataArray().owner() == this;
+    public final <T extends V> boolean has(Tsr<T> tensor) {
+        return tensor.getUnsafe().getDataArray() != null && tensor.getUnsafe().getDataArray().owner() == this;
     }
 
 
