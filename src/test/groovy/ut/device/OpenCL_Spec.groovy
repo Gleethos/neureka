@@ -1,5 +1,6 @@
 package ut.device
 
+import neureka.DataArray
 import neureka.Neureka
 import neureka.Tsr
 import neureka.common.composition.Component
@@ -96,6 +97,9 @@ class OpenCL_Spec extends Specification
 
         and : 'Another mocked tensor that represents a slice of the prior one.'
             Tsr<?> s = Mock(Tsr) // Could be : t[1..3, 1..2]
+            Tsr.Unsafe<?> u = Mock(Tsr.Unsafe)
+            s.getUnsafe() >> u
+            u.getDataArray() >> Mock(DataArray)
 
         and : 'A mocked relation between both tensors returned by the slice as component.'
             Relation r = Mock(Relation)
@@ -117,7 +121,7 @@ class OpenCL_Spec extends Specification
             })
 
         then : 'The device will now try to store the tensor throw an exception because the tensor has an illegal state...'
-            def exception = thrown(IllegalStateException)
+            def exception = thrown(Exception)
 
         and : 'It explains what went wrong.'
             exception.message == "Data parent is not outsourced!"

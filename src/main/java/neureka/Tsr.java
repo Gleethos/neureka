@@ -505,9 +505,21 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
-    static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data, false ); }
+    static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data ); }
 
-    static <V> Tsr<V> of( DataType<V> dataType, NDConstructor ndConstructor, Object data ) { return new TsrImpl<>( ndConstructor, dataType, data, true ); }
+    /**
+     *  This factory method a raw tensor constructor which will not perform any type checking
+     *  or data conversion on the data provided to it.
+     *  It constructs the tensor expecting that the data provided to it is of the correct type
+     *  and an array of axis sizes.
+     *
+     * @param dataType The data type of the data represented by {@link Tsr} instance created by this method.
+     * @param ndConstructor The {@link NDConstructor} that will be used to construct the {@link Tsr} instance.
+     * @param data The data for the {@link Tsr} that is about to be created, which is expected to be an array.
+     * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
+     * @param <V> The type parameter of individual tensor items.
+     */
+    static <V> Tsr<V> of( DataType<V> dataType, NDConstructor ndConstructor, DataArray data ) { return new TsrImpl<>( ndConstructor, dataType, data ); }
 
     /**
      *  This factory method allows the creation of tensors with an additional initialization
@@ -2129,7 +2141,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
             return getData(Object.class);
         }
 
-        DataArray getDataArray();
+        DataArray<T> getDataArray();
 
         <D> D getData( Class<D> dataType );
 

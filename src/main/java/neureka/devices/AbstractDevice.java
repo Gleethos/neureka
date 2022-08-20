@@ -96,7 +96,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
                         throw new IllegalStateException("Data parent is not outsourced!");
                 }
             }
-            Device<V> found = newOwner.getDevice();
+            Device<V> found = newOwner.getUnsafe().getDataArray().owner();
             if ( found != null && found != this ) {
                 found.restore( newOwner );
             }
@@ -140,7 +140,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public final <T extends V> boolean has(Tsr<T> tensor) {
+    public <T extends V> boolean has(Tsr<T> tensor) {
         return tensor.getUnsafe().getDataArray() != null && tensor.getUnsafe().getDataArray().owner() == this;
     }
 
@@ -166,7 +166,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public int getDataSize() { return _sizeOccupiedBy( tensor ); }
             @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
-            @Override public DataArray actualize() { return _actualize( tensor ); }
+            @Override public DataArray<V> actualize() { return _actualize( tensor ); }
         };
     }
 
@@ -193,12 +193,12 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
 
-    protected abstract DataArray _actualize( Tsr<?> tensor );
+    protected abstract DataArray<V> _actualize( Tsr<?> tensor );
 
-    protected DataArray _dataArrayOf( Object data ) {
-        assert data == null || !(data instanceof DataArray);
-        return new DataArray() {
-            @Override public Device<?> owner() { return AbstractDevice.this; }
+    protected DataArray<V> _dataArrayOf( Object data ) {
+        assert !(data instanceof DataArray);
+        return new DataArray<V>() {
+            @Override public Device<V> owner() { return AbstractDevice.this; }
             @Override public Object get() { return data; }
         };
     }

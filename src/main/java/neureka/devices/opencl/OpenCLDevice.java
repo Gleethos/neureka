@@ -375,6 +375,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
         _tensors.add( tensor.getUnsafe().upcast(Number.class) );
     }
 
+    @Override
+    public final <T extends Number> boolean has(Tsr<T> tensor) {
+        return _tensors.contains(tensor);
+    }
+
     private <T extends Number> void _add(
             Tsr<Number> tensor,
             cl_tsr<Number, T> parent,

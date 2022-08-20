@@ -2,12 +2,12 @@ package neureka;
 
 import neureka.devices.Device;
 
-public interface DataArray {
+public interface DataArray<V> {
 
     /**
-     * @return The owner of this data array.
+     * @return The owner of this data array (the device which allocated the memory).
      */
-    Device<?> owner();
+    Device<V> owner();
 
     /**
      * @return The raw underlying data of this wrapper.

@@ -83,7 +83,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     /**
      *  The heart and sole of the nd-array / tensor: its underlying data array.
      */
-    private DataArray _dataArray;
+    private DataArray<V> _dataArray;
 
     /**
      *  This integer represents the version of the data (accessible through {@link #getData()})
@@ -126,7 +126,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      @Override
     public DataType<V> getDataType() { _guardGet("data type"); return (DataType<V>) _dataType; }
 
-    protected final DataArray _getData() { _guardGet("data object"); return _dataArray; }
+    protected final DataArray<V> _getData() { _guardGet("data object"); return _dataArray; }
 
     protected final Object _getRawData() {
         return  _getData() == null ? null : _getData().get();
@@ -285,7 +285,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
                 new TsrConstructor.API() {
                     @Override public void   setType( DataType<?> type       ) { nda.getUnsafe().setDataType( type ); }
                     @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }
-                    @Override public void   setData( DataArray o            ) { nda._setData( o ); AbstractNda.this.set((Device)o.owner()); }
+                    @Override public void   setData( DataArray<?> o         ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }
                     @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                 }
             );
@@ -354,8 +354,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             assert s1 == s2;
         }
         _NDConf = ndConfiguration;
-        if ( this.has( Device.class ) )
-            this.get(Device.class).access(this).updateNDConf();
+        getDevice().access(this).updateNDConf();
 
         return (C) this;
     }

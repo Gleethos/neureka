@@ -161,8 +161,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             t.constructFor(CPU.get(), NDConstructor.of(new int[]{args.length}))
                 .tryConstructing(
                     DataType.of(commonType),
-                    args,
-                    false
+                    args
                 );
             return t;
         }
@@ -226,8 +225,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      */
     TsrImpl() {}
 
-    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object data, boolean trusted ) {
-        constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data, trusted );
+    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object data ) {
+        constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data );
+    }
+
+    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, DataArray data ) {
+        constructFor(CPU.get(), ndConstructor).constructTrusted( dataType, data );
     }
 
     /**
@@ -478,10 +481,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     @Override
     public <T extends Component<?>> T get( Class<T> componentClass ) {
         LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
+
         if ( GraphNode.class.isAssignableFrom(componentClass) )
             _guardGet(componentClass.getSimpleName());
         else if ( NDFrame.class.isAssignableFrom(componentClass) )
             _guardGet(componentClass.getSimpleName());
+
         return super.get(componentClass);
     }
 
@@ -707,7 +712,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             @Override
             public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
             @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
-            @Override public DataArray getDataArray() { return _getData(); }
+            @Override public DataArray<V> getDataArray() { return _getData(); }
             @Override public <D> D getData(Class<D> dataType) {
                 Object data = _getRawData();
                 if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
@@ -1265,7 +1270,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             Object newData = _convertedDataOfType( typeClass );
             _setData( null );
             _setDataType( DataType.of( typeClass ) );
-            _setData( TsrConstructor.dataArrayOnCPUFor(newData) );
+            _setData( CPU.get().allocate(newData) );
         }
         forComponent( TsrImpl.class, gradient -> gradient._toType( typeClass ) );
         return (Tsr<T>) this;

@@ -396,6 +396,37 @@ public class CPU extends AbstractDevice<Object>
             throw new IllegalArgumentException("Array type '"+jvmData.getClass().getSimpleName()+"' not supported!");
     }
 
+    public DataArray allocate( Object data ) {
+        int size;
+        if ( data instanceof Object[] ) {
+            size = ( (Object[]) data ).length;
+        } else if ( data instanceof int[] ) {
+            size = ( (int[]) data ).length;
+        } else if ( data instanceof long[] ) {
+            size = ( (long[]) data ).length;
+        } else if ( data instanceof float[] ) {
+            size = ( (float[]) data ).length;
+        } else if ( data instanceof double[] ) {
+            size = ( (double[]) data ).length;
+        } else if ( data instanceof short[] ) {
+            size = ( (short[]) data ).length;
+        } else if ( data instanceof byte[] ) {
+            size = ( (byte[]) data ).length;
+        } else if ( data instanceof boolean[] ) {
+            size = ( (boolean[]) data ).length;
+        } else if ( data instanceof char[] ) {
+            size = ( (char[]) data ).length;
+        }
+        else
+            throw new IllegalArgumentException( "Unsupported data type: " + data.getClass() );
+
+        DataArray dataArray = CPU.get().allocate( data, size );
+        if ( dataArray.get() != data )
+            throw new IllegalStateException( "CPU seems to have reallocated some already valid data unnecessarily! This is most likely a bug." );
+
+        return dataArray;
+    }
+
     @Override
     protected final DataArray _actualize( Tsr<?> tensor ) {
         DataArray dataArray = tensor.getUnsafe().getDataArray();

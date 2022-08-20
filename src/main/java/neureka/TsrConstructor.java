@@ -4,7 +4,6 @@ import neureka.backend.main.operations.other.Randomization;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
@@ -33,7 +32,7 @@ final class TsrConstructor
     public interface API {
         void   setType( DataType<?> type );
         void   setConf( NDConfiguration conf );
-        void   setData( DataArray o );
+        void   setData( DataArray<?> o );
         void   setIsVirtual(  boolean isVirtual );
     }
 
@@ -70,20 +69,22 @@ final class TsrConstructor
         _API.setConf( _ndConstructor.produceNDC( makeVirtual ) );
     }
 
+    public void constructTrusted(
+            DataType<?> dataType,
+            DataArray<?> data
+    ) {
+        _API.setType( dataType );
+        _API.setData( data );
+        _API.setConf( _ndConstructor.produceNDC( false ) );
+    }
+
     public void tryConstructing(
         DataType<?> dataType,
-        Object data,
-        boolean trusted
+        Object data
     ) {
         LogUtil.nullArgCheck( _ndConstructor, "ndConstructor", NDConstructor.class );
         LogUtil.nullArgCheck( _ndConstructor.getShape(), "shape", int[].class );
         LogUtil.nullArgCheck( dataType, "dataType", DataType.class );
-        if ( trusted ) {
-            _API.setType( dataType );
-            _API.setData(dataArrayOnCPUFor(data));
-            _API.setConf( _ndConstructor.produceNDC( false ) );
-            return;
-        }
         LogUtil.nullArgCheck( data, "data", Object.class );
 
         int size = _ndConstructor.getSize();
@@ -130,14 +131,7 @@ final class TsrConstructor
         return data != null;
     }
 
-    public static DataArray dataArrayOnCPUFor( Object data ) {
-        return new DataArray() {
-            @Override public Device<?> owner() { return CPU.get(); }
-            @Override public Object get() { return data; }
-        };
-    }
-
-    private DataArray _constructAllFromOne( int size, Object data, Class<?> type )
+    private DataArray<?> _constructAllFromOne( int size, Object data, Class<?> type )
     {
         if ( type == Double   .class ) { return _constructAll( size, data, type ); }
         if ( type == Float    .class ) { return _constructAll( size, data, type ); }
