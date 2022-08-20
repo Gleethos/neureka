@@ -644,10 +644,18 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     private void _updateInternal(Tsr<Number> newOwner, Runnable migration) {
-        Tsr<Number> root = null;
-        if (newOwner.has(Relation.class)) root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor();
+        Tsr<Number> root = _findRoot( newOwner );
         if (root != null) store(newOwner, root);
         else _add( newOwner, null, migration );
+    }
+
+    private Tsr<Number> _findRoot( Tsr<Number> newOwner ) {
+        Tsr<Number> root = null;
+        Relation<Number> relation = newOwner.get(Relation.class);
+        if ( relation != null )
+            root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor();
+
+        return root;
     }
 
     private JVMData _read(JVMData jvmData, Tsr<Number> tensor, int offset ) {
