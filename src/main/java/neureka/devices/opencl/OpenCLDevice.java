@@ -388,6 +388,14 @@ public class OpenCLDevice extends AbstractDevice<Number>
             _LOG.debug("Trying to add a tensor to a device which already reports hosting it.");
             return;
         }
+        if ( parent == null ) {
+            if ( tensor.getUnsafe().getDataArray().owner() == this ) {
+                _tensors.add( tensor );
+                migration.run();
+                return;
+            }
+        }
+
         cl_tsr<Number, Number> newClt = new cl_tsr<>();
 
         //VALUE TRANSFER:
@@ -639,7 +647,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         Tsr<Number> root = null;
         if (newOwner.has(Relation.class)) root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor();
         if (root != null) store(newOwner, root);
-        else _add(newOwner, null, migration);
+        else _add( newOwner, null, migration );
     }
 
     private JVMData _read(JVMData jvmData, Tsr<Number> tensor, int offset ) {
