@@ -145,18 +145,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     void dispose();
 
     /**
-     *  Implementations of this method ought to store the value
-     *  of the given tensor and the "parent" tensor in whatever
-     *  formant suites the underlying implementation and or final type.
-     *  {@link Device} implementations are also tensor storages
-     *  which may also have to store tensors which are slices of bigger tensors.   <br><br>
-     *
-     * @param tensor The tensor whose data ought to be stored.
-     * @return A reference this object to allow for method chaining. (factory pattern)
-     */
-    <T extends V> Device<V> store( Tsr<T> tensor, Tsr<T> parent );
-
-    /**
      *  Use this to check if a tensor is stored on this {@link Device}!  <br><br>
      *
      * @param tensor The tensor which may or may not be stored on this {@link Device}.

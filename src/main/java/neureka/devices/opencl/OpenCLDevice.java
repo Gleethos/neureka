@@ -363,15 +363,23 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return this;
     }
 
-    @Override
-    public <T extends Number> Device<Number> store( Tsr<T> tensor, Tsr<T> parent ) {
+
+    /**
+     * Implementations of this method ought to store the value
+     * of the given tensor and the "parent" tensor in whatever
+     * formant suites the underlying implementation and or final type.
+     * {@link Device} implementations are also tensor storages
+     * which may also have to store tensors which are slices of bigger tensors.   <br><br>
+     *
+     * @param tensor The tensor whose data ought to be stored.
+     */
+    private <T extends Number> void _store(Tsr<T> tensor, Tsr<T> parent ) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add(
             tensor.getUnsafe().upcast(Number.class),
             parent.getUnsafe().getData(cl_tsr.class),
             () -> tensor.set((Component) this)
         );
-        return this;
     }
 
     @Override
@@ -645,7 +653,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private void _updateInternal(Tsr<Number> newOwner, Runnable migration) {
         Tsr<Number> root = _findRoot( newOwner );
-        if (root != null) store(newOwner, root);
+        if (root != null) _store(newOwner, root);
         else _add( newOwner, null, migration );
     }
 

@@ -153,7 +153,7 @@ public class Slice extends AbstractOperation
 
         if ( input.isOutsourced() ) {
             Device<Object> device = input.getDevice();
-            device.store( subset, input );
+            device.store( subset );
         }
         if ( input.isVirtual() ) subset.setIsVirtual( true );
 

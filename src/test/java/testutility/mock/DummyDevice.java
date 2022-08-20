@@ -29,9 +29,6 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Device<Object> store( Tsr tensor ) { return this; }
 
     @Override
-    public Device<Object> store( Tsr tensor, Tsr parent ) { return this; }
-
-    @Override
     public boolean has( Tsr tensor ) {
         return false;
     }

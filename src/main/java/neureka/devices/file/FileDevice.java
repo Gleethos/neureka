@@ -210,9 +210,6 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T> Device<Object> store( Tsr<T> tensor, Tsr<T> parent ) { throw new IllegalStateException(); }
-
-    @Override
     public <T> boolean has( Tsr<T> tensor ) {
         LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
         return _stored.containsKey( tensor );
