@@ -145,16 +145,17 @@ public class Slice extends AbstractOperation
                             input.getUnsafe().getDataArray()
                         );
 
-        if ( input.isOutsourced() ) {
-            Device<Object> device = input.getDevice();
-            device.store( subset, input );
-        }
-        if ( input.isVirtual() ) subset.setIsVirtual( true );
         subset.set( new Relation().addParent( input ) );
         Relation<Object> parent = input.get( Relation.class );
         parent = ( parent != null ) ? parent : new Relation<>();
         parent.addChild( subset );
         input.set( parent );
+
+        if ( input.isOutsourced() ) {
+            Device<Object> device = input.getDevice();
+            device.store( subset, input );
+        }
+        if ( input.isVirtual() ) subset.setIsVirtual( true );
 
         return subset;
     }
