@@ -22,7 +22,7 @@ import spock.lang.Title
     autograd system, more specifically: the recorded computation graph. 
     Inline operations can break the mathematically pureness of the back-propagation
     procedure by for example changing partial derivatives... <br>
-    In order to prevent said errors to occur unnoticed tensors
+    In order to prevent said errors from occurring unnoticed tensors
     have versions which will increment when the underlying data of the tensor changes. 
     This version will be tracked by the computation graph as well in order to
     match it with the ones stored inside the tensor. 
