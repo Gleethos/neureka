@@ -105,7 +105,7 @@ final class TsrConstructor
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
 
-        DataArray array = _targetDevice.allocate( data, size );
+        DataArray<?> array = _targetDevice.allocate( data, size );
         newUnpopulated( false, false, dataType );
         _API.setData( array );
     }
@@ -125,7 +125,7 @@ final class TsrConstructor
         int size = _ndConstructor.getSize();
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
-        DataArray array = _constructAllFromOne( _ndConstructor.getSize(), data, type );
+        DataArray<?> array = _constructAllFromOne( _ndConstructor.getSize(), data, type );
         _API.setData( array );
         _API.setConf( _ndConstructor.produceNDC() );
         return data != null;
@@ -150,7 +150,7 @@ final class TsrConstructor
         return null;
     }
 
-    private DataArray _constructAll( int size, Object value, Class<?> typeClass )
+    private DataArray<?> _constructAll( int size, Object value, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
         return _targetDevice.allocate( dataType, Math.min(size, 1), value );
@@ -159,7 +159,7 @@ final class TsrConstructor
     public <V> void newSeeded( Class<V> valueType, Object seed )
     {
         int size = _ndConstructor.getSize();
-        DataArray data = _targetDevice.allocate( DataType.of( valueType ), size );
+        DataArray<?> data = _targetDevice.allocate( DataType.of( valueType ), size );
         Object out = Randomization.fillRandomly( data.get(), seed.toString() );
         assert out == data.get();
         newUnpopulated( false, false, DataType.of(valueType) );

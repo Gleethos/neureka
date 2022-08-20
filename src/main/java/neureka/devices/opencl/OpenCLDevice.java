@@ -365,18 +365,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public <T extends Number> Device<Number> store( Tsr<T> tensor, Tsr<T> parent ) {
-        _store(tensor, parent, () -> tensor.set((Component) this));
+        if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
+        _add(
+            tensor.getUnsafe().upcast(Number.class),
+            parent.getUnsafe().getData(cl_tsr.class),
+            () -> tensor.set((Component) this)
+        );
         return this;
     }
 
-    private <T extends Number> void _store(Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
-        if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
-        _add( tensor.getUnsafe().upcast(Number.class), parent.getUnsafe().getData(cl_tsr.class), migration);
-        _tensors.add( tensor.getUnsafe().upcast(Number.class) );
-    }
-
     @Override
-    public final <T extends Number> boolean has(Tsr<T> tensor) {
+    public final <T extends Number> boolean has( Tsr<T> tensor ) {
         return _tensors.contains(tensor);
     }
 
