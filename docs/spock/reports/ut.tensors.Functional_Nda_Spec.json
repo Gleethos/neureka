@@ -1,0 +1,56 @@
+{
+  "className":"ut.tensors.Functional_Nda_Spec",
+  "title":"Functional ND-Arrays",
+  "narrative":"ND-Arrays expose a powerful API for performing operations on them\n    in a functional style.",
+  "subjects":[],
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.502 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"We can initialize an ND-Array using a filler lambda mapping indices to items.",
+      "result":"PASS",
+      "duration":"0.271 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We instantiate the ND-Array using an initializer lambda which explains the indices of each item.","code":["var t = Nda.of(String).withShape(2, 3).andWhere(( int i, int[] indices ) -> { i + ':' + indices.toString() })"]},
+
+        {"kind":"then","text":"The ND-Array will have the expected items:","code":["t.items == [\"0:[0, 0]\", \"1:[0, 1]\", \"2:[0, 2]\", \"3:[1, 0]\", \"4:[1, 1]\", \"5:[1, 2]\"]"]},
+
+        {"kind":"and","text":"We can also recognise them when printed as string:","code":["t.toString() == \"(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find both min and max items in an ND-array by providing a comparator.",
+      "result":"PASS",
+      "duration":"0.217 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create an ND-array of strings for which we want to find a min and max value:","code":["var n = Nda.of(String)",".withShape(2, 3)",".andWhere(( int i, int[] indices ) -> { \"a\" + i } )"]},
+
+        {"kind":"when","text":"We find the min value by passing a comparator (which takes 2 values and returns an int):","code":["var min = n.minItem( ( String a, String b ) -> a.compareTo( b ) )"]},
+
+        {"kind":"then","text":"The resulting min value is the last item in the array:","code":["min == \"a0\""]},
+
+        {"kind":"when","text":"We now try to find the max value:","code":["var max = n.maxItem( ( String a, String b ) -> a.compareTo( b ) )"]},
+
+        {"kind":"then","text":"The max value is the last item in the array:","code":["max == \"a5\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

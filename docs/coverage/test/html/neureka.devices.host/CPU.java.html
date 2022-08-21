@@ -458,7 +458,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="fc bfc" id="L458" title="All 2 branches covered.">        } else if ( typeClass == I64.class ) {</span>
 <span class="pc bpc" id="L459" title="1 of 2 branches missed.">            if ( ( (long[]) value ).length == size ) return dataArray;</span>
 <span class="fc" id="L460">            newValue = new long[ size ];</span>
-<span class="fc bfc" id="L461" title="All 2 branches covered.">            if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );</span>
+<span class="pc bpc" id="L461" title="1 of 2 branches missed.">            if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );</span>
 <span class="fc bfc" id="L462" title="All 2 branches covered.">        } else if ( typeClass == Boolean.class ) {</span>
 <span class="pc bpc" id="L463" title="1 of 2 branches missed.">            if ( ( (boolean[]) value ).length == size ) return dataArray;</span>
 <span class="fc" id="L464">            newValue = new boolean[ size ];</span>
@@ -466,7 +466,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="fc bfc" id="L466" title="All 2 branches covered.">        } else if ( typeClass == Character.class ) {</span>
 <span class="pc bpc" id="L467" title="1 of 2 branches missed.">            if ( ( (char[]) value ).length == size ) return dataArray;</span>
 <span class="fc" id="L468">            newValue = new char[ size ];</span>
-<span class="fc bfc" id="L469" title="All 2 branches covered.">            if ( ( (char[]) value )[ 0 ] != (char) 0 ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );</span>
+<span class="pc bpc" id="L469" title="1 of 2 branches missed.">            if ( ( (char[]) value )[ 0 ] != (char) 0 ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );</span>
         } else {
 <span class="pc bpc" id="L471" title="1 of 2 branches missed.">            if ( ( (Object[]) value ).length == size ) return dataArray;</span>
 <span class="fc" id="L472">            newValue = new Object[ size ];</span>

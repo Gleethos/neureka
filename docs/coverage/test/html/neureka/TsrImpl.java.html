@@ -1090,7 +1090,7 @@ import java.util.stream.Collectors;
      *  {@inheritDoc}
      */
     @Override
-    public Object getItems() {
+    public Object getRawItems() {
 <span class="fc" id="L1094">        _guardGet(&quot;value object&quot;);</span>
 <span class="fc bfc" id="L1095" title="All 2 branches covered.">        if ( this.isOutsourced() ) {</span>
 <span class="fc" id="L1096">            Device&lt;V&gt; device = get( Device.class );</span>
@@ -1103,7 +1103,7 @@ import java.util.stream.Collectors;
         }
 <span class="fc bfc" id="L1104" title="All 2 branches covered.">        if ( this.isVirtual() )</span>
 <span class="fc" id="L1105">            return getDevice().access(this).actualize().get();</span>
-<span class="fc bfc" id="L1106" title="All 4 branches covered.">        else if ( this.getNDConf().isSimple() &amp;&amp; !this.isSlice() )</span>
+<span class="pc bpc" id="L1106" title="1 of 4 branches missed.">        else if ( this.getNDConf().isSimple() &amp;&amp; !this.isSlice() )</span>
 <span class="fc" id="L1107">            return getData();</span>
         else
 <span class="fc" id="L1109">            return this.deepCopy().getUnsafe().getData();</span>
