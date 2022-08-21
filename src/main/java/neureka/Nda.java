@@ -11,6 +11,7 @@ import neureka.ndim.NDimensional;
 import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -175,6 +176,28 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return The number of items in the nd-array that match the predicate.
      */
     default int count( Predicate<V> predicate ) { return (int) stream().filter(predicate).count(); }
+
+    /**
+     *  Reduces all the items in this nd-array to a single value
+     *  based on a provided {@link Comparator}.
+     *  The {@link Comparator} is used to determine the order of the items in the nd-array
+     *  and the reduction is performed in that order to find the minimum value.
+     *
+     * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
+     * @return The minimum value in the nd-array.
+     */
+    default V minItem( Comparator<V> comparator ) { return stream().min( comparator ).orElse(null); }
+
+    /**
+     * Reduces all the items in this nd-array to a single value
+     * based on a provided {@link Comparator}.
+     * The {@link Comparator} is used to determine the order of the items in the nd-array
+     * and the reduction is performed in that order to find the maximum value.
+     *
+     * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
+     * @return The maximum value in the nd-array.
+     */
+    default V maxItem( Comparator<V> comparator ) { return stream().max( comparator ).orElse(null); }
 
     /**
      *  This returns an unprocessed version of the underlying data of this nd-array.

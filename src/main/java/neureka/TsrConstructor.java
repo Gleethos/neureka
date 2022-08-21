@@ -119,41 +119,41 @@ final class TsrConstructor
     }
 
 
-    public boolean newPopulatedFromOne( Object data, Class<?> type ) {
-
+    public boolean newPopulatedFromOne( Object singleItem, Class<?> type )
+    {
         DataType<Object> dataType = (DataType<Object>) DataType.of( type );
         int size = _ndConstructor.getSize();
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
-        DataArray<?> array = _constructAllFromOne( _ndConstructor.getSize(), data, type );
+        DataArray<?> array = _constructAllFromOne( singleItem, _ndConstructor.getSize(), type );
         _API.setData( array );
         _API.setConf( _ndConstructor.produceNDC() );
-        return data != null;
+        return singleItem != null;
     }
 
-    private DataArray<?> _constructAllFromOne( int size, Object data, Class<?> type )
+    private DataArray<?> _constructAllFromOne( Object singleItem, int size, Class<?> type )
     {
-        if ( type == Double   .class ) { return _constructAll( size, data, type ); }
-        if ( type == Float    .class ) { return _constructAll( size, data, type ); }
-        if ( type == Integer  .class ) { return _constructAll( size, data, type ); }
-        if ( type == Short    .class ) { return _constructAll( size, data, type ); }
-        if ( type == Byte     .class ) { return _constructAll( size, data, type ); }
-        if ( type == Long     .class ) { return _constructAll( size, data, type ); }
-        if ( type == Boolean  .class ) { return _constructAll( size, data, type ); }
-        if ( type == Character.class ) { return _constructAll( size, data, type ); }
+        if ( type == Double   .class ) { return _constructAll( size, singleItem, type ); }
+        if ( type == Float    .class ) { return _constructAll( size, singleItem, type ); }
+        if ( type == Integer  .class ) { return _constructAll( size, singleItem, type ); }
+        if ( type == Short    .class ) { return _constructAll( size, singleItem, type ); }
+        if ( type == Byte     .class ) { return _constructAll( size, singleItem, type ); }
+        if ( type == Long     .class ) { return _constructAll( size, singleItem, type ); }
+        if ( type == Boolean  .class ) { return _constructAll( size, singleItem, type ); }
+        if ( type == Character.class ) { return _constructAll( size, singleItem, type ); }
         if ( Number.class.isAssignableFrom( type ) ) {
-            return _constructAll( size, ((Number)data).doubleValue(), Double.class );
+            return _constructAll( size, ((Number)singleItem).doubleValue(), Double.class );
         } else
             if ( !type.isArray() ) {
-            return _constructAll( size, data, type );
+            return _constructAll( size, singleItem, type );
         }
         return null;
     }
 
-    private DataArray<?> _constructAll( int size, Object value, Class<?> typeClass )
+    private DataArray<?> _constructAll( int size, Object singleItem, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
-        return _targetDevice.allocate( dataType, Math.min(size, 1), value );
+        return _targetDevice.allocate( dataType, Math.min(size, 1), singleItem );
     }
 
     public <V> void newSeeded( Class<V> valueType, Object seed )
@@ -196,21 +196,23 @@ final class TsrConstructor
             short[] shorts = new short[size];
             for( int i = 0; i < size; i++ ) shorts[ i ] = (Short) values[ i % values.length ];
             data = shorts;
-        } else if ( values.length != size ) {
+        }
+        else if ( values.length != size ) {
             Object[] objects = new Object[size];
             for( int i = 0; i < size; i++ ) objects[ i ] = values[ i % values.length ];
             data = objects;
-        } else if ( dataType == DataType.of(Boolean.class) ) {
+        }
+        else if ( dataType == DataType.of(Boolean.class) ) {
             boolean[] booleans = new boolean[size];
             for( int i = 0; i < size; i++ ) booleans[ i ] = (Boolean) values[ i % values.length ];
             data = booleans;
-        } else if ( dataType == DataType.of(Character.class) ) {
+        }
+        else if ( dataType == DataType.of(Character.class) ) {
             char[] chars = new char[size];
             for( int i = 0; i < size; i++ ) chars[ i ] = (Character) values[ i % values.length ];
             data = chars;
         }
         return data;
     }
-
 
 }

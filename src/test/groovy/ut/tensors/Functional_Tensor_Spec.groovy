@@ -65,7 +65,6 @@ class Functional_Tensor_Spec extends Specification
             t.toString() == "(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]"
     }
 
-
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'We can analyse the values of a tensor using various predicate receiving methods'(
             String device
@@ -147,6 +146,26 @@ class Functional_Tensor_Spec extends Specification
 
         where :
             device << ['CPU', 'GPU']
+    }
+
+    def 'We can find both min and max items in a tensor by providing a comparator.'()
+    {
+        given : 'We create a tensor of chars for which we want to find a min and max values:'
+            var t = Tsr.of(Character)
+                                .withShape(2, 13)
+                                .andWhere(( int i, int[] indices ) -> { (i+65) as char } )
+
+        when : 'We find the min value by passing a comparator (which takes 2 values and returns an int):'
+            var min = t.minItem( ( Character a, Character b ) -> a.compareTo( b ) )
+
+        then : 'The resulting min value is the last item in the tensor, the letter A:'
+            min == 'A'
+
+        when : 'We now try to find the max value:'
+            var max = t.maxItem( ( Character a, Character b ) -> a.compareTo( b ) )
+
+        then : 'The max value is the last item in the tensor, the letter Z:'
+            max == 'Z'
     }
 
 }
