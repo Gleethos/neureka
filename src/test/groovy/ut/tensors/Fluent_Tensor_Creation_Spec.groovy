@@ -25,7 +25,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
         and : '...also it will contain the expected data.'
             t.unsafe.data == data
             t.data.length == 1
-            t.items.length == 6
+            t.items.size() == 6
 
         and : 'The tensor will have the shape we passed to the builder.'
             t.shape() == [3, 2]

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -219,7 +220,11 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     V getDataAt( int i );
 
-    Object getItems();
+    default List<V> getItems() {
+        return stream().collect( Collectors.toList() );
+    }
+
+    Object getRawItems();
 
     /**
      *  An NDArray implementation ought to have some way to selectively modify its underlying value.
@@ -276,13 +281,12 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     }
 
     default <A> A getItemsAs( Class<A> arrayTypeClass ) {
-        return DataConverter.get().convert( getItems(), arrayTypeClass );
+        return DataConverter.get().convert( getRawItems(), arrayTypeClass );
     }
 
     default  <A> A getDataAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getData(), arrayTypeClass );
     }
-
 
     // Slicing:
 

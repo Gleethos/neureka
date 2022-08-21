@@ -104,16 +104,10 @@ class OpenCLDevice_Spec extends Specification
             t.dataType == DataType.of( Float.class )
 
         when : 'The tensor value is being fetched...'
-            def value = t.getItems()
+            def value = t.rawItems
 
         then : 'This value object is an instance of a "float[]" array because the device converted the value.'
             value instanceof float[]
-
-        //when : 'The tensor datatype is being change from double to float...'
-        //    t.to32()
-        //    data = t.getValue()
-        //then : 'The data that will be returned by the tensor is of type "float[]".'
-        //    value instanceof float[] // WIP!
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!

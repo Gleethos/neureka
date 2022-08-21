@@ -177,7 +177,7 @@ class Tensor_IO_Spec extends Specification
             x.setItems(value64)
 
         then : '...once again the tensor changes as expected.'
-            x.getItems() instanceof double[]
+            x.rawItems instanceof double[]
             x.unsafe.data instanceof double[]
             x.data instanceof double[]
             x.getItemsAs( float[].class )[ 0 ]==4.0f
@@ -197,7 +197,7 @@ class Tensor_IO_Spec extends Specification
             x.size()==1
 
         when : x.unsafe.toType( Float.class )
-        then : x.items instanceof float[]
+        then : x.rawItems instanceof float[]
 
         when :
             value64 = new double[1]
@@ -205,7 +205,7 @@ class Tensor_IO_Spec extends Specification
             x.setItems(value64)
 
         then :
-            !(x.getItems() instanceof double[])
+            !(x.rawItems instanceof double[])
             !(x.unsafe.data instanceof double[])
             !(x.data instanceof double[])
             x.getItemsAs( float[].class )[ 0 ]==7.0f
@@ -335,14 +335,14 @@ class Tensor_IO_Spec extends Specification
 
         when : x.unsafe.toType( Float.class )
         then :
-            x.getItems() instanceof float[]
+            x.rawItems instanceof float[]
             x.unsafe.data instanceof float[]
             x.data instanceof float[]
             x.getItemsAs( float[].class )[ 0 ]==3.0f
 
         when : x.unsafe.toType( Double.class )
         then :
-            x.getItems() instanceof double[]
+            x.rawItems instanceof double[]
             x.unsafe.data instanceof double[]
             x.data instanceof double[]
             x.getItemsAs( float[].class )[ 0 ]==3.0f

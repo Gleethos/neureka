@@ -1090,7 +1090,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Object getItems() {
+    public Object getRawItems() {
         _guardGet("value object");
         if ( this.isOutsourced() ) {
             Device<V> device = get( Device.class );

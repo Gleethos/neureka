@@ -419,7 +419,7 @@ Kotlin_Compatibility_Unit_Testing {
                         .andWhere { _, indices -> indices.sum()/2  }
 
         assert((0..5).all { (nda.data as IntArray)[it] == arrayOf(0,0,1,0,1,1)[it] })
-        assert((0..5).all { (nda.items as IntArray)[it] == arrayOf(0,0,1,0,1,1)[it] })
+        assert((0..5).all { (nda.rawItems as IntArray)[it] == arrayOf(0,0,1,0,1,1)[it] })
     }
 
 }
