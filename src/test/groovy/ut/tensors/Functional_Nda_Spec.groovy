@@ -3,11 +3,18 @@ package ut.tensors
 import neureka.Nda
 import neureka.Neureka
 import neureka.common.utility.SettingsLoader
-import neureka.devices.opencl.CLContext
 import neureka.view.NDPrintSettings
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Functional ND-Arrays")
+@Narrative('''
 
+    ND-Arrays expose a powerful API for performing operations on them
+    in a functional style.
+
+''')
 class Functional_Nda_Spec extends Specification
 {
     def setup() {
@@ -29,6 +36,19 @@ class Functional_Nda_Spec extends Specification
             it.hasSlimNumbers    = false
         })
     }
+
+
+    def 'We can initialize an ND-Array using a filler lambda mapping indices to items.'()
+    {
+        when : 'We instantiate the ND-Array using an initializer lambda which explains the indices of each item.'
+            var t = Nda.of(String).withShape(2, 3).andWhere(( int i, int[] indices ) -> { i + ':' + indices.toString() })
+
+        then : 'The ND-Array will have the expected items:'
+            t.items == ["0:[0, 0]", "1:[0, 1]", "2:[0, 2]", "3:[1, 0]", "4:[1, 1]", "5:[1, 2]"]
+        and : 'We can also recognise them when printed as string:'
+            t.toString() == "(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]"
+    }
+
 
     def 'We can find both min and max items in an ND-array by providing a comparator.'()
     {

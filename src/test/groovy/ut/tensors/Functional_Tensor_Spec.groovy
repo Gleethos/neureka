@@ -7,11 +7,20 @@ import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
+@Title("Functional Tensors")
+@Narrative('''
+
+    Tensors expose a powerful API for performing operations on them
+    in a functional style.
+
+''')
 class Functional_Tensor_Spec extends Specification
 {
     def setup() {
@@ -42,27 +51,17 @@ class Functional_Tensor_Spec extends Specification
             Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
     }
 
-    def 'Tensor initialization lambdas produce expected tensors.'()
+    def 'We can initialize a tensor using a filler lambda mapping indices to items.'()
     {
-        when : 'Instantiating a tensor using an initializer lambda...'
-            Tsr t = Tsr.of(
-                        DataType.of( Integer.class ),
-                        [ 2, 3 ],
-                        ( int i, int[] indices ) -> { i - 2 }
-                    )
+        when : 'We instantiate a tensor using an initializer lambda...'
+            Tsr<Integer> t = Tsr.of(
+                                    DataType.of( Integer.class ),
+                                    [ 2, 3 ],
+                                    ( int i, int[] indices ) -> { i - 2 }
+                                )
 
-        then : 'The tensor has been initialized with the expected values:'
+        then : 'It is initialized with the expected values:'
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
-
-        when :
-            t = Tsr.of(
-                    DataType.of( String.class ),
-                    [ 2, 3 ],
-                    ( int i, int[] indices ) -> { i + ':' + indices.toString() }
-                )
-
-        then :
-            t.toString() == "(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]"
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
@@ -137,7 +136,7 @@ class Functional_Tensor_Spec extends Specification
                                 .to(device)
 
         when : 'We map the tensor to a new tensor of the same type.'
-            var b = t.map((it) -> {it + 1})
+            var b = t.map( it -> it + 1 )
         then : 'The new tensor should have the same value as the original tensor.'
             b.toString() == "(1):[2.0]"
             b.itemType == Integer.class

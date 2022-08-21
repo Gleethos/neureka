@@ -178,21 +178,17 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     default int count( Predicate<V> predicate ) { return (int) stream().filter(predicate).count(); }
 
     /**
-     *  Reduces all the items in this nd-array to a single value
-     *  based on a provided {@link Comparator}.
-     *  The {@link Comparator} is used to determine the order of the items in the nd-array
-     *  and the reduction is performed in that order to find the minimum value.
-     *
+     * Returns the minimum item of this nd-array according to the provided
+     * {@link Comparator}.  This is a special case of a reduction.
+
      * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
      * @return The minimum value in the nd-array.
      */
     default V minItem( Comparator<V> comparator ) { return stream().min( comparator ).orElse(null); }
 
     /**
-     * Reduces all the items in this nd-array to a single value
-     * based on a provided {@link Comparator}.
-     * The {@link Comparator} is used to determine the order of the items in the nd-array
-     * and the reduction is performed in that order to find the maximum value.
+     * Returns the maximum item of this nd-array according to the provided
+     * {@link Comparator}.  This is a special case of a reduction.
      *
      * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
      * @return The maximum value in the nd-array.
@@ -213,8 +209,11 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     Object getData();
 
     /**
-     *  An NDArray implementation ought to have some way to access its underlying data array.
-     *  This method simple returns an element within this data array sitting at position "i".
+     *  Use this to access elements of the underlying data array without any index
+     *  transformation applied to it. This is usually similar to the {@link #getItemAt} method,
+     *  however for nd-arrays which are sliced or reshaped views of the data of another nd-array,
+     *  this method will always be unbiased access of the raw data...
+     *
      * @param i The position of the targeted item within the raw data array of an NDArray implementation.
      * @return The found object sitting at the specified index position.
      */
@@ -244,11 +243,11 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     Nda<V> setItems( Object value );
 
     /**
-     *  The following method returns a raw value item within this nd-array
-     *  targeted by a scalar index.
+     *  The following method returns a single item within this nd-array
+     *  targeted by the provided integer index.
      *
-     * @param i The scalar index of the value item which should be returned by the method.
-     * @return The value item found at the targeted index.
+     * @param i The scalar index of the item which should be returned by the method.
+     * @return The item found at the targeted index.
      */
     default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
 

@@ -1101,10 +1101,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                     return device.access( this.deepCopy().setIsVirtual( false ) ).readAll(false);
             }
         }
-        if ( this.isVirtual() ) {
-            if ( this.isOutsourced() ) return null;
-            else return getDevice().access(this).actualize().get();
-        }
+        if ( this.isVirtual() )
+            return getDevice().access(this).actualize().get();
         else if ( this.getNDConf().isSimple() && !this.isSlice() )
             return getData();
         else
