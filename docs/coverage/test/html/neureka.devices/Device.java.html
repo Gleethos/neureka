@@ -45,6 +45,7 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.common.composition.Component;
+import neureka.common.utility.LogUtil;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
@@ -77,7 +78,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static Optional&lt;Device&lt;Object&gt;&gt; find( String... searchKeys ) {
-<span class="fc" id="L80">        return Optional.ofNullable( Query.query( Device.class, searchKeys ) );</span>
+<span class="fc" id="L81">        return Optional.ofNullable( Query.query( Device.class, searchKeys ) );</span>
     }
 
     /**
@@ -91,7 +92,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static &lt;T, D extends Device&lt;T&gt;&gt; Optional&lt;D&gt; find( Class&lt;D&gt; deviceType, String... searchKeys ) {
-<span class="fc" id="L94">        return Optional.ofNullable( Query.query( deviceType, searchKeys ) );</span>
+<span class="fc" id="L95">        return Optional.ofNullable( Query.query( deviceType, searchKeys ) );</span>
     }
 
     /**
@@ -103,8 +104,8 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static Device&lt;Object&gt; any( String... searchKeys ) {
-<span class="fc" id="L106">        Device&lt;Object&gt; found = get( Device.class, searchKeys );</span>
-<span class="fc bfc" id="L107" title="All 2 branches covered.">        return ( found == null ? CPU.get() : found );</span>
+<span class="fc" id="L107">        Device&lt;Object&gt; found = get( Device.class, searchKeys );</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        return ( found == null ? CPU.get() : found );</span>
     }
 
     /**
@@ -116,7 +117,8 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return The found {@link Device} instance or simply {@code null} by default.
      */
     static Device&lt;Object&gt; get( String... searchKeys ) {
-<span class="fc" id="L119">        return get( Device.class, searchKeys );</span>
+<span class="fc" id="L120">        LogUtil.nullArgCheck( searchKeys, &quot;searchKeys&quot;, String.class );</span>
+<span class="fc" id="L121">        return get( Device.class, searchKeys );</span>
     }
 
     /**
@@ -129,7 +131,11 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @param &lt;D&gt; The device type parameter.
      * @return The found {@link Device} instance or null if nothing was found which matches the provided search hints well enough.
      */
-<span class="fc" id="L132">    static &lt;T, D extends Device&lt;T&gt;&gt; D get( Class&lt;D&gt; deviceType, String... searchKeys ) { return Query.query( deviceType, searchKeys ); }</span>
+    static &lt;T, D extends Device&lt;T&gt;&gt; D get( Class&lt;D&gt; deviceType, String... searchKeys ) {
+<span class="fc" id="L135">        LogUtil.nullArgCheck( deviceType, &quot;deviceType&quot;, Class.class );</span>
+<span class="fc" id="L136">        LogUtil.nullArgCheck( searchKeys, &quot;searchKeys&quot;, String.class );</span>
+<span class="fc" id="L137">        return Query.query( deviceType, searchKeys );</span>
+    }
 
     /**
      *  This method signals the device to get ready for garbage collection.
@@ -137,18 +143,6 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      *  One may also choose to do resource freeing manually.
      */
     void dispose();
-
-    /**
-     *  Implementations of this method ought to store the value
-     *  of the given tensor and the &quot;parent&quot; tensor in whatever
-     *  formant suites the underlying implementation and or final type.
-     *  {@link Device} implementations are also tensor storages
-     *  which may also have to store tensors which are slices of bigger tensors.   &lt;br&gt;&lt;br&gt;
-     *
-     * @param tensor The tensor whose data ought to be stored.
-     * @return A reference this object to allow for method chaining. (factory pattern)
-     */
-    &lt;T extends V&gt; Device&lt;V&gt; store( Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent );
 
     /**
      *  Use this to check if a tensor is stored on this {@link Device}!  &lt;br&gt;&lt;br&gt;
@@ -224,16 +218,19 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return An instance of the optimized function.
      */
     default Function optimizedFunctionOf( Function function, String name ) {
-<span class="fc" id="L227">        Operation optimizedOperation = optimizedOperationOf( function, name );</span>
-<span class="fc" id="L228">        BackendContext currentContext = Neureka.get().backend();</span>
-<span class="pc bpc" id="L229" title="1 of 2 branches missed.">        if ( !currentContext.hasOperation( optimizedOperation ) )</span>
-<span class="fc" id="L230">            currentContext.addOperation( optimizedOperation );</span>
+<span class="fc" id="L221">        LogUtil.nullArgCheck( function, &quot;function&quot;, Function.class );</span>
+<span class="fc" id="L222">        LogUtil.nullArgCheck( name, &quot;name&quot;, String.class );</span>
 
-<span class="fc" id="L232">        return new FunctionParser( currentContext )</span>
-<span class="fc" id="L233">                            .parse(</span>
-                                    optimizedOperation,
-<span class="fc" id="L235">                                    function.numberOfArgs(),</span>
-<span class="fc" id="L236">                                    function.isDoingAD()</span>
+<span class="fc" id="L224">        Operation optimizedOperation = optimizedOperationOf( function, name );</span>
+<span class="fc" id="L225">        BackendContext currentContext = Neureka.get().backend();</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        if ( !currentContext.hasOperation( optimizedOperation ) )</span>
+<span class="fc" id="L227">            currentContext.addOperation( optimizedOperation );</span>
+
+<span class="fc" id="L229">        return new FunctionParser( currentContext )</span>
+<span class="fc" id="L230">                            .parse(</span>
+                                optimizedOperation,
+<span class="fc" id="L232">                                function.numberOfArgs(),</span>
+<span class="fc" id="L233">                                function.isDoingAD()</span>
                             );
     }
 
@@ -252,21 +249,23 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      *         tensors back to their original devices!
      */
     default In borrow( Tsr&lt;V&gt; first, Tsr&lt;V&gt;... rest ) {
-<span class="fc" id="L255">        List&lt;Tsr&lt;V&gt;&gt; tensors = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L256" title="1 of 2 branches missed.">        if ( first != null ) tensors.add( first );</span>
-<span class="fc bfc" id="L257" title="All 2 branches covered.">        if ( rest.length &gt; 0 )</span>
-<span class="fc" id="L258">            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );</span>
-<span class="fc" id="L259">        Device&lt;?&gt; thisDevice = this;</span>
-<span class="fc" id="L260">        return new In() {</span>
+<span class="fc" id="L252">        LogUtil.nullArgCheck( first, &quot;first&quot;, Tsr.class );</span>
+<span class="fc" id="L253">        LogUtil.nullArgCheck( rest, &quot;rest&quot;, Tsr[].class );</span>
+<span class="fc" id="L254">        List&lt;Tsr&lt;V&gt;&gt; tensors = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">        if ( first != null ) tensors.add( first );</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        if ( rest.length &gt; 0 )</span>
+<span class="fc" id="L257">            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );</span>
+<span class="fc" id="L258">        Device&lt;?&gt; thisDevice = this;</span>
+<span class="fc" id="L259">        return new In() {</span>
             @Override
             public &lt;R&gt; R in( Supplier&lt;R&gt; lambda ) {
-<span class="fc" id="L263">                List&lt;Device&lt;?&gt;&gt; devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );</span>
-<span class="fc bfc" id="L264" title="All 2 branches covered.">                for ( Tsr&lt;V&gt; t : tensors ) t.to( thisDevice );</span>
-<span class="fc" id="L265">                R result = lambda.get();</span>
-<span class="fc bfc" id="L266" title="All 2 branches covered.">                for ( int i = 0; i &lt; tensors.size(); i++ ) {</span>
-<span class="pc bpc" id="L267" title="1 of 2 branches missed.">                    if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );</span>
+<span class="fc" id="L262">                List&lt;Device&lt;?&gt;&gt; devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">                for ( Tsr&lt;V&gt; t : tensors ) t.to( thisDevice );</span>
+<span class="fc" id="L264">                R result = lambda.get();</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">                for ( int i = 0; i &lt; tensors.size(); i++ ) {</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">                    if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );</span>
                 }
-<span class="fc" id="L269">                return result;</span>
+<span class="fc" id="L268">                return result;</span>
             }
         };
     }
@@ -287,22 +286,14 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
         &lt;R&gt; R in( Supplier&lt;R&gt; lambda );
     }
 
-    /**
-     *  Implementations of this represent the access to tensors stored on a device
-     *  in order to read from or write to said tensor. &lt;br&gt;
-     *  &lt;b&gt;Warning: This API exposes the true underlying data of a tensor
-     *  which does not take into account slice, reshape or stride information...&lt;/b&gt;
-     *
-     * @param &lt;V&gt; The type parameter of the tensor accessed by an instance of this.
-     */
-    interface Access&lt;V&gt;
+    interface Data&lt;V&gt;
     {
         /**
          *  Use this to write a single scalar item into the accessed tensor at
          *  one or more positions within the tensor.
          *
          * @param item The item which should be written to the tensor.
-         * @return A {@link Writer} implementation which expects the type of writing to be specified.
+         * @return A {@link Device.Writer} implementation which expects the type of writing to be specified.
          */
         Writer write( V item );
         /**
@@ -310,7 +301,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
          *
          * @param array The data array whose data should be britten from.
          * @param offset The start index offset within the provided data array.
-         * @return A {@link Writer} implementation which expects the type of writing to be specified.
+         * @return A {@link Device.Writer} implementation which expects the type of writing to be specified.
          */
         Writer writeFrom( Object array, int offset );
         /**
@@ -319,7 +310,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
          *
          * @param array The data inn the form of a primitive array.
          */
-<span class="fc" id="L322">        default void writeFrom( Object array ) { this.writeFrom( array, 0 ).fully(); }</span>
+<span class="fc" id="L313">        default void writeFrom( Object array ) { this.writeFrom( array, 0 ).fully(); }</span>
         /**
          *  Find a particular tensor item by providing its location.
          *
@@ -349,6 +340,20 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
          * @return The size of the underlying data array of the accessed tensor.
          */
         int getDataSize();
+
+    }
+
+
+    /**
+     *  Implementations of this represent the access to tensors stored on a device
+     *  in order to read from or write to said tensor. &lt;br&gt;
+     *  &lt;b&gt;Warning: This API exposes the true underlying data of a tensor
+     *  which does not take into account slice, reshape or stride information...&lt;/b&gt;
+     *
+     * @param &lt;V&gt; The type parameter of the tensor accessed by an instance of this.
+     */
+    interface Access&lt;V&gt; extends Data&lt;V&gt;
+    {
         /**
          *  Use this to perform some custom memory cleanup for when the accessed {@link Tsr} gets garbage collected.   &lt;br&gt;&lt;br&gt;
          *
@@ -378,7 +383,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
          *
          * @param index The position at which data should be written to.
          */
-<span class="fc" id="L381">        default void at( int index ) { intoRange( index, index + 1 ); }</span>
+<span class="fc" id="L386">        default void at( int index ) { intoRange( index, index + 1 ); }</span>
         /**
          *  Writes whatever kind of data was previously specified, to the tensors'
          *  data into the range targeted by the provided {@code start} and {@code limit}.

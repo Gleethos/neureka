@@ -31,7 +31,7 @@ public interface NDConstructor {
     {
 <span class="fc" id="L32">        return new NDConstructor() {</span>
 <span class="nc" id="L33">            @Override public int getSize() { return ndc.size(); }</span>
-<span class="fc" id="L34">            @Override public int[] getShape() { return ndc.shape(); }</span>
+<span class="nc" id="L34">            @Override public int[] getShape() { return ndc.shape(); }</span>
             @Override public NDConfiguration produceNDC(boolean makeVirtual) {
 <span class="fc" id="L36">                return ndc;//makeVirtual ? of(ndc.shape()).produceNDC(true) : ndc;</span>
             }

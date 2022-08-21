@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"4.341 seconds"
+    "duration":"28.781 seconds"
   },
   "headers":["\n            <h2> OpenCLDevice Integration Tests </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An OpenCLDevice loads tensors in a provided lambda temporarily.",
       "result":"PASS",
-      "duration":"0.020 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -41,7 +41,7 @@
     {
       "id":"The \"getValue()\" method of an outsourced tensor will return the expected array type.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
 
         {"kind":"then","text":"The data type of the tensor is being converted to single precision.","code":["t.dataType == DataType.of( Float.class )"]},
 
-        {"kind":"when","text":"The tensor value is being fetched...","code":["def value = t.getItems()"]},
+        {"kind":"when","text":"The tensor value is being fetched...","code":["def value = t.rawItems"]},
 
         {"kind":"then","text":"This value object is an instance of a \"float[]\" array because the device converted the value.","code":["value instanceof float[]"]}
       ],
@@ -64,7 +64,7 @@
     {
       "id":"The \"getData()\" method of an outsourced tensor will return null when outsourced.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,7 +85,7 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"0.119 seconds",
+      "duration":"0.047 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"0.626 seconds",
+      "duration":"0.120 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +137,7 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"0.404 seconds",
+      "duration":"27.954 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -164,7 +164,7 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"0.925 seconds",
+      "duration":"0.276 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -191,7 +191,7 @@
     {
       "id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.",
       "result":"PASS",
-      "duration":"2.204 seconds",
+      "duration":"0.308 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

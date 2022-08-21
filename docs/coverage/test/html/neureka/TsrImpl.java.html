@@ -161,10 +161,9 @@ import java.util.stream.Collectors;
 <span class="fc" id="L161">            t.constructFor(CPU.get(), NDConstructor.of(new int[]{args.length}))</span>
 <span class="fc" id="L162">                .tryConstructing(</span>
 <span class="fc" id="L163">                    DataType.of(commonType),</span>
-                    args,
-                    false
+                    args
                 );
-<span class="fc" id="L167">            return t;</span>
+<span class="fc" id="L166">            return t;</span>
         }
 
         /* EXPRESSION BASED CONSTRUCTION:
@@ -174,30 +173,30 @@ import java.util.stream.Collectors;
 
                 Tsr&lt;?&gt; t = Tsr.of( &quot;tanh(&quot;, x, &quot;) * 7 **&quot;, y );
         */
-<span class="fc" id="L177">        boolean containsString = false;</span>
-<span class="fc" id="L178">        int numberOfTensors = 0;</span>
-<span class="fc bfc" id="L179" title="All 2 branches covered.">        for ( Object o : args ) {</span>
-<span class="fc bfc" id="L180" title="All 4 branches covered.">            containsString = ( o instanceof String ) || containsString;</span>
-<span class="fc bfc" id="L181" title="All 2 branches covered.">            if ( o instanceof TsrImpl)</span>
-<span class="fc" id="L182">                numberOfTensors++;</span>
+<span class="fc" id="L176">        boolean containsString = false;</span>
+<span class="fc" id="L177">        int numberOfTensors = 0;</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        for ( Object o : args ) {</span>
+<span class="fc bfc" id="L179" title="All 4 branches covered.">            containsString = ( o instanceof String ) || containsString;</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">            if ( o instanceof TsrImpl)</span>
+<span class="fc" id="L181">                numberOfTensors++;</span>
         }
-<span class="fc" id="L184">        TsrImpl&lt;T&gt;[] tensors = new TsrImpl[ numberOfTensors ];</span>
-<span class="fc" id="L185">        StringBuilder f = new StringBuilder();</span>
-<span class="fc" id="L186">        int ti = 0;</span>
-<span class="fc bfc" id="L187" title="All 2 branches covered.">        for ( Object o : args ) {</span>
-<span class="fc bfc" id="L188" title="All 2 branches covered.">            if ( o instanceof TsrImpl) {</span>
-<span class="fc" id="L189">                tensors[ ti ] = ( (TsrImpl&lt;T&gt;) o );</span>
-<span class="fc" id="L190">                f.append( &quot;I[&quot; ).append( ti ).append( &quot;]&quot; );</span>
-<span class="fc" id="L191">                ti++;</span>
+<span class="fc" id="L183">        TsrImpl&lt;T&gt;[] tensors = new TsrImpl[ numberOfTensors ];</span>
+<span class="fc" id="L184">        StringBuilder f = new StringBuilder();</span>
+<span class="fc" id="L185">        int ti = 0;</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        for ( Object o : args ) {</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">            if ( o instanceof TsrImpl) {</span>
+<span class="fc" id="L188">                tensors[ ti ] = ( (TsrImpl&lt;T&gt;) o );</span>
+<span class="fc" id="L189">                f.append( &quot;I[&quot; ).append( ti ).append( &quot;]&quot; );</span>
+<span class="fc" id="L190">                ti++;</span>
             }
-<span class="pc bpc" id="L193" title="1 of 2 branches missed.">            else if ( o instanceof String ) f.append( (String) o );</span>
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">            else if ( o instanceof String ) f.append( (String) o );</span>
             else
-<span class="nc" id="L195">                _LOG.debug(</span>
-<span class="nc" id="L196">                    &quot;Unexpected tensor construction argument of type '&quot;+o.getClass().getSimpleName()+&quot;'&quot;</span>
+<span class="nc" id="L194">                _LOG.debug(</span>
+<span class="nc" id="L195">                    &quot;Unexpected tensor construction argument of type '&quot;+o.getClass().getSimpleName()+&quot;'&quot;</span>
                 );
         }
-<span class="pc bpc" id="L199" title="2 of 4 branches missed.">        if ( tensors.length == 0 || tensors[0] == null) return new TsrImpl&lt;&gt;();</span>
-<span class="fc" id="L200">        return Function.of( f.toString(), true ).call( tensors );</span>
+<span class="pc bpc" id="L198" title="2 of 4 branches missed.">        if ( tensors.length == 0 || tensors[0] == null) return new TsrImpl&lt;&gt;();</span>
+<span class="fc" id="L199">        return Function.of( f.toString(), true ).call( tensors );</span>
     }
 
     /**
@@ -205,12 +204,12 @@ import java.util.stream.Collectors;
      * @return A common type or null if they are not all of the same type.
      */
     private static Class&lt;?&gt; _extractCommonType( Object... args ) {
-<span class="fc" id="L208">        Class&lt;?&gt; commonType = null;</span>
-<span class="fc bfc" id="L209" title="All 2 branches covered.">        for ( Object o : args ) {</span>
-<span class="fc bfc" id="L210" title="All 2 branches covered.">            if ( commonType == null ) commonType = o.getClass();</span>
-<span class="fc bfc" id="L211" title="All 2 branches covered.">            else if ( !commonType.equals( o.getClass() ) ) return null;</span>
+<span class="fc" id="L207">        Class&lt;?&gt; commonType = null;</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        for ( Object o : args ) {</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            if ( commonType == null ) commonType = o.getClass();</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            else if ( !commonType.equals( o.getClass() ) ) return null;</span>
         }
-<span class="fc" id="L213">        return commonType;</span>
+<span class="fc" id="L212">        return commonType;</span>
     }
 
     // Constructors:
@@ -224,30 +223,34 @@ import java.util.stream.Collectors;
      *  second parameter into this {@link Tsr} instance.
      *  This constructor will be called by the {@link Tsr#newInstance()} factory method.
      */
-<span class="fc" id="L227">    TsrImpl() {}</span>
+<span class="fc" id="L226">    TsrImpl() {}</span>
 
-<span class="fc" id="L229">    TsrImpl( NDConstructor ndConstructor, DataType&lt;?&gt; dataType, Object data, boolean trusted ) {</span>
-<span class="fc" id="L230">        constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data, trusted );</span>
-<span class="fc" id="L231">    }</span>
+<span class="fc" id="L228">    TsrImpl( NDConstructor ndConstructor, DataType&lt;?&gt; dataType, Object data ) {</span>
+<span class="fc" id="L229">        constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data );</span>
+<span class="fc" id="L230">    }</span>
+
+<span class="fc" id="L232">    TsrImpl( NDConstructor ndConstructor, DataType&lt;?&gt; dataType, DataArray data ) {</span>
+<span class="fc" id="L233">        constructFor(CPU.get(), ndConstructor).constructTrusted( dataType, data );</span>
+<span class="fc" id="L234">    }</span>
 
     /**
      *  see {@link Tsr#of(DataType, int[], Filler)}
      */
-<span class="fc" id="L236">    &lt;T&gt; TsrImpl( NDConstructor ndConstructor, DataType&lt;T&gt; type, Filler&lt;T&gt; filler ) {</span>
-<span class="fc" id="L237">        _constructFromInitializer(ndConstructor, type, filler);</span>
-<span class="fc" id="L238">    }</span>
+<span class="fc" id="L239">    &lt;T&gt; TsrImpl( NDConstructor ndConstructor, DataType&lt;T&gt; type, Filler&lt;T&gt; filler ) {</span>
+<span class="fc" id="L240">        _constructFromInitializer(ndConstructor, type, filler);</span>
+<span class="fc" id="L241">    }</span>
 
     /**
      *  See {@link Tsr#of(Class, int[], String)} and {@link #of(List, String)}
      */
-<span class="fc" id="L243">    TsrImpl( Class&lt;V&gt; valueType, NDConstructor ndConstructor, String seed ) {</span>
-<span class="fc" id="L244">        constructFor(CPU.get(), ndConstructor).newSeeded( valueType, seed );</span>
-<span class="fc" id="L245">    }</span>
+<span class="fc" id="L246">    TsrImpl( Class&lt;V&gt; valueType, NDConstructor ndConstructor, String seed ) {</span>
+<span class="fc" id="L247">        constructFor(CPU.get(), ndConstructor).newSeeded( valueType, seed );</span>
+<span class="fc" id="L248">    }</span>
 
-<span class="fc" id="L247">    TsrImpl( NDConstructor ndConstructor, DataType&lt;?&gt; type ) {</span>
-<span class="fc" id="L248">        _setDataType( DataType.of( type.getRepresentativeType() ) );</span>
-<span class="fc" id="L249">        _constructAndAllocate(ndConstructor, true );</span>
-<span class="fc" id="L250">    }</span>
+<span class="fc" id="L250">    TsrImpl( NDConstructor ndConstructor, DataType&lt;?&gt; type ) {</span>
+<span class="fc" id="L251">        _setDataType( DataType.of( type.getRepresentativeType() ) );</span>
+<span class="fc" id="L252">        _constructAndAllocate(ndConstructor, true );</span>
+<span class="fc" id="L253">    }</span>
 
 
     /**
@@ -257,17 +260,17 @@ import java.util.stream.Collectors;
      * @param &lt;T&gt; The type parameter for the actual data array items.
      */
     private &lt;T&gt; void _constructFromInitializer(NDConstructor ndConstructor, DataType&lt;T&gt; type, Filler&lt;T&gt; filler ) {
-<span class="fc" id="L260">        LogUtil.nullArgCheck(ndConstructor, &quot;ndcProducer&quot;, NDConstructor.class );</span>
-<span class="fc" id="L261">        LogUtil.nullArgCheck( type, &quot;type&quot;, DataType.class );</span>
-<span class="fc" id="L262">        LogUtil.nullArgCheck( type, &quot;filler&quot;, Filler.class );</span>
-<span class="fc" id="L263">        _setDataType( type );</span>
-<span class="fc" id="L264">        _constructAndAllocate(ndConstructor, false );</span>
-<span class="fc" id="L265">        _initData(filler);</span>
-<span class="fc" id="L266">    }</span>
+<span class="fc" id="L263">        LogUtil.nullArgCheck(ndConstructor, &quot;ndcProducer&quot;, NDConstructor.class );</span>
+<span class="fc" id="L264">        LogUtil.nullArgCheck( type, &quot;type&quot;, DataType.class );</span>
+<span class="fc" id="L265">        LogUtil.nullArgCheck( type, &quot;filler&quot;, Filler.class );</span>
+<span class="fc" id="L266">        _setDataType( type );</span>
+<span class="fc" id="L267">        _constructAndAllocate(ndConstructor, false );</span>
+<span class="fc" id="L268">        _initData(filler);</span>
+<span class="fc" id="L269">    }</span>
 
     private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual ) {
-<span class="fc" id="L269">        constructFor(CPU.get(), ndConstructor).newUnpopulated( virtual, true, getDataType() );</span>
-<span class="fc" id="L270">    }</span>
+<span class="fc" id="L272">        constructFor(CPU.get(), ndConstructor).newUnpopulated( virtual, true, getDataType() );</span>
+<span class="fc" id="L273">    }</span>
 
     /*==================================================================================================================
     |
@@ -280,40 +283,40 @@ import java.util.stream.Collectors;
      */
     @Override
     public Tsr&lt;V&gt; setRqsGradient(boolean rqsGradient ) {
-<span class="fc bfc" id="L283" title="All 2 branches covered.">        if ( rqsGradient() != rqsGradient ) {</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">            if ( !rqsGradient ) this.remove( TsrImpl.class );</span>
-<span class="fc bfc" id="L285" title="All 2 branches covered.">            else if ( has(GraphNode.class) ) {</span>
-<span class="pc bpc" id="L286" title="1 of 2 branches missed.">                if ( getGraphNode().getMode() == 0 )</span>
-<span class="fc" id="L287">                    remove(GraphNode.class);</span>
+<span class="fc bfc" id="L286" title="All 2 branches covered.">        if ( rqsGradient() != rqsGradient ) {</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">            if ( !rqsGradient ) this.remove( TsrImpl.class );</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">            else if ( has(GraphNode.class) ) {</span>
+<span class="pc bpc" id="L289" title="1 of 2 branches missed.">                if ( getGraphNode().getMode() == 0 )</span>
+<span class="fc" id="L290">                    remove(GraphNode.class);</span>
                 else
-<span class="nc" id="L289">                    throw new IllegalArgumentException(</span>
+<span class="nc" id="L292">                    throw new IllegalArgumentException(</span>
                         &quot;This tensor is already part of a gradient dependent graph as &quot; +
                         &quot;branch node and therefore cannot be removed from it.&quot;
                     );
             }
         }
-<span class="fc" id="L295">        _setRqsGradient( rqsGradient );</span>
-<span class="fc" id="L296">        return this;</span>
+<span class="fc" id="L298">        _setRqsGradient( rqsGradient );</span>
+<span class="fc" id="L299">        return this;</span>
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-<span class="fc bfc" id="L303" title="All 2 branches covered.">    public boolean rqsGradient() { return ( _flags &amp; RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK; }</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">    public boolean rqsGradient() { return ( _flags &amp; RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK; }</span>
 
     private void _setRqsGradient(boolean rqsGradient) {
-<span class="fc bfc" id="L306" title="All 2 branches covered.">        if ( rqsGradient() != rqsGradient ) {</span>
-<span class="fc bfc" id="L307" title="All 2 branches covered.">            if ( rqsGradient ) _flags += RQS_GRADIENT_MASK;</span>
-<span class="fc" id="L308">            else               _flags -= RQS_GRADIENT_MASK;</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">        if ( rqsGradient() != rqsGradient ) {</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">            if ( rqsGradient ) _flags += RQS_GRADIENT_MASK;</span>
+<span class="fc" id="L311">            else               _flags -= RQS_GRADIENT_MASK;</span>
         }
-<span class="fc" id="L310">    }</span>
+<span class="fc" id="L313">    }</span>
 
     /**
      *  {@inheritDoc}
      */
     @Override
-<span class="fc bfc" id="L316" title="All 2 branches covered.">    public boolean isIntermediate() { return ( _flags &amp; IS_INTERMEDIATE_MASK ) == IS_INTERMEDIATE_MASK; }</span>
+<span class="fc bfc" id="L319" title="All 2 branches covered.">    public boolean isIntermediate() { return ( _flags &amp; IS_INTERMEDIATE_MASK ) == IS_INTERMEDIATE_MASK; }</span>
 
     /**
      *  Intermediate tensors are internal non-user tensors which may be eligible
@@ -324,64 +327,18 @@ import java.util.stream.Collectors;
      *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
      */
     private Tsr&lt;V&gt; _setIsIntermediate(boolean isIntermediate) {
-<span class="fc bfc" id="L327" title="All 2 branches covered.">        if ( isIntermediate() != isIntermediate ) {</span>
-<span class="fc bfc" id="L328" title="All 2 branches covered.">            if ( isIntermediate ) _flags += IS_INTERMEDIATE_MASK;</span>
-<span class="fc" id="L329">            else                  _flags -= IS_INTERMEDIATE_MASK;</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">        if ( isIntermediate() != isIntermediate ) {</span>
+<span class="fc bfc" id="L331" title="All 2 branches covered.">            if ( isIntermediate ) _flags += IS_INTERMEDIATE_MASK;</span>
+<span class="fc" id="L332">            else                  _flags -= IS_INTERMEDIATE_MASK;</span>
         }
-<span class="fc" id="L331">        return this;</span>
+<span class="fc" id="L334">        return this;</span>
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public Tsr&lt;V&gt; setIsOutsourced( boolean isOutsourced ) {
-<span class="pc bpc" id="L339" title="2 of 4 branches missed.">        if ( !isOutsourced &amp;&amp; !forComponent(</span>
-                Device.class,
-                device -&gt; {
-                    try {
-<span class="pc bpc" id="L343" title="1 of 2 branches missed.">                        if ( device.has( this ) ) device.restore( this );</span>
-<span class="nc" id="L344">                    } catch ( Exception exception ) {</span>
-<span class="nc" id="L345">                        _LOG.error(</span>
-                            &quot;Tensor could not be restored from device component when trying to migrate it back to RAM.&quot;,
-                            exception
-                        );
-<span class="nc" id="L349">                        throw exception;</span>
-<span class="fc" id="L350">                    }</span>
-<span class="fc" id="L351">                    this.remove( Device.class );</span>
-<span class="fc" id="L352">                    forComponent(</span>
-                        TsrImpl.class,
-                        gradient -&gt;
-<span class="fc" id="L355">                            ( (TsrImpl&lt;V&gt;) gradient ).forComponent(</span>
-                                Device.class,
-                                gradDevice -&gt; {
-                                    try {
-<span class="pc bpc" id="L359" title="1 of 2 branches missed.">                                        if ( gradDevice.has( gradient ) ) gradDevice.restore( gradient );</span>
-                                    }
-<span class="nc" id="L361">                                    catch ( Exception exception ) {</span>
-<span class="nc" id="L362">                                        _LOG.error(</span>
-                                            &quot;Gradient could not be restored from device component when trying to migrate it back to RAM.&quot;,
-                                            exception
-                                        );
-<span class="nc" id="L366">                                        throw exception;</span>
-<span class="fc" id="L367">                                    }</span>
-<span class="fc" id="L368">                                    gradient.remove( Device.class );</span>
-<span class="fc" id="L369">                                })</span>
-                    );
-<span class="fc" id="L371">                }</span>
-            )
-        ) {
-<span class="nc" id="L374">            _setIsVirtual( true );</span>
-<span class="nc" id="L375">            _allocate( 1 ); // Only a single value representing the rest.</span>
-        }
-<span class="fc" id="L377">        return this;</span>
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-<span class="fc bfc" id="L384" title="All 2 branches covered.">    public boolean isVirtual() { return ( _flags &amp; IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK; }</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">    public boolean isVirtual() { return ( _flags &amp; IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK; }</span>
 
     /**
      *  {@inheritDoc}
@@ -389,54 +346,54 @@ import java.util.stream.Collectors;
     @Override
     public Tsr&lt;V&gt; setIsVirtual( boolean isVirtual ) {
 
-<span class="pc bpc" id="L392" title="2 of 4 branches missed.">        assert getNDConf() != null;</span>
+<span class="pc bpc" id="L349" title="2 of 4 branches missed.">        assert getNDConf() != null;</span>
 
-<span class="fc bfc" id="L394" title="All 2 branches covered.">        if ( isVirtual() != isVirtual ) {</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        if ( isVirtual() != isVirtual ) {</span>
             // Currently, we avoid offloading the virtualization by restoring outsourced tensors into RAM...
-<span class="fc" id="L396">            Device&lt;V&gt; device = this.get( Device.class );</span>
+<span class="fc" id="L353">            Device&lt;V&gt; device = this.get( Device.class );</span>
             try {
                 // TODO: Fix this im-performant mess below:
-<span class="fc bfc" id="L399" title="All 2 branches covered.">                if ( device != null ) device.restore( this );</span>
-<span class="nc" id="L400">            } catch ( Exception exception ) {</span>
-<span class="nc" id="L401">                _LOG.error(</span>
+<span class="fc bfc" id="L356" title="All 2 branches covered.">                if ( device != null ) device.restore( this );</span>
+<span class="nc" id="L357">            } catch ( Exception exception ) {</span>
+<span class="nc" id="L358">                _LOG.error(</span>
                     &quot;Tensor could not be restored from device component when changing flag 'isVirtual' to &quot; + isVirtual + &quot;.&quot;,
                     exception
                 );
-<span class="nc" id="L405">                throw exception;</span>
-<span class="fc" id="L406">            }</span>
-<span class="fc bfc" id="L407" title="All 2 branches covered.">            if ( isVirtual )</span>
-<span class="fc" id="L408">                _virtualize();</span>
+<span class="nc" id="L362">                throw exception;</span>
+<span class="fc" id="L363">            }</span>
+<span class="fc bfc" id="L364" title="All 2 branches covered.">            if ( isVirtual )</span>
+<span class="fc" id="L365">                _virtualize();</span>
             else
-<span class="fc" id="L410">                _actualize();</span>
+<span class="fc" id="L367">                _actualize();</span>
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-<span class="fc" id="L413">            constructFor(CPU.get(),NDConstructor.of(getNDConf().shape())).newUnpopulated( isVirtual, false, getDataType() );</span>
-<span class="fc bfc" id="L414" title="All 2 branches covered.">            if ( isVirtual ) {</span>
-<span class="fc" id="L415">                Relation&lt;V&gt; relation = get( Relation.class );</span>
-<span class="pc bpc" id="L416" title="1 of 2 branches missed.">                if ( relation!=null )</span>
-<span class="nc" id="L417">                    relation.foreachChild( c -&gt; {</span>
-<span class="nc" id="L418">                                ((TsrImpl&lt;?&gt;)c)._setData( _getData());</span>
-<span class="nc" id="L419">                                c.setIsVirtual( true );</span>
-<span class="nc" id="L420">                            });</span>
-<span class="fc" id="L421">            } else {</span>
-<span class="pc bpc" id="L422" title="1 of 2 branches missed.">                Tsr&lt;?&gt; parentTensor = ( this.isSlice() ) ? get(Relation.class).getParent() : null;</span>
-<span class="pc bpc" id="L423" title="1 of 2 branches missed.">                if ( parentTensor != null ) parentTensor.get( Relation.class ).remove( this );</span>
+<span class="fc" id="L370">            constructFor(CPU.get(),NDConstructor.of(getNDConf().shape())).newUnpopulated( isVirtual, false, getDataType() );</span>
+<span class="fc bfc" id="L371" title="All 2 branches covered.">            if ( isVirtual ) {</span>
+<span class="fc" id="L372">                Relation&lt;V&gt; relation = get( Relation.class );</span>
+<span class="pc bpc" id="L373" title="1 of 2 branches missed.">                if ( relation!=null )</span>
+<span class="nc" id="L374">                    relation.foreachChild( c -&gt; {</span>
+<span class="nc" id="L375">                                ((TsrImpl&lt;?&gt;)c)._setData( _getData());</span>
+<span class="nc" id="L376">                                c.setIsVirtual( true );</span>
+<span class="nc" id="L377">                            });</span>
+<span class="fc" id="L378">            } else {</span>
+<span class="pc bpc" id="L379" title="1 of 2 branches missed.">                Tsr&lt;?&gt; parentTensor = ( this.isSlice() ) ? get(Relation.class).getParent() : null;</span>
+<span class="pc bpc" id="L380" title="1 of 2 branches missed.">                if ( parentTensor != null ) parentTensor.get( Relation.class ).remove( this );</span>
             }
 
             try {
-<span class="fc bfc" id="L427" title="All 2 branches covered.">                if ( device != null ) device.store( this );</span>
-<span class="nc" id="L428">            } catch ( Exception exception ) {</span>
-<span class="nc" id="L429">                String message =</span>
+<span class="fc bfc" id="L384" title="All 2 branches covered.">                if ( device != null ) device.store( this );</span>
+<span class="nc" id="L385">            } catch ( Exception exception ) {</span>
+<span class="nc" id="L386">                String message =</span>
                         &quot;Tensor could not be migrated back to host device after changing flag 'isVirtual' to &quot;+isVirtual+&quot;.&quot;;
-<span class="nc" id="L431">                _LOG.error(</span>
+<span class="nc" id="L388">                _LOG.error(</span>
                         message,
                         exception
                 );
-<span class="nc" id="L435">                throw new IllegalStateException( message );</span>
-<span class="fc" id="L436">            }</span>
-<span class="fc" id="L437">        }</span>
-<span class="pc bpc" id="L438" title="1 of 2 branches missed.">        else if ( isVirtual ) _allocate( 1 ); //&gt; Only a single value representing the rest.</span>
-<span class="fc" id="L439">        return this;</span>
+<span class="nc" id="L392">                throw new IllegalStateException( message );</span>
+<span class="fc" id="L393">            }</span>
+<span class="fc" id="L394">        }</span>
+<span class="pc bpc" id="L395" title="1 of 2 branches missed.">        else if ( isVirtual ) _allocate( 1 ); //&gt; Only a single value representing the rest.</span>
+<span class="fc" id="L396">        return this;</span>
     }
 
     /**
@@ -447,40 +404,40 @@ import java.util.stream.Collectors;
      */
     @Override
     protected void _setIsVirtual( boolean isVirtual ) {
-<span class="fc bfc" id="L450" title="All 2 branches covered.">        if ( isVirtual() != isVirtual ) {</span>
-<span class="fc bfc" id="L451" title="All 2 branches covered.">            if ( isVirtual ) _flags += IS_VIRTUAL_MASK;</span>
-<span class="fc" id="L452">            else             _flags -= IS_VIRTUAL_MASK;</span>
+<span class="fc bfc" id="L407" title="All 2 branches covered.">        if ( isVirtual() != isVirtual ) {</span>
+<span class="fc bfc" id="L408" title="All 2 branches covered.">            if ( isVirtual ) _flags += IS_VIRTUAL_MASK;</span>
+<span class="fc" id="L409">            else             _flags -= IS_VIRTUAL_MASK;</span>
         }
-<span class="fc" id="L454">    }</span>
+<span class="fc" id="L411">    }</span>
 
     /**
      *  {@inheritDoc}
      */
     @Override
-<span class="fc bfc" id="L460" title="All 2 branches covered.">    public boolean isDeleted() { return ( _flags &amp; IS_DELETED_MASK ) == IS_DELETED_MASK; }</span>
+<span class="fc bfc" id="L417" title="All 2 branches covered.">    public boolean isDeleted() { return ( _flags &amp; IS_DELETED_MASK ) == IS_DELETED_MASK; }</span>
 
     /** {@inheritDoc} */
     @Override
-<span class="fc bfc" id="L464" title="All 2 branches covered.">    public boolean gradientApplyRequested() { return ( _flags &amp; GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">    public boolean gradientApplyRequested() { return ( _flags &amp; GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }</span>
 
     /**
      *  {@inheritDoc}
      */
     @Override
     public Tsr&lt;V&gt; setGradientApplyRequested(boolean applyRequested ) {
-<span class="fc bfc" id="L471" title="All 2 branches covered.">        if ( gradientApplyRequested() != applyRequested ) {</span>
-<span class="fc bfc" id="L472" title="All 2 branches covered.">            if ( applyRequested ) {</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">        if ( gradientApplyRequested() != applyRequested ) {</span>
+<span class="fc bfc" id="L429" title="All 2 branches covered.">            if ( applyRequested ) {</span>
                 if (
-<span class="fc bfc" id="L474" title="All 2 branches covered.">                    Neureka.get().settings().autograd().isApplyingGradientWhenRequested() &amp;&amp;</span>
-<span class="fc bfc" id="L475" title="All 2 branches covered.">                    !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()</span>
+<span class="fc bfc" id="L431" title="All 2 branches covered.">                    Neureka.get().settings().autograd().isApplyingGradientWhenRequested() &amp;&amp;</span>
+<span class="fc bfc" id="L432" title="All 2 branches covered.">                    !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()</span>
                 )
-<span class="fc" id="L477">                    this.applyGradient();</span>
+<span class="fc" id="L434">                    this.applyGradient();</span>
                 else
-<span class="fc" id="L479">                    _flags += GRADIENT_APPLY_RQD_MASK;</span>
+<span class="fc" id="L436">                    _flags += GRADIENT_APPLY_RQD_MASK;</span>
             }
-<span class="fc" id="L481">            else _flags -= GRADIENT_APPLY_RQD_MASK;</span>
+<span class="fc" id="L438">            else _flags -= GRADIENT_APPLY_RQD_MASK;</span>
         }
-<span class="fc" id="L483">        return this;</span>
+<span class="fc" id="L440">        return this;</span>
     }
 
     /**
@@ -496,23 +453,23 @@ import java.util.stream.Collectors;
      */
     private Tsr&lt;V&gt; _delete()
     {
-<span class="pc bpc" id="L499" title="1 of 2 branches missed.">        if ( isDeleted() ) return this;</span>
-<span class="fc" id="L500">        forComponent( GraphNode.class, n -&gt; {</span>
-<span class="fc bfc" id="L501" title="All 2 branches covered.">            if ( n.isUsedAsDerivative() ) {</span>
-<span class="fc" id="L502">                String message = &quot;Cannot delete a tensor which is used as derivative by the AD computation graph!&quot;;</span>
-<span class="fc" id="L503">                _LOG.error( message );</span>
-<span class="fc" id="L504">                throw new IllegalStateException( message );</span>
+<span class="pc bpc" id="L456" title="1 of 2 branches missed.">        if ( isDeleted() ) return this;</span>
+<span class="fc" id="L457">        forComponent( GraphNode.class, n -&gt; {</span>
+<span class="fc bfc" id="L458" title="All 2 branches covered.">            if ( n.isUsedAsDerivative() ) {</span>
+<span class="fc" id="L459">                String message = &quot;Cannot delete a tensor which is used as derivative by the AD computation graph!&quot;;</span>
+<span class="fc" id="L460">                _LOG.error( message );</span>
+<span class="fc" id="L461">                throw new IllegalStateException( message );</span>
             }
-<span class="fc" id="L506">        });</span>
-<span class="fc" id="L507">        forComponent( Device.class, device -&gt; device.free( this ) );</span>
-<span class="fc" id="L508">        _setData( null );</span>
-<span class="fc" id="L509">        _setNDConf( null );</span>
-<span class="fc" id="L510">        _flags = 0;</span>
-<span class="fc" id="L511">        forComponent( TsrImpl.class, t -&gt; t.getUnsafe().delete() );</span>
-<span class="fc" id="L512">        _deleteComponents();</span>
-<span class="fc" id="L513">        _flags += IS_DELETED_MASK;</span>
+<span class="fc" id="L463">        });</span>
+<span class="fc" id="L464">        forComponent( Device.class, device -&gt; device.free( this ) );</span>
+<span class="fc" id="L465">        _setData( null );</span>
+<span class="fc" id="L466">        _setNDConf( null );</span>
+<span class="fc" id="L467">        _flags = 0;</span>
+<span class="fc" id="L468">        forComponent( TsrImpl.class, t -&gt; t.getUnsafe().delete() );</span>
+<span class="fc" id="L469">        _deleteComponents();</span>
+<span class="fc" id="L470">        _flags += IS_DELETED_MASK;</span>
 
-<span class="fc" id="L515">        return this;</span>
+<span class="fc" id="L472">        return this;</span>
     }
 
     /*==================================================================================================================
@@ -523,12 +480,14 @@ import java.util.stream.Collectors;
 
     @Override
     public &lt;T extends Component&lt;?&gt;&gt; T get( Class&lt;T&gt; componentClass ) {
-<span class="fc" id="L526">        LogUtil.nullArgCheck( componentClass, &quot;componentClass&quot;, Class.class );</span>
-<span class="fc bfc" id="L527" title="All 2 branches covered.">        if ( GraphNode.class.isAssignableFrom(componentClass) )</span>
-<span class="fc" id="L528">            _guardGet(componentClass.getSimpleName());</span>
-<span class="fc bfc" id="L529" title="All 2 branches covered.">        else if ( NDFrame.class.isAssignableFrom(componentClass) )</span>
-<span class="fc" id="L530">            _guardGet(componentClass.getSimpleName());</span>
-<span class="fc" id="L531">        return super.get(componentClass);</span>
+<span class="fc" id="L483">        LogUtil.nullArgCheck( componentClass, &quot;componentClass&quot;, Class.class );</span>
+
+<span class="fc bfc" id="L485" title="All 2 branches covered.">        if ( GraphNode.class.isAssignableFrom(componentClass) )</span>
+<span class="fc" id="L486">            _guardGet(componentClass.getSimpleName());</span>
+<span class="fc bfc" id="L487" title="All 2 branches covered.">        else if ( NDFrame.class.isAssignableFrom(componentClass) )</span>
+<span class="fc" id="L488">            _guardGet(componentClass.getSimpleName());</span>
+
+<span class="fc" id="L490">        return super.get(componentClass);</span>
     }
 
     /**
@@ -541,7 +500,7 @@ import java.util.stream.Collectors;
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
-<span class="fc" id="L544">    protected &lt; T extends Component&lt;Tsr&lt;V&gt;&gt; &gt; T _setOrReject(T newComponent ) { return newComponent; }</span>
+<span class="fc" id="L503">    protected &lt; T extends Component&lt;Tsr&lt;V&gt;&gt; &gt; T _setOrReject(T newComponent ) { return newComponent; }</span>
 
     /**
      * This method is executed when a component is being removed from the tensor.
@@ -555,28 +514,28 @@ import java.util.stream.Collectors;
     @Override
     protected &lt;T extends Component&lt;Tsr&lt;V&gt;&gt;&gt; T _removeOrReject(T newComponent )
     {
-<span class="fc bfc" id="L558" title="All 2 branches covered.">        if ( newComponent instanceof Device ) {</span>
-<span class="fc" id="L559">            Device&lt;V&gt; device = (Device&lt;V&gt;) newComponent;</span>
+<span class="fc bfc" id="L517" title="All 2 branches covered.">        if ( newComponent instanceof Device ) {</span>
+<span class="fc" id="L518">            Device&lt;V&gt; device = (Device&lt;V&gt;) newComponent;</span>
             /*
                 The following seems like a redundant check, however often times a tensor
                 will be removed from a Device implementation inside the &quot;restore&quot; method
                 when the tensor has already been removed from the device...
                 Without the condition below a stack overflow would occur!
              */
-<span class="pc bpc" id="L566" title="1 of 2 branches missed.">            if ( device.has( this ) ) {</span>
+<span class="pc bpc" id="L525" title="1 of 2 branches missed.">            if ( device.has( this ) ) {</span>
                 try {
-<span class="nc" id="L568">                    device.restore( this );</span>
-<span class="nc" id="L569">                } catch ( Exception exception ) {</span>
-<span class="nc" id="L570">                    _LOG.error(</span>
+<span class="nc" id="L527">                    device.restore( this );</span>
+<span class="nc" id="L528">                } catch ( Exception exception ) {</span>
+<span class="nc" id="L529">                    _LOG.error(</span>
                         &quot;Removing device from tensor / tensor from device failed.\n&quot; +
                         &quot;Restoring tensor from device threw exception.\n&quot;,
                         exception
                     );
-<span class="nc" id="L575">                    throw exception;</span>
-<span class="nc" id="L576">                }</span>
+<span class="nc" id="L534">                    throw exception;</span>
+<span class="nc" id="L535">                }</span>
             }
         }
-<span class="fc" id="L579">        return newComponent;</span>
+<span class="fc" id="L538">        return newComponent;</span>
     }
 
     /*==================================================================================================================
@@ -589,7 +548,7 @@ import java.util.stream.Collectors;
      *  {@inheritDoc}
      */
     @Override
-<span class="fc" id="L592">    public int getVersion() { return _version; }</span>
+<span class="fc" id="L551">    public int getVersion() { return _version; }</span>
 
     /*==================================================================================================================
     |
@@ -599,65 +558,65 @@ import java.util.stream.Collectors;
 
     private void _toLayout( NDConfiguration.Layout target )
     {
-<span class="fc bfc" id="L602" title="All 2 branches covered.">        if ( target == this.getNDConf().getLayout() ) return;</span>
+<span class="fc bfc" id="L561" title="All 2 branches covered.">        if ( target == this.getNDConf().getLayout() ) return;</span>
 
-<span class="fc" id="L604">        NDConfiguration old = this.getNDConf();</span>
+<span class="fc" id="L563">        NDConfiguration old = this.getNDConf();</span>
 
-<span class="fc bfc" id="L606" title="All 2 branches covered.">        if ( target == NDConfiguration.Layout.ROW_MAJOR )</span>
-<span class="fc" id="L607">            _fromCMToRM();</span>
+<span class="fc bfc" id="L565" title="All 2 branches covered.">        if ( target == NDConfiguration.Layout.ROW_MAJOR )</span>
+<span class="fc" id="L566">            _fromCMToRM();</span>
         else
-<span class="fc" id="L609">            _fromRMToCM();</span>
+<span class="fc" id="L568">            _fromRMToCM();</span>
 
-<span class="fc" id="L611">        _checkLayoutConversion( this.getNDConf(), old, target );</span>
-<span class="fc" id="L612">    }</span>
+<span class="fc" id="L570">        _checkLayoutConversion( this.getNDConf(), old, target );</span>
+<span class="fc" id="L571">    }</span>
 
     /**
      *  Converts this tensor from column major to column major layout.
      */
     private void _fromCMToRM() {
-<span class="fc bfc" id="L618" title="All 2 branches covered.">        if ( this.getNDConf().isVirtual() ) {</span>
-<span class="fc" id="L619">            this.setIsVirtual( false ); // We actualized the tensor before conversion!</span>
-<span class="pc bpc" id="L620" title="1 of 2 branches missed.">            if ( this.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )</span>
-<span class="fc" id="L621">                return;</span>
+<span class="fc bfc" id="L577" title="All 2 branches covered.">        if ( this.getNDConf().isVirtual() ) {</span>
+<span class="fc" id="L578">            this.setIsVirtual( false ); // We actualized the tensor before conversion!</span>
+<span class="pc bpc" id="L579" title="1 of 2 branches missed.">            if ( this.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )</span>
+<span class="fc" id="L580">                return;</span>
         }
-<span class="fc" id="L623">        TsrImpl&lt;V&gt; clone = deepCopy(); // A clone will have by default a row major layout.</span>
-<span class="fc" id="L624">        _setNDConf( clone.getNDConf() );</span>
-<span class="fc" id="L625">        _assignIfActual( () -&gt; clone );</span>
-<span class="fc" id="L626">    }</span>
+<span class="fc" id="L582">        TsrImpl&lt;V&gt; clone = deepCopy(); // A clone will have by default a row major layout.</span>
+<span class="fc" id="L583">        _setNDConf( clone.getNDConf() );</span>
+<span class="fc" id="L584">        _assignIfActual( () -&gt; clone );</span>
+<span class="fc" id="L585">    }</span>
 
     /**
      *  Converts this tensor from row major to column major layout.
      */
     private void _fromRMToCM() {
-<span class="fc" id="L632">        _assignIfActual( () -&gt; TsrImpl.this.T().deepCopy().getUnsafe().detach() );</span>
-<span class="fc" id="L633">        NDConfiguration old = this.getNDConf();</span>
-<span class="fc" id="L634">        int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());</span>
-<span class="fc bfc" id="L635" title="All 2 branches covered.">        if ( old.isVirtual() ) {</span>
-<span class="fc" id="L636">            this.setIsVirtual(false);</span>
-<span class="fc" id="L637">            old = this.getNDConf();</span>
+<span class="fc" id="L591">        _assignIfActual( () -&gt; TsrImpl.this.T().deepCopy().getUnsafe().detach() );</span>
+<span class="fc" id="L592">        NDConfiguration old = this.getNDConf();</span>
+<span class="fc" id="L593">        int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());</span>
+<span class="fc bfc" id="L594" title="All 2 branches covered.">        if ( old.isVirtual() ) {</span>
+<span class="fc" id="L595">            this.setIsVirtual(false);</span>
+<span class="fc" id="L596">            old = this.getNDConf();</span>
         }
-<span class="fc" id="L639">        _setNDConf( _createNewNDCFrom( old, newTranslation, old.translation() ) );</span>
-<span class="fc" id="L640">    }</span>
+<span class="fc" id="L598">        _setNDConf( _createNewNDCFrom( old, newTranslation, old.translation() ) );</span>
+<span class="fc" id="L599">    }</span>
 
     /**
      *  This will only call the supplier and copy its result into this tensor
      *  if this tensor is not virtual (meaning this is an actual tensor).
      */
     private void _assignIfActual( Supplier&lt;Tsr&lt;?&gt;&gt; provider ) {
-<span class="fc bfc" id="L647" title="All 2 branches covered.">        if ( !this.isVirtual() ) {</span>
-<span class="fc" id="L648">            Tsr&lt;?&gt; toBeAssigned = provider.get();</span>
-<span class="fc" id="L649">            MemUtil.keep(this, toBeAssigned,</span>
-<span class="fc" id="L650">                () -&gt; Neureka.get().backend().getFunction().idy().execute( this, toBeAssigned )</span>
+<span class="fc bfc" id="L606" title="All 2 branches covered.">        if ( !this.isVirtual() ) {</span>
+<span class="fc" id="L607">            Tsr&lt;?&gt; toBeAssigned = provider.get();</span>
+<span class="fc" id="L608">            MemUtil.keep(this, toBeAssigned,</span>
+<span class="fc" id="L609">                () -&gt; Neureka.get().backend().getFunction().idy().execute( this, toBeAssigned )</span>
             );
         }
-<span class="fc" id="L653">    }</span>
+<span class="fc" id="L612">    }</span>
 
     private static NDConfiguration _createNewNDCFrom(
         NDConfiguration old, int[] newTranslation, int[] indicesMap
     ) {
-<span class="pc bpc" id="L658" title="2 of 4 branches missed.">        assert !old.isVirtual();</span>
-<span class="fc" id="L659">        return NDConfiguration.of(</span>
-<span class="fc" id="L660">            old.shape(), newTranslation, indicesMap, old.spread(), old.offset()</span>
+<span class="pc bpc" id="L617" title="2 of 4 branches missed.">        assert !old.isVirtual();</span>
+<span class="fc" id="L618">        return NDConfiguration.of(</span>
+<span class="fc" id="L619">            old.shape(), newTranslation, indicesMap, old.spread(), old.offset()</span>
         );
     }
 
@@ -666,14 +625,14 @@ import java.util.stream.Collectors;
             NDConfiguration oldConf,
             NDConfiguration.Layout targetLayout
     ) {
-<span class="pc bpc" id="L669" title="1 of 2 branches missed.">        if ( newConf.isVirtual() )</span>
-<span class="nc" id="L670">            throw new IllegalStateException(&quot;Layout conversion produced a virtual nd-configuration!&quot;);</span>
-<span class="pc bpc" id="L671" title="1 of 2 branches missed.">        if ( !newConf.getLayout().isCompatible(targetLayout) )</span>
-<span class="nc" id="L672">            throw new IllegalArgumentException(</span>
-<span class="nc" id="L673">                &quot;Failed to convert this tensor from its original layout '&quot;+oldConf.getLayout()+&quot;' &quot; +</span>
-<span class="nc" id="L674">                &quot;to target layout '&quot;+targetLayout+&quot;'. Instead this tensor has layout '&quot;+newConf.getLayout()+&quot;'.&quot;</span>
+<span class="pc bpc" id="L628" title="1 of 2 branches missed.">        if ( newConf.isVirtual() )</span>
+<span class="nc" id="L629">            throw new IllegalStateException(&quot;Layout conversion produced a virtual nd-configuration!&quot;);</span>
+<span class="pc bpc" id="L630" title="1 of 2 branches missed.">        if ( !newConf.getLayout().isCompatible(targetLayout) )</span>
+<span class="nc" id="L631">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L632">                &quot;Failed to convert this tensor from its original layout '&quot;+oldConf.getLayout()+&quot;' &quot; +</span>
+<span class="nc" id="L633">                &quot;to target layout '&quot;+targetLayout+&quot;'. Instead this tensor has layout '&quot;+newConf.getLayout()+&quot;'.&quot;</span>
             );
-<span class="fc" id="L676">    }</span>
+<span class="fc" id="L635">    }</span>
 
     /**
      * This method is responsible for incrementing
@@ -685,19 +644,19 @@ import java.util.stream.Collectors;
      * @param call The context object containing all relevant information that defines a call for tensor execution.
      */
     private void _incrementVersionBecauseOf( ExecutionCall&lt;?&gt; call ) {
-<span class="fc bfc" id="L688" title="All 2 branches covered.">        if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {</span>
-<span class="fc" id="L689">            _version++; // Autograd must be warned!</span>
-<span class="fc" id="L690">            GraphNode&lt;?&gt; node = get( GraphNode.class );</span>
-<span class="pc bpc" id="L691" title="1 of 4 branches missed.">            if ( node != null &amp;&amp; node.getPayloadReferenceVersion() != _version ) {</span>
-<span class="pc bpc" id="L692" title="1 of 4 branches missed.">                if ( node.usesAD() || node.isUsedAsDerivative() ) {</span>
-<span class="fc" id="L693">                    String error = &quot;Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n&quot; +</span>
-<span class="fc" id="L694">                                   &quot;The following OperationType caused an internal version mismatch: '&quot;+call.getOperation().getIdentifier()+&quot;'&quot;;</span>
-<span class="fc" id="L695">                    _LOG.error( error );</span>
-<span class="fc" id="L696">                    throw new IllegalStateException( error );</span>
+<span class="fc bfc" id="L647" title="All 2 branches covered.">        if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {</span>
+<span class="fc" id="L648">            _version++; // Autograd must be warned!</span>
+<span class="fc" id="L649">            GraphNode&lt;?&gt; node = get( GraphNode.class );</span>
+<span class="pc bpc" id="L650" title="1 of 4 branches missed.">            if ( node != null &amp;&amp; node.getPayloadReferenceVersion() != _version ) {</span>
+<span class="pc bpc" id="L651" title="1 of 4 branches missed.">                if ( node.usesAD() || node.isUsedAsDerivative() ) {</span>
+<span class="fc" id="L652">                    String error = &quot;Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n&quot; +</span>
+<span class="fc" id="L653">                                   &quot;The following OperationType caused an internal version mismatch: '&quot;+call.getOperation().getIdentifier()+&quot;'&quot;;</span>
+<span class="fc" id="L654">                    _LOG.error( error );</span>
+<span class="fc" id="L655">                    throw new IllegalStateException( error );</span>
                 }
             }
         }
-<span class="fc" id="L700">    }</span>
+<span class="fc" id="L659">    }</span>
 
     /**
      *  In essence tensors are merely fancy wrapper for some form of array of any type... 
@@ -709,75 +668,75 @@ import java.util.stream.Collectors;
      */
     private void _become( TsrImpl&lt;V&gt; tensor )
     {
-<span class="pc bpc" id="L712" title="1 of 2 branches missed.">        if ( tensor == null ) return;</span>
-<span class="fc" id="L713">        _setDataType( tensor.getDataType() );</span>
-<span class="fc" id="L714">        _setData( tensor.getUnsafe().getDataArray() );</span>
-<span class="fc" id="L715">        _setNDConf( tensor.getNDConf() );</span>
-<span class="fc" id="L716">        _flags = tensor._flags;</span>
-<span class="fc" id="L717">        _transferFrom( tensor );</span>
-<span class="fc" id="L718">        tensor._setData( null );</span>
-<span class="fc" id="L719">        tensor._setDataType( null );</span>
-<span class="fc" id="L720">        tensor._setNDConf( null );</span>
-<span class="fc" id="L721">        tensor._flags = 0;</span>
-<span class="fc" id="L722">    }</span>
+<span class="pc bpc" id="L671" title="1 of 2 branches missed.">        if ( tensor == null ) return;</span>
+<span class="fc" id="L672">        _setDataType( tensor.getDataType() );</span>
+<span class="fc" id="L673">        _setData( tensor.getUnsafe().getDataArray() );</span>
+<span class="fc" id="L674">        _setNDConf( tensor.getNDConf() );</span>
+<span class="fc" id="L675">        _flags = tensor._flags;</span>
+<span class="fc" id="L676">        _transferFrom( tensor );</span>
+<span class="fc" id="L677">        tensor._setData( null );</span>
+<span class="fc" id="L678">        tensor._setDataType( null );</span>
+<span class="fc" id="L679">        tensor._setNDConf( null );</span>
+<span class="fc" id="L680">        tensor._flags = 0;</span>
+<span class="fc" id="L681">    }</span>
 
     /**
      *  {@inheritDoc}
      */
     @Override
     public Unsafe&lt;V&gt; getUnsafe() {
-<span class="fc" id="L729">        _guardGet(&quot;unsafe API&quot;);</span>
-<span class="fc" id="L730">        return new Unsafe&lt;V&gt;() {</span>
+<span class="fc" id="L688">        _guardGet(&quot;unsafe API&quot;);</span>
+<span class="fc" id="L689">        return new Unsafe&lt;V&gt;() {</span>
             @Override
-<span class="fc" id="L732">            public Tsr&lt;V&gt; setNDConf(NDConfiguration configuration ) { TsrImpl.this._setNDConf( configuration ); return TsrImpl.this; }</span>
+<span class="fc" id="L691">            public Tsr&lt;V&gt; setNDConf(NDConfiguration configuration ) { TsrImpl.this._setNDConf( configuration ); return TsrImpl.this; }</span>
             @Override
-<span class="fc" id="L734">            public &lt;V&gt; Tsr&lt;V&gt; toType( Class&lt;V&gt; typeClass ) { return TsrImpl.this._toType( typeClass ); }</span>
+<span class="fc" id="L693">            public &lt;V&gt; Tsr&lt;V&gt; toType( Class&lt;V&gt; typeClass ) { return TsrImpl.this._toType( typeClass ); }</span>
 
             @Override
             public &lt;U&gt; Tsr&lt;U&gt; upcast( Class&lt;U&gt; superType ) {
-<span class="pc bpc" id="L738" title="1 of 2 branches missed.">                if ( superType.isAssignableFrom(TsrImpl.this.itemType()) )</span>
-<span class="fc" id="L739">                    return (Tsr&lt;U&gt;) TsrImpl.this;</span>
+<span class="pc bpc" id="L697" title="1 of 2 branches missed.">                if ( superType.isAssignableFrom(TsrImpl.this.itemType()) )</span>
+<span class="fc" id="L698">                    return (Tsr&lt;U&gt;) TsrImpl.this;</span>
                 else
-<span class="nc" id="L741">                    throw new IllegalArgumentException(&quot;Provided type '&quot;+superType+&quot;' is not a super type of '&quot;+ TsrImpl.this.itemType()+&quot;'.&quot;);</span>
+<span class="nc" id="L700">                    throw new IllegalArgumentException(&quot;Provided type '&quot;+superType+&quot;' is not a super type of '&quot;+ TsrImpl.this.itemType()+&quot;'.&quot;);</span>
             }
 
             @Override
-<span class="fc" id="L745">            public &lt;T&gt; Tsr&lt;T&gt; setDataType( DataType&lt;T&gt; dataType ) { return (TsrImpl&lt;T&gt;) TsrImpl.this._setDataType(dataType); }</span>
+<span class="fc" id="L704">            public &lt;T&gt; Tsr&lt;T&gt; setDataType( DataType&lt;T&gt; dataType ) { return (TsrImpl&lt;T&gt;) TsrImpl.this._setDataType(dataType); }</span>
             @Override
-<span class="fc" id="L747">            public Tsr&lt;V&gt; toLayout(NDConfiguration.Layout layout) { TsrImpl.this._toLayout( layout ); return TsrImpl.this; }</span>
+<span class="fc" id="L706">            public Tsr&lt;V&gt; toLayout(NDConfiguration.Layout layout) { TsrImpl.this._toLayout( layout ); return TsrImpl.this; }</span>
             @Override
             public Tsr&lt;V&gt; incrementVersion(ExecutionCall&lt;?&gt; call ) {
-<span class="fc" id="L750">                _incrementVersionBecauseOf( call );</span>
-<span class="fc" id="L751">                return TsrImpl.this;</span>
+<span class="fc" id="L709">                _incrementVersionBecauseOf( call );</span>
+<span class="fc" id="L710">                return TsrImpl.this;</span>
             }
             @Override
-<span class="fc" id="L754">            public Tsr&lt;V&gt; setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }</span>
-<span class="fc" id="L755">            @Override public Tsr&lt;V&gt; delete() { return TsrImpl.this._delete(); }</span>
-<span class="fc" id="L756">            @Override public DataArray getDataArray() { return _getData(); }</span>
+<span class="fc" id="L713">            public Tsr&lt;V&gt; setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }</span>
+<span class="fc" id="L714">            @Override public Tsr&lt;V&gt; delete() { return TsrImpl.this._delete(); }</span>
+<span class="fc" id="L715">            @Override public DataArray&lt;V&gt; getDataArray() { return _getData(); }</span>
             @Override public &lt;D&gt; D getData(Class&lt;D&gt; dataType) {
-<span class="fc" id="L758">                Object data = _getRawData();</span>
-<span class="pc bpc" id="L759" title="1 of 4 branches missed.">                if ( data != null &amp;&amp; !dataType.isAssignableFrom(data.getClass()) )</span>
-<span class="nc" id="L760">                    throw new IllegalArgumentException(&quot;Provided data type '&quot;+dataType+&quot;' is not assignable from '&quot;+data.getClass()+&quot;'.&quot;);</span>
-<span class="fc" id="L761">                return (D) data;</span>
+<span class="fc" id="L717">                Object data = _getRawData();</span>
+<span class="pc bpc" id="L718" title="1 of 4 branches missed.">                if ( data != null &amp;&amp; !dataType.isAssignableFrom(data.getClass()) )</span>
+<span class="nc" id="L719">                    throw new IllegalArgumentException(&quot;Provided data type '&quot;+dataType+&quot;' is not assignable from '&quot;+data.getClass()+&quot;'.&quot;);</span>
+<span class="fc" id="L720">                return (D) data;</span>
             }
             @Override
             public &lt;A&gt; A getDataAs( Class&lt;A&gt; arrayTypeClass ) {
-<span class="fc" id="L765">                return DataConverter.get().convert( _getData(false), arrayTypeClass );</span>
+<span class="fc" id="L724">                return DataConverter.get().convert( _getData(false), arrayTypeClass );</span>
             }
             @Override
             public Tsr&lt;V&gt; setDataAt( int i, V o ) {
-<span class="fc" id="L769">                _guardMod(&quot;data object&quot;);</span>
-<span class="fc" id="L770">                _setDataAt( i, o );</span>
-<span class="fc" id="L771">                return TsrImpl.this;</span>
+<span class="fc" id="L728">                _guardMod(&quot;data object&quot;);</span>
+<span class="fc" id="L729">                _setDataAt( i, o );</span>
+<span class="fc" id="L730">                return TsrImpl.this;</span>
             }
 
             @Override
             public Tsr&lt;V&gt; setDataArray(DataArray data) {
-<span class="fc" id="L776">                TsrImpl.this._setData( data );</span>
-<span class="fc" id="L777">                return TsrImpl.this;</span>
+<span class="fc" id="L735">                TsrImpl.this._setData( data );</span>
+<span class="fc" id="L736">                return TsrImpl.this;</span>
             }
 
-<span class="fc" id="L780">            @Override public Tsr&lt;V&gt; detach() { TsrImpl.this.remove( GraphNode.class ); return TsrImpl.this; }</span>
+<span class="fc" id="L739">            @Override public Tsr&lt;V&gt; detach() { TsrImpl.this.remove( GraphNode.class ); return TsrImpl.this; }</span>
         };
     }
 
@@ -796,20 +755,20 @@ import java.util.stream.Collectors;
     @Override
     public Iterator&lt;V&gt; iterator()
     {
-<span class="fc" id="L799">        NDIterator _ndi = NDIterator.of( this );</span>
-<span class="fc" id="L800">        return new Iterator&lt;V&gt;()</span>
-<span class="fc" id="L801">        {</span>
-<span class="fc" id="L802">            private final int _size = TsrImpl.this.size();</span>
-<span class="fc" id="L803">            private int _count = 0;</span>
+<span class="fc" id="L758">        NDIterator _ndi = NDIterator.of( this );</span>
+<span class="fc" id="L759">        return new Iterator&lt;V&gt;()</span>
+<span class="fc" id="L760">        {</span>
+<span class="fc" id="L761">            private final int _size = TsrImpl.this.size();</span>
+<span class="fc" id="L762">            private int _count = 0;</span>
 
-<span class="fc bfc" id="L805" title="All 2 branches covered.">            @Override public boolean hasNext() { return _count != _size; }</span>
+<span class="fc bfc" id="L764" title="All 2 branches covered.">            @Override public boolean hasNext() { return _count != _size; }</span>
 
             @Override
             public V next() {
-<span class="fc" id="L809">                V value = TsrImpl.this.getDataAt( _ndi.i() );</span>
-<span class="fc" id="L810">                _ndi.increment();</span>
-<span class="fc" id="L811">                _count ++;</span>
-<span class="fc" id="L812">                return value;</span>
+<span class="fc" id="L768">                V value = TsrImpl.this.getDataAt( _ndi.i() );</span>
+<span class="fc" id="L769">                _ndi.increment();</span>
+<span class="fc" id="L770">                _count ++;</span>
+<span class="fc" id="L771">                return value;</span>
             }
         };
     }
@@ -825,65 +784,65 @@ import java.util.stream.Collectors;
      *  {@inheritDoc}
      */
     @Override
-<span class="fc" id="L828">    public Tsr&lt;V&gt; to( Device&lt;?&gt; device ){ super._set( device ); return this; }</span>
+<span class="fc" id="L787">    public Tsr&lt;V&gt; to( Device&lt;?&gt; device ){ super._set( device ); return this; }</span>
 
     /** {@inheritDoc} */
     @Override
     public Tsr&lt;V&gt; label( String tensorName, String[][] labels )
     {
-<span class="fc" id="L834">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, String[][].class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
-<span class="fc" id="L835">        NDFrame&lt;V&gt; frame = get( NDFrame.class );</span>
-<span class="fc bfc" id="L836" title="All 2 branches covered.">        if ( frame == null ) {</span>
-<span class="fc" id="L837">            frame = new NDFrame( this.rank(), tensorName );</span>
-<span class="fc" id="L838">            set(frame);</span>
+<span class="fc" id="L793">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, String[][].class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
+<span class="fc" id="L794">        NDFrame&lt;V&gt; frame = get( NDFrame.class );</span>
+<span class="fc bfc" id="L795" title="All 2 branches covered.">        if ( frame == null ) {</span>
+<span class="fc" id="L796">            frame = new NDFrame( this.rank(), tensorName );</span>
+<span class="fc" id="L797">            set(frame);</span>
         }
-<span class="pc bpc" id="L840" title="2 of 4 branches missed.">        assert labels.length &lt;= this.rank();</span>
-<span class="fc bfc" id="L841" title="All 2 branches covered.">        for( int i = 0; i &lt; labels.length; i++ ) {</span>
-<span class="pc bpc" id="L842" title="1 of 2 branches missed.">            if ( labels[ i ] != null ) {</span>
-<span class="fc" id="L843">                AxisFrame&lt;Integer, V&gt; atAxis = frame.atAxis( i );</span>
-<span class="fc bfc" id="L844" title="All 2 branches covered.">                for ( int ii = 0; ii &lt; labels[ i ].length; ii++ ) {</span>
-<span class="pc bpc" id="L845" title="1 of 2 branches missed.">                    if ( labels[ i ][ ii ] != null )</span>
-<span class="fc" id="L846">                        atAxis.atIndexAlias( labels[ i ][ ii ] ).setIndex( ii );</span>
+<span class="pc bpc" id="L799" title="2 of 4 branches missed.">        assert labels.length &lt;= this.rank();</span>
+<span class="fc bfc" id="L800" title="All 2 branches covered.">        for( int i = 0; i &lt; labels.length; i++ ) {</span>
+<span class="pc bpc" id="L801" title="1 of 2 branches missed.">            if ( labels[ i ] != null ) {</span>
+<span class="fc" id="L802">                AxisFrame&lt;Integer, V&gt; atAxis = frame.atAxis( i );</span>
+<span class="fc bfc" id="L803" title="All 2 branches covered.">                for ( int ii = 0; ii &lt; labels[ i ].length; ii++ ) {</span>
+<span class="pc bpc" id="L804" title="1 of 2 branches missed.">                    if ( labels[ i ][ ii ] != null )</span>
+<span class="fc" id="L805">                        atAxis.atIndexAlias( labels[ i ][ ii ] ).setIndex( ii );</span>
                 }
             }
         }
-<span class="fc" id="L850">        return this;</span>
+<span class="fc" id="L809">        return this;</span>
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr&lt;V&gt; label(List&lt;List&lt;Object&gt;&gt; labels ) {
-<span class="fc" id="L856">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, List.class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
-<span class="fc" id="L857">        NDFrame&lt;V&gt; frame = get( NDFrame.class );</span>
-<span class="pc bpc" id="L858" title="1 of 2 branches missed.">        if ( frame == null ) set( new NDFrame( labels, null ) );</span>
-<span class="fc" id="L859">        return this;</span>
+<span class="fc" id="L815">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, List.class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
+<span class="fc" id="L816">        NDFrame&lt;V&gt; frame = get( NDFrame.class );</span>
+<span class="pc bpc" id="L817" title="1 of 2 branches missed.">        if ( frame == null ) set( new NDFrame( labels, null ) );</span>
+<span class="fc" id="L818">        return this;</span>
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr&lt;V&gt; label( String tensorName, List&lt;List&lt;Object&gt;&gt; labels ) {
-<span class="fc" id="L865">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, List.class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
-<span class="fc" id="L866">        NDFrame&lt;V&gt; frame = get( NDFrame.class );</span>
-<span class="pc bpc" id="L867" title="1 of 2 branches missed.">        if ( frame == null ) set( new NDFrame&lt;&gt;( labels, tensorName ) );</span>
-<span class="fc" id="L868">        return this;</span>
+<span class="fc" id="L824">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, List.class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
+<span class="fc" id="L825">        NDFrame&lt;V&gt; frame = get( NDFrame.class );</span>
+<span class="pc bpc" id="L826" title="1 of 2 branches missed.">        if ( frame == null ) set( new NDFrame&lt;&gt;( labels, tensorName ) );</span>
+<span class="fc" id="L827">        return this;</span>
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr&lt;V&gt; label( Map&lt;Object, List&lt;Object&gt;&gt; labels )
     {
-<span class="fc" id="L875">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, Map.class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
-<span class="fc" id="L876">        this.set( new NDFrame&lt;&gt;( labels, this, null ) );</span>
-<span class="fc" id="L877">        return this;</span>
+<span class="fc" id="L834">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, Map.class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
+<span class="fc" id="L835">        this.set( new NDFrame&lt;&gt;( labels, this, null ) );</span>
+<span class="fc" id="L836">        return this;</span>
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr&lt;V&gt; label(String tensorName, Map&lt;Object, List&lt;Object&gt;&gt; labels )
     {
-<span class="nc" id="L884">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, Map.class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
-<span class="nc" id="L885">        this.set( new NDFrame&lt;&gt;( labels, this, tensorName ) );</span>
-<span class="nc" id="L886">        return this;</span>
+<span class="nc" id="L843">        LogUtil.nullArgCheck(labels, &quot;labels&quot;, Map.class, &quot;Tensors cannot be labeled 'null'!&quot;);</span>
+<span class="nc" id="L844">        this.set( new NDFrame&lt;&gt;( labels, this, tensorName ) );</span>
+<span class="nc" id="L845">        return this;</span>
     }
 
     /*==================================================================================================================
@@ -896,12 +855,12 @@ import java.util.stream.Collectors;
     /** {@inheritDoc} */
     @Override
     public boolean isCase( Tsr&lt;V&gt; other ) {
-<span class="fc" id="L899">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform 'is case' operation when second oprand is 'null'!&quot;);</span>
-<span class="fc" id="L900">        boolean[] found = { false };</span>
-<span class="fc" id="L901">        this.forComponent( Relation.class, r -&gt; r.foreachChild( c -&gt; {</span>
-<span class="fc bfc" id="L902" title="All 2 branches covered.">                if ( c.equals( other ) ) found[ 0 ] = true;</span>
-<span class="fc" id="L903">            }));</span>
-<span class="fc" id="L904">        return found[ 0 ];</span>
+<span class="fc" id="L858">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tsr.class, &quot;Cannot perform 'is case' operation when second oprand is 'null'!&quot;);</span>
+<span class="fc" id="L859">        boolean[] found = { false };</span>
+<span class="fc" id="L860">        this.forComponent( Relation.class, r -&gt; r.foreachChild( c -&gt; {</span>
+<span class="fc bfc" id="L861" title="All 2 branches covered.">                if ( c.equals( other ) ) found[ 0 ] = true;</span>
+<span class="fc" id="L862">            }));</span>
+<span class="fc" id="L863">        return found[ 0 ];</span>
     }
 
     /*==================================================================================================================
@@ -914,16 +873,16 @@ import java.util.stream.Collectors;
     /** {@inheritDoc} */
     @Override
     public Tsr&lt;V&gt; getAt( int... indices ) {
-<span class="fc" id="L917">        LogUtil.nullArgCheck(indices, &quot;indices&quot;, int[].class, &quot;Indices array must not be 'null'!&quot;);</span>
-<span class="fc" id="L918">        return getAt( Arrays.stream( indices ).boxed().toArray() );</span>
+<span class="fc" id="L876">        LogUtil.nullArgCheck(indices, &quot;indices&quot;, int[].class, &quot;Indices array must not be 'null'!&quot;);</span>
+<span class="fc" id="L877">        return getAt( Arrays.stream( indices ).boxed().toArray() );</span>
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr&lt;V&gt; getAt( Map&lt;?,Integer&gt; rankToStrides ) {
-<span class="fc" id="L924">        LogUtil.nullArgCheck(rankToStrides, &quot;rankToStrides&quot;, Map.class, &quot;Rank-to-strides map must not be 'null'!&quot;);</span>
+<span class="fc" id="L883">        LogUtil.nullArgCheck(rankToStrides, &quot;rankToStrides&quot;, Map.class, &quot;Rank-to-strides map must not be 'null'!&quot;);</span>
         // ...not a simple slice... Advanced:
-<span class="fc" id="L926">        return SmartSlicer.slice(new Object[]{rankToStrides}, this);</span>
+<span class="fc" id="L885">        return SmartSlicer.slice(new Object[]{rankToStrides}, this);</span>
     }
 
     /**
@@ -931,35 +890,35 @@ import java.util.stream.Collectors;
      */
     @Override
     public Tsr&lt;V&gt; getAt( List&lt;?&gt; key ) {
-<span class="fc" id="L934">        LogUtil.nullArgCheck( key, &quot;key&quot;, List.class );</span>
-<span class="fc bfc" id="L935" title="All 4 branches covered.">        if ( key.stream().anyMatch( i -&gt; i == null ) )</span>
-<span class="fc" id="L936">            throw new IllegalArgumentException(&quot;List of indices/ranges may not contain entries which are null!&quot;);</span>
-<span class="fc bfc" id="L937" title="All 2 branches covered.">        if ( key.isEmpty() ) {</span>
+<span class="fc" id="L893">        LogUtil.nullArgCheck( key, &quot;key&quot;, List.class );</span>
+<span class="fc bfc" id="L894" title="All 4 branches covered.">        if ( key.stream().anyMatch( i -&gt; i == null ) )</span>
+<span class="fc" id="L895">            throw new IllegalArgumentException(&quot;List of indices/ranges may not contain entries which are null!&quot;);</span>
+<span class="fc bfc" id="L896" title="All 2 branches covered.">        if ( key.isEmpty() ) {</span>
             /*
                 An empty List instance is being interpreted as
                 the request to create an identical slice, meaning that the
                 resulting tensor views the same data as its parent while not
                 being the same instance. (In a sense, its a shallow copy!)
              */
-<span class="fc" id="L944">            return shallowCopy();</span>
+<span class="fc" id="L903">            return shallowCopy();</span>
         }
 
-<span class="fc" id="L947">        Object[] indices = key.toArray();</span>
+<span class="fc" id="L906">        Object[] indices = key.toArray();</span>
 
-<span class="fc" id="L949">        boolean allInt = true;</span>
-<span class="fc bfc" id="L950" title="All 6 branches covered.">        for ( Object o : indices ) allInt = allInt &amp;&amp; o instanceof Integer;</span>
-<span class="fc bfc" id="L951" title="All 4 branches covered.">        if ( allInt &amp;&amp; indices.length == rank() ) {</span>
-<span class="fc" id="L952">            int[] newOffset = DataConverter.get().convert(indices, int[].class);</span>
-<span class="fc bfc" id="L953" title="All 2 branches covered.">            for ( int i = 0; i &lt; this.rank(); i++ )</span>
-<span class="fc bfc" id="L954" title="All 2 branches covered.">                newOffset[ i ] = ( newOffset[ i ] &lt; 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];</span>
-<span class="fc bfc" id="L955" title="All 2 branches covered.">            for ( int i = 0; i &lt; this.rank(); i++ )</span>
-<span class="fc" id="L956">                indices[ i ] = newOffset[ i ];</span>
-<span class="fc" id="L957">            allInt = false;</span>
+<span class="fc" id="L908">        boolean allInt = true;</span>
+<span class="fc bfc" id="L909" title="All 6 branches covered.">        for ( Object o : indices ) allInt = allInt &amp;&amp; o instanceof Integer;</span>
+<span class="fc bfc" id="L910" title="All 4 branches covered.">        if ( allInt &amp;&amp; indices.length == rank() ) {</span>
+<span class="fc" id="L911">            int[] newOffset = DataConverter.get().convert(indices, int[].class);</span>
+<span class="fc bfc" id="L912" title="All 2 branches covered.">            for ( int i = 0; i &lt; this.rank(); i++ )</span>
+<span class="fc bfc" id="L913" title="All 2 branches covered.">                newOffset[ i ] = ( newOffset[ i ] &lt; 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];</span>
+<span class="fc bfc" id="L914" title="All 2 branches covered.">            for ( int i = 0; i &lt; this.rank(); i++ )</span>
+<span class="fc" id="L915">                indices[ i ] = newOffset[ i ];</span>
+<span class="fc" id="L916">            allInt = false;</span>
         }
-<span class="fc" id="L959">        boolean hasScale = false;</span>
-<span class="pc bpc" id="L960" title="1 of 6 branches missed.">        for ( Object o : indices ) hasScale = hasScale || o instanceof Map;</span>
-<span class="fc" id="L961">        return SmartSlicer.slice(</span>
-<span class="fc bfc" id="L962" title="All 2 branches covered.">                ( allInt ? new Object[]{ DataConverter.get().convert(indices, int[].class) } : indices ),</span>
+<span class="fc" id="L918">        boolean hasScale = false;</span>
+<span class="pc bpc" id="L919" title="1 of 6 branches missed.">        for ( Object o : indices ) hasScale = hasScale || o instanceof Map;</span>
+<span class="fc" id="L920">        return SmartSlicer.slice(</span>
+<span class="fc bfc" id="L921" title="All 2 branches covered.">                ( allInt ? new Object[]{ DataConverter.get().convert(indices, int[].class) } : indices ),</span>
                 this
             );
     }
@@ -967,26 +926,26 @@ import java.util.stream.Collectors;
     /** {@inheritDoc} */
      @Override
     public TsrImpl&lt;V&gt; deepCopy() {
-<span class="fc" id="L970">        Function cloner = Neureka.get().backend().getFunction().idy();</span>
-<span class="fc" id="L971">        boolean thisIsIntermediate = this.isIntermediate();</span>
-<span class="fc" id="L972">        _setIsIntermediate( false );</span>
-<span class="fc" id="L973">        Tsr&lt;V&gt; clone = Tsr.like( this )</span>
-<span class="fc" id="L974">                            .all( (V) Double.valueOf(0.0) );</span>
+<span class="fc" id="L929">        Function cloner = Neureka.get().backend().getFunction().idy();</span>
+<span class="fc" id="L930">        boolean thisIsIntermediate = this.isIntermediate();</span>
+<span class="fc" id="L931">        _setIsIntermediate( false );</span>
+<span class="fc" id="L932">        Tsr&lt;V&gt; clone = Tsr.like( this )</span>
+<span class="fc" id="L933">                            .all( (V) Double.valueOf(0.0) );</span>
 
-<span class="pc bpc" id="L976" title="1 of 2 branches missed.">        if ( clone.itemType() != this.itemType() )</span>
-<span class="nc" id="L977">            throw new IllegalStateException(&quot;Item type of clone must be the same as the item type of the original!&quot;);</span>
+<span class="pc bpc" id="L935" title="1 of 2 branches missed.">        if ( clone.itemType() != this.itemType() )</span>
+<span class="nc" id="L936">            throw new IllegalStateException(&quot;Item type of clone must be the same as the item type of the original!&quot;);</span>
 
-<span class="fc" id="L979">        clone = cloner.call( clone, this );</span>
-<span class="fc" id="L980">        clone.getUnsafe().setIsIntermediate( thisIsIntermediate );</span>
-<span class="fc" id="L981">        _setIsIntermediate( thisIsIntermediate );</span>
-<span class="fc" id="L982">        return (TsrImpl&lt;V&gt;) clone;</span>
+<span class="fc" id="L938">        clone = cloner.call( clone, this );</span>
+<span class="fc" id="L939">        clone.getUnsafe().setIsIntermediate( thisIsIntermediate );</span>
+<span class="fc" id="L940">        _setIsIntermediate( thisIsIntermediate );</span>
+<span class="fc" id="L941">        return (TsrImpl&lt;V&gt;) clone;</span>
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-<span class="fc" id="L989">    public AxisOrGetTsr&lt;V&gt; slice() { return new SliceBuilder&lt;&gt;( this ); }</span>
+<span class="fc" id="L948">    public AxisOrGetTsr&lt;V&gt; slice() { return new SliceBuilder&lt;&gt;( this ); }</span>
 
 
     /**
@@ -994,9 +953,9 @@ import java.util.stream.Collectors;
      */
     @Override
     public Tsr&lt;V&gt; putAt( List&lt;?&gt; key, Nda&lt;V&gt; value ) {
-<span class="fc" id="L997">        _putAtCheckFor( (Tsr&lt;?&gt;) value );</span>
-<span class="pc bpc" id="L998" title="1 of 2 branches missed.">        Tsr&lt;V&gt; slice = ( key == null ) ? this : getAt( key );</span>
-<span class="fc" id="L999">        return _putAt( slice, (Tsr&lt;V&gt;) value );</span>
+<span class="fc" id="L956">        _putAtCheckFor( (Tsr&lt;?&gt;) value );</span>
+<span class="pc bpc" id="L957" title="1 of 2 branches missed.">        Tsr&lt;V&gt; slice = ( key == null ) ? this : getAt( key );</span>
+<span class="fc" id="L958">        return _putAt( slice, (Tsr&lt;V&gt;) value );</span>
     }
 
     /**
@@ -1004,17 +963,17 @@ import java.util.stream.Collectors;
      */
     @Override
     public Tsr&lt;V&gt; putAt(int[] indices, V item ) {
-<span class="pc bpc" id="L1007" title="1 of 2 branches missed.">        if ( indices == null )</span>
-<span class="nc" id="L1008">            throw new IllegalArgumentException( &quot;Provided indices are null!&quot; );</span>
-<span class="pc bpc" id="L1009" title="1 of 2 branches missed.">        if ( indices.length &gt; this.rank() ) {</span>
-<span class="nc" id="L1010">            int[] correct = new int[rank()];</span>
-<span class="nc" id="L1011">            System.arraycopy( indices, 0, correct, 0, indices.length );</span>
-<span class="nc" id="L1012">            indices = correct;</span>
+<span class="pc bpc" id="L966" title="1 of 2 branches missed.">        if ( indices == null )</span>
+<span class="nc" id="L967">            throw new IllegalArgumentException( &quot;Provided indices are null!&quot; );</span>
+<span class="pc bpc" id="L968" title="1 of 2 branches missed.">        if ( indices.length &gt; this.rank() ) {</span>
+<span class="nc" id="L969">            int[] correct = new int[rank()];</span>
+<span class="nc" id="L970">            System.arraycopy( indices, 0, correct, 0, indices.length );</span>
+<span class="nc" id="L971">            indices = correct;</span>
         }
-<span class="fc bfc" id="L1014" title="All 2 branches covered.">        if ( this.isVirtual() ) this.setIsVirtual( false );</span>
-<span class="fc" id="L1015">        int i = getNDConf().indexOfIndices(indices);</span>
-<span class="fc" id="L1016">        getUnsafe().setDataAt( i, item );</span>
-<span class="fc" id="L1017">        return this;</span>
+<span class="fc bfc" id="L973" title="All 2 branches covered.">        if ( this.isVirtual() ) this.setIsVirtual( false );</span>
+<span class="fc" id="L974">        int i = getNDConf().indexOfIndices(indices);</span>
+<span class="fc" id="L975">        getUnsafe().setDataAt( i, item );</span>
+<span class="fc" id="L976">        return this;</span>
     }
 
     /**
@@ -1022,67 +981,67 @@ import java.util.stream.Collectors;
      */
     @Override
     public Tsr&lt;V&gt; putAt( Map&lt;?,Integer&gt; key, Nda&lt;V&gt; value ) {
-<span class="fc" id="L1025">        _putAtCheckFor((Tsr&lt;?&gt;) value);</span>
-<span class="pc bpc" id="L1026" title="1 of 2 branches missed.">        Tsr&lt;V&gt; slice = ( key == null ) ? this : getAt( key );</span>
-<span class="fc" id="L1027">        return _putAt( slice, (Tsr&lt;V&gt;) value);</span>
+<span class="fc" id="L984">        _putAtCheckFor((Tsr&lt;?&gt;) value);</span>
+<span class="pc bpc" id="L985" title="1 of 2 branches missed.">        Tsr&lt;V&gt; slice = ( key == null ) ? this : getAt( key );</span>
+<span class="fc" id="L986">        return _putAt( slice, (Tsr&lt;V&gt;) value);</span>
     }
 
     private void _putAtCheckFor( Tsr&lt;?&gt; value ) {
-<span class="fc bfc" id="L1031" title="All 2 branches covered.">        if ( value.isEmpty() ) {</span>
-<span class="fc" id="L1032">            String message = &quot;Provided tensor is empty! Empty tensors cannot be injected.&quot;;</span>
-<span class="fc" id="L1033">            _LOG.error( message );</span>
-<span class="fc" id="L1034">            throw new IllegalArgumentException( message );</span>
+<span class="fc bfc" id="L990" title="All 2 branches covered.">        if ( value.isEmpty() ) {</span>
+<span class="fc" id="L991">            String message = &quot;Provided tensor is empty! Empty tensors cannot be injected.&quot;;</span>
+<span class="fc" id="L992">            _LOG.error( message );</span>
+<span class="fc" id="L993">            throw new IllegalArgumentException( message );</span>
         }
-<span class="fc" id="L1036">    }</span>
+<span class="fc" id="L995">    }</span>
 
     private Tsr&lt;V&gt; _putAt( Tsr&lt;V&gt; slice, Tsr&lt;V&gt; value )
     {
-<span class="fc" id="L1040">        boolean valueIsDeviceVisitor = false;</span>
-<span class="fc bfc" id="L1041" title="All 4 branches covered.">        if ( slice.isOutsourced() &amp;&amp; !value.isOutsourced() ) {</span>
-<span class="fc" id="L1042">            Device&lt;V&gt; device = slice.getDevice();</span>
+<span class="fc" id="L999">        boolean valueIsDeviceVisitor = false;</span>
+<span class="fc bfc" id="L1000" title="All 4 branches covered.">        if ( slice.isOutsourced() &amp;&amp; !value.isOutsourced() ) {</span>
+<span class="fc" id="L1001">            Device&lt;V&gt; device = slice.getDevice();</span>
             try {
-<span class="fc" id="L1044">                device.store( value );</span>
-<span class="nc" id="L1045">            } catch ( Exception e ) {</span>
-<span class="nc" id="L1046">                _LOG.error( &quot;Trying to migrate target slice tensor to device failed.&quot;, e );</span>
-<span class="nc" id="L1047">                throw e;</span>
-<span class="fc" id="L1048">            }</span>
-<span class="fc" id="L1049">            valueIsDeviceVisitor = true;</span>
+<span class="fc" id="L1003">                device.store( value );</span>
+<span class="nc" id="L1004">            } catch ( Exception e ) {</span>
+<span class="nc" id="L1005">                _LOG.error( &quot;Trying to migrate target slice tensor to device failed.&quot;, e );</span>
+<span class="nc" id="L1006">                throw e;</span>
+<span class="fc" id="L1007">            }</span>
+<span class="fc" id="L1008">            valueIsDeviceVisitor = true;</span>
         }
-<span class="pc bpc" id="L1051" title="2 of 6 branches missed.">        if ( this.isEmpty() &amp;&amp; slice.isEmpty() || slice.size() != value.size() ) _become((TsrImpl&lt;V&gt;) value); // TODO: Rethink this a little</span>
-<span class="fc" id="L1052">        else Neureka.get().backend().getFunction().idy().call(  slice, value  );</span>
+<span class="pc bpc" id="L1010" title="2 of 6 branches missed.">        if ( this.isEmpty() &amp;&amp; slice.isEmpty() || slice.size() != value.size() ) _become((TsrImpl&lt;V&gt;) value); // TODO: Rethink this a little</span>
+<span class="fc" id="L1011">        else Neureka.get().backend().getFunction().idy().call(  slice, value  );</span>
         try {
-<span class="fc bfc" id="L1054" title="All 2 branches covered.">            if ( valueIsDeviceVisitor ) value.getDevice().restore( value );</span>
-<span class="nc" id="L1055">        } catch ( Exception exception ) {</span>
-<span class="nc" id="L1056">            _LOG.error( &quot;Trying to migrate source tensor back to original location failed.&quot;, exception );</span>
-<span class="nc" id="L1057">            throw exception;</span>
-<span class="fc" id="L1058">        }</span>
-<span class="fc" id="L1059">        return this;</span>
+<span class="fc bfc" id="L1013" title="All 2 branches covered.">            if ( valueIsDeviceVisitor ) value.getDevice().restore( value );</span>
+<span class="nc" id="L1014">        } catch ( Exception exception ) {</span>
+<span class="nc" id="L1015">            _LOG.error( &quot;Trying to migrate source tensor back to original location failed.&quot;, exception );</span>
+<span class="nc" id="L1016">            throw exception;</span>
+<span class="fc" id="L1017">        }</span>
+<span class="fc" id="L1018">        return this;</span>
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-<span class="fc" id="L1066">    public V getDataAt( int i ) { return getDevice().access( this ).readAt( i ); }</span>
+<span class="fc" id="L1025">    public V getDataAt( int i ) { return getDevice().access( this ).readAt( i ); }</span>
 
     /**
      *  {@inheritDoc}
      */
     @Override
     public Tsr&lt;V&gt; setItemAt( int i, V o ) {
-<span class="fc" id="L1073">        _guardMod(&quot;data object&quot;);</span>
-<span class="fc" id="L1074">        NDConfiguration ndc = this.getNDConf();</span>
-<span class="fc" id="L1075">        _setDataAt( ndc.indexOfIndex( i ), o );</span>
-<span class="fc" id="L1076">        return this;</span>
+<span class="fc" id="L1032">        _guardMod(&quot;data object&quot;);</span>
+<span class="fc" id="L1033">        NDConfiguration ndc = this.getNDConf();</span>
+<span class="fc" id="L1034">        _setDataAt( ndc.indexOfIndex( i ), o );</span>
+<span class="fc" id="L1035">        return this;</span>
     }
 
     private void _setDataAt( int i, V o ) {
-<span class="pc bpc" id="L1080" title="1 of 4 branches missed.">        if ( this.isVirtual() &amp;&amp; i &gt; 0 )</span>
-<span class="nc" id="L1081">            throw new IllegalArgumentException(&quot;There is no data item at index &quot;+i+&quot; for this virtual tensor!&quot;);</span>
+<span class="pc bpc" id="L1039" title="1 of 4 branches missed.">        if ( this.isVirtual() &amp;&amp; i &gt; 0 )</span>
+<span class="nc" id="L1040">            throw new IllegalArgumentException(&quot;There is no data item at index &quot;+i+&quot; for this virtual tensor!&quot;);</span>
 
-<span class="fc" id="L1083">        getDevice().access( this ).write( o ).at( i );</span>
-<span class="fc" id="L1084">        _version++; // Autograd must be warned!</span>
-<span class="fc" id="L1085">    }</span>
+<span class="fc" id="L1042">        getDevice().access( this ).write( o ).at( i );</span>
+<span class="fc" id="L1043">        _version++; // Autograd must be warned!</span>
+<span class="fc" id="L1044">    }</span>
 
     /**
      *  {@inheritDoc}
@@ -1090,26 +1049,26 @@ import java.util.stream.Collectors;
     @Override
     public Tsr&lt;V&gt; setItems( Object value )
     {
-<span class="fc" id="L1093">        LogUtil.nullArgCheck( value, &quot;value&quot;, Object.class );</span>
-<span class="fc" id="L1094">        boolean success = true;</span>
-<span class="fc bfc" id="L1095" title="All 2 branches covered.">        if ( Number.class.isAssignableFrom(value.getClass()) ) { // A virtual tensor!</span>
-<span class="fc" id="L1096">            this.setIsVirtual( true );</span>
-<span class="fc" id="L1097">            value = DataConverter.get().convert( value, this.itemType() );</span>
-<span class="fc" id="L1098">            this.getUnsafe().setDataAt( 0, (V) value );</span>
-<span class="pc bpc" id="L1099" title="1 of 2 branches missed.">        } else if ( value.getClass().isArray() ) {</span>
-<span class="fc bfc" id="L1100" title="All 2 branches covered.">            if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );</span>
+<span class="fc" id="L1052">        LogUtil.nullArgCheck( value, &quot;value&quot;, Object.class );</span>
+<span class="fc" id="L1053">        boolean success = true;</span>
+<span class="fc bfc" id="L1054" title="All 2 branches covered.">        if ( Number.class.isAssignableFrom(value.getClass()) ) { // A virtual tensor!</span>
+<span class="fc" id="L1055">            this.setIsVirtual( true );</span>
+<span class="fc" id="L1056">            value = DataConverter.get().convert( value, this.itemType() );</span>
+<span class="fc" id="L1057">            this.getUnsafe().setDataAt( 0, (V) value );</span>
+<span class="pc bpc" id="L1058" title="1 of 2 branches missed.">        } else if ( value.getClass().isArray() ) {</span>
+<span class="fc bfc" id="L1059" title="All 2 branches covered.">            if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );</span>
             else {
                 // This usually happens when a tensor was just freed from a device.
-<span class="fc" id="L1103">                getDevice().access(this).writeFrom(value);</span>
-<span class="pc bpc" id="L1104" title="1 of 2 branches missed.">                if ( this.isOutsourced() ) setIsVirtual(false);</span>
+<span class="fc" id="L1062">                getDevice().access(this).writeFrom(value);</span>
+<span class="pc bpc" id="L1063" title="1 of 2 branches missed.">                if ( this.isOutsourced() ) setIsVirtual(false);</span>
             }
         }
-<span class="nc" id="L1107">        else success = false;</span>
+<span class="nc" id="L1066">        else success = false;</span>
 
-<span class="pc bpc" id="L1109" title="1 of 2 branches missed.">        if ( !success )</span>
-<span class="nc" id="L1110">            _LOG.warn( &quot;Failed to set value of type '&quot;+value.getClass().getSimpleName()+&quot;'!&quot; );</span>
+<span class="pc bpc" id="L1068" title="1 of 2 branches missed.">        if ( !success )</span>
+<span class="nc" id="L1069">            _LOG.warn( &quot;Failed to set value of type '&quot;+value.getClass().getSimpleName()+&quot;'!&quot; );</span>
 
-<span class="fc" id="L1112">        return this;</span>
+<span class="fc" id="L1071">        return this;</span>
     }
 
     /**
@@ -1117,14 +1076,14 @@ import java.util.stream.Collectors;
      */
     @Override
     public Object getData() {
-<span class="fc" id="L1120">        _guardGet(&quot;data object&quot;);</span>
-<span class="fc" id="L1121">        return _getData( true );</span>
+<span class="fc" id="L1079">        _guardGet(&quot;data object&quot;);</span>
+<span class="fc" id="L1080">        return _getData( true );</span>
     }
 
     private Object _getData( boolean clone ) {
-<span class="fc" id="L1125">        Device&lt;V&gt; device = this.getDevice();</span>
-<span class="pc bpc" id="L1126" title="1 of 2 branches missed.">        if ( device == null ) return null;</span>
-<span class="fc" id="L1127">        else return device.access( this ).readAll( clone );</span>
+<span class="fc" id="L1084">        Device&lt;V&gt; device = this.getDevice();</span>
+<span class="pc bpc" id="L1085" title="1 of 2 branches missed.">        if ( device == null ) return null;</span>
+<span class="fc" id="L1086">        else return device.access( this ).readAll( clone );</span>
     }
 
     /**
@@ -1132,24 +1091,22 @@ import java.util.stream.Collectors;
      */
     @Override
     public Object getItems() {
-<span class="fc" id="L1135">        _guardGet(&quot;value object&quot;);</span>
-<span class="fc bfc" id="L1136" title="All 2 branches covered.">        if ( this.isOutsourced() ) {</span>
-<span class="fc" id="L1137">            Device&lt;V&gt; device = get( Device.class );</span>
-<span class="pc bpc" id="L1138" title="1 of 2 branches missed.">            if ( device != null ) {</span>
-<span class="pc bpc" id="L1139" title="1 of 4 branches missed.">                if ( this.getNDConf().isSimple() &amp;&amp; !this.isSlice() )</span>
-<span class="fc" id="L1140">                    return device.access(this).readAll(false);</span>
+<span class="fc" id="L1094">        _guardGet(&quot;value object&quot;);</span>
+<span class="fc bfc" id="L1095" title="All 2 branches covered.">        if ( this.isOutsourced() ) {</span>
+<span class="fc" id="L1096">            Device&lt;V&gt; device = get( Device.class );</span>
+<span class="pc bpc" id="L1097" title="1 of 2 branches missed.">            if ( device != null ) {</span>
+<span class="pc bpc" id="L1098" title="1 of 4 branches missed.">                if ( this.getNDConf().isSimple() &amp;&amp; !this.isSlice() )</span>
+<span class="fc" id="L1099">                    return device.access(this).readAll(false);</span>
                 else
-<span class="fc" id="L1142">                    return device.access( this.deepCopy().setIsVirtual( false ) ).readAll(false);</span>
+<span class="fc" id="L1101">                    return device.access( this.deepCopy().setIsVirtual( false ) ).readAll(false);</span>
             }
         }
-<span class="fc bfc" id="L1145" title="All 2 branches covered.">        if ( this.isVirtual() ) {</span>
-<span class="pc bpc" id="L1146" title="1 of 2 branches missed.">            if ( this.isOutsourced() ) return null;</span>
-<span class="fc" id="L1147">            else return getDevice().access(this).actualize().get();</span>
-        }
-<span class="fc bfc" id="L1149" title="All 4 branches covered.">        else if ( this.getNDConf().isSimple() &amp;&amp; !this.isSlice() )</span>
-<span class="fc" id="L1150">            return getData();</span>
+<span class="fc bfc" id="L1104" title="All 2 branches covered.">        if ( this.isVirtual() )</span>
+<span class="fc" id="L1105">            return getDevice().access(this).actualize().get();</span>
+<span class="fc bfc" id="L1106" title="All 4 branches covered.">        else if ( this.getNDConf().isSimple() &amp;&amp; !this.isSlice() )</span>
+<span class="fc" id="L1107">            return getData();</span>
         else
-<span class="fc" id="L1152">            return this.deepCopy().getUnsafe().getData();</span>
+<span class="fc" id="L1109">            return this.deepCopy().getUnsafe().getData();</span>
     }
 
     /*==================================================================================================================
@@ -1165,101 +1122,101 @@ import java.util.stream.Collectors;
     @Override
     public BufferedImage asImage( ImageType type )
     {
-<span class="pc bpc" id="L1168" title="1 of 4 branches missed.">        switch ( type.bufferType )</span>
+<span class="pc bpc" id="L1125" title="1 of 4 branches missed.">        switch ( type.bufferType )</span>
         {
             case BufferedImage.TYPE_3BYTE_BGR: {
-<span class="fc" id="L1171">                _checkRankForImageConversion(type, Number.class, 0, 0, 3);</span>
+<span class="fc" id="L1128">                _checkRankForImageConversion(type, Number.class, 0, 0, 3);</span>
                 // We expect a tensor of shape (height x width x 3)!
-<span class="fc" id="L1173">                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);</span>
-<span class="fc" id="L1174">                byte[] data = DataConverter.get().convert( _getRawData(), byte[].class);</span>
-<span class="fc" id="L1175">                _writeImgData(new DataBufferByte(data, data.length), image);</span>
-<span class="fc" id="L1176">                return image;</span>
+<span class="fc" id="L1130">                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);</span>
+<span class="fc" id="L1131">                byte[] data = DataConverter.get().convert( _getRawData(), byte[].class);</span>
+<span class="fc" id="L1132">                _writeImgData(new DataBufferByte(data, data.length), image);</span>
+<span class="fc" id="L1133">                return image;</span>
             }
             case BufferedImage.TYPE_4BYTE_ABGR:
             case BufferedImage.TYPE_4BYTE_ABGR_PRE:
             {
-<span class="fc" id="L1181">                _checkRankForImageConversion(type, Number.class, 0, 0, 4);</span>
-<span class="fc" id="L1182">                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);</span>
-<span class="fc" id="L1183">                byte[] data = DataConverter.get().convert( _getRawData(), byte[].class);</span>
-<span class="fc" id="L1184">                _writeImgData(new DataBufferByte(data, data.length), image);</span>
-<span class="fc" id="L1185">                return image;</span>
+<span class="fc" id="L1138">                _checkRankForImageConversion(type, Number.class, 0, 0, 4);</span>
+<span class="fc" id="L1139">                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);</span>
+<span class="fc" id="L1140">                byte[] data = DataConverter.get().convert( _getRawData(), byte[].class);</span>
+<span class="fc" id="L1141">                _writeImgData(new DataBufferByte(data, data.length), image);</span>
+<span class="fc" id="L1142">                return image;</span>
             }
             case BufferedImage.TYPE_INT_ARGB: {
-<span class="fc" id="L1188">                _checkRankForImageConversion(type, Number.class, 0, 0, 1);</span>
-<span class="fc" id="L1189">                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);</span>
-<span class="fc" id="L1190">                int[] data = DataConverter.get().convert( _getRawData(), int[].class);</span>
-<span class="fc" id="L1191">                _writeImgData(new DataBufferInt(data, data.length), image);</span>
-<span class="fc" id="L1192">                return image;</span>
+<span class="fc" id="L1145">                _checkRankForImageConversion(type, Number.class, 0, 0, 1);</span>
+<span class="fc" id="L1146">                BufferedImage image = new BufferedImage(shape(1), shape(0), type.bufferType);</span>
+<span class="fc" id="L1147">                int[] data = DataConverter.get().convert( _getRawData(), int[].class);</span>
+<span class="fc" id="L1148">                _writeImgData(new DataBufferInt(data, data.length), image);</span>
+<span class="fc" id="L1149">                return image;</span>
             }
         }
-<span class="nc" id="L1195">        throw new IllegalArgumentException(&quot;Image type '&quot;+type+&quot;' not supported.&quot;);</span>
+<span class="nc" id="L1152">        throw new IllegalArgumentException(&quot;Image type '&quot;+type+&quot;' not supported.&quot;);</span>
     }
 
     private void _checkRankForImageConversion( ImageType type, Class&lt;?&gt; dataType, int... pattern ) {
-<span class="fc" id="L1199">        int rank = pattern.length; // The expected rank!</span>
-<span class="fc bfc" id="L1200" title="All 2 branches covered.">        if ( this.rank() != rank ) {</span>
-<span class="fc" id="L1201">            throw new IllegalArgumentException(</span>
-<span class="fc" id="L1202">                    &quot;Cannot create image of type '&quot; + type.name() + &quot;' from tensor of rank &quot; + this.rank() + &quot;. &quot; +</span>
+<span class="fc" id="L1156">        int rank = pattern.length; // The expected rank!</span>
+<span class="fc bfc" id="L1157" title="All 2 branches covered.">        if ( this.rank() != rank ) {</span>
+<span class="fc" id="L1158">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L1159">                    &quot;Cannot create image of type '&quot; + type.name() + &quot;' from tensor of rank &quot; + this.rank() + &quot;. &quot; +</span>
                     &quot;Expected to receive tensor of rank &quot; + rank + &quot;.&quot;
                 );
         }
-<span class="fc bfc" id="L1206" title="All 2 branches covered.">        for ( int i = 0; i &lt; pattern.length; i++ ) {</span>
-<span class="fc" id="L1207">            int axisSize = pattern[ i ]; // The expected axis size!</span>
-<span class="fc bfc" id="L1208" title="All 2 branches covered.">            if ( axisSize &gt; 0 ) {</span>
-<span class="fc bfc" id="L1209" title="All 2 branches covered.">                if ( axisSize != this.shape(i) ) {</span>
-<span class="fc" id="L1210">                    String shape = this.shape().stream().map( a -&gt; a.toString() ).collect(Collectors.joining(&quot;x&quot;));</span>
-<span class="fc" id="L1211">                    throw new IllegalArgumentException(</span>
-<span class="fc" id="L1212">                        &quot;Cannot create image of type '&quot; + type.name() + &quot;' from tensor with shape (&quot; + shape + &quot;). &quot; +</span>
+<span class="fc bfc" id="L1163" title="All 2 branches covered.">        for ( int i = 0; i &lt; pattern.length; i++ ) {</span>
+<span class="fc" id="L1164">            int axisSize = pattern[ i ]; // The expected axis size!</span>
+<span class="fc bfc" id="L1165" title="All 2 branches covered.">            if ( axisSize &gt; 0 ) {</span>
+<span class="fc bfc" id="L1166" title="All 2 branches covered.">                if ( axisSize != this.shape(i) ) {</span>
+<span class="fc" id="L1167">                    String shape = this.shape().stream().map( a -&gt; a.toString() ).collect(Collectors.joining(&quot;x&quot;));</span>
+<span class="fc" id="L1168">                    throw new IllegalArgumentException(</span>
+<span class="fc" id="L1169">                        &quot;Cannot create image of type '&quot; + type.name() + &quot;' from tensor with shape (&quot; + shape + &quot;). &quot; +</span>
                         &quot;Axis &quot; + i + &quot; is expected to be of size &quot; + axisSize + &quot;.&quot;
                     );
                 }
             }
         }
-<span class="fc bfc" id="L1218" title="All 2 branches covered.">        if ( !dataType.isAssignableFrom(this.getItemType()) )</span>
-<span class="fc" id="L1219">            throw new IllegalArgumentException(</span>
-<span class="fc" id="L1220">                &quot;Cannot create image of type '&quot; + type.name() + &quot;' from tensor of type '&quot; + this.getItemType().getSimpleName() + &quot;. &quot; +</span>
-<span class="fc" id="L1221">                &quot;Expected to receive a tensor whose type is at least a sub-type of '&quot; + dataType.getSimpleName() + &quot;'.&quot;</span>
+<span class="fc bfc" id="L1175" title="All 2 branches covered.">        if ( !dataType.isAssignableFrom(this.getItemType()) )</span>
+<span class="fc" id="L1176">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L1177">                &quot;Cannot create image of type '&quot; + type.name() + &quot;' from tensor of type '&quot; + this.getItemType().getSimpleName() + &quot;. &quot; +</span>
+<span class="fc" id="L1178">                &quot;Expected to receive a tensor whose type is at least a sub-type of '&quot; + dataType.getSimpleName() + &quot;'.&quot;</span>
             );
-<span class="fc" id="L1223">    }</span>
+<span class="fc" id="L1180">    }</span>
 
     private static void _writeImgData( DataBuffer data, BufferedImage target ) {
-<span class="fc" id="L1226">        target.setData(</span>
-<span class="fc" id="L1227">            Raster.createRaster( target.getSampleModel(), data, new Point() )</span>
+<span class="fc" id="L1183">        target.setData(</span>
+<span class="fc" id="L1184">            Raster.createRaster( target.getSampleModel(), data, new Point() )</span>
         );
-<span class="fc" id="L1229">    }</span>
+<span class="fc" id="L1186">    }</span>
 
     /**
      *  {@inheritDoc}
      */
     @Override
     public Tsr&lt;V&gt; addToGradient( Tsr&lt;V&gt; error ) {
-<span class="fc" id="L1236">        _guardSet(&quot;gradient&quot;);</span>
-<span class="fc" id="L1237">        if (</span>
-<span class="fc bfc" id="L1238" title="All 2 branches covered.">            !forComponent(</span>
+<span class="fc" id="L1193">        _guardSet(&quot;gradient&quot;);</span>
+<span class="fc" id="L1194">        if (</span>
+<span class="fc bfc" id="L1195" title="All 2 branches covered.">            !forComponent(</span>
                 Tsr.class,
                     gradient -&gt;
-<span class="fc" id="L1241">                    this.set(</span>
-<span class="fc" id="L1242">                        MemUtil.keep( gradient, error, () -&gt;</span>
-<span class="fc" id="L1243">                            Neureka.get()</span>
-<span class="fc" id="L1244">                                    .backend()</span>
-<span class="fc" id="L1245">                                    .getFunction()</span>
-<span class="fc" id="L1246">                                    .plusAssign()</span>
-<span class="fc" id="L1247">                                    .call(gradient, error)</span>
+<span class="fc" id="L1198">                    this.set(</span>
+<span class="fc" id="L1199">                        MemUtil.keep( gradient, error, () -&gt;</span>
+<span class="fc" id="L1200">                            Neureka.get()</span>
+<span class="fc" id="L1201">                                    .backend()</span>
+<span class="fc" id="L1202">                                    .getFunction()</span>
+<span class="fc" id="L1203">                                    .plusAssign()</span>
+<span class="fc" id="L1204">                                    .call(gradient, error)</span>
                         )
                     )
             )
         ) {
-<span class="fc" id="L1252">            this.set( error );</span>
-<span class="fc" id="L1253">            this.forComponent( Device.class, device -&gt; {</span>
+<span class="fc" id="L1209">            this.set( error );</span>
+<span class="fc" id="L1210">            this.forComponent( Device.class, device -&gt; {</span>
                 try {
-<span class="fc" id="L1255">                    device.store( error ) ;</span>
-<span class="nc" id="L1256">                } catch ( Exception exception ) {</span>
-<span class="nc" id="L1257">                    _LOG.error( &quot;Failed trying to store a given error to a device for gradient accumulation.&quot;, exception );</span>
-<span class="nc" id="L1258">                    throw exception;</span>
-<span class="fc" id="L1259">                }</span>
-<span class="fc" id="L1260">            });</span>
+<span class="fc" id="L1212">                    device.store( error ) ;</span>
+<span class="nc" id="L1213">                } catch ( Exception exception ) {</span>
+<span class="nc" id="L1214">                    _LOG.error( &quot;Failed trying to store a given error to a device for gradient accumulation.&quot;, exception );</span>
+<span class="nc" id="L1215">                    throw exception;</span>
+<span class="fc" id="L1216">                }</span>
+<span class="fc" id="L1217">            });</span>
         }
-<span class="fc" id="L1262">        return this;</span>
+<span class="fc" id="L1219">        return this;</span>
     }
 
     /**
@@ -1268,16 +1225,16 @@ import java.util.stream.Collectors;
     @Override
     public &lt;T&gt; T asType( Class&lt;T&gt; typeClass )
     {
-<span class="fc" id="L1271">        LogUtil.nullArgCheck( typeClass, &quot;typeClass&quot;, Class.class );</span>
-<span class="fc bfc" id="L1272" title="All 2 branches covered.">        if ( typeClass == Tsr.class ) return (T) this;</span>
-<span class="pc bpc" id="L1273" title="1 of 4 branches missed.">        if ( Number.class.isAssignableFrom( this.itemType()) &amp;&amp; Number.class.isAssignableFrom(typeClass) ) {</span>
-<span class="fc" id="L1274">            DataConverter converter = DataConverter.get();</span>
-<span class="fc" id="L1275">            return converter.convert( mean().at(0).get(), typeClass );</span>
+<span class="fc" id="L1228">        LogUtil.nullArgCheck( typeClass, &quot;typeClass&quot;, Class.class );</span>
+<span class="fc bfc" id="L1229" title="All 2 branches covered.">        if ( typeClass == Tsr.class ) return (T) this;</span>
+<span class="pc bpc" id="L1230" title="1 of 4 branches missed.">        if ( Number.class.isAssignableFrom( this.itemType()) &amp;&amp; Number.class.isAssignableFrom(typeClass) ) {</span>
+<span class="fc" id="L1231">            DataConverter converter = DataConverter.get();</span>
+<span class="fc" id="L1232">            return converter.convert( mean().at(0).get(), typeClass );</span>
         }
-<span class="fc bfc" id="L1277" title="All 2 branches covered.">        if ( typeClass == String.class )</span>
-<span class="fc" id="L1278">            return (T) this.toString();</span>
+<span class="fc bfc" id="L1234" title="All 2 branches covered.">        if ( typeClass == String.class )</span>
+<span class="fc" id="L1235">            return (T) this.toString();</span>
 
-<span class="fc" id="L1280">        throw new IllegalArgumentException(&quot;Failed to convert this tensor of type '&quot;+getDataType()+&quot;' to '&quot;+typeClass+&quot;'!&quot;);</span>
+<span class="fc" id="L1237">        throw new IllegalArgumentException(&quot;Failed to convert this tensor of type '&quot;+getDataType()+&quot;' to '&quot;+typeClass+&quot;'!&quot;);</span>
     }
 
     /**
@@ -1303,27 +1260,27 @@ import java.util.stream.Collectors;
      */
     private &lt;T&gt; Tsr&lt;T&gt; _toType( Class&lt;T&gt; typeClass )
     {
-<span class="fc bfc" id="L1306" title="All 2 branches covered.">        if ( this.isOutsourced() ) {</span>
-<span class="fc" id="L1307">            _setDataType( DataType.of( typeClass ) );</span>
-<span class="fc" id="L1308">            return (Tsr&lt;T&gt;) this;</span>
+<span class="fc bfc" id="L1263" title="All 2 branches covered.">        if ( this.isOutsourced() ) {</span>
+<span class="fc" id="L1264">            _setDataType( DataType.of( typeClass ) );</span>
+<span class="fc" id="L1265">            return (Tsr&lt;T&gt;) this;</span>
         }
         else {
-<span class="fc" id="L1311">            Object newData = _convertedDataOfType( typeClass );</span>
-<span class="fc" id="L1312">            _setData( null );</span>
-<span class="fc" id="L1313">            _setDataType( DataType.of( typeClass ) );</span>
-<span class="fc" id="L1314">            _setData( TsrConstructor.dataArrayOnCPUFor(newData) );</span>
+<span class="fc" id="L1268">            Object newData = _convertedDataOfType( typeClass );</span>
+<span class="fc" id="L1269">            _setData( null );</span>
+<span class="fc" id="L1270">            _setDataType( DataType.of( typeClass ) );</span>
+<span class="fc" id="L1271">            _setData( CPU.get().allocate(newData) );</span>
         }
-<span class="pc" id="L1316">        forComponent( TsrImpl.class, gradient -&gt; gradient._toType( typeClass ) );</span>
-<span class="fc" id="L1317">        return (Tsr&lt;T&gt;) this;</span>
+<span class="pc" id="L1273">        forComponent( TsrImpl.class, gradient -&gt; gradient._toType( typeClass ) );</span>
+<span class="fc" id="L1274">        return (Tsr&lt;T&gt;) this;</span>
     }
 
     @Override
     public String toString()
     {
-<span class="fc bfc" id="L1323" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
-<span class="pc bpc" id="L1324" title="1 of 2 branches missed.">        else if ( this.isEmpty() ) return &quot;empty&quot;;</span>
-<span class="pc bpc" id="L1325" title="1 of 2 branches missed.">        else if ( this.isUndefined() ) return &quot;undefined&quot;;</span>
-<span class="fc" id="L1326">        return NdaAsString.representing( this ).byDefaults().toString();</span>
+<span class="fc bfc" id="L1280" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="pc bpc" id="L1281" title="1 of 2 branches missed.">        else if ( this.isEmpty() ) return &quot;empty&quot;;</span>
+<span class="pc bpc" id="L1282" title="1 of 2 branches missed.">        else if ( this.isUndefined() ) return &quot;undefined&quot;;</span>
+<span class="fc" id="L1283">        return NdaAsString.representing( this ).byDefaults().toString();</span>
     }
 
 }

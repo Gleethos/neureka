@@ -11,6 +11,7 @@ import neureka.ndim.NDimensional;
 import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -28,13 +29,13 @@ import java.util.stream.Stream;
  */
 public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
 {
-<span class="fc" id="L31">    static &lt;V&gt; WithShapeOrScalarOrVector&lt;V&gt; of( Class&lt;V&gt; type ) { return new NdaBuilder&lt;&gt;( type ); }</span>
+<span class="fc" id="L32">    static &lt;V&gt; WithShapeOrScalarOrVector&lt;V&gt; of( Class&lt;V&gt; type ) { return new NdaBuilder&lt;&gt;( type ); }</span>
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar double tensor.
      */
-<span class="nc" id="L37">    static Nda&lt;Double&gt; of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }</span>
+<span class="nc" id="L38">    static Nda&lt;Double&gt; of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }</span>
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -42,7 +43,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of floats from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of floats.
      */
-<span class="nc" id="L45">    static Nda&lt;Float&gt; of( float... value ) { return Tsr.of( Float.class, new int[]{ value.length }, value ); }</span>
+<span class="nc" id="L46">    static Nda&lt;Float&gt; of( float... value ) { return Tsr.of( Float.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of doubles based on the provided array.
@@ -50,7 +51,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of doubles from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of doubles.
      */
-<span class="fc" id="L53">    static Nda&lt;Double&gt; of( double... value ) { return Tsr.of( Double.class, new int[]{ value.length }, value ); }</span>
+<span class="fc" id="L54">    static Nda&lt;Double&gt; of( double... value ) { return Tsr.of( Double.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of bytes based on the provided array.
@@ -58,7 +59,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of bytes from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of bytes.
      */
-<span class="nc" id="L61">    static Nda&lt;Byte&gt; of( byte... value ) { return Tsr.of( Byte.class, new int[]{ value.length }, value ); }</span>
+<span class="nc" id="L62">    static Nda&lt;Byte&gt; of( byte... value ) { return Tsr.of( Byte.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -66,7 +67,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of ints from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of ints.
      */
-<span class="fc" id="L69">    static Nda&lt;Integer&gt; of( int... value ) { return Tsr.of( Integer.class, new int[]{ value.length }, value ); }</span>
+<span class="fc" id="L70">    static Nda&lt;Integer&gt; of( int... value ) { return Tsr.of( Integer.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of longs based on the provided array.
@@ -74,7 +75,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of longs from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of longs.
      */
-<span class="nc" id="L77">    static Nda&lt;Long&gt; of( long... value ) { return Tsr.of( Long.class, new int[]{ value.length }, value ); }</span>
+<span class="nc" id="L78">    static Nda&lt;Long&gt; of( long... value ) { return Tsr.of( Long.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of shorts based on the provided array.
@@ -82,7 +83,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of shorts from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of shorts.
      */
-<span class="nc" id="L85">    static Nda&lt;Short&gt; of( short... value ) { return Tsr.of( Short.class, new int[]{ value.length }, value ); }</span>
+<span class="nc" id="L86">    static Nda&lt;Short&gt; of( short... value ) { return Tsr.of( Short.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of booleans based on the provided array.
@@ -90,7 +91,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of booleans from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of shorts.
      */
-<span class="fc" id="L93">    static Nda&lt;Boolean&gt; of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }</span>
+<span class="fc" id="L94">    static Nda&lt;Boolean&gt; of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }</span>
 
 
     /**
@@ -127,7 +128,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     /**
      * @return The type class of individual value items within this nd-array.
      */
-<span class="fc" id="L130">    default Class&lt;V&gt; itemType() { return getItemType(); }</span>
+<span class="fc" id="L131">    default Class&lt;V&gt; itemType() { return getItemType(); }</span>
 
     /*==================================================================================================================
     |
@@ -139,9 +140,9 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  @return A {@link Stream} of the items in this {@link Nda}.
      */
     default Stream&lt;V&gt; stream() {
-<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        boolean executeInParallel = ( this.size() &gt; 1_000 );</span>
-<span class="fc" id="L143">        IntStream indices = IntStream.range(0,size());</span>
-<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getItemAt);</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        boolean executeInParallel = ( this.size() &gt; 1_000 );</span>
+<span class="fc" id="L144">        IntStream indices = IntStream.range(0,size());</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getItemAt);</span>
     }
 
     /**
@@ -150,7 +151,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param predicate The lambda to check each element against.
      * @return true if every item in the nd-array matches the predicate, false otherwise.
      */
-<span class="fc" id="L153">    default boolean every( Predicate&lt;V&gt; predicate ) { return stream().allMatch(predicate); }</span>
+<span class="fc" id="L154">    default boolean every( Predicate&lt;V&gt; predicate ) { return stream().allMatch(predicate); }</span>
 
     /**
      * Iterates over every element of this nd-array, and checks whether any
@@ -158,7 +159,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param predicate The lambda to check each element against.
      * @return true if any item in the nd-array matches the predicate, false otherwise.
      */
-<span class="fc" id="L161">    default boolean any( Predicate&lt;V&gt; predicate ) { return stream().anyMatch(predicate); }</span>
+<span class="fc" id="L162">    default boolean any( Predicate&lt;V&gt; predicate ) { return stream().anyMatch(predicate); }</span>
 
     /**
      * Iterates over every element of this nd-array, and checks whether none
@@ -166,7 +167,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param predicate The lambda to check each element against.
      * @return true if none of the items in the nd-array match the predicate, false otherwise.
      */
-<span class="fc" id="L169">    default boolean none( Predicate&lt;V&gt; predicate ) { return stream().noneMatch(predicate);}</span>
+<span class="fc" id="L170">    default boolean none( Predicate&lt;V&gt; predicate ) { return stream().noneMatch(predicate);}</span>
 
     /**
      *  Iterates over every element of this nd-array, and counts the number of
@@ -174,7 +175,25 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param predicate The lambda to check each element against.
      * @return The number of items in the nd-array that match the predicate.
      */
-<span class="fc" id="L177">    default int count( Predicate&lt;V&gt; predicate ) { return (int) stream().filter(predicate).count(); }</span>
+<span class="fc" id="L178">    default int count( Predicate&lt;V&gt; predicate ) { return (int) stream().filter(predicate).count(); }</span>
+
+    /**
+     * Returns the minimum item of this nd-array according to the provided
+     * {@link Comparator}.  This is a special case of a reduction.
+
+     * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
+     * @return The minimum value in the nd-array.
+     */
+<span class="fc" id="L187">    default V minItem( Comparator&lt;V&gt; comparator ) { return stream().min( comparator ).orElse(null); }</span>
+
+    /**
+     * Returns the maximum item of this nd-array according to the provided
+     * {@link Comparator}.  This is a special case of a reduction.
+     *
+     * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
+     * @return The maximum value in the nd-array.
+     */
+<span class="fc" id="L196">    default V maxItem( Comparator&lt;V&gt; comparator ) { return stream().max( comparator ).orElse(null); }</span>
 
     /**
      *  This returns an unprocessed version of the underlying data of this nd-array.
@@ -190,8 +209,11 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     Object getData();
 
     /**
-     *  An NDArray implementation ought to have some way to access its underlying data array.
-     *  This method simple returns an element within this data array sitting at position &quot;i&quot;.
+     *  Use this to access elements of the underlying data array without any index
+     *  transformation applied to it. This is usually similar to the {@link #getItemAt} method,
+     *  however for nd-arrays which are sliced or reshaped views of the data of another nd-array,
+     *  this method will always be unbiased access of the raw data...
+     *
      * @param i The position of the targeted item within the raw data array of an NDArray implementation.
      * @return The found object sitting at the specified index position.
      */
@@ -221,13 +243,13 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     Nda&lt;V&gt; setItems( Object value );
 
     /**
-     *  The following method returns a raw value item within this nd-array
-     *  targeted by a scalar index.
+     *  The following method returns a single item within this nd-array
+     *  targeted by the provided integer index.
      *
-     * @param i The scalar index of the value item which should be returned by the method.
-     * @return The value item found at the targeted index.
+     * @param i The scalar index of the item which should be returned by the method.
+     * @return The item found at the targeted index.
      */
-<span class="fc" id="L230">    default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }</span>
+<span class="fc" id="L252">    default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }</span>
 
     /**
      *  This method returns a raw value item within this nd-array
@@ -240,25 +262,25 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return The found raw value item targeted by the provided index array.
      */
     default V getItemAt( int... indices ) {
-<span class="fc" id="L243">        LogUtil.nullArgCheck( indices, &quot;indices&quot;, int[].class, &quot;Cannot find nd-array value without indices!&quot; );</span>
-<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        if ( indices.length == 0 ) throw new IllegalArgumentException(&quot;Index array may not be empty!&quot;);</span>
-<span class="fc bfc" id="L245" title="All 2 branches covered.">        if ( indices.length &lt; this.rank() ) {</span>
-<span class="fc bfc" id="L246" title="All 2 branches covered.">            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );</span>
+<span class="fc" id="L265">        LogUtil.nullArgCheck( indices, &quot;indices&quot;, int[].class, &quot;Cannot find nd-array value without indices!&quot; );</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">        if ( indices.length == 0 ) throw new IllegalArgumentException(&quot;Index array may not be empty!&quot;);</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        if ( indices.length &lt; this.rank() ) {</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );</span>
             else {
-<span class="fc" id="L248">                int[] allIndices = new int[this.rank()]; // We do some 0 padding to make sure we have the correct number of indices.</span>
-<span class="fc" id="L249">                System.arraycopy( indices, 0, allIndices, 0, indices.length );</span>
-<span class="fc" id="L250">                return getDataAt( getNDConf().indexOfIndices( allIndices ) );</span>
+<span class="fc" id="L270">                int[] allIndices = new int[this.rank()]; // We do some 0 padding to make sure we have the correct number of indices.</span>
+<span class="fc" id="L271">                System.arraycopy( indices, 0, allIndices, 0, indices.length );</span>
+<span class="fc" id="L272">                return getDataAt( getNDConf().indexOfIndices( allIndices ) );</span>
             }
         }
-<span class="fc" id="L253">        return getDataAt( getNDConf().indexOfIndices( indices ) );</span>
+<span class="fc" id="L275">        return getDataAt( getNDConf().indexOfIndices( indices ) );</span>
     }
 
     default &lt;A&gt; A getItemsAs( Class&lt;A&gt; arrayTypeClass ) {
-<span class="fc" id="L257">        return DataConverter.get().convert( getItems(), arrayTypeClass );</span>
+<span class="fc" id="L279">        return DataConverter.get().convert( getItems(), arrayTypeClass );</span>
     }
 
     default  &lt;A&gt; A getDataAs( Class&lt;A&gt; arrayTypeClass ) {
-<span class="fc" id="L261">        return DataConverter.get().convert( getData(), arrayTypeClass );</span>
+<span class="fc" id="L283">        return DataConverter.get().convert( getData(), arrayTypeClass );</span>
     }
 
 
@@ -558,15 +580,15 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return An object which allows you to get or set individual items within this nd-array.
      */
     default Access&lt;V&gt; at( int... indices ) {
-<span class="fc" id="L561">        return new Access&lt;V&gt;() {</span>
-<span class="fc" id="L562">            @Override public V    get()          { return getItemAt( indices ); }</span>
-<span class="fc" id="L563">            @Override public void set( V value ) { putAt( indices, value ); }</span>
+<span class="fc" id="L583">        return new Access&lt;V&gt;() {</span>
+<span class="fc" id="L584">            @Override public V    get()          { return getItemAt( indices ); }</span>
+<span class="fc" id="L585">            @Override public void set( V value ) { putAt( indices, value ); }</span>
             @Override public boolean equals( Object o ) {
-<span class="pc bpc" id="L565" title="1 of 2 branches missed.">                if ( o == null ) return false;</span>
-<span class="pc bpc" id="L566" title="1 of 2 branches missed.">                if ( o == this ) return true;</span>
-<span class="pc bpc" id="L567" title="1 of 2 branches missed.">                if ( o.getClass() != this.getClass() ) return false;</span>
-<span class="fc" id="L568">                Access&lt;V&gt; other = (Access&lt;V&gt;) o;</span>
-<span class="fc" id="L569">                return this.get().equals( other.get() );</span>
+<span class="pc bpc" id="L587" title="1 of 2 branches missed.">                if ( o == null ) return false;</span>
+<span class="pc bpc" id="L588" title="1 of 2 branches missed.">                if ( o == this ) return true;</span>
+<span class="pc bpc" id="L589" title="1 of 2 branches missed.">                if ( o.getClass() != this.getClass() ) return false;</span>
+<span class="fc" id="L590">                Access&lt;V&gt; other = (Access&lt;V&gt;) o;</span>
+<span class="fc" id="L591">                return this.get().equals( other.get() );</span>
             }
         };
     }
@@ -591,7 +613,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     }
 
     default String toString( NDPrintSettings config ) {
-<span class="fc" id="L594">        return NdaAsString.representing( this ).withConfig( config ).toString();</span>
+<span class="fc" id="L616">        return NdaAsString.representing( this ).withConfig( config ).toString();</span>
     }
 
     /**
@@ -604,9 +626,9 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return The {@link String} representation of this nd-array.
      */
     default String toString( Consumer&lt;NDPrintSettings&gt; config ) {
-<span class="fc" id="L607">        NDPrintSettings defaults = Neureka.get().settings().view().getNDPrintSettings().clone();</span>
-<span class="fc" id="L608">        config.accept(defaults);</span>
-<span class="fc" id="L609">        return NdaAsString.representing( this ).withConfig( defaults ).toString();</span>
+<span class="fc" id="L629">        NDPrintSettings defaults = Neureka.get().settings().view().getNDPrintSettings().clone();</span>
+<span class="fc" id="L630">        config.accept(defaults);</span>
+<span class="fc" id="L631">        return NdaAsString.representing( this ).withConfig( defaults ).toString();</span>
     }
 
     String toString();

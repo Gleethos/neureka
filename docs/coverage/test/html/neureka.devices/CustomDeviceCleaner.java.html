@@ -10,61 +10,65 @@ import java.util.List;
  *  This class is similar to the cleaner class introduced in JDK 11, however the minimal version compatibility target
  *  for Neureka is Java 8, which means that this cleaner class introduced in Java 11 is not available here!
  *  That is why a custom cleaner implementation is being defined below.&lt;br&gt;
+ *  &lt;br&gt; &lt;br&gt;
+ *  &lt;b&gt;Warning: This is an internal class, meaning it should not be used
+ *  anywhere but within this library. &lt;br&gt;
+ *  This class or its public methods might change or get removed in future versions!&lt;/b&gt;
  */
-<span class="fc" id="L14">final class CustomDeviceCleaner implements DeviceCleaner, Runnable</span>
+<span class="fc" id="L18">final class CustomDeviceCleaner implements DeviceCleaner, Runnable</span>
 {
-<span class="fc" id="L16">    private final ReferenceQueue&lt;Object&gt; _referenceQueue = new ReferenceQueue&lt;&gt;();</span>
-<span class="fc" id="L17">    private final long _timeout = 60 * 1000;</span>
-<span class="fc" id="L18">    private int _registered = 0;</span>
+<span class="fc" id="L20">    private final ReferenceQueue&lt;Object&gt; _referenceQueue = new ReferenceQueue&lt;&gt;();</span>
+<span class="fc" id="L21">    private final long _timeout = 60 * 1000;</span>
+<span class="fc" id="L22">    private int _registered = 0;</span>
 
-<span class="fc" id="L20">    List&lt;Object&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L24">    List&lt;Object&gt; list = new ArrayList&lt;&gt;();</span>
 
     static class ReferenceWithCleanup&lt;T&gt; extends PhantomReference&lt;T&gt;
     {
         private final Runnable _action;
 
         ReferenceWithCleanup(T o, Runnable action, ReferenceQueue&lt;T&gt; queue) {
-<span class="fc" id="L27">            super( o, queue );</span>
-<span class="fc" id="L28">            _action = action;</span>
-<span class="fc" id="L29">        }</span>
+<span class="fc" id="L31">            super( o, queue );</span>
+<span class="fc" id="L32">            _action = action;</span>
+<span class="fc" id="L33">        }</span>
         public void cleanup() {
-<span class="fc" id="L31">            _action.run();</span>
-<span class="fc" id="L32">        }</span>
+<span class="fc" id="L35">            _action.run();</span>
+<span class="fc" id="L36">        }</span>
     }
 
     @Override
     public void register(Object o, Runnable action) {
-<span class="fc" id="L37">        synchronized ( _referenceQueue ) {</span>
-<span class="fc" id="L38">            list.add(new ReferenceWithCleanup&lt;Object&gt;(o, action, _referenceQueue));</span>
-<span class="fc" id="L39">            _registered++;</span>
-<span class="fc bfc" id="L40" title="All 2 branches covered.">            if ( _registered == 1 ) new Thread( this::run ).start();</span>
-<span class="fc" id="L41">        }</span>
-<span class="fc" id="L42">    }</span>
+<span class="fc" id="L41">        synchronized ( _referenceQueue ) {</span>
+<span class="fc" id="L42">            list.add(new ReferenceWithCleanup&lt;Object&gt;(o, action, _referenceQueue));</span>
+<span class="fc" id="L43">            _registered++;</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">            if ( _registered == 1 ) new Thread( this::run ).start();</span>
+<span class="fc" id="L45">        }</span>
+<span class="fc" id="L46">    }</span>
 
     @Override
     public void run() {
-<span class="fc bfc" id="L46" title="All 2 branches covered.">        while ( _registered &gt; 0 ) {</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        while ( _registered &gt; 0 ) {</span>
             try {
-<span class="fc" id="L48">                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove(_timeout);</span>
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                if ( ref != null ) {</span>
+<span class="fc" id="L52">                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove(_timeout);</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                if ( ref != null ) {</span>
                     try {
-<span class="fc" id="L51">                        ref.cleanup();</span>
-<span class="nc" id="L52">                    } catch ( Throwable e ) {</span>
-<span class="nc" id="L53">                        e.printStackTrace();</span>
+<span class="fc" id="L55">                        ref.cleanup();</span>
+<span class="nc" id="L56">                    } catch ( Throwable e ) {</span>
+<span class="nc" id="L57">                        e.printStackTrace();</span>
                         // ignore exceptions from the cleanup action
                         // (including interruption of cleanup thread)
-<span class="fc" id="L56">                    }</span>
-<span class="fc" id="L57">                    _registered--;</span>
+<span class="fc" id="L60">                    }</span>
+<span class="fc" id="L61">                    _registered--;</span>
                 }
-<span class="nc" id="L59">            } catch ( Throwable e ) {</span>
-<span class="nc" id="L60">                e.printStackTrace(); // The queue failed</span>
-<span class="pc" id="L61">            }</span>
+<span class="nc" id="L63">            } catch ( Throwable e ) {</span>
+<span class="nc" id="L64">                e.printStackTrace(); // The queue failed</span>
+<span class="pc" id="L65">            }</span>
         }
-<span class="fc" id="L63">    }</span>
+<span class="nc" id="L67">    }</span>
 
     @Override
     public String toString() {
-<span class="fc" id="L67">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(this.hashCode())+&quot;[&quot; +</span>
+<span class="fc" id="L71">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(this.hashCode())+&quot;[&quot; +</span>
                     &quot;registered=&quot; + _registered +
                 &quot;]&quot;;
     }

@@ -1,33 +1,29 @@
 {
   "className":"ut.tensors.Functional_Tensor_Spec",
-  "title":"",
-  "narrative":"",
+  "title":"Functional Tensors",
+  "narrative":"Tensors expose a powerful API for performing operations on them\n    in a functional style.",
   "subjects":[],
   "statistics":{
-    "runs":"4",
+    "runs":"5",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.913 seconds"
+    "duration":"2.262 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"Tensor initialization lambdas produce expected tensors.",
+      "id":"We can initialize a tensor using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.200 seconds",
+      "duration":"0.240 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","    DataType.of( Integer.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { i - 2 }",")"]},
+        {"kind":"when","text":"We instantiate a tensor using an initializer lambda...","code":["Tsr<Integer> t = Tsr.of(","    DataType.of( Integer.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { i - 2 }",")"]},
 
-        {"kind":"then","text":"The tensor has been initialized with the expected values:","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]},
-
-        {"kind":"when","text":"","code":["t = Tsr.of(","    DataType.of( String.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { i + ':' + indices.toString() }",")"]},
-
-        {"kind":"then","text":"","code":["t.toString() == \"(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]\""]}
+        {"kind":"then","text":"It is initialized with the expected values:","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -35,7 +31,7 @@
     {
       "id":"We can analyse the values of a tensor using various predicate receiving methods",
       "result":"PASS",
-      "duration":"0.247 seconds",
+      "duration":"0.482 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +54,7 @@
     {
       "id":"Tensor mapping lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.230 seconds",
+      "duration":"0.819 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,20 +77,41 @@
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
       "result":"PASS",
-      "duration":"0.223 seconds",
+      "duration":"0.484 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create a tensor with a single element.","code":["var t = Tsr.of(","    DataType.of( Integer.class ),","    [ 1 ],","    ( int i, int[] indices ) -> { 1 }",")",".to(device)"]},
 
-        {"kind":"when","text":"We map the tensor to a new tensor of the same type.","code":["var b = t.map((it) -> {it + 1})"]},
+        {"kind":"when","text":"We map the tensor to a new tensor of the same type.","code":["var b = t.map( it -> it + 1 )"]},
 
         {"kind":"then","text":"The new tensor should have the same value as the original tensor.","code":["b.toString() == \"(1):[2.0]\"","b.itemType == Integer.class"]},
 
         {"kind":"and","text":"The original tensor should not have changed because no inline operation occurred.","code":["t.toString() == \"(1):[1.0]\""]},
 
         {"kind":"where","text":"","code":{"device":["CPU","GPU"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find both min and max items in a tensor by providing a comparator.",
+      "result":"PASS",
+      "duration":"0.221 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor of chars for which we want to find a min and max values:","code":["var t = Tsr.of(Character)",".withShape(2, 13)",".andWhere(( int i, int[] indices ) -> { (i+65) as char } )"]},
+
+        {"kind":"when","text":"We find the min value by passing a comparator (which takes 2 values and returns an int):","code":["var min = t.minItem( ( Character a, Character b ) -> a.compareTo( b ) )"]},
+
+        {"kind":"then","text":"The resulting min value is the last item in the tensor, the letter A:","code":["min == 'A'"]},
+
+        {"kind":"when","text":"We now try to find the max value:","code":["var max = t.maxItem( ( Character a, Character b ) -> a.compareTo( b ) )"]},
+
+        {"kind":"then","text":"The max value is the last item in the tensor, the letter Z:","code":["max == 'Z'"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

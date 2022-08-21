@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.105 seconds"
+    "duration":"0.071 seconds"
   },
   "headers":["\n            <h2> GraphNode Instantiation </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the GraphNode class during instantiation.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GraphNode instantiation works as expected when the context argument is a GraphLock.",
       "result":"PASS",
-      "duration":"0.815 seconds",
+      "duration":"0.032 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"GraphNode instantiation works as expected when the context argument is an ExecutionCall.",
       "result":"PASS",
-      "duration":"0.274 seconds",
+      "duration":"0.016 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

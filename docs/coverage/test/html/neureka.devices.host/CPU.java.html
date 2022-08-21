@@ -94,378 +94,401 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="fc" id="L94">    public CPU restore( Tsr&lt;Object&gt; tensor ) { return this; }</span>
 
     @Override
-    public &lt;T&gt; CPU store(Tsr&lt;T&gt; tensor ) {
-        //super.store(tensor);
-<span class="fc" id="L99">        _tensors.add( (Tsr&lt;Object&gt;) tensor);</span>
-<span class="fc" id="L100">        return this;</span>
+    public &lt;T&gt; CPU store( Tsr&lt;T&gt; tensor ) {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if ( !this.has( tensor ) )</span>
+<span class="nc" id="L99">            tensor.getUnsafe().getDataArray().owner().restore( tensor );</span>
+
+<span class="fc" id="L101">        _tensors.add( (Tsr&lt;Object&gt;) tensor);</span>
+<span class="fc" id="L102">        return this;</span>
     }
 
-<span class="nc" id="L103">    @Override protected final &lt;T&gt; void _updateNDConf(Tsr&lt;T&gt; tensor) { /* Nothing to do here */ }</span>
+<span class="fc" id="L105">    @Override protected final &lt;T&gt; void _updateNDConf(Tsr&lt;T&gt; tensor) { /* Nothing to do here */ }</span>
 
     @Override
     protected final &lt;T&gt; int _sizeOccupiedBy(Tsr&lt;T&gt; tensor) {
-<span class="fc" id="L107">        Object data = tensor.getUnsafe().getData();</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">        if      ( data instanceof float[]   ) return ( (float[])   data).length;</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">        else if ( data instanceof double[]  ) return ( (double[])  data).length;</span>
-<span class="fc bfc" id="L110" title="All 2 branches covered.">        else if ( data instanceof short[]   ) return ( (short[])   data).length;</span>
-<span class="fc bfc" id="L111" title="All 2 branches covered.">        else if ( data instanceof int[]     ) return ( (int[])     data).length;</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        else if ( data instanceof byte[]    ) return ( (byte[])    data).length;</span>
-<span class="fc bfc" id="L113" title="All 2 branches covered.">        else if ( data instanceof long[]    ) return ( (long[])    data).length;</span>
-<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        else if ( data instanceof boolean[] ) return ( (boolean[]) data).length;</span>
-<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        else if ( data instanceof char[]    ) return ( (char[])    data).length;</span>
-<span class="fc" id="L116">        else return ( (Object[]) data).length;</span>
+<span class="fc" id="L109">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if      ( data instanceof float[]   ) return ( (float[])   data).length;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        else if ( data instanceof double[]  ) return ( (double[])  data).length;</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        else if ( data instanceof short[]   ) return ( (short[])   data).length;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        else if ( data instanceof int[]     ) return ( (int[])     data).length;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        else if ( data instanceof byte[]    ) return ( (byte[])    data).length;</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        else if ( data instanceof long[]    ) return ( (long[])    data).length;</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        else if ( data instanceof boolean[] ) return ( (boolean[]) data).length;</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        else if ( data instanceof char[]    ) return ( (char[])    data).length;</span>
+<span class="fc" id="L118">        else return ( (Object[]) data).length;</span>
     }
 
     @Override
     protected final &lt;T&gt; Object _readAll(Tsr&lt;T&gt; tensor, boolean clone ) {
-<span class="fc" id="L121">        Object data = tensor.getUnsafe().getData();</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">        if ( clone ) {</span>
-<span class="fc bfc" id="L123" title="All 2 branches covered.">            if ( data instanceof double[]  ) return ( (double[])  data ).clone();</span>
-<span class="fc bfc" id="L124" title="All 2 branches covered.">            if ( data instanceof float[]   ) return ( (float[])   data ).clone();</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">            if ( data instanceof byte[]    ) return ( (byte[])    data ).clone();</span>
-<span class="fc bfc" id="L126" title="All 2 branches covered.">            if ( data instanceof short[]   ) return ( (short[])   data ).clone();</span>
-<span class="fc bfc" id="L127" title="All 2 branches covered.">            if ( data instanceof int[]     ) return ( (int[])     data ).clone();</span>
-<span class="fc bfc" id="L128" title="All 2 branches covered.">            if ( data instanceof long[]    ) return ( (long[])    data ).clone();</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">            if ( data instanceof char[]    ) return ( (char[])    data ).clone();</span>
-<span class="fc bfc" id="L130" title="All 2 branches covered.">            if ( data instanceof boolean[] ) return ( (boolean[]) data ).clone();</span>
-<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if ( data instanceof Object[]  ) return ( (Object[])  data ).clone();</span>
+<span class="fc" id="L123">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if ( clone ) {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">            if ( data instanceof double[]  ) return ( (double[])  data ).clone();</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            if ( data instanceof float[]   ) return ( (float[])   data ).clone();</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            if ( data instanceof byte[]    ) return ( (byte[])    data ).clone();</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if ( data instanceof short[]   ) return ( (short[])   data ).clone();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            if ( data instanceof int[]     ) return ( (int[])     data ).clone();</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            if ( data instanceof long[]    ) return ( (long[])    data ).clone();</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            if ( data instanceof char[]    ) return ( (char[])    data ).clone();</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            if ( data instanceof boolean[] ) return ( (boolean[]) data ).clone();</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">            if ( data instanceof Object[]  ) return ( (Object[])  data ).clone();</span>
         }
-<span class="fc" id="L133">        return data;</span>
+<span class="fc" id="L135">        return data;</span>
     }
 
     @Override
     protected final &lt;T&gt; T _readItem( Tsr&lt;T&gt; tensor, int index ) {
-<span class="fc" id="L138">        Object data = tensor.getUnsafe().getData();</span>
-<span class="fc bfc" id="L139" title="All 2 branches covered.">        if      ( data instanceof float[]   ) return (T)Float.valueOf( ((float[])   data)[ index ] );</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">        else if ( data instanceof double[]  ) return (T)Double.valueOf( ((double[])  data)[ index ] );</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        else if ( data instanceof short[]   ) return (T)Short.valueOf( ((short[])   data)[ index ] );</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">        else if ( data instanceof int[]     ) return (T)Integer.valueOf( ((int[])     data)[ index ] );</span>
-<span class="fc bfc" id="L143" title="All 2 branches covered.">        else if ( data instanceof byte[]    ) return (T)Byte.valueOf( ((byte[])    data)[ index ] );</span>
-<span class="fc bfc" id="L144" title="All 2 branches covered.">        else if ( data instanceof long[]    ) return (T)Long.valueOf( ((long[])    data)[ index ] );</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">        else if ( data instanceof boolean[] ) return (T)Boolean.valueOf( ((boolean[]) data)[ index ] );</span>
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        else if ( data instanceof char[]    ) return (T)Character.valueOf( ((char[])  data)[ index ] );</span>
-<span class="fc" id="L147">        else return (T)( (Object[]) data)[ index ];</span>
+<span class="fc" id="L140">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if      ( data instanceof float[]   ) return (T)Float.valueOf( ((float[])   data)[ index ] );</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        else if ( data instanceof double[]  ) return (T)Double.valueOf( ((double[])  data)[ index ] );</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        else if ( data instanceof short[]   ) return (T)Short.valueOf( ((short[])   data)[ index ] );</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        else if ( data instanceof int[]     ) return (T)Integer.valueOf( ((int[])     data)[ index ] );</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        else if ( data instanceof byte[]    ) return (T)Byte.valueOf( ((byte[])    data)[ index ] );</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        else if ( data instanceof long[]    ) return (T)Long.valueOf( ((long[])    data)[ index ] );</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        else if ( data instanceof boolean[] ) return (T)Boolean.valueOf( ((boolean[]) data)[ index ] );</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        else if ( data instanceof char[]    ) return (T)Character.valueOf( ((char[])  data)[ index ] );</span>
+<span class="fc" id="L149">        else return (T)( (Object[]) data)[ index ];</span>
     }
 
     @Override
     protected final &lt;T, A&gt; A _readArray(
             Tsr&lt;T&gt; tensor, Class&lt;A&gt; arrayType, int start, int size
     ) {
-<span class="fc bfc" id="L154" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
-<span class="fc" id="L155">            float[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), float[].class);</span>
-<span class="fc" id="L156">            float[] data = new float[size];</span>
-<span class="fc" id="L157">            System.arraycopy(source, start, data, 0, size);</span>
-<span class="fc" id="L158">            return (A) data;</span>
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
-<span class="fc" id="L160">            short[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), short[].class);</span>
-<span class="fc" id="L161">            short[] data = new short[size];</span>
-<span class="fc" id="L162">            System.arraycopy(source, start, data, 0, size);</span>
-<span class="fc" id="L163">            return (A) data;</span>
-<span class="fc bfc" id="L164" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
-<span class="fc" id="L165">            byte[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), byte[].class);</span>
-<span class="fc" id="L166">            byte[] data = new byte[size];</span>
-<span class="fc" id="L167">            System.arraycopy(source, start, data, 0, size);</span>
-<span class="fc" id="L168">            return (A) data;</span>
-<span class="fc bfc" id="L169" title="All 2 branches covered.">        } else if ( arrayType == boolean[].class ){</span>
-<span class="fc" id="L170">            boolean[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), boolean[].class);</span>
-<span class="fc" id="L171">            boolean[] data = new boolean[size];</span>
-<span class="fc" id="L172">            System.arraycopy(source, start, data, 0, size);</span>
-<span class="fc" id="L173">            return (A) data;</span>
-<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
-<span class="nc" id="L175">            char[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), char[].class);</span>
-<span class="nc" id="L176">            char[] data = new char[size];</span>
-<span class="nc" id="L177">            System.arraycopy(source, start, data, 0, size);</span>
-<span class="nc" id="L178">            return (A) data;</span>
-<span class="fc bfc" id="L179" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
-<span class="fc" id="L180">            double[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), double[].class);</span>
-<span class="fc" id="L181">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
-<span class="fc bfc" id="L182" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
-<span class="fc" id="L183">            int[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), int[].class);</span>
-<span class="fc" id="L184">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
-<span class="fc bfc" id="L185" title="All 2 branches covered.">        } else if ( arrayType == long[].class ){</span>
-<span class="fc" id="L186">            long[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), long[].class);</span>
-<span class="fc" id="L187">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
-<span class="pc bpc" id="L188" title="1 of 2 branches missed.">        } else if ( arrayType == Object[].class ){</span>
-<span class="fc" id="L189">            Object[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), Object[].class);</span>
-<span class="fc" id="L190">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
+<span class="fc" id="L157">            float[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), float[].class);</span>
+<span class="fc" id="L158">            float[] data = new float[size];</span>
+<span class="fc" id="L159">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="fc" id="L160">            return (A) data;</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
+<span class="fc" id="L162">            short[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), short[].class);</span>
+<span class="fc" id="L163">            short[] data = new short[size];</span>
+<span class="fc" id="L164">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="fc" id="L165">            return (A) data;</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
+<span class="fc" id="L167">            byte[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), byte[].class);</span>
+<span class="fc" id="L168">            byte[] data = new byte[size];</span>
+<span class="fc" id="L169">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="fc" id="L170">            return (A) data;</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        } else if ( arrayType == boolean[].class ){</span>
+<span class="fc" id="L172">            boolean[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), boolean[].class);</span>
+<span class="fc" id="L173">            boolean[] data = new boolean[size];</span>
+<span class="fc" id="L174">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="fc" id="L175">            return (A) data;</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
+<span class="nc" id="L177">            char[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), char[].class);</span>
+<span class="nc" id="L178">            char[] data = new char[size];</span>
+<span class="nc" id="L179">            System.arraycopy(source, start, data, 0, size);</span>
+<span class="nc" id="L180">            return (A) data;</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
+<span class="fc" id="L182">            double[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), double[].class);</span>
+<span class="fc" id="L183">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
+<span class="fc" id="L185">            int[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), int[].class);</span>
+<span class="fc" id="L186">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        } else if ( arrayType == long[].class ){</span>
+<span class="fc" id="L188">            long[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), long[].class);</span>
+<span class="fc" id="L189">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        } else if ( arrayType == Object[].class ){</span>
+<span class="fc" id="L191">            Object[] source = DataConverter.get().convert(tensor.getUnsafe().getData(), Object[].class);</span>
+<span class="fc" id="L192">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
         }
-<span class="nc" id="L192">        throw new IllegalArgumentException(&quot;Array type '&quot;+arrayType.getSimpleName()+&quot;' not supported!&quot;);</span>
+<span class="nc" id="L194">        throw new IllegalArgumentException(&quot;Array type '&quot;+arrayType.getSimpleName()+&quot;' not supported!&quot;);</span>
     }
 
     @Override
     protected final &lt;T&gt; void _writeItem( Tsr&lt;T&gt; tensor, T item, int start, int size ) {
-<span class="fc" id="L197">        Object data = tensor.getUnsafe().getData();</span>
-<span class="fc" id="L198">        Class&lt;?&gt; arrayType = data.getClass();</span>
-<span class="fc bfc" id="L199" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
-<span class="fc" id="L200">            float source = DataConverter.get().convert(item, Float.class);</span>
-<span class="fc" id="L201">            float[] target = (float[]) data;</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
-<span class="fc bfc" id="L203" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
-<span class="fc" id="L204">            short source = DataConverter.get().convert(item, Short.class);</span>
-<span class="fc" id="L205">            short[] target = (short[]) data;</span>
-<span class="fc bfc" id="L206" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
-<span class="fc bfc" id="L207" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
-<span class="fc" id="L208">            byte source = DataConverter.get().convert(item, Byte.class);</span>
-<span class="fc" id="L209">            byte[] target = (byte[]) data;</span>
-<span class="fc bfc" id="L210" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
-<span class="pc bpc" id="L211" title="1 of 2 branches missed.">        } else if ( arrayType == boolean[].class ){</span>
-<span class="nc" id="L212">            boolean source = DataConverter.get().convert(item, Boolean.class);</span>
-<span class="nc" id="L213">            boolean[] target = (boolean[]) data;</span>
-<span class="nc bnc" id="L214" title="All 2 branches missed.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
-<span class="pc bfc" id="L215" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
-<span class="fc" id="L216">            double source = DataConverter.get().convert(item, Double.class);</span>
-<span class="fc" id="L217">            double[] target = (double[]) data;</span>
-<span class="fc bfc" id="L218" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
-<span class="fc bfc" id="L219" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
-<span class="fc" id="L220">            int source = DataConverter.get().convert(item, Integer.class);</span>
-<span class="fc" id="L221">            int[] target = (int[]) data;</span>
-<span class="fc bfc" id="L222" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
-<span class="fc bfc" id="L223" title="All 2 branches covered.">        } else if ( arrayType == long[].class ){</span>
-<span class="fc" id="L224">            long source = DataConverter.get().convert(item, Long.class);</span>
-<span class="fc" id="L225">            long[] target = (long[]) data;</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
-<span class="pc bpc" id="L227" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
-<span class="nc" id="L228">            char source = DataConverter.get().convert(item, Character.class);</span>
-<span class="nc" id="L229">            char[] target = (char[]) data;</span>
-<span class="nc bnc" id="L230" title="All 2 branches missed.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
-<span class="pc bpc" id="L231" title="1 of 2 branches missed.">        } else if ( arrayType == Object[].class ) {</span>
-<span class="fc" id="L232">            Object[] target = (Object[]) data;</span>
-<span class="fc bfc" id="L233" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = item;</span>
+<span class="fc" id="L199">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc" id="L200">        Class&lt;?&gt; arrayType = data.getClass();</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
+<span class="fc" id="L202">            float source = DataConverter.get().convert(item, Float.class);</span>
+<span class="fc" id="L203">            float[] target = (float[]) data;</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
+<span class="fc" id="L206">            short source = DataConverter.get().convert(item, Short.class);</span>
+<span class="fc" id="L207">            short[] target = (short[]) data;</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
+<span class="fc" id="L210">            byte source = DataConverter.get().convert(item, Byte.class);</span>
+<span class="fc" id="L211">            byte[] target = (byte[]) data;</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        } else if ( arrayType == boolean[].class ){</span>
+<span class="nc" id="L214">            boolean source = DataConverter.get().convert(item, Boolean.class);</span>
+<span class="nc" id="L215">            boolean[] target = (boolean[]) data;</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="pc bfc" id="L217" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
+<span class="fc" id="L218">            double source = DataConverter.get().convert(item, Double.class);</span>
+<span class="fc" id="L219">            double[] target = (double[]) data;</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
+<span class="fc" id="L222">            int source = DataConverter.get().convert(item, Integer.class);</span>
+<span class="fc" id="L223">            int[] target = (int[]) data;</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        } else if ( arrayType == long[].class ){</span>
+<span class="fc" id="L226">            long source = DataConverter.get().convert(item, Long.class);</span>
+<span class="fc" id="L227">            long[] target = (long[]) data;</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
+<span class="nc" id="L230">            char source = DataConverter.get().convert(item, Character.class);</span>
+<span class="nc" id="L231">            char[] target = (char[]) data;</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = source;</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">        } else if ( arrayType == Object[].class ) {</span>
+<span class="fc" id="L234">            Object[] target = (Object[]) data;</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">            for ( int i = start; i &lt; (start+size); i++ ) target[i] = item;</span>
         }
-<span class="fc" id="L235">    }</span>
+<span class="fc" id="L237">    }</span>
 
     @Override
     protected final &lt;T&gt; void _writeArray(Tsr&lt;T&gt; tensor, Object array, int offset, int start, int size) {
-<span class="fc" id="L239">        Object data = tensor.getUnsafe().getData();</span>
-<span class="fc bfc" id="L240" title="All 2 branches covered.">        if ( data == null ) {</span>
-<span class="fc" id="L241">            tensor.getUnsafe().setDataArray(_dataArrayOf(array));</span>
-<span class="fc" id="L242">            return;</span>
+<span class="fc" id="L241">        Object data = tensor.getUnsafe().getData();</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">        if ( data == null ) {</span>
+<span class="fc" id="L243">            tensor.getUnsafe().setDataArray(_dataArrayOf(array));</span>
+<span class="fc" id="L244">            return;</span>
         }
-<span class="fc" id="L244">        Class&lt;?&gt; arrayType = data.getClass();</span>
-<span class="fc bfc" id="L245" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
-<span class="fc" id="L246">            float[] source = DataConverter.get().convert(array, float[].class);</span>
-<span class="fc" id="L247">            float[] target = (float[]) data;</span>
-<span class="fc" id="L248">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
-<span class="fc bfc" id="L249" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
-<span class="fc" id="L250">            short[] source = DataConverter.get().convert(array, short[].class);</span>
-<span class="fc" id="L251">            short[] target = (short[]) data;</span>
-<span class="fc" id="L252">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
-<span class="fc bfc" id="L253" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
-<span class="fc" id="L254">            byte[] source = DataConverter.get().convert(array, byte[].class);</span>
-<span class="fc" id="L255">            byte[] target = (byte[]) data;</span>
-<span class="fc" id="L256">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
-<span class="pc bpc" id="L257" title="1 of 2 branches missed.">        } else if ( arrayType == boolean[].class ){</span>
-<span class="nc" id="L258">            boolean[] source = DataConverter.get().convert(array, boolean[].class);</span>
-<span class="nc" id="L259">            boolean[] target = (boolean[]) data;</span>
-<span class="nc" id="L260">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
-<span class="pc bfc" id="L261" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
-<span class="fc" id="L262">            double[] source = DataConverter.get().convert(array, double[].class);</span>
-<span class="fc" id="L263">            double[] target = (double[]) data;</span>
-<span class="fc" id="L264">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
-<span class="fc bfc" id="L265" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
-<span class="fc" id="L266">            int[] source = DataConverter.get().convert(array, int[].class);</span>
-<span class="fc" id="L267">            int[] target = (int[]) data;</span>
-<span class="fc" id="L268">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
-<span class="pc bpc" id="L269" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
-<span class="nc" id="L270">            char[] source = DataConverter.get().convert(array, char[].class);</span>
-<span class="nc" id="L271">            char[] target = (char[]) data;</span>
-<span class="nc" id="L272">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
-<span class="pc bpc" id="L273" title="1 of 2 branches missed.">        } else if ( arrayType == long[].class ){</span>
-<span class="fc" id="L274">            long[] source = DataConverter.get().convert(array, long[].class);</span>
-<span class="fc" id="L275">            long[] target = (long[]) data;</span>
-<span class="fc" id="L276">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
-<span class="pc bnc" id="L277" title="All 2 branches missed.">        } else if ( arrayType == Object[].class ){</span>
-<span class="nc" id="L278">            Object[] source = DataConverter.get().convert(array, Object[].class);</span>
-<span class="nc" id="L279">            Object[] target = (Object[]) data;</span>
-<span class="nc" id="L280">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
-<span class="nc" id="L281">        }</span>
-<span class="nc" id="L282">        else throw new IllegalArgumentException(&quot;Array type '&quot;+arrayType.getSimpleName()+&quot;' not supported!&quot;);</span>
-<span class="fc" id="L283">    }</span>
+<span class="fc" id="L246">        Class&lt;?&gt; arrayType = data.getClass();</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
+<span class="fc" id="L248">            float[] source = DataConverter.get().convert(array, float[].class);</span>
+<span class="fc" id="L249">            float[] target = (float[]) data;</span>
+<span class="fc" id="L250">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="fc bfc" id="L251" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
+<span class="fc" id="L252">            short[] source = DataConverter.get().convert(array, short[].class);</span>
+<span class="fc" id="L253">            short[] target = (short[]) data;</span>
+<span class="fc" id="L254">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
+<span class="fc" id="L256">            byte[] source = DataConverter.get().convert(array, byte[].class);</span>
+<span class="fc" id="L257">            byte[] target = (byte[]) data;</span>
+<span class="fc" id="L258">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        } else if ( arrayType == boolean[].class ){</span>
+<span class="nc" id="L260">            boolean[] source = DataConverter.get().convert(array, boolean[].class);</span>
+<span class="nc" id="L261">            boolean[] target = (boolean[]) data;</span>
+<span class="nc" id="L262">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bfc" id="L263" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
+<span class="fc" id="L264">            double[] source = DataConverter.get().convert(array, double[].class);</span>
+<span class="fc" id="L265">            double[] target = (double[]) data;</span>
+<span class="fc" id="L266">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
+<span class="fc" id="L268">            int[] source = DataConverter.get().convert(array, int[].class);</span>
+<span class="fc" id="L269">            int[] target = (int[]) data;</span>
+<span class="fc" id="L270">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
+<span class="nc" id="L272">            char[] source = DataConverter.get().convert(array, char[].class);</span>
+<span class="nc" id="L273">            char[] target = (char[]) data;</span>
+<span class="nc" id="L274">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">        } else if ( arrayType == long[].class ){</span>
+<span class="fc" id="L276">            long[] source = DataConverter.get().convert(array, long[].class);</span>
+<span class="fc" id="L277">            long[] target = (long[]) data;</span>
+<span class="fc" id="L278">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="pc bnc" id="L279" title="All 2 branches missed.">        } else if ( arrayType == Object[].class ){</span>
+<span class="nc" id="L280">            Object[] source = DataConverter.get().convert(array, Object[].class);</span>
+<span class="nc" id="L281">            Object[] target = (Object[]) data;</span>
+<span class="nc" id="L282">            System.arraycopy(source, offset, target, start, Math.min(size, source.length));</span>
+<span class="nc" id="L283">        }</span>
+<span class="nc" id="L284">        else throw new IllegalArgumentException(&quot;Array type '&quot;+arrayType.getSimpleName()+&quot;' not supported!&quot;);</span>
+<span class="fc" id="L285">    }</span>
 
     @Override
     public final DataArray allocate( DataType&lt;?&gt; dataType, int size ) {
-<span class="fc" id="L287">        Class&lt;?&gt; typeClass = dataType.getRepresentativeType();</span>
-<span class="fc bfc" id="L288" title="All 2 branches covered.">        if ( typeClass == F64.class )</span>
-<span class="fc" id="L289">            return _dataArrayOf(new double[ size ]);</span>
-<span class="fc bfc" id="L290" title="All 2 branches covered.">        else if ( typeClass == F32.class )</span>
-<span class="fc" id="L291">            return _dataArrayOf(new float[ size ]);</span>
-<span class="pc bpc" id="L292" title="1 of 4 branches missed.">        else if ( typeClass == I32.class || typeClass == UI32.class )</span>
-<span class="fc" id="L293">            return _dataArrayOf(new int[ size ]);</span>
-<span class="pc bpc" id="L294" title="1 of 4 branches missed.">        else if ( typeClass == I16.class || typeClass == UI16.class )</span>
-<span class="fc" id="L295">            return _dataArrayOf(new short[ size ]);</span>
-<span class="pc bpc" id="L296" title="1 of 4 branches missed.">        else if ( typeClass == I8.class || typeClass == UI8.class )</span>
-<span class="fc" id="L297">            return _dataArrayOf(new byte[ size ]);</span>
-<span class="pc bpc" id="L298" title="1 of 4 branches missed.">        else if ( typeClass == I64.class || typeClass == UI64.class )</span>
-<span class="fc" id="L299">            return _dataArrayOf(new long[ size ]);</span>
-<span class="fc bfc" id="L300" title="All 2 branches covered.">        else if ( dataType.getItemTypeClass() == Boolean.class )</span>
-<span class="fc" id="L301">            return _dataArrayOf(new boolean[ size ]);</span>
-<span class="fc bfc" id="L302" title="All 2 branches covered.">        else if ( dataType.getItemTypeClass() == Character.class )</span>
-<span class="fc" id="L303">            return _dataArrayOf(new char[ size ]);</span>
+<span class="fc" id="L289">        Class&lt;?&gt; typeClass = dataType.getRepresentativeType();</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">        if ( typeClass == F64.class )</span>
+<span class="fc" id="L291">            return _dataArrayOf(new double[ size ]);</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">        else if ( typeClass == F32.class )</span>
+<span class="fc" id="L293">            return _dataArrayOf(new float[ size ]);</span>
+<span class="pc bpc" id="L294" title="1 of 4 branches missed.">        else if ( typeClass == I32.class || typeClass == UI32.class )</span>
+<span class="fc" id="L295">            return _dataArrayOf(new int[ size ]);</span>
+<span class="pc bpc" id="L296" title="1 of 4 branches missed.">        else if ( typeClass == I16.class || typeClass == UI16.class )</span>
+<span class="fc" id="L297">            return _dataArrayOf(new short[ size ]);</span>
+<span class="pc bpc" id="L298" title="1 of 4 branches missed.">        else if ( typeClass == I8.class || typeClass == UI8.class )</span>
+<span class="fc" id="L299">            return _dataArrayOf(new byte[ size ]);</span>
+<span class="pc bpc" id="L300" title="1 of 4 branches missed.">        else if ( typeClass == I64.class || typeClass == UI64.class )</span>
+<span class="fc" id="L301">            return _dataArrayOf(new long[ size ]);</span>
+<span class="fc bfc" id="L302" title="All 2 branches covered.">        else if ( dataType.getItemTypeClass() == Boolean.class )</span>
+<span class="fc" id="L303">            return _dataArrayOf(new boolean[ size ]);</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        else if ( dataType.getItemTypeClass() == Character.class )</span>
+<span class="fc" id="L305">            return _dataArrayOf(new char[ size ]);</span>
         else
-<span class="fc" id="L305">            return _dataArrayOf(new Object[ size ]);</span>
+<span class="fc" id="L307">            return _dataArrayOf(new Object[ size ]);</span>
     }
 
     @Override
     public &lt;V&gt; DataArray allocate( DataType&lt;V&gt; dataType, int size, V initialValue ) {
-<span class="fc" id="L310">        Class&lt;?&gt; type = dataType.getItemTypeClass();</span>
-<span class="fc" id="L311">        DataArray array = allocate( dataType, size );</span>
-<span class="fc" id="L312">        Object data = array.get();</span>
-<span class="fc bfc" id="L313" title="All 2 branches covered.">        if      ( type == Double   .class ) { Arrays.fill((double[])  data, (Double)   initialValue); }</span>
-<span class="fc bfc" id="L314" title="All 2 branches covered.">        else if ( type == Float    .class ) { Arrays.fill((float[])   data, (Float)    initialValue); }</span>
-<span class="fc bfc" id="L315" title="All 2 branches covered.">        else if ( type == Integer  .class ) { Arrays.fill((int[])     data, (Integer)  initialValue); }</span>
-<span class="fc bfc" id="L316" title="All 2 branches covered.">        else if ( type == Short    .class ) { Arrays.fill((short[])   data, (Short)    initialValue); }</span>
-<span class="fc bfc" id="L317" title="All 2 branches covered.">        else if ( type == Byte     .class ) { Arrays.fill((byte[])    data, (Byte)     initialValue); }</span>
-<span class="fc bfc" id="L318" title="All 2 branches covered.">        else if ( type == Long     .class ) { Arrays.fill((long[])    data, (Long)     initialValue); }</span>
-<span class="fc bfc" id="L319" title="All 2 branches covered.">        else if ( type == Boolean  .class ) { Arrays.fill((boolean[]) data, (Boolean)  initialValue); }</span>
-<span class="fc bfc" id="L320" title="All 2 branches covered.">        else if ( type == Character.class ) { Arrays.fill((char[])    data, (Character)initialValue); }</span>
-<span class="fc" id="L321">        else { Arrays.fill((Object[])  data, initialValue); }</span>
-<span class="fc" id="L322">        return array;</span>
+<span class="fc" id="L312">        Class&lt;?&gt; type = dataType.getItemTypeClass();</span>
+<span class="fc" id="L313">        DataArray array = allocate( dataType, size );</span>
+<span class="fc" id="L314">        Object data = array.get();</span>
+<span class="fc bfc" id="L315" title="All 2 branches covered.">        if      ( type == Double   .class ) { Arrays.fill((double[])  data, (Double)   initialValue); }</span>
+<span class="fc bfc" id="L316" title="All 2 branches covered.">        else if ( type == Float    .class ) { Arrays.fill((float[])   data, (Float)    initialValue); }</span>
+<span class="fc bfc" id="L317" title="All 2 branches covered.">        else if ( type == Integer  .class ) { Arrays.fill((int[])     data, (Integer)  initialValue); }</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">        else if ( type == Short    .class ) { Arrays.fill((short[])   data, (Short)    initialValue); }</span>
+<span class="fc bfc" id="L319" title="All 2 branches covered.">        else if ( type == Byte     .class ) { Arrays.fill((byte[])    data, (Byte)     initialValue); }</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">        else if ( type == Long     .class ) { Arrays.fill((long[])    data, (Long)     initialValue); }</span>
+<span class="fc bfc" id="L321" title="All 2 branches covered.">        else if ( type == Boolean  .class ) { Arrays.fill((boolean[]) data, (Boolean)  initialValue); }</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">        else if ( type == Character.class ) { Arrays.fill((char[])    data, (Character)initialValue); }</span>
+<span class="fc" id="L323">        else { Arrays.fill((Object[])  data, initialValue); }</span>
+<span class="fc" id="L324">        return array;</span>
     }
 
     @Override
     public DataArray allocate( Object jvmData, int desiredSize )
     {
-<span class="fc" id="L328">        DataArray dataArray = _dataArrayOf(jvmData);</span>
-<span class="fc bfc" id="L329" title="All 2 branches covered.">        if ( jvmData instanceof int[] ) {</span>
-<span class="fc" id="L330">            int[] array = (int[]) jvmData;</span>
-<span class="pc bpc" id="L331" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
-<span class="nc" id="L332">                dataArray = CPU.get().allocate( DataType.of(I32.class), desiredSize );</span>
-<span class="nc bnc" id="L333" title="All 2 branches missed.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (int[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
+<span class="fc" id="L330">        DataArray dataArray = _dataArrayOf(jvmData);</span>
+<span class="fc bfc" id="L331" title="All 2 branches covered.">        if ( jvmData instanceof int[] ) {</span>
+<span class="fc" id="L332">            int[] array = (int[]) jvmData;</span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
+<span class="nc" id="L334">                dataArray = CPU.get().allocate( DataType.of(I32.class), desiredSize );</span>
+<span class="nc bnc" id="L335" title="All 2 branches missed.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (int[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
             }
-<span class="fc" id="L335">            return dataArray;</span>
-<span class="fc bfc" id="L336" title="All 2 branches covered.">        } else if ( jvmData instanceof float[] ) {</span>
-<span class="fc" id="L337">            float[] array = (float[]) jvmData;</span>
-<span class="pc bpc" id="L338" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
-<span class="nc" id="L339">                dataArray = CPU.get().allocate( DataType.of(F32.class), desiredSize );</span>
-<span class="nc bnc" id="L340" title="All 2 branches missed.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (float[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
+<span class="fc" id="L337">            return dataArray;</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">        } else if ( jvmData instanceof float[] ) {</span>
+<span class="fc" id="L339">            float[] array = (float[]) jvmData;</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
+<span class="nc" id="L341">                dataArray = CPU.get().allocate( DataType.of(F32.class), desiredSize );</span>
+<span class="nc bnc" id="L342" title="All 2 branches missed.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (float[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
             }
-<span class="fc" id="L342">            return dataArray;</span>
-<span class="fc bfc" id="L343" title="All 2 branches covered.">        } else if ( jvmData instanceof double[] ) {</span>
-<span class="fc" id="L344">            double[] array = (double[]) jvmData;</span>
-<span class="fc bfc" id="L345" title="All 2 branches covered.">            if ( desiredSize != array.length ) {</span>
-<span class="fc" id="L346">                dataArray = CPU.get().allocate( DataType.of(F64.class), desiredSize );</span>
-<span class="fc bfc" id="L347" title="All 2 branches covered.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (double[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
+<span class="fc" id="L344">            return dataArray;</span>
+<span class="fc bfc" id="L345" title="All 2 branches covered.">        } else if ( jvmData instanceof double[] ) {</span>
+<span class="fc" id="L346">            double[] array = (double[]) jvmData;</span>
+<span class="fc bfc" id="L347" title="All 2 branches covered.">            if ( desiredSize != array.length ) {</span>
+<span class="fc" id="L348">                dataArray = CPU.get().allocate( DataType.of(F64.class), desiredSize );</span>
+<span class="fc bfc" id="L349" title="All 2 branches covered.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (double[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
             }
-<span class="fc" id="L349">            return dataArray;</span>
-<span class="fc bfc" id="L350" title="All 2 branches covered.">        } else if ( jvmData instanceof long[] ) {</span>
-<span class="fc" id="L351">            long[] array = (long[]) jvmData;</span>
-<span class="pc bpc" id="L352" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
-<span class="nc" id="L353">                dataArray = CPU.get().allocate( DataType.of(I64.class), desiredSize );</span>
-<span class="nc bnc" id="L354" title="All 2 branches missed.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (long[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
+<span class="fc" id="L351">            return dataArray;</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">        } else if ( jvmData instanceof long[] ) {</span>
+<span class="fc" id="L353">            long[] array = (long[]) jvmData;</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
+<span class="nc" id="L355">                dataArray = CPU.get().allocate( DataType.of(I64.class), desiredSize );</span>
+<span class="nc bnc" id="L356" title="All 2 branches missed.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (long[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
             }
-<span class="fc" id="L356">            return dataArray;</span>
-<span class="fc bfc" id="L357" title="All 2 branches covered.">        } else if ( jvmData instanceof short[] ) {</span>
-<span class="fc" id="L358">            short[] array = (short[]) jvmData;</span>
-<span class="pc bpc" id="L359" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
-<span class="nc" id="L360">                dataArray = CPU.get().allocate( DataType.of(I16.class), desiredSize );</span>
-<span class="nc bnc" id="L361" title="All 2 branches missed.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (short[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
+<span class="fc" id="L358">            return dataArray;</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">        } else if ( jvmData instanceof short[] ) {</span>
+<span class="fc" id="L360">            short[] array = (short[]) jvmData;</span>
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
+<span class="nc" id="L362">                dataArray = CPU.get().allocate( DataType.of(I16.class), desiredSize );</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">                for ( int i = 0; i &lt; desiredSize; i++ ) ( (short[]) dataArray.get() )[ i ]  = array[ i % array.length ];</span>
             }
-<span class="fc" id="L363">            return dataArray;</span>
-<span class="fc bfc" id="L364" title="All 2 branches covered.">        } else if ( jvmData instanceof byte[] ) {</span>
-<span class="fc" id="L365">            byte[] array = (byte[]) jvmData;</span>
-<span class="pc bpc" id="L366" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
-<span class="nc" id="L367">                dataArray = CPU.get().allocate(DataType.of(I8.class), desiredSize);</span>
-<span class="nc bnc" id="L368" title="All 2 branches missed.">                for (int i = 0; i &lt; desiredSize; i++) ((byte[]) dataArray.get())[i] = array[i % array.length];</span>
+<span class="fc" id="L365">            return dataArray;</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">        } else if ( jvmData instanceof byte[] ) {</span>
+<span class="fc" id="L367">            byte[] array = (byte[]) jvmData;</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
+<span class="nc" id="L369">                dataArray = CPU.get().allocate(DataType.of(I8.class), desiredSize);</span>
+<span class="nc bnc" id="L370" title="All 2 branches missed.">                for (int i = 0; i &lt; desiredSize; i++) ((byte[]) dataArray.get())[i] = array[i % array.length];</span>
             }
-<span class="fc" id="L370">            return dataArray;</span>
-<span class="fc bfc" id="L371" title="All 2 branches covered.">        } else if ( jvmData instanceof boolean[] ) {</span>
-<span class="fc" id="L372">            boolean[] array = (boolean[]) jvmData;</span>
-<span class="fc bfc" id="L373" title="All 2 branches covered.">            if ( desiredSize != array.length ) {</span>
-<span class="fc" id="L374">                dataArray = CPU.get().allocate(DataType.of(Boolean.class), desiredSize);</span>
-<span class="fc bfc" id="L375" title="All 2 branches covered.">                for (int i = 0; i &lt; desiredSize; i++) ((boolean[]) dataArray.get())[i] = array[i % array.length];</span>
+<span class="fc" id="L372">            return dataArray;</span>
+<span class="fc bfc" id="L373" title="All 2 branches covered.">        } else if ( jvmData instanceof boolean[] ) {</span>
+<span class="fc" id="L374">            boolean[] array = (boolean[]) jvmData;</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">            if ( desiredSize != array.length ) {</span>
+<span class="fc" id="L376">                dataArray = CPU.get().allocate(DataType.of(Boolean.class), desiredSize);</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">                for (int i = 0; i &lt; desiredSize; i++) ((boolean[]) dataArray.get())[i] = array[i % array.length];</span>
             }
-<span class="fc" id="L377">            return dataArray;</span>
-<span class="fc bfc" id="L378" title="All 2 branches covered.">        } else if ( jvmData instanceof char[] ) {</span>
-<span class="fc" id="L379">            char[] array = (char[]) jvmData;</span>
-<span class="pc bpc" id="L380" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
-<span class="nc" id="L381">                dataArray = CPU.get().allocate(DataType.of(Character.class), desiredSize);</span>
-<span class="nc bnc" id="L382" title="All 2 branches missed.">                for (int i = 0; i &lt; desiredSize; i++) ((char[]) dataArray.get())[i] = array[i % array.length];</span>
+<span class="fc" id="L379">            return dataArray;</span>
+<span class="fc bfc" id="L380" title="All 2 branches covered.">        } else if ( jvmData instanceof char[] ) {</span>
+<span class="fc" id="L381">            char[] array = (char[]) jvmData;</span>
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
+<span class="nc" id="L383">                dataArray = CPU.get().allocate(DataType.of(Character.class), desiredSize);</span>
+<span class="nc bnc" id="L384" title="All 2 branches missed.">                for (int i = 0; i &lt; desiredSize; i++) ((char[]) dataArray.get())[i] = array[i % array.length];</span>
             }
-<span class="fc" id="L384">            return dataArray;</span>
-<span class="pc bpc" id="L385" title="1 of 2 branches missed.">        } else if ( jvmData instanceof Object[] ) {</span>
-<span class="fc" id="L386">            Object[] array = (Object[]) jvmData;</span>
-<span class="pc bpc" id="L387" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
-<span class="nc" id="L388">                dataArray = CPU.get().allocate(DataType.of(Object.class), desiredSize);</span>
-<span class="nc bnc" id="L389" title="All 2 branches missed.">                for (int i = 0; i &lt; desiredSize; i++) ((Object[]) dataArray.get())[i] = array[i % array.length];</span>
+<span class="fc" id="L386">            return dataArray;</span>
+<span class="pc bpc" id="L387" title="1 of 2 branches missed.">        } else if ( jvmData instanceof Object[] ) {</span>
+<span class="fc" id="L388">            Object[] array = (Object[]) jvmData;</span>
+<span class="pc bpc" id="L389" title="1 of 2 branches missed.">            if ( desiredSize != array.length ) {</span>
+<span class="nc" id="L390">                dataArray = CPU.get().allocate(DataType.of(Object.class), desiredSize);</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">                for (int i = 0; i &lt; desiredSize; i++) ((Object[]) dataArray.get())[i] = array[i % array.length];</span>
             }
-<span class="fc" id="L391">            return dataArray;</span>
+<span class="fc" id="L393">            return dataArray;</span>
         }
         else
-<span class="nc" id="L394">            throw new IllegalArgumentException(&quot;Array type '&quot;+jvmData.getClass().getSimpleName()+&quot;' not supported!&quot;);</span>
+<span class="nc" id="L396">            throw new IllegalArgumentException(&quot;Array type '&quot;+jvmData.getClass().getSimpleName()+&quot;' not supported!&quot;);</span>
+    }
+
+    public DataArray allocate( Object data ) {
+        int size;
+<span class="pc bpc" id="L401" title="1 of 2 branches missed.">        if ( data instanceof Object[] ) {</span>
+<span class="nc" id="L402">            size = ( (Object[]) data ).length;</span>
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">        } else if ( data instanceof int[] ) {</span>
+<span class="nc" id="L404">            size = ( (int[]) data ).length;</span>
+<span class="pc bpc" id="L405" title="1 of 2 branches missed.">        } else if ( data instanceof long[] ) {</span>
+<span class="nc" id="L406">            size = ( (long[]) data ).length;</span>
+<span class="fc bfc" id="L407" title="All 2 branches covered.">        } else if ( data instanceof float[] ) {</span>
+<span class="fc" id="L408">            size = ( (float[]) data ).length;</span>
+<span class="pc bpc" id="L409" title="1 of 2 branches missed.">        } else if ( data instanceof double[] ) {</span>
+<span class="fc" id="L410">            size = ( (double[]) data ).length;</span>
+<span class="nc bnc" id="L411" title="All 2 branches missed.">        } else if ( data instanceof short[] ) {</span>
+<span class="nc" id="L412">            size = ( (short[]) data ).length;</span>
+<span class="nc bnc" id="L413" title="All 2 branches missed.">        } else if ( data instanceof byte[] ) {</span>
+<span class="nc" id="L414">            size = ( (byte[]) data ).length;</span>
+<span class="nc bnc" id="L415" title="All 2 branches missed.">        } else if ( data instanceof boolean[] ) {</span>
+<span class="nc" id="L416">            size = ( (boolean[]) data ).length;</span>
+<span class="nc bnc" id="L417" title="All 2 branches missed.">        } else if ( data instanceof char[] ) {</span>
+<span class="nc" id="L418">            size = ( (char[]) data ).length;</span>
+        }
+        else
+<span class="nc" id="L421">            throw new IllegalArgumentException( &quot;Unsupported data type: &quot; + data.getClass() );</span>
+
+<span class="fc" id="L423">        DataArray dataArray = CPU.get().allocate( data, size );</span>
+<span class="pc bpc" id="L424" title="1 of 2 branches missed.">        if ( dataArray.get() != data )</span>
+<span class="nc" id="L425">            throw new IllegalStateException( &quot;CPU seems to have reallocated some already valid data unnecessarily! This is most likely a bug.&quot; );</span>
+
+<span class="fc" id="L427">        return dataArray;</span>
     }
 
     @Override
     protected final DataArray _actualize( Tsr&lt;?&gt; tensor ) {
-<span class="fc" id="L399">        DataArray dataArray = tensor.getUnsafe().getDataArray();</span>
-<span class="fc" id="L400">        Object value = dataArray.get();</span>
-<span class="fc" id="L401">        DataType&lt;?&gt; dataType = tensor.getDataType();</span>
-<span class="fc" id="L402">        int size = tensor.size();</span>
-<span class="fc" id="L403">        Class&lt;?&gt; typeClass = dataType.getRepresentativeType();</span>
+<span class="fc" id="L432">        DataArray dataArray = tensor.getUnsafe().getDataArray();</span>
+<span class="fc" id="L433">        Object value = dataArray.get();</span>
+<span class="fc" id="L434">        DataType&lt;?&gt; dataType = tensor.getDataType();</span>
+<span class="fc" id="L435">        int size = tensor.size();</span>
+<span class="fc" id="L436">        Class&lt;?&gt; typeClass = dataType.getRepresentativeType();</span>
         Object newValue;
-<span class="fc bfc" id="L405" title="All 2 branches covered.">        if ( typeClass == F64.class ) {</span>
-<span class="fc bfc" id="L406" title="All 2 branches covered.">            if ( ( (double[]) value ).length == size ) return dataArray;</span>
-<span class="fc" id="L407">            newValue = new double[ size ];</span>
-<span class="fc bfc" id="L408" title="All 2 branches covered.">            if ( ( (double[]) value )[ 0 ] != 0d ) Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );</span>
-<span class="fc bfc" id="L409" title="All 2 branches covered.">        } else if ( typeClass == F32.class ) {</span>
-<span class="fc bfc" id="L410" title="All 2 branches covered.">            if ( ( (float[]) value ).length == size ) return dataArray;</span>
-<span class="fc" id="L411">            newValue = new float[size];</span>
-<span class="fc bfc" id="L412" title="All 2 branches covered.">            if ( ( (float[]) value )[ 0 ] != 0f ) Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );</span>
-<span class="fc bfc" id="L413" title="All 2 branches covered.">        } else if ( typeClass == I32.class ) {</span>
-<span class="pc bpc" id="L414" title="1 of 2 branches missed.">            if ( ( (int[]) value ).length == size ) return dataArray;</span>
-<span class="fc" id="L415">            newValue = new int[ size ];</span>
-<span class="fc bfc" id="L416" title="All 2 branches covered.">            if ( ( (int[]) value )[ 0 ] != 0 ) Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );</span>
-<span class="fc bfc" id="L417" title="All 2 branches covered.">        } else if ( typeClass == I16.class ) {</span>
-<span class="pc bpc" id="L418" title="1 of 2 branches missed.">            if ( ( (short[]) value ).length == size ) return dataArray;</span>
-<span class="fc" id="L419">            newValue = new short[ size ];</span>
-<span class="fc bfc" id="L420" title="All 2 branches covered.">            if ( ( (short[]) value )[ 0 ] != 0 ) Arrays.fill( (short[]) newValue, ( (short[]) value )[ 0 ] );</span>
-<span class="fc bfc" id="L421" title="All 2 branches covered.">        } else if ( typeClass == I8.class ) {</span>
-<span class="pc bpc" id="L422" title="1 of 2 branches missed.">            if ( ( (byte[]) value ).length == size ) return dataArray;</span>
-<span class="fc" id="L423">            newValue = new byte[ size ];</span>
-<span class="fc bfc" id="L424" title="All 2 branches covered.">            if ( ( (byte[]) value )[ 0 ] != 0 ) Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );</span>
-<span class="fc bfc" id="L425" title="All 2 branches covered.">        } else if ( typeClass == I64.class ) {</span>
-<span class="pc bpc" id="L426" title="1 of 2 branches missed.">            if ( ( (long[]) value ).length == size ) return dataArray;</span>
-<span class="fc" id="L427">            newValue = new long[ size ];</span>
-<span class="fc bfc" id="L428" title="All 2 branches covered.">            if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );</span>
-<span class="fc bfc" id="L429" title="All 2 branches covered.">        } else if ( typeClass == Boolean.class ) {</span>
-<span class="pc bpc" id="L430" title="1 of 2 branches missed.">            if ( ( (boolean[]) value ).length == size ) return dataArray;</span>
-<span class="fc" id="L431">            newValue = new boolean[ size ];</span>
-<span class="fc" id="L432">            Arrays.fill( (boolean[]) newValue, ( (boolean[]) value )[ 0 ] );</span>
-<span class="fc bfc" id="L433" title="All 2 branches covered.">        } else if ( typeClass == Character.class ) {</span>
-<span class="pc bpc" id="L434" title="1 of 2 branches missed.">            if ( ( (char[]) value ).length == size ) return dataArray;</span>
-<span class="fc" id="L435">            newValue = new char[ size ];</span>
-<span class="fc bfc" id="L436" title="All 2 branches covered.">            if ( ( (char[]) value )[ 0 ] != (char) 0 ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );</span>
+<span class="fc bfc" id="L438" title="All 2 branches covered.">        if ( typeClass == F64.class ) {</span>
+<span class="fc bfc" id="L439" title="All 2 branches covered.">            if ( ( (double[]) value ).length == size ) return dataArray;</span>
+<span class="fc" id="L440">            newValue = new double[ size ];</span>
+<span class="fc bfc" id="L441" title="All 2 branches covered.">            if ( ( (double[]) value )[ 0 ] != 0d ) Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );</span>
+<span class="fc bfc" id="L442" title="All 2 branches covered.">        } else if ( typeClass == F32.class ) {</span>
+<span class="fc bfc" id="L443" title="All 2 branches covered.">            if ( ( (float[]) value ).length == size ) return dataArray;</span>
+<span class="fc" id="L444">            newValue = new float[size];</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">            if ( ( (float[]) value )[ 0 ] != 0f ) Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );</span>
+<span class="fc bfc" id="L446" title="All 2 branches covered.">        } else if ( typeClass == I32.class ) {</span>
+<span class="pc bpc" id="L447" title="1 of 2 branches missed.">            if ( ( (int[]) value ).length == size ) return dataArray;</span>
+<span class="fc" id="L448">            newValue = new int[ size ];</span>
+<span class="fc bfc" id="L449" title="All 2 branches covered.">            if ( ( (int[]) value )[ 0 ] != 0 ) Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );</span>
+<span class="fc bfc" id="L450" title="All 2 branches covered.">        } else if ( typeClass == I16.class ) {</span>
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">            if ( ( (short[]) value ).length == size ) return dataArray;</span>
+<span class="fc" id="L452">            newValue = new short[ size ];</span>
+<span class="fc bfc" id="L453" title="All 2 branches covered.">            if ( ( (short[]) value )[ 0 ] != 0 ) Arrays.fill( (short[]) newValue, ( (short[]) value )[ 0 ] );</span>
+<span class="fc bfc" id="L454" title="All 2 branches covered.">        } else if ( typeClass == I8.class ) {</span>
+<span class="pc bpc" id="L455" title="1 of 2 branches missed.">            if ( ( (byte[]) value ).length == size ) return dataArray;</span>
+<span class="fc" id="L456">            newValue = new byte[ size ];</span>
+<span class="fc bfc" id="L457" title="All 2 branches covered.">            if ( ( (byte[]) value )[ 0 ] != 0 ) Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );</span>
+<span class="fc bfc" id="L458" title="All 2 branches covered.">        } else if ( typeClass == I64.class ) {</span>
+<span class="pc bpc" id="L459" title="1 of 2 branches missed.">            if ( ( (long[]) value ).length == size ) return dataArray;</span>
+<span class="fc" id="L460">            newValue = new long[ size ];</span>
+<span class="fc bfc" id="L461" title="All 2 branches covered.">            if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );</span>
+<span class="fc bfc" id="L462" title="All 2 branches covered.">        } else if ( typeClass == Boolean.class ) {</span>
+<span class="pc bpc" id="L463" title="1 of 2 branches missed.">            if ( ( (boolean[]) value ).length == size ) return dataArray;</span>
+<span class="fc" id="L464">            newValue = new boolean[ size ];</span>
+<span class="fc" id="L465">            Arrays.fill( (boolean[]) newValue, ( (boolean[]) value )[ 0 ] );</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">        } else if ( typeClass == Character.class ) {</span>
+<span class="pc bpc" id="L467" title="1 of 2 branches missed.">            if ( ( (char[]) value ).length == size ) return dataArray;</span>
+<span class="fc" id="L468">            newValue = new char[ size ];</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">            if ( ( (char[]) value )[ 0 ] != (char) 0 ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );</span>
         } else {
-<span class="pc bpc" id="L438" title="1 of 2 branches missed.">            if ( ( (Object[]) value ).length == size ) return dataArray;</span>
-<span class="fc" id="L439">            newValue = new Object[ size ];</span>
-<span class="fc bfc" id="L440" title="All 2 branches covered.">            if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );</span>
+<span class="pc bpc" id="L471" title="1 of 2 branches missed.">            if ( ( (Object[]) value ).length == size ) return dataArray;</span>
+<span class="fc" id="L472">            newValue = new Object[ size ];</span>
+<span class="fc bfc" id="L473" title="All 2 branches covered.">            if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );</span>
         }
-<span class="fc" id="L442">        return _dataArrayOf(newValue);</span>
+<span class="fc" id="L475">        return _dataArrayOf(newValue);</span>
     }
 
     @Override
-    public final &lt;T&gt; CPU store(Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent ) {
-<span class="nc" id="L447">        _tensors.add( (Tsr&lt;Object&gt;) tensor);</span>
-<span class="nc" id="L448">        _tensors.add( (Tsr&lt;Object&gt;) parent);</span>
-<span class="nc" id="L449">        return this;</span>
+    public &lt;T&gt; CPU free( Tsr&lt;T&gt; tensor ) {
+<span class="fc" id="L480">        _tensors.remove( tensor );</span>
+<span class="fc" id="L481">        return this;</span>
     }
 
     @Override
-<span class="fc" id="L453">    public final &lt;T&gt; boolean has(Tsr&lt;T&gt; tensor ) { return _tensors.contains( tensor ); }</span>
+<span class="nc" id="L485">    protected &lt;T&gt; void _swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement ) {}</span>
 
     @Override
-    public &lt;T&gt; CPU free(Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L457">        _tensors.remove( tensor );</span>
-<span class="fc" id="L458">        return this;</span>
-    }
+<span class="fc" id="L488">    public Collection&lt;Tsr&lt;Object&gt;&gt; getTensors() { return _tensors; }</span>
 
     @Override
-<span class="nc" id="L462">    protected &lt;T&gt; void _swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement ) {}</span>
-
-    @Override
-<span class="fc" id="L465">    public Collection&lt;Tsr&lt;Object&gt;&gt; getTensors() { return _tensors; }</span>
-
-    @Override
-<span class="nc" id="L468">    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }</span>
+<span class="nc" id="L491">    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }</span>
 
     /**
      *  This method is part of the component system built into the {@link Tsr} class.
@@ -476,8 +499,8 @@ public class CPU extends AbstractDevice&lt;Object&gt;
      */
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;Object&gt;&gt; changeRequest ) {
-<span class="fc" id="L479">        super.update( changeRequest );</span>
-<span class="fc" id="L480">        return false; // This type of device can not be a component simply because it is the default device</span>
+<span class="fc" id="L502">        super.update( changeRequest );</span>
+<span class="fc" id="L503">        return false; // This type of device can not be a component simply because it is the default device</span>
     }
 
     /**
@@ -489,10 +512,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
      * @return The maximum number of CPU cores available to the JVM.
      *         This number is never smaller than one!
      */
-<span class="fc" id="L492">    public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }</span>
+<span class="fc" id="L515">    public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }</span>
 
     @Override
-<span class="fc" id="L495">    public String toString() { return this.getClass().getSimpleName()+&quot;[coreCount=&quot;+getCoreCount()+&quot;]&quot;; }</span>
+<span class="fc" id="L518">    public String toString() { return this.getClass().getSimpleName()+&quot;[coreCount=&quot;+getCoreCount()+&quot;]&quot;; }</span>
 
     /**
      *  A simple functional interface for executing a range whose implementations will
@@ -512,10 +535,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
      *  If the workload is very small, then the current main thread will process the entire workload range
      *  whereas the underlying {@link ThreadPoolExecutor} will not be used to avoid unnecessary overhead.
      */
-<span class="fc" id="L515">    public static class JVMExecutor</span>
+<span class="fc" id="L538">    public static class JVMExecutor</span>
     {
-<span class="fc" id="L517">        private static final AtomicInteger _COUNTER = new AtomicInteger();</span>
-<span class="fc" id="L518">        private static final ThreadGroup   _GROUP   = new ThreadGroup(THREAD_PREFIX+&quot;-group&quot;);</span>
+<span class="fc" id="L540">        private static final AtomicInteger _COUNTER = new AtomicInteger();</span>
+<span class="fc" id="L541">        private static final ThreadGroup   _GROUP   = new ThreadGroup(THREAD_PREFIX+&quot;-group&quot;);</span>
 
         /*
             The following 2 constants determine if any given workload size will be parallelized or not...
@@ -524,31 +547,31 @@ public class CPU extends AbstractDevice&lt;Object&gt;
         private static final int _MIN_THREADED_WORKLOAD_SIZE = 32;
         private static final int _MIN_WORKLOAD_PER_THREAD    = 8;
 
-<span class="fc" id="L527">        private final ThreadPoolExecutor _pool =</span>
+<span class="fc" id="L550">        private final ThreadPoolExecutor _pool =</span>
                                             new ThreadPoolExecutor(
                                                     ConcreteMachine.ENVIRONMENT.units,
                                                     Integer.MAX_VALUE,
                                                     5L,
                                                     TimeUnit.SECONDS,
                                                     new SynchronousQueue&lt;Runnable&gt;(), // This is basically always of size 1
-<span class="fc" id="L534">                                                    _newThreadFactory(THREAD_PREFIX+&quot;-&quot;)</span>
+<span class="fc" id="L557">                                                    _newThreadFactory(THREAD_PREFIX+&quot;-&quot;)</span>
                                             );
 
         private static ThreadFactory _newThreadFactory( final String name ) {
-<span class="fc" id="L538">            return _newThreadFactory( _GROUP, name );</span>
+<span class="fc" id="L561">            return _newThreadFactory( _GROUP, name );</span>
         }
 
         private static ThreadFactory _newThreadFactory( final ThreadGroup group, final String name ) {
 
-<span class="pc bpc" id="L543" title="1 of 2 branches missed.">            String prefix = name.endsWith(&quot;-&quot;) ? name : name + &quot;-&quot;;</span>
+<span class="pc bpc" id="L566" title="1 of 2 branches missed.">            String prefix = name.endsWith(&quot;-&quot;) ? name : name + &quot;-&quot;;</span>
 
-<span class="fc" id="L545">            return target -&gt; {</span>
-<span class="fc" id="L546">                Thread thread = new Thread(</span>
+<span class="fc" id="L568">            return target -&gt; {</span>
+<span class="fc" id="L569">                Thread thread = new Thread(</span>
                                     group, target,
-<span class="fc" id="L548">                                    prefix + _COUNTER.incrementAndGet() // The name, including the thread number.</span>
+<span class="fc" id="L571">                                    prefix + _COUNTER.incrementAndGet() // The name, including the thread number.</span>
                                 );
-<span class="fc" id="L550">                thread.setDaemon(true);</span>
-<span class="fc" id="L551">                return thread;</span>
+<span class="fc" id="L573">                thread.setDaemon(true);</span>
+<span class="fc" id="L574">                return thread;</span>
             };
         }
 
@@ -558,14 +581,14 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          *
          * @return the number of threads
          */
-<span class="fc" id="L561">        public int getActiveThreadCount() { return _pool.getActiveCount(); }</span>
+<span class="fc" id="L584">        public int getActiveThreadCount() { return _pool.getActiveCount(); }</span>
 
         /**
          * Returns the core number of threads.
          *
          * @return the core number of threads
          */
-<span class="fc" id="L568">        public int getCorePoolSize() { return _pool.getCorePoolSize(); }</span>
+<span class="fc" id="L591">        public int getCorePoolSize() { return _pool.getCorePoolSize(); }</span>
 
         /**
          * Returns the approximate total number of tasks that have
@@ -576,7 +599,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          *
          * @return the number of tasks
          */
-<span class="fc" id="L579">        public long getCompletedTaskCount() { return _pool.getCompletedTaskCount(); }</span>
+<span class="fc" id="L602">        public long getCompletedTaskCount() { return _pool.getCompletedTaskCount(); }</span>
 
         /**
          *  This method slices the provided workload size into multiple ranges which can be executed in parallel.
@@ -586,13 +609,13 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          */
         public void threaded( int workloadSize, RangeWorkload workload )
         {
-<span class="fc" id="L589">            int cores = get().getCoreCount();</span>
-<span class="pc bpc" id="L590" title="1 of 2 branches missed.">            cores = ( cores == 0 ? 1 : cores );</span>
-<span class="fc bfc" id="L591" title="All 4 branches covered.">            if ( workloadSize &gt;= _MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= _MIN_WORKLOAD_PER_THREAD) ) {</span>
-<span class="fc" id="L592">                threaded(0, workloadSize, workload );</span>
+<span class="fc" id="L612">            int cores = get().getCoreCount();</span>
+<span class="pc bpc" id="L613" title="1 of 2 branches missed.">            cores = ( cores == 0 ? 1 : cores );</span>
+<span class="fc bfc" id="L614" title="All 4 branches covered.">            if ( workloadSize &gt;= _MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= _MIN_WORKLOAD_PER_THREAD) ) {</span>
+<span class="fc" id="L615">                threaded(0, workloadSize, workload );</span>
             }
-<span class="fc" id="L594">            else sequential( workloadSize, workload );</span>
-<span class="fc" id="L595">        }</span>
+<span class="fc" id="L617">            else sequential( workloadSize, workload );</span>
+<span class="fc" id="L618">        }</span>
 
         /**
          *  This method will simply execute the provided {@link RangeWorkload} lambda sequentially
@@ -601,7 +624,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          * @param workloadSize The workload size which will be passed to the provided {@link RangeWorkload} as second argument.
          * @param workload The {@link RangeWorkload} which will be executed sequentially.
          */
-<span class="fc" id="L604">        public void sequential( int workloadSize, RangeWorkload workload ) { workload.execute( 0, workloadSize ); }</span>
+<span class="fc" id="L627">        public void sequential( int workloadSize, RangeWorkload workload ) { workload.execute( 0, workloadSize ); }</span>
 
 
         /**
@@ -616,10 +639,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
                 final int limit,
                 final RangeWorkload rangeWorkload
         ) {
-<span class="fc" id="L619">            _DIVIDER.parallelism( _PARALLELISM )</span>
-<span class="fc" id="L620">                    .threshold( PARALLELIZATION_THRESHOLD )</span>
-<span class="fc" id="L621">                    .divide( first, limit, rangeWorkload);</span>
-<span class="fc" id="L622">        }</span>
+<span class="fc" id="L642">            _DIVIDER.parallelism( _PARALLELISM )</span>
+<span class="fc" id="L643">                    .threshold( PARALLELIZATION_THRESHOLD )</span>
+<span class="fc" id="L644">                    .divide( first, limit, rangeWorkload);</span>
+<span class="fc" id="L645">        }</span>
 
     }
 

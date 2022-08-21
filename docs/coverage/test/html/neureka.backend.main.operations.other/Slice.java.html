@@ -142,39 +142,40 @@ public class Slice extends AbstractOperation
 <span class="fc" id="L142">                        Tsr.of(</span>
 <span class="fc" id="L143">                            input.getDataType(),</span>
 <span class="fc" id="L144">                            NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),</span>
-<span class="fc" id="L145">                            input.getUnsafe().getData()</span>
+<span class="fc" id="L145">                            input.getUnsafe().getDataArray()</span>
                         );
 
-<span class="fc bfc" id="L148" title="All 2 branches covered.">        if ( input.isOutsourced() ) {</span>
-<span class="fc" id="L149">            Device&lt;Object&gt; device = input.getDevice();</span>
-<span class="fc" id="L150">            device.store( subset, input );</span>
-        }
-<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if ( input.isVirtual() ) subset.setIsVirtual( true );</span>
-<span class="fc" id="L153">        subset.set( new Relation().addParent( input ) );</span>
-<span class="fc" id="L154">        Relation&lt;Object&gt; parent = input.get( Relation.class );</span>
-<span class="fc bfc" id="L155" title="All 2 branches covered.">        parent = ( parent != null ) ? parent : new Relation&lt;&gt;();</span>
-<span class="fc" id="L156">        parent.addChild( subset );</span>
-<span class="fc" id="L157">        input.set( parent );</span>
+<span class="fc" id="L148">        subset.set( new Relation().addParent( input ) );</span>
+<span class="fc" id="L149">        Relation&lt;Object&gt; parent = input.get( Relation.class );</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        parent = ( parent != null ) ? parent : new Relation&lt;&gt;();</span>
+<span class="fc" id="L151">        parent.addChild( subset );</span>
+<span class="fc" id="L152">        input.set( parent );</span>
 
-<span class="fc" id="L159">        return subset;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        if ( input.isOutsourced() ) {</span>
+<span class="fc" id="L155">            Device&lt;Object&gt; device = input.getDevice();</span>
+<span class="fc" id="L156">            device.store( subset );</span>
+        }
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if ( input.isVirtual() ) subset.setIsVirtual( true );</span>
+
+<span class="fc" id="L160">        return subset;</span>
     }
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L164">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L165" title="3 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
-<span class="nc" id="L166">            return &quot;slice&quot; + expression;</span>
+<span class="fc" id="L165">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L166" title="3 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
+<span class="nc" id="L167">            return &quot;slice&quot; + expression;</span>
         }
-<span class="fc" id="L168">        return &quot;slice&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L169">        return &quot;slice&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative(Function[] children, int derivationIndex) {
-<span class="nc" id="L173">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L174">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
-<span class="nc" id="L177">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
+<span class="nc" id="L178">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

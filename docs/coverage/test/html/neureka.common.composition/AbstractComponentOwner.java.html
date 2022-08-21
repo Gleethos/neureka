@@ -139,7 +139,7 @@ import java.util.function.Consumer;
 <span class="fc" id="L139">        LogUtil.nullArgCheck( component, &quot;component&quot;, Component.class );</span>
 <span class="fc bfc" id="L140" title="All 2 branches covered.">        if ( _components == null ) _setComps( new Component[]{ component } );</span>
         else {
-<span class="pc bpc" id="L142" title="1 of 4 branches missed.">            for ( Component&lt;C&gt; c : _components ) if ( c == component ) return;</span>
+<span class="fc bfc" id="L142" title="All 4 branches covered.">            for ( Component&lt;C&gt; c : _components ) if ( c == component ) return;</span>
 <span class="fc" id="L143">            Component&lt;C&gt;[] newComponents = new Component[ _components.length + 1 ];</span>
 <span class="fc" id="L144">            System.arraycopy( _components, 0, newComponents, 0, _components.length );</span>
 <span class="fc" id="L145">            newComponents[ newComponents.length - 1 ] = component;</span>

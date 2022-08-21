@@ -492,14 +492,14 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
 
     public static Hardware makeSimple(final String systemArchitecture, final long systemMemory, final int systemThreads) {
 
-<span class="pc bpc" id="L495" title="1 of 2 branches missed.">        if (systemThreads &gt; 8) {</span>
+<span class="nc bnc" id="L495" title="All 2 branches missed.">        if (systemThreads &gt; 8) {</span>
             // Assume hyperthreading, L3 cache and more than 1 CPU
 
-<span class="fc" id="L498">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 2); //Hyperthreading</span>
-<span class="fc" id="L499">            final BasicMachine tmpL2Machine = new BasicMachine(256L * K, tmpL1Machine.threads);</span>
-<span class="fc" id="L500">            final BasicMachine tmpL3Machine = new BasicMachine(4L * K * K, systemThreads / ((systemThreads + 7) / 8)); //More than 1 CPU</span>
-<span class="fc" id="L501">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
-<span class="fc" id="L502">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL3Machine, tmpL2Machine, tmpL1Machine });</span>
+<span class="nc" id="L498">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 2); //Hyperthreading</span>
+<span class="nc" id="L499">            final BasicMachine tmpL2Machine = new BasicMachine(256L * K, tmpL1Machine.threads);</span>
+<span class="nc" id="L500">            final BasicMachine tmpL3Machine = new BasicMachine(4L * K * K, systemThreads / ((systemThreads + 7) / 8)); //More than 1 CPU</span>
+<span class="nc" id="L501">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
+<span class="nc" id="L502">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL3Machine, tmpL2Machine, tmpL1Machine });</span>
 
 <span class="nc bnc" id="L504" title="All 2 branches missed.">        } else if (systemThreads &gt;= 4) {</span>
             // Assume hyperthreading, L3 cache but only 1 CPU

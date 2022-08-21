@@ -15,18 +15,18 @@ public final class ConcreteMachine extends CommonMachine {
 <span class="fc" id="L15">        int threads = ConcreteMachine.getThreads();</span>
 
 <span class="fc bfc" id="L17" title="All 2 branches covered.">        for (Hardware hw : Hardware.PREDEFINED) {</span>
-<span class="pc bpc" id="L18" title="3 of 6 branches missed.">            if (hw.architecture.equals(architecture) &amp;&amp; (hw.threads == threads) &amp;&amp; (hw.memory &gt;= memory)) {</span>
-<span class="nc" id="L19">                ENVIRONMENT = hw.virtualize();</span>
+<span class="pc bpc" id="L18" title="1 of 6 branches missed.">            if (hw.architecture.equals(architecture) &amp;&amp; (hw.threads == threads) &amp;&amp; (hw.memory &gt;= memory)) {</span>
+<span class="fc" id="L19">                ENVIRONMENT = hw.virtualize();</span>
             }
 <span class="fc" id="L21">        }</span>
 
 <span class="pc bpc" id="L23" title="1 of 2 branches missed.">        if (ENVIRONMENT == null) {</span>
-<span class="fc" id="L24">            _LOG.debug(</span>
+<span class="nc" id="L24">            _LOG.debug(</span>
                     &quot;No matching hardware profile found for this system. &quot; +
                     &quot;Instantiating a default hardware profile with the following main properties: &quot; +
-<span class="fc" id="L27">                    &quot;Architecture={} Threads={} Memory={}&quot;, architecture, threads, memory</span>
+<span class="nc" id="L27">                    &quot;Architecture={} Threads={} Memory={}&quot;, architecture, threads, memory</span>
             );
-<span class="fc" id="L29">            ENVIRONMENT = Hardware.makeSimple(architecture, memory, threads).virtualize();</span>
+<span class="nc" id="L29">            ENVIRONMENT = Hardware.makeSimple(architecture, memory, threads).virtualize();</span>
         }
 <span class="fc" id="L31">    }</span>
 

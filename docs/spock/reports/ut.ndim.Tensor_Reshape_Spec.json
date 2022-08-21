@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.009 seconds"
+    "duration":"0.001 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"When matrices are transpose, they will change their layout type.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

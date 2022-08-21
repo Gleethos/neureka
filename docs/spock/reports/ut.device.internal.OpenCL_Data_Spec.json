@@ -9,21 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.082 seconds"
+    "duration":"0.126 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice specific Data class represents JVM data for OpenCL.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.029 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We make sure that any data will not automatically be converted to floats!","code":["if ( Neureka.get().backend.has(CLContext) )","Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = false"]},
 
-        {"kind":"and","text":"We create 2 different data objects, a full and a partial/sliced array.","code":["var full = Data.of(data)","var slice = Data.of(data, size, start)"]},
+        {"kind":"and","text":"We create 2 different data objects, a full and a partial/sliced array.","code":["var full = JVMData.of(data)","var slice = JVMData.of(data, size, start)"]},
 
         {"kind":"and","text":"An expected array based on the previous slice indices!","code":["var expected2 = expected[start..(start+size-1)]"]},
 
@@ -45,12 +45,12 @@
     {
       "id":"The \"Data\" class can represent various OpenCL data types.",
       "result":"PASS",
-      "duration":"0.019 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["array = array.asType(arrayType)","var data1 = Data.of(array, size, offset)","var data2 = Data.of(type, size)","var data3 = Data.of(array)"]},
+        {"kind":"given","text":"","code":["array = array.asType(arrayType)","var data1 = JVMData.of(array, size, offset)","var data2 = JVMData.of(type, size)","var data3 = JVMData.of(array)"]},
 
         {"kind":"expect","text":"","code":["data1.array == array[offset..(offset+size-1)].asType(arrayType)","data2.array == new int[size].asType(arrayType)","data3.array == array"]},
 

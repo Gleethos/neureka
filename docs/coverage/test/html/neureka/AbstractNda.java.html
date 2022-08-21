@@ -73,7 +73,7 @@ import java.util.Arrays;
     /**
      *  An instance of an implementation of the {@link NDConfiguration} interface defining
      *  the dimensionality of this {@link AbstractNda} in terms of certain index properties
-     *  which imply individual access patterns for the underlying {@link #_data}.
+     *  which imply individual access patterns for the underlying {@link #_dataArray}.
      */
     private NDConfiguration _NDConf;
     /**
@@ -83,7 +83,7 @@ import java.util.Arrays;
     /**
      *  The heart and sole of the nd-array / tensor: its underlying data array.
      */
-    private DataArray _data;
+    private DataArray&lt;V&gt; _dataArray;
 
     /**
      *  This integer represents the version of the data (accessible through {@link #getData()})
@@ -126,7 +126,7 @@ import java.util.Arrays;
      @Override
 <span class="fc" id="L127">    public DataType&lt;V&gt; getDataType() { _guardGet(&quot;data type&quot;); return (DataType&lt;V&gt;) _dataType; }</span>
 
-<span class="fc" id="L129">    protected final DataArray _getData() { _guardGet(&quot;data object&quot;); return _data; }</span>
+<span class="fc" id="L129">    protected final DataArray&lt;V&gt; _getData() { _guardGet(&quot;data object&quot;); return _dataArray; }</span>
 
     protected final Object _getRawData() {
 <span class="fc bfc" id="L132" title="All 2 branches covered.">        return  _getData() == null ? null : _getData().get();</span>
@@ -189,12 +189,12 @@ import java.util.Arrays;
             }
         }
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-<span class="pc bpc" id="L192" title="2 of 8 branches missed.">        if ( _data != null &amp;&amp; _data.get() != data &amp;&amp; data != null &amp;&amp; _data.get() != null ) {</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">            boolean isProbablyDeviceTransfer = ( _data.get().getClass().isArray() != data.getClass().isArray() );</span>
+<span class="pc bpc" id="L192" title="2 of 8 branches missed.">        if ( _dataArray != null &amp;&amp; _dataArray.get() != data &amp;&amp; data != null &amp;&amp; _dataArray.get() != null ) {</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">            boolean isProbablyDeviceTransfer = ( _dataArray.get().getClass().isArray() != data.getClass().isArray() );</span>
 <span class="fc bfc" id="L194" title="All 2 branches covered.">            if ( !isProbablyDeviceTransfer)</span>
 <span class="fc" id="L195">                _version++; // Autograd must be warned!</span>
         }
-<span class="fc" id="L197">        _data = array;</span>
+<span class="fc" id="L197">        _dataArray = array;</span>
 <span class="fc" id="L198">    }</span>
 
     protected &lt;T&gt; void _initData( Filler&lt;T&gt; filler )
@@ -258,7 +258,7 @@ import java.util.Arrays;
      *
      * @param size The size of the data array which ought to be allocated.
      */
-<span class="nc" id="L261">    protected final void _allocate( int size ) { _data = getDevice().allocate( this.getDataType(), size ); }</span>
+<span class="nc" id="L261">    protected final void _allocate( int size ) { _dataArray = getDevice().allocate( this.getDataType(), size ); }</span>
 
     /**
      *  The internal implementation handling {@link #setIsVirtual(boolean)}.
@@ -285,7 +285,7 @@ import java.util.Arrays;
 <span class="fc" id="L285">                new TsrConstructor.API() {</span>
 <span class="fc" id="L286">                    @Override public void   setType( DataType&lt;?&gt; type       ) { nda.getUnsafe().setDataType( type ); }</span>
 <span class="fc" id="L287">                    @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }</span>
-<span class="fc" id="L288">                    @Override public void   setData( DataArray o            ) { nda._setData( o ); }</span>
+<span class="fc" id="L288">                    @Override public void   setData( DataArray&lt;?&gt; o         ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }</span>
 <span class="fc" id="L289">                    @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }</span>
                 }
             );
@@ -300,7 +300,7 @@ import java.util.Arrays;
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  &lt;br&gt;
      */
-<span class="fc" id="L303">    protected final void _virtualize() { _data = _dataType.virtualize( _data ); }</span>
+<span class="fc" id="L303">    protected final void _virtualize() { _dataArray = _dataType.virtualize(_dataArray); }</span>
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. &lt;br&gt;
@@ -312,7 +312,7 @@ import java.util.Arrays;
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... &lt;br&gt;
      */
-<span class="fc" id="L315">    protected final void _actualize() { _data = getDevice().access(this).actualize(); }</span>
+<span class="fc" id="L315">    protected final void _actualize() { _dataArray = getDevice().access(this).actualize(); }</span>
 
     protected Object _convertedDataOfType( Class&lt;?&gt; typeClass )
     {
@@ -354,10 +354,9 @@ import java.util.Arrays;
 <span class="pc bpc" id="L354" title="2 of 4 branches missed.">            assert s1 == s2;</span>
         }
 <span class="fc" id="L356">        _NDConf = ndConfiguration;</span>
-<span class="fc bfc" id="L357" title="All 2 branches covered.">        if ( this.has( Device.class ) )</span>
-<span class="fc" id="L358">            this.get(Device.class).access(this).updateNDConf();</span>
+<span class="fc" id="L357">        getDevice().access(this).updateNDConf();</span>
 
-<span class="fc" id="L360">        return (C) this;</span>
+<span class="fc" id="L359">        return (C) this;</span>
     }
 
 }

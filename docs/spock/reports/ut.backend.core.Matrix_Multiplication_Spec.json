@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.759 seconds"
+    "duration":"3.469 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -35,7 +35,7 @@
     {
       "id":"The internal matrix multiplication test script runs!",
       "result":"PASS",
-      "duration":"0.697 seconds",
+      "duration":"3.447 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
