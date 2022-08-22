@@ -1,4 +1,4 @@
-<h1 align="center"> :cyclone: <a href="https://gleethos.github.io/neureka/index.html">NEUREKA</a> :cyclone: </h1>
+<h1 align="center"> <a href="https://gleethos.github.io/neureka/index.html">NEUREKA</a> </h1>
 
 <h2 align="center"><b> A lightweight <br> platform independent <br> tensor library for the JVM </b></h2>
 
