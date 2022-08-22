@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.017 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Object arrays can be converted to primitive arrays.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"","code":["result.class == expectedType"]},
 
-        {"kind":"where","text":"","code":{"input":["[1.0, 2.0, 3.0]","[1.0, 2.0, 3.0]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[true, true, true]","[\u0001, \u0002, \u0003]"],"code":["ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure1@22d22cb6","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure2@650e0934","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure3@1ca99135","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure4@687399df","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure5@1f098454","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure6@5aa28fee","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure7@440958f3","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure8@5f6622c"],"expectedType":["class [F","class [D","class [I","class [J","class [S","class [B","class [Z","class [C"]}}
+        {"kind":"where","text":"","code":{"input":["[1.0, 2.0, 3.0]","[1.0, 2.0, 3.0]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[true, true, true]","[\u0001, \u0002, \u0003]"],"code":["ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure1@7f167134","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure2@5d8bc857","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure3@461df104","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure4@6648ef24","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure5@5a1717d4","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure6@7fe5740f","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure7@891c0a3","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure8@57f77c3a"],"expectedType":["class [F","class [D","class [I","class [J","class [S","class [B","class [Z","class [C"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

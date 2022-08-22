@@ -94,6 +94,14 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     static Nda<Boolean> of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }
 
+    /**
+     * Constructs a vector of objects based on the provided array.
+     *
+     * @param values The array of objects from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of objects.
+     */
+    @SafeVarargs
+    static <T> Nda<T> of( T... values ) { return Tsr.of(values); }
 
     /**
      *  If this nd-array is a slice of a parent nd-array then this method will yield true.

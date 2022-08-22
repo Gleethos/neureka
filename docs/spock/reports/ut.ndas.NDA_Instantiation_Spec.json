@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.031 seconds"
+    "duration":"0.005 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A vector can be created from an array of values through the \"of\" method.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"expect","text":"The nd-array will then have the expected shape, items and data type.","code":["nda.shape == [3]","nda.items == [1, 2, 3]","nda.itemType == Integer"]},
 
-        {"kind":"when","text":"We use doubles instead of ints...","code":["nda = Nda.of(4.0, 5.0)"]},
+        {"kind":"when","text":"We use doubles instead of ints...","code":["nda = Nda.of(4.0d, 5.0d)"]},
 
         {"kind":"then","text":"...the nd-array will be an array of doubles!","code":["nda.shape == [2]","nda.items == [4.0, 5.0]","nda.itemType == Double"]},
 
@@ -39,7 +39,7 @@
     {
       "id":"ND-arrays can be created fluently.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },

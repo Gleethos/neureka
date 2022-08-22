@@ -1,7 +1,7 @@
 {
   "className":"ut.ndim.NDConfiguration_Spec",
-  "title":"",
-  "narrative":"",
+  "title":"Making Arrays N-Dimensional",
+  "narrative":"Under the hood Neureka implements powerful indexing \n    abstractions through the `NDConfiguration` interface and its various implementations.\n    This allows for the creation of tensors/nd-arrays with arbitrary dimensions, \n    the ability to slice them into smaller tensors/nd-arrays with the same underlying data,\n    and finally the ability to reshape their axes (like transposing them for example).\n\n    This specification however only focuses on the behaviour of the `NDConfiguration` interface\n    which translates various types of indices.",
   "subjects":["neureka.ndim.config.NDConfiguration"],
   "statistics":{
     "runs":"1",
@@ -9,19 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.210 seconds"
+    "duration":"0.049 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Various NDConfigurations behaviour exactly as their general purpose implementation.",
       "result":"PASS",
-      "duration":"0.134 seconds",
+      "duration":"0.026 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var ndc1 = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset)","var ndc2 = NDConfiguration.of(shape, translation, indicesMap, spread, offset)","var i1 = NDIterator.of(ndc1, NDIterator.NonVirtual.FALSE)","var i2 = NDIterator.of(ndc2, NDIterator.NonVirtual.FALSE)"]},
+        {"kind":"given","text":"A general purpose NDConfiguration implementation as well as a specialized one (provided by the factory method).","code":["var ndc1 = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset)","var ndc2 = NDConfiguration.of(shape, translation, indicesMap, spread, offset)"]},
+
+        {"kind":"and","text":"2 corresponding iterators:","code":["var i1 = NDIterator.of(ndc1, NDIterator.NonVirtual.FALSE)","var i2 = NDIterator.of(ndc2, NDIterator.NonVirtual.FALSE)"]},
 
         {"kind":"expect","text":"","code":["ndc2.getClass()    == expected","ndc1.rank()        == ndc2.rank()","ndc1.size()        == ndc2.size()","ndc1.shape()       == ndc2.shape()","ndc1.translation() == ndc2.translation()","ndc1.indicesMap()  == ndc2.indicesMap()","ndc1.spread()      == ndc2.spread()","ndc1.offset()      == ndc2.offset()"]},
 

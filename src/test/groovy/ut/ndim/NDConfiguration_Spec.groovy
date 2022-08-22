@@ -15,13 +15,27 @@ import neureka.ndim.config.types.sliced.Sliced2DConfiguration
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration
 import neureka.ndim.iterator.NDIterator
+import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Title
 
+@Title("Making Arrays N-Dimensional")
+@Narrative('''
+
+    Under the hood Neureka implements powerful indexing 
+    abstractions through the `NDConfiguration` interface and its various implementations.
+    This allows for the creation of tensors/nd-arrays with arbitrary dimensions, 
+    the ability to slice them into smaller tensors/nd-arrays with the same underlying data,
+    and finally the ability to reshape their axes (like transposing them for example).
+    
+    This specification however only focuses on the behaviour of the `NDConfiguration` interface
+    which translates various types of indices.
+
+''')
 @Subject([NDConfiguration])
-class NDConfiguration_Spec extends Specification {
-
-
+class NDConfiguration_Spec extends Specification
+{
     def 'Various NDConfigurations behaviour exactly as their general purpose implementation.'(
             int[] shape,
             int[] translation,
@@ -30,10 +44,10 @@ class NDConfiguration_Spec extends Specification {
             int[] offset,
             Class<?> expected
     ) {
-
-        given :
+        given : 'A general purpose NDConfiguration implementation as well as a specialized one (provided by the factory method).'
             var ndc1 = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset)
             var ndc2 = NDConfiguration.of(shape, translation, indicesMap, spread, offset)
+        and : '2 corresponding iterators:'
             var i1 = NDIterator.of(ndc1, NDIterator.NonVirtual.FALSE)
             var i2 = NDIterator.of(ndc2, NDIterator.NonVirtual.FALSE)
 
@@ -101,7 +115,6 @@ class NDConfiguration_Spec extends Specification {
             [30]      | [8]            | [2]            | [1]        | [0]       || Reshaped1DConfiguration
             [2]       | [1]            | [1]            | [1]        | [5]       || Sliced1DConfiguration
     }
-
 
 
 }

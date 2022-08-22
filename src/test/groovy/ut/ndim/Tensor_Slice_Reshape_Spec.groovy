@@ -4,8 +4,21 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.view.NDPrintSettings
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
+import spock.lang.Title
 
+@Title("Reshaping Slices of Tensors")
+@Narrative('''
+
+    Neureka provides a convenient way to reshape tensors
+    even if they are slices of other tensors sharing the same underlying data.
+    This is possible because of the under the hood indexing 
+    abstractions provided by the `NDConfiguration` interface and its various implementations.
+
+''')
+@Subject([Tsr])
 class Tensor_Slice_Reshape_Spec extends Specification
 {
     def setup() {
@@ -26,6 +39,7 @@ class Tensor_Slice_Reshape_Spec extends Specification
             it.hasSlimNumbers    = false
         })
     }
+
 
     def 'A slice of a tensor changes as expected when reshaping it.'()
     {
@@ -63,7 +77,6 @@ class Tensor_Slice_Reshape_Spec extends Specification
             b.toString() == "(3x2):[-1.0, 0.0, 9.0, 0.0, 4.0, -3.0]"
             a.toString() == "(3x2):[-1.0, 0.0, 9.0, 0.0, 4.0, -3.0]"
     }
-
 
 
     def 'Two slices of one big tensor perform matrix multiplication flawless.'()
@@ -104,16 +117,16 @@ class Tensor_Slice_Reshape_Spec extends Specification
 
     def 'Reshaping a slice works as expected.'()
     {
-        given : 'A parent tensor.'
+        given : 'A parent tensor from which we want to create slices.'
             Tsr X = Tsr.of([
                     [1000, 1000, 1000, 1000, ],
                     [1000,   -1,    4, 1000, ],
                     [1000,    2,    7, 1000, ],
                     [1000,    5,   -9, 1000, ],
                     [1000, 1000, 1000, 1000, ]
-            ])
+                ])
 
-        when :
+        when : 'We extract a slice from the tensor above...'
             Tsr a = X[1..3, 1..2].T()
 
         then :

@@ -2,14 +2,14 @@
   "className":"ut.ndim.Tensor_Reshape_Spec",
   "title":"",
   "narrative":"",
-  "subjects":[],
+  "subjects":["neureka.Tsr"],
   "statistics":{
     "runs":"1",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.001 seconds"
+    "duration":"0.002 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.459 seconds"
+    "duration":"0.135 seconds"
   },
   "headers":[" \n                <p>\n                    This specification covers the behavior of tensors when being sliced\n                    on multiple different device types in conjunction with \n                    the autograd system.\n                    Autograd should work on slices as well.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.141 seconds",
+      "duration":"0.040 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
 
         {"kind":"then","text":"","code":["y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
 
-        {"kind":"where","text":"","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x25ec40ae930],platform=OpenCLPlatform@3b0b1ee8[pid=cl_platform_id[0x25ec40af380],context=cl_context[0x25ec5b41710],kernels=[..46..]]]","CPU[coreCount=12]"]}}
+        {"kind":"where","text":"","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x28422583ff0],platform=OpenCLPlatform@5a56cd6a[pid=cl_platform_id[0x7ff85f668000],context=cl_context[0x2841b68fb20],kernels=[..46..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -41,7 +41,7 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.292 seconds",
+      "duration":"0.086 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -96,7 +96,7 @@
 
         {"kind":"then","text":"","code":["x.toString().contains(\"[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)\")"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=12]","OpenCLDevice[deviceId=cl_device_id[0x25ec40ae930],platform=OpenCLPlatform@3b0b1ee8[pid=cl_platform_id[0x25ec40af380],context=cl_context[0x25ec5b41710],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x28422583ff0],platform=OpenCLPlatform@5a56cd6a[pid=cl_platform_id[0x7ff85f668000],context=cl_context[0x2841b68fb20],kernels=[..46..]]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

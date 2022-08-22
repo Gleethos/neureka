@@ -94,6 +94,14 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      */
 <span class="fc" id="L95">    static Nda&lt;Boolean&gt; of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }</span>
 
+    /**
+     * Constructs a vector of objects based on the provided array.
+     *
+     * @param values The array of objects from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of objects.
+     */
+    @SafeVarargs
+<span class="fc" id="L104">    static &lt;T&gt; Nda&lt;T&gt; of( T... values ) { return Tsr.of(values); }</span>
 
     /**
      *  If this nd-array is a slice of a parent nd-array then this method will yield true.
@@ -129,7 +137,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     /**
      * @return The type class of individual value items within this nd-array.
      */
-<span class="fc" id="L132">    default Class&lt;V&gt; itemType() { return getItemType(); }</span>
+<span class="fc" id="L140">    default Class&lt;V&gt; itemType() { return getItemType(); }</span>
 
     /*==================================================================================================================
     |
@@ -141,9 +149,9 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  @return A {@link Stream} of the items in this {@link Nda}.
      */
     default Stream&lt;V&gt; stream() {
-<span class="fc bfc" id="L144" title="All 2 branches covered.">        boolean executeInParallel = ( this.size() &gt; 1_000 );</span>
-<span class="fc" id="L145">        IntStream indices = IntStream.range(0,size());</span>
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getItemAt);</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        boolean executeInParallel = ( this.size() &gt; 1_000 );</span>
+<span class="fc" id="L153">        IntStream indices = IntStream.range(0,size());</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getItemAt);</span>
     }
 
     /**
@@ -152,7 +160,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param predicate The lambda to check each element against.
      * @return true if every item in the nd-array matches the predicate, false otherwise.
      */
-<span class="fc" id="L155">    default boolean every( Predicate&lt;V&gt; predicate ) { return stream().allMatch(predicate); }</span>
+<span class="fc" id="L163">    default boolean every( Predicate&lt;V&gt; predicate ) { return stream().allMatch(predicate); }</span>
 
     /**
      * Iterates over every element of this nd-array, and checks whether any
@@ -160,7 +168,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param predicate The lambda to check each element against.
      * @return true if any item in the nd-array matches the predicate, false otherwise.
      */
-<span class="fc" id="L163">    default boolean any( Predicate&lt;V&gt; predicate ) { return stream().anyMatch(predicate); }</span>
+<span class="fc" id="L171">    default boolean any( Predicate&lt;V&gt; predicate ) { return stream().anyMatch(predicate); }</span>
 
     /**
      * Iterates over every element of this nd-array, and checks whether none
@@ -168,7 +176,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param predicate The lambda to check each element against.
      * @return true if none of the items in the nd-array match the predicate, false otherwise.
      */
-<span class="fc" id="L171">    default boolean none( Predicate&lt;V&gt; predicate ) { return stream().noneMatch(predicate);}</span>
+<span class="fc" id="L179">    default boolean none( Predicate&lt;V&gt; predicate ) { return stream().noneMatch(predicate);}</span>
 
     /**
      *  Iterates over every element of this nd-array, and counts the number of
@@ -176,7 +184,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param predicate The lambda to check each element against.
      * @return The number of items in the nd-array that match the predicate.
      */
-<span class="fc" id="L179">    default int count( Predicate&lt;V&gt; predicate ) { return (int) stream().filter(predicate).count(); }</span>
+<span class="fc" id="L187">    default int count( Predicate&lt;V&gt; predicate ) { return (int) stream().filter(predicate).count(); }</span>
 
     /**
      * Returns the minimum item of this nd-array according to the provided
@@ -185,7 +193,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
      * @return The minimum value in the nd-array.
      */
-<span class="fc" id="L188">    default V minItem( Comparator&lt;V&gt; comparator ) { return stream().min( comparator ).orElse(null); }</span>
+<span class="fc" id="L196">    default V minItem( Comparator&lt;V&gt; comparator ) { return stream().min( comparator ).orElse(null); }</span>
 
     /**
      * Returns the maximum item of this nd-array according to the provided
@@ -194,7 +202,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
      * @return The maximum value in the nd-array.
      */
-<span class="fc" id="L197">    default V maxItem( Comparator&lt;V&gt; comparator ) { return stream().max( comparator ).orElse(null); }</span>
+<span class="fc" id="L205">    default V maxItem( Comparator&lt;V&gt; comparator ) { return stream().max( comparator ).orElse(null); }</span>
 
     /**
      *  This returns an unprocessed version of the underlying data of this nd-array.
@@ -221,7 +229,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     V getDataAt( int i );
 
     default List&lt;V&gt; getItems() {
-<span class="fc" id="L224">        return stream().collect( Collectors.toList() );</span>
+<span class="fc" id="L232">        return stream().collect( Collectors.toList() );</span>
     }
 
     Object getRawItems();
@@ -254,7 +262,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param i The scalar index of the item which should be returned by the method.
      * @return The item found at the targeted index.
      */
-<span class="fc" id="L257">    default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }</span>
+<span class="fc" id="L265">    default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }</span>
 
     /**
      *  This method returns a raw value item within this nd-array
@@ -267,25 +275,25 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return The found raw value item targeted by the provided index array.
      */
     default V getItemAt( int... indices ) {
-<span class="fc" id="L270">        LogUtil.nullArgCheck( indices, &quot;indices&quot;, int[].class, &quot;Cannot find nd-array value without indices!&quot; );</span>
-<span class="pc bpc" id="L271" title="1 of 2 branches missed.">        if ( indices.length == 0 ) throw new IllegalArgumentException(&quot;Index array may not be empty!&quot;);</span>
-<span class="fc bfc" id="L272" title="All 2 branches covered.">        if ( indices.length &lt; this.rank() ) {</span>
-<span class="fc bfc" id="L273" title="All 2 branches covered.">            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );</span>
+<span class="fc" id="L278">        LogUtil.nullArgCheck( indices, &quot;indices&quot;, int[].class, &quot;Cannot find nd-array value without indices!&quot; );</span>
+<span class="pc bpc" id="L279" title="1 of 2 branches missed.">        if ( indices.length == 0 ) throw new IllegalArgumentException(&quot;Index array may not be empty!&quot;);</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">        if ( indices.length &lt; this.rank() ) {</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );</span>
             else {
-<span class="fc" id="L275">                int[] allIndices = new int[this.rank()]; // We do some 0 padding to make sure we have the correct number of indices.</span>
-<span class="fc" id="L276">                System.arraycopy( indices, 0, allIndices, 0, indices.length );</span>
-<span class="fc" id="L277">                return getDataAt( getNDConf().indexOfIndices( allIndices ) );</span>
+<span class="fc" id="L283">                int[] allIndices = new int[this.rank()]; // We do some 0 padding to make sure we have the correct number of indices.</span>
+<span class="fc" id="L284">                System.arraycopy( indices, 0, allIndices, 0, indices.length );</span>
+<span class="fc" id="L285">                return getDataAt( getNDConf().indexOfIndices( allIndices ) );</span>
             }
         }
-<span class="fc" id="L280">        return getDataAt( getNDConf().indexOfIndices( indices ) );</span>
+<span class="fc" id="L288">        return getDataAt( getNDConf().indexOfIndices( indices ) );</span>
     }
 
     default &lt;A&gt; A getItemsAs( Class&lt;A&gt; arrayTypeClass ) {
-<span class="fc" id="L284">        return DataConverter.get().convert( getRawItems(), arrayTypeClass );</span>
+<span class="fc" id="L292">        return DataConverter.get().convert( getRawItems(), arrayTypeClass );</span>
     }
 
     default  &lt;A&gt; A getDataAs( Class&lt;A&gt; arrayTypeClass ) {
-<span class="fc" id="L288">        return DataConverter.get().convert( getData(), arrayTypeClass );</span>
+<span class="fc" id="L296">        return DataConverter.get().convert( getData(), arrayTypeClass );</span>
     }
 
     // Slicing:
@@ -584,15 +592,15 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return An object which allows you to get or set individual items within this nd-array.
      */
     default Access&lt;V&gt; at( int... indices ) {
-<span class="fc" id="L587">        return new Access&lt;V&gt;() {</span>
-<span class="fc" id="L588">            @Override public V    get()          { return getItemAt( indices ); }</span>
-<span class="fc" id="L589">            @Override public void set( V value ) { putAt( indices, value ); }</span>
+<span class="fc" id="L595">        return new Access&lt;V&gt;() {</span>
+<span class="fc" id="L596">            @Override public V    get()          { return getItemAt( indices ); }</span>
+<span class="fc" id="L597">            @Override public void set( V value ) { putAt( indices, value ); }</span>
             @Override public boolean equals( Object o ) {
-<span class="pc bpc" id="L591" title="1 of 2 branches missed.">                if ( o == null ) return false;</span>
-<span class="pc bpc" id="L592" title="1 of 2 branches missed.">                if ( o == this ) return true;</span>
-<span class="pc bpc" id="L593" title="1 of 2 branches missed.">                if ( o.getClass() != this.getClass() ) return false;</span>
-<span class="fc" id="L594">                Access&lt;V&gt; other = (Access&lt;V&gt;) o;</span>
-<span class="fc" id="L595">                return this.get().equals( other.get() );</span>
+<span class="pc bpc" id="L599" title="1 of 2 branches missed.">                if ( o == null ) return false;</span>
+<span class="pc bpc" id="L600" title="1 of 2 branches missed.">                if ( o == this ) return true;</span>
+<span class="pc bpc" id="L601" title="1 of 2 branches missed.">                if ( o.getClass() != this.getClass() ) return false;</span>
+<span class="fc" id="L602">                Access&lt;V&gt; other = (Access&lt;V&gt;) o;</span>
+<span class="fc" id="L603">                return this.get().equals( other.get() );</span>
             }
         };
     }
@@ -617,7 +625,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     }
 
     default String toString( NDPrintSettings config ) {
-<span class="fc" id="L620">        return NdaAsString.representing( this ).withConfig( config ).toString();</span>
+<span class="fc" id="L628">        return NdaAsString.representing( this ).withConfig( config ).toString();</span>
     }
 
     /**
@@ -630,9 +638,9 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return The {@link String} representation of this nd-array.
      */
     default String toString( Consumer&lt;NDPrintSettings&gt; config ) {
-<span class="fc" id="L633">        NDPrintSettings defaults = Neureka.get().settings().view().getNDPrintSettings().clone();</span>
-<span class="fc" id="L634">        config.accept(defaults);</span>
-<span class="fc" id="L635">        return NdaAsString.representing( this ).withConfig( defaults ).toString();</span>
+<span class="fc" id="L641">        NDPrintSettings defaults = Neureka.get().settings().view().getNDPrintSettings().clone();</span>
+<span class="fc" id="L642">        config.accept(defaults);</span>
+<span class="fc" id="L643">        return NdaAsString.representing( this ).withConfig( defaults ).toString();</span>
     }
 
     String toString();

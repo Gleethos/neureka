@@ -27,7 +27,7 @@ class NDA_Instantiation_Spec extends Specification
             nda.itemType == Integer
 
         when : 'We use doubles instead of ints...'
-            nda = Nda.of(4.0, 5.0)
+            nda = Nda.of(4.0d, 5.0d)
         then : '...the nd-array will be an array of doubles!'
             nda.shape == [2]
             nda.items == [4.0, 5.0]

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.116 seconds"
+    "duration":"0.023 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
@@ -41,7 +41,7 @@
     {
       "id":"Range based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Value based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -91,7 +91,7 @@
     {
       "id":"Seed based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@46ab3803","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@32443a40","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@48cf52f","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@5d397a60","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@3a926809","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@24378f14","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@6fda1ec3","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@57723b4b"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@76f40c09","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@e758b6d","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@944c4bb","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@21870070","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@567f064e","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@3f3863b4","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@4eb5eb50","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@1ca28e25"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -143,7 +143,7 @@
     {
       "id":"Vectors can be created fluently.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

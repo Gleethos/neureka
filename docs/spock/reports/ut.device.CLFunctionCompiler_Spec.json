@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.063 seconds"
+    "duration":"0.122 seconds"
   },
   "headers":["\n            Specified below are strict tests for covering the ability of \n            OpenCL devices to be able produce optimized functions given\n            a normal function instance created from a String...\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).",
       "result":"PASS",
-      "duration":"0.059 seconds",
+      "duration":"0.120 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

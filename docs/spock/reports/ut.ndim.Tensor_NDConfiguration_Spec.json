@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.045 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":["\n            <p>\n                Specified below are strict integration tests for tensors and\n                their behaviour with regards to the usage of implementations of the\n                NDConfiguration interface. <br>\n                For certain situations the \"Tsr\" class should use the correct \n                implementations of said interface as configuration for internal index mapping...\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"NDConfiguration instances of tensors have expected state.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"NDConfiguration instances of tensors have expected state and behaviour.",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

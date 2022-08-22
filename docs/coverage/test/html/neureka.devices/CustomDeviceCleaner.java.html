@@ -50,7 +50,7 @@ import java.util.List;
 <span class="pc bpc" id="L50" title="1 of 2 branches missed.">        while ( _registered &gt; 0 ) {</span>
             try {
 <span class="fc" id="L52">                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove(_timeout);</span>
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                if ( ref != null ) {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">                if ( ref != null ) {</span>
                     try {
 <span class="fc" id="L55">                        ref.cleanup();</span>
 <span class="nc" id="L56">                    } catch ( Throwable e ) {</span>

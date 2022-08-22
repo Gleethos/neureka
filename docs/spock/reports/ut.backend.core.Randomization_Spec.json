@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.092 seconds"
+    "duration":"0.023 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can make slices of tensors random.",
       "result":"PASS",
-      "duration":"0.041 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Randomization is in essence the same algorithm as JDKs \"Random\".",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,7 +56,7 @@
     {
       "id":"The Randomization class can fill various types of arrays with pseudo random numbers.",
       "result":"PASS",
-      "duration":"0.024 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

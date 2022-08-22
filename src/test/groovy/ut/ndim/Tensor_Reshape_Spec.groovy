@@ -3,10 +3,13 @@ package ut.ndim
 import neureka.Tsr
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([Tsr])
 class Tensor_Reshape_Spec extends Specification {
 
-    def 'When matrices are transpose, they will change their layout type.'() {
+    def 'When matrices are transpose, they will change their layout type.'()
+    {
 
         given :
             Tsr t = Tsr.ofFloats().withShape(3, 4).andSeed(42)
