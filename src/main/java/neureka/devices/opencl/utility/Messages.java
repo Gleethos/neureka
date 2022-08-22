@@ -61,7 +61,11 @@ public final class Messages
             }
         }
         //---
-        String foundOS = properties.getProperty("NAME").toLowerCase().replace("\"", "").trim();
+        String foundOS = properties.getProperty("NAME");
+        if ( foundOS == null || foundOS.isEmpty() )
+            return Tips.UNKNOWN;
+
+        foundOS = foundOS.toLowerCase().replace("\"", "").trim();
         switch ( foundOS ) {
             case "ubuntu":  return Tips.UBUNTU;
             case "fedora":  return Tips.FEDORA;
