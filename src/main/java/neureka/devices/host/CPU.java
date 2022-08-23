@@ -525,6 +525,10 @@ public class CPU extends AbstractDevice<Object>
     @FunctionalInterface
     public interface RangeWorkload {  void execute( int start, int end );  }
 
+
+    @FunctionalInterface
+    public interface IndexedWorkload {  void execute( int i );  }
+
     /**
      *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
      *  however it differs in that the {@link JVMExecutor} is processing {@link RangeWorkload} lambdas
@@ -615,6 +619,19 @@ public class CPU extends AbstractDevice<Object>
                 threaded(0, workloadSize, workload );
             }
             else sequential( workloadSize, workload );
+        }
+
+        /**
+         *  Executes the provided workload lambda across multiple threads
+         *  where the provided worker lambda will receive the index/id of the current worker.
+         *
+         * @param numberOfWorkloads The total number of workloads to be executed.
+         * @param workload The workload lambda to be executed.
+         */
+        public void threaded( int numberOfWorkloads, IndexedWorkload workload ) {
+            _DIVIDER.parallelism( _PARALLELISM )
+                    .threshold( 1 )
+                    .divide( 0, numberOfWorkloads, (start, end)-> workload.execute(start) );
         }
 
         /**

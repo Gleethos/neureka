@@ -50,3 +50,4 @@ neureka.backend.main.operations.other.AssignLeft
 neureka.backend.main.operations.other.Randomization
 neureka.backend.main.operations.other.Cat
 neureka.backend.main.operations.other.Slice
+neureka.backend.main.operations.other.Max

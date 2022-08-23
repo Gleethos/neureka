@@ -7,8 +7,9 @@ import neureka.backend.main.operations.linear.internal.opencl.Reduce
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Specification
+import spock.lang.Subject
 
-
+@Subject([GEMM, Reduce])
 class OpenCL_Kernel_Unit_Spec extends Specification
 {
     def 'The GEMM implementation for the OpenCLDevice has realistic behaviour'()

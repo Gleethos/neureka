@@ -32,7 +32,7 @@ public abstract class WorkScheduler {
             final int threshold
     ) {
         int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;
-        Divider.devide(
+        Divider._divide(
             executor,
             first,
             limit,
@@ -63,27 +63,27 @@ public abstract class WorkScheduler {
             _executor = executor;
         }
 
-        public void divide( final int limit, final CPU.RangeWorkload rangeWorkload) {
-            this.divide(0, limit, rangeWorkload);
+        public void divide( final int limit, final CPU.RangeWorkload rangeWorkload ) {
+            divide(0, limit, rangeWorkload);
         }
 
-        public void divide( final int first, final int limit, final CPU.RangeWorkload rangeWorkload) {
-            devide(
-                    _executor,
-                    first,
-                    limit,
-                    _threshold,
-                    _parallelism.getAsInt(),
-                    rangeWorkload
+        public void divide(
+            final int first, final int limit, final CPU.RangeWorkload rangeWorkload
+        ) {
+            _divide(
+                _executor,
+                first,
+                limit,
+                _threshold,
+                _parallelism.getAsInt(),
+                rangeWorkload
             );
         }
 
         public Divider parallelism(
                 final IntSupplier parallelism
         ) {
-            if ( parallelism != null ) {
-                _parallelism = parallelism;
-            }
+            if ( parallelism != null ) _parallelism = parallelism;
             return this;
         }
 
@@ -92,7 +92,7 @@ public abstract class WorkScheduler {
             return this;
         }
 
-        private static void devide(
+        private static void _divide(
                 final ExecutorService executor,
                 final int start,
                 final int end,
@@ -107,8 +107,8 @@ public abstract class WorkScheduler {
                 int split = start + workload / 2;
                 int nextWorkers = workers / 2;
 
-                Future<?> firstPart = executor.submit( () -> devide(executor, start, split, threshold, nextWorkers, rangeWorkload) );
-                Future<?> secondPart = executor.submit( () -> devide(executor, split, end, threshold, nextWorkers, rangeWorkload) );
+                Future<?> firstPart = executor.submit( () -> _divide(executor, start, split, threshold, nextWorkers, rangeWorkload) );
+                Future<?> secondPart = executor.submit( () -> _divide(executor, split, end, threshold, nextWorkers, rangeWorkload) );
 
                 try {
                     firstPart.get();
