@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 
 public class Reduce implements ImplementationFor<OpenCLDevice>
 {
+    public static String INDICES_MAPPER_ID = "indices_to_values_mapper";
     public enum Type { MIN, MAX }
 
     private final Type _type;
@@ -110,9 +111,9 @@ public class Reduce implements ImplementationFor<OpenCLDevice>
     private Tsr<Float> _fetch(
             Tsr<Float> in, Tsr<Integer> indices, OpenCLDevice device
     ) {
-        Tsr<Float> out = Tsr.of(Float.class, new int[]{indices.size()}, 0);
+        Tsr<Float> out = Tsr.of(Float.class, new int[]{indices.size()}, 0).to(device);
 
-        String kernelName = "indices_to_values_mapper";
+        String kernelName = INDICES_MAPPER_ID;
 
         Supplier<String> code = () ->
                     "   __kernel void " + kernelName + "(                         \n" +
@@ -127,7 +128,8 @@ public class Reduce implements ImplementationFor<OpenCLDevice>
         KernelCaller caller =
                 device.hasAdHocKernel(kernelName)
                         ? device.getAdHocKernel(kernelName)
-                        : device.compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);
+                        : device.compileAdHocKernel(kernelName, code.get())
+                                .getAdHocKernel(kernelName);
 
         long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)
         long[] global = new long[]{ indices.size() };

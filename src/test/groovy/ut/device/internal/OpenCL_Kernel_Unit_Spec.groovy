@@ -39,7 +39,7 @@ class OpenCL_Kernel_Unit_Spec extends Specification
     def 'The Reduce implementation for the OpenCLDevice has realistic behaviour'(Reduce.Type type)
     {
         given :
-            var a = Tsr.ofFloats().withShape(3, 4).andWhere({i, _ -> (1+(7**i)%30)})
+            var a = Tsr.ofFloats().withShape(19, 7).andWhere({i, _ -> (1+(7**i)%30)})
             var call = Mock(ExecutionCall)
             var device = Mock(OpenCLDevice)
             var kernel = Mock(KernelCaller)
@@ -51,10 +51,14 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             _ * call.input(0) >> a
             (1.._) * call.input(Float, 0) >> a
             (1.._) * call.getDevice() >> device
-            (1.._) * device.hasAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >> false
+            (1.._) * device.hasAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >>> [false, true]
             (1.._) * device.compileAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64", _) >> device
             (1.._) * device.getAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >> kernel
             (3.._) * kernel.pass(_) >> kernel
+        and :
+            (1.._) * device.hasAdHocKernel(Reduce.INDICES_MAPPER_ID) >>> [false, true]
+            (1.._) * device.compileAdHocKernel(Reduce.INDICES_MAPPER_ID, _) >> device
+            (1.._) * device.getAdHocKernel(Reduce.INDICES_MAPPER_ID) >> kernel
 
         where :
             type << [Reduce.Type.MIN, Reduce.Type.MAX]

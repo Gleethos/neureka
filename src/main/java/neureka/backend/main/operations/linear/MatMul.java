@@ -166,6 +166,9 @@ public class MatMul extends AbstractOperation
     /**
      *  This method will clone {@link Tsr} instances if they do not
      *  possess a simple {@link neureka.ndim.config.NDConfiguration}.
+     *  This is usually the case when they are slices or reshaped views on data...
+     *  The reason for this is simply that we need inline data for the OpenCL kernels!
+     *
      *
      * @param call The execution call whose tensors ought to be cloned based on the complexity of their access patterns.
      */
