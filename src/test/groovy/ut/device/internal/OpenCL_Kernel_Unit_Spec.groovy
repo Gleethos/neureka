@@ -3,13 +3,14 @@ package ut.device.internal
 import neureka.Tsr
 import neureka.backend.api.ExecutionCall
 import neureka.backend.main.operations.linear.internal.opencl.GEMM
+import neureka.backend.main.operations.linear.internal.opencl.Reduce
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Specification
 
 
-class OpenCL_GEMM_Unit_Spec extends Specification {
-
+class OpenCL_Kernel_Unit_Spec extends Specification
+{
     def 'The GEMM implementation for the OpenCLDevice has realistic behaviour'()
     {
         given :
@@ -34,5 +35,29 @@ class OpenCL_GEMM_Unit_Spec extends Specification {
             (3.._) * kernel.pass(_) >> kernel
     }
 
+
+    def 'The Reduce implementation for the OpenCLDevice has realistic behaviour'(Reduce.Type type)
+    {
+        given :
+            var a = Tsr.ofFloats().withShape(3, 4).andWhere({i, _ -> (1+(7**i)%30)})
+            var call = Mock(ExecutionCall)
+            var device = Mock(OpenCLDevice)
+            var kernel = Mock(KernelCaller)
+
+        when :
+            new Reduce(type).run( call )
+
+        then :
+            _ * call.input(0) >> a
+            (1.._) * call.input(Float, 0) >> a
+            (1.._) * call.getDevice() >> device
+            (1.._) * device.hasAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >> false
+            (1.._) * device.compileAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64", _) >> device
+            (1.._) * device.getAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >> kernel
+            (3.._) * kernel.pass(_) >> kernel
+
+        where :
+            type << [Reduce.Type.MIN, Reduce.Type.MAX]
+    }
 
 }

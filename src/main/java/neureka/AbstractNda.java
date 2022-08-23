@@ -204,32 +204,32 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
         if ( data instanceof double[] )
             executor.threaded( ( (double[]) data ).length, ( start, end ) -> {
                 for (int i = start; i < end; i++)
-                    ( (double[]) data )[i] = (Double) filler.init( i, _NDConf.indicesOfIndex(i) );
+                    ( (double[]) data )[i] = ((Number) filler.init( i, _NDConf.indicesOfIndex(i))).doubleValue();
             });
         else if ( data instanceof float[] )
             executor.threaded( ( (float[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (float[]) data )[ i ] = (Float) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (float[]) data )[ i ] = ((Number) filler.init( i, _NDConf.indicesOfIndex( i ) )).floatValue();
             });
         else if ( data instanceof int[] )
             executor.threaded( ( (int[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (int[]) data )[ i ] = (Integer) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (int[]) data )[ i ] = ((Number) filler.init( i, _NDConf.indicesOfIndex( i ) )).intValue();
             });
         else if ( data instanceof short[] )
             executor.threaded( ( (short[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (short[]) data )[ i ] = (Short) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (short[]) data )[ i ] = ((Number) filler.init( i, _NDConf.indicesOfIndex( i ) )).shortValue();
             });
         else if ( data instanceof byte[] )
             executor.threaded( ( (byte[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (byte[]) data )[ i ] = (Byte) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (byte[]) data )[ i ] = ((Number) filler.init( i, _NDConf.indicesOfIndex( i ) )).byteValue();
             });
         else if ( data instanceof long[] )
             executor.threaded( ( (long[]) data ).length, (start, end) -> {
                 for (int i = start; i < end; i++)
-                    ( (long[]) data )[ i ] = (Long) filler.init( i, _NDConf.indicesOfIndex( i )  );
+                    ( (long[]) data )[ i ] = ((Number) filler.init( i, _NDConf.indicesOfIndex( i ) )).longValue();
             });
         else if ( data instanceof boolean[] )
             executor.threaded( ( (boolean[]) data ).length, (start, end) -> {
