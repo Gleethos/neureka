@@ -48,7 +48,7 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
         setImplementationFor(
             OpenCLDevice.class,
             call -> {
-                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).getItemAt(0).doubleValue());
+                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).item(0).doubleValue());
                 Tsr<Number> out = call.input( Number.class, 0 );
                 out.getUnsafe().setDataAt(0, value);
                 return call.input(0);
@@ -66,7 +66,7 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
             Functions<Fun> functions
     ) {
         CPU.RangeWorkload workload = (i,end) -> {
-            Number value =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(call.input( Number.class, 1 ).getItemAt(0).doubleValue());
+            Number value =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(call.input( Number.class, 1 ).item(0).doubleValue());
             Tsr<Number> out = call.input( Number.class, 0 );
             out.getUnsafe().setDataAt(0, value);
         };

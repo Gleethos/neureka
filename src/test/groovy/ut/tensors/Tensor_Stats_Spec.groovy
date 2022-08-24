@@ -3,7 +3,6 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.devices.Device
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.lang.Subject
@@ -79,8 +78,8 @@ class Tensor_Stats_Spec extends Specification
             var max = a.max()
 
         expect : 'The results are correct:'
-            min.getItemAt(0) == -150.0
-            max.getItemAt(0) == 147.0
+            min.item(0) == -150.0
+            max.item(0) == 147.0
 
         where :
             device << ['CPU', 'GPU']

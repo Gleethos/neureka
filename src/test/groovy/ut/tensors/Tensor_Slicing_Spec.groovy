@@ -340,9 +340,9 @@ class Tensor_Slicing_Spec extends Specification
         then : 'The slice will contain only a single number, namely: 4.'
             s.items == [4]
         and : 'We verify this through the "getItemAt" method.'
-            s.items == [t.getItemAt(1, 1, 2, 0)]
+            s.items == [t.item(1, 1, 2, 0)]
         and : 'A variation of the previous verification (here we test 0 padding of getItemAt).'
-            s.items == [t.getItemAt(1, 1, 2)] // This is the same as getItemAt(1, 1, 2, 0)
+            s.items == [t.item(1, 1, 2)] // This is the same as getItemAt(1, 1, 2, 0)
     }
 
 

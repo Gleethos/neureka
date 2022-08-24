@@ -443,7 +443,7 @@ class Tensor_IO_Spec extends Specification
             t.setItemAt(t.indexOfIndices(indices), -6.0 as double)
         then :
             t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 6.0)")
-            t.getItemAt(indices) ==-6.0d
+            t.item(indices) ==-6.0d
 
         when :
             indices[0] = 1
@@ -492,7 +492,7 @@ class Tensor_IO_Spec extends Specification
         and :
             t.setItemAt( 1, element )
         then :
-            t.getItemAt( 1 ) == element
+            t.item( 1 ) == element
         and :
             t.unsafe.data == expected
             t.data == expected

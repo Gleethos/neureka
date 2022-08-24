@@ -241,7 +241,7 @@ public class Addition extends AbstractOperation {
                                 return Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
                             else {
                                 int gwz = call.input(Number.class, 0).size();
-                                float value = call.input(Number.class, 2).getItemAt(0).floatValue();
+                                float value = call.input(Number.class, 2).item(0).floatValue();
                                 call.getDevice()
                                     .getKernel(call)
                                     .passAllOf(call.input(Number.class, 0))

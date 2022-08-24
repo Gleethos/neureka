@@ -151,7 +151,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     default Stream<V> stream() {
         boolean executeInParallel = ( this.size() > 1_000 );
         IntStream indices = IntStream.range(0,size());
-        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::getItemAt);
+        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::item);
     }
 
     /**
@@ -219,7 +219,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 
     /**
      *  Use this to access elements of the underlying data array without any index
-     *  transformation applied to it. This is usually similar to the {@link #getItemAt} method,
+     *  transformation applied to it. This is usually similar to the {@link #item} method,
      *  however for nd-arrays which are sliced or reshaped views of the data of another nd-array,
      *  this method will always be unbiased access of the raw data...
      *
@@ -228,9 +228,17 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     V getDataAt( int i );
 
-    default List<V> getItems() {
-        return stream().collect( Collectors.toList() );
-    }
+    /**
+     *  A more verbose version of the {@link #items()} method (best used by JVM languages with property support).
+     * @return A list of the items in this nd-array.
+     */
+    default List<V> getItems() { return stream().collect( Collectors.toList() ); }
+
+    /**
+     *  A more concise version of the {@link #getItems()} method.
+     * @return A list of the items in this nd-array.
+     */
+    default List<V> items() { return getItems(); }
 
     Object getRawItems();
 
@@ -262,7 +270,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param i The scalar index of the item which should be returned by the method.
      * @return The item found at the targeted index.
      */
-    default V getItemAt( int i ) { return getDataAt( indexOfIndex( i ) ); }
+    default V item( int i ) { return getDataAt( indexOfIndex( i ) ); }
 
     /**
      *  This method returns a raw value item within this nd-array
@@ -274,7 +282,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param indices The index array which targets a single value item within this nd-array.
      * @return The found raw value item targeted by the provided index array.
      */
-    default V getItemAt( int... indices ) {
+    default V item( int... indices ) {
         LogUtil.nullArgCheck( indices, "indices", int[].class, "Cannot find nd-array value without indices!" );
         if ( indices.length == 0 ) throw new IllegalArgumentException("Index array may not be empty!");
         if ( indices.length < this.rank() ) {
@@ -593,7 +601,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     default Access<V> at( int... indices ) {
         return new Access<V>() {
-            @Override public V    get()          { return getItemAt( indices ); }
+            @Override public V    get()          { return item( indices ); }
             @Override public void set( V value ) { putAt( indices, value ); }
             @Override public boolean equals( Object o ) {
                 if ( o == null ) return false;
