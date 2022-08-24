@@ -1,9 +1,10 @@
 package ut.device.internal
 
+
 import neureka.Tsr
 import neureka.backend.api.ExecutionCall
-import neureka.backend.main.operations.linear.internal.opencl.GEMM
 import neureka.backend.main.operations.linear.internal.opencl.CLReduce
+import neureka.backend.main.operations.linear.internal.opencl.GEMM
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Specification

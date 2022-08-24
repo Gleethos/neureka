@@ -16,7 +16,7 @@
     {
       "id":"Tensors try to migrate themselves to a device that is being added to them as component.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

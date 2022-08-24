@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.037 seconds"
+    "duration":"0.040 seconds"
   },
   "headers":["\n            <h2>Tensor Instantiation and IO Tests</h2>\n            <p>\n                This specification covers some basic behaviour related to\n                tensor instantiation and modification.\n                This includes the instantiation of tensors with custom seeds, shapes and values...\n                Included are also tests covering static factory methods.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can be instantiated with String seed.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -174,7 +174,7 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -197,7 +197,7 @@
     {
       "id":"We can manipulate the underlying data array of a tensor through the unsafe API.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -226,7 +226,7 @@
     {
       "id":"When we try to manipulate the underlying data array of a virtual tensor then it will become actual.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -339,7 +339,7 @@
     {
       "id":"Tensor values can be manipulated via static method calls within the \"Tsr.IO\" class.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -358,7 +358,7 @@
 
         {"kind":"when","text":"","code":["int[] indices = new int[2]","indices[1] = 1","t.setItemAt(t.indexOfIndices(indices), -6.0 as double)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, 6.0)\")","t.getItemAt(indices) ==-6.0d"]},
+        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, 6.0)\")","t.item(indices) ==-6.0d"]},
 
         {"kind":"when","text":"","code":["indices[0] = 1","t[indices].timesAssign(-1d)"]},
 
@@ -413,7 +413,7 @@
 
         {"kind":"and","text":"","code":["t.setItemAt( 1, element )"]},
 
-        {"kind":"then","text":"","code":["t.getItemAt( 1 ) == element"]},
+        {"kind":"then","text":"","code":["t.item( 1 ) == element"]},
 
         {"kind":"and","text":"","code":["t.unsafe.data == expected","t.data == expected"]},
 

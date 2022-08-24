@@ -1,0 +1,56 @@
+{
+  "className":"ut.device.internal.OpenCL_Kernel_Unit_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":["neureka.backend.main.operations.linear.internal.opencl.GEMM","neureka.backend.main.operations.linear.internal.opencl.CLReduce"],
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.012 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The GEMM implementation for the OpenCLDevice has realistic behaviour",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var a = Tsr.ofFloats().withShape(3, 4).all(7)","var b = Tsr.ofFloats().withShape(4, 2).all(-5)","var c = Tsr.ofFloats().withShape(3, 2).all(0)","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
+
+        {"kind":"when","text":"","code":["new GEMM().run( call )"]},
+
+        {"kind":"then","text":"","code":["(1.._) * call.input(Float, 0) >> c","(1.._) * call.input(Float, 1) >> a","(1.._) * call.input(Float, 2) >> b","(1.._) * call.getDevice() >> device","(1.._) * device.hasAdHocKernel(\"fast_CM_MM_3x4x2\") >> false","(1.._) * device.compileAdHocKernel(\"fast_CM_MM_3x4x2\", _) >> device","(1.._) * device.getAdHocKernel(\"fast_CM_MM_3x4x2\") >> kernel","(3.._) * kernel.pass(_) >> kernel"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the OpenCLDevice has realistic behaviour",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var a = Tsr.ofFloats().withShape(19, 7).andWhere({i, _ -> (1+(7**i)%30)})","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
+
+        {"kind":"when","text":"","code":["new CLReduce(type).run( call )"]},
+
+        {"kind":"then","text":"","code":["_ * call.input(0) >> a","(1.._) * call.input(Float, 0) >> a","(1.._) * call.getDevice() >> device","(1.._) * device.hasAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\") >>> [false, true]","(1.._) * device.compileAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\", _) >> device","(1.._) * device.getAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\") >> kernel","(3.._) * kernel.pass(_) >> kernel"]},
+
+        {"kind":"and","text":"","code":["(1.._) * device.hasAdHocKernel(CLReduce.INDICES_MAPPER_ID) >>> [false, true]","(1.._) * device.compileAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> device","(1.._) * device.getAdHocKernel(CLReduce.INDICES_MAPPER_ID) >> kernel"]},
+
+        {"kind":"where","text":"","code":{"type":["MIN","MAX"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

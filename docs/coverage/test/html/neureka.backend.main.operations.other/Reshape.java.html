@@ -42,7 +42,7 @@ public class Reshape extends AbstractOperation
 <span class="fc" id="L42">                    Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();</span>
 <span class="fc" id="L43">                    int[] newForm = new int[ inputs.length - 1 ];</span>
 <span class="fc bfc" id="L44" title="All 2 branches covered.">                    for ( int i = 0; i &lt; inputs.length - 1; i++ )</span>
-<span class="fc" id="L45">                        newForm[ i ] = ( (Number) inputs[ i ].getItemAt( 0 ) ).intValue();</span>
+<span class="fc" id="L45">                        newForm[ i ] = ( (Number) inputs[ i ].item( 0 ) ).intValue();</span>
 
 <span class="fc bfc" id="L47" title="All 2 branches covered.">                    if ( call.getValOf( Arg.DerivIdx.class ) &gt;= 0 ) //reverse reshape:</span>
 <span class="fc" id="L48">                        newForm = invert( newForm );</span>

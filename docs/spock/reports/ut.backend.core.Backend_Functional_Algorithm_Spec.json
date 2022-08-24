@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"The exception tells us this:","code":["exception.message == \"Trying use an instance of 'TestAlgorithm' with name 'test_name' which was not fully built!\""]},
 
-        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@767dee3b","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@44350e6e","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@416d8dfd","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@1b92c9c1"]}}
+        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@179f58f6","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@35f6ef34","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@486eedbe","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@20eadf16"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -44,13 +44,13 @@
       "blocks":[
         {"kind":"given","text":"We create a dumb test algorithm.","code":["def algorithm = new TestAlgorithm()"]},
 
-        {"kind":"when","text":"We build it thoroughly...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )","._setExecution((caller, call ) -> null)",".setCallPreparation(call -> null)",".buildFunAlgorithm()"]},
+        {"kind":"when","text":"We build it thoroughly...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )",".setExecution((caller, call ) -> null)",".setCallPreparation(call -> null)",".buildFunAlgorithm()"]},
 
         {"kind":"then","text":"The algorithm should be usable just fine!","code":["algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT","algorithm.autoDiffModeFrom(null) == AutoDiffMode.BACKWARD_ONLY","algorithm.execute(null, null) == null","algorithm.prepare(null) == null"]},
 
         {"kind":"when","text":"We create a new instance!","code":["algorithm = new TestAlgorithm()"]},
 
-        {"kind":"and","text":"Which we do not build fully this time...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )","._setExecution((caller, call ) -> null)",".setCallPreparation(null) // This is not acceptable!",".buildFunAlgorithm()"]},
+        {"kind":"and","text":"Which we do not build fully this time...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )",".setExecution((caller, call ) -> null)",".setCallPreparation(null) // This is not acceptable!",".buildFunAlgorithm()"]},
 
         {"kind":"then","text":"This should throw an illegal state exception, because we have not built the algorithm properly!","code":["def exception = thrown(IllegalStateException)"]},
 
@@ -71,7 +71,7 @@
 
         {"kind":"and","text":"","code":["def oldStream = System.err","System.err = Mock(PrintStream)"]},
 
-        {"kind":"when","text":"We build it thoroughly...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )","._setExecution((caller, call ) -> null)",".setCallPreparation(call -> null)",".buildFunAlgorithm()"]},
+        {"kind":"when","text":"We build it thoroughly...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )",".setExecution((caller, call ) -> null)",".setCallPreparation(call -> null)",".buildFunAlgorithm()"]},
 
         {"kind":"then","text":"The algorithm should be usable just fine!","code":["algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT","algorithm.autoDiffModeFrom(null) == AutoDiffMode.BACKWARD_ONLY","algorithm.execute(null, null) == null","algorithm.prepare(null) == null"]},
 
@@ -81,7 +81,7 @@
 
         {"kind":"cleanup","text":"","code":["System.err = oldStream"]},
 
-        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@737567e2","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@1185562e","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@4861d21c"]}}
+        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@2dd94a1f","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@183f4c0c","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@7d46856"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.026 seconds"
+    "duration":"0.024 seconds"
   },
   "headers":["    \n            <p>\n                This unit test specification covers the expected state of newly instantiated tensors.\n                Certain properties must have their expected default values.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -71,7 +71,7 @@
     {
       "id":"Tensors as String can be formatted depending on shape.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

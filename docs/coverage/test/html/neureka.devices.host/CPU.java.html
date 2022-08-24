@@ -525,6 +525,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     @FunctionalInterface
     public interface RangeWorkload {  void execute( int start, int end );  }
 
+
+    @FunctionalInterface
+    public interface IndexedWorkload {  void execute( int i );  }
+
     /**
      *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
      *  however it differs in that the {@link JVMExecutor} is processing {@link RangeWorkload} lambdas
@@ -535,10 +539,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
      *  If the workload is very small, then the current main thread will process the entire workload range
      *  whereas the underlying {@link ThreadPoolExecutor} will not be used to avoid unnecessary overhead.
      */
-<span class="fc" id="L538">    public static class JVMExecutor</span>
+<span class="fc" id="L542">    public static class JVMExecutor</span>
     {
-<span class="fc" id="L540">        private static final AtomicInteger _COUNTER = new AtomicInteger();</span>
-<span class="fc" id="L541">        private static final ThreadGroup   _GROUP   = new ThreadGroup(THREAD_PREFIX+&quot;-group&quot;);</span>
+<span class="fc" id="L544">        private static final AtomicInteger _COUNTER = new AtomicInteger();</span>
+<span class="fc" id="L545">        private static final ThreadGroup   _GROUP   = new ThreadGroup(THREAD_PREFIX+&quot;-group&quot;);</span>
 
         /*
             The following 2 constants determine if any given workload size will be parallelized or not...
@@ -547,31 +551,31 @@ public class CPU extends AbstractDevice&lt;Object&gt;
         private static final int _MIN_THREADED_WORKLOAD_SIZE = 32;
         private static final int _MIN_WORKLOAD_PER_THREAD    = 8;
 
-<span class="fc" id="L550">        private final ThreadPoolExecutor _pool =</span>
+<span class="fc" id="L554">        private final ThreadPoolExecutor _pool =</span>
                                             new ThreadPoolExecutor(
                                                     ConcreteMachine.ENVIRONMENT.units,
                                                     Integer.MAX_VALUE,
                                                     5L,
                                                     TimeUnit.SECONDS,
                                                     new SynchronousQueue&lt;Runnable&gt;(), // This is basically always of size 1
-<span class="fc" id="L557">                                                    _newThreadFactory(THREAD_PREFIX+&quot;-&quot;)</span>
+<span class="fc" id="L561">                                                    _newThreadFactory(THREAD_PREFIX+&quot;-&quot;)</span>
                                             );
 
         private static ThreadFactory _newThreadFactory( final String name ) {
-<span class="fc" id="L561">            return _newThreadFactory( _GROUP, name );</span>
+<span class="fc" id="L565">            return _newThreadFactory( _GROUP, name );</span>
         }
 
         private static ThreadFactory _newThreadFactory( final ThreadGroup group, final String name ) {
 
-<span class="pc bpc" id="L566" title="1 of 2 branches missed.">            String prefix = name.endsWith(&quot;-&quot;) ? name : name + &quot;-&quot;;</span>
+<span class="pc bpc" id="L570" title="1 of 2 branches missed.">            String prefix = name.endsWith(&quot;-&quot;) ? name : name + &quot;-&quot;;</span>
 
-<span class="fc" id="L568">            return target -&gt; {</span>
-<span class="fc" id="L569">                Thread thread = new Thread(</span>
+<span class="fc" id="L572">            return target -&gt; {</span>
+<span class="fc" id="L573">                Thread thread = new Thread(</span>
                                     group, target,
-<span class="fc" id="L571">                                    prefix + _COUNTER.incrementAndGet() // The name, including the thread number.</span>
+<span class="fc" id="L575">                                    prefix + _COUNTER.incrementAndGet() // The name, including the thread number.</span>
                                 );
-<span class="fc" id="L573">                thread.setDaemon(true);</span>
-<span class="fc" id="L574">                return thread;</span>
+<span class="fc" id="L577">                thread.setDaemon(true);</span>
+<span class="fc" id="L578">                return thread;</span>
             };
         }
 
@@ -581,14 +585,14 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          *
          * @return the number of threads
          */
-<span class="fc" id="L584">        public int getActiveThreadCount() { return _pool.getActiveCount(); }</span>
+<span class="fc" id="L588">        public int getActiveThreadCount() { return _pool.getActiveCount(); }</span>
 
         /**
          * Returns the core number of threads.
          *
          * @return the core number of threads
          */
-<span class="fc" id="L591">        public int getCorePoolSize() { return _pool.getCorePoolSize(); }</span>
+<span class="fc" id="L595">        public int getCorePoolSize() { return _pool.getCorePoolSize(); }</span>
 
         /**
          * Returns the approximate total number of tasks that have
@@ -599,7 +603,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          *
          * @return the number of tasks
          */
-<span class="fc" id="L602">        public long getCompletedTaskCount() { return _pool.getCompletedTaskCount(); }</span>
+<span class="fc" id="L606">        public long getCompletedTaskCount() { return _pool.getCompletedTaskCount(); }</span>
 
         /**
          *  This method slices the provided workload size into multiple ranges which can be executed in parallel.
@@ -609,13 +613,26 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          */
         public void threaded( int workloadSize, RangeWorkload workload )
         {
-<span class="fc" id="L612">            int cores = get().getCoreCount();</span>
-<span class="pc bpc" id="L613" title="1 of 2 branches missed.">            cores = ( cores == 0 ? 1 : cores );</span>
-<span class="fc bfc" id="L614" title="All 4 branches covered.">            if ( workloadSize &gt;= _MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= _MIN_WORKLOAD_PER_THREAD) ) {</span>
-<span class="fc" id="L615">                threaded(0, workloadSize, workload );</span>
+<span class="fc" id="L616">            int cores = get().getCoreCount();</span>
+<span class="pc bpc" id="L617" title="1 of 2 branches missed.">            cores = ( cores == 0 ? 1 : cores );</span>
+<span class="fc bfc" id="L618" title="All 4 branches covered.">            if ( workloadSize &gt;= _MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= _MIN_WORKLOAD_PER_THREAD) ) {</span>
+<span class="fc" id="L619">                threaded(0, workloadSize, workload );</span>
             }
-<span class="fc" id="L617">            else sequential( workloadSize, workload );</span>
-<span class="fc" id="L618">        }</span>
+<span class="fc" id="L621">            else sequential( workloadSize, workload );</span>
+<span class="fc" id="L622">        }</span>
+
+        /**
+         *  Executes the provided workload lambda across multiple threads
+         *  where the provided worker lambda will receive the index/id of the current worker.
+         *
+         * @param numberOfWorkloads The total number of workloads to be executed.
+         * @param workload The workload lambda to be executed.
+         */
+        public void threaded( int numberOfWorkloads, IndexedWorkload workload ) {
+<span class="fc" id="L632">            _DIVIDER.parallelism( _PARALLELISM )</span>
+<span class="fc" id="L633">                    .threshold( 1 )</span>
+<span class="fc" id="L634">                    .divide( 0, numberOfWorkloads, (start, end)-&gt; workload.execute(start) );</span>
+<span class="fc" id="L635">        }</span>
 
         /**
          *  This method will simply execute the provided {@link RangeWorkload} lambda sequentially
@@ -624,7 +641,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          * @param workloadSize The workload size which will be passed to the provided {@link RangeWorkload} as second argument.
          * @param workload The {@link RangeWorkload} which will be executed sequentially.
          */
-<span class="fc" id="L627">        public void sequential( int workloadSize, RangeWorkload workload ) { workload.execute( 0, workloadSize ); }</span>
+<span class="fc" id="L644">        public void sequential( int workloadSize, RangeWorkload workload ) { workload.execute( 0, workloadSize ); }</span>
 
 
         /**
@@ -639,10 +656,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
                 final int limit,
                 final RangeWorkload rangeWorkload
         ) {
-<span class="fc" id="L642">            _DIVIDER.parallelism( _PARALLELISM )</span>
-<span class="fc" id="L643">                    .threshold( PARALLELIZATION_THRESHOLD )</span>
-<span class="fc" id="L644">                    .divide( first, limit, rangeWorkload);</span>
-<span class="fc" id="L645">        }</span>
+<span class="fc" id="L659">            _DIVIDER.parallelism( _PARALLELISM )</span>
+<span class="fc" id="L660">                    .threshold( PARALLELIZATION_THRESHOLD )</span>
+<span class="fc" id="L661">                    .divide( first, limit, rangeWorkload);</span>
+<span class="fc" id="L662">        }</span>
 
     }
 

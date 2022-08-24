@@ -235,7 +235,7 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
 <span class="fc" id="L235">        return _autogradModeFor.autoDiffModeFrom( call );</span>
     }
 
-    public AbstractFunDeviceAlgorithm&lt;C&gt; _setExecution(Execution execution) {
+    public AbstractFunDeviceAlgorithm&lt;C&gt; setExecution(Execution execution) {
 <span class="fc" id="L239">        _execution = _checked(execution, _execution, Execution.class);</span>
 <span class="fc" id="L240">        return this;</span>
     }
@@ -243,8 +243,8 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
     public final AbstractFunDeviceAlgorithm&lt;C&gt; setDeviceExecution(Execute executor, ADAgentSupplier adAgentSupplier ) {
 <span class="fc" id="L244">        return</span>
 <span class="fc bfc" id="L245" title="All 2 branches covered.">                adAgentSupplier == null</span>
-<span class="fc" id="L246">                        ? _setExecution( (caller, call) -&gt; Result.of(AbstractDeviceAlgorithm.executeFor( caller, call, (innerCall, callback) -&gt; executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)  )) )</span>
-<span class="fc" id="L247">                        : _setExecution( (caller, call) -&gt;</span>
+<span class="fc" id="L246">                        ? setExecution( (caller, call) -&gt; Result.of(AbstractDeviceAlgorithm.executeFor( caller, call, (innerCall, callback) -&gt; executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)  )) )</span>
+<span class="fc" id="L247">                        : setExecution( (caller, call) -&gt;</span>
 <span class="fc" id="L248">                        Result.of(AbstractDeviceAlgorithm.executeFor(</span>
 <span class="fc" id="L249">                                    caller, call, (innerCall, callback) -&gt; executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)</span>
                                 ))
@@ -252,8 +252,10 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
                 );
     }
 
+
+
     public final AbstractFunDeviceAlgorithm&lt;C&gt; setDeviceExecution( Execute executor ) {
-<span class="fc" id="L256">        return setDeviceExecution( executor, FallbackAlgorithm::ADAgent );</span>
+<span class="fc" id="L258">        return setDeviceExecution( executor, FallbackAlgorithm::ADAgent );</span>
     }
     public interface Execute {
 
@@ -263,37 +265,37 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
 
     @Override
     public Result execute( Function caller, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
-<span class="fc" id="L266">        _checkReadiness();</span>
-<span class="fc bfc" id="L267" title="All 2 branches covered.">        if ( call == null ) {</span>
-<span class="pc bpc" id="L268" title="1 of 2 branches missed.">            if ( _supplyADAgentFor != null )</span>
-<span class="nc" id="L269">                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);</span>
+<span class="fc" id="L268">        _checkReadiness();</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        if ( call == null ) {</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            if ( _supplyADAgentFor != null )</span>
+<span class="nc" id="L271">                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);</span>
             else
-<span class="fc" id="L271">                return _execution.execute( caller, call );</span>
+<span class="fc" id="L273">                return _execution.execute( caller, call );</span>
         }
-<span class="fc" id="L273">        MemValidator checker = MemValidator.forInputs( call.inputs(), ()-&gt; {</span>
-<span class="fc bfc" id="L274" title="All 2 branches covered.">            if ( _supplyADAgentFor != null )</span>
-<span class="fc" id="L275">                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);</span>
+<span class="fc" id="L275">        MemValidator checker = MemValidator.forInputs( call.inputs(), ()-&gt; {</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">            if ( _supplyADAgentFor != null )</span>
+<span class="fc" id="L277">                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);</span>
             else
-<span class="fc" id="L277">                return _execution.execute( caller, call );</span>
+<span class="fc" id="L279">                return _execution.execute( caller, call );</span>
         });
-<span class="pc bpc" id="L279" title="1 of 2 branches missed.">        if ( checker.isWronglyIntermediate() ) {</span>
-<span class="nc" id="L280">            throw new IllegalStateException(</span>
-<span class="nc" id="L281">                    &quot;Output of algorithm '&quot; + this.getName() + &quot;' &quot; +</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        if ( checker.isWronglyIntermediate() ) {</span>
+<span class="nc" id="L282">            throw new IllegalStateException(</span>
+<span class="nc" id="L283">                    &quot;Output of algorithm '&quot; + this.getName() + &quot;' &quot; +</span>
                             &quot;is marked as intermediate result, despite the fact &quot; +
                             &quot;that it is a member of the input array. &quot; +
                             &quot;Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged &quot; +
                             &quot;as 'intermediate', because they are not eligible for deletion!&quot;
             );
         }
-<span class="pc bpc" id="L288" title="1 of 2 branches missed.">        if ( checker.isWronglyNonIntermediate() ) {</span>
-<span class="nc" id="L289">            throw new IllegalStateException(</span>
-<span class="nc" id="L290">                    &quot;Output of algorithm '&quot; + this.getName() + &quot;' &quot; +</span>
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">        if ( checker.isWronglyNonIntermediate() ) {</span>
+<span class="nc" id="L291">            throw new IllegalStateException(</span>
+<span class="nc" id="L292">                    &quot;Output of algorithm '&quot; + this.getName() + &quot;' &quot; +</span>
                             &quot;is neither marked as intermediate result nor a member of the input array. &quot; +
                             &quot;Tensors instantiated by operations in the backend are expected to be flagged &quot; +
                             &quot;as 'intermediate' in order to be eligible for deletion!&quot;
             );
         }
-<span class="fc" id="L296">        return checker.getResult();</span>
+<span class="fc" id="L298">        return checker.getResult();</span>
     }
 }
 

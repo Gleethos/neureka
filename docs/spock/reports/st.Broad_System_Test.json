@@ -16,7 +16,7 @@
     {
       "id":"Test integration broadly.",
       "result":"PASS",
-      "duration":"0.036 seconds",
+      "duration":"0.035 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

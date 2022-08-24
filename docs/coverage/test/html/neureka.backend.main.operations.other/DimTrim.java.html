@@ -47,11 +47,11 @@ import java.util.List;
 <span class="fc" id="L47">                        int postfix = endings[ 1 ];</span>
 
 <span class="fc" id="L49">                        return</span>
-<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                                call.autogradMode() == AutoDiffMode.FORWARD_ONLY</span>
-<span class="nc" id="L51">                                    ? new FunctionParser( Neureka.get().backend() )</span>
-<span class="nc" id="L52">                                                        .parse(caller.toString(), false)</span>
-<span class="nc" id="L53">                                                        .derive(new Tsr[]{target.error()},0)</span>
-<span class="fc" id="L54">                                    : _pad(target.error(), new int[]{prefix, postfix}, true);</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                            call.autogradMode() == AutoDiffMode.FORWARD_ONLY</span>
+<span class="nc" id="L51">                                ? new FunctionParser( Neureka.get().backend() )</span>
+<span class="nc" id="L52">                                                    .parse(caller.toString(), false)</span>
+<span class="nc" id="L53">                                                    .derive(new Tsr[]{target.error()},0)</span>
+<span class="fc" id="L54">                                : _pad(target.error(), new int[]{prefix, postfix}, true);</span>
                     };
 
 <span class="fc" id="L57">                    Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();</span>

@@ -33,12 +33,13 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
 
     @Override
     public Tsr<Integer> run(ExecutionCall<OpenCLDevice> call) {
-        CLSettings settings = Neureka.get().backend().get(CLContext.class).getSettings();
-        boolean autoConvert = settings.isAutoConvertToFloat();
-        settings.setAutoConvertToFloat(false);
+        CLContext context = Neureka.get().backend().get(CLContext.class);
+        CLSettings settings = context == null ? null : context.getSettings();
+        boolean autoConvert = context == null || settings.isAutoConvertToFloat();
+        if ( settings != null ) settings.setAutoConvertToFloat(false);
         Tsr<Float> in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);
         int index = _runRecursively(in, call.getDevice());
-        settings.setAutoConvertToFloat(autoConvert);
+        if ( settings != null ) settings.setAutoConvertToFloat(autoConvert);
         return Tsr.of(Integer.class, new int[]{1}, index);
     }
 

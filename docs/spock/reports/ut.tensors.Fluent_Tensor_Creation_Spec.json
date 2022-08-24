@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.023 seconds"
+    "duration":"0.026 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@76f40c09","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@e758b6d","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@944c4bb","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@21870070","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@567f064e","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@3f3863b4","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@4eb5eb50","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@1ca28e25"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@1ae3ee4d","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@208befcf","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@574439c4","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@540e8cd4","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@4b8cf9d","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@28275a08","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@3aa57538","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@3cabbc17"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

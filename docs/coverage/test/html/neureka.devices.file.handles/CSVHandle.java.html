@@ -69,7 +69,7 @@ import java.util.stream.Collectors;
 <span class="fc bfc" id="L69" title="All 2 branches covered.">            if ( _firstColIsIndex ) asCsv.append( index.get( i ).toString() + &quot;,&quot; );</span>
 <span class="fc bfc" id="L70" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; shape[ 1 ]; ii++ ) {</span>
 <span class="fc" id="L71">                indices[ 1 ] = ii;</span>
-<span class="fc" id="L72">                asCsv.append( tensor.getItemAt( indices ) );</span>
+<span class="fc" id="L72">                asCsv.append( tensor.item( indices ) );</span>
 <span class="fc bfc" id="L73" title="All 2 branches covered.">                if ( ii &lt; shape[ 1 ] - 1 ) asCsv.append( _delimiter );</span>
             }
 <span class="fc" id="L75">            asCsv.append( &quot;\n&quot; );</span>

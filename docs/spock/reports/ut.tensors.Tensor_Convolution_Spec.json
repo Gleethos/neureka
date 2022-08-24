@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.617 seconds"
+    "duration":"0.602 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"x\" (convolution) operator produces expected results (On the CPU).",
       "result":"PASS",
-      "duration":"0.141 seconds",
+      "duration":"0.149 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        ","\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        "]
       },
@@ -43,7 +43,7 @@
     {
       "id":"Manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.115 seconds",
+      "duration":"0.076 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Very simple manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.156 seconds",
+      "duration":"0.152 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
 
         {"kind":"then","text":"","code":["xAsStr.contains(\"(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]\")","yAsStr.contains(\"(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]\")","zAsStr.contains(\"(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]\")","rcAsStr.contains(\"(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]\")","kAsStr.contains(\"(2x2):[15.0, 18.0, 27.0, 30.0]\")","vAsStr.contains(\"(2x2):[12.0, 15.0, 24.0, 27.0]\")","jAsStr.contains(\"(2x2):[18.0, 21.0, 30.0, 33.0]\")","uAsStr.contains(\"(2x2):[5.0, 6.0, 9.0, 10.0]\")","colconvol.toString().contains(\"(2x2):[0.0, 0.0, 0.0, 0.0]\")"]},
 
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x28422583ff0],platform=OpenCLPlatform@5a56cd6a[pid=cl_platform_id[0x7ff85f668000],context=cl_context[0x2841b68fb20],kernels=[..46..]]]"]}}
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x1c165d9cf30],platform=OpenCLPlatform@3d5c5bd1[pid=cl_platform_id[0x7ff927018000],context=cl_context[0x1c15c75f6a0],kernels=[..46..]]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -79,7 +79,7 @@
     {
       "id":"Autograd works with simple 2D convolution.",
       "result":"PASS",
-      "duration":"0.066 seconds",
+      "duration":"0.074 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -104,7 +104,7 @@
     {
       "id":"Sime convolution works as expected eith autograd.",
       "result":"PASS",
-      "duration":"0.068 seconds",
+      "duration":"0.073 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,7 +129,7 @@
     {
       "id":"Tensors have the correct layout after convolution.",
       "result":"PASS",
-      "duration":"0.063 seconds",
+      "duration":"0.072 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

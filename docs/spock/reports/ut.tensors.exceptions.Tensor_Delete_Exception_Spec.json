@@ -31,7 +31,7 @@
     {
       "id":"A deleted tensor will throw an exception when accessing its configuration.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

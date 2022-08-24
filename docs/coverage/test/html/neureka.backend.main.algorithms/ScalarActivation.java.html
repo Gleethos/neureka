@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L48">        setImplementationFor(</span>
             OpenCLDevice.class,
             call -&gt; {
-<span class="fc" id="L51">                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).getItemAt(0).doubleValue());</span>
+<span class="fc" id="L51">                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).item(0).doubleValue());</span>
 <span class="fc" id="L52">                Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
 <span class="fc" id="L53">                out.getUnsafe().setDataAt(0, value);</span>
 <span class="fc" id="L54">                return call.input(0);</span>
@@ -66,7 +66,7 @@ import org.jetbrains.annotations.Contract;
             Functions&lt;Fun&gt; functions
     ) {
 <span class="fc" id="L68">        CPU.RangeWorkload workload = (i,end) -&gt; {</span>
-<span class="fc" id="L69">            Number value =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(call.input( Number.class, 1 ).getItemAt(0).doubleValue());</span>
+<span class="fc" id="L69">            Number value =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(call.input( Number.class, 1 ).item(0).doubleValue());</span>
 <span class="fc" id="L70">            Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
 <span class="fc" id="L71">            out.getUnsafe().setDataAt(0, value);</span>
 <span class="fc" id="L72">        };</span>
