@@ -23,7 +23,7 @@ class CPU_Kernel_Spec extends Specification
             var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())
         when :
             var index = new CPUReduce(reduceType).run( call )
-            var result = a.item(index.item(0) as int)
+            var result = a.item(index.item() as int)
 
         then :
             result == expected

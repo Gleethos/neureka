@@ -296,6 +296,13 @@ public interface Nda<V> extends NDimensional, Iterable<V>
         return getDataAt( getNDConf().indexOfIndices( indices ) );
     }
 
+    /**
+     *  Equivalent to the {@code #item(0)}.
+     *
+     * @return The first item of this nd-array.
+     */
+    default V item() { return item( 0 ); }
+
     default <A> A getItemsAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getRawItems(), arrayTypeClass );
     }

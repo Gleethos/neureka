@@ -44,7 +44,7 @@ public class Max extends AbstractOperation
             .setExecution( (caller, call) -> {
                 Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
                 Tsr<Integer> index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
-                int i = index.item(0);
+                int i = index.item();
                 Tsr<?> in = inputs[0] == null ? inputs[1] : inputs[0];
                 return Result.of(
                             Tsr.of(in.itemType(), new int[]{1}, in.item(i)).to(call.getDevice()).getUnsafe().setIsIntermediate(true)
