@@ -3,13 +3,13 @@ package ut.device.internal
 import neureka.Tsr
 import neureka.backend.api.ExecutionCall
 import neureka.backend.main.operations.linear.internal.opencl.GEMM
-import neureka.backend.main.operations.linear.internal.opencl.Reduce
+import neureka.backend.main.operations.linear.internal.opencl.CLReduce
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Specification
 import spock.lang.Subject
 
-@Subject([GEMM, Reduce])
+@Subject([GEMM, CLReduce])
 class OpenCL_Kernel_Unit_Spec extends Specification
 {
     def 'The GEMM implementation for the OpenCLDevice has realistic behaviour'()
@@ -37,7 +37,7 @@ class OpenCL_Kernel_Unit_Spec extends Specification
     }
 
 
-    def 'The Reduce implementation for the OpenCLDevice has realistic behaviour'(Reduce.Type type)
+    def 'The Reduce implementation for the OpenCLDevice has realistic behaviour'(CLReduce.Type type)
     {
         given :
             var a = Tsr.ofFloats().withShape(19, 7).andWhere({i, _ -> (1+(7**i)%30)})
@@ -46,7 +46,7 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             var kernel = Mock(KernelCaller)
 
         when :
-            new Reduce(type).run( call )
+            new CLReduce(type).run( call )
 
         then :
             _ * call.input(0) >> a
@@ -57,12 +57,12 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             (1.._) * device.getAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >> kernel
             (3.._) * kernel.pass(_) >> kernel
         and :
-            (1.._) * device.hasAdHocKernel(Reduce.INDICES_MAPPER_ID) >>> [false, true]
-            (1.._) * device.compileAdHocKernel(Reduce.INDICES_MAPPER_ID, _) >> device
-            (1.._) * device.getAdHocKernel(Reduce.INDICES_MAPPER_ID) >> kernel
+            (1.._) * device.hasAdHocKernel(CLReduce.INDICES_MAPPER_ID) >>> [false, true]
+            (1.._) * device.compileAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> device
+            (1.._) * device.getAdHocKernel(CLReduce.INDICES_MAPPER_ID) >> kernel
 
         where :
-            type << [Reduce.Type.MIN, Reduce.Type.MAX]
+            type << [CLReduce.Type.MIN, CLReduce.Type.MAX]
     }
 
 }

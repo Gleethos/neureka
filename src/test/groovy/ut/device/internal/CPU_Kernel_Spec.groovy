@@ -24,7 +24,6 @@ class CPU_Kernel_Spec extends Specification
         when :
             var index = new CPUReduce(reduceType).run( call )
             var result = a.getItemAt(index.getItemAt(0) as int)
-            println(result+"|"+a.items.min()+"|"+a.items.max())
 
         then :
             result == expected

@@ -48,7 +48,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
                     .setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )
-                    ._setExecution((caller, call ) -> null)
+                    .setExecution((caller, call ) -> null)
                     .setCallPreparation(call -> null)
                     .buildFunAlgorithm()
 
@@ -64,7 +64,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
                     .setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )
-                    ._setExecution((caller, call ) -> null)
+                    .setExecution((caller, call ) -> null)
                     .setCallPreparation(null) // This is not acceptable!
                     .buildFunAlgorithm()
 
@@ -88,7 +88,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
             algorithm
                     .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)
                     .setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )
-                    ._setExecution((caller, call ) -> null)
+                    .setExecution((caller, call ) -> null)
                     .setCallPreparation(call -> null)
                     .buildFunAlgorithm()
 

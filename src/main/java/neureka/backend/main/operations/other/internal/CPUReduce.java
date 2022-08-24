@@ -78,7 +78,7 @@ public class CPUReduce implements ImplementationFor<CPU>
 
 
     @Override
-    public Tsr<?> run(ExecutionCall<CPU> call) {
+    public Tsr<Integer> run(ExecutionCall<CPU> call) {
         if ( call.getDevice() != CPU.get() )
             throw new IllegalArgumentException("This implementation is only available for the CPU!");
         Tsr<?> in = call.input(0) == null ? call.input(1) : call.input(0);

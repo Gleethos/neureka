@@ -1,14 +1,17 @@
 package neureka.backend.main.operations.linear.internal.opencl;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
+import neureka.devices.opencl.CLContext;
+import neureka.devices.opencl.CLSettings;
 import neureka.devices.opencl.KernelCaller;
 import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.function.Supplier;
 
-public class Reduce implements ImplementationFor<OpenCLDevice>
+public class CLReduce implements ImplementationFor<OpenCLDevice>
 {
     public static String INDICES_MAPPER_ID = "indices_to_values_mapper";
     public enum Type { MIN, MAX }
@@ -17,7 +20,7 @@ public class Reduce implements ImplementationFor<OpenCLDevice>
     private final static int RTS = 64; // Register Tile Size
     private final String _comparator;
 
-    public Reduce(Type type) {
+    public CLReduce(Type type) {
         String comparator = "";
         switch (type) {
             case MIN: comparator = "current < value"; break;
@@ -29,9 +32,13 @@ public class Reduce implements ImplementationFor<OpenCLDevice>
     }
 
     @Override
-    public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
+    public Tsr<Integer> run(ExecutionCall<OpenCLDevice> call) {
+        CLSettings settings = Neureka.get().backend().get(CLContext.class).getSettings();
+        boolean autoConvert = settings.isAutoConvertToFloat();
+        settings.setAutoConvertToFloat(false);
         Tsr<Float> in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);
         int index = _runRecursively(in, call.getDevice());
+        settings.setAutoConvertToFloat(autoConvert);
         return Tsr.of(Integer.class, new int[]{1}, index);
     }
 
@@ -63,12 +70,12 @@ public class Reduce implements ImplementationFor<OpenCLDevice>
                         "   __kernel void "+kernelName+"(                                                                   \n" +
                         "               const int size,                                                                     \n" +
                         "               const __global float* in,                                                           \n" +
-                        "                     __global int* out, // indices                                                 \n" +
+                        "                     __global int* out  // indices                                                 \n" +
                         "   ) {                                                                                             \n" +
                         "       size_t ni = get_global_id(0); //   global N-tile id                                         \n" +
                         "                                                                                                   \n" +
-                        "       uint offset = ni * RTS;                                                                     \n" +
-                        "       uint limit = min( offset + RTS, size );                                                     \n" +
+                        "       int offset = ni * RTS;                                                                      \n" +
+                        "       int limit = min( offset + RTS, size ); // Boundary condition!                               \n" +
                         "       float value = in[offset];                                                                   \n" +
                         "       int found_index = offset;                                                                   \n" +
                         "       offset++;                                                                                   \n" +
@@ -76,7 +83,7 @@ public class Reduce implements ImplementationFor<OpenCLDevice>
                         "       #pragma unroll                                                                              \n" +
                         "       for ( uint i=offset; i < limit; ++i ) {                                                     \n" +
                         "           float current = in[i];                                                                  \n" +
-                        "           if ( "+ _comparator +" ) {                                                                 \n" +
+                        "           if ( "+ _comparator +" ) {                                                              \n" +
                         "               value = current;                                                                    \n" +
                         "               found_index = i;                                                                    \n" +
                         "           }                                                                                       \n" +
@@ -94,12 +101,17 @@ public class Reduce implements ImplementationFor<OpenCLDevice>
 
         caller.pass(SIZE).pass( in ).pass( out ).call( global, local );
 
+        int i;
         if ( N > 1 ) {
             Tsr<Float> reduced = _fetch(in, out, device);
-            out.getUnsafe().delete();
-            return _runRecursively(reduced, device);
-        } else
-            return out.at(0).get();
+            i = out.at(_runRecursively(reduced, device)).get();
+            reduced.getUnsafe().delete();
+        }
+        else
+            i = out.at(0).get();
+
+        out.getUnsafe().delete();
+        return i;
     }
 
     /**
@@ -112,6 +124,7 @@ public class Reduce implements ImplementationFor<OpenCLDevice>
             Tsr<Float> in, Tsr<Integer> indices, OpenCLDevice device
     ) {
         Tsr<Float> out = Tsr.of(Float.class, new int[]{indices.size()}, 0).to(device);
+        out.setIsVirtual(false);
 
         String kernelName = INDICES_MAPPER_ID;
 

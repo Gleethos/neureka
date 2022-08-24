@@ -47,11 +47,11 @@ public class DimTrim extends AbstractOperation
                         int postfix = endings[ 1 ];
 
                         return
-                                call.autogradMode() == AutoDiffMode.FORWARD_ONLY
-                                    ? new FunctionParser( Neureka.get().backend() )
-                                                        .parse(caller.toString(), false)
-                                                        .derive(new Tsr[]{target.error()},0)
-                                    : _pad(target.error(), new int[]{prefix, postfix}, true);
+                            call.autogradMode() == AutoDiffMode.FORWARD_ONLY
+                                ? new FunctionParser( Neureka.get().backend() )
+                                                    .parse(caller.toString(), false)
+                                                    .derive(new Tsr[]{target.error()},0)
+                                : _pad(target.error(), new int[]{prefix, postfix}, true);
                     };
 
                     Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();

@@ -57,21 +57,21 @@ public class MatMul extends AbstractOperation
                 )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setDeviceExecution(
-                        ( context, callback ) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), null),
-                        ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                        {
-                            if ( adCall.autogradMode().allowsForward() )
-                                throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
-                            Function matMul = Neureka.get().backend().getFunction().matMul();
-                            int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                            Tsr<?> derivative = adCall.input( d ).T().deepCopy().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
-                            derivative.to(adCall.getDevice());
-                            return ADAgent.of( derivative )
-                                    .withAD( target ->
-                                            d == 1
-                                                    ? matMul.execute( target.error(), derivative )
-                                                    : matMul.execute( derivative, target.error() )
-                                    );
+                    ( context, callback ) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), null),
+                    ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                    {
+                        if ( adCall.autogradMode().allowsForward() )
+                            throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
+                        Function matMul = Neureka.get().backend().getFunction().matMul();
+                        int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
+                        Tsr<?> derivative = adCall.input( d ).T().deepCopy().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                        derivative.to(adCall.getDevice());
+                        return ADAgent.of( derivative )
+                                .withAD( target ->
+                                        d == 1
+                                                ? matMul.execute( target.error(), derivative )
+                                                : matMul.execute( derivative, target.error() )
+                                );
                     }
                 )
                 .setCallPreparation(MatMul::_prepare)

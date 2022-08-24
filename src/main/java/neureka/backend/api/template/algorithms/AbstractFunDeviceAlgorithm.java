@@ -235,7 +235,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return _autogradModeFor.autoDiffModeFrom( call );
     }
 
-    public AbstractFunDeviceAlgorithm<C> _setExecution(Execution execution) {
+    public AbstractFunDeviceAlgorithm<C> setExecution(Execution execution) {
         _execution = _checked(execution, _execution, Execution.class);
         return this;
     }
@@ -243,14 +243,16 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Execute executor, ADAgentSupplier adAgentSupplier ) {
         return
                 adAgentSupplier == null
-                        ? _setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor( caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)  )) )
-                        : _setExecution( (caller, call) ->
+                        ? setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor( caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)  )) )
+                        : setExecution( (caller, call) ->
                         Result.of(AbstractDeviceAlgorithm.executeFor(
                                     caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)
                                 ))
                                 .withAutoDiff( adAgentSupplier )
                 );
     }
+
+
 
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Execute executor ) {
         return setDeviceExecution( executor, FallbackAlgorithm::ADAgent );

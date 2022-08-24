@@ -1,11 +1,13 @@
 package neureka.backend.main.operations.other;
 
+import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
+import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.operations.linear.internal.opencl.Reduce;
+import neureka.backend.main.operations.linear.internal.opencl.CLReduce;
 import neureka.backend.main.operations.other.internal.CPUReduce;
 import neureka.calculus.Function;
 import neureka.devices.host.CPU;
@@ -39,7 +41,18 @@ public class Max extends AbstractOperation
                                 .getEstimation()
             )
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-            .setDeviceExecution( (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )
+            .setExecution( (caller, call) -> {
+                Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
+                Tsr<Integer> index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
+                int i = index.getItemAt(0);
+                Tsr<?> in = inputs[0] == null ? inputs[1] : inputs[0];
+                return Result.of(
+                            Tsr.of(in.itemType(), new int[]{1}, in.getItemAt(i)).to(call.getDevice()).getUnsafe().setIsIntermediate(true)
+                        )
+                        .withADAction( target -> {
+                            return null;//TODO
+                        });
+            })
             .setCallPreparation( call ->
              {
                  if ( call.input( 0 ) == null )
@@ -49,7 +62,7 @@ public class Max extends AbstractOperation
              })
             .buildFunAlgorithm()
             .setImplementationFor( CPU.class, new CPUReduce(CPUReduce.Type.MAX) )
-            .setImplementationFor( OpenCLDevice.class, new Reduce(Reduce.Type.MAX) )
+            .setImplementationFor( OpenCLDevice.class, new CLReduce(CLReduce.Type.MAX) )
         );
     }
 
