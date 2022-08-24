@@ -16,7 +16,7 @@
     {
       "id":"Anonymous tensor instance has the default datatype class as defined in Neureka settings.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

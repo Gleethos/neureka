@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.008 seconds"
+    "duration":"0.010 seconds"
   },
   "headers":["\n            <p>\n                Specified below are strict integration tests for tensors and\n                their behaviour with regards to the usage of implementations of the\n                NDConfiguration interface. <br>\n                For certain situations the \"Tsr\" class should use the correct \n                implementations of said interface as configuration for internal index mapping...\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 

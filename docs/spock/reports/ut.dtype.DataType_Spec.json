@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.008 seconds"
+    "duration":"0.013 seconds"
   },
   "headers":["\n            This specification tests the \"DataType\" class, which hosts a multiton\n            design pattern in order to guarantee uniqueness of instances of the type\n            which represent the same class type. <br>\n            Instances of this class wrap a Class variable which is the type of the data of the tensor. <br>\n            (The following types are usually used : UI8, I8, UI16, I16, UI32, I64, I32, F32, F64 )\n        "],"tags":{},"see":[],
   "features":[ 
