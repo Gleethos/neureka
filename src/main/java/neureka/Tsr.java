@@ -1455,6 +1455,28 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return sum;
     }
 
+    default Tsr<V> min() {
+        Functions functions = Neureka.get().backend().getAutogradFunction();
+        Tsr<V> min = functions.min().call( this );
+        if ( min == null )
+            throw new IllegalStateException(
+                "Failed to calculate min using min function! Shapes: "+
+                Arrays.toString(this.getNDConf().shape())
+            );
+        return min;
+    }
+
+    default Tsr<V> max() {
+        Functions functions = Neureka.get().backend().getAutogradFunction();
+        Tsr<V> max = functions.max().call( this );
+        if ( max == null )
+            throw new IllegalStateException(
+                "Failed to calculate max using max function! Shapes: "+
+                Arrays.toString(this.getNDConf().shape())
+            );
+        return max;
+    }
+
     /**
      *  This method performs a convolutional based dot product between the last dimension of this tensor
      *  and the first dimension of the passed tensor.

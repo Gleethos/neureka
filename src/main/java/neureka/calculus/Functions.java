@@ -46,6 +46,10 @@ public class Functions {
     private final Function _gelu;
     private final Function _selu;
 
+    private final Function _min;
+    private final Function _max;
+
+
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
         _idy = Function.of( "I[ 0 ]<-I[ 1 ]",                  doingAD );
@@ -84,6 +88,8 @@ public class Functions {
         _silu  = Function.of("silu(I[0])",                     doingAD );
         _gelu  = Function.of("gelu(I[0])",                     doingAD );
         _selu  = Function.of("selu(I[0])",                     doingAD );
+        _min  = Function.of("min(I[0])",                       doingAD );
+        _max  = Function.of("max(I[0])",                       doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -378,6 +384,13 @@ public class Functions {
      */
     public final Function selu() { return _selu; }
 
+    public final Function getMin() { return _min; }
+
+    public final Function min() { return _min; }
+
+    public final Function getMax() { return _max; }
+
+    public final Function max() { return _max; }
 
     @Override
     public final String toString() {
