@@ -4,19 +4,19 @@
   "narrative":"",
   "subjects":["neureka.Tsr"],
   "statistics":{
-    "runs":"3",
+    "runs":"4",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.351 seconds"
+    "duration":"0.605 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.328 seconds",
+      "duration":"0.468 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -41,7 +41,7 @@
     {
       "id":"We can get pre-instantiated min and max functions from the library context.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -72,6 +72,27 @@
         {"kind":"expect","text":"The results are correct:","code":["min.item(0) == -150.0","max.item(0) == 147.0"]},
 
         {"kind":"where","text":"","code":{"device":["CPU","GPU"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Both the min and max operation support autograd (back-propagation).",
+      "result":"PASS",
+      "duration":"0.046 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a simple tensor of floats which requires gradients:","code":["var a = Tsr.of(-3f, 6.42f, 2.065f, -8f, 0.2, 7.666f, 3.39f).setRqsGradient(true)"]},
+
+        {"kind":"and","text":"We first do a simple operation to get another tensor:","code":["var b = a * 3"]},
+
+        {"kind":"and","text":"We then do min and max operations as well as 2 divisions:","code":["var x = b.min() / 2","var y = b.max() / 4"]},
+
+        {"kind":"when","text":"We back-propagate both paths by adding them and calling backward:","code":["(x+y).backward()"]},
+
+        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.items == [0.0, 0.0, 0.0, 1.5, 0.0, 0.75, 0.0]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

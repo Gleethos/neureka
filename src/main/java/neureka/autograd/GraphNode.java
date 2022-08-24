@@ -454,12 +454,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
             pendingNodes.forEach( n -> {
                 if ( !n._pendingError.isFullyAccumulated() ) {
                     throw new IllegalStateException(
-                            "Pending error in graph node '"+ n +"' has not received expected accumulation. " +
-                            "Please examine function " + n._function + " and its underlying operations " +
-                            n._function.getAllFunctions()
-                                    .stream()
-                                    .map( f -> f.getOperation().getIdentifier() )
-                                    .collect(Collectors.joining(", ")) + "!"
+                        "Pending error in graph node '"+ n +"' has not received expected accumulation during back-prop. " +
+                        "This is most likely because the recorded computation graph has multiple root!\n " +
+                        "Otherwise please examine function " + n._function + " and its underlying operations: '" +
+                        n._function.getAllFunctions()
+                                .stream()
+                                .filter( f -> f.getOperation() != null )
+                                .map( f -> f.getOperation().getIdentifier() )
+                                .collect(Collectors.joining("', '")) + "'!"
                     );
                 }
                 n.backward( n._pendingError.getAccumulatedError() ); // Continue back-propagation recursively!

@@ -85,4 +85,21 @@ class Tensor_Stats_Spec extends Specification
             device << ['CPU', 'GPU']
     }
 
+    def 'Both the min and max operation support autograd (back-propagation).'()
+    {
+        given : 'We create a simple tensor of floats which requires gradients:'
+            var a = Tsr.of(-3f, 6.42f, 2.065f, -8f, 0.2, 7.666f, 3.39f).setRqsGradient(true)
+        and : 'We first do a simple operation to get another tensor:'
+            var b = a * 3
+        and : 'We then do min and max operations as well as 2 divisions:'
+            var x = b.min() / 2
+            var y = b.max() / 4
+
+        when : 'We back-propagate both paths by adding them and calling backward:'
+            (x+y).backward()
+
+        then : 'The gradient is correct:'
+            a.gradient.items == [0.0, 0.0, 0.0, 1.5, 0.0, 0.75, 0.0]
+    }
+
 }
