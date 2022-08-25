@@ -24,10 +24,7 @@ class Tensor_State_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """    
-            <p>
-                This unit test specification covers the expected state of newly instantiated tensors.
-                Certain properties must have their expected default values.
-            </p>
+            
         """
     }
 
@@ -51,13 +48,13 @@ class Tensor_State_Spec extends Specification
         })
     }
 
-    def 'A tensor can be instantiated from a target type and nested lists.'(
+    def 'A tensor can be instantiated from a item type class and nested lists.'(
             Class<Object> type, List<Object> list, List<Integer> shape, Object expected
     ) {
-        given : 'We instantiate a tensor based on a target type and a list of things.'
+        given : 'We instantiate a tensor using a type and a list of things (or list of list of things, or..).'
             var t = Tsr.of(type, list)
 
-        expect : 'The tensor has the targeted type, shape and data array!'
+        expect : 'The tensor has the item type, shape and data array!'
             t.itemType == type
             t.shape() == shape
             t.unsafe.data == expected
@@ -80,20 +77,20 @@ class Tensor_State_Spec extends Specification
                        ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6  )
             })
 
-        expect: 'When we convert the tensor to a String via the flags "b" (cell bound) and "f" (formatted).'
+        expect: 'The tensor converted to a String with custom cell bounds, size, etc... should be as expected:'
             t.toString({ NDPrintSettings it ->
-                                    it.setHasSlimNumbers(false)
-                                            .setIsScientific(true)
-                                            .setIsCellBound(true)
-                                            .setIsMultiline(true)
-                                            .setCellSize(5)
+                                      it.setHasSlimNumbers(false)
+                                      .setIsScientific(true)
+                                      .setIsCellBound(true)
+                                      .setIsMultiline(true)
+                                      .setCellSize(5)
                                 })  == "(2x3):[\n" +
                                          "   [ sal.., swe.., spi.. ],\n" +
                                          "   [ blu.., shi.., con.. ]\n" +
                                          "]"
-        and: 'When additionally supplying the flag "p" (padding) then most String entries will be printed fully.'
+        and: 'When increase the cell size, most String entries will be printed fully.'
             t.toString({ NDPrintSettings it ->
-                        it.setHasSlimNumbers(false)
+                                it.setHasSlimNumbers(false)
                                 .setIsScientific(true)
                                 .setIsCellBound(true)
                                 .setIsMultiline(true)
@@ -102,12 +99,12 @@ class Tensor_State_Spec extends Specification
                                        "   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\n" +
                                        "   [   blue Almond  ,  shining Salad , confused Saitan ]\n" +
                                        "]"
-        and: 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
+        and: 'Now we try a cell size of 10:'
             t.toString(
                     { NDPrintSettings it -> it.setIsCellBound(true).setCellSize(10)}
             ) == "(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]"
 
-        and: 'This way we can also configure a postfix and prefix as well as limit the number of entries in a row:'
+        and: 'We can also configure a postfix and prefix as well as limit the number of entries in a row:'
             t.toString({ NDPrintSettings it ->
                                         it.setPrefix('START<|').setPostfix('|>END').setCellSize(0).setIsCellBound(false).setRowLimit(2) }
             ) == "START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END"
@@ -119,15 +116,14 @@ class Tensor_State_Spec extends Specification
         given : 'A new tensor of rank 2 storing floats:'
             Tsr t = Tsr.of(DataType.of(Float.class), [2, 3], (i, indices) -> (i%4)/3 as float )
 
-        expect : 'When we convert the tensor to a String via the flag "f" (formatted).'
+        expect : 'When we convert the tensor to a String with scientific formatting.'
             t.toString(
                     { NDPrintSettings it -> it.setHasSlimNumbers(false).setIsScientific(true).setIsCellBound(false).setIsMultiline(false).setCellSize(3) }
             ) == "(2x3):[0.0, 0.33333, 0.66666, 1.0, 0.0, 0.33333]"
-        and : 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
+        and : 'If the numbers are still to verbose, we can make them "slim":'
             t.toString(
                 { NDPrintSettings it -> it.setHasSlimNumbers(true).setIsScientific(true).setCellSize(0) }
                 ) == "(2x3):[0, .33333, .66666, 1, 0, .33333]"
-
     }
 
 
@@ -197,19 +193,21 @@ class Tensor_State_Spec extends Specification
 
 
 
-    def 'Newly instantiated and unmodified scalar tensor has expected state.'()
+    def 'We can create scalar tensors.'()
     {
         given: 'A new instance of a scalar tensor.'
             Tsr t = Tsr.of( 6 )
         expect: 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
         and : 'The tensor contains the expected data.'
+            t.unsafe.data == [6] as double[]
+            t.items == [6]
+            t.rawItems == [6] as double[]
+        and : 'We can read the data in various array types:'
             t.getItemsAs( double[].class ) == [6] as double[]
             t.getItemsAs( float[].class  ) == [6] as float[]
             t.getDataAs( double[].class ) == [6] as double[]
             t.getDataAs( float[].class  ) == [6] as float[]
-            t.unsafe.data == [6] as double[]
-            t.items == [6] as double[]
     }
 
     def 'Tensor created from shape and datatype has expected state.'()
