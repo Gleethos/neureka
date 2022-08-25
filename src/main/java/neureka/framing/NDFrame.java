@@ -103,6 +103,10 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         return indices;
     }
 
+    public boolean hasLabelsForAxis(Object axisAlias) {
+        return !atAxis(axisAlias).getAllAliases().isEmpty();
+    }
+
     /**
      *  A {@link NDFrame} exposes aliases for axis as well as aliases for individual positions within an axis.
      *  This method returns a view on a axis which is targeted by an axis alias as key.
