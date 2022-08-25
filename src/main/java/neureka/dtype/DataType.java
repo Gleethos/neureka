@@ -36,7 +36,7 @@ SOFTWARE.
 package neureka.dtype;
 
 
-import neureka.DataArray;
+import neureka.Data;
 import neureka.common.utility.LogUtil;
 import neureka.devices.host.CPU;
 import neureka.dtype.custom.*;
@@ -149,9 +149,9 @@ public final class DataType<Type>
             return Object[].class;
     }
 
-    public DataArray virtualize( DataArray dataArray )
+    public Data virtualize(Data data)
     {
-        Object value = dataArray == null ? null : dataArray.get();
+        Object value = data == null ? null : data.get();
         assert value != null;
         Object newValue;
         if ( _typeClass == F64.class )

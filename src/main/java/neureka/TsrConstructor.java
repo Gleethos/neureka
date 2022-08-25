@@ -32,7 +32,7 @@ final class TsrConstructor
     public interface API {
         void   setType( DataType<?> type );
         void   setConf( NDConfiguration conf );
-        void   setData( DataArray<?> o );
+        void   setData( Data<?> o );
         void   setIsVirtual(  boolean isVirtual );
     }
 
@@ -71,7 +71,7 @@ final class TsrConstructor
 
     public void constructTrusted(
             DataType<?> dataType,
-            DataArray<?> data
+            Data<?> data
     ) {
         _API.setType( dataType );
         _API.setData( data );
@@ -105,7 +105,7 @@ final class TsrConstructor
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
 
-        DataArray<?> array = _targetDevice.allocate( data, size );
+        Data<?> array = _targetDevice.allocate( data, size );
         newUnpopulated( false, false, dataType );
         _API.setData( array );
     }
@@ -125,13 +125,13 @@ final class TsrConstructor
         int size = _ndConstructor.getSize();
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
-        DataArray<?> array = _constructAllFromOne( singleItem, _ndConstructor.getSize(), type );
+        Data<?> array = _constructAllFromOne( singleItem, _ndConstructor.getSize(), type );
         _API.setData( array );
         _API.setConf( _ndConstructor.produceNDC() );
         return singleItem != null;
     }
 
-    private DataArray<?> _constructAllFromOne( Object singleItem, int size, Class<?> type )
+    private Data<?> _constructAllFromOne(Object singleItem, int size, Class<?> type )
     {
         if ( type == Double   .class ) { return _constructAll( size, singleItem, type ); }
         if ( type == Float    .class ) { return _constructAll( size, singleItem, type ); }
@@ -150,7 +150,7 @@ final class TsrConstructor
         return null;
     }
 
-    private DataArray<?> _constructAll( int size, Object singleItem, Class<?> typeClass )
+    private Data<?> _constructAll(int size, Object singleItem, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
         return _targetDevice.allocate( dataType, Math.min(size, 1), singleItem );
@@ -159,7 +159,7 @@ final class TsrConstructor
     public <V> void newSeeded( Class<V> valueType, Object seed )
     {
         int size = _ndConstructor.getSize();
-        DataArray<?> data = _targetDevice.allocate( DataType.of( valueType ), size );
+        Data<?> data = _targetDevice.allocate( DataType.of( valueType ), size );
         Object out = Randomization.fillRandomly( data.get(), seed.toString() );
         assert out == data.get();
         newUnpopulated( false, false, DataType.of(valueType) );

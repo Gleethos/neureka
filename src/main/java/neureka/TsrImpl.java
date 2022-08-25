@@ -229,7 +229,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data );
     }
 
-    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, DataArray data ) {
+    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Data data ) {
         constructFor(CPU.get(), ndConstructor).constructTrusted( dataType, data );
     }
 
@@ -712,7 +712,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             @Override
             public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
             @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
-            @Override public DataArray<V> getDataArray() { return _getData(); }
+            @Override public Data<V> getDataArray() { return _getData(); }
             @Override public <D> D getData(Class<D> dataType) {
                 Object data = _getRawData();
                 if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
@@ -731,7 +731,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
 
             @Override
-            public Tsr<V> setDataArray(DataArray data) {
+            public Tsr<V> setDataArray(Data data) {
                 TsrImpl.this._setData( data );
                 return TsrImpl.this;
             }
