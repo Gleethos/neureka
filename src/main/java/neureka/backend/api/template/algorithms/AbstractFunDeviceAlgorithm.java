@@ -248,13 +248,13 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
                 ? setExecution( (outerCaller, outerCall) ->
                     Result.of(AbstractDeviceAlgorithm.executeFor(
                         outerCaller, outerCall,
-                        (innerCall, callback) -> exec.execute(new DeviceExecutionContext(outerCall, innerCall, outerCaller), callback)
+                        (innerCall, callback) -> exec.execute(new DeviceExecutionContext( innerCall, outerCaller ), callback)
                     ))
                 )
                 : setExecution( (outerCaller, outerCall) ->
                     Result.of(AbstractDeviceAlgorithm.executeFor(
                         outerCaller, outerCall,
-                        (innerCall, callback) -> exec.execute(new DeviceExecutionContext(outerCall, innerCall, outerCaller), callback)
+                        (innerCall, callback) -> exec.execute(new DeviceExecutionContext( innerCall, outerCaller ), callback)
                     ))
                     .withAutoDiff( adAgentSupplier )
                 );

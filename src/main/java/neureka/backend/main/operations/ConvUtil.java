@@ -29,18 +29,18 @@ public class ConvUtil
                 .setDeviceExecution(
                     (context, executor) ->
                     {
-                        ExecutionCall<?> call = context.initialCall();
+                        int offset = ( context.call().input(0) == null ? 1 : 0 );
                         Function caller = context.caller();
-                        Tsr<?>[] tensors = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
+                        Tsr<?>[] tensors = new Tsr[]{context.call().input(offset+0), context.call().input(offset+1), context.call().input(offset+2)};
                         Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                         for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
                         return AbstractDeviceAlgorithm.prepareAndExecuteRecursively(
                                                 ExecutionCall.of( tensors )
                                                         .andArgs( Arg.DerivIdx.of(0) )
-                                                        .running( call.getOperation() )
-                                                        .on( call.getDevice() ),
+                                                        .running( context.call().getOperation() )
+                                                        .on( context.call().getDevice() ),
                                                 (a, b) -> ConvUtil.executeRecursively(op, a, b)
-                                        );
+                                            );
                     },
                     ( Function f, ExecutionCall<? extends Device<?>> adCall ) -> {
                         throw new UnsupportedOperationException("Not yet implemented!");
@@ -48,15 +48,8 @@ public class ConvUtil
                 )
                 .setCallPreparation(
                      call -> {
-                         Device<Number> device = call.getDeviceFor(Number.class);
-                         if ( call.input( 0 ) == null ) // Creating a new tensor:
-                         {
-                             int[] shp = shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
-                             Tsr<Number> output = (Tsr<Number>) Tsr.of( call.input( 1 ).itemType(), shp, 0.0 ).getUnsafe().setIsIntermediate( true );
-                             output.setIsVirtual( false );
-                             device.store( output );
-                             return call.withInputAt( 0, output );
-                         }
+                         if ( call.input( 0 ) == null )
+                             return call.withRemovedInputAt( 0 );
                          return call;
                      }
                 )

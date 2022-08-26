@@ -167,6 +167,12 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );
     }
 
+    public ExecutionCall<D> withRemovedInputAt(int index) {
+        List<Tsr<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
+        inputs.remove(index);
+        return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );
+    }
+
     /**
      *  Use this to produce a clone with a new set of meta arguments.
      *

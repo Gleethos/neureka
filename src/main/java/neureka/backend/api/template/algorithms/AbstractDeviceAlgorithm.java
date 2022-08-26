@@ -114,7 +114,7 @@ implements DeviceAlgorithm<C>
         for ( Tsr<?> t : executionCall.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
-                            "One or more tensor arguments within the given ExecutionCall instance is null."
+                    "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         return executionCall;
     }

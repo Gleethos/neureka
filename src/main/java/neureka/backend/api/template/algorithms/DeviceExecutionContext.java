@@ -5,18 +5,12 @@ import neureka.calculus.Function;
 
 public class DeviceExecutionContext
 {
-    private final ExecutionCall<?> initialCall;
     private final ExecutionCall<?> call;
     private final Function caller;
 
-    public DeviceExecutionContext( ExecutionCall<?> initialCall, ExecutionCall<?> call, Function caller ) {
-        this.initialCall = initialCall;
+    public DeviceExecutionContext( ExecutionCall<?> call, Function caller ) {
         this.call = call;
         this.caller = caller;
-    }
-
-    public ExecutionCall<?> initialCall() {
-        return initialCall;
     }
 
     public ExecutionCall<?> call() {
