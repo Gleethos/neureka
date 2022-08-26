@@ -26,11 +26,10 @@ class Broad_System_Test extends Specification
         })
     }
 
-    def 'Test integration broadly.'()
+    def 'The long broad integration test runs successfully.'()
     {
         expect : 'The integration test runs without exceptions or assertion errors.'
-            BroadSystemTest.on()
+            BroadSystemTest.on() // This is the actual test.
     }
-
 
 }

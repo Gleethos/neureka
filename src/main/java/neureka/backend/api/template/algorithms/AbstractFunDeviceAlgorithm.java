@@ -240,15 +240,23 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return this;
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(Execute executor, ADAgentSupplier adAgentSupplier ) {
+    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(
+            Execute exec, ADAgentSupplier adAgentSupplier
+    ) {
         return
-                adAgentSupplier == null
-                        ? setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor( caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)  )) )
-                        : setExecution( (caller, call) ->
-                        Result.of(AbstractDeviceAlgorithm.executeFor(
-                                    caller, call, (innerCall, callback) -> executor.execute(new DeviceExecutionContext(call, innerCall, caller), callback)
-                                ))
-                                .withAutoDiff( adAgentSupplier )
+            adAgentSupplier == null
+                ? setExecution( (outerCaller, outerCall) ->
+                    Result.of(AbstractDeviceAlgorithm.executeFor(
+                        outerCaller, outerCall,
+                        (innerCall, callback) -> exec.execute(new DeviceExecutionContext(outerCall, innerCall, outerCaller), callback)
+                    ))
+                )
+                : setExecution( (outerCaller, outerCall) ->
+                    Result.of(AbstractDeviceAlgorithm.executeFor(
+                        outerCaller, outerCall,
+                        (innerCall, callback) -> exec.execute(new DeviceExecutionContext(outerCall, innerCall, outerCaller), callback)
+                    ))
+                    .withAutoDiff( adAgentSupplier )
                 );
     }
 

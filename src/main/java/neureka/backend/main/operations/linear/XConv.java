@@ -17,16 +17,16 @@ public class XConv extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .identifier(         "mul_conv"    )
-                        .operator(         "x"    )
-                        .arity(            2          )
-                        .isOperator(       true       )
+                        .identifier(       "mul_conv"  )
+                        .operator(         "x"         )
+                        .arity(            2           )
+                        .isOperator(       true        )
                         .isIndexer(        false       )
                         .isDifferentiable( true        )
                         .isInline(         false       )
         );
 
-        Convolution convolution = ConvUtil.getConv();
+        Convolution convolution = ConvUtil.createDeconvolutionFor("x");
 
         setAlgorithm(
             Convolution.class,

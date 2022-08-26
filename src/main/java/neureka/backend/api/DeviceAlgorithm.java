@@ -49,7 +49,7 @@ public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm
      * @param <D>         The type parameter which has to be a class extending the Device interface.
      * @return The implementation for the passed device type class.
      */
-    <D extends Device<?>> ImplementationFor<D> getImplementationFor(Class<D> deviceClass );
+    <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass );
 
     /**
      * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing
@@ -61,7 +61,7 @@ public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm
      * @param <D>    type parameter which has to be a class extending the Device interface.
      * @return The implementation for the passed device type class.
      */
-    default <D extends Device<?>> ImplementationFor<D> getImplementationFor(D device ) {
+    default <D extends Device<?>> ImplementationFor<D> getImplementationFor( D device ) {
         return (ImplementationFor<D>) getImplementationFor(device.getClass());
     }
 

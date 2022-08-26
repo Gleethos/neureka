@@ -47,7 +47,7 @@ public abstract class AbstractOperation implements Operation
      *      <li> Operator: '+';   Example: 'I[0] + 3 + 5 * I[1]'
      *      <li> Function: 'add'; Example: 'add( I[0], 3, 5*I[1] )'
      * </ul>
-     * The following String is the primer way of representing the operation, namely: as an operator.
+     * The following String is the primary way of representing the operation, namely: as an operator.
      */
     protected final String _operator;
 

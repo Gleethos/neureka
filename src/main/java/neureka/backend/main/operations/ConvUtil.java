@@ -16,14 +16,8 @@ import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
 
-public class ConvUtil {
-
-    /**
-     *  There will always only be a single convolution instance
-     *  shared among all 3 convolution operations.
-     */
-    private static Convolution conv = null;
-
+public class ConvUtil
+{
     public static Convolution createDeconvolutionFor( String operator ) {
         return new Convolution()
                 .setAutogradModeFor( call -> {
@@ -112,12 +106,6 @@ public class ConvUtil {
                      }
                 )
                 .buildFunAlgorithm();
-    }
-
-    public static Convolution getConv() {
-        if ( conv == null )
-            conv = createDeconvolutionFor("x");
-        return ConvUtil.conv;
     }
 
     @Contract(pure = true)
