@@ -9,21 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.026 seconds"
+    "duration":"0.027 seconds"
   },
-  "headers":["    \n            <p>\n                This unit test specification covers the expected state of newly instantiated tensors.\n                Certain properties must have their expected default values.\n            </p>\n        "],"tags":{},"see":[],
+  "headers":["    \n\n        "],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"A tensor can be instantiated from a target type and nested lists.",
+      "id":"A tensor can be instantiated from a item type class and nested lists.",
       "result":"PASS",
       "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We instantiate a tensor based on a target type and a list of things.","code":["var t = Tsr.of(type, list)"]},
+        {"kind":"given","text":"We instantiate a tensor using a type and a list of things (or list of list of things, or..).","code":["var t = Tsr.of(type, list)"]},
 
-        {"kind":"expect","text":"The tensor has the targeted type, shape and data array!","code":["t.itemType == type","t.shape() == shape","t.unsafe.data == expected"]},
+        {"kind":"expect","text":"The tensor has the item type, shape and data array!","code":["t.itemType == type","t.shape() == shape","t.unsafe.data == expected"]},
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Byte","class java.lang.String"],"list":["[1, 2, 1]","[5, -4]","[3, 4]","[[3], [4]]","[[3, 4]]"],"shape":["[3]","[2]","[2]","[2, 1]","[1, 2]"],"expected":["[1.0, 2.0, 1.0]","[5.0, -4.0]","[3, 4]","[3, 4]","[3, 4]"]}}
       ],
@@ -40,13 +40,13 @@
       "blocks":[
         {"kind":"given","text":"A new tensor of rank 2 storing Strings:","code":["Tsr t = Tsr.of(DataType.of(String.class), [2, 3], (i, indices) -> {","    return [\"sweet\", \"salty\", \"blue\", \"spinning\", \"confused\", \"shining\"].get( (i + 17**i)%6 ) + ' ' +","           [\"Saitan\", \"Apple\", \"Tofu\",  \"Strawberry\", \"Almond\", \"Salad\"].get( (i + 7**i)%6  )","})"]},
 
-        {"kind":"expect","text":"When we convert the tensor to a String via the flags \"b\" (cell bound) and \"f\" (formatted).","code":["t.toString({ NDPrintSettings it ->","    it.setHasSlimNumbers(false)","            .setIsScientific(true)","            .setIsCellBound(true)","            .setIsMultiline(true)","            .setCellSize(5)","})  == \"(2x3):[\\n\" +","         \"   [ sal.., swe.., spi.. ],\\n\" +","         \"   [ blu.., shi.., con.. ]\\n\" +","         \"]\""]},
+        {"kind":"expect","text":"The tensor converted to a String with custom cell bounds, size, etc... should be as expected:","code":["t.toString({ NDPrintSettings it ->","      it.setHasSlimNumbers(false)","      .setIsScientific(true)","      .setIsCellBound(true)","      .setIsMultiline(true)","      .setCellSize(5)","})  == \"(2x3):[\\n\" +","         \"   [ sal.., swe.., spi.. ],\\n\" +","         \"   [ blu.., shi.., con.. ]\\n\" +","         \"]\""]},
 
-        {"kind":"and","text":"When additionally supplying the flag \"p\" (padding) then most String entries will be printed fully.","code":["t.toString({ NDPrintSettings it ->","    it.setHasSlimNumbers(false)","            .setIsScientific(true)","            .setIsCellBound(true)","            .setIsMultiline(true)","            .setCellSize(15)","}) == \"(2x3):[\\n\" +","                   \"   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\\n\" +","                   \"   [   blue Almond  ,  shining Salad , confused Saitan ]\\n\" +","                   \"]\""]},
+        {"kind":"and","text":"When increase the cell size, most String entries will be printed fully.","code":["t.toString({ NDPrintSettings it ->","            it.setHasSlimNumbers(false)","            .setIsScientific(true)","            .setIsCellBound(true)","            .setIsMultiline(true)","            .setCellSize(15)","}) == \"(2x3):[\\n\" +","                   \"   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\\n\" +","                   \"   [   blue Almond  ,  shining Salad , confused Saitan ]\\n\" +","                   \"]\""]},
 
-        {"kind":"and","text":"Whe can use a map of configuration configuration enums as keys and fitting objects as values:","code":["t.toString(","        { NDPrintSettings it -> it.setIsCellBound(true).setCellSize(10)}",") == \"(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]\""]},
+        {"kind":"and","text":"Now we try a cell size of 10:","code":["t.toString(","        { NDPrintSettings it -> it.setIsCellBound(true).setCellSize(10)}",") == \"(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]\""]},
 
-        {"kind":"and","text":"This way we can also configure a postfix and prefix as well as limit the number of entries in a row:","code":["t.toString({ NDPrintSettings it ->","                            it.setPrefix('START<|').setPostfix('|>END').setCellSize(0).setIsCellBound(false).setRowLimit(2) }",") == \"START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END\""]}
+        {"kind":"and","text":"We can also configure a postfix and prefix as well as limit the number of entries in a row:","code":["t.toString({ NDPrintSettings it ->","                            it.setPrefix('START<|').setPostfix('|>END').setCellSize(0).setIsCellBound(false).setRowLimit(2) }",") == \"START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -61,9 +61,9 @@
       "blocks":[
         {"kind":"given","text":"A new tensor of rank 2 storing floats:","code":["Tsr t = Tsr.of(DataType.of(Float.class), [2, 3], (i, indices) -> (i%4)/3 as float )"]},
 
-        {"kind":"expect","text":"When we convert the tensor to a String via the flag \"f\" (formatted).","code":["t.toString(","        { NDPrintSettings it -> it.setHasSlimNumbers(false).setIsScientific(true).setIsCellBound(false).setIsMultiline(false).setCellSize(3) }",") == \"(2x3):[0.0, 0.33333, 0.66666, 1.0, 0.0, 0.33333]\""]},
+        {"kind":"expect","text":"When we convert the tensor to a String with scientific formatting.","code":["t.toString(","        { NDPrintSettings it -> it.setHasSlimNumbers(false).setIsScientific(true).setIsCellBound(false).setIsMultiline(false).setCellSize(3) }",") == \"(2x3):[0.0, 0.33333, 0.66666, 1.0, 0.0, 0.33333]\""]},
 
-        {"kind":"and","text":"Whe can use a map of configuration configuration enums as keys and fitting objects as values:","code":["t.toString(","{ NDPrintSettings it -> it.setHasSlimNumbers(true).setIsScientific(true).setCellSize(0) }",") == \"(2x3):[0, .33333, .66666, 1, 0, .33333]\""]}
+        {"kind":"and","text":"If the numbers are still to verbose, we can make them \"slim\":","code":["t.toString(","{ NDPrintSettings it -> it.setHasSlimNumbers(true).setIsScientific(true).setCellSize(0) }",") == \"(2x3):[0, .33333, .66666, 1, 0, .33333]\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -71,7 +71,7 @@
     {
       "id":"Tensors as String can be formatted depending on shape.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -96,7 +96,7 @@
     },
   
     {
-      "id":"Newly instantiated and unmodified scalar tensor has expected state.",
+      "id":"We can create scalar tensors.",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -107,7 +107,9 @@
 
         {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()"]},
 
-        {"kind":"and","text":"The tensor contains the expected data.","code":["t.getItemsAs( double[].class ) == [6] as double[]","t.getItemsAs( float[].class  ) == [6] as float[]","t.getDataAs( double[].class ) == [6] as double[]","t.getDataAs( float[].class  ) == [6] as float[]","t.unsafe.data == [6] as double[]","t.items == [6] as double[]"]}
+        {"kind":"and","text":"The tensor contains the expected data.","code":["t.unsafe.data == [6] as double[]","t.items == [6]","t.rawItems == [6] as double[]"]},
+
+        {"kind":"and","text":"We can read the data in various array types:","code":["t.getItemsAs( double[].class ) == [6] as double[]","t.getItemsAs( float[].class  ) == [6] as float[]","t.getDataAs( double[].class ) == [6] as double[]","t.getDataAs( float[].class  ) == [6] as float[]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

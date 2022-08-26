@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.172 seconds"
+    "duration":"0.189 seconds"
   },
   "headers":["\n            <h2> GraphNode Instantiation Tests </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the GraphNode class during instantiation where\n                inputs are setup to cause expected exceptions.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GraphNode throws an exception when trying to instantiate it with the wrong context.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"GraphNode throws exception when trying to instantiate it with the Function argument being null.",
       "result":"PASS",
-      "duration":"0.016 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.",
       "result":"PASS",
-      "duration":"0.120 seconds",
+      "duration":"0.128 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -90,7 +90,7 @@
     {
       "id":"GraphNode instantiation throws exception because GraphNode instances of input tensors do not share the same GraphLock.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -109,7 +109,7 @@
     {
       "id":"GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.012 seconds"
+    "duration":"0.004 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -39,7 +39,7 @@
     {
       "id":"ND-arrays can be created fluently.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },

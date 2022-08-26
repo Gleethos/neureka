@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.082 seconds"
+    "duration":"0.090 seconds"
   },
   "headers":[" \n                This specification ensures that tensors supplied\n                to functions are executed successfully and produce the expected results.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The optimization function for the SGD algorithm produces the expected result",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Tensor results of various Function instances return expected results.",
       "result":"PASS",
-      "duration":"0.038 seconds",
+      "duration":"0.045 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -83,7 +83,7 @@
     {
       "id":"The \"DimTrim\" operation works forward as well as backward!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -4,19 +4,19 @@
   "narrative":"A powerful concept in the data science as well as machine learning\n    world is something usually referred to as \"Data Frames\".\n    These are highly flexible 2D data structures\n    used to load and store CSV, CRV, etc... files for \n    data exploration and further processing.\n    Data frames are so powerful because\n    their indices are labeled and therefore human readable.\n    Neureka's tensors are general purpose data containers\n    which may also stored data in 2 dimensions whose\n    indices may also be something other than integers.",
   "subjects":["neureka.Tsr","neureka.framing.NDFrame"],
   "statistics":{
-    "runs":"3",
+    "runs":"4",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.229 seconds"
+    "duration":"0.208 seconds"
   },
   "headers":["\n                <h2> Framing Behavior </h2>\n                <br> \n                <p>\n                    This specification covers the behavior\n                    of the classes contained in the \"framing\" package, which \n                    contains logic in order to set aliases for\n                    tensor indices.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Added labels to tensors are accessible through the \"index()\" method.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,7 +84,7 @@
     {
       "id":"Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.214 seconds",
+      "duration":"0.193 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -124,6 +124,21 @@
         {"kind":"when","text":"...we make the GC collect some garbage...","code":["WeakReference weak = new WeakReference(x)","x = null","System.gc()","Sleep.until(100, { weak.get() == null })"]},
 
         {"kind":"then","text":"The weak reference is null because the tensor had no string reference to it! (No memory leak!)","code":["weak.get() != null"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A tensor can be labeled partially.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A labeled tensor of rank 3 is being created.","code":["Tsr t = Tsr.of([2, 3, 4], -7d..7d)","t.label( 'My Tensor', [","    [\"1\", \"2\"],","    null, // We don't want to label the rows","    [\"tim\", \"tom\"] // We only label 2 of 4","])"]},
+
+        {"kind":"expect","text":"When the tensor is converted to a String then the labels will be included:","code":["t.toString({","    it.isMultiline=true; it.isCellBound=true; it.cellSize=7;it.isLegacy=false","}) == \"(2x3x4):[\\n\" +","        \"   ( 1 ):[\\n\" +","        \"      (   tim  )(  tom  )(       )(        ):( My Tensor )\\n\" +","        \"      [   -7.0 ,   -6.0 ,   -5.0 ,   -4.0  ],\\n\" +","        \"      [   -3.0 ,   -2.0 ,   -1.0 ,   0.0   ],\\n\" +","        \"      [   1.0  ,   2.0  ,   3.0  ,   4.0   ]\\n\" +","        \"   ],\\n\" +","        \"   ( 2 ):[\\n\" +","        \"      (   tim  )(  tom  )(       )(        ):( My Tensor )\\n\" +","        \"      [   5.0  ,   6.0  ,   7.0  ,   -7.0  ],\\n\" +","        \"      [   -6.0 ,   -5.0 ,   -4.0 ,   -3.0  ],\\n\" +","        \"      [   -2.0 ,   -1.0 ,   0.0  ,   1.0   ]\\n\" +","        \"   ]\\n\" +","        \"]\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

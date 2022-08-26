@@ -16,7 +16,7 @@
     {
       "id":"We can use the access device API to read from a tensor.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"We can use the access device API to write to a tensor",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

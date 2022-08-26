@@ -1,7 +1,7 @@
 {
   "className":"ut.tensors.Tensor_Stats_Spec",
-  "title":"Tensor Number Statistics",
-  "narrative":"",
+  "title":"Reducing Tensors",
+  "narrative":"Various kinds of operations reduce tensors to scalars,\n    the most common ones being the min and max operations \n    which find the smallest as well as largest number among all \n    items of a tensor.\n    Neureka exposes various different ways to achieve this,\n    all of which are also differential (autograd support).",
   "subjects":["neureka.Tsr"],
   "statistics":{
     "runs":"4",
@@ -9,25 +9,25 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.605 seconds"
+    "duration":"0.359 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.468 seconds",
+      "duration":"0.333 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a max function:","code":["var fun = Function.of(reduceType.toLowerCase() + \"(I[0])\")"]},
+        {"kind":"given","text":"We create a min/max function:","code":["var fun = Function.of(reduceType.toLowerCase() + \"(I[0])\")"]},
 
         {"kind":"and","text":"A seed, for some variability:","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.hashCode()"]},
 
         {"kind":"and","text":"","code":["var a = Tsr.of(dataType)",".withShape(19, 7)",".andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})"]},
 
-        {"kind":"and","text":"","code":["a.to(device)"]},
+        {"kind":"and","text":"Before applying the function, we copy the tensor to the device:","code":["a.to(device)"]},
 
         {"kind":"when","text":"We apply the function to the tensor:","code":["var result = fun(a)"]},
 
@@ -41,7 +41,7 @@
     {
       "id":"We can get pre-instantiated min and max functions from the library context.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -50,7 +50,7 @@
 
         {"kind":"and","text":"We access the pre-instantiated min function:","code":["var max = Neureka.get().backend.autogradFunction.max"]},
 
-        {"kind":"expect","text":"","code":["min.toString() == \"min(I[0])\"","max.toString() == \"max(I[0])\""]}
+        {"kind":"expect","text":"The 2 functions are indeed min and max","code":["min.toString() == \"min(I[0])\"","max.toString() == \"max(I[0])\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -58,14 +58,14 @@
     {
       "id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create a tensor:","code":["var a = Tsr.of(Float)",".withShape(19, 7)",".andWhere({ i, _ -> ((31**(i+42))%301)-151})"]},
 
-        {"kind":"and","text":"","code":["a.to(device)"]},
+        {"kind":"and","text":"Before applying the function, we copy the tensor to the device:","code":["a.to(device)"]},
 
         {"kind":"and","text":"We access the min and max methods:","code":["var min = a.min()","var max = a.max()"]},
 
@@ -79,7 +79,7 @@
     {
       "id":"Both the min and max operation support autograd (back-propagation).",
       "result":"PASS",
-      "duration":"0.046 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

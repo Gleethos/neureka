@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.330 seconds"
+    "duration":"2.427 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -61,7 +61,7 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -70,7 +70,7 @@
 
         {"kind":"and","text":"A mocked tensor that is not outsourced.","code":["Tsr<?> t = Mock(Tsr)","t.isOutsourced() >> false"]},
 
-        {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tsr<?> s = Mock(Tsr)","Tsr.Unsafe<?> u = Mock(Tsr.Unsafe)","s.getUnsafe() >> u","u.getDataArray() >> Mock(DataArray)"]},
+        {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tsr<?> s = Mock(Tsr)","Tsr.Unsafe<?> u = Mock(Tsr.Unsafe)","s.getUnsafe() >> u","u.getDataArray() >> Mock(Data)"]},
 
         {"kind":"and","text":"A mocked relation between both tensors returned by the slice as component.","code":["Relation r = Mock(Relation)","s.has(Relation.class) >> true","s.get(Relation.class) >> r","r.findRootTensor() >> t"]},
 
@@ -90,7 +90,7 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.301 seconds",
+      "duration":"2.397 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
