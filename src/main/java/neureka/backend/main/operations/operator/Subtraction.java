@@ -85,7 +85,7 @@ public class Subtraction extends AbstractOperation
         Scalarization scalarization =
             new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setDeviceExecution( (context, callback) -> ElemWiseUtil.forSubtractions(context.call(), callback) )
+                .setDeviceExecution( (call, callback) -> ElemWiseUtil.forSubtractions(call, callback) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

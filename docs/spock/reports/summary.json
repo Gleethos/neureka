@@ -1,14 +1,14 @@
 {
   "project": "Neureka",
   "version": "0.17.0",
-  "created": "Fri Aug 26 13:15:34 CEST 2022",
+  "created": "Fri Aug 26 14:29:33 CEST 2022",
   "statistics":{
     "runs":"84",
     "passed":"83",
     "failed":"0",
     "featureFailures":"0",
     "successRate":"1.0",
-    "duration":"121942.0"
+    "duration":"118728.0"
   },
   "specifications": [{
       "className":"ut.ndas.NDA_Instantiation_Spec",
@@ -31,7 +31,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"59",
+      "duration":"55",
       "executedFeatures":[{"id":"Call me feature not unit test!","extraInfo":[]},{"id":"I am readable and also best practice!","extraInfo":[]},{"id":"Numbers to the power of two with a fancy data table!","extraInfo":[]},{"id":"Should be able to remove from list","extraInfo":[]},{"id":"iAmNotSoReadable","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -43,7 +43,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"185",
+      "duration":"173",
       "executedFeatures":[{"id":"Payloads and derivatives are null after garbage collection.","extraInfo":[]},{"id":"Reshaping produces expected computation graph and also works with reverse mode AD.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -55,7 +55,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"17",
+      "duration":"15",
       "executedFeatures":[{"id":"GraphNode instantiation works as expected when the context argument is a GraphLock.","extraInfo":[]},{"id":"GraphNode instantiation works as expected when the context argument is an ExecutionCall.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -67,7 +67,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"72",
+      "duration":"74",
       "executedFeatures":[{"id":"GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.","extraInfo":[]},{"id":"Test context mock for opencl reference implementations.","extraInfo":[]},{"id":"Tile parsing for kernel parameter calculation yields expected tile dimensions.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -91,7 +91,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"558",
+      "duration":"557",
       "executedFeatures":[{"id":"Tensor mapping lambdas produce expected tensors.","extraInfo":[]},{"id":"The \"map\" method is a shorter convenience method for mapping to the same type.","extraInfo":[]},{"id":"We can analyse the values of a tensor using various predicate receiving methods","extraInfo":[]},{"id":"We can find both min and max items in a tensor by providing a comparator.","extraInfo":[]},{"id":"We can initialize a tensor using a filler lambda mapping indices to items.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -103,7 +103,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"6",
+      "duration":"5",
       "executedFeatures":[{"id":"1D tensors can be created from primitive arrays.","extraInfo":[]},{"id":"Anonymous tensor instance has the default datatype class as defined in Neureka settings.","extraInfo":[]},{"id":"String tensor instance discovers expected class.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -115,7 +115,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"35",
+      "duration":"36",
       "executedFeatures":[{"id":"A tensor produced by a function has expected properties.","extraInfo":[]},{"id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.","extraInfo":[]},{"id":"Adding OpenCL device to tensor makes tensor be \"outsourced\" and contain the Device instance as component.","extraInfo":[]},{"id":"Indexing after reshaping works as expected.","extraInfo":[]},{"id":"Passing String seed to tensor produces expected values.","extraInfo":[]},{"id":"Smart tensor constructors yield expected results.","extraInfo":[]},{"id":"Tensor value type can not be changed by passing float or double arrays to it.","extraInfo":[]},{"id":"Tensor values can be manipulated via static method calls within the \"Tsr.IO\" class.","extraInfo":[]},{"id":"Tensors can be instantiated with String seed.","extraInfo":[]},{"id":"Tensors value type can be changed by calling \"toType(...)\".","extraInfo":[]},{"id":"The tensor data array can be modified by targeting them with an index.","extraInfo":[]},{"id":"Vector tensors can be instantiated via factory methods.","extraInfo":[]},{"id":"We can manipulate the underlying data array of a tensor through the unsafe API.","extraInfo":[]},{"id":"We can re-populate a tensor of shorts from a single scalar value!","extraInfo":[]},{"id":"We turn a tensor into a scalar value or string through the \"as\" operator!","extraInfo":[]},{"id":"When we try to manipulate the underlying data array of a virtual tensor then it will become actual.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -127,7 +127,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"311",
+      "duration":"309",
       "executedFeatures":[{"id":"A new transposed version of a given tensor will be returned by the \"T()\" method.","extraInfo":[]},{"id":"Matrix multiplication works for both column and row major matrices across devices.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -139,7 +139,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"3",
+      "duration":"4",
       "executedFeatures":[{"id":"An array of any type of object may be converted to a array of primitives.","extraInfo":[]},{"id":"The DataConverter can convert the given array data.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -151,7 +151,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"22",
+      "duration":"21",
       "executedFeatures":[{"id":"A functional algorithm cannot be used if it was not built properly!","extraInfo":[]},{"id":"A functional algorithm does not accept null as an answer!","extraInfo":[]},{"id":"A functional algorithm warns us when modified after it has been built!","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -175,7 +175,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"25",
+      "duration":"27",
       "executedFeatures":[{"id":"The \"Data\" class can represent various OpenCL data types.","extraInfo":[]},{"id":"The OpenCLDevice specific Data class represents JVM data for OpenCL.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -187,7 +187,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"3",
+      "duration":"2",
       "executedFeatures":[{"id":"When matrices are transpose, they will change their layout type.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -199,7 +199,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"18",
+      "duration":"17",
       "executedFeatures":[{"id":"RMSprop optimizes according to expected inputs","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -223,7 +223,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"644",
+      "duration":"668",
       "executedFeatures":[{"id":"Activation functions work across types, on large prime sized 1D slices and non sliced 1D tensors.","extraInfo":[]},{"id":"Activation functions work across types.","extraInfo":[]},{"id":"Dot operation stress test runs error free and produces expected result","extraInfo":[]},{"id":"Stress test runs error free and produces expected result","extraInfo":[]},{"id":"The broadcast operation stress test runs error free and produces expected result","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -235,7 +235,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"19",
+      "duration":"18",
       "executedFeatures":[{"id":"A tensor used as derivative within a computation graph will throw exception when trying to deleting it.","extraInfo":[]},{"id":"Second-Test \"x-mul\" autograd behaviour. (Not on device)","extraInfo":[]},{"id":"Test basic autograd behaviour. (Not on device)","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -247,7 +247,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"8",
+      "duration":"7",
       "executedFeatures":[{"id":"NDConfiguration instances of tensors have expected state and behaviour.","extraInfo":[]},{"id":"NDConfiguration instances of tensors have expected state.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -259,7 +259,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"32",
+      "duration":"28",
       "executedFeatures":[{"id":"A tensor can be sliced by passing ranges in the form of lists (Groovy ranges).","extraInfo":[]},{"id":"A tensor can be sliced by passing ranges in the form of primitive arrays.","extraInfo":[]},{"id":"Normal slicing will try to do autograd.","extraInfo":[]},{"id":"Slicing is also a Function with autograd support!","extraInfo":[]},{"id":"The \"at\" method and the \"from\" / \"to\" methods can be mixed when slicing a tensor.","extraInfo":[]},{"id":"The slice builder also supports slicing with custom step sizes.","extraInfo":[]},{"id":"We can avoid autograd when slicing by using the \"detached\" instead of the \"get\" method.","extraInfo":[]},{"id":"We can slice a scalar tensor from a larger tensor of rank 4.","extraInfo":[]},{"id":"When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -283,7 +283,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"118",
+      "duration":"121",
       "executedFeatures":[{"id":"Autograd work for simple matrix multiplications.","extraInfo":[]},{"id":"Autograd works for 2 matrix multiplications in a row.","extraInfo":[]},{"id":"Autograd works in a simple convolutional dot product and float based feed forward neural network.","extraInfo":[]},{"id":"Autograd works in a simple convolutional dot product based feed forward neural network.","extraInfo":[]},{"id":"Autograd works in a simple mat-mul based feed forward neural network.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -295,7 +295,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"154",
+      "duration":"158",
       "executedFeatures":[{"id":"Gradient auto-apply kicks in when used AD uses JIT prop","extraInfo":[]},{"id":"Test JIT propagation variant one.","extraInfo":[]},{"id":"Test JIT propagation variant two.","extraInfo":[]},{"id":"Test autograd without JIT and auto apply.","extraInfo":[]},{"id":"Test in-differential and JIT with auto apply","extraInfo":[]},{"id":"Test no JIT prop when forward AD","extraInfo":[]},{"id":"Test no preemptive gradient apply when not requested and auto apply and JIT_prop","extraInfo":[]},{"id":"Test pending error optimization","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -307,7 +307,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"24",
+      "duration":"20",
       "executedFeatures":[{"id":"Randomization is in essence the same algorithm as JDKs \"Random\".","extraInfo":[]},{"id":"The Randomization class can fill various types of arrays with pseudo random numbers.","extraInfo":[]},{"id":"We can make slices of tensors random.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -319,7 +319,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"242",
+      "duration":"206",
       "executedFeatures":[{"id":"Ad hoc compilation produces expected exceptions when duplication is found.","extraInfo":[]},{"id":"Ad hoc compilation produces expected exceptions.","extraInfo":[]},{"id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.","extraInfo":[]},{"id":"Trying to restore a tensor which is not on a device raises exception.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -331,7 +331,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"50",
+      "duration":"46",
       "executedFeatures":[{"id":"Various NDConfigurations behaviour exactly as their general purpose implementation.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -355,7 +355,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"5",
+      "duration":"4",
       "executedFeatures":[{"id":"The ListReader will detect inconsistent degrees of nesting in the provided data.","extraInfo":[]},{"id":"The ListReader will detect inconsistent types in the provided data.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -367,7 +367,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"128",
+      "duration":"134",
       "executedFeatures":[{"id":"Cross device sliced tensor integration test runs without errors.","extraInfo":[]},{"id":"Slices can be created using the SliceBuilder.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -391,7 +391,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"90",
+      "duration":"80",
       "executedFeatures":[{"id":"Executed tensors are intermediate tensors.","extraInfo":[]},{"id":"Reshaping on 3D tensors works by instantiate a Function instance built from a String.","extraInfo":[]},{"id":"Tensor results of various Function instances return expected results.","extraInfo":[]},{"id":"The \"DimTrim\" operation works forward as well as backward!","extraInfo":[]},{"id":"The optimization function for the SGD algorithm produces the expected result","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -415,7 +415,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"80",
+      "duration":"79",
       "executedFeatures":[{"id":"A file device stores tensors in idx files by default.","extraInfo":[]},{"id":"A file device stores tensors in various file formats.","extraInfo":[]},{"id":"The file device can load known files in a directory.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -451,7 +451,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"27",
+      "duration":"23",
       "executedFeatures":[{"id":"A tensor can be instantiated from a item type class and nested lists.","extraInfo":[]},{"id":"Numeric tensors as String can be formatted on an entry based level.","extraInfo":[]},{"id":"Tensor created from shape and datatype has expected state.","extraInfo":[]},{"id":"Tensors as String can be formatted depending on shape.","extraInfo":[]},{"id":"Tensors as String can be formatted on an entry based level.","extraInfo":[]},{"id":"The data and the value of a tensor a 2 different things!","extraInfo":[]},{"id":"We can create scalar tensors.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -463,7 +463,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"393",
+      "duration":"418",
       "executedFeatures":[{"id":"The default DeviceCleaner works","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -499,7 +499,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"121",
+      "duration":"119",
       "executedFeatures":[{"id":"Activation implementations behave as expected.","extraInfo":[]},{"id":"Broadcast implementations behave as expected.","extraInfo":[]},{"id":"Convolution implementations behave as expected.","extraInfo":[]},{"id":"Operator implementations behave as expected.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -511,7 +511,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"42",
+      "duration":"38",
       "executedFeatures":[{"id":"Function implementations ensure that internally created tensors are flagged as \"intermediate\" initially!","extraInfo":[]},{"id":"Function implementations ensure that outputs which are input members are not flagged as \"intermediate\"!","extraInfo":[]},{"id":"Function implementations will ensure the \"call\" and \"invoke\" does not return tensors flagged as \"intermediate\".","extraInfo":[]},{"id":"The library context exposes a set of useful functions.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -535,7 +535,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"80445",
+      "duration":"78503",
       "executedFeatures":[{"id":"Ad hoc compilation produces executable kernel.","extraInfo":[]},{"id":"Ad hoc compilation works for WIP general purpose matrix multiplication.","extraInfo":[]},{"id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.","extraInfo":[]},{"id":"Ad hoc compilation works for custom simple row major based matrix multiplication.","extraInfo":[]},{"id":"Ad hoc matrix multiplication works for multiple of 16 matrices.","extraInfo":[]},{"id":"An OpenCLDevice loads tensors in a provided lambda temporarily.","extraInfo":[]},{"id":"The \"getData()\" method of an outsourced tensor will return null when outsourced.","extraInfo":[]},{"id":"The \"getValue()\" method of an outsourced tensor will return the expected array type.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -547,7 +547,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"50",
+      "duration":"52",
       "executedFeatures":[{"id":"ADAM optimizes according to expected inputs","extraInfo":[]},{"id":"Equations \"I[0]*I[1]+(1-I[2])*I[3]\" and \"(1-I[0])*I[1]\" used within ADAM return expected results.","extraInfo":[]},{"id":"Equations used by ADAM return expected result.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -559,7 +559,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"470",
+      "duration":"472",
       "executedFeatures":[{"id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.","extraInfo":[]},{"id":"Partially labeled tenors will be stored with their labels included when saving them as CSV.","extraInfo":[]},{"id":"Test reading IDX file format.","extraInfo":[]},{"id":"Test writing IDX file format.","extraInfo":[]},{"id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors.","extraInfo":[]},{"id":"We can load image files as tensors.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -571,7 +571,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"1954",
+      "duration":"1937",
       "executedFeatures":[{"id":"Tensor can be constructed by passing List instances.","extraInfo":[]},{"id":"Test benchmark script and simple tensor constructor.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -583,7 +583,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"560",
+      "duration":"566",
       "executedFeatures":[{"id":"The internal matrix multiplication test script runs!","extraInfo":[]},{"id":"The simple CPU matrix multiplication implementation works as expected.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -595,7 +595,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"27",
+      "duration":"28",
       "executedFeatures":[{"id":"Function \"(I[0]+1/I[0])**-I[0]\" instance returns expected scalar result.","extraInfo":[]},{"id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars.","extraInfo":[]},{"id":"Function \"1/I[0]\" instance returns expected scalar results.","extraInfo":[]},{"id":"Function \"I[0]+1/I[0]\" instance returns expected scalar results.","extraInfo":[]},{"id":"Test scalar results of Function \"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\" instance.","extraInfo":[]},{"id":"Test scalar results of various Function instances.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -631,7 +631,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"5396",
+      "duration":"5421",
       "executedFeatures":[{"id":"Backend related library objects adhere to the same toString formatting convention!","extraInfo":[]},{"id":"Every Thread instance has their own Neureka instance.","extraInfo":[]},{"id":"Neureka class instance has expected behaviour.","extraInfo":[]},{"id":"Neureka settings class can be locked causing its properties to be immutable.","extraInfo":[]},{"id":"OpenCL related library objects adhere to the same toString formatting convention!","extraInfo":[]},{"id":"Various library objects adhere to the same toString formatting convention!","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -643,7 +643,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"10",
+      "duration":"11",
       "executedFeatures":[{"id":"Momentum optimizes according to expected inputs","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -655,7 +655,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"559",
+      "duration":"556",
       "executedFeatures":[{"id":"Autograd works with simple 2D convolution.","extraInfo":[]},{"id":"Manual convolution produces expected result.","extraInfo":[]},{"id":"Sime convolution works as expected eith autograd.","extraInfo":[]},{"id":"Tensors have the correct layout after convolution.","extraInfo":[]},{"id":"The \"x\" (convolution) operator produces expected results (On the CPU).","extraInfo":[]},{"id":"Very simple manual convolution produces expected result.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -679,7 +679,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"203",
+      "duration":"222",
       "executedFeatures":[{"id":"One can write a simple double based neural network in less than 11 lines of java like code using the \"@\" operator!","extraInfo":[]},{"id":"One can write a simple float based neural network in less than 11 lines of java like code!","extraInfo":[]},{"id":"One can write a simple neural network in less than 11 lines of code!","extraInfo":[]},{"id":"One can write a simple neural network with custom back-prop in 11 lines of code!","extraInfo":[]},{"id":"The pseudo random number generator works as expected for the weights used in the 11 line NN examples!","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -691,7 +691,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"42",
+      "duration":"39",
       "executedFeatures":[{"id":"The long broad integration test runs successfully.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -703,7 +703,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"189",
+      "duration":"180",
       "executedFeatures":[{"id":"GraphNode instantiation throws exception because GraphNode instances of input tensors do not share the same GraphLock.","extraInfo":[]},{"id":"GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.","extraInfo":[]},{"id":"GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.","extraInfo":[]},{"id":"GraphNode throws an exception when trying to instantiate it with the wrong context.","extraInfo":[]},{"id":"GraphNode throws exception when payload is null.","extraInfo":[]},{"id":"GraphNode throws exception when trying to instantiate it with the Function argument being null.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -715,7 +715,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"73",
+      "duration":"72",
       "executedFeatures":[{"id":"Lambda properties of mock implementation interact with FunctionNode as expected.","extraInfo":[]},{"id":"Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -727,7 +727,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"16",
+      "duration":"17",
       "executedFeatures":[{"id":"The simple CPU matrix multiplication implementation works as expected.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -739,7 +739,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"402",
+      "duration":"361",
       "executedFeatures":[{"id":"CPU knows the current number of available processor cores!","extraInfo":[]},{"id":"The CPU exposes a non null API for executing workloads in parallel.","extraInfo":[]},{"id":"Thread pool executes given workload in parallel","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -751,7 +751,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"32",
+      "duration":"31",
       "executedFeatures":[{"id":"Conversion goes both ways and produces expected numeric values.","extraInfo":[]},{"id":"NumericType conversion to holder types yields expected results.","extraInfo":[]},{"id":"NumericType implementations behave as expected.","extraInfo":[]},{"id":"NumericType implementations return their expected properties.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -763,7 +763,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"208",
+      "duration":"211",
       "executedFeatures":[{"id":"A tensor can be labeled partially.","extraInfo":[]},{"id":"Added labels to tensors are accessible through the \"index()\" method.","extraInfo":[]},{"id":"Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.","extraInfo":[]},{"id":"Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -811,7 +811,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"7969",
+      "duration":"7526",
       "executedFeatures":[{"id":"Activation functions work across types on slices and non sliced tensors.","extraInfo":[]},{"id":"Auto reshaping and broadcasting works and the result can be back propagated.","extraInfo":[]},{"id":"New method \"asFunction\" of String added at runtime is callable by groovy and also works.","extraInfo":[]},{"id":"New operator methods added to \"SDK-types\" at runtime are callable by groovy and also work.","extraInfo":[]},{"id":"Operators \"+,*,**\" produce expected results with gradients which can be accessed via a \"Ig[0]\" Function instance","extraInfo":[]},{"id":"Overloaded operation methods on tensors produce expected results when called.","extraInfo":[]},{"id":"Simple slice addition produces expected result.","extraInfo":[]},{"id":"The \"dot\" operation reshapes and produces valid \"x\" operation result.","extraInfo":[]},{"id":"The \"matMul\" operation produces the expected result.","extraInfo":[]},{"id":"The \"random\" function/operation populates tensors randomly.","extraInfo":[]},{"id":"The values of a randomly populated tensor seems to adhere to a gaussian distribution.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -823,7 +823,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"15992",
+      "duration":"15217",
       "executedFeatures":[{"id":"A gradient of ones can be set by calling the backward method on a tensor sitting on any device.","extraInfo":[]},{"id":"Convolution can model matrix multiplications across devices.","extraInfo":[]},{"id":"Cross device system test runs successfully.","extraInfo":[]},{"id":"Mapping tensors works for every device (even if they are not used).","extraInfo":[]},{"id":"Test simple NN implementation with manual backprop","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -847,7 +847,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"5",
+      "duration":"6",
       "executedFeatures":[{"id":"A tensor cannot be deleted if it is part of a graph and the tensor is used as derivative.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -859,7 +859,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"155",
+      "duration":"144",
       "executedFeatures":[{"id":"Activation implementations have expected Executor instances.","extraInfo":[]},{"id":"CLExecutors of Operator implementations behave as expected.","extraInfo":[]},{"id":"HostExecutors of Operator implementations behave as expected.","extraInfo":[]},{"id":"Operator implementations have expected Executor instances.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -871,7 +871,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"24",
+      "duration":"22",
       "executedFeatures":[{"id":"Functions can derive themselves according to the provided index of the input which ought to be derived.","extraInfo":[]},{"id":"Parsed equations throw expected error messages.","extraInfo":[]},{"id":"Test parsed equations when building Function instances.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -883,7 +883,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"23",
+      "duration":"37",
       "executedFeatures":[{"id":"We can concatenate 2 float tensors alongside a specified axis!","extraInfo":[]},{"id":"We can concatenate 2 string tensors alongside a specified axis!","extraInfo":[]},{"id":"We can concatenate 2 tensors alongside a specified axis!","extraInfo":[]},{"id":"We can concatenate and then back-propagate 2 simple float tensors alongside a specified axis!","extraInfo":[]},{"id":"We can concatenate and then back-propagate 3 simple float tensors alongside a specified axis!","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -895,7 +895,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"129",
+      "duration":"123",
       "executedFeatures":[{"id":"The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -907,7 +907,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"2427",
+      "duration":"2396",
       "executedFeatures":[{"id":"A given OpenCL context can be disposed!","extraInfo":[]},{"id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.","extraInfo":[]},{"id":"First found OpenCLDevice will have realistic numeric properties.","extraInfo":[]},{"id":"First found OpenCLDevice will have realistic properties inside summary query.","extraInfo":[]},{"id":"First found OpenCLDevice will have realistic text properties.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -919,7 +919,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"31",
+      "duration":"30",
       "executedFeatures":[{"id":"Building a tensor with \"null\" as shape argument throws an exception.","extraInfo":[]},{"id":"Building a tensor with 0 shape arguments throws an exception.","extraInfo":[]},{"id":"Casting a tensor as something unusual will cuas an exception to be thrown.","extraInfo":[]},{"id":"Out of dimension bound causes descriptive exception!","extraInfo":[]},{"id":"Passing an invalid key object into the \"getAt\" method causes a descriptive exception.","extraInfo":[]},{"id":"Passing an invalid object into Tsr constructor causes descriptive exception.","extraInfo":[]},{"id":"Passing null to various methods of the tensor API will throw exceptions.","extraInfo":[]},{"id":"Trying to inject an empty tensor into another causes fitting exception.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -931,7 +931,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"21",
+      "duration":"25",
       "executedFeatures":[{"id":"Initialization lambda based tensors can be created fluently.","extraInfo":[]},{"id":"Range based tensors can be created fluently.","extraInfo":[]},{"id":"Scalars can be created fluently.","extraInfo":[]},{"id":"Seed based tensors can be created fluently.","extraInfo":[]},{"id":"Tensors can be created fluently.","extraInfo":[]},{"id":"Value based tensors can be created fluently.","extraInfo":[]},{"id":"Vectors can be created fluently.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -943,7 +943,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"3",
+      "duration":"4",
       "executedFeatures":[{"id":"Gradient of tensor is being applies regardless of the tensor requiring gradient or not","extraInfo":[]},{"id":"Tensors can have gradients but not require them.","extraInfo":[]},{"id":"Tensors that have gradients but do not require them still print them.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -955,7 +955,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"146",
+      "duration":"163",
       "executedFeatures":[{"id":"Inline operations cause illegal state exceptions.","extraInfo":[]},{"id":"Inline operations causes version incrementation.","extraInfo":[]},{"id":"Non-inline operations do not cause version incrementation.","extraInfo":[]},{"id":"Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -967,7 +967,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"136",
+      "duration":"141",
       "executedFeatures":[{"id":"We can find both min and max items in an ND-array by providing a comparator.","extraInfo":[]},{"id":"We can initialize an ND-Array using a filler lambda mapping indices to items.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -979,7 +979,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"6",
+      "duration":"5",
       "executedFeatures":[{"id":"Tensor is a subtype of NdArray.","extraInfo":[]},{"id":"We can use tensors for numeric calculations (but not nd-arrays).","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -1003,7 +1003,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"359",
+      "duration":"358",
       "executedFeatures":[{"id":"Both the min and max operation support autograd (back-propagation).","extraInfo":[]},{"id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.","extraInfo":[]},{"id":"We can get pre-instantiated min and max functions from the library context.","extraInfo":[]},{"id":"We can use the max operation as a function","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
@@ -1015,7 +1015,7 @@
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
-      "duration":"10",
+      "duration":"11",
       "executedFeatures":[{"id":"The GEMM implementation for the OpenCLDevice has realistic behaviour","extraInfo":[]},{"id":"The Reduce implementation for the OpenCLDevice has realistic behaviour","extraInfo":[]}],
       "ignoredFeatures":[]
     }

@@ -154,7 +154,7 @@ public class Division extends AbstractOperation
         Scalarization scalarization = new Scalarization()
                 .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
                 .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setDeviceExecution( (context, callback) -> ElemWiseUtil.forDivisionsOrModuli(context.call(), callback) )
+                .setDeviceExecution( (call, callback) -> ElemWiseUtil.forDivisionsOrModuli(call, callback) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

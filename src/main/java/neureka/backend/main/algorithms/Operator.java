@@ -31,7 +31,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
                     .basicSuitability()
         );
         setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD );
-        setDeviceExecution( (context, callback) -> finalExecutor.execute(context.call(), callback), (ADAgentSupplier) null );
+        setDeviceExecution( (call, callback) -> finalExecutor.execute(call, callback), (ADAgentSupplier) null );
         setCallPreparation(
             call -> {
                 Device<Object> device = (Device<Object>) call.getDevice();

@@ -16,7 +16,7 @@
     {
       "id":"The long broad integration test runs successfully.",
       "result":"PASS",
-      "duration":"0.037 seconds",
+      "duration":"0.038 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

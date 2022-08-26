@@ -27,17 +27,17 @@ public class ConvUtil
                     return AutoDiffMode.FORWARD_AND_BACKWARD;
                 })
                 .setDeviceExecution(
-                    (context, executor) ->
+                    (call, executor) ->
                     {
-                        int offset = ( context.call().input(0) == null ? 1 : 0 );
-                        Tsr<?>[] tensors = new Tsr[]{context.call().input(offset+0), context.call().input(offset+1), context.call().input(offset+2)};
+                        int offset = ( call.input(0) == null ? 1 : 0 );
+                        Tsr<?>[] tensors = new Tsr[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};
                         Reshape.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)
                         for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
                         return AbstractDeviceAlgorithm.prepareAndExecuteRecursively(
                                                 ExecutionCall.of( tensors )
                                                         .andArgs( Arg.DerivIdx.of(0) )
-                                                        .running( context.call().getOperation() )
-                                                        .on( context.call().getDevice() ),
+                                                        .running( call.getOperation() )
+                                                        .on( call.getDevice() ),
                                                 (a, b) -> ConvUtil.executeRecursively(op, a, b)
                                             );
                     },

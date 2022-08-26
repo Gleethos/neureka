@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.470 seconds"
+    "duration":"0.472 seconds"
   },
   "headers":["\n            This specification covers the expected functionality of\n            various \"FileHandle\" implementations.\n            Such implementations ought to be able to save tensors to\n            a given directory in the file format that they represent.\n            Functionalities like : \"store\", \"restore\" and \"free\" must\n            behave as expected.\n            (For more information take a look a the \"FileHandle\" & \"Storage\" interface)\n        "],"tags":{},"see":[],
   "features":[ 
@@ -106,7 +106,7 @@
     {
       "id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

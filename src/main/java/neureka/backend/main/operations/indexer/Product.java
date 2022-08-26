@@ -95,7 +95,7 @@ public final class Product extends AbstractOperation
         Activation activation = new Activation()
         .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
         .setDeviceExecution(
-            (context, callback) -> ElemWiseUtil.forMultiplications(context.call(), callback),
+            (call, callback) -> ElemWiseUtil.forMultiplications(call, callback),
             (Function f, ExecutionCall<? extends Device<?>> adCall ) -> // Autograd
             {
                 Function mul = Neureka.get().backend().getFunction().mul();

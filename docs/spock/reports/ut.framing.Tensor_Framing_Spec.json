@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.208 seconds"
+    "duration":"0.206 seconds"
   },
   "headers":["\n                <h2> Framing Behavior </h2>\n                <br> \n                <p>\n                    This specification covers the behavior\n                    of the classes contained in the \"framing\" package, which \n                    contains logic in order to set aliases for\n                    tensor indices.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
@@ -84,7 +84,7 @@
     {
       "id":"Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.193 seconds",
+      "duration":"0.191 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

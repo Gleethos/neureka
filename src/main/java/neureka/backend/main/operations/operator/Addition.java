@@ -169,7 +169,7 @@ public class Addition extends AbstractOperation {
 
         Scalarization scalarization =
             new Scalarization()
-                .setDeviceExecution( (context, callback) -> ElemWiseUtil.forAdditions(context.call(), callback) )
+                .setDeviceExecution( (call, callback) -> ElemWiseUtil.forAdditions(call, callback) )
                 .buildFunAlgorithm();
 
         setAlgorithm(

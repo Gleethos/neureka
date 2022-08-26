@@ -47,9 +47,8 @@ public class XConv extends AbstractOperation
                     return AutoDiffMode.FORWARD_AND_BACKWARD;
                 })
                 .setDeviceExecution(
-                    (context, executor) ->
+                    (call, executor) ->
                     {
-                        ExecutionCall<?> call = context.call();
                         Tsr<?>[] tensors = call.inputs();
                         for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
 

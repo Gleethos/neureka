@@ -57,7 +57,7 @@ public class MatMul extends AbstractOperation
                 )
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setDeviceExecution(
-                    ( context, callback ) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), null),
+                    ( call, callback ) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, null),
                     ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                     {
                         if ( adCall.autogradMode().allowsForward() )

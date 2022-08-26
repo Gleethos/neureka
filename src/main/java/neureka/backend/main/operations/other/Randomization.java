@@ -61,7 +61,7 @@ public class Randomization extends AbstractOperation
                             .basicSuitability()
                 )
                 .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
-                .setDeviceExecution( (context, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )
+                .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
                 .setCallPreparation( call ->
                 {
                     if ( call.input( 0 ) == null )
