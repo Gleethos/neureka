@@ -30,9 +30,8 @@ public class ConvUtil
                     (context, executor) ->
                     {
                         int offset = ( context.call().input(0) == null ? 1 : 0 );
-                        Function caller = context.caller();
                         Tsr<?>[] tensors = new Tsr[]{context.call().input(offset+0), context.call().input(offset+1), context.call().input(offset+2)};
-                        Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                        Reshape.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)
                         for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
                         return AbstractDeviceAlgorithm.prepareAndExecuteRecursively(
                                                 ExecutionCall.of( tensors )
