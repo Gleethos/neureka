@@ -259,27 +259,13 @@ public class Addition extends AbstractOperation {
         );
     }
 
-    @Contract(pure = true)
-    @Override
-    public String stringify( String[] children ) {
-        StringBuilder reconstructed = new StringBuilder();
-        for ( int i = 0; i < children.length; ++i ) {
-            reconstructed.append( children[ i ] );
-            if ( i < children.length - 1 ) {
-                reconstructed.append(" + ");
-            }
-        }
-        return "(" + reconstructed + ")";
-    }
-
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-        String s =  Arrays.stream( children )
-                .filter( child -> child.dependsOn(derivationIndex) )
-                .map( child -> child.getDerivative(derivationIndex) )
-                .map( Object::toString )
-                .collect( Collectors.joining( " + " ) );
-        return s;
+        return Arrays.stream( children )
+                    .filter( child -> child.dependsOn(derivationIndex) )
+                    .map( child -> child.getDerivative(derivationIndex) )
+                    .map( Object::toString )
+                    .collect( Collectors.joining( " "+getOperator()+" " ) );
     }
 
     @Override
@@ -312,9 +298,9 @@ public class Addition extends AbstractOperation {
             return result;
         } else {
             double derivative = 0;
-            for ( Function function : src ) {
+            for ( Function function : src )
                 derivative += function.derive( inputs, d );
-            }
+
             return derivative;
         }
     }

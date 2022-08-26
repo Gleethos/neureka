@@ -33,7 +33,7 @@ public final class Product extends AbstractOperation
     {
         super (
             new OperationBuilder()
-                    .setIdentifier(         "prodJs"    )
+                    .setIdentifier(       "prodJs"    )
                     .setOperator(         "prodJs"    )
                     .setArity(            1           )
                     .setIsOperator(       false       )
@@ -169,17 +169,6 @@ public final class Product extends AbstractOperation
 
 
 
-    }
-
-
-
-    @Override
-    public String stringify( String[] children ) {
-        String expression = String.join( ", ", children );
-        if ( expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')' ) {
-            return "prodJs" + expression;
-        }
-        return "prodJs" + "(" + expression + ")";
     }
 
     @Override

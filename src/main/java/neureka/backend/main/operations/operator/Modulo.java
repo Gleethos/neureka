@@ -241,18 +241,6 @@ public class Modulo extends AbstractOperation {
     }
 
     @Override
-    public String stringify( String[] children ) {
-        StringBuilder reconstructed = new StringBuilder();
-        for ( int i = 0; i < children.length; ++i ) {
-            reconstructed.append( children[ i ] );
-            if ( i < children.length - 1 ) {
-                reconstructed.append(" % ");
-            }
-        }
-        return "(" + reconstructed + ")";
-    }
-
-    @Override
     public String asDerivative( Function[] children, int derivationIndex) {
         return children[ 0 ].getDerivative(derivationIndex).toString();
     }

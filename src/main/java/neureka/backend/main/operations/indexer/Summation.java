@@ -35,8 +35,8 @@ public final class Summation extends AbstractOperation
     {
         super (
                 new OperationBuilder()
-                        .setIdentifier(         "sumJs"    )
-                        .setOperator(         "sumJs"    )
+                        .setIdentifier(        "sumJs"    )
+                        .setOperator(          "sumJs"    )
                         .setArity(            1           )
                         .setIsOperator(       false       )
                         .setIsIndexer(        true        )
@@ -206,15 +206,6 @@ public final class Summation extends AbstractOperation
             )
         );
 
-    }
-
-    @Override
-    public String stringify( String[] children ) {
-        String expression = String.join( ", ", children );
-        if ( expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')' ) {
-            return "sumJs" + expression;
-        }
-        return "sumJs" + "(" + expression + ")";
     }
 
     @Override

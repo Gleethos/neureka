@@ -165,15 +165,6 @@ public class DimTrim extends AbstractOperation
     }
 
     @Override
-    public String stringify( String[] children ) {
-        String expression = String.join( ", ", children );
-        if ( expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')' ) {
-            return "dimtrim" + expression;
-        }
-        return "dimtrim" + "(" + expression + ")";
-    }
-
-    @Override
     public String asDerivative( Function[] children, int derivationIndex) {
         throw new IllegalStateException("Operation does not support dynamic derivation!");
     }

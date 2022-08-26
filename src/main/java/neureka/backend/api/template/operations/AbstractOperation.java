@@ -6,6 +6,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,6 +226,29 @@ public abstract class AbstractOperation implements Operation
     @Override public boolean isInline() { return _isInline; }
 
     public final FallbackAlgorithm getDefaultAlgorithm() { return _defaultAlgorithm; }
+
+    @Contract(pure = true)
+    @Override
+    public String stringify( String[] children ) {
+        if ( this.isOperator() ) {
+            StringBuilder reconstructed = new StringBuilder();
+            for ( int i = 0; i < children.length; ++i ) {
+                reconstructed.append( children[ i ] );
+                if ( i < children.length - 1 )
+                    reconstructed
+                            .append(" ")
+                            .append(this.getOperator())
+                            .append(" ");
+            }
+            return "(" + reconstructed + ")";
+        } else {
+            String expression = String.join(", ", children);
+            if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')')
+                return getIdentifier() + expression;
+            else
+                return getIdentifier() + "(" + expression + ")";
+        }
+    }
 
     @Override
     public final String toString() {

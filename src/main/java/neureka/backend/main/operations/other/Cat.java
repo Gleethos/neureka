@@ -89,15 +89,6 @@ public class Cat extends AbstractOperation
     }
 
     @Override
-    public String stringify( String[] children ) {
-        String expression = String.join( ", ", children );
-        if ( expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')' ) {
-            return "concat" + expression;
-        }
-        return "concat" + "(" + expression + ")";
-    }
-
-    @Override
     public String asDerivative( Function[] children, int derivationIndex) {
         throw new IllegalStateException("Operation does not support dynamic derivation!");
     }

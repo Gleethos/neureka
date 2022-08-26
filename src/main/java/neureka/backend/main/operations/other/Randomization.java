@@ -342,18 +342,7 @@ public class Randomization extends AbstractOperation
         i = ( i * 0x105139C0C031L + 0x4c0e1e9f367dL     ) ^ seed;
         i = ( i * 0x196E6109L     + 0x6c6f72656e64616eL ) ^ seed;
         i = ( i * 0x653L          + 0xCBC85B449DL       ) ^ seed;
-        return (i * seed) ^ 0xa785a819cd72c6fdL;
-    }
-
-
-
-    @Override
-    public String stringify( String[] children ) {
-        String expression = String.join( ", ", children );
-        if ( expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')' ) {
-            return "rand" + expression;
-        }
-        return "rand" + "(" + expression + ")";
+        return ( i * seed ) ^ 0xa785a819cd72c6fdL;
     }
 
     @Override
