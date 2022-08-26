@@ -11,14 +11,13 @@ import neureka.ndim.NDimensional;
 import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 /**
  *  {@link Nda}, which is an abbreviation of <b>'N-Dimensional-Array'</b>, represents
@@ -149,9 +148,29 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  @return A {@link Stream} of the items in this {@link Nda}.
      */
     default Stream<V> stream() {
+        Object rawItems = getRawItems();
+        Stream<V> stream;
+        if ( rawItems instanceof double[] )
+            stream = (Stream<V>) DoubleStream.of( (double[]) rawItems ).boxed();
+        else if ( rawItems instanceof int[] )
+            stream = (Stream<V>) IntStream.of( (int[]) rawItems ).boxed();
+        else if ( rawItems instanceof long[] )
+            stream = (Stream<V>) LongStream.of( (long[]) rawItems ).boxed();
+        else if ( rawItems instanceof float[] )
+            stream = IntStream.range(0,size()).mapToObj(i -> (V) Float.valueOf( ((float[]) rawItems)[i] ) );
+        else if ( rawItems instanceof byte[] )
+            stream = IntStream.range(0,size()).mapToObj(i -> (V) Byte.valueOf( ((byte[]) rawItems)[i] ) );
+        else if ( rawItems instanceof short[] )
+            stream = IntStream.range(0,size()).mapToObj(i -> (V) Short.valueOf( ((short[]) rawItems)[i] ) );
+        else if ( rawItems instanceof boolean[] )
+            stream = IntStream.range(0,size()).mapToObj(i -> (V) Boolean.valueOf( ((boolean[]) rawItems)[i] ) );
+        else if ( rawItems instanceof char[] )
+            stream = IntStream.range(0,size()).mapToObj(i -> (V) Character.valueOf( ((char[]) rawItems)[i] ) );
+        else
+            stream = (Stream<V>) Arrays.stream( (Object[]) rawItems );
+
         boolean executeInParallel = ( this.size() > 1_000 );
-        IntStream indices = IntStream.range(0,size());
-        return ( executeInParallel ? indices.parallel() : indices ).mapToObj(this::item);
+        return executeInParallel ? stream.parallel() : stream;
     }
 
     /**

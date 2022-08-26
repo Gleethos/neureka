@@ -564,22 +564,22 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public neureka.Data allocate(DataType<?> dataType, int size ) {
+    public neureka.Data<Number> allocate(DataType<?> dataType, int size ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    public <V> neureka.Data allocate(DataType<V> dataType, int size, V initialValue) {
+    public <V> neureka.Data<Number> allocate(DataType<V> dataType, int size, V initialValue) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    public neureka.Data allocate(Object jvmData, int desiredSize) {
+    public neureka.Data<Number> allocate( Object jvmData, int desiredSize ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    protected neureka.Data _actualize(Tsr<?> tensor ) {
+    protected neureka.Data<Number> _actualize( Tsr<?> tensor ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 

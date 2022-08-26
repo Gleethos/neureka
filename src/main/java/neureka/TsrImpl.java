@@ -1092,21 +1092,14 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     @Override
     public Object getRawItems() {
         _guardGet("value object");
-        if ( this.isOutsourced() ) {
-            Device<V> device = get( Device.class );
-            if ( device != null ) {
-                if ( this.getNDConf().isSimple() && !this.isSlice() )
-                    return device.access(this).readAll(false);
-                else
-                    return device.access( this.deepCopy().setIsVirtual( false ) ).readAll(false);
-            }
-        }
         if ( this.isVirtual() )
-            return getDevice().access(this).actualize().get();
+            return this.isOutsourced()
+                    ? getDevice().access( this.deepCopy().setIsVirtual( false ) ).readAll(false)
+                    : getDevice().access(this).actualize().get(); // Todo: make data access more consistent!
         else if ( this.getNDConf().isSimple() && !this.isSlice() )
-            return getData();
+            return getDevice().access(this).readAll(!this.isOutsourced());
         else
-            return this.deepCopy().getUnsafe().getData();
+            return getDevice().access( this.deepCopy().setIsVirtual( false ) ).readAll(false);
     }
 
     /*==================================================================================================================
