@@ -1,10 +1,8 @@
 package neureka.backend.main.operations;
 
-import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.Convolution;
@@ -12,7 +10,6 @@ import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
 
@@ -34,63 +31,21 @@ public class ConvUtil
                     {
                         ExecutionCall<?> call = context.initialCall();
                         Function caller = context.caller();
-                        if ( op.equals("x") ) {
-                            Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
-                            tensors[ 0 ] =
-                                (call.getValOf( Arg.DerivIdx.class ) < 0)
-                                        ? Tsr.of(
-                                                call.input(0).getItemType(),
-                                                shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
-                                                0
-                                        )
-                                        .getUnsafe()
-                                        .setIsIntermediate( true )
-                                        : null;
+                        Tsr<?>[] tensors = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
+                        Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                        for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
+                        tensors[ 0 ] = AbstractDeviceAlgorithm.prepareAndExecuteRecursively(
+                                                ExecutionCall.of( tensors )
+                                                        .andArgs( Arg.DerivIdx.of(0) )
+                                                        .running( call.getOperation() )
+                                                        .on( call.getDevice() ),
+                                                (a, b) -> ConvUtil.executeRecursively(op, a, b)
+                                        );
 
-                            for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-
-                            ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
-                            return AbstractDeviceAlgorithm.executeOnCommonDevice(
-                                    prepared,()->ConvUtil.executeRecursively( op, prepared, null/*recursion is not expected to happen here*/ )
-                            );
-                        } else {
-                            Tsr<?>[] tensors = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
-                            Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
-                            for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                            tensors[ 0 ] = AbstractDeviceAlgorithm.prepareAndExecuteRecursively(
-                                                    ExecutionCall.of( tensors )
-                                                            .andArgs( Arg.DerivIdx.of(0) )
-                                                            .running( call.getOperation() )
-                                                            .on( call.getDevice() ),
-                                                    (a, b) -> ConvUtil.executeRecursively(op, a, b)
-                                            );
-
-                            return tensors[ 0 ];
-                        }
+                        return tensors[ 0 ];
                     },
-                    ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                    {
-                        int d = adCall.getDerivativeIndex();
-                        Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
-                                "I[ 0 ]" + op + ">>I[ 1 ]" + op + ">>I[ 2 ]",
-                                false
-                        );
-                        Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
-                        assert d >= 0 && d <= 1;
-                        assert derivative != null;
-                        assert deConv != null;
-                        assert adCall.arity() >= 2 && adCall.arity() <= 3;
-                        // Now we need to remember the shape of the input which is targeted for back prop.
-                        int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
-                        // This is because it will be the shape of the output to the de-convolution!
-                        return ADAgent.of( derivative )
-                                .withAD( target ->
-                                        deConv.execute(
-                                                target.error(),
-                                                derivative,
-                                                Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
-                                        )
-                                );
+                    ( Function f, ExecutionCall<? extends Device<?>> adCall ) -> {
+                        throw new UnsupportedOperationException("Not yet implemented!");
                     }
                 )
                 .setCallPreparation(

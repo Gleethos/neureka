@@ -22,12 +22,6 @@ public final class Convolution extends AbstractFunDeviceAlgorithm<Convolution>
         );
     }
 
-
-    public String getKernelSource() {
-        return Neureka.get().utility().readResource("kernels/convolution_template.cl");
-    }
-
-
     public static Functions.Builder<Fun> implementationForCPU() {
         return Functions.implementation( 3, Convolution::_newWorkloadFor );
     }
