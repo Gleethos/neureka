@@ -14,7 +14,6 @@ import neureka.calculus.Function;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.config.types.simple.Simple2DConfiguration;
 
 public class Min extends AbstractOperation
 {
@@ -22,13 +21,13 @@ public class Min extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setIdentifier(       "min"       )
-                        .setOperator(         "min"       )
-                        .setArity(            1           )
-                        .setIsOperator(       false       )
-                        .setIsIndexer(        false       )
-                        .setIsDifferentiable( true        )
-                        .setIsInline(         false       )
+                        .identifier(       "min"       )
+                        .operator(         "min"       )
+                        .arity(            1           )
+                        .isOperator(       false       )
+                        .isIndexer(        false       )
+                        .isDifferentiable( true        )
+                        .isInline(         false       )
         );
 
         setAlgorithm(
@@ -71,20 +70,6 @@ public class Min extends AbstractOperation
             .setImplementationFor( CPU.class, new CPUReduce(CPUReduce.Type.MIN) )
             .setImplementationFor( OpenCLDevice.class, new CLReduce(CLReduce.Type.MIN) )
         );
-    }
-
-    @Override
-    public String stringify( String[] children ) {
-        String expression = String.join( ", ", children );
-        if ( expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')' ) {
-            return "min" + expression;
-        }
-        return "min" + "(" + expression + ")";
-    }
-
-    @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

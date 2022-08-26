@@ -29,13 +29,13 @@ public class Subtraction extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setIdentifier(         "subtract"    )
-                        .setOperator(         "-"        )
-                        .setArity(            -1         )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( true       )
-                        .setIsInline(         false      )
+                        .identifier(         "subtract"    )
+                        .operator(         "-"        )
+                        .arity(            -1         )
+                        .isOperator(       true       )
+                        .isIndexer(        false      )
+                        .isDifferentiable( true       )
+                        .isInline(         false      )
         );
 
         //_____________________

@@ -23,13 +23,13 @@ public class AssignLeft extends AbstractOperation
     public AssignLeft() {
         super(
             new OperationBuilder()
-                .setIdentifier(       "left_inline"  )
-                .setOperator(         "<"            )
-                .setArity(            -2             )
-                .setIsOperator(       true           )
-                .setIsIndexer(        false          )
-                .setIsDifferentiable( false          )
-                .setIsInline(         true           )
+                .identifier(       "left_inline"  )
+                .operator(         "<"            )
+                .arity(            -2             )
+                .isOperator(       true           )
+                .isIndexer(        false          )
+                .isDifferentiable( false          )
+                .isInline(         true           )
         );
 
         setAlgorithm(
@@ -153,11 +153,6 @@ public class AssignLeft extends AbstractOperation
             if ( i < children.length - 1 ) reconstructed.append(" <- ");
         }
         return "(" + reconstructed + ")";
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

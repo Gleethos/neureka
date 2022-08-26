@@ -17,13 +17,13 @@ public class XConv extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setIdentifier(         "mul_conv"    )
-                        .setOperator(         "x"    )
-                        .setArity(            2          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false       )
-                        .setIsDifferentiable( true        )
-                        .setIsInline(         false       )
+                        .identifier(         "mul_conv"    )
+                        .operator(         "x"    )
+                        .arity(            2          )
+                        .isOperator(       true       )
+                        .isIndexer(        false       )
+                        .isDifferentiable( true        )
+                        .isInline(         false       )
         );
 
         Convolution convolution = ConvUtil.getConv();
@@ -74,11 +74,6 @@ public class XConv extends AbstractOperation
                 )
         );
 
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

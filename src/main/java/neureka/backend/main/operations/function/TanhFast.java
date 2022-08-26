@@ -8,11 +8,6 @@ public class TanhFast extends AbstractActivationOperation
     public TanhFast() { super("fast_tanh" ); }
 
     @Override
-    public String asDerivative( Function[] children, int derivationIndex ) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
-    @Override
     protected String _activationCode() {
         return "output = input * fast_inverse_sqrt( 1.0f + input * input );\n";
     }

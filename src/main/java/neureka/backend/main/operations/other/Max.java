@@ -14,7 +14,6 @@ import neureka.calculus.Function;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.ndim.config.types.simple.Simple2DConfiguration;
 
 public class Max extends AbstractOperation
 {
@@ -22,13 +21,13 @@ public class Max extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setIdentifier(       "max"       )
-                .setOperator(         "max"       )
-                .setArity(            1           )
-                .setIsOperator(       false       )
-                .setIsIndexer(        false       )
-                .setIsDifferentiable( true        )
-                .setIsInline(         false       )
+                .identifier(       "max"       )
+                .operator(         "max"       )
+                .arity(            1           )
+                .isOperator(       false       )
+                .isIndexer(        false       )
+                .isDifferentiable( true        )
+                .isInline(         false       )
         );
 
         setAlgorithm(
@@ -71,11 +70,6 @@ public class Max extends AbstractOperation
             .setImplementationFor( CPU.class, new CPUReduce(CPUReduce.Type.MAX) )
             .setImplementationFor( OpenCLDevice.class, new CLReduce(CLReduce.Type.MAX) )
         );
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

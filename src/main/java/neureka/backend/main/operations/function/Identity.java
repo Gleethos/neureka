@@ -6,11 +6,6 @@ public final class Identity extends AbstractActivationOperation
 {
     public Identity() { super( "idy"); }
 
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
     @Override protected String _activationCode() { return "output = input; \n"; }
 
     @Override protected String _derivationCode() { return "output = 1.0f; \n"; }

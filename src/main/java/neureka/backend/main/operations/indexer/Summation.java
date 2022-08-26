@@ -35,13 +35,13 @@ public final class Summation extends AbstractOperation
     {
         super (
                 new OperationBuilder()
-                        .setIdentifier(        "sumJs"    )
-                        .setOperator(          "sumJs"    )
-                        .setArity(            1           )
-                        .setIsOperator(       false       )
-                        .setIsIndexer(        true        )
-                        .setIsDifferentiable( true        )
-                        .setIsInline(         false       )
+                        .identifier(        "sumJs"    )
+                        .operator(          "sumJs"    )
+                        .arity(            1           )
+                        .isOperator(       false       )
+                        .isIndexer(        true        )
+                        .isDifferentiable( true        )
+                        .isInline(         false       )
         );
 
         //________________
@@ -206,11 +206,6 @@ public final class Summation extends AbstractOperation
             )
         );
 
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

@@ -15,11 +15,6 @@ public class GaSU extends AbstractActivationOperation
     public GaSU() { super("gasu"); }
 
     @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
-    @Override
     protected String _activationCode() {
         return "float cubed = input * input * input;        \n" +
                "output = cubed / ( 1.0f + fabs( cubed ) );  \n";

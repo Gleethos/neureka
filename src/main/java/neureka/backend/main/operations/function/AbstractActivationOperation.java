@@ -20,13 +20,13 @@ abstract class AbstractActivationOperation extends AbstractOperation {
     {
         super(
             new OperationBuilder()
-                .setIdentifier(       identifier    )
-                .setOperator(         identifier    )
-                .setArity(            1             )
-                .setIsOperator(       false         )
-                .setIsIndexer(        false         )
-                .setIsDifferentiable( true          )
-                .setIsInline(         false         )
+                .identifier(       identifier    )
+                .operator(         identifier    )
+                .arity(            1             )
+                .isOperator(       false         )
+                .isIndexer(        false         )
+                .isDifferentiable( true          )
+                .isInline(         false         )
         );
         setAlgorithm(
             new Activation().setSupplyADAgentFor( getDefaultAlgorithm() ).buildFunAlgorithm()

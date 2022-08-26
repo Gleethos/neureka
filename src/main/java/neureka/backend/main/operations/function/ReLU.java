@@ -7,11 +7,6 @@ public final class ReLU extends AbstractActivationOperation
     public ReLU() { super( "relu" ); }
 
     @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
-    @Override
     protected String _activationCode() {
         return "if (input >= 0) {  output = input; } else { output = input * (float)0.01; }\n";
     }

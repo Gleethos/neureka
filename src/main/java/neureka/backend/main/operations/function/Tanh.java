@@ -7,11 +7,6 @@ public final class Tanh extends AbstractActivationOperation
     public Tanh() { super( "tanh" ); }
 
     @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
-    @Override
     protected String _activationCode() {
         return "output = tanh(input);\n";
     }

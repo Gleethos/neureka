@@ -14,11 +14,10 @@ import java.util.List;
  *  In order to ensure that all necessary properties have been set the builder keeps track
  *  of the passed parameters. If not all properties have been set, the builder will trow an exception.
  */
-public class OperationBuilder
+public final class OperationBuilder
 {
-
     private Stringifier _stringifier = null;
-    private Derivator _derivator = null;
+    private Derivation _derivation = null;
     /**
      *  Concrete {@link Operation} types ought to be representable by a function name.
      *  This property will correspond to the {@link Operation#getIdentifier()} method.
@@ -59,14 +58,14 @@ public class OperationBuilder
         String stringify( String[] children );
     }
 
-    public interface Derivator
+    public interface Derivation
     {
         String asDerivative( Function[] children, int d );
     }
 
     public Stringifier getStringifier() { return _stringifier; }
 
-    public Derivator getDerivator() { return _derivator; }
+    public Derivation getDerivator() { return _derivation; }
 
     public String getIdentifier() { return _identifier; }
 
@@ -82,47 +81,65 @@ public class OperationBuilder
 
     public Boolean getIsInline() { return _isInline; }
 
-    public OperationBuilder setStringifier( Stringifier stringifier ) {
+    public OperationBuilder stringifier( Stringifier stringifier ) {
+        if ( _disposed ) throw new IllegalStateException("This builder has already been disposed!");
+        if ( _stringifier != null ) throw new IllegalStateException("Stringifier has already been set!");
         _stringifier = stringifier;
         return this;
     }
 
-    public OperationBuilder setDerivator( Derivator derivator ) {
-        _derivator = derivator;
+    public OperationBuilder setDerivation( Derivation derivation) {
+        if ( _disposed ) throw new IllegalStateException("This builder has already been disposed!");
+        if ( _derivation != null ) throw new IllegalStateException("Derivation has already been set!");
+        _derivation = derivation;
         return this;
     }
 
-    public OperationBuilder setIdentifier( String identifier ) {
+    public OperationBuilder identifier( String identifier ) {
+        if ( _disposed ) throw new IllegalStateException("This builder has already been disposed!");
+        if ( _identifier != null ) throw new IllegalStateException("Identifier has already been set!");
         _identifier = identifier;
         return this;
     }
 
-    public OperationBuilder setOperator( String operator ) {
+    public OperationBuilder operator( String operator ) {
+        if ( _disposed ) throw new IllegalStateException("This builder has already been disposed!");
+        if ( _operator != null ) throw new IllegalStateException("Operator has already been set!");
         _operator = operator;
         return this;
     }
 
-    public OperationBuilder setArity( int arity ) {
+    public OperationBuilder arity( int arity ) {
+        if ( _disposed ) throw new IllegalStateException("This builder has already been disposed!");
+        if ( _arity != null ) throw new IllegalStateException("Arity has already been set!");
         _arity = arity;
         return this;
     }
 
-    public OperationBuilder setIsOperator( boolean isOperator ) {
+    public OperationBuilder isOperator( boolean isOperator ) {
+        if ( _disposed ) throw new IllegalStateException("This builder has already been disposed!");
+        if ( _isOperator != null ) throw new IllegalStateException("IsOperator has already been set!");
         _isOperator = isOperator;
         return this;
     }
 
-    public OperationBuilder setIsIndexer( boolean isIndexer ) {
+    public OperationBuilder isIndexer( boolean isIndexer ) {
+        if ( _disposed ) throw new IllegalStateException("This builder has already been disposed!");
+        if ( _isIndexer != null ) throw new IllegalStateException("IsIndexer has already been set!");
         _isIndexer = isIndexer;
         return this;
     }
 
-    public OperationBuilder setIsDifferentiable( boolean isDifferentiable ) {
+    public OperationBuilder isDifferentiable( boolean isDifferentiable ) {
+        if ( _disposed ) throw new IllegalStateException("This builder has already been disposed!");
+        if ( _isDifferentiable != null ) throw new IllegalStateException("IsDifferentiable has already been set!");
         _isDifferentiable = isDifferentiable;
         return this;
     }
 
-    public OperationBuilder setIsInline( boolean isInline ) {
+    public OperationBuilder isInline( boolean isInline ) {
+        if ( _disposed ) throw new IllegalStateException("This builder has already been disposed!");
+        if ( _isInline != null ) throw new IllegalStateException("IsInline has already been set!");
         _isInline = isInline;
         return this;
     }
@@ -138,6 +155,7 @@ public class OperationBuilder
         if ( _isIndexer        == null ) missing.add( "isIndexer" );
         if ( _isDifferentiable == null ) missing.add( "isDifferentiable" );
         if ( _isInline         == null ) missing.add( "isInline" );
+        // Note: the stringifier is not a requirement! (there is a default impl in the AbstractOperation)
         return missing;
     }
 
@@ -151,12 +169,18 @@ public class OperationBuilder
             return new AbstractOperation( this ) {
                 @Override
                 public String stringify( String[] children ) {
-                    return _stringifier.stringify( children );
+                    if ( _stringifier == null )
+                        return super.stringify( children );
+                    else
+                        return _stringifier.stringify( children );
                 }
 
                 @Override
                 public String asDerivative( Function[] children, int derivationIndex) {
-                    return _derivator.asDerivative( children, derivationIndex);
+                    if ( _derivation == null )
+                        return super.asDerivative( children, derivationIndex );
+                    else
+                        return _derivation.asDerivative( children, derivationIndex);
                 }
 
                 @Override

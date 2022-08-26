@@ -24,13 +24,13 @@ public class DimTrim extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setIdentifier(       "dimtrim"   )
-                .setOperator(         "dimtrim"   )
-                .setArity(            1           )
-                .setIsOperator(       false       )
-                .setIsIndexer(        false       )
-                .setIsDifferentiable( true        )
-                .setIsInline(         false       )
+                .identifier(       "dimtrim"   )
+                .operator(         "dimtrim"   )
+                .arity(            1           )
+                .isOperator(       false       )
+                .isIndexer(        false       )
+                .isDifferentiable( true        )
+                .isInline(         false       )
         );
         setAlgorithm(
             Algorithm
@@ -162,11 +162,6 @@ public class DimTrim extends AbstractOperation
         int postfix = 0;
         for ( int i = shape.length-1; i >= 0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
         return new int[]{ prefix, postfix };
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

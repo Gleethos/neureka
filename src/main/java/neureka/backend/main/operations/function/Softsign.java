@@ -15,11 +15,6 @@ public class Softsign extends AbstractActivationOperation
     public Softsign() { super("softsign"); }
 
     @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
-    @Override
     protected String _activationCode() {
         return "output = input / ( 1.0f + fabs( input ) );\n";
     }

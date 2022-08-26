@@ -33,13 +33,13 @@ public class MatMul extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setIdentifier(       "matMul"    )
-                .setOperator(         "@"         )
-                .setArity(            2           )
-                .setIsOperator(       true        )
-                .setIsIndexer(        false       )
-                .setIsDifferentiable( true        )
-                .setIsInline(         false       )
+                .identifier(       "matMul"    )
+                .operator(         "@"         )
+                .arity(            2           )
+                .isOperator(       true        )
+                .isIndexer(        false       )
+                .isDifferentiable( true        )
+                .isInline(         false       )
         );
 
         //throw new IllegalArgumentException("Matrix multiplication does not support call preparation!");
@@ -197,11 +197,6 @@ public class MatMul extends AbstractOperation
 
     private static boolean _isSimpleRowMajorMatrix( Tsr<?> t ) {
         return t.rank() == 2 && t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

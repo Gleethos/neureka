@@ -10,7 +10,6 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
-import org.jetbrains.annotations.Contract;
 
 public class DimFit extends AbstractOperation
 {
@@ -18,13 +17,13 @@ public class DimFit extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                    .setIdentifier(       "dimfit"    )
-                    .setOperator(         "dimfit"    )
-                    .setArity(            -1          )
-                    .setIsOperator(       false       )
-                    .setIsIndexer(        false       )
-                    .setIsDifferentiable( true        )
-                    .setIsInline(         false       )
+                    .identifier(       "dimfit"    )
+                    .operator(         "dimfit"    )
+                    .arity(            -1          )
+                    .isOperator(       false       )
+                    .isIndexer(        false       )
+                    .isDifferentiable( true        )
+                    .isInline(         false       )
         );
 
         setAlgorithm(
@@ -71,11 +70,6 @@ public class DimFit extends AbstractOperation
             )
             .buildFunAlgorithm()
         );
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

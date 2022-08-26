@@ -10,11 +10,6 @@ public final class Softplus extends AbstractActivationOperation
 {
     public Softplus() { super( "softplus" ); }
 
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
     @Override protected String _activationCode() { return "output = log( 1.0f + exp( input ) );"; }
 
     @Override protected String _derivationCode() { return "output = 1.0f / ( 1.0f + exp( -input ) );\n"; }

@@ -47,14 +47,14 @@ class Backend_MatMul_Extension_Spec extends Specification
                     .addOperation(
                             Operation
                                 .builder()
-                                .setIdentifier('test_function')
-                                .setOperator('test_function')
-                                .setArity(-1)
-                                .setIsIndexer(false)
-                                .setIsOperator(false)
-                                .setIsDifferentiable(true)
-                                .setIsInline(false)
-                                .setStringifier(
+                                .identifier('test_function')
+                                .operator('test_function')
+                                .arity(-1)
+                                .isIndexer(false)
+                                .isOperator(false)
+                                .isDifferentiable(true)
+                                .isInline(false)
+                                .stringifier(
                                         children -> {
                                             String expression = String.join(", ", children);
                                             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {

@@ -16,11 +16,6 @@ public class GeLU extends AbstractActivationOperation
 
     public GeLU() { super( "gelu" ); }
 
-    @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
     @Override protected String _activationCode() { return "output = input / ( 1 + (float) exp(-input * 1.702) );\n"; }
 
     @Override protected String _derivationCode() {

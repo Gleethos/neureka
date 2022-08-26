@@ -23,13 +23,13 @@ public class Reshape extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setIdentifier(       "reshape"  )
-                .setOperator(         ","        )
-                .setArity(            -1         )
-                .setIsOperator(       true       )
-                .setIsIndexer(        false      )
-                .setIsDifferentiable( true       )
-                .setIsInline(         false      )
+                .identifier(       "reshape"  )
+                .operator(         ","        )
+                .arity(            -1         )
+                .isOperator(       true       )
+                .isIndexer(        false      )
+                .isDifferentiable( true       )
+                .isInline(         false      )
         );
         setAlgorithm(
             Algorithm
@@ -152,14 +152,9 @@ public class Reshape extends AbstractOperation
     }
 
     @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
-    @Override
     public double calculate( double[] inputs, int j, int d, Function[] src )
     {
-            return src[ 0 ].call( inputs, j );
+        return src[ 0 ].call( inputs, j );
     }
 
 

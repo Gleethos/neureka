@@ -29,13 +29,13 @@ public class Division extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setIdentifier(         "divide"   )
-                        .setOperator(         "/"        )
-                        .setArity(            -1         )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( true       )
-                        .setIsInline(         false      )
+                        .identifier(         "divide"   )
+                        .operator(         "/"        )
+                        .arity(            -1         )
+                        .isOperator(       true       )
+                        .isIndexer(        false      )
+                        .isDifferentiable( true       )
+                        .isInline(         false      )
         );
 
         //_____________________

@@ -54,14 +54,14 @@ public final class CLFunctionCompiler
             numberOfArgs = -1; // The function is an indexer which means that it can have any number of arguments...
         return Operation
                 .builder()
-                .setIdentifier( _functionName )
-                .setOperator( _functionName )
-                .setArity( numberOfArgs )
-                .setIsIndexer( numberOfArgs < 0 )
-                .setIsOperator( false )
-                .setIsDifferentiable( true )
-                .setIsInline( false )
-                .setStringifier(
+                .identifier( _functionName )
+                .operator( _functionName )
+                .arity( numberOfArgs )
+                .isIndexer( numberOfArgs < 0 )
+                .isOperator( false )
+                .isDifferentiable( true )
+                .isInline( false )
+                .stringifier(
                     children -> {
                         String expression = String.join( ", ", children );
                         if ( expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')' )

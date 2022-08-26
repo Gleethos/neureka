@@ -1,15 +1,8 @@
 package neureka.backend.main.operations.function;
 
-import neureka.calculus.Function;
-
 public final class Cosinus extends AbstractActivationOperation
 {
     public Cosinus() { super( "cos" ); }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
 
     @Override
     protected String _activationCode() { return "output = cos( input );\n"; }

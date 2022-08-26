@@ -22,10 +22,6 @@ public class SeLU extends AbstractActivationOperation
 
     public SeLU() { super( "selu" ); }
 
-    @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
 
     @Override protected String _activationCode() {
         return "if      ( input > 0  ) output = "+SCALE_F32+"f * input;\n" +

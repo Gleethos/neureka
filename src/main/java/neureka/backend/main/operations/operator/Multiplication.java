@@ -32,13 +32,13 @@ public class Multiplication extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setIdentifier(    "multiply"    )
-                        .setOperator(         "*"        )
-                        .setArity(            -1         )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( true       )
-                        .setIsInline(         false      )
+                        .identifier(    "multiply"    )
+                        .operator(         "*"        )
+                        .arity(            -1         )
+                        .isOperator(       true       )
+                        .isIndexer(        false      )
+                        .isDifferentiable( true       )
+                        .isInline(         false      )
         );
 
         //_____________________

@@ -15,11 +15,6 @@ public class GaTU  extends AbstractActivationOperation
     public GaTU() { super( "gatu" ); }
 
     @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
-    @Override
     protected String _activationCode() { return "output = tanh(input*input*input);\n"; }
 
     @Override

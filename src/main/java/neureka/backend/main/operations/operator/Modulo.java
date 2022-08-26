@@ -29,13 +29,13 @@ public class Modulo extends AbstractOperation {
     {
         super(
                 new OperationBuilder()
-                        .setIdentifier(       "modulo"    )
-                        .setOperator(         "%"         )
-                        .setArity(            -1          )
-                        .setIsOperator(       true        )
-                        .setIsIndexer(        false       )
-                        .setIsDifferentiable( true        )
-                        .setIsInline(         false       )
+                        .identifier(       "modulo"    )
+                        .operator(         "%"         )
+                        .arity(            -1          )
+                        .isOperator(       true        )
+                        .isIndexer(        false       )
+                        .isDifferentiable( true        )
+                        .isInline(         false       )
         );
 
         //_____________________

@@ -6,11 +6,6 @@ public final class Absolute extends AbstractActivationOperation
 {
     public Absolute() { super( "abs" ); }
 
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
-    }
-
     @Override protected String _activationCode() { return "output = fabs( input );\n"; }
 
     @Override protected String _derivationCode() { return "output = ( input < 0 ) ? -1 : 1;\n"; }

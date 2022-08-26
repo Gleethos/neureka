@@ -6,6 +6,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
+import neureka.calculus.Function;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,6 +228,13 @@ public abstract class AbstractOperation implements Operation
 
     public final FallbackAlgorithm getDefaultAlgorithm() { return _defaultAlgorithm; }
 
+    /** {@inheritDoc} */
+    @Override
+    public String asDerivative(Function[] children, int derivationIndex) {
+        throw new IllegalStateException("Operation '"+this.getIdentifier()+"' does not support dynamic derivation!");
+    }
+
+    /** {@inheritDoc} */
     @Contract(pure = true)
     @Override
     public String stringify( String[] children ) {

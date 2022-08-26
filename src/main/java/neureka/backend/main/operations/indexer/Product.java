@@ -33,13 +33,13 @@ public final class Product extends AbstractOperation
     {
         super (
             new OperationBuilder()
-                    .setIdentifier(       "prodJs"    )
-                    .setOperator(         "prodJs"    )
-                    .setArity(            1           )
-                    .setIsOperator(       false       )
-                    .setIsIndexer(        true        )
-                    .setIsDifferentiable( true        )
-                    .setIsInline(         false       )
+                    .identifier(       "prodJs"    )
+                    .operator(         "prodJs"    )
+                    .arity(            1           )
+                    .isOperator(       false       )
+                    .isIndexer(        true        )
+                    .isDifferentiable( true        )
+                    .isInline(         false       )
         );
 
         //________________
@@ -169,11 +169,6 @@ public final class Product extends AbstractOperation
 
 
 
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

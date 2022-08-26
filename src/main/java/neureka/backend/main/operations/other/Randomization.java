@@ -38,13 +38,13 @@ public class Randomization extends AbstractOperation
     {
         super(
             new OperationBuilder()
-                .setIdentifier(       "random"   )
-                .setOperator(         "rand"     )
-                .setArity(            1          )
-                .setIsOperator(       true       )
-                .setIsIndexer(        false      )
-                .setIsDifferentiable( false      )
-                .setIsInline(         true       )
+                .identifier(       "random"   )
+                .operator(         "rand"     )
+                .arity(            1          )
+                .isOperator(       true       )
+                .isIndexer(        false      )
+                .isDifferentiable( false      )
+                .isInline(         true       )
         );
 
         setAlgorithm(
@@ -343,11 +343,6 @@ public class Randomization extends AbstractOperation
         i = ( i * 0x196E6109L     + 0x6c6f72656e64616eL ) ^ seed;
         i = ( i * 0x653L          + 0xCBC85B449DL       ) ^ seed;
         return ( i * seed ) ^ 0xa785a819cd72c6fdL;
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

@@ -65,13 +65,13 @@ public class Addition extends AbstractOperation {
     {
         super (
                 new OperationBuilder()
-                        .setIdentifier(       "add"      )
-                        .setOperator(         "+"        )
-                        .setArity(            -1         )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( true       )
-                        .setIsInline(         false      )
+                        .identifier(       "add"      )
+                        .operator(         "+"        )
+                        .arity(            -1         )
+                        .isOperator(       true       )
+                        .isIndexer(        false      )
+                        .isDifferentiable( true       )
+                        .isInline(         false      )
         );
 
         //_____________________

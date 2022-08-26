@@ -11,13 +11,13 @@ public class XConvLeft extends AbstractOperation {
     public XConvLeft() {
         super(
                 new OperationBuilder()
-                        .setIdentifier(         "inv_convolve_mul_left"    )
-                        .setOperator(         ((char) 171) + "x"         )
-                        .setArity(            3                         )
-                        .setIsOperator(       true        )
-                        .setIsIndexer(        false       )
-                        .setIsDifferentiable( false       )
-                        .setIsInline(         false       )
+                        .identifier(         "inv_convolve_mul_left"    )
+                        .operator(         ((char) 171) + "x"         )
+                        .arity(            3                         )
+                        .isOperator(       true        )
+                        .isIndexer(        false       )
+                        .isDifferentiable( false       )
+                        .isInline(         false       )
         );
         setAlgorithm( Convolution.class, ConvUtil.getConv() );
     }
@@ -32,11 +32,6 @@ public class XConvLeft extends AbstractOperation {
             }
         }
         return "(" + reconstructed + ")";
-    }
-
-    @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override
