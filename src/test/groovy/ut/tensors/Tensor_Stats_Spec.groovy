@@ -4,11 +4,22 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Title
 
-@Title("Tensor Number Statistics")
+@Title("Reducing Tensors")
+@Narrative('''
+
+    Various kinds of operations reduce tensors to scalars,
+    the most common ones being the min and max operations 
+    which find the smallest as well as largest number among all 
+    items of a tensor.
+    Neureka exposes various different ways to achieve this,
+    all of which are also differential (autograd support).
+
+''')
 @Subject([Tsr])
 class Tensor_Stats_Spec extends Specification
 {
@@ -16,7 +27,7 @@ class Tensor_Stats_Spec extends Specification
     def 'We can use the max operation as a function'(
             String reduceType, Class<?> dataType, String device, Number expected
     ) {
-        given : 'We create a max function:'
+        given : 'We create a min/max function:'
             var fun = Function.of(reduceType.toLowerCase() + "(I[0])")
         and : 'A seed, for some variability:'
             var seed = dataType.getSimpleName().hashCode() + reduceType.hashCode()
@@ -24,7 +35,7 @@ class Tensor_Stats_Spec extends Specification
             var a = Tsr.of(dataType)
                                 .withShape(19, 7)
                                 .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})
-        and :
+        and : 'Before applying the function, we copy the tensor to the device:'
             a.to(device)
 
         when : 'We apply the function to the tensor:'
@@ -57,7 +68,7 @@ class Tensor_Stats_Spec extends Specification
         and : 'We access the pre-instantiated min function:'
             var max = Neureka.get().backend.autogradFunction.max
 
-        expect :
+        expect : 'The 2 functions are indeed min and max'
             min.toString() == "min(I[0])"
             max.toString() == "max(I[0])"
     }
@@ -70,7 +81,7 @@ class Tensor_Stats_Spec extends Specification
             var a = Tsr.of(Float)
                                 .withShape(19, 7)
                                 .andWhere({ i, _ -> ((31**(i+42))%301)-151})
-        and :
+        and : 'Before applying the function, we copy the tensor to the device:'
             a.to(device)
 
         and : 'We access the min and max methods:'

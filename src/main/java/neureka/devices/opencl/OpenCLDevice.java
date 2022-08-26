@@ -48,7 +48,6 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
-import neureka.DataArray;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.*;
@@ -565,22 +564,22 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public DataArray allocate( DataType<?> dataType, int size ) {
+    public neureka.Data allocate(DataType<?> dataType, int size ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    public <V> DataArray allocate(DataType<V> dataType, int size, V initialValue) {
+    public <V> neureka.Data allocate(DataType<V> dataType, int size, V initialValue) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    public DataArray allocate(Object jvmData, int desiredSize) {
+    public neureka.Data allocate(Object jvmData, int desiredSize) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    protected DataArray _actualize(Tsr<?> tensor ) {
+    protected neureka.Data _actualize(Tsr<?> tensor ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 

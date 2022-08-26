@@ -1,7 +1,6 @@
 package neureka.devices.file;
 
 
-import neureka.DataArray;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -248,17 +247,17 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     public Collection<Tsr<Object>> getTensors() { return _stored.keySet(); }
 
     @Override
-    public DataArray allocate(DataType<?> dataType, int size) {
+    public neureka.Data allocate(DataType<?> dataType, int size) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 
     @Override
-    public <V> DataArray allocate(DataType<V> dataType, int size, V initialValue) {
+    public <V> neureka.Data allocate(DataType<V> dataType, int size, V initialValue) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 
     @Override
-    public DataArray allocate(Object jvmData, int desiredSize) {
+    public neureka.Data allocate(Object jvmData, int desiredSize) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 

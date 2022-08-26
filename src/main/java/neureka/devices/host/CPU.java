@@ -1,6 +1,5 @@
 package neureka.devices.host;
 
-import neureka.DataArray;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
@@ -285,7 +284,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public final DataArray allocate( DataType<?> dataType, int size ) {
+    public final neureka.Data allocate(DataType<?> dataType, int size ) {
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
             return _dataArrayOf(new double[ size ]);
@@ -308,9 +307,9 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <V> DataArray allocate( DataType<V> dataType, int size, V initialValue ) {
+    public <V> neureka.Data allocate(DataType<V> dataType, int size, V initialValue ) {
         Class<?> type = dataType.getItemTypeClass();
-        DataArray array = allocate( dataType, size );
+        neureka.Data array = allocate( dataType, size );
         Object data = array.get();
         if      ( type == Double   .class ) { Arrays.fill((double[])  data, (Double)   initialValue); }
         else if ( type == Float    .class ) { Arrays.fill((float[])   data, (Float)    initialValue); }
@@ -325,78 +324,78 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public DataArray allocate( Object jvmData, int desiredSize )
+    public neureka.Data allocate(Object jvmData, int desiredSize )
     {
-        DataArray dataArray = _dataArrayOf(jvmData);
+        neureka.Data data = _dataArrayOf(jvmData);
         if ( jvmData instanceof int[] ) {
             int[] array = (int[]) jvmData;
             if ( desiredSize != array.length ) {
-                dataArray = CPU.get().allocate( DataType.of(I32.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (int[]) dataArray.get() )[ i ]  = array[ i % array.length ];
+                data = CPU.get().allocate( DataType.of(I32.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (int[]) data.get() )[ i ]  = array[ i % array.length ];
             }
-            return dataArray;
+            return data;
         } else if ( jvmData instanceof float[] ) {
             float[] array = (float[]) jvmData;
             if ( desiredSize != array.length ) {
-                dataArray = CPU.get().allocate( DataType.of(F32.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (float[]) dataArray.get() )[ i ]  = array[ i % array.length ];
+                data = CPU.get().allocate( DataType.of(F32.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (float[]) data.get() )[ i ]  = array[ i % array.length ];
             }
-            return dataArray;
+            return data;
         } else if ( jvmData instanceof double[] ) {
             double[] array = (double[]) jvmData;
             if ( desiredSize != array.length ) {
-                dataArray = CPU.get().allocate( DataType.of(F64.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (double[]) dataArray.get() )[ i ]  = array[ i % array.length ];
+                data = CPU.get().allocate( DataType.of(F64.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (double[]) data.get() )[ i ]  = array[ i % array.length ];
             }
-            return dataArray;
+            return data;
         } else if ( jvmData instanceof long[] ) {
             long[] array = (long[]) jvmData;
             if ( desiredSize != array.length ) {
-                dataArray = CPU.get().allocate( DataType.of(I64.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (long[]) dataArray.get() )[ i ]  = array[ i % array.length ];
+                data = CPU.get().allocate( DataType.of(I64.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (long[]) data.get() )[ i ]  = array[ i % array.length ];
             }
-            return dataArray;
+            return data;
         } else if ( jvmData instanceof short[] ) {
             short[] array = (short[]) jvmData;
             if ( desiredSize != array.length ) {
-                dataArray = CPU.get().allocate( DataType.of(I16.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (short[]) dataArray.get() )[ i ]  = array[ i % array.length ];
+                data = CPU.get().allocate( DataType.of(I16.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) ( (short[]) data.get() )[ i ]  = array[ i % array.length ];
             }
-            return dataArray;
+            return data;
         } else if ( jvmData instanceof byte[] ) {
             byte[] array = (byte[]) jvmData;
             if ( desiredSize != array.length ) {
-                dataArray = CPU.get().allocate(DataType.of(I8.class), desiredSize);
-                for (int i = 0; i < desiredSize; i++) ((byte[]) dataArray.get())[i] = array[i % array.length];
+                data = CPU.get().allocate(DataType.of(I8.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) ((byte[]) data.get())[i] = array[i % array.length];
             }
-            return dataArray;
+            return data;
         } else if ( jvmData instanceof boolean[] ) {
             boolean[] array = (boolean[]) jvmData;
             if ( desiredSize != array.length ) {
-                dataArray = CPU.get().allocate(DataType.of(Boolean.class), desiredSize);
-                for (int i = 0; i < desiredSize; i++) ((boolean[]) dataArray.get())[i] = array[i % array.length];
+                data = CPU.get().allocate(DataType.of(Boolean.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) ((boolean[]) data.get())[i] = array[i % array.length];
             }
-            return dataArray;
+            return data;
         } else if ( jvmData instanceof char[] ) {
             char[] array = (char[]) jvmData;
             if ( desiredSize != array.length ) {
-                dataArray = CPU.get().allocate(DataType.of(Character.class), desiredSize);
-                for (int i = 0; i < desiredSize; i++) ((char[]) dataArray.get())[i] = array[i % array.length];
+                data = CPU.get().allocate(DataType.of(Character.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) ((char[]) data.get())[i] = array[i % array.length];
             }
-            return dataArray;
+            return data;
         } else if ( jvmData instanceof Object[] ) {
             Object[] array = (Object[]) jvmData;
             if ( desiredSize != array.length ) {
-                dataArray = CPU.get().allocate(DataType.of(Object.class), desiredSize);
-                for (int i = 0; i < desiredSize; i++) ((Object[]) dataArray.get())[i] = array[i % array.length];
+                data = CPU.get().allocate(DataType.of(Object.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) ((Object[]) data.get())[i] = array[i % array.length];
             }
-            return dataArray;
+            return data;
         }
         else
             throw new IllegalArgumentException("Array type '"+jvmData.getClass().getSimpleName()+"' not supported!");
     }
 
-    public DataArray allocate( Object data ) {
+    public neureka.Data allocate(Object data ) {
         int size;
         if ( data instanceof Object[] ) {
             size = ( (Object[]) data ).length;
@@ -420,7 +419,7 @@ public class CPU extends AbstractDevice<Object>
         else
             throw new IllegalArgumentException( "Unsupported data type: " + data.getClass() );
 
-        DataArray dataArray = CPU.get().allocate( data, size );
+        neureka.Data dataArray = CPU.get().allocate( data, size );
         if ( dataArray.get() != data )
             throw new IllegalStateException( "CPU seems to have reallocated some already valid data unnecessarily! This is most likely a bug." );
 
@@ -428,47 +427,47 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final DataArray _actualize( Tsr<?> tensor ) {
-        DataArray dataArray = tensor.getUnsafe().getDataArray();
-        Object value = dataArray.get();
+    protected final neureka.Data _actualize(Tsr<?> tensor ) {
+        neureka.Data data = tensor.getUnsafe().getDataArray();
+        Object value = data.get();
         DataType<?> dataType = tensor.getDataType();
         int size = tensor.size();
         Class<?> typeClass = dataType.getRepresentativeType();
         Object newValue;
         if ( typeClass == F64.class ) {
-            if ( ( (double[]) value ).length == size ) return dataArray;
+            if ( ( (double[]) value ).length == size ) return data;
             newValue = new double[ size ];
             if ( ( (double[]) value )[ 0 ] != 0d ) Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );
         } else if ( typeClass == F32.class ) {
-            if ( ( (float[]) value ).length == size ) return dataArray;
+            if ( ( (float[]) value ).length == size ) return data;
             newValue = new float[size];
             if ( ( (float[]) value )[ 0 ] != 0f ) Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );
         } else if ( typeClass == I32.class ) {
-            if ( ( (int[]) value ).length == size ) return dataArray;
+            if ( ( (int[]) value ).length == size ) return data;
             newValue = new int[ size ];
             if ( ( (int[]) value )[ 0 ] != 0 ) Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );
         } else if ( typeClass == I16.class ) {
-            if ( ( (short[]) value ).length == size ) return dataArray;
+            if ( ( (short[]) value ).length == size ) return data;
             newValue = new short[ size ];
             if ( ( (short[]) value )[ 0 ] != 0 ) Arrays.fill( (short[]) newValue, ( (short[]) value )[ 0 ] );
         } else if ( typeClass == I8.class ) {
-            if ( ( (byte[]) value ).length == size ) return dataArray;
+            if ( ( (byte[]) value ).length == size ) return data;
             newValue = new byte[ size ];
             if ( ( (byte[]) value )[ 0 ] != 0 ) Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );
         } else if ( typeClass == I64.class ) {
-            if ( ( (long[]) value ).length == size ) return dataArray;
+            if ( ( (long[]) value ).length == size ) return data;
             newValue = new long[ size ];
             if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );
         } else if ( typeClass == Boolean.class ) {
-            if ( ( (boolean[]) value ).length == size ) return dataArray;
+            if ( ( (boolean[]) value ).length == size ) return data;
             newValue = new boolean[ size ];
             Arrays.fill( (boolean[]) newValue, ( (boolean[]) value )[ 0 ] );
         } else if ( typeClass == Character.class ) {
-            if ( ( (char[]) value ).length == size ) return dataArray;
+            if ( ( (char[]) value ).length == size ) return data;
             newValue = new char[ size ];
             if ( ( (char[]) value )[ 0 ] != (char) 0 ) Arrays.fill( (char[]) newValue, ( (char[]) value )[ 0 ] );
         } else {
-            if ( ( (Object[]) value ).length == size ) return dataArray;
+            if ( ( (Object[]) value ).length == size ) return data;
             newValue = new Object[ size ];
             if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
         }

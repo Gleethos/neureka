@@ -46,6 +46,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -191,7 +192,9 @@ public final class NdaAsString
         if ( _isCellBound ) finalProcessing = i -> {
             String s = postProcessing.stringify( i );
             int margin =  s.length() - cellSize;
-            if ( margin > 0 ) s = s.substring( 0, cellSize - 2 ) + "..";
+            if ( margin > 0 )
+                s = s.substring(0, Math.max(0, cellSize - 2)) + "..";
+
             return s;
         };
         else finalProcessing = postProcessing;
@@ -385,7 +388,8 @@ public final class NdaAsString
         int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );
         int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );
         trimEnd += ( trimSize % 2 );
-        assert _shape[dim] <= _rowLimit || (_shape[dim] - (trimEnd - trimStart)) == _rowLimit;
+        if ( !(_shape[dim] <= _rowLimit || (_shape[dim] - (trimEnd - trimStart)) == _rowLimit) )
+            throw new IllegalStateException("Failed to print tensor!");
         NDFrame<?> alias = _tensor.get( NDFrame.class );
         if ( dim == indices.length - 1 ) {
             if (
@@ -397,13 +401,17 @@ public final class NdaAsString
                 if ( aliases != null ) {
                     _$( Util.indent( dim ) );
                     _$( _legacy ? "[ " : "( " ); // The following assert has prevented many String miscarriages!
-                    assert aliases.size() - _shape[ indices.length - 1 ] == 0; // This is a basic requirement for the label size...
+                    int missing = _shape[ indices.length - 1 ] - aliases.size();
+                    if ( missing > 0 ) { // This is a basic requirement for the label size...
+                        aliases = new ArrayList<>(aliases);
+                        for ( int i = 0; i < missing; i++ ) aliases.add("");
+                    }
                     ValStringifier getter = _createValStringifierAndFormatter( aliases.toArray() );
                     _buildRow(
-                            trimStart, trimEnd, trimSize,
-                            new int[ indices.length ],
-                            iarr -> getter.stringify( iarr[ iarr.length -1 ] ),
-                            _legacy ? "][" : ")("
+                        trimStart, trimEnd, trimSize,
+                        new int[ indices.length ],
+                        iarr -> getter.stringify( iarr[ iarr.length -1 ] ),
+                        _legacy ? "][" : ")("
                     );
                     _$( _legacy ? " ]" : " )" );
                     if ( alias.getTensorName() != null )
@@ -421,10 +429,11 @@ public final class NdaAsString
             _buildRow( trimStart, trimEnd, trimSize, indices, fun, ", " );
             _$( _legacy ? " )" : " ]" );
 
-            if ( alias != null ) _$( ":" )._buildSingleLabel( alias, dim, indices );
+            if ( alias != null && alias.hasLabelsForAxis( dim - 1 ) )
+                _$( ":" )._buildSingleLabel( alias, dim, indices );
         } else {
             _$( Util.indent( dim ) );
-            if ( dim > 0 && alias != null )
+            if ( dim > 0 && alias != null && alias.hasLabelsForAxis(dim-1) )
                 _buildSingleLabel( alias, dim, indices )._$(":");
             _$( ( _legacy ? "(" : "[" ) + _breakAndIndent() );
             int i = 0;
@@ -453,7 +462,7 @@ public final class NdaAsString
             int i = ( dim == indices.length - 1 )
                     ? ( _shape[ pos ] + indices[ pos ] - 1 ) % _shape[ pos ]
                     : indices[ pos ];
-            _$( key.get( i ).toString() );
+            _$( i >= key.size() ? "" : key.get( i ).toString() );
             _$( _legacy ? " ]" : " )" );
         }
         return this;
