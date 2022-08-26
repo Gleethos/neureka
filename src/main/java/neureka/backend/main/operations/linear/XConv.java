@@ -49,19 +49,9 @@ public class XConv extends AbstractOperation
                 .setDeviceExecution(
                     (context, executor) ->
                     {
-                        ExecutionCall<?> call = context.initialCall();
-                        Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
-                        tensors[ 0 ] =
-                            (call.getValOf( Arg.DerivIdx.class ) < 0)
-                                    ? Tsr.of(
-                                            call.input(0).getItemType(),
-                                            ConvUtil.shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
-                                            0
-                                    )
-                                    .getUnsafe()
-                                    .setIsIntermediate( true )
-                                    : null;
-
+                        ExecutionCall<?> call = context.call();
+                        ExecutionCall<?> inner = context.call();
+                        Tsr<?>[] tensors = inner.inputs();
                         for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
 
                         ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
@@ -98,15 +88,13 @@ public class XConv extends AbstractOperation
                 .setCallPreparation(
                      call -> {
                          Device<Number> device = call.getDeviceFor(Number.class);
-                         if ( call.input( 0 ) == null ) // Creating a new tensor:
-                         {
-                             int[] shp = ConvUtil.shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
-                             Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
-                             output.setIsVirtual( false );
-                             device.store( output );
-                             return call.withInputAt( 0, output );
-                         }
-                         return call;
+                         int[] shp = ConvUtil.shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
+                         Tsr<Number> output = (Tsr<Number>) Tsr.of( call.input(1).getItemType(), shp, 0 )
+                                                 .getUnsafe()
+                                                 .setIsIntermediate( true );
+                         output.setIsVirtual( false );
+                         //device.store( output );//Todo: find out why this causes problems
+                         return call.withInputAt( 0, output );
                      }
                 )
                 .buildFunAlgorithm()

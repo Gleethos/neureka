@@ -100,7 +100,7 @@ class Cross_Device_Spec extends Specification
 
 
     @IgnoreIf({ data.deviceType == "GPU" && !Neureka.get().canAccessOpenCLDevice() })
-    def 'Test cross device system test runs successfully.' (
+    def 'Cross device system test runs successfully.' (
             String deviceType
     ) {
         given : 'A given device of any type and the settings configured for testing.'
