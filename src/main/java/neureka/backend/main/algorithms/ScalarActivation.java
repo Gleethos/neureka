@@ -65,13 +65,12 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
             ExecutionCall<CPU> call,
             Functions<Fun> functions
     ) {
-        CPU.RangeWorkload workload = (i,end) -> {
+        return (i, end) -> {
             double      in  = call.input( Number.class, 1 ).item(0).doubleValue();
             Tsr<Number> out = call.input( Number.class, 0 );
             Number result =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(in);
             out.getUnsafe().setDataAt(0, result);
         };
-        return workload;
     }
 
 }
