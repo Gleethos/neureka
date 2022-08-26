@@ -28,12 +28,16 @@ function loadReportUI(target, search) {
                     let features = spec['executedFeatures'];
                     scores[name] = 0;
                     scores[name] += searchScore(term, spec['className'].replace(".", " ").replace("_", " ").toLowerCase());
+                    scores[name] += searchScore(term, spec['className'].toLowerCase());
                     scores[name] += searchScore(term, spec['title'].toLowerCase());
                     scores[name] += searchScore(term, spec['narrative'].toLowerCase());
                     let featureToScore = {};
                     features.forEach((feature) => {
-                        featureToScore[feature['id']] = searchScore(term, feature['id'].toLowerCase());
-                        scores[name] += featureToScore[feature['id']];
+                        let basicScore = searchScore(term, feature['id'].toLowerCase());
+                        if ( feature['id'].toLowerCase().indexOf(term.toLowerCase()) !== -1 )
+                            basicScore += ( term.length / 11.0 )*( term.length / 11.0 );
+                        featureToScore[feature['id']] = basicScore;
+                        scores[name] += basicScore;
                     });
                     // We sort the features based on their score:
                     features = Object.keys(featureToScore).sort((a, b) => {
