@@ -50,15 +50,13 @@ public class XConv extends AbstractOperation
                     (context, executor) ->
                     {
                         ExecutionCall<?> call = context.call();
-                        ExecutionCall<?> inner = context.call();
-                        Tsr<?>[] tensors = inner.inputs();
+                        Tsr<?>[] tensors = call.inputs();
                         for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
 
                         ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
                         return AbstractDeviceAlgorithm.executeOnCommonDevice(
                                 prepared,()->ConvUtil.executeRecursively( "x", prepared, null/*recursion is not expected to happen here*/ )
                         );
-
                     },
                     ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                     {

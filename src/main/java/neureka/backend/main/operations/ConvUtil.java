@@ -34,15 +34,13 @@ public class ConvUtil
                         Tsr<?>[] tensors = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
                         Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                         for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                        tensors[ 0 ] = AbstractDeviceAlgorithm.prepareAndExecuteRecursively(
+                        return AbstractDeviceAlgorithm.prepareAndExecuteRecursively(
                                                 ExecutionCall.of( tensors )
                                                         .andArgs( Arg.DerivIdx.of(0) )
                                                         .running( call.getOperation() )
                                                         .on( call.getDevice() ),
                                                 (a, b) -> ConvUtil.executeRecursively(op, a, b)
                                         );
-
-                        return tensors[ 0 ];
                     },
                     ( Function f, ExecutionCall<? extends Device<?>> adCall ) -> {
                         throw new UnsupportedOperationException("Not yet implemented!");
@@ -54,7 +52,7 @@ public class ConvUtil
                          if ( call.input( 0 ) == null ) // Creating a new tensor:
                          {
                              int[] shp = shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
-                             Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
+                             Tsr<Number> output = (Tsr<Number>) Tsr.of( call.input( 1 ).itemType(), shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                              output.setIsVirtual( false );
                              device.store( output );
                              return call.withInputAt( 0, output );
