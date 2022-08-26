@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Contract;
 
 public class ConvUtil
 {
-    public static Convolution createDeconvolutionFor( String operator ) {
+    public static Convolution createDeconvolutionFor( String op ) {
         return new Convolution()
                 .setAutogradModeFor( call -> {
                     if ( call.getOperation().supports( Convolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;
@@ -34,13 +34,13 @@ public class ConvUtil
                     {
                         ExecutionCall<?> call = context.initialCall();
                         Function caller = context.caller();
-                        if ( call.getOperation().getOperator().equals("x") ) {
+                        if ( op.equals("x") ) {
                             Tsr<?>[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};
                             tensors[ 0 ] =
                                 (call.getValOf( Arg.DerivIdx.class ) < 0)
                                         ? Tsr.of(
                                                 call.input(0).getItemType(),
-                                                _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
+                                                shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),
                                                 0
                                         )
                                         .getUnsafe()
@@ -50,7 +50,9 @@ public class ConvUtil
                             for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
 
                             ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
-                            return AbstractDeviceAlgorithm.executeOnCommonDevice(prepared,()->ConvUtil._executeRecursively( prepared, null/*recursion is not expected to happen here*/ ));
+                            return AbstractDeviceAlgorithm.executeOnCommonDevice(
+                                    prepared,()->ConvUtil.executeRecursively( op, prepared, null/*recursion is not expected to happen here*/ )
+                            );
                         } else {
                             Tsr<?>[] tensors = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
                             Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
@@ -60,7 +62,7 @@ public class ConvUtil
                                                             .andArgs( Arg.DerivIdx.of(0) )
                                                             .running( call.getOperation() )
                                                             .on( call.getDevice() ),
-                                                    ConvUtil::_executeRecursively
+                                                    (a, b) -> ConvUtil.executeRecursively(op, a, b)
                                             );
 
                             return tensors[ 0 ];
@@ -70,7 +72,7 @@ public class ConvUtil
                     {
                         int d = adCall.getDerivativeIndex();
                         Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
-                                "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
+                                "I[ 0 ]" + op + ">>I[ 1 ]" + op + ">>I[ 2 ]",
                                 false
                         );
                         Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
@@ -96,7 +98,7 @@ public class ConvUtil
                          Device<Number> device = call.getDeviceFor(Number.class);
                          if ( call.input( 0 ) == null ) // Creating a new tensor:
                          {
-                             int[] shp = _shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
+                             int[] shp = shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
                              Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
                              output.setIsVirtual( false );
                              device.store( output );
@@ -109,7 +111,7 @@ public class ConvUtil
     }
 
     @Contract(pure = true)
-    private static int[] _shapeOfCon( int[] shape1, int[] shape2 ) {
+    public static int[] shapeOfCon(int[] shape1, int[] shape2 ) {
         int[] shape = new int[ ( shape1.length + shape2.length ) / 2 ];
         for ( int i = 0; i < shape1.length && i < shape2.length; i++ )
             shape[ i ] = Math.abs( shape1[ i ] - shape2[ i ] ) + 1;
@@ -118,7 +120,8 @@ public class ConvUtil
 
 
     @Contract( pure = true )
-    private static Tsr<?> _executeRecursively(
+    public static Tsr<?> executeRecursively(
+            String op,
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
@@ -151,7 +154,7 @@ public class ConvUtil
             if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
             return result;
         } else {
-            if ( call.getOperation().getOperator().equals("x") ) {
+            if ( op.equals("x") ) {
                 if ( d >= 0 ) {
                     if ( d == 0 )
                         call = call.withInputAt( 0, call.input( 2 ) );
@@ -162,7 +165,7 @@ public class ConvUtil
                 } else {
                     call.rearrangeInputs( 0, 1, 2 );
                 }
-            } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
+            } else if ( op.equals("x"+ ((char) 187)) ) {
                 call.rearrangeInputs( 2, 1, 0 );
             }
             return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
