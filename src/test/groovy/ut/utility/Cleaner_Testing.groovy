@@ -3,12 +3,31 @@ package ut.utility
 import neureka.Tsr
 import neureka.devices.DeviceCleaner
 import spock.lang.Specification
+import spock.lang.Title
+import spock.lang.Narrative
 import testutility.Sleep
 
+@Title("How Neureka Cleans Up")
+@Narrative ('''
+
+    Under the hood 
+    Neureka deals whith large arrays of
+    data, which are often times 
+    native data arrays requiring explicit
+    memory freeing!
+    This freeing of memory can happen at any time
+    during the livetime of a nd-array, however
+    it should happen at least up until the nd-arra/tensor
+    objects representing their referenced data arrays become
+    eligible for garbage collection.
+    This specification ensures that the custom garbage
+    cleaner implementation used by Neureka fulfills this role 
+
+''')
 class Cleaner_Testing extends Specification
 {
 
-    def 'The default DeviceCleaner works'(){
+    def 'The DeviceCleaner triggers registersd cleaner actions when things are eligable for GC.'(){
 
         given :
             def cleaner = DeviceCleaner.getInstance()
