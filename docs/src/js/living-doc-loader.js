@@ -314,8 +314,11 @@ function createUIForFeature(featureData) {
         let blockDiv = $('<div></div>');
         let blockTitle = $('<div style="width:100%"></div>');
         let text = block['text'];
-        // We check if the text is empty and if so we display a universal default deqscription:
-        if ( text.length === 0 ) text = "The parameters in the above code can have the following states:";
+        // We check if the text is empty and if so we may display a universal default description:
+        if ( text.length === 0 && kind === 'where' ) 
+            text = "The parameters in the above code can have the following states:";
+        if ( text.length === 0 && kind === 'then' )
+            text = "The expression"+(block['code'].length>1?"s":"")+" below "+(block['code'].length>1?"are":"is")+" true:";
         blockTitle.html("<i>"+uppercaseFirstLetter(kind)+"</i> "+lowercaseFirstLetter(text));
         blockDiv.append(blockTitle);
         if ( kind === 'where' ) {
