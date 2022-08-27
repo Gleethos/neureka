@@ -9,20 +9,24 @@ import neureka.ndim.config.types.sliced.Sliced1DConfiguration
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
 import spock.lang.Title
+import spock.lang.Narrative
 
 @Title("What it means to be N-Dimensional")
+@Narrative('''
+
+    This specification covers how implementations
+    of the `NDConfiguration` interface manage to define
+    what it means to be a n-dimensional tensor/nd-array.
+
+''')
 class Tensor_NDConfiguration_Spec extends Specification
 {
     def setupSpec()
     {
         reportHeader """
-            <p>
-                Specified below are strict integration tests for tensors and
-                their behaviour with regards to the usage of implementations of the
-                NDConfiguration interface. <br>
                 For certain situations the "Tsr" class should use the correct 
                 implementations of said interface as configuration for internal index mapping...
-            </p>
+
         """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
