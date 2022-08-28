@@ -52,3 +52,4 @@ neureka.backend.main.operations.other.Cat
 neureka.backend.main.operations.other.Slice
 neureka.backend.main.operations.other.Min
 neureka.backend.main.operations.other.Max
+neureka.backend.main.operations.other.Sum

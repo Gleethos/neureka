@@ -4,6 +4,7 @@ package ut.device.internal
 import neureka.Tsr
 import neureka.backend.api.ExecutionCall
 import neureka.backend.main.operations.linear.internal.opencl.CLReduce
+import neureka.backend.main.operations.linear.internal.opencl.CLSum
 import neureka.backend.main.operations.linear.internal.opencl.GEMM
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
@@ -53,6 +54,7 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             _ * call.input(0) >> a
             (1.._) * call.input(Float, 0) >> a
             (1.._) * call.getDevice() >> device
+            (1.._) * device.maxWorkGroupSize() >> 64
             (1.._) * device.hasAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >>> [false, true]
             (1.._) * device.compileAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64", _) >> device
             (1.._) * device.getAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >> kernel
@@ -64,6 +66,30 @@ class OpenCL_Kernel_Unit_Spec extends Specification
 
         where :
             type << [CLReduce.Type.MIN, CLReduce.Type.MAX]
+    }
+
+
+    def 'The Sum implementation for the OpenCLDevice has realistic behaviour'()
+    {
+        given :
+            var a = Tsr.ofFloats().withShape(19, 7).andWhere({i, _ -> (1+(7**i)%30)})
+            var call = Mock(ExecutionCall)
+            var device = Mock(OpenCLDevice)
+            var kernel = Mock(KernelCaller)
+
+        when :
+            new CLSum().run( call )
+
+        then :
+            _ * call.input(0) >> a
+            (1.._) * call.input(Float, 0) >> a
+            (1.._) * call.getDevice() >> device
+            (1.._) * device.maxWorkGroupSize() >> 32
+            (1.._) * device.hasAdHocKernel("fast_local_mem_based_sum") >>> [false, true]
+            (1.._) * device.compileAdHocKernel("fast_local_mem_based_sum", _) >> device
+            (1.._) * device.getAdHocKernel("fast_local_mem_based_sum") >> kernel
+            (3.._) * kernel.pass(_) >> kernel
+            (1.._) * kernel.passLocalFloats(_) >> kernel
     }
 
 }

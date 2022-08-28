@@ -110,7 +110,20 @@ class Tensor_Stats_Spec extends Specification
             (x+y).backward()
 
         then : 'The gradient is correct:'
-            a.gradient.items == [0.0, 0.0, 0.0, 1.5, 0.0, 0.75, 0.0]
+            a.gradient.items == [0f, 0f, 0f, 1.5f, 0f, 0.75f, 0f]
+    }
+
+    def 'We can use the "sum" method to sum the items of a tensor.'()
+    {
+        given : 'We create a tensor:'
+            var a = Tsr.of(Float)
+                                .withShape(13, 73, 11)
+                                .andWhere({ i, _ -> ((7**i) % 11)-5})
+        and : 'We sum the items of the tensor:'
+            var sum = a.sum()
+
+        expect : 'The result is correct:'
+            sum.item() == 2029
     }
 
 }

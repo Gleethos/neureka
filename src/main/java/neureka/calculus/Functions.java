@@ -48,6 +48,7 @@ public class Functions {
 
     private final Function _min;
     private final Function _max;
+    private final Function _sum;
 
 
     public Functions( boolean doingAD ) {
@@ -90,6 +91,7 @@ public class Functions {
         _selu  = Function.of("selu(I[0])",                     doingAD );
         _min  = Function.of("min(I[0])",                       doingAD );
         _max  = Function.of("max(I[0])",                       doingAD );
+        _sum  = Function.of("sumItems(I[0])",                  doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -391,6 +393,10 @@ public class Functions {
     public final Function getMax() { return _max; }
 
     public final Function max() { return _max; }
+
+    public final Function getSum() { return _sum; }
+
+    public final Function sum() { return _sum; }
 
     @Override
     public final String toString() {

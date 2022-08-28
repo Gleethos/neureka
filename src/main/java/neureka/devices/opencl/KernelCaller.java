@@ -97,14 +97,29 @@ public class KernelCaller
     }
 
     /**
+     *  Use this to pass an array of float values to the kernel.
      *
+     * @param values An array of float values which ought to be passed to the kernel.
+     * @return This very KernelCaller instance (factory pattern).
+     */
+    public KernelCaller pass( float... values ) {
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_float * (long) values.length, Pointer.to( values ) );
+        _argId++;
+        return this;
+    }
+
+    public KernelCaller passLocalFloats(long size ) {
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_float * (long) size, null );
+        _argId++;
+        return this;
+    }
+
+    /**
      * @param value A float value which ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller pass( float value ) {
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_float, Pointer.to( new float[]{ value } ) );
-        _argId++;
-        return this;
+        return this.pass( new float[]{ value } );
     }
 
     /**
@@ -130,6 +145,25 @@ public class KernelCaller
         );
     }
 
+     /**
+     *  Use this to call the kernel with 2 long arrays defining how the kernel should be indexed and parallelized.
+     *  The {@code globalWorkSizes} span an n-dimensional grid of global threads,
+     *  whereas the {@code localWorkSizes} defines the dimensions of a grid of local work items (which are called "work groups").
+     *  The total number of work items is equal to the product of the {@code localWorkSizes} array entries
+     *  exactly like the product of the {@code globalWorkSizes} array is the total number of (global) threads.        <br>
+     *  Both sizes have to fulfill the following condition: {@code globalWorkSize = localWorkSize * numberOfGroups}. <br>
+     *  Note: The {@code localWorkSizes} is optional, so the second argument may be null
+     *  in which case OpenCL will choose a local group size appropriately for you.
+     *  This is usually also the optimal choice,
+     *  however if the global work size is a prime number (that is larger than the maximum local work size),
+     *  then an OpenCL implementation may be forced to use a local work size of 1...
+     * <p>
+     * This can usually be circumvented by padding the data to be a multiple of a more appropriate
+     * local work size or by introducing boundary checks in your kernel.
+     *
+     * @param globalWorkSizes An arrays of long values which span a nd-grid of global threads.
+     * @param localWorkSizes  An arrays of long values which span a nd-grid of local threads (work groups).
+     */
     public void call( long[] globalWorkSizes, long[] localWorkSizes )
     {
         cl_event[] events = _getWaitList( _inputs.toArray( new Tsr[ 0 ] ) );

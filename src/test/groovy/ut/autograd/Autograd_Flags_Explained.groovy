@@ -126,7 +126,7 @@ class Autograd_Flags_Explained extends Specification
             def result = z.mean()
 
         then : 'This "result" tensor will be the expected scalar :'
-            result.toString().contains("(1x1):[27.0]")
+            result.toString().contains("27.0")
 
         when : """
                 We now try to backpropagate! Because "result" contains a single scalar,

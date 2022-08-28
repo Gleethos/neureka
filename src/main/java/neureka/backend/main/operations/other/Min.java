@@ -41,6 +41,7 @@ public class Min extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
             .setExecution( (caller, call) -> {
                 Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
+                call = call.withInputs(inputs);
                 Tsr<Integer> index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
                 int i = index.item(0);
                 Tsr<?> in = inputs[0] == null ? inputs[1] : inputs[0];

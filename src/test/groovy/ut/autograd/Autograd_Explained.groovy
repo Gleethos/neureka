@@ -113,7 +113,7 @@ class Autograd_Explained extends Specification
             def result = z.mean()
 
         then : 'This "result" tensor will be the expected scalar :'
-            result.toString().contains("(1x1):[27.0]")
+            result.toString().contains("27.0")
 
         when : 'Any new tensor is created...'
             def someTensor = Tsr.newInstance()

@@ -6,7 +6,7 @@ import neureka.backend.api.ImplementationFor;
 import neureka.devices.host.CPU;
 
 /**
- *  An implementation of the min and may algorithm running on the CPU.
+ *  An implementation of the min and max algorithm running on the CPU.
  *  This algorithm splits the provided input tensor into chucks which
  *  are then reduced to local min and max values.
  *  This happens iteratively until only a single value is left.

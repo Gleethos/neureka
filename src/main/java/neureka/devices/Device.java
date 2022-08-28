@@ -133,6 +133,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     static <T, D extends Device<T>> D get( Class<D> deviceType, String... searchKeys ) {
         LogUtil.nullArgCheck( deviceType, "deviceType", Class.class );
         LogUtil.nullArgCheck( searchKeys, "searchKeys", String.class );
+        if ( searchKeys.length == 0 ) searchKeys = new String[] { "first" };
         return Query.query( deviceType, searchKeys );
     }
 

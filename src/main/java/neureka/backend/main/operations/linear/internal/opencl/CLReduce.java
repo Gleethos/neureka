@@ -17,11 +17,10 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
     public enum Type { MIN, MAX }
 
     private final Type _type;
-    private final static int RTS = 64; // Register Tile Size
     private final String _comparator;
 
     public CLReduce(Type type) {
-        String comparator = "";
+        String comparator;
         switch (type) {
             case MIN: comparator = "current < value"; break;
             case MAX: comparator = "current > value"; break;
@@ -45,8 +44,8 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
 
     private int _runRecursively(Tsr<Float> in, OpenCLDevice device)
     {
+        final long RTS = device.maxWorkGroupSize(); // Register tile size
         final int SIZE = in.size();
-
         double fraction = (double) SIZE / (double) RTS;
         // Determining optimal number of tiles!
         int N;
@@ -117,7 +116,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
 
     /**
      *  Creates and return a new tensor with the size of the
-     *  {@code indices} tensor but with th values targeted in the {@code in}
+     *  {@code indices} tensor but with the values targeted in the {@code in}
      *  argument.
      *  All of this is done on a simple index to array entry mapping kernel!
      */

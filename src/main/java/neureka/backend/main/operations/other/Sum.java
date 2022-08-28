@@ -7,22 +7,21 @@ import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.operations.linear.internal.opencl.CLReduce;
+import neureka.backend.main.operations.linear.internal.opencl.CLSum;
 import neureka.backend.main.operations.other.internal.CPUReduce;
+import neureka.backend.main.operations.other.internal.CPUSum;
 import neureka.calculus.Function;
-import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
-public class Max extends AbstractOperation
+public class Sum extends AbstractOperation
 {
-    public Max()
+    public Sum()
     {
         super(
             new OperationBuilder()
-                .identifier(       "max"       )
-                .operator(         "max"       )
+                .identifier(       "sumItems"       )
+                .operator(         "sumItems"       )
                 .arity(            1           )
                 .isOperator(       false       )
                 .isIndexer(        false       )
@@ -32,7 +31,7 @@ public class Max extends AbstractOperation
 
         setAlgorithm(
             DeviceAlgorithm
-            .withName("max_algorithm")
+            .withName("sum_algorithm")
             .setIsSuitableFor(
                 call -> call.validate()
                             .allNotNull( t -> Number.class.isAssignableFrom(t.getItemType()) )
@@ -42,22 +41,13 @@ public class Max extends AbstractOperation
             .setExecution( (caller, call) -> {
                 Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
                 call = call.withInputs(inputs);
-                Tsr<Integer> index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
-                int i = index.item();
-                Tsr<?> in = inputs[0] == null ? inputs[1] : inputs[0];
-                Class<Object> typeClass = (Class<Object>) in.itemType();
-                int[] shape = in.getNDConf().shape();
-                Device<Object> device = (Device<Object>) call.getDevice();
+                Tsr<?> result = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
+
                 return Result.of(
-                            Tsr.of(in.itemType(), new int[]{1}, in.item(i)).to(call.getDevice()).getUnsafe().setIsIntermediate(true)
+                            result.getUnsafe().setIsIntermediate(true)
                         )
                         .withADAction( target -> {
-                            Tsr<Object> error = (Tsr<Object>) target.error();
-                            assert error.size() == 1;
-                            Tsr<Object> newError = ElemWiseUtil.newTsrLike(typeClass, shape, true, device, 0);
-                            newError.setIsVirtual(false);
-                            newError.setItemAt(i, error.item(0));
-                            return newError;
+                            throw new UnsupportedOperationException("The sum operation is not yet supported for auto differentiation!");
                         });
             })
             .setCallPreparation( call ->
@@ -68,8 +58,8 @@ public class Max extends AbstractOperation
                  return call;
              })
             .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUReduce(CPUReduce.Type.MAX) )
-            .setImplementationFor( OpenCLDevice.class, new CLReduce(CLReduce.Type.MAX) )
+            .setImplementationFor( CPU.class, new CPUSum() )
+            .setImplementationFor( OpenCLDevice.class, new CLSum() )
         );
     }
 

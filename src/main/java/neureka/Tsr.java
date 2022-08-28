@@ -1437,21 +1437,18 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> sum = this.sum();
         Tsr<V> result = functions.div().call( sum, of( this.getItemType(), new int[]{1}, this.size() ) );
-        sum.getUnsafe().delete();
+        sum.getUnsafe().delete(); // This is a temporary tensor which is not needed anymore! (not even for back propagation)
         return result;
     }
 
     default Tsr<V> sum() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
-        Tsr<V> ones = of( this.getItemType(), this.getNDConf().shape(), 1 );
-        Tsr<V> sum = functions.conv().call( this, ones );
-        if ( !ones.belongsToGraph() || !ones.getGraphNode().isUsedAsDerivative() )
-            ones.getUnsafe().delete();
+        Tsr<V> sum = functions.sum().call( this );
         if ( sum == null )
             throw new IllegalStateException(
-                "Failed to calculate sum using convolution! Shapes: "+
-                Arrays.toString(this.getNDConf().shape())+"x"+Arrays.toString(ones.getNDConf().shape())
-            );
+                    "Failed to calculate sum using function! Shape: "+
+                    Arrays.toString(this.getNDConf().shape())
+                );
         return sum;
     }
 
@@ -1460,7 +1457,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         Tsr<V> min = functions.min().call( this );
         if ( min == null )
             throw new IllegalStateException(
-                "Failed to calculate min using min function! Shapes: "+
+                "Failed to calculate min using min function! Shape: "+
                 Arrays.toString(this.getNDConf().shape())
             );
         return min;
@@ -1471,7 +1468,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         Tsr<V> max = functions.max().call( this );
         if ( max == null )
             throw new IllegalStateException(
-                "Failed to calculate max using max function! Shapes: "+
+                "Failed to calculate max using max function! Shape: "+
                 Arrays.toString(this.getNDConf().shape())
             );
         return max;

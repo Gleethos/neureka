@@ -127,7 +127,7 @@ class Autograd_NN_Spec extends Specification
             z2s[0].contains("(3x1):[-0.39169, -0.24453, -0.23981]") // This has been checked thoroughly!
             outputResults[0].contains("(3x1):[0.40330, 0.43917, 0.44033]; ->d(3x1):[0.24065, 0.24629, 0.24643]")// This has been checked thoroughly!
             errors[0].contains("(3x1):[0.51669, 0.56082, 0.44966]") // This has been checked thoroughly!
-            losses[0].contains("(1x1):[0.26123]")
+            losses[0].contains("0.26123")
 
             W1s[1].contains("(2x3):[-1.13651, -0.00752, -1.52342, -1.3438, -1.03799, 0.55511]:g:[null]")
             z1s[1].contains("(3x3):[-2.10151, -1.043, -0.46055, -1.12542, -0.57921, -0.19933, -2.03242, -0.69955, -1.15333]")
@@ -136,12 +136,12 @@ class Autograd_NN_Spec extends Specification
             z2s[1].contains("(3x1):[-0.25019, -0.08770, -0.11706]") // This has been checked thoroughly!
             outputResults[1].contains("(3x1):[0.43777, 0.47808, 0.47076]; ->d(3x1):[0.24612, 0.24951, 0.24914]")// This has been checked thoroughly!
             errors[1].contains("(3x1):[0.48222, 0.52191, 0.41923]") // This has been checked thoroughly!
-            losses[1].contains("(1x1):[0.22689]")
+            losses[1].contains("0.22689")
 
-            losses[2].contains("(1x1):[0.19843]")
-            losses[3].contains("(1x1):[0.17438]")
-            losses[4].contains("(1x1):[0.15367]")
-            losses[5].contains("(1x1):[0.13556]")
+            losses[2].contains("0.19843")
+            losses[3].contains("0.17438")
+            losses[4].contains("0.15367")
+            losses[5].contains("0.13556")
 
         and :
             graph.contains("""
@@ -243,7 +243,7 @@ class Autograd_NN_Spec extends Specification
                 z2s[0].contains("(3):[-0.39169, -0.24453, -0.23981]") // This has been checked thoroughly!
                 outputResults[0].contains("(3):[0.40330, 0.43917, 0.44033]; ->d(3):[0.24065, 0.24629, 0.24643]")// This has been checked thoroughly!
                 errors[0].contains("(3x1):[0.51669, 0.56082, 0.44966]") // This has been checked thoroughly!
-                losses[0].contains("(1x1):[0.26123]")
+                losses[0].contains("0.26123")
 
                 W1s[1].contains("(2x3):[-1.13651, -0.00752, -1.52342, -1.3438, -1.03799, 0.55511]:g:[null]")
                 z1s[1].contains("(3x1x3):[-2.10151, -1.043, -0.46055, -1.12542, -0.57921, -0.19933, -2.03242, -0.69955, -1.15333]")
@@ -252,12 +252,12 @@ class Autograd_NN_Spec extends Specification
                 z2s[1].contains("(3):[-0.25019, -0.08770, -0.11706]") // This has been checked thoroughly!
                 outputResults[1].contains("(3):[0.43777, 0.47808, 0.47076]; ->d(3):[0.24612, 0.24951, 0.24914]")// This has been checked thoroughly!
                 errors[1].contains("(3x1):[0.48222, 0.52191, 0.41923]") // This has been checked thoroughly!
-                losses[1].contains("(1x1):[0.22689]")
+                losses[1].contains("0.22689")
 
-                losses[2].contains("(1x1):[0.19843]")
-                losses[3].contains("(1x1):[0.17438]")
-                losses[4].contains("(1x1):[0.15367]")
-                losses[5].contains("(1x1):[0.13556]")
+                losses[2].contains("0.19843")
+                losses[3].contains("0.17438")
+                losses[4].contains("0.15367")
+                losses[5].contains("0.13556")
 
             and :
                 graph.contains("""
@@ -371,7 +371,7 @@ class Autograd_NN_Spec extends Specification
             z2s[0].contains("(3):[-0.39169, -0.24453, -0.23981]") // This has been checked thoroughly!
             outputResults[0].contains("(3):[0.40330, 0.43917, 0.44033]; ->d(3):[0.24065, 0.24629, 0.24643]")// This has been checked thoroughly!
             errors[0].contains("(3x1):[0.51669, 0.56082, 0.44966]") // This has been checked thoroughly!
-            losses[0].contains("(1x1):[0.26123]")
+            losses[0].contains("0.26123")
 
             W1s[1].contains("(2x3):[-1.13651, -0.00752, -1.52342, -1.3438, -1.03799, 0.55511]:g:[null]")
             z1s[1].contains("(3x1x3):[-2.10151, -1.043, -0.46055, -1.12542, -0.57921, -0.19933, -2.03242, -0.69955, -1.15333]")
@@ -380,12 +380,12 @@ class Autograd_NN_Spec extends Specification
             z2s[1].contains("(3):[-0.25019, -0.08770, -0.11706]") // This has been checked thoroughly!
             outputResults[1].contains("(3):[0.43777, 0.47808, 0.47076]; ->d(3):[0.24612, 0.24951, 0.24914]")// This has been checked thoroughly!
             errors[1].contains("(3x1):[0.48222, 0.52191, 0.41923]") // This has been checked thoroughly!
-            losses[1].contains("(1x1):[0.22689]")
+            losses[1].contains("0.22689")
 
-            losses[2].contains("(1x1):[0.19843]")
-            losses[3].contains("(1x1):[0.17438]")
-            losses[4].contains("(1x1):[0.15367]")
-            losses[5].contains("(1x1):[0.13556]")
+            losses[2].contains("0.19843")
+            losses[3].contains("0.17438")
+            losses[4].contains("0.15367")
+            losses[5].contains("0.13556")
 
         and :
             graph.contains("""
