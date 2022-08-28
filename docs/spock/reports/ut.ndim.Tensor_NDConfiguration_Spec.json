@@ -1,7 +1,7 @@
 {
   "className":"ut.ndim.Tensor_NDConfiguration_Spec",
   "title":"What it means to be N-Dimensional",
-  "narrative":"",
+  "narrative":"This specification covers how implementations\n    of the `NDConfiguration` interface manage to define\n    what it means to be a n-dimensional tensor/nd-array.",
   "subjects":[],
   "statistics":{
     "runs":"2",
@@ -9,9 +9,9 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.009 seconds"
+    "duration":"0.008 seconds"
   },
-  "headers":["\n            <p>\n                Specified below are strict integration tests for tensors and\n                their behaviour with regards to the usage of implementations of the\n                NDConfiguration interface. <br>\n                For certain situations the \"Tsr\" class should use the correct \n                implementations of said interface as configuration for internal index mapping...\n            </p>\n        "],"tags":{},"see":[],
+  "headers":["\n                For certain situations the \"Tsr\" class should use the correct \n                implementations of said interface as configuration for internal index mapping...\n\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"NDConfiguration instances of tensors have expected state.",

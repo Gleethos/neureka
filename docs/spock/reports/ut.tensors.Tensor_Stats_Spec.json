@@ -4,19 +4,19 @@
   "narrative":"Various kinds of operations reduce tensors to scalars,\n    the most common ones being the min and max operations \n    which find the smallest as well as largest number among all \n    items of a tensor.\n    Neureka exposes various different ways to achieve this,\n    all of which are also differential (autograd support).",
   "subjects":["neureka.Tsr"],
   "statistics":{
-    "runs":"4",
+    "runs":"5",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.358 seconds"
+    "duration":"0.395 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.330 seconds",
+      "duration":"0.216 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -92,7 +92,24 @@
 
         {"kind":"when","text":"We back-propagate both paths by adding them and calling backward:","code":["(x+y).backward()"]},
 
-        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.items == [0.0, 0.0, 0.0, 1.5, 0.0, 0.75, 0.0]"]}
+        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.items == [0f, 0f, 0f, 1.5f, 0f, 0.75f, 0f]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use the \"sum\" method to sum the items of a tensor.",
+      "result":"PASS",
+      "duration":"0.159 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor:","code":["var a = Tsr.of(Float)",".withShape(13, 73, 11)",".andWhere({ i, _ -> ((7**i) % 11)-5})"]},
+
+        {"kind":"and","text":"We sum the items of the tensor:","code":["var sum = a.sum()"]},
+
+        {"kind":"expect","text":"The result is correct:","code":["sum.item() == 2029"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

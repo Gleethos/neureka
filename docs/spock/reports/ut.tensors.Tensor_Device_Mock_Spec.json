@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":["    \n            <h2>Tensor Device Mock Tests</h2>\n            <p>\n                This unit test specification covers \n                the expected behavior of tensors when interacting\n                with instances of implementations of the Device interface.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -37,7 +37,7 @@
     {
       "id":"The device of a tensor can be accessed via the \"device()\" method.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

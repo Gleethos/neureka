@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.987 seconds"
+    "duration":"1.883 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be constructed by passing List instances.",
       "result":"PASS",
-      "duration":"0.663 seconds",
+      "duration":"0.603 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Test benchmark script and simple tensor constructor.",
       "result":"PASS",
-      "duration":"1.320 seconds",
+      "duration":"1.276 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
