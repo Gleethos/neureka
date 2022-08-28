@@ -123,7 +123,9 @@ class Tensor_Stats_Spec extends Specification
             var sum = a.sum()
 
         expect : 'The result is correct:'
-            sum.item() == 2029
+            sum.item() == 123
+        and : 'This can be verified using a stream:'
+            sum.item == sum.items.stream().reduce(0,(x,y)->x+y)
     }
 
 }
