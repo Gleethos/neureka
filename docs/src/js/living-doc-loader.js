@@ -51,8 +51,8 @@ function loadReportUI(target, search) {
             let sortedScores = Object.keys(scores).sort((a,b)=>{
                 return scores[b]-scores[a];
             });
-            // And we select only the top 4:
-            sortedScores = sortedScores.slice(0,3);
+            // And we select only the top 5:
+            sortedScores = sortedScores.slice(0,5);
             let chosen = [];
             // We then iterate over the sorted scores:
             sortedScores.forEach((specName)=>{
@@ -307,33 +307,76 @@ function buildFeatureListFor(expandableFeature, data, content) {
 function createUIForFeature(featureData) {
     let wrapper = $('<div></div>');
     let blocks = $('<div></div>');
-    // We iterate over the blocks:#
-    featureData['blocks'].forEach((block)=>{
+    if ( featureData['iterations']['extraInfo'].length > 0 ) {
+        // We attach the extra info to the wrapper:
+        wrapper.append("<p>" + featureData['iterations']['extraInfo'][0] + "</p>");
+        //(only the first one because we don't care about all the iterations)
+    }
+    // We iterate over the blocks:
+    featureData['blocks'].forEach((block, i)=>{
+        autoCompleteMissingBlockData(block, 73 * i + featureData['blocks'].length );
         let kind = block['kind'];
-
+        let text = block['text'];
+        let code = block['code'];
         let blockDiv = $('<div></div>');
         let blockTitle = $('<div style="width:100%"></div>');
-        let text = block['text'];
-        // We check if the text is empty and if so we may display a universal default description:
-        if ( text.length === 0 && kind === 'where' ) 
-            text = "The parameters in the above code can have the following states:";
-        if ( text.length === 0 && kind === 'then' )
-            text = "The expression"+(block['code'].length>1?"s":"")+" below "+(block['code'].length>1?"are":"is")+" true:";
         blockTitle.html("<i>"+uppercaseFirstLetter(kind)+"</i> "+lowercaseFirstLetter(text));
         blockDiv.append(blockTitle);
         if ( kind === 'where' ) {
-            let table = dictionaryOfHeaderNamesToColumnArraysToTable(block['code']);
+            let table = dictionaryOfHeaderNamesToColumnArraysToTable(code);
             blockDiv.append(table);
         } else {
             let blockCode = $('<pre style="width:100%"></pre>');
-            let codeWrapper = $('<code class="hljs language-java" style="box-shadow: inset 0 0 3px 0px #767676"></code>');
+            let codeWrapper = $('<code class="hljs language-java" style="box-shadow: inset 0 0 3px 0 #767676"></code>');
             blockCode.append(codeWrapper);
-            codeWrapper.text(block['code'].join("\n"));
+            codeWrapper.text(code.join("\n"));
             blockDiv.append(blockCode);
         }
         blocks.append(blockDiv);
     });
     return wrapper.append(blocks);
+}
+
+function autoCompleteMissingBlockData(block, seed) {
+    let kind = block['kind'];
+    let text = block['text'];
+    let code = block['code'];
+    // We check if the text is empty and if so we may display a universal default description:
+    if ( text === '' ) {
+        switch ( seed % 5 ) {
+            case 0:
+                if ( kind === 'expect') text = "The line"+(code.length>1?"s":"")+" below to be true:";
+                if ( kind === 'when'  ) text = "We execute the following expression"+(code.length>1?"s":"")+":";
+                if ( kind === 'then'  ) text = "The expression"+(code.length>1?"s":"")+" below "+(code.length>1?"are":"is")+" true:";
+                if ( kind === 'where' ) text = "The parameters in the above code can have the following states:";
+                break;
+            case 1:
+                if ( kind === 'expect') text = "The expression"+(code.length>1?"s":"")+" below "+(code.length>1?"all yield":"yields")+" true:";
+                if ( kind === 'when'  ) text = "We execute the following line"+(code.length>1?"s":"")+":";
+                if ( kind === 'then'  ) text = "The line"+(code.length>1?"s":"")+" below "+(code.length>1?"all yield":"yields")+" true:";
+                if ( kind === 'where' ) text = "This works when the parameters used in the above code have the following states:";
+                break
+            case 2:
+                if ( kind === 'expect') text = "The following is true:";
+                if ( kind === 'when'  ) text = "We execute the following code:";
+                if ( kind === 'then'  ) text = "The following will be true:";
+                if ( kind === 'where' ) text = "For the used variables we can use the data below:";
+                break;
+            case 3:
+                if ( kind === 'expect') text = "These line"+(code.length>1?"s":"")+" to be true:";
+                if ( kind === 'when'  ) text = "We run this "+(code.length>1?"code":"line")+":";
+                if ( kind === 'then'  ) text = "The following will be true:";
+                if ( kind === 'where' ) text = "For the used variables we can use the data below:";
+                break;
+            case 4:
+                if ( kind === 'expect') text = (code.length>1?"These":"This")+" expression"+(code.length>1?"s":"")+" to be true:";
+                if ( kind === 'when'  ) text = "We run "+(code.length>1?"these lines":"this line")+" of code:";
+                if ( kind === 'then'  ) text = (code.length>1?"These lines are":"This line is")+" now true:";
+                if ( kind === 'where' ) text = "We can populate the used variables with the subsequent rows of data:";
+                break;
+        }
+    }
+    block['text'] = text;
 }
 
 // Takes a string and makes the first letter uppercase:
