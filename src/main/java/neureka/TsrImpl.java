@@ -136,24 +136,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         }
         args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (List<?>) args[ 0 ] ).toArray() : args[ 0 ];
         args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
-        if ( args[ 0 ] instanceof Object[] ) {
-            if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
-                args[ 0 ] = DataConverter.get().convert( args[ 0 ], int[].class );
-            }
-        }
-        //CASES:
-        if ( args[ 0 ] instanceof int[] ) {
-            TsrImpl<T> t = new TsrImpl<>();
-            if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
-                args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                t.constructFor(CPU.get(), NDConstructor.of((int[]) args[ 0 ])).newPopulatedFromOne( args[ 1 ], args[ 1 ].getClass() );
-            } else {
-                t._setDataType( DataType.of( args[1].getClass() ) );
-                t._constructAndAllocate( NDConstructor.of((int[]) args[0]), true );
-                ((Object[])t.getUnsafe().getData())[0] = args[1];
-            }
-            return t;
-        }
 
         Class<?> commonType = _extractCommonType(args);
         if ( commonType != null ) {
