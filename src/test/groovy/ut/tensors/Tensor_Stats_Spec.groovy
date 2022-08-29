@@ -129,4 +129,19 @@ class Tensor_Stats_Spec extends Specification
             sum.item() == a.unsafe.data.sum()
     }
 
+    def 'The sum operation support autograd (back-propagation).'() {
+        given : 'We create a simple tensor of floats which requires gradients:'
+            var a = Tsr.of(1f, 2f, 3f, 4f).setRqsGradient(true)
+        and : 'We first do a simple operation to get another tensor:'
+            var b = a * 3
+        and : 'We then do a sum operation:'
+            var x = b.sum()
+
+        when : 'We back-propagate the path by calling backward:'
+            x.backward()
+
+        then : 'The gradient is correct:'
+            a.gradient.items == [3f, 3f, 3f, 3f]
+    }
+
 }
