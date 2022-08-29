@@ -140,7 +140,6 @@ dependencies {
 
     // Core library dependencies :
     implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
-    implementation 'org.jetbrains:annotations:23.0.0'
 
     // Logging :
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'

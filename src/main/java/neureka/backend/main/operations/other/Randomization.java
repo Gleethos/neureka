@@ -14,7 +14,6 @@ import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
-import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
 
@@ -139,7 +138,7 @@ public class Randomization extends AbstractOperation
 
 
 
-    @Contract( pure = true )
+    
     private static long _longStringHash( String string )
     {
         long h = 1125899906842597L; // prime

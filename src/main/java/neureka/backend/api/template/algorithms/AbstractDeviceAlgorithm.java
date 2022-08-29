@@ -15,7 +15,6 @@ import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
-import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +79,7 @@ implements DeviceAlgorithm<C>
     }
 
 
-    @Contract( pure = true )
+    
     public static Tsr<?> executeFor(
             final Function caller,
             final ExecutionCall<? extends Device<?>> call,
@@ -159,7 +158,7 @@ implements DeviceAlgorithm<C>
     }
 
 
-    @Contract( pure = true )
+    
     private static <D extends Device<?>> ExecutionCall<D> _flatten(
             ExecutionCall<D> call, Function[] src
     ) {
@@ -189,7 +188,7 @@ implements DeviceAlgorithm<C>
         });
     }
 
-    @Contract( pure = true )
+    
     private static Tsr<?> _deepActivation(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
@@ -263,7 +262,7 @@ implements DeviceAlgorithm<C>
      * @param tensors An array of tensors which ought to be analyzed.
      * @return The index of the tensor whose value is "1.0" (if all others are "0.0"), otherwise : -1
      */
-    @Contract( pure = true )
+    
     private static int _indexOfFoundDerivative( final Tsr<?>[] tensors )
     {
         boolean allVirtual = true;
@@ -285,7 +284,7 @@ implements DeviceAlgorithm<C>
         return -1;
     }
 
-    @Contract( pure = true )
+    
     private static Tsr<?> _deepDerivative(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
@@ -434,7 +433,7 @@ implements DeviceAlgorithm<C>
      *
      * @return The execution result of the provided {@param call}.
      */
-    @Contract( pure = true )
+    
     private static Tsr<?> _recursiveReductiveExecutionOf(
             final ExecutionCall<? extends Device<?>> call,
             final RecursiveExecutor executor

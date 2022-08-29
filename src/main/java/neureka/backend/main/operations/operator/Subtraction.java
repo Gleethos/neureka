@@ -18,7 +18,6 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -243,7 +242,7 @@ public class Subtraction extends AbstractOperation
         }
     }
 
-    @Contract(pure = true)
+    
     public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
             double result = src[ 0 ].call( inputs );

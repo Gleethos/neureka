@@ -15,7 +15,6 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.framing.Relation;
 import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
-import org.jetbrains.annotations.Contract;
 
 public class Reshape extends AbstractOperation
 {
@@ -158,7 +157,7 @@ public class Reshape extends AbstractOperation
     }
 
 
-    @Contract(pure = true)
+    
     private static void _shapeCheck( int[] newShp, Tsr<?> t ) {
         if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {
             throw new IllegalArgumentException(

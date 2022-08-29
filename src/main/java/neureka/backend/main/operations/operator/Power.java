@@ -21,7 +21,6 @@ import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import org.jetbrains.annotations.Contract;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -353,7 +352,7 @@ public class Power extends AbstractOperation
         }
     }
 
-    @Contract(pure = true)
+    
     public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
             double result = src[ 0 ].call( inputs );

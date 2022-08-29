@@ -8,7 +8,6 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
-import org.jetbrains.annotations.Contract;
 
 public final class Convolution extends AbstractFunDeviceAlgorithm<Convolution>
 {
@@ -61,7 +60,7 @@ public final class Convolution extends AbstractFunDeviceAlgorithm<Convolution>
     }
 
 
-    @Contract(pure = true)
+    
     private static void _convolve64(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
@@ -231,7 +230,7 @@ public final class Convolution extends AbstractFunDeviceAlgorithm<Convolution>
 
     // ---
 
-    @Contract(pure = true)
+    
     private static void _convolve32(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,

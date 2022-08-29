@@ -12,7 +12,6 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
-import org.jetbrains.annotations.Contract;
 
 abstract class AbstractActivationOperation extends AbstractOperation {
 
@@ -117,7 +116,7 @@ abstract class AbstractActivationOperation extends AbstractOperation {
         return calculate( src[ 0 ].call( inputs, j ),  derive ) * inner;
     }
 
-    @Contract(pure = true)
+    
     private double calculate(double input, boolean derive ) {
         if ( !derive )
             return _activate( input );

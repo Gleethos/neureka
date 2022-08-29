@@ -42,7 +42,6 @@ import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.framing.NDFrame;
 import neureka.ndim.config.NDConfiguration;
-import org.jetbrains.annotations.Contract;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -487,7 +486,7 @@ public final class NdaAsString
         return "\n" + _indent;
     }
 
-    @Contract( pure = true )
+    
     private static String formatFP( double v )
     {
         DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.UK );
@@ -559,15 +558,15 @@ public final class NdaAsString
      */
     public static class Util
     {
-        @Contract( pure = true )
+        
         public static String indent( int n ) { return String.join("", Collections.nCopies( n, "   " )); }
 
-        @Contract( pure = true )
+        
         public static String pad( int left, String s ) {
             return String.join("", Collections.nCopies( left, " " )) + s;
         }
 
-        @Contract( pure = true )
+        
         public static String pad( String s, int right ) {
             return s + String.join("", Collections.nCopies( right, " " ));
         }

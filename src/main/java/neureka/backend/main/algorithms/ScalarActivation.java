@@ -12,7 +12,6 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.NumericType;
-import org.jetbrains.annotations.Contract;
 
 public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivation>
 {
@@ -60,7 +59,7 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
         return Functions.implementation( 2, call -> 1, ScalarActivation::_workloadFor );
     }
 
-    @Contract(pure = true)
+    
     private static CPU.RangeWorkload _workloadFor(
             ExecutionCall<CPU> call,
             Functions<Fun> functions

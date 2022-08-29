@@ -34,8 +34,6 @@ SOFTWARE.
 
 package neureka.ndim.config;
 
-import org.jetbrains.annotations.Contract;
-
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
@@ -69,7 +67,7 @@ public interface NDConfiguration
             return this == other;
         }
 
-        @Contract(pure = true)
+        
         public int[] newTranslationFor(int[] shape) {
             int[] translation = new int[shape.length];
             int prod = 1;
@@ -89,7 +87,7 @@ public interface NDConfiguration
             return translation;
         }
 
-        @Contract(pure = true)
+        
         public int[] rearrange(int[] tln, int[] shape, int[] newForm) {
             int[] shpTln = this.newTranslationFor(shape);
             int[] newTln = new int[newForm.length];
@@ -385,7 +383,7 @@ public interface NDConfiguration
      * incrementing or decrementing index arrays...
      */
     class Utility {
-        @Contract( pure = true )
+        
         public static int[] rearrange(int[] array, int[] pointers) {
             int[] newShp = new int[pointers.length];
             for (int i = 0; i < pointers.length; i++) {
@@ -395,13 +393,13 @@ public interface NDConfiguration
             return newShp;
         }
 
-        @Contract( pure = true )
+        
         public static void increment(int[] indices, int[] shape) {
             int i = shape.length - 1;
             while (i >= 0 && i < shape.length) i = _incrementAt(i, indices, shape);
         }
 
-        @Contract( pure = true )
+        
         private static int _incrementAt(int i, int[] indices, int[] shape) {
             if (indices[i] < shape[i]) {
                 indices[i]++;
@@ -413,13 +411,13 @@ public interface NDConfiguration
             return i;
         }
 
-        @Contract( pure = true )
+        
         public static void decrement(int[] indices, int[] shape) {
             int i = shape.length - 1;
             while (i >= 0 && i < shape.length) i = _decrementAt(i, indices, shape);
         }
 
-        @Contract( pure = true )
+        
         private static int _decrementAt(int i, int[] indices, int[] shape) {
             if (indices[i] >= 0) {
                 indices[i]--;
@@ -432,7 +430,7 @@ public interface NDConfiguration
         }
 
 
-        @Contract(pure = true)
+        
         public static int sizeOfShape( int[] shape ) {
             int size = 1;
             for (int i : shape) size *= i;

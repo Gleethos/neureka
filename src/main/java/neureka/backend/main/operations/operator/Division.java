@@ -20,7 +20,6 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
-import org.jetbrains.annotations.Contract;
 
 
 public class Division extends AbstractOperation
@@ -274,7 +273,7 @@ public class Division extends AbstractOperation
         }
     }
 
-    @Contract(pure = true)
+    
     public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
             double result = src[ 0 ].call( inputs );

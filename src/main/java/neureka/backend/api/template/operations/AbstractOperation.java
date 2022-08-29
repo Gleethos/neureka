@@ -7,7 +7,6 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.calculus.Function;
-import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,7 +234,7 @@ public abstract class AbstractOperation implements Operation
     }
 
     /** {@inheritDoc} */
-    @Contract(pure = true)
+    
     @Override
     public String stringify( String[] children ) {
         if ( this.isOperator() ) {

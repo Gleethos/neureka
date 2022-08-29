@@ -1,6 +1,5 @@
 package testutility;
 
-import org.jetbrains.annotations.Contract;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -186,7 +185,7 @@ public class UnitTester
         _session +=message+"\n";
     }
 
-    @Contract( pure = true )
+    
     public static String formatFP( double v )
     {
         DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );

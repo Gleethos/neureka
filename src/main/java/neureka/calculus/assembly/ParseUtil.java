@@ -2,7 +2,6 @@ package neureka.calculus.assembly;
 
 import neureka.Neureka;
 import neureka.backend.api.Operation;
-import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +15,7 @@ public final class ParseUtil
 {
     private ParseUtil() {}
 
-    @Contract( pure = true ) 
+     
     public static int numberOfOperationsWithin( final List<String> operations ) {
         int counter = 0;
         for( Operation ot : Neureka.get().backend().getOperations() ) {
@@ -25,7 +24,7 @@ public final class ParseUtil
         return counter;
     }
 
-    @Contract( pure = true )
+    
     public static String parsedOperation( final String exp, final int index ) {
         if (exp.length() <= index) return null;
         String operation;
@@ -38,7 +37,7 @@ public final class ParseUtil
         return null;
     }
 
-    @Contract( pure = true )
+    
     public static String findComponentIn( String exp, final int index ) {
         exp = exp.trim();
         if (exp.length() <= index) return null;
@@ -70,7 +69,7 @@ public final class ParseUtil
         return component.toString();
     }
 
-    @Contract( pure = true )
+    
     private static boolean _isOperationComponent( String exp, int i, int ii ) {
         String possibleOperation = exp.substring( i + 1, ii );
         return ParseUtil.isAnOperation( possibleOperation )
@@ -78,7 +77,7 @@ public final class ParseUtil
                ( exp.charAt(i) == 'j' || !(Character.isLetter(exp.charAt(i)) || exp.charAt(i) == '_') );
     }
 
-    @Contract( pure = true )
+    
     public static List<String> findParametersIn( String exp, final int index ) {
         exp = exp.trim();
         if ( exp.length() <= index ) return null;
@@ -106,14 +105,14 @@ public final class ParseUtil
         return parameters;
     }
 
-    @Contract( pure = true )
+    
     public static boolean isAnOperation( final String operationName ) {
         if ( operationName.length() > 32 ) return false;
         Operation operation = Neureka.get().backend().getOperation( operationName );
         return operation != null;
     }
 
-    @Contract( pure = true )
+    
     public static String groupBy(
             final String operation,
             final String currentChain,
@@ -130,13 +129,13 @@ public final class ParseUtil
         return group;
     }
 
-    @Contract( pure = true )
+    
     private static boolean isForbiddenChar( char c ) {
         return c == '"' || c == '$' || c == '%' || c == '&'  || c == '=' || c == '#' || c == '|' || c == '~' || c == ':'
             || c == ';' || c == '@' || c == '?' || c == '\\' || c == '>' || c == '<' || c == ' ';
     }
 
-    @Contract( pure = true )
+    
     public static String cleanedHeadAndTail( String exp ) {
         exp = exp.trim();
         int ci = 0;
@@ -180,7 +179,7 @@ public final class ParseUtil
         return exp;
     }
 
-    @Contract( pure = true )
+    
     public static String unpackAndCorrect( String exp ) {
         if ( exp == null ) return null;
         if ( exp.length() == 0 ) return "";
@@ -244,7 +243,7 @@ public final class ParseUtil
      * @param expression The expression which should be interpreted as something similar.
      * @return Something similar or null if the expression is not similar enough.
      */
-    @Contract( pure = true )
+    
     public static String assumptionBasedOn( String expression ) {
         double largest = -1;
         int best = 0;
@@ -266,7 +265,7 @@ public final class ParseUtil
      * @param s2 The second string which should be compared to the first string.
      * @return A similarity score between 0 and 1 where 1 would be 100% similar (equal).
      */
-    @Contract( pure = true )
+    
     public static double similarity( final String s1, final String s2 ) {
             String longer = (s1.length() > s2.length()) ?s1 : s2;
             String shorter = (s1.length() > s2.length()) ? s2 : s1;
