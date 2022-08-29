@@ -123,9 +123,10 @@ class Tensor_Stats_Spec extends Specification
             var sum = a.sum()
 
         expect : 'The result is correct:'
-            sum.item() == 123
-        and : 'This can be verified using a stream:'
+            sum.item() == 5217.0
+        and : 'The result can be verified using other methods:'
             sum.item() == sum.items.stream().reduce(0,(x,y)->x+y)
+            sum.item() == a.unsafe.data.sum()
     }
 
 }

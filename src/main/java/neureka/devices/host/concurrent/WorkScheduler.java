@@ -80,6 +80,21 @@ public abstract class WorkScheduler {
             );
         }
 
+        public void submit( final int limit, final CPU.IndexedWorkload rangeWorkload ) {
+            Future<?>[] futures = new Future<?>[limit];
+            for ( int i = 0; i < limit; ++i ) {
+                int finalI = i;
+                futures[i] = _executor.submit( () -> rangeWorkload.execute(finalI) );
+            }
+            for ( Future<?> future : futures ) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
         public Divider parallelism(
                 final IntSupplier parallelism
         ) {
@@ -107,7 +122,7 @@ public abstract class WorkScheduler {
                 int split = start + workload / 2;
                 int nextWorkers = workers / 2;
 
-                Future<?> firstPart = executor.submit( () -> _divide(executor, start, split, threshold, nextWorkers, rangeWorkload) );
+                Future<?> firstPart  = executor.submit( () -> _divide(executor, start, split, threshold, nextWorkers, rangeWorkload) );
                 Future<?> secondPart = executor.submit( () -> _divide(executor, split, end, threshold, nextWorkers, rangeWorkload) );
 
                 try {

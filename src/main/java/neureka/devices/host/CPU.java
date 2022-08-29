@@ -630,7 +630,7 @@ public class CPU extends AbstractDevice<Object>
         public void threaded( int numberOfWorkloads, IndexedWorkload workload ) {
             _DIVIDER.parallelism( _PARALLELISM )
                     .threshold( 1 )
-                    .divide( 0, numberOfWorkloads, (start, end)-> workload.execute(start) );
+                    .submit( numberOfWorkloads, (i)-> workload.execute(i) );
         }
 
         /**
