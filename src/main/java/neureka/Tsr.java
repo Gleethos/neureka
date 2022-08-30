@@ -1320,7 +1320,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     boolean is( Class<?> typeClass );
 
     /**
-     *  This method will produce the sum of
+     *  This method will produce the addition of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
@@ -1358,17 +1358,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> plus( V value ) { return plus( of( itemType(), this.shape(), value ) ); }
 
     /**
-     *  This method will perform subtraction on
+     *  Performs subtraction on
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
+     *  If the shapes of both of the involved tensors are identical then
      *  the result will be a regular element-wise subtraction.
      *  Otherwise, the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
-     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Either the dimensions have the same size or one of them has size 1.    <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)          <br>
      *
      * @param other The right operand of the subtraction.
      * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
@@ -1391,7 +1391,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return Neureka.get().backend().getFunction().minusAssign().call( this, other );
     }
 
-
+    /**
+     * @param other The scalar value which should be subtracted from the values of this tensor.
+     * @return This tensor after the minus-assign inline operation was applied.
+     */
     default Tsr<V> minusAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getItemType(), "Cannot subtract-assign 'null' from a tensor!");
         return minusAssign(
@@ -1400,13 +1403,15 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                         .all(other)
         );
     }
+
     /**
      * @return A clone of this tensor where the signs of all elements are flipped.
      */
     default Tsr<V> negative() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }
 
     /**
-     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
+     *  Creates and returns a new {@link Tsr} instance which is a transposed twin of this instance.<br>
+     *  This is a shorter alternative to the functionally identical {@link #getT()} method.
      *
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
@@ -1572,8 +1577,8 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }
 
     /**
-     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
-     *  It is and alias method to the {@link #T()} method...
+     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.<br>
+     *  This is an alternative to the functionally identical {@link #T()} method.
      *
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
