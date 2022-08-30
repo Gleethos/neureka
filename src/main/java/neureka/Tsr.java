@@ -1194,7 +1194,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  Therefore, a "detached" clone of this tensor is
      *  simply a tensor without a {@link GraphNode} component.
      *
-     * @return This very instance in order to allows for a more streamline usage of this method.
+     * @return This very instance in order to allow for a more streamline usage of this method.
      */
     default Tsr<V> detached() {
         if ( this.has( GraphNode.class ) )
@@ -1300,7 +1300,26 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     Tsr<V> label( Map<Object, List<Object>> labels );
 
+    /**
+     *  This method provides the ability to
+     *  label not only the indices of the shape of this tensor, but also
+     *  the dimension of the shape.
+     *  The first and only argument of the method expects a map instance
+     *  where keys are the objects which ought to act as dimension labels
+     *  and the values are lists of labels for the indices of said dimensions.
+     *  For example the shape (2,3) could be labeled as follows:            <br>
+     *  [                                                                   <br>
+     *     "dim 0" : ["A", "B"],                                            <br>
+     *     "dim 1" : ["1", "2", "3"]                                        <br>
+     *  ]                                                                   <br>
+     *                                                                      <br>
+     * @param tensorName A label for this tensor itself.
+     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
+     * @return This tensor (method chaining).
+     */
     Tsr<V> label( String tensorName, Map<Object, List<Object>> labels );
+
+
 
     /*==================================================================================================================
     |
@@ -1340,6 +1359,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return Neureka.get().backend().getAutogradFunction().plus().call( this, other );
     }
 
+    /**
+     *  Performs an addition of the passed tensor to this tensor.
+     *  The result of the addition will be stored in this tensor (inline operation).
+     *
+     * @param other The tensor which ought to be added to this tensor.
+     * @return This tensor.
+     */
     default Tsr<V> plusAssign( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
         return Neureka.get().backend().getFunction().plusAssign().call( this, other );
