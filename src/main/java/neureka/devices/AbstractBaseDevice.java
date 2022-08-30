@@ -39,7 +39,6 @@ import neureka.Tsr;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Spliterator;
-import java.util.function.IntFunction;
 
 /**
  * @param <V> The value type parameter representing a common super type for all values supported by the device.
