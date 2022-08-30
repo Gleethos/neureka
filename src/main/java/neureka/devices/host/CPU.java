@@ -95,7 +95,7 @@ public class CPU extends AbstractDevice<Object>
     @Override
     public <T> CPU store( Tsr<T> tensor ) {
         if ( !this.has( tensor ) )
-            tensor.getUnsafe().getDataArray().owner().restore( tensor );
+            tensor.getUnsafe().getData().owner().restore( tensor );
 
         _tensors.add( (Tsr<Object>) tensor);
         return this;
@@ -105,7 +105,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> int _sizeOccupiedBy(Tsr<T> tensor) {
-        Object data = tensor.getUnsafe().getDataArray().getRef();
+        Object data = tensor.getUnsafe().getData().getRef();
         if      ( data instanceof float[]   ) return ( (float[])   data).length;
         else if ( data instanceof double[]  ) return ( (double[])  data).length;
         else if ( data instanceof short[]   ) return ( (short[])   data).length;
@@ -119,7 +119,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> Object _readAll(Tsr<T> tensor, boolean clone ) {
-        Object data = tensor.getUnsafe().getDataArray().getRef();
+        Object data = tensor.getUnsafe().getData().getRef();
         if ( clone ) {
             if ( data instanceof double[]  ) return ( (double[])  data ).clone();
             if ( data instanceof float[]   ) return ( (float[])   data ).clone();
@@ -136,7 +136,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> T _readItem( Tsr<T> tensor, int index ) {
-        Object data = tensor.getUnsafe().getDataArray().getRef();
+        Object data = tensor.getUnsafe().getData().getRef();
         if      ( data instanceof float[]   ) return (T)Float.valueOf( ((float[])   data)[ index ] );
         else if ( data instanceof double[]  ) return (T)Double.valueOf( ((double[])  data)[ index ] );
         else if ( data instanceof short[]   ) return (T)Short.valueOf( ((short[])   data)[ index ] );
@@ -153,41 +153,41 @@ public class CPU extends AbstractDevice<Object>
             Tsr<T> tensor, Class<A> arrayType, int start, int size
     ) {
         if ( arrayType == float[].class ) {
-            float[] source = DataConverter.get().convert(tensor.getUnsafe().getDataArray().getRef(), float[].class);
+            float[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), float[].class);
             float[] data = new float[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == short[].class ){
-            short[] source = DataConverter.get().convert(tensor.getUnsafe().getDataArray().getRef(), short[].class);
+            short[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), short[].class);
             short[] data = new short[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == byte[].class ){
-            byte[] source = DataConverter.get().convert(tensor.getUnsafe().getDataArray().getRef(), byte[].class);
+            byte[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), byte[].class);
             byte[] data = new byte[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == boolean[].class ){
-            boolean[] source = DataConverter.get().convert(tensor.getUnsafe().getDataArray().getRef(), boolean[].class);
+            boolean[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), boolean[].class);
             boolean[] data = new boolean[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == char[].class ){
-            char[] source = DataConverter.get().convert(tensor.getUnsafe().getDataArray().getRef(), char[].class);
+            char[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), char[].class);
             char[] data = new char[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == double[].class ){
-            double[] source = DataConverter.get().convert(tensor.getUnsafe().getDataArray().getRef(), double[].class);
+            double[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), double[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         } else if ( arrayType == int[].class ){
-            int[] source = DataConverter.get().convert(tensor.getUnsafe().getDataArray().getRef(), int[].class);
+            int[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), int[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         } else if ( arrayType == long[].class ){
-            long[] source = DataConverter.get().convert(tensor.getUnsafe().getDataArray().getRef(), long[].class);
+            long[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), long[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         } else if ( arrayType == Object[].class ){
-            Object[] source = DataConverter.get().convert(tensor.getUnsafe().getDataArray().getRef(), Object[].class);
+            Object[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), Object[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         }
         throw new IllegalArgumentException("Array type '"+arrayType.getSimpleName()+"' not supported!");
@@ -195,7 +195,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
-        Object data = tensor.getUnsafe().getDataArray().getRef();
+        Object data = tensor.getUnsafe().getData().getRef();
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
             float source = DataConverter.get().convert(item, Float.class);
@@ -237,7 +237,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
-        Object data = tensor.getUnsafe().getDataArray().getRef();
+        Object data = tensor.getUnsafe().getData().getRef();
         if ( data == null ) {
             tensor.getUnsafe().setDataArray(_dataArrayOf(array));
             return;
@@ -428,7 +428,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final neureka.Data _actualize(Tsr<?> tensor ) {
-        neureka.Data data = tensor.getUnsafe().getDataArray();
+        neureka.Data data = tensor.getUnsafe().getData();
         Object value = data.getRef();
         DataType<?> dataType = tensor.getDataType();
         int size = tensor.size();

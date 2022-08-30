@@ -126,7 +126,7 @@ class Tensor_Stats_Spec extends Specification
             sum.item() == 5217.0
         and : 'The result can be verified using other methods:'
             sum.item() == sum.items.stream().reduce(0,(x,y)->x+y)
-            sum.item() == a.unsafe.dataArray.ref.sum()
+            sum.item() == a.unsafe.data.ref.sum()
     }
 
     def 'The sum operation support autograd (back-propagation).'() {

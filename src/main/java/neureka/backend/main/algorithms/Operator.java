@@ -215,7 +215,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
     ) {
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );
-        int[] t0_val = (int[]) t0_drn.getUnsafe().getDataArray().getRef();
+        int[] t0_val = (int[]) t0_drn.getUnsafe().getData().getRef();
         int[] t1_val = t1_src.getUnsafe().getDataAs( int[].class );
         int[] t2_val = t2_src.getUnsafe().getDataAs( int[].class );
 

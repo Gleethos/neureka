@@ -651,7 +651,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     {
         if ( tensor == null ) return;
         _setDataType( tensor.getDataType() );
-        _setData( tensor.getUnsafe().getDataArray() );
+        _setData( tensor.getUnsafe().getData() );
         _setNDConf( tensor.getNDConf() );
         _flags = tensor._flags;
         _transferFrom( tensor );
@@ -693,7 +693,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             @Override
             public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
             @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
-            @Override public Data<V> getDataArray() { return _getData(); }
+            @Override public Data<V> getData() { return _getData(); }
             @Override public <D> D getData(Class<D> dataType) {
                 Object data = _getRawData();
                 if ( data != null && !dataType.isAssignableFrom(data.getClass()) )

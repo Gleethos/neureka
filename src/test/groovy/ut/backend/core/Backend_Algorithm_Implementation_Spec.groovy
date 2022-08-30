@@ -107,7 +107,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (1.._) * tensor.size() >> 0
             (0.._) * tensor.itemType >> Double
             (0.._) * tensor.getDataAs(double[]) >> new double[0]
-            (0.._) * unsafe.dataArray >> dataObj
+            (0.._) * unsafe.data >> dataObj
             (0.._) * dataObj.ref >> new double[0]
             (0.._) * unsafe.getDataAs(double[]) >> new double[0]
             (0.._) * unsafe.getDataForWriting(double[]) >> new double[0]

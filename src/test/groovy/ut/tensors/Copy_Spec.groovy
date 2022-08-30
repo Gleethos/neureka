@@ -34,7 +34,7 @@ class Copy_Spec extends Specification
         given : 'A tensor of ints with shape (2, 3).'
             var t = Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)
         expect : 'The underlying data array is as expected.'
-            t.unsafe.dataArray.ref == [1, 2 ,-9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
+            t.unsafe.data.ref == [1, 2, -9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
 
         when : 'We create a deep copy of the tensor.'
             var deep = t.deepCopy()
@@ -42,8 +42,8 @@ class Copy_Spec extends Specification
             deep !== t // It's not the same instance!
         and : 'The shape and underlying data array are equal to the original tensor but the data is not identical.'
             deep.shape == t.shape
-            deep.unsafe.dataArray.ref == t.unsafe.dataArray.ref // The tensors share the same values!
-            deep.unsafe.dataArray.ref !== t.unsafe.dataArray.ref // ...but they are not the same array!
+            deep.unsafe.data.ref == t.unsafe.data.ref // The tensors share the same values!
+            deep.unsafe.data.ref !== t.unsafe.data.ref // ...but they are not the same array!
         and :
             (0..<t.size).every({ int i -> deep.at(i) == t.at(i) }) // The values are the same!
     }
@@ -56,7 +56,7 @@ class Copy_Spec extends Specification
         expect : 'The underlying items and data array is as expected.'
             s.items == [2, -9, 3, -2]
             s.data == [1, 2, -9, 8, 3, -2, 1, 2, -9]
-            s.unsafe.dataArray.ref == [1, 2, -9, 8, 3, -2, 1, 2, -9] // It's unsafe because it exposes mutable parts of the tensor!
+            s.unsafe.data.ref == [1, 2, -9, 8, 3, -2, 1, 2, -9] // It's unsafe because it exposes mutable parts of the tensor!
 
         when : 'We create a deep copy of the tensor.'
             var deep = s.deepCopy()
@@ -65,13 +65,13 @@ class Copy_Spec extends Specification
         and : 'The underlying items and data array are as expected.'
             deep.items == [2, -9, 3, -2]
             deep.data == [2, -9, 3, -2]
-            deep.unsafe.dataArray.ref == [2, -9, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
+            deep.unsafe.data.ref == [2, -9, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
         and : 'The slice and the copy have the same shape.'
             deep.shape == s.shape
             deep.items == s.items // The tensors share the same values!
             deep.items !== s.items // The tensors share the same values!
-            deep.unsafe.dataArray.ref !== s.unsafe.dataArray.ref // The tensors share the same values!
-            deep.unsafe.dataArray.ref !== s.unsafe.dataArray.ref // ...but they are not the same array!
+            deep.unsafe.data.ref !== s.unsafe.data.ref // The tensors share the same values!
+            deep.unsafe.data.ref !== s.unsafe.data.ref // ...but they are not the same array!
         and : 'We verify that they share the same ints through the "every" method.'
             (0..<s.size).every({ int i -> deep.at(i) == s.at(i) }) // The values are the same!
     }
@@ -81,15 +81,15 @@ class Copy_Spec extends Specification
         given : 'A tensor of ints with shape (2, 3).'
             var t = Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)
         expect : 'The underlying data array is as expected.'
-            t.unsafe.dataArray.ref == [1, 2 ,-9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
+            t.unsafe.data.ref == [1, 2, -9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
 
         when : 'We create a shallow copy of the tensor.'
             var shallow = cloner(t)
         then : 'The copy is not the same instance as the original tensor.'
             shallow !== t // It's not the same instance!
             shallow.shape == t.shape
-            shallow.unsafe.dataArray.ref == t.unsafe.dataArray.ref // The tensors share the same values!
-            shallow.unsafe.dataArray.ref === t.unsafe.dataArray.ref // The tensors share the exact same data array!
+            shallow.unsafe.data.ref == t.unsafe.data.ref // The tensors share the same values!
+            shallow.unsafe.data.ref === t.unsafe.data.ref // The tensors share the exact same data array!
         and : 'We verify that they share the same ints through the "every" method.'
             (0..<t.size).every({ int i -> shallow.at(i) == t.at(i) }) // The values are the same!
 
@@ -114,8 +114,8 @@ class Copy_Spec extends Specification
 
         and : 'The shape and underlying data array are equal to the original tensor but the data is not identical.'
             deep.shape == t.shape
-            deep.unsafe.dataArray.ref == t.unsafe.dataArray.ref // The tensors share the same values!
-            deep.unsafe.dataArray.ref !== t.unsafe.dataArray.ref // ...but they are not the same array!
+            deep.unsafe.data.ref == t.unsafe.data.ref // The tensors share the same values!
+            deep.unsafe.data.ref !== t.unsafe.data.ref // ...but they are not the same array!
 
         and : 'Both the copied tensor and its slice have the expected values.'
             deep.items == expected

@@ -99,7 +99,7 @@ class OpenCL_Spec extends Specification
             Tsr<?> s = Mock(Tsr) // Could be : t[1..3, 1..2]
             Tsr.Unsafe<?> u = Mock(Tsr.Unsafe)
             s.getUnsafe() >> u
-            u.getDataArray() >> Mock(Data)
+            u.getData() >> Mock(Data)
 
         and : 'A mocked relation between both tensors returned by the slice as component.'
             Relation r = Mock(Relation)

@@ -396,7 +396,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             return;
         }
         if ( parent == null ) {
-            if ( tensor.getUnsafe().getDataArray().owner() == this ) {
+            if ( tensor.getUnsafe().getData().owner() == this ) {
                 _tensors.add( tensor );
                 migration.run();
                 return;
@@ -489,7 +489,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             Tsr<Number> tensor,
             cl_tsr<?, ?> newClTsr
     ) {
-        JVMData jvmData = JVMData.of( tensor.getUnsafe().getDataArray().getRef() );
+        JVMData jvmData = JVMData.of( tensor.getUnsafe().getData().getRef() );
         newClTsr.value.size = (int) jvmData.getLength();
         newClTsr.dtype = jvmData.getType();
         //VALUE TRANSFER:

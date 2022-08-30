@@ -142,7 +142,7 @@ public class Slice extends AbstractOperation
                         Tsr.of(
                             input.getDataType(),
                             NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),
-                            input.getUnsafe().getDataArray()
+                            input.getUnsafe().getData()
                         );
 
         subset.set( new Relation().addParent( input ) );
