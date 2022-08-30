@@ -42,8 +42,8 @@ public abstract class CommonMachine extends BasicMachine {
      */
     public final int cores;
     /**
-     * The number of top level (L3 or L2) cache units. With L3 cache defined this corresponds to the number of
-     * CPU:s.
+     * The number of top level (L3 or L2) cache units.
+     * With L3 cache defined, this corresponds to the number of CPUs.
      */
     public final int units;
 

@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
+ *  This models the cache levels and threads of a CPU
+ *  using an array of where each entry represents a memory level.
  * <ul>
  * <li>The first element in the array should correspond to total system resources; the total amount of RAM and
  * the total number of threads (Typically the same as what is returned by
@@ -42,12 +44,9 @@ import java.util.TreeSet;
  * <li>The array must have at least 2 elements. You must describe the total system resources and the L1 cache.
  * It is strongly recommended to also describe the L2 cache. The L3 cache, if it exists, is less important to
  * describe. The derived attributes <code>processors</code>, <code>cores</code> and <code>units</code> may be
- * incorrectly calculated if you fail to specify the caches. Known issue: If you have more than one processor,
- * nut no L3 cache; the <code>processors</code> attribute will be incorrectly set 1. A workaround that
- * currently works is to define an L3 cache anyway and set the memory/size of that cache to 0bytes. This
- * workoround may stop working in the future.</li>
- * <li><code>new MemoryThreads[] { SYSTEM, L3, L2, L1 }</code> or
- * <code>new MemoryThreads[] { SYSTEM, L2, L1 }</code> or <code>new MemoryThreads[] { SYSTEM, L1 }</code></li>
+ * incorrectly calculated if you fail to specify the caches.</li>
+ * <li><code>Define new entries using this pattern: [SYSTEM, L3, L2, L1]</code> or
+ * <code>[SYSTEM, L2, L1]</code> or <code>[SYSTEM, L1]</code></li>
  * </ul>
  *
  */
@@ -542,7 +541,7 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
         }
     }
 
-    private final BasicMachine[] myLevels;
+    private final BasicMachine[] _levels;
 
     /**
      * <code>new BasicMachine[] { SYSTEM, L3, L2, L1 }</code> or
@@ -563,7 +562,7 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
             throw new IllegalArgumentException();
         }
 
-        myLevels = COPY.copyOf(levels);
+        _levels = COPY.copyOf(levels);
     }
 
     public int compareTo(final Hardware other) {
@@ -594,7 +593,7 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
             return false;
         }
         final Hardware other = (Hardware) obj;
-        if (!Arrays.equals(myLevels, other.myLevels)) {
+        if (!Arrays.equals(_levels, other._levels)) {
             return false;
         }
         return true;
@@ -604,16 +603,16 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = (prime * result) + Arrays.hashCode(myLevels);
+        result = (prime * result) + Arrays.hashCode(_levels);
         return result;
     }
 
     public boolean isL2Specified() {
-        return myLevels.length > 2;
+        return _levels.length > 2;
     }
 
     public boolean isL3Specified() {
-        return myLevels.length > 3;
+        return _levels.length > 3;
     }
 
     @Override
@@ -621,13 +620,13 @@ public final class Hardware extends CommonMachine implements Comparable<Hardware
 
         final StringBuilder retVal = new StringBuilder("HW=");
 
-        retVal.append(myLevels[0].toString());
+        retVal.append(_levels[0].toString());
         if (this.isL3Specified()) {
-            retVal.append(',').append(units).append("xL3:").append(myLevels[myLevels.length - 3]);
+            retVal.append(',').append(units).append("xL3:").append(_levels[_levels.length - 3]);
         } else if (this.isL2Specified()) {
-            retVal.append(',').append(units).append("xL2:").append(myLevels[myLevels.length - 2]);
+            retVal.append(',').append(units).append("xL2:").append(_levels[_levels.length - 2]);
         }
-        retVal.append(',').append(cores).append("cores:").append(myLevels[myLevels.length - 1]);
+        retVal.append(',').append(cores).append("cores:").append(_levels[_levels.length - 1]);
 
         return retVal.toString();
     }
