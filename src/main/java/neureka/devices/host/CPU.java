@@ -237,7 +237,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
-        Object data = tensor.getUnsafe().getData().getRef();
+        Object data = tensor.getUnsafe().getData() == null ? null : tensor.getUnsafe().getData().getRef();
         if ( data == null ) {
             tensor.getUnsafe().setData(_dataArrayOf(array));
             return;
