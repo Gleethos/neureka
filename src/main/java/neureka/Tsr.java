@@ -956,6 +956,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     */
 
     /**
+     *
      *  Important : Components of type {@link Tsr} are simply gradients!
      *  Currently, this method is used only to catch illegal arguments which
      *  is for example the case when trying to attach a gradient with a different shape...
@@ -1062,6 +1063,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     Tsr<V> to( Device<?> device );
 
+    /**
+     * @param deviceType A search key identifying the device onto which this tensor should be stored.
+     * @return This very tensor instance in order to enable method chaining.
+     */
     default Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
 
     /**
@@ -1072,7 +1077,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  the accumulation of gradients.
      *
      * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
-     * @return The tensor on which this method was called. (factory pattern)
+     * @return This tensor, to allow for method chaining.
      */
     default Tsr<V> backward( Tsr<V> error ) {
         LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
@@ -1100,7 +1105,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  recorded computation graph.
      *
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
-     * @return The tensor on which this method was called. (factory pattern)
+     * @return The tensor, to allow for method chaining.
      */
     default Tsr<V> backward( double value ) {
         backward( Tsr.of( this.getItemType(), getNDConf().shape(), value ) );
@@ -1108,7 +1113,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  Use this to back-propagate an error signal of 1.0 through the recorded computation graph.
+     *  Tensors which are used or produced by operations supporting the autograd system
+     *  will have this graph defined by {@link GraphNode} components attached to them.
      *  This is because autograd requires recording a computation graph for back-prop traversal.
      *  If this tensor is part of a computation graph then this method
      *  will traverse an error backward in the recorded history towards tensors which require
@@ -1118,7 +1125,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  an error of "1" having the same shape as
      *  this tensor.
      *
-     * @return The tensor on which this method was called. (factory pattern)
+     * @return This tensor to allow for method chaining.
      */
     default Tsr<V> backward() {
         backward( 1 ); // By default we back-propagate a base factor of 1.
