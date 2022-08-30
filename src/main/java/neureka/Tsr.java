@@ -2150,8 +2150,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
         Data<T> getData();
 
-        <D> D getData( Class<D> dataType );
-
         <A> A getDataAs( Class<A> arrayTypeClass );
 
         /**

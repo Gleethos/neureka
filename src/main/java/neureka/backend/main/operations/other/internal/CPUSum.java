@@ -42,7 +42,7 @@ public class CPUSum implements ImplementationFor<CPU>
         Class<?> type = in.itemType();
 
         if ( type == Float.class ) {
-            float[] inData = in.getUnsafe().getData(float[].class);
+            float[] inData = in.getUnsafe().getData().getRef(float[].class);
             float[] out = new float[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -58,7 +58,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Double.class ) {
-            double[] inData = in.getUnsafe().getData(double[].class);
+            double[] inData = in.getUnsafe().getData().getRef(double[].class);
             double[] out = new double[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -74,7 +74,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Integer.class ) {
-            int[] inData = in.getUnsafe().getData(int[].class);
+            int[] inData = in.getUnsafe().getData().getRef(int[].class);
             int[] out = new int[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -90,7 +90,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Long.class ) {
-            long[] inData = in.getUnsafe().getData(long[].class);
+            long[] inData = in.getUnsafe().getData().getRef(long[].class);
             long[] out = new long[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -106,7 +106,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Short.class ) {
-            short[] inData = in.getUnsafe().getData(short[].class);
+            short[] inData = in.getUnsafe().getData().getRef(short[].class);
             short[] out = new short[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -122,7 +122,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Byte.class ) {
-            byte[] inData = in.getUnsafe().getData(byte[].class);
+            byte[] inData = in.getUnsafe().getData().getRef(byte[].class);
             byte[] out = new byte[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -138,7 +138,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( Number.class.isAssignableFrom(type) ) {
-            Object[] inData = in.getUnsafe().getData(Object[].class);
+            Object[] inData = in.getUnsafe().getData().getRef(Object[].class);
             Number[] out = new Number[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;

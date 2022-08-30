@@ -26,4 +26,11 @@ public interface Data<V> {
      */
     Object getRef();
 
+    default <D> D getRef(Class<D> dataType) {
+        Object data = getRef();
+        if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
+            throw new IllegalArgumentException("Provided data type '"+dataType+"' is not assignable from '"+data.getClass()+"'.");
+        return (D) data;
+    }
+
 }

@@ -694,12 +694,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
             @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
             @Override public Data<V> getData() { return _getData(); }
-            @Override public <D> D getData(Class<D> dataType) {
-                Object data = _getRawData();
-                if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
-                    throw new IllegalArgumentException("Provided data type '"+dataType+"' is not assignable from '"+data.getClass()+"'.");
-                return (D) data;
-            }
             @Override
             public <A> A getDataAs( Class<A> arrayTypeClass ) {
                 return DataConverter.get().convert( _getData(false), arrayTypeClass );
