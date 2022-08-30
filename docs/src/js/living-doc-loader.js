@@ -260,11 +260,25 @@ function createLoaderDropDownFor(specName, expandableFeature) {
 }
 
 function buildFeatureListFor(expandableFeature, data, content) {
+    let nothingHappened = true;
     data['features'].forEach((feature)=>{
         if ( feature['id'] === expandableFeature ) {
             content.append(createUIForFeature(feature));
+            nothingHappened = false;
         }
     });
+    if ( nothingHappened ) {
+        // If the feature is unrolled then its id contains table data... we need to account for this.
+        let choices = data['features']
+                            .filter( f => f['id'].startsWith(expandableFeature) )
+                            .sort( (a,b) => b.length - a.length ) // We sort them by size
+        // Now we unroll the iterations (we call them examples here) so that the user can see them all!
+        choices.forEach( (iteration, i) => {
+            content.append('<p style="font-weight: bold;">Example '+i+':</p>')
+            //content.append($('<p style="font-size: 12px"><i>'+iteration['id'].substring(expandableFeature.length).trim()+'</i></p>'));
+            content.append(createUIForFeature(iteration));
+        })
+    }
     setTimeout(() => {
             hljs.initHighlighting.called = false;
             hljs.highlightAll();
