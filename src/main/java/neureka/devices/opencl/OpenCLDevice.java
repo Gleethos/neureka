@@ -445,7 +445,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         _tensors.add( tensor );
 
-        tensor.getUnsafe().setDataArray( _dataArrayOf(newClt) );
+        tensor.getUnsafe().setData( _dataArrayOf(newClt) );
         migration.run(); // TODO: REMOVE
 
         // When tensors get stored on this device,
@@ -514,7 +514,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_tsr<?, ?> clt = tensor.getUnsafe().getData().getRef( cl_tsr.class);
         if (clt == null) return this;
         _tensors.remove(tensor);
-        tensor.getUnsafe().setDataArray(null);
+        tensor.getUnsafe().setData(null);
         tensor.forComponent(
             Device.class,
             device -> {
@@ -604,8 +604,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     protected final <T extends Number> void _swap(Tsr<T> former, Tsr<T> replacement) {
         cl_tsr<Number, T> clTsr = former.getUnsafe().getData().getRef( cl_tsr.class);
-        former.getUnsafe().setDataArray(null);
-        replacement.getUnsafe().setDataArray( _dataArrayOf(clTsr) );
+        former.getUnsafe().setData(null);
+        replacement.getUnsafe().setData( _dataArrayOf(clTsr) );
         _tensors.remove(former);
         _tensors.add( replacement.getUnsafe().upcast(Number.class) );
     }

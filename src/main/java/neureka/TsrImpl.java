@@ -706,7 +706,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
 
             @Override
-            public Tsr<V> setDataArray(Data data) {
+            public Tsr<V> setData(Data data) {
                 TsrImpl.this._setData( data );
                 return TsrImpl.this;
             }
