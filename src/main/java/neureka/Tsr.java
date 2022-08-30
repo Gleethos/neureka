@@ -1426,12 +1426,12 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  This method performs various operations by calling {@link Function} instances
-     *  in order to ultimately calculate the mean value of all values
-     *  of this very tensor!
-     *  This scalar tensor is then returned.
+     *  Calculate the mean value of all values
+     *  within this tensor and returns it
+     *  in the form of a scalar tensor. <br>
+     *  This operation supports autograd.
      *
-     * @return A scalar tensor which is the mean value of all values of this very tensor.
+     * @return A scalar tensor which wraps the mean value of all values of this tensor.
      */
     default Tsr<V> mean() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
@@ -1441,6 +1441,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return result;
     }
 
+    /**
+     *  Calculate the sum value of all values
+     *  within this tensor and returns it
+     *  in the form of a scalar tensor. <br>
+     *  This operation supports autograd.
+     *
+     * @return A scalar tensor which wraps the sum of all values of this tensor.
+     */
     default Tsr<V> sum() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> sum = functions.sum().call( this );
@@ -1452,6 +1460,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return sum;
     }
 
+    /**
+     *  Calculate the min value of all values
+     *  within this tensor and returns it
+     *  in the form of a scalar tensor. <br>
+     *  This operation supports autograd.
+     *
+     * @return A scalar tensor which wraps the smallest of all values of this tensor.
+     */
     default Tsr<V> min() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> min = functions.min().call( this );
@@ -1463,6 +1479,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return min;
     }
 
+    /**
+     *  Calculate the max value of all values
+     *  within this tensor and returns it
+     *  in the form of a scalar tensor. <br>
+     *  This operation supports autograd.
+     *
+     * @return A scalar tensor which wraps the largest of all values of this tensor.
+     */
     default Tsr<V> max() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> max = functions.max().call( this );
@@ -1501,8 +1525,8 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  This method performs a dot product between the last dimension of this tensor
-     *  and the first dimension of the passed tensor.
+     *  Performs a dot product between the last dimension of this tensor
+     *  and the first dimension of the provided tensor.
      *  However, currently this method can only handle matrices which means
      *  that it is functionally completely identical to the {@link #matMul(Tsr)} method.
      *
@@ -1536,7 +1560,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  This method creates a new tensor sharing the same data and whose shape is trimmed.
+     *  This creates a new tensor with the same underlying {@link Data} and whose shape is trimmed.
      *  A trimmed shape is simply a shape without preceding and trailing ones. <br>
      *  For example the shape (1x4x1x2x1) would be trimmed to (4x1x2).
      *  The underlying operation does not perform a removal of redundant ones all together.
