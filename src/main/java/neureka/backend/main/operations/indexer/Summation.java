@@ -19,7 +19,6 @@ import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import org.jetbrains.annotations.Contract;
 
 /**
  *  This type of operation belongs to the same species as the
@@ -215,7 +214,7 @@ public final class Summation extends AbstractOperation
         else return src[ 0 ].derive( inputs, d, j );
     }
 
-    @Contract(pure = true)
+    
     public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 )
             return _calculate( inputs, src );

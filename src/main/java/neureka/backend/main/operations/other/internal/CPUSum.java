@@ -47,8 +47,7 @@ public class CPUSum implements ImplementationFor<CPU>
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
-                float value = inData[offset];
-                offset++;
+                float value = 0;
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
@@ -64,8 +63,7 @@ public class CPUSum implements ImplementationFor<CPU>
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
-                double value = inData[offset];
-                offset++;
+                double value = 0;
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
@@ -81,8 +79,7 @@ public class CPUSum implements ImplementationFor<CPU>
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
-                int value = inData[offset];
-                offset++;
+                int value = 0;
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
@@ -98,8 +95,7 @@ public class CPUSum implements ImplementationFor<CPU>
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
-                long value = inData[offset];
-                offset++;
+                long value = 0;
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
@@ -115,8 +111,7 @@ public class CPUSum implements ImplementationFor<CPU>
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
-                short value = inData[offset];
-                offset++;
+                short value = 0;
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
@@ -132,8 +127,7 @@ public class CPUSum implements ImplementationFor<CPU>
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
-                byte value = inData[offset];
-                offset++;
+                byte value = 0;
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });

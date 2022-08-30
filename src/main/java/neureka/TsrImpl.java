@@ -76,7 +76,6 @@ import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterator.NDIterator;
 import neureka.view.NdaAsString;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
@@ -733,7 +732,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *
      * @return An iterator over elements of type ValType.
      */
-    @NotNull
+
     @Override
     public Iterator<V> iterator()
     {

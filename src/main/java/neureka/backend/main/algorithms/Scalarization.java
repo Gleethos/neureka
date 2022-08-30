@@ -11,7 +11,6 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
-import org.jetbrains.annotations.Contract;
 
 public class Scalarization extends AbstractFunDeviceAlgorithm< Scalarization >
 {
@@ -64,7 +63,7 @@ public class Scalarization extends AbstractFunDeviceAlgorithm< Scalarization >
         return Functions.implementation( 2, Scalarization::_workloadFor );
     }
 
-    @Contract(pure = true)
+    
     private static CPU.RangeWorkload _workloadFor(
         ExecutionCall<CPU> call,
         Functions<Fun> functions

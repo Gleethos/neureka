@@ -11,7 +11,6 @@ import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import org.jetbrains.annotations.Contract;
 
 public class ConvUtil
 {
@@ -55,7 +54,7 @@ public class ConvUtil
                 .buildFunAlgorithm();
     }
 
-    @Contract(pure = true)
+    
     public static int[] shapeOfCon(int[] shape1, int[] shape2 ) {
         int[] shape = new int[ ( shape1.length + shape2.length ) / 2 ];
         for ( int i = 0; i < shape1.length && i < shape2.length; i++ )
@@ -64,7 +63,7 @@ public class ConvUtil
     }
 
 
-    @Contract( pure = true )
+    
     public static Tsr<?> executeRecursively(
             String op,
             ExecutionCall<? extends Device<?>> call,

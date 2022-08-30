@@ -8,7 +8,6 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.internal.CallExecutor;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +66,7 @@ public class ElemWiseUtil
 
     }
 
-    @Contract( pure = true )
+    
     public static Tsr<?> forDivisionsOrModuli(
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
@@ -139,7 +138,7 @@ public class ElemWiseUtil
         return result;
     }
 
-    @Contract( pure = true )
+    
     public static Tsr<?> forAdditions(
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
@@ -147,7 +146,7 @@ public class ElemWiseUtil
         return _forAdditionsOrSubtractions(call, recursiveExecutor, true);
     }
 
-    @Contract( pure = true )
+    
     public static Tsr<?> forSubtractions(
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor
@@ -155,7 +154,7 @@ public class ElemWiseUtil
         return _forAdditionsOrSubtractions(call, recursiveExecutor, false);
     }
 
-    @Contract( pure = true )
+    
     private static Tsr<?> _forAdditionsOrSubtractions(
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor,

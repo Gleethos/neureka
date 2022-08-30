@@ -1,13 +1,12 @@
 package neureka.ndim;
 
-import org.jetbrains.annotations.Contract;
 
 /**
  *  Static utility methods for the NDArray.
  */
 public class NDUtil
 {
-    @Contract( pure = true )
+    
     public static String shapeString( int[] conf ) {
         StringBuilder str = new StringBuilder();
         for ( int i = 0; i < conf.length; i++ )
@@ -15,7 +14,7 @@ public class NDUtil
         return "[" + str + "]";
     }
 
-    @Contract(pure = true)
+    
     public static int[][] makeFit( int[] sA, int[] sB ) {
         int lastIndexOfA = 0;
         for ( int i = sA.length-1; i >= 0; i-- ) {

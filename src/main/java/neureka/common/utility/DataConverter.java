@@ -38,7 +38,6 @@ package neureka.common.utility;
 import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
-import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -389,7 +388,7 @@ public final class DataConverter
      */
     public static class Utility
     {
-        @Contract( pure = true )
+        
         public static float[] objFloatsToPrimFloats( Float[] objects ) {
             float[] array = new float[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -398,7 +397,7 @@ public final class DataConverter
             return array;
         }
 
-        @Contract( pure = true )
+        
         public static double[] objDoublesToPrimDoubles( Double[] objects ) {
             double[] array = new double[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -407,7 +406,7 @@ public final class DataConverter
             return array;
         }
 
-        @Contract( pure = true )
+        
         public static int[] objIntsToPrimInts( Integer[] objects ) {
             int[] array = new int[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -416,7 +415,7 @@ public final class DataConverter
             return array;
         }
 
-        @Contract( pure = true )
+        
         public static long[] objLongsToPrimLongs( Long[] objects ) {
             long[] array = new long[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -425,7 +424,7 @@ public final class DataConverter
             return array;
         }
 
-        @Contract( pure = true )
+        
         public static short[] objShortsToPrimShorts( Short[] objects ) {
             short[] array = new short[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -434,7 +433,7 @@ public final class DataConverter
             return array;
         }
 
-        @Contract( pure = true )
+        
         public static byte[] objBytesToPrimBytes( Byte[] objects ) {
             byte[] array = new byte[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -443,7 +442,7 @@ public final class DataConverter
             return array;
         }
 
-        @Contract( pure = true )
+        
         public static boolean[] objBooleansToPrimBooleans( Boolean[] objects ) {
             boolean[] array = new boolean[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -452,7 +451,7 @@ public final class DataConverter
             return array;
         }
 
-        @Contract( pure = true )
+        
         public static char[] objCharsToPrimChars( Character[] objects ) {
             char[] array = new char[objects.length];
             for ( int i = 0; i < array.length; i++ ) {
@@ -461,7 +460,7 @@ public final class DataConverter
             return array;
         }
 
-        @Contract( pure = true )
+        
         public static short[] byteToShort( byte[] data ) {
             if ( data == null ) return null;
             short[] newData = new short[ data.length ];
@@ -469,7 +468,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static BigInteger[] byteToBigInteger( byte[] data ) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[ data.length ];
@@ -477,7 +476,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static float[] doubleToFloat( double[] data ) {
             if ( data == null ) return null;
             float[] newData = new float[ data.length ];
@@ -491,7 +490,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static byte[] doubleToByte( double[] data ) {
             if ( data == null ) return null;
             byte[] newData = new byte[ data.length ];
@@ -499,7 +498,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static short[] doubleToShort( double[] data ) {
             if ( data == null ) return null;
             short[] newData = new short[ data.length ];
@@ -507,7 +506,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static long[] doubleToLong( double[] data ) {
             if ( data == null ) return null;
             long[] newData = new long[ data.length ];
@@ -515,7 +514,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static boolean[] doubleToBool( double[] data ) {
             if ( data == null ) return null;
             boolean[] newData = new boolean[ data.length ];
@@ -523,7 +522,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static double[] boolToDouble( boolean[] data ) {
             if ( data == null ) return null;
             double[] newData = new double[ data.length ];
@@ -531,7 +530,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static float[] boolToFloat( boolean[] data ) {
             if ( data == null ) return null;
             float[] newData = new float[ data.length ];
@@ -539,7 +538,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static double[] floatToDouble(float[] data) {
             if ( data == null ) return null;
             double[] newData = new double[ data.length ];
@@ -553,7 +552,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static byte[] floatToByte( float[] data ) {
             if ( data == null ) return null;
             byte[] newData = new byte[ data.length ];
@@ -561,7 +560,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static short[] floatToShort( float[] data ) {
             if ( data == null ) return null;
             short[] newData = new short[ data.length ];
@@ -569,7 +568,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static long[] floatToLong( float[] data ) {
             if ( data == null ) return null;
             long[] newData = new long[ data.length ];
@@ -577,7 +576,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static double[] shortToDouble( short[] data ) {
             if ( data == null ) return null;
             double[] newData = new double[ data.length ];
@@ -585,7 +584,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static double[] byteToDouble( byte[] data ) {
             if ( data == null ) return null;
             double[] newData = new double[ data.length ];
@@ -593,7 +592,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static float[] byteToFloat( byte[] data ) {
             if ( data == null ) return null;
             float[] newData = new float[ data.length ];
@@ -601,7 +600,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static float[] shortToFloat( short[] data ) {
             if ( data == null ) return null;
             float[] newData = new float[ data.length ];
@@ -609,7 +608,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static int[] byteToInt( byte[] data ) {
             if ( data == null ) return null;
             int[] newData = new int[ data.length ];
@@ -617,7 +616,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static int[] shortToInt( short[] data ) {
             if ( data == null ) return null;
             int[] newData = new int[ data.length ];
@@ -625,7 +624,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static byte[] shortToByte(short[] data) {
             if ( data == null ) return null;
             byte[] newData = new byte[ data.length ];
@@ -633,7 +632,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static long[] byteToLong(byte[] data) {
             if ( data == null ) return null;
             long[] newData = new long[ data.length ];
@@ -641,7 +640,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static long[] shortToLong(short[] data) {
             if ( data == null ) return null;
             long[] newData = new long[ data.length ];
@@ -649,7 +648,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static BigInteger[] shortToBigInteger(short[] data) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[ data.length ];
@@ -657,7 +656,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static float[] intToFloat(int[] data) {
             if ( data == null ) return null;
             float[] newData = new float[ data.length ];
@@ -665,7 +664,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static int[] floatToInt(float[] data) {
             if ( data == null ) return null;
             int[] newData = new int[ data.length ];
@@ -673,7 +672,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static BigInteger[] floatToBigInteger( float[] data ) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[ data.length ];
@@ -681,7 +680,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static int[] doubleToInt(double[] data) {
             if ( data == null ) return null;
             int[] newData = new int[ data.length ];
@@ -689,7 +688,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static BigInteger[] doubleToBigInteger( double[] data ) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[ data.length ];
@@ -697,7 +696,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static double[] intToDouble(int[] data) {
             if ( data == null ) return null;
             double[] newData = new double[ data.length ];
@@ -705,7 +704,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static long[] intToLong( int[] data ) {
             if ( data == null ) return null;
             long[] newData = new long[ data.length ];
@@ -713,7 +712,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static short[] intToShort( int[] data ) {
             if ( data == null ) return null;
             short[] newData = new short[ data.length ];
@@ -721,7 +720,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static byte[] intToByte( int[] data ) {
             if ( data == null ) return null;
             byte[] newData = new byte[ data.length ];
@@ -729,7 +728,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static BigInteger[] intToBigInteger( int[] data ) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[ data.length ];
@@ -737,7 +736,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static byte[] longToByte(long[] data) {
             if ( data == null ) return null;
             byte[] newData = new byte[ data.length ];
@@ -745,7 +744,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static short[] longToShort(long[] data) {
             if ( data == null ) return null;
             short[] newData = new short[ data.length ];
@@ -753,7 +752,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static int[] longToInt(long[] data) {
             if ( data == null ) return null;
             int[] newData = new int[ data.length ];
@@ -761,7 +760,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static float[] longToFloat(long[] data) {
             if ( data == null ) return null;
             float[] newData = new float[ data.length ];
@@ -769,7 +768,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static double[] longToDouble(long[] data) {
             if ( data == null ) return null;
             double[] newData = new double[ data.length ];
@@ -777,7 +776,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static BigInteger[] longToBigInteger( long[] data ) {
             if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[ data.length ];
@@ -785,7 +784,7 @@ public final class DataConverter
             return newData;
         }
 
-        @Contract( pure = true )
+        
         public static double[] objectsToDoubles( Object[] objects, int targetSize ) {
             double[] data = new double[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
@@ -797,7 +796,7 @@ public final class DataConverter
             return data;
         }
 
-        @Contract( pure = true )
+        
         public static float[] objectsToFloats( Object[] objects, int targetSize ) {
             float[] data = new float[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
@@ -807,7 +806,7 @@ public final class DataConverter
             return data;
         }
 
-        @Contract( pure = true )
+        
         public static short[] objectsToShorts( Object[] objects, int targetSize ) {
             short[] data = new short[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
@@ -817,7 +816,7 @@ public final class DataConverter
             return data;
         }
 
-        @Contract( pure = true )
+        
         public static byte[] objectsToBytes( Object[] objects, int targetSize ) {
             byte[] data = new byte[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
@@ -827,7 +826,7 @@ public final class DataConverter
             return data;
         }
 
-        @Contract( pure = true )
+        
         public static long[] objectsToLongs( Object[] objects, int targetSize ) {
             long[] data = new long[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {
@@ -837,7 +836,7 @@ public final class DataConverter
             return data;
         }
 
-        @Contract( pure = true )
+        
         public static int[] objectsToInts( Object[] objects, int targetSize ) {
             int[] data = new int[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {

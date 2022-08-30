@@ -1,8 +1,6 @@
 package neureka.devices.opencl;
 
 import neureka.Tsr;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jocl.*;
 
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ public class KernelCaller
      * @param kernel The kernel which ought to be called.
      * @param queue The queue on which calls ought to be dispatched.
      */
-    public KernelCaller( @NotNull cl_kernel kernel, @NotNull cl_command_queue queue ) {
+    public KernelCaller( cl_kernel kernel, cl_command_queue queue ) {
         _queue  = queue;
         _kernel = kernel;
         _inputs = new ArrayList<>();
@@ -40,7 +38,7 @@ public class KernelCaller
      * @param tensor The tensor whose data and configuration ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory pattern).
      */
-    public KernelCaller passAllOf( @NotNull Tsr<Number> tensor ) {
+    public KernelCaller passAllOf( Tsr<Number> tensor ) {
         _inputs.add( tensor );
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
@@ -56,7 +54,7 @@ public class KernelCaller
      *  @param tensor The tensor whose ND configuration ought to be passed to the kernel.
      *  @return This very KernelCaller instance (factory pattern).
      */
-    public KernelCaller passConfOf( @NotNull Tsr<Number> tensor ) {
+    public KernelCaller passConfOf( Tsr<Number> tensor ) {
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).config.data ) );
         _argId++;
         return this;
@@ -68,7 +66,7 @@ public class KernelCaller
      * @param tensor The tensor whose data ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory pattern).
      */
-    public <T extends Number> KernelCaller pass( @NotNull Tsr<T> tensor ) {
+    public <T extends Number> KernelCaller pass( Tsr<T> tensor ) {
         _inputs.add( tensor.getUnsafe().upcast(Number.class) );
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
@@ -184,8 +182,8 @@ public class KernelCaller
         );
     }
 
-    @Contract( pure = true )
-    private void _releaseEvents( @NotNull Tsr<Number>[] tensors ) {
+    
+    private void _releaseEvents( Tsr<Number>[] tensors ) {
         for ( Tsr<Number> t : tensors ) {
             if ( t.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.event != null ) {
                 clReleaseEvent(t.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.event);
@@ -194,8 +192,8 @@ public class KernelCaller
         }
     }
 
-    @Contract( pure = true )
-    private cl_event[] _getWaitList( @NotNull Tsr<Number>[] tensors ) {
+    
+    private cl_event[] _getWaitList( Tsr<Number>[] tensors ) {
         List<cl_event> list = new ArrayList<>();
         for ( Tsr<Number> t : tensors ) {
             cl_event event = t.getUnsafe().getData( OpenCLDevice.cl_tsr.class ).value.event;

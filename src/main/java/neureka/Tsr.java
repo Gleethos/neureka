@@ -1437,7 +1437,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> sum = this.sum();
         Tsr<V> result = functions.div().call( sum, of( this.getItemType(), new int[]{1}, this.size() ) );
-        sum.getUnsafe().delete(); // This is a temporary tensor which is not needed anymore! (not even for back propagation)
+        if (sum != this) sum.getUnsafe().delete(); // This is a temporary tensor which is not needed anymore! (not even for back propagation)
         return result;
     }
 

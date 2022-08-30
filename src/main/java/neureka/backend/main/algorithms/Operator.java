@@ -16,7 +16,6 @@ import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
 import neureka.ndim.NDimensional;
 import neureka.ndim.iterator.NDIterator;
-import org.jetbrains.annotations.Contract;
 
 public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
 {
@@ -117,7 +116,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
     }
 
 
-    @Contract(pure = true)
+    
     private static CPU.RangeWorkload _newWorkloadF64(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             Fun.F64F64ToF64 operation
@@ -162,7 +161,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
         }
     }
 
-    @Contract(pure = true)
+    
     private static CPU.RangeWorkload _newWorkloadF32(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             Fun.F32F32ToF32 operation
@@ -209,7 +208,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
     }
 
 
-    @Contract(pure = true)
+    
     private static CPU.RangeWorkload _newWorkloadI32(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             Fun.I32I32ToI32 operation

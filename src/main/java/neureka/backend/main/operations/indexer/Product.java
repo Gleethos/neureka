@@ -17,7 +17,6 @@ import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
-import org.jetbrains.annotations.Contract;
 
 /**
  *  This type of operation belongs to the same species as the
@@ -198,7 +197,7 @@ public final class Product extends AbstractOperation
         }
     }
 
-    @Contract(pure = true)
+    
     public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
             double prod = 1;

@@ -2,8 +2,6 @@ package neureka.ndim.config.types.views;
 
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,8 +98,8 @@ public class SimpleReshapeView extends AbstractNDC
         return _toBeViewed.indexOfIndices( innerIdx );
     }
 
-    @Contract(pure = true)
-    private static int[] _rearrange( @NotNull int[] array, @NotNull int[] ptr, @NotNull int[] indices ) {
+    
+    private static int[] _rearrange( int[] array, int[] ptr, int[] indices ) {
         for ( int i = 0; i < ptr.length; i++ ) {
             if ( ptr[ i ] >= 0 ) indices[ ptr[ i ] ] = array[ i ];
         }

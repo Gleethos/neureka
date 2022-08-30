@@ -20,7 +20,6 @@ import neureka.dtype.DataType;
 import neureka.ndim.NDUtil;
 import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
-import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
@@ -380,7 +379,7 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
-    @Contract(pure = true)
+    
     private static int[] _shpOfBrc( int[] shp1, int[] shp2 ) {
         int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
         for ( int i = 0; i < shp1.length && i < shp2.length; i++ ) {
@@ -392,7 +391,7 @@ public class UnitTester_Tensor extends UnitTester
         return shape;
     }
 
-    @Contract(pure = true)
+    
     private static int[] _shpOfCon( int[] shp1, int[] shp2 ) {
         int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
         for ( int i = 0; i < shp1.length && i < shp2.length; i++ )

@@ -17,7 +17,6 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
 import neureka.ndim.iterator.NDIterator;
-import org.jetbrains.annotations.Contract;
 
 public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
 {
@@ -170,7 +169,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
             return workload;
     }
 
-    @Contract(pure = true)
+    
     private static void _broadcastF64(
             Tsr<Number> t0_drn, Tsr<Number> t1_src, Tsr<Number> t2_src,
             int d, int i, int end,
@@ -271,7 +270,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
     }
 
 
-    @Contract(pure = true)
+    
     private static void _broadcastF32(
             Tsr<Number> t0_drn, Tsr<Number> t1_src, Tsr<Number> t2_src,
             int d, int i, int end,
