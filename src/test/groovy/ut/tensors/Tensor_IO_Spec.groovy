@@ -166,7 +166,7 @@ class Tensor_IO_Spec extends Specification
 
         then : '...the tensor will change as expected.'
             !(x.getItems() instanceof float[])
-            !(x.unsafe.data instanceof float[])
+            !(x.unsafe.dataArray.ref instanceof float[])
             !(x.data instanceof float[])
             x.getItemsAs( float[].class )[ 0 ]==5.0f
             x.getItemsAs( double[].class )[0]==5.0d
@@ -178,7 +178,7 @@ class Tensor_IO_Spec extends Specification
 
         then : '...once again the tensor changes as expected.'
             x.rawItems instanceof double[]
-            x.unsafe.data instanceof double[]
+            x.unsafe.dataArray.ref instanceof double[]
             x.data instanceof double[]
             x.getItemsAs( float[].class )[ 0 ]==4.0f
             x.getItemsAs( double[].class )[0]==4.0d
@@ -206,7 +206,7 @@ class Tensor_IO_Spec extends Specification
 
         then :
             !(x.rawItems instanceof double[])
-            !(x.unsafe.data instanceof double[])
+            !(x.unsafe.dataArray.ref instanceof double[])
             !(x.data instanceof double[])
             x.getItemsAs( float[].class )[ 0 ]==7.0f
             x.getItemsAs( double[].class )[0]==7.0d
@@ -336,14 +336,14 @@ class Tensor_IO_Spec extends Specification
         when : x.unsafe.toType( Float.class )
         then :
             x.rawItems instanceof float[]
-            x.unsafe.data instanceof float[]
+            x.unsafe.dataArray.ref instanceof float[]
             x.data instanceof float[]
             x.getItemsAs( float[].class )[ 0 ]==3.0f
 
         when : x.unsafe.toType( Double.class )
         then :
             x.rawItems instanceof double[]
-            x.unsafe.data instanceof double[]
+            x.unsafe.dataArray.ref instanceof double[]
             x.data instanceof double[]
             x.getItemsAs( float[].class )[ 0 ]==3.0f
     }
@@ -360,7 +360,7 @@ class Tensor_IO_Spec extends Specification
         and : 'Also the expected shape.'
             t.shape() == shape
         and : 'The tensor has the expected data array.'
-            t.unsafe.data == data
+            t.unsafe.dataArray.ref == data
             t.data == data
         and : 'The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.'
             t.items == data
@@ -484,7 +484,7 @@ class Tensor_IO_Spec extends Specification
         then :
             t.getDataAt( 1 ) == element
         and :
-            t.unsafe.data == expected
+            t.unsafe.dataArray.ref == expected
             t.data == expected
 
         when :
@@ -494,7 +494,7 @@ class Tensor_IO_Spec extends Specification
         then :
             t.item( 1 ) == element
         and :
-            t.unsafe.data == expected
+            t.unsafe.dataArray.ref == expected
             t.data == expected
 
         where :

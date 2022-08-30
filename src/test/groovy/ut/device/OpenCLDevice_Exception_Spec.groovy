@@ -54,7 +54,7 @@ class OpenCLDevice_Exception_Spec extends Specification
             Tsr s = t[1..3, 1..2]
 
         expect : 'Both tensors share not only the same data but also the same data type.'
-            t.unsafe.data == s.unsafe.data
+            t.unsafe.dataArray.ref == s.unsafe.dataArray.ref
             t.dataType == DataType.of( Double.class )
             s.dataType == DataType.of( Double.class )
 

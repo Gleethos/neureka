@@ -353,7 +353,7 @@ class Cross_Device_Type_Spec extends Specification
             b.isOutsourced()
         and :
             device.has( a )
-            b.unsafe.data == null
+            b.unsafe.dataArray.ref == null
             device.has( b )
             device.size() == initialSize
 

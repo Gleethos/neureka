@@ -142,7 +142,7 @@ public class Scalarization extends AbstractFunDeviceAlgorithm< Scalarization >
                 }
             };
         }
-        if ( t0_drn.getUnsafe().getData().getClass() == Object[].class ) {
+        if ( t0_drn.getUnsafe().getDataArray().getRef().getClass() == Object[].class ) {
             Object value = call.input( 1 + offset ).at(0).get();
             Fun.ObjObjToObj operation = functions.get(Fun.ObjObjToObj.class).getFor( call );
             Object[] t0_value = t0_drn.getUnsafe().getDataForWriting(Object[].class);

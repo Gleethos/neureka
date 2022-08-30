@@ -120,7 +120,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
 
             if ( rightTypeClass == Integer.class )
             {
-                int[] t1_value = (int[]) t1_src.getUnsafe().getData();
+                int[] t1_value = (int[]) t1_src.getUnsafe().getDataArray().getRef();
                 workload = (i, end) -> {
                     NDIterator t0Idx = NDIterator.of(t0_drn);
                     NDIterator t1Idx = NDIterator.of(t1_src);
@@ -190,7 +190,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
         {
             Fun.I32ToI32 fun = funs.get(Fun.I32ToI32.class).get(d);
             assert fun != null;
-            int[] t0_value = (int[]) t0_drn.getUnsafe().getData();
+            int[] t0_value = (int[]) t0_drn.getUnsafe().getDataArray().getRef();
             int[] t1_value = t1_src.getUnsafe().getDataAs(int[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -216,7 +216,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
         {
             Fun.I64ToI64 fun = funs.get(Fun.I64ToI64.class).get(d);
             assert fun != null;
-            long[] t0_value = (long[]) t0_drn.getUnsafe().getData();
+            long[] t0_value = (long[]) t0_drn.getUnsafe().getDataArray().getRef();
             long[] t1_value = t1_src.getUnsafe().getDataAs(long[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -242,7 +242,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
         {
             Fun.I8ToI8 fun = funs.get(Fun.I8ToI8.class).get(d);
             assert fun != null;
-            byte[] t0_value = (byte[]) t0_drn.getUnsafe().getData();
+            byte[] t0_value = (byte[]) t0_drn.getUnsafe().getDataArray().getRef();
             byte[] t1_value = t1_src.getUnsafe().getDataAs(byte[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -268,7 +268,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
         {
             Fun.I16ToI16 fun = funs.get(Fun.I16ToI16.class).get(d);
             assert fun != null;
-            short[] t0_value = (short[]) t0_drn.getUnsafe().getData();
+            short[] t0_value = (short[]) t0_drn.getUnsafe().getDataArray().getRef();
             short[] t1_value = t1_src.getUnsafe().getDataAs(short[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -294,7 +294,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
         {
             Fun.BoolToBool fun = funs.get(Fun.BoolToBool.class).get(d);
             assert fun != null;
-            boolean[] t0_value = (boolean[]) t0_drn.getUnsafe().getData();
+            boolean[] t0_value = (boolean[]) t0_drn.getUnsafe().getDataArray().getRef();
             boolean[] t1_value = t1_src.getUnsafe().getDataAs(boolean[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -320,7 +320,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
         {
             Fun.CharToChar fun = funs.get(Fun.CharToChar.class).get(d);
             assert fun != null;
-            char[] t0_value = (char[]) t0_drn.getUnsafe().getData();
+            char[] t0_value = (char[]) t0_drn.getUnsafe().getDataArray().getRef();
             char[] t1_value = t1_src.getUnsafe().getDataAs(char[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -345,7 +345,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
             try {
                 Fun.ObjToObj fun = funs.get(Fun.ObjToObj.class).get(d);
                 assert fun != null;
-                Object[] t0_value = (Object[]) t0_drn.getUnsafe().getData();
+                Object[] t0_value = (Object[]) t0_drn.getUnsafe().getDataArray().getRef();
                 Object[] t1_value = t1_src.getUnsafe().getDataAs(Object[].class);
                 if (isSimple)
                     workload = (start, end) -> {

@@ -129,7 +129,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     protected final Data<V> _getData() { _guardGet("data object"); return _data; }
 
     protected final Object _getRawData() {
-        return  _getData() == null ? null : _getData().get();
+        return  _getData() == null ? null : _getData().getRef();
     }
 
     /** {@inheritDoc} */
@@ -173,7 +173,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     protected final void _setData( Data array )
     {
         _guardSet( "data object" );
-        Object data = array == null ? null : array.get();
+        Object data = array == null ? null : array.getRef();
         if ( _dataType == null ) {
             String message = "Trying to set data in a tensor which does not have a DataTyp instance.";
             _LOG.error( message );
@@ -189,8 +189,8 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             }
         }
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-        if ( _data != null && _data.get() != data && data != null && _data.get() != null ) {
-            boolean isProbablyDeviceTransfer = ( _data.get().getClass().isArray() != data.getClass().isArray() );
+        if ( _data != null && _data.getRef() != data && data != null && _data.getRef() != null ) {
+            boolean isProbablyDeviceTransfer = ( _data.getRef().getClass().isArray() != data.getClass().isArray() );
             if ( !isProbablyDeviceTransfer)
                 _version++; // Autograd must be warned!
         }
@@ -200,7 +200,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     protected <T> void _initData( Filler<T> filler )
     {
         CPU.JVMExecutor executor = CPU.get().getExecutor();
-        Object data = _getData().get();
+        Object data = _getData().getRef();
         if ( data instanceof double[] )
             executor.threaded( ( (double[]) data ).length, ( start, end ) -> {
                 for (int i = start; i < end; i++)

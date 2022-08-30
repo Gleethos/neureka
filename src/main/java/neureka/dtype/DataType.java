@@ -151,7 +151,7 @@ public final class DataType<Type>
 
     public Data virtualize(Data data)
     {
-        Object value = data == null ? null : data.get();
+        Object value = data == null ? null : data.getRef();
         assert value != null;
         Object newValue;
         if ( _typeClass == F64.class )

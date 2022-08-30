@@ -160,8 +160,8 @@ final class TsrConstructor
     {
         int size = _ndConstructor.getSize();
         Data<?> data = _targetDevice.allocate( DataType.of( valueType ), size );
-        Object out = Randomization.fillRandomly( data.get(), seed.toString() );
-        assert out == data.get();
+        Object out = Randomization.fillRandomly( data.getRef(), seed.toString() );
+        assert out == data.getRef();
         newUnpopulated( false, false, DataType.of(valueType) );
         _API.setData( data );
     }

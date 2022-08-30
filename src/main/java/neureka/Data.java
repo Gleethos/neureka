@@ -17,8 +17,13 @@ public interface Data<V> {
     Device<V> owner();
 
     /**
-     * @return The raw underlying data of this wrapper.
+     *  This returns the underlying raw data object of an nd-array or tensor.
+     *  Contrary to the {@link Nda#getItems()} ()} method, this will
+     *  return an unbiased view on the raw data of this tensor.
+     *  Be careful using this, as it exposes mutable state!
+     *
+     * @return The raw data object underlying an nd-array/tensor.
      */
-    Object get();
+    Object getRef();
 
 }

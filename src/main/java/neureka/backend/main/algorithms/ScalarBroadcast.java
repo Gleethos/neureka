@@ -153,7 +153,7 @@ public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
                 }
             };
         }
-        if ( t0_drn.getUnsafe().getData().getClass() == Object[].class ) {
+        if ( t0_drn.getUnsafe().getDataArray().getRef().getClass() == Object[].class ) {
             Object value = src.at(0).get();
             Fun.ObjToObj operation = functions.get(Fun.ObjToObj.class).getFor( call );
             Object[] t0_value = t0_drn.getUnsafe().getDataForWriting(Object[].class);

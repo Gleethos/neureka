@@ -489,7 +489,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             Tsr<Number> tensor,
             cl_tsr<?, ?> newClTsr
     ) {
-        JVMData jvmData = JVMData.of( tensor.getUnsafe().getData() );
+        JVMData jvmData = JVMData.of( tensor.getUnsafe().getDataArray().getRef() );
         newClTsr.value.size = (int) jvmData.getLength();
         newClTsr.dtype = jvmData.getType();
         //VALUE TRANSFER:

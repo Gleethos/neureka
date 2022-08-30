@@ -1,5 +1,6 @@
 package ut.backend.core
 
+import neureka.Data
 import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.api.DeviceAlgorithm
@@ -88,6 +89,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             var ndConf = Mock(NDConfiguration)
             var hostExecutor = imp.getImplementationFor( CPU.class )
             var nativeExecutor = Mock( CPU.JVMExecutor )
+            var dataObj = Mock(Data)
 
         when : 'Host-executor instance is being called...'
             hostExecutor.run( call )
@@ -105,7 +107,8 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (1.._) * tensor.size() >> 0
             (0.._) * tensor.itemType >> Double
             (0.._) * tensor.getDataAs(double[]) >> new double[0]
-            (0.._) * unsafe.getData() >> new double[0]
+            (0.._) * unsafe.dataArray >> dataObj
+            (0.._) * dataObj.ref >> new double[0]
             (0.._) * unsafe.getDataAs(double[]) >> new double[0]
             (0.._) * unsafe.getDataForWriting(double[]) >> new double[0]
             (1.._) * tensor.getNDConf() >> ndConf

@@ -198,7 +198,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         assert !(data instanceof neureka.Data);
         return new neureka.Data<V>() {
             @Override public Device<V> owner() { return AbstractDevice.this; }
-            @Override public Object get() { return data; }
+            @Override public Object getRef() { return data; }
         };
     }
 

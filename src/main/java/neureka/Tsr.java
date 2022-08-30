@@ -838,7 +838,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *
      * @return The truth value determining if this tensor has data.
      */
-    default boolean isEmpty() { return getUnsafe().getData() == null && !this.isOutsourced(); }
+    default boolean isEmpty() { return getUnsafe().getDataArray() == null && !this.isOutsourced(); }
 
     /**
      *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
@@ -1219,7 +1219,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    default Tsr<V> label( String[][] labels ) {
+    default Tsr<V> label( String[]... labels ) {
         label( null, labels );
         return this;
     }
@@ -1243,7 +1243,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    Tsr<V> label( String tensorName, String[][] labels );
+    Tsr<V> label( String tensorName, String[]... labels );
 
     /**
      *  This method receives a nested {@link String} list which
@@ -1878,7 +1878,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return CPU.get() // This little API will temporarily migrate this to the JVM.
                 .borrow( (Tsr<Object>) this )
                 .in( () -> {
-                    Object data = getUnsafe().getData();
+                    Object data = getUnsafe().getDataArray().getRef();
                     DataConverter.ForTensor map = new DataConverter.ForTensor( this );
                     if ( data == null ) {
                         if ( this.isOutsourced() )
@@ -1891,19 +1891,19 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                     if ( Number.class.isAssignableFrom(typeClass) ) {
                         java.util.function.Function<Integer, Number> access;
                         if ( this.getItemType() == Integer.class ) {
-                            int[] sourceData = (int[]) getUnsafe().getData();
+                            int[] sourceData = (int[]) getUnsafe().getDataArray().getRef();
                             access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
                         } else if (this.getItemType() == Double.class) {
-                            double[] sourceData = (double[]) getUnsafe().getData();
+                            double[] sourceData = (double[]) getUnsafe().getDataArray().getRef();
                             access = (i -> (Number) mapper.apply((V) Double.valueOf(sourceData[i])));
                         } else if (this.getItemType() == Float.class) {
-                            float[] sourceData = (float[]) getUnsafe().getData();
+                            float[] sourceData = (float[]) getUnsafe().getDataArray().getRef();
                             access = (i -> (Number) mapper.apply((V) Float.valueOf(sourceData[i])));
                         } else if (this.getItemType() == Short.class) {
-                            short[] sourceData = (short[]) getUnsafe().getData();
+                            short[] sourceData = (short[]) getUnsafe().getDataArray().getRef();
                             access = (i -> (Number) mapper.apply((V) Short.valueOf(sourceData[i])));
                         } else if (this.getItemType() == Byte.class) {
-                            byte[] sourceData = (byte[]) getUnsafe().getData();
+                            byte[] sourceData = (byte[]) getUnsafe().getDataArray().getRef();
                             access = (i -> (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
@@ -1919,19 +1919,19 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                     } else {
                         java.util.function.Function<Integer, Object> access = null;
                         if ( this.getItemType() == Integer.class ) {
-                            int[] sourceData = (int[]) getUnsafe().getData();
+                            int[] sourceData = (int[]) getUnsafe().getDataArray().getRef();
                             access = (i -> mapper.apply((V) Integer.valueOf(sourceData[i])));
                         } else if ( this.getItemType() == Double.class ) {
-                            double[] sourceData = (double[]) getUnsafe().getData();
+                            double[] sourceData = (double[]) getUnsafe().getDataArray().getRef();
                             access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
                         } else if ( this.getItemType() == Float.class ) {
-                            float[] sourceData = (float[]) getUnsafe().getData();
+                            float[] sourceData = (float[]) getUnsafe().getDataArray().getRef();
                             access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
                         } else if ( this.getItemType() == Short.class ) {
-                            short[] sourceData = (short[]) getUnsafe().getData();
+                            short[] sourceData = (short[]) getUnsafe().getDataArray().getRef();
                             access = (i -> mapper.apply((V) Short.valueOf(sourceData[i])));
                         } else if ( this.getItemType() == Byte.class ) {
-                            byte[] sourceData = (byte[]) getUnsafe().getData();
+                            byte[] sourceData = (byte[]) getUnsafe().getDataArray().getRef();
                             access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
@@ -2148,18 +2148,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
          */
         Tsr<T> delete();
 
-        /**
-         *  This returns the underlying raw data object of this tensor.
-         *  Contrary to the {@link Tsr#getItems()} ()} method, this one will
-         *  return an unbiased view on the raw data of this tensor.
-         *  Be careful using this, as it exposes mutable state!
-         *
-         * @return The raw data object underlying this tensor.
-         */
-        default Object getData() {
-            return getData(Object.class);
-        }
-
         Data<T> getDataArray();
 
         <D> D getData( Class<D> dataType );
@@ -2192,7 +2180,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
             LogUtil.nullArgCheck( arrayTypeClass, "arrayTypeClass", Class.class, "Array type must not be null!" );
             if ( !arrayTypeClass.isArray() )
                 throw new IllegalArgumentException("Provided type is not an array type.");
-            Object data = Unsafe.this.getData();
+            Object data = Unsafe.this.getDataArray().getRef();
             if ( data == null )
                 throw new IllegalStateException("Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).");
 
