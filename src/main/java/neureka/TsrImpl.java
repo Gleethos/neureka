@@ -325,9 +325,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setIsVirtual( boolean isVirtual ) {
-
-        assert getNDConf() != null;
+    public Tsr<V> setIsVirtual( boolean isVirtual )
+    {
+        if ( getNDConf() == null )
+            throw new IllegalStateException(
+                "Cannot set the virtual flag of a tensor which has not been constructed yet!"
+            );
 
         if ( isVirtual() != isVirtual ) {
             // Currently, we avoid offloading the virtualization by restoring outsourced tensors into RAM...
@@ -353,7 +356,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                 Relation<V> relation = get( Relation.class );
                 if ( relation!=null )
                     relation.foreachChild( c -> {
-                                ((TsrImpl<?>)c)._setData( _getData());
+                                ((TsrImpl<V>)c)._setData( _getData() );
                                 c.setIsVirtual( true );
                             });
             } else {

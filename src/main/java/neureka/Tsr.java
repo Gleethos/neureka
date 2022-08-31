@@ -519,7 +519,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      * @param <V> The type parameter of individual tensor items.
      */
-    static <V> Tsr<V> of( DataType<V> dataType, NDConstructor ndConstructor, Data data ) { return new TsrImpl<>( ndConstructor, dataType, data ); }
+    static <V> Tsr<V> of( DataType<V> dataType, NDConstructor ndConstructor, Data<V> data ) { return new TsrImpl<>( ndConstructor, dataType, data ); }
 
     /**
      *  This factory method allows the creation of tensors with an additional initialization
