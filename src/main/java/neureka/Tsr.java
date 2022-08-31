@@ -729,7 +729,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
      * @return A new {@link Tsr} instance with the same data type, shape and memory location as the provided template.
      */
-    static <V> IterByOrIterFromOrAllTsr<V> like(Tsr<V> template ) {
+    static <V> IterByOrIterFromOrAllTsr<V> like( Tsr<V> template ) {
         return of( template.getDataType().getItemTypeClass() )
                 .on( template.getDevice() )
                 .withShape( template.getNDConf().shape() );
@@ -742,11 +742,12 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     */
 
     /**
-     *  Settings this flag via this setter will indirectly trigger the activation of
-     *  the autograd / auto-differentiation system of this library!
-     *  If the flag is set to 'true' and the tensor is used for computation then
-     *  it will also receive gradients when the {@link #backward()} method is being called
-     *  on any descendant tensor within the computation graph.
+     *  Setting this flag to {@code true} will tell the autograd system to accumulate gradients at this tensor.
+     *  This is achieved by allowing for the recording of a computation graph
+     *  for when this tensor is used in any autograd supporting operations.
+     *  This allows the autograd / auto-differentiation system to traverse said graph
+     *  for when the {@link #backward()} method is called
+     *  on any descendant tensor at the most recent end of the computation graph.
      *
      * @param rqsGradient The truth value determining if this tensor ought to receive gradients via
      *                     the built-in automatic backpropagation system.
@@ -811,7 +812,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  In essence this feature is a form of lazy loading.
      *  <br><br>
      *  WARNING! Virtualizing is the process of compacting the underlying data array
-     *  down to an array holding a single value.
+     *  down to an array holding a single value item.
      *  This only makes sense for homogeneously populated tensors.
      *  Passing {@code false} to this method will "actualize" a "virtual" tensor.
      *  Meaning the underlying data array will at least become as large as the size of the tensor
@@ -824,21 +825,20 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /**
      *  This will check if the {@link Unsafe#delete()} method was previously called on this tensor.
-     *  This means that any references inside the tensor will be null
-     *  as well as that the tensor data was freed on every device,
-     *  meaning that what was previously referenced was most likely garbage collected...
+     *  This means that the tensor data was freed on every device
+     *  and any references inside the tensor are null (to be eligable for garbage collection).
      *
      * @return The truth value determining if the {@link Unsafe#delete()} method has been called oin this instance.
      */
     boolean isDeleted();
 
     /**
-     *  A tensor is empty if there is neither data referenced within the tensor directly
-     *  nor within any given device to which the tensor might belong.
+     *  A tensor is empty if it's {@link Data} storage is null.
+     *  This is true for deleted tensors or tensors which have not been initialized yet.
      *
-     * @return The truth value determining if this tensor has data.
+     * @return The truth value determining if this tensor has no {@link Data}.
      */
-    default boolean isEmpty() { return getUnsafe().getData() == null && !this.isOutsourced(); }
+    default boolean isEmpty() { return getUnsafe().getData() == null; }
 
     /**
      *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
