@@ -330,13 +330,13 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
      * into the provided Consumer lambda.
      * If however no component was found then this lambda is being left untouched.
      *
-     * @param cc Component class of whose type the requested component is.
+     * @param componentClass Component class of whose type the requested component is.
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
     @Override
-    public <T extends Component<C>> boolean forComponent(Class<T> cc, Consumer<T> action) {
-        T component = this.get( cc );
+    public <T extends Component<C>> boolean forComponent( Class<T> componentClass, Consumer<T> action ) {
+        T component = this.get( componentClass );
         if ( component != null ) {
             action.accept( component );
             return true;

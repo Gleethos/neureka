@@ -84,8 +84,8 @@ public class CPU extends AbstractDevice<Object>
         _executor._pool.shutdown();
         _tensors.clear();
         _LOG.warn(
-                "Main thread pool in '"+this.getClass()+"' shutting down! " +
-                "Newly incoming operations will not be executed in parallel."
+            "Main thread pool in '"+this.getClass()+"' shutting down! " +
+            "Newly incoming operations will not be executed in parallel."
         );
     }
 
@@ -236,7 +236,9 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final <T> void _writeArray(Tsr<T> tensor, Object array, int offset, int start, int size) {
+    protected final <T> void _writeArray(
+            Tsr<T> tensor, Object array, int offset, int start, int size
+    ) {
         Object data = tensor.getUnsafe().getData() == null ? null : tensor.getUnsafe().getData().getRef();
         if ( data == null ) {
             tensor.getUnsafe().setData(_dataArrayOf(array));
@@ -284,7 +286,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public final neureka.Data allocate(DataType<?> dataType, int size ) {
+    public final neureka.Data allocate( DataType<?> dataType, int size ) {
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
             return _dataArrayOf(new double[ size ]);
@@ -307,7 +309,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <V> neureka.Data allocate(DataType<V> dataType, int size, V initialValue ) {
+    public <V> neureka.Data allocate( DataType<V> dataType, int size, V initialValue ) {
         Class<?> type = dataType.getItemTypeClass();
         neureka.Data array = allocate( dataType, size );
         Object data = array.getRef();
