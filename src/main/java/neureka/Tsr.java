@@ -472,23 +472,23 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  Use this to construct and return a double tensor of the specified shape and initial values.
      *  The length of the provided array does not have to match the number of elements
      *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
-     *  provided double array..
+     *  provided double array.
      *
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tsr<Double> of( int[] shape, double[] value ) { return of( Double.class, shape, value ); }
+    static Tsr<Double> of( int[] shape, double[] values ) { return of( Double.class, shape, values ); }
 
     /**
      *  Use this to construct and return an int tensor of the specified shape and initial values.
      *  The length of the provided array does not have to match the number of elements
      *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
-     *  provided int array..
+     *  provided int array.
      *
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tsr<Integer> of( int[] shape, int[] value ) { return of( Integer.class, shape, value ); }
+    static Tsr<Integer> of( int[] shape, int[] values ) { return of( Integer.class, shape, values ); }
 
     /**
      *  Use this to construct and return a byte tensor of the specified shape and initial values.
