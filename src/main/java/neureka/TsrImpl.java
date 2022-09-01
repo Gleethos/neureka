@@ -246,7 +246,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         LogUtil.nullArgCheck( type, "filler", Filler.class );
         _setDataType( type );
         _constructAndAllocate(ndConstructor, false );
-        _initData(filler);
+        _initDataArrayFrom( filler );
     }
 
     private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual ) {

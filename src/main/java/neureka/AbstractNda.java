@@ -197,7 +197,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
         _data = array;
     }
 
-    protected <T> void _initData( Filler<T> filler )
+    protected <T> void _initDataArrayFrom( Filler<T> filler )
     {
         CPU.JVMExecutor executor = CPU.get().getExecutor();
         Object data = _getData().getRef();
@@ -339,13 +339,12 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     }
 
     /**
-     *  This method sets the NDConfiguration of this NDArray.
-     *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
+     * This method sets the NDConfiguration of this NDArray.
+     * Therefore, it should not be used lightly as it can cause major internal inconsistencies.
      *
      * @param ndConfiguration The new NDConfiguration instance which ought to be set.
-     * @return The final instance type of this class which enables method chaining.
      */
-    protected C _setNDConf( NDConfiguration ndConfiguration )
+    protected void _setNDConf(NDConfiguration ndConfiguration )
     {
         _guardSet( "ND-Configuration" );
         if ( _NDConf != null && ndConfiguration != null ) {
@@ -356,7 +355,6 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
         _NDConf = ndConfiguration;
         getDevice().access(this).updateNDConf();
 
-        return (C) this;
     }
 
 }
