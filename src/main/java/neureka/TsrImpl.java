@@ -674,10 +674,14 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             @Override
             public Tsr<V> setNDConf(NDConfiguration configuration ) { TsrImpl.this._setNDConf( configuration ); return TsrImpl.this; }
             @Override
-            public <V> Tsr<V> toType( Class<V> typeClass ) { return TsrImpl.this._toType( typeClass ); }
+            public <V> Tsr<V> toType( Class<V> typeClass ) {
+                LogUtil.nullArgCheck( typeClass, "typeClass", Class.class, "Cannot convert tensor to 'null' data type." );
+                return TsrImpl.this._toType( typeClass );
+            }
 
             @Override
             public <U> Tsr<U> upcast( Class<U> superType ) {
+                LogUtil.nullArgCheck( superType, "superType", Class.class );
                 if ( superType.isAssignableFrom(TsrImpl.this.itemType()) )
                     return (Tsr<U>) TsrImpl.this;
                 else
@@ -689,7 +693,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             @Override
             public Tsr<V> toLayout(NDConfiguration.Layout layout) { TsrImpl.this._toLayout( layout ); return TsrImpl.this; }
             @Override
-            public Tsr<V> incrementVersion(ExecutionCall<?> call ) {
+            public Tsr<V> incrementVersion( ExecutionCall<?> call ) {
+                LogUtil.nullArgCheck( call, "call", ExecutionCall.class );
                 _incrementVersionBecauseOf( call );
                 return TsrImpl.this;
             }
@@ -709,7 +714,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
 
             @Override
-            public Tsr<V> setData(Data data) {
+            public Tsr<V> setData( Data<V> data ) {
                 TsrImpl.this._setData( data );
                 return TsrImpl.this;
             }

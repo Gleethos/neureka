@@ -1128,7 +1128,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return This tensor to allow for method chaining.
      */
     default Tsr<V> backward() {
-        backward( 1 ); // By default we back-propagate a base factor of 1.
+        backward( 1 ); // By default, we back-propagate an error signal of 1.
         return this;
     }
 
@@ -2232,7 +2232,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
          */
         Tsr<T> setDataAt( int i, T o );
 
-        Tsr<T> setData(Data data );
+        Tsr<T> setData( Data<T> data );
 
         /**
          *  Use this to access the underlying writable data of this tensor if
