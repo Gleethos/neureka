@@ -47,6 +47,8 @@ final class TsrConstructor
      * @param API An implementation of the {@link API} interface.
      */
     public TsrConstructor( Device<?> targetDevice, NDConstructor ndConstructor, API API ) {
+        LogUtil.nullArgCheck( targetDevice, "targetDevice", Device.class, "Cannot construct a tensor without target device." );
+        LogUtil.nullArgCheck( ndConstructor, "ndConstructor", NDConstructor.class, "Cannot construct tensor without shape information." );
         _targetDevice = targetDevice;
         _ndConstructor = ndConstructor;
         _API = API;

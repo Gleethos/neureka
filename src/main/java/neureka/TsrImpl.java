@@ -253,15 +253,14 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         constructFor(CPU.get(), ndConstructor).newUnpopulated( virtual, true, getDataType() );
     }
 
+
     /*==================================================================================================================
     |
     |       §(2) : FLAGS
     |   ----------------------
     */
 
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> setRqsGradient(boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient ) {
@@ -280,11 +279,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         return this;
     }
 
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean rqsGradient() { return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK; }
+    /** {@inheritDoc} */
+    @Override public boolean rqsGradient() { return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK; }
 
     private void _setRqsGradient(boolean rqsGradient) {
         if ( rqsGradient() != rqsGradient ) {
@@ -293,11 +289,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         }
     }
 
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public boolean isIntermediate() { return ( _flags & IS_INTERMEDIATE_MASK ) == IS_INTERMEDIATE_MASK; }
+    /** {@inheritDoc} */
+    @Override public boolean isIntermediate() { return ( _flags & IS_INTERMEDIATE_MASK ) == IS_INTERMEDIATE_MASK; }
 
     /**
      *  Intermediate tensors are internal non-user tensors which may be eligible
@@ -315,15 +308,11 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         return this;
     }
 
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isVirtual() { return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK; }
 
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> setIsVirtual( boolean isVirtual )
     {
@@ -394,9 +383,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         }
     }
 
-    /**
-     *  {@inheritDoc}
-     */
+    /**  {@inheritDoc} */
     @Override
     public boolean isDeleted() { return ( _flags & IS_DELETED_MASK ) == IS_DELETED_MASK; }
 
@@ -404,9 +391,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     @Override
     public boolean gradientApplyRequested() { return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }
 
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Tsr<V> setGradientApplyRequested(boolean applyRequested ) {
         if ( gradientApplyRequested() != applyRequested ) {
@@ -462,8 +447,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     |   --------------------------------
     */
 
-    @Override
-    public <T extends Component<?>> T get( Class<T> componentClass ) {
+    /** {@inheritDoc} */
+    @Override public <T extends Component<?>> T get( Class<T> componentClass )
+    {
         LogUtil.nullArgCheck( componentClass, "componentClass", Class.class );
 
         if ( GraphNode.class.isAssignableFrom(componentClass) )
@@ -522,6 +508,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
         return newComponent;
     }
 
+
     /*==================================================================================================================
     |
     |       §(4) : PROPERTIES :
@@ -533,6 +520,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
      */
     @Override
     public int getVersion() { return _version; }
+
 
     /*==================================================================================================================
     |
