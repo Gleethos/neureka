@@ -1353,7 +1353,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular element-wise addition.
      *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
+     *  for every pair of shape dimensions the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
      *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
@@ -1398,7 +1398,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  If the shapes of both of the involved tensors are identical then
      *  the result will be a regular element-wise subtraction.
      *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
+     *  for every pair of shape dimensions the following is true:
      *  Either the dimensions have the same size or one of them has size 1.    <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
      *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)          <br>
@@ -1446,7 +1446,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  Creates and returns a new {@link Tsr} instance which is a transposed twin of this instance.<br>
      *  This is a shorter alternative to the functionally identical {@link #getT()} method.
      *
-     * @return A new transposed tensor with the same underlying data as this tensor.
+     * @return A new transposed tensor with the same underlying {@link Data} as this tensor.
      */
     default Tsr<V> T() {
         if ( this.rank() == 1 ) return this;
@@ -1613,7 +1613,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.<br>
      *  This is an alternative to the functionally identical {@link #T()} method.
      *
-     * @return A new transposed tensor with the same underlying data as this tensor.
+     * @return A new transposed tensor with the same underlying {@link Data} as this tensor.
      */
     default Tsr<V> getT() { return this.T(); } // Transposed
 
@@ -1651,7 +1651,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular element-wise product.
      *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
+     *  for every pair of shape dimensions the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
      *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
@@ -1678,7 +1678,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  The {@link #times(Tsr)} method is synonymous to the {@link #multiply(Tsr)}.
+     *  This is a functionally identical synonym to the {@link #multiply(Tsr)} method.
      *  Both of which will produce the product of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
@@ -1686,7 +1686,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular element-wise product.
      *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
+     *  for every pair of shape dimensions the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
      *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
@@ -1731,14 +1731,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> multiply( double value ) { return multiply( of( getItemType(), getNDConf().shape(), value ) ); }
 
     /**
-     *  The {@link #div(Tsr)} method will produce the quotient of
+     *  This method will produce the quotient of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
+     *  If the shapes of both of the involved tensors are identical then
      *  the result will be a regular element-wise division.
      *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
+     *  for every pair of shape dimensions the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
      *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
@@ -1758,14 +1758,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  The {@link #mod(Tsr)} method will produce the modulus of
+     *  Produces the modulus of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
+     *  If the shapes of these 2 tensors are identical then
      *  the result will be a regular element-wise modulo operation.
      *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
+     *  for every pair of shape dimensions the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
      *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
@@ -1791,14 +1791,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  The {@link #power(Tsr)} (Tsr)} method will produce the power of
+     *  This will produce the power of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
      *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
-     *  If the shapes of both of the involved tensors is identical then
+     *  If the shapes of the involved tensors are identical then
      *  the result will be a regular element-wise exponentiation.
      *  Otherwise, the method will also be able to perform broadcasting, however only if
-     *  for every pair of shape dimension the following is true:
+     *  for every pair of shape dimensions the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
      *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
      *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
@@ -1811,12 +1811,20 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return Neureka.get().backend().getAutogradFunction().pow().call( this, other );
     }
 
+    /**
+     *  Raises all items of this tensor to the power of the provided value.
+     *  The returned tensor is a new instance which will have the same shape as this tensor.
+     * 
+     * @param value The value which should be used to raise all items of this tensor to the power of.
+     * @return A new clone of this tensor where all items are raised to the power of the provided value.
+     */
     default Tsr<V> power( V value ) {
+        LogUtil.nullArgCheck(value, "value", getItemType(), "Cannot raise a tensor to the power of 'null'!");
         return power( of( this.itemType(), this.shape(), value ) );
     }
-
+    
     /**
-     *  This method is synonymous to the {@link #power(Tsr)} method.
+     *  This method is a functionally identical synonym to the {@link #power(Tsr)} method.
      */
     default Tsr<V> xor( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot raise a tensor to the power of 'null'!");
@@ -1824,10 +1832,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  This method is synonymous to the {@link #power(Tsr)} method.
+     *  This method is a functionally identical synonym to the {@link #power(Tsr)} method.
      */
     default Tsr<V> xor( double value ) { return xor( of( this.itemType(), this.shape(), value ) ); }
 
+    
     /*==================================================================================================================
     |
     |       §(9) : SLICING, INDEXING & INJECTING :
@@ -1892,8 +1901,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     @Override Tsr<V> putAt( int[] indices, V value );
 
     /** {@inheritDoc} */
-    @Override
-    default Tsr<V> set( int[] indices, V value ) { return putAt( indices, value ); }
+    @Override default Tsr<V> set( int[] indices, V value ) { return putAt( indices, value ); }
 
     /** {@inheritDoc} */
     @Override default Tsr<V> putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }
@@ -1918,6 +1926,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override Tsr<V> setItems( Object value );
 
+    
     /*==================================================================================================================
     |
     |       §(10) : Mapping :
