@@ -19,9 +19,9 @@ import java.util.stream.IntStream;
  *  The existence of this class is a symptom of the fact that there
  *  is a very large API for creating tensors in Neureka.
  *  This means that all the code dealing with verifying and converting
- *  API input (provided by various {@link neureka.Tsr#of} methods)
+ *  API input (provided by various {@link neureka.Tsr#of} as well as {@link neureka.Tsr#of} methods)
  *  sits inside this class instead of polluting the already very large
- *  {@link neureka.Tsr} class.
+ *  {@link neureka.TsrImpl} class.
  */
 final class TsrConstructor
 {
@@ -55,7 +55,7 @@ final class TsrConstructor
     }
 
     /**
-     *  Constructs the tensor without any initial data.
+     *  Constructs the tensor without any initial {@link Data}.
      *
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
