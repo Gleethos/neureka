@@ -17,7 +17,7 @@ public interface Data<V> {
     Device<V> owner();
 
     /**
-     *  This returns the underlying raw data object of an nd-array or tensor.
+     *  This returns the underlying raw data object of a nd-array or tensor.
      *  Contrary to the {@link Nda#getItems()} ()} method, this will
      *  return an unbiased view on the raw data of this tensor.
      *  Be careful using this, as it exposes mutable state!
@@ -26,6 +26,15 @@ public interface Data<V> {
      */
     Object getRef();
 
+    /**
+     *  This returns the underlying raw data object of a nd-array or tensor.
+     *  Contrary to the {@link Nda#getItems()} ()} method, this will
+     *  return an unbiased view on the raw data of this tensor.
+     *  Be careful using this, as it exposes mutable state!
+     *
+     * @param dataType The type the underlying reference object is expected to have (this may be a JVM array or something device specific).
+     * @return The raw data object underlying a nd-array/tensor.
+     */
     default <D> D getRef(Class<D> dataType) {
         Object data = getRef();
         if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
