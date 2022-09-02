@@ -124,12 +124,13 @@ class InternalMatMulTest
 
         //---
 
-        M64 A = new M64(1, 2,  new double[2])
-        M64 B = new M64(2, 2,  new double[4])
-        _fillIt64(A.data, -339)
-        _fillIt64(B.data, 543)
+        var A = new double[2]
+        var B = new double[4]
+        _fillIt64(A, -339)
+        _fillIt64(B, 543)
+        var C = new double[2]
 
-        var C = A.multiply(DO_ROW_MAJOR, B, new double[2])
+        MatMul.operationForF64( DO_ROW_MAJOR, 1, 2 ).invoke( C, A, 2, B );
 
         /*
                         ( 5  -5 )
@@ -141,18 +142,19 @@ class InternalMatMulTest
                 (-5 -4) (-5  32 )
         */
 
-        assert A.data == [-5, -4] as double[]
-        assert B.data == [5, -5, -4, -3] as double[]
-        assert C.data == (type == Type.COL_MAJOR ? [-5, 32] : [-9, 37] ) as double[]
+        assert A == [-5, -4] as double[]
+        assert B == [5, -5, -4, -3] as double[]
+        assert C == (type == Type.COL_MAJOR ? [-5, 32] : [-9, 37] ) as double[]
 
         //---
 
-        A = new M64(2, 2,  new double[4])
-        B = new M64(2, 1,  new double[2])
-        _fillIt64(A.data, -339)
-        _fillIt64(B.data, 543)
+        A = new double[4]
+        B = new double[2]
+        _fillIt64(A, -339)
+        _fillIt64(B, 543)
+        C = new double[2*1]
 
-        C = A.multiply(DO_ROW_MAJOR, B, new double[2*1])
+        MatMul.operationForF64( DO_ROW_MAJOR, 2, 1 ).invoke( C, A, 2, B );
 
         /*
                         ( 5)
@@ -166,9 +168,9 @@ class InternalMatMulTest
                 (-4 -2) (-10)
         */
 
-        assert A.data == [-5, -4, -3, -2] as double[]
-        assert B.data == [5, -5] as double[]
-        assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as double[]
+        assert A == [-5, -4, -3, -2] as double[]
+        assert B == [5, -5] as double[]
+        assert C == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as double[]
 
     }
 
