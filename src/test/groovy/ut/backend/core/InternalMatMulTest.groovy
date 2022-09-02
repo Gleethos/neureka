@@ -91,11 +91,14 @@ class InternalMatMulTest
 
     private void _testDoubles(int dim, int dim2, int dim3, int hash) {
 
-        var A = new M64(dim, dim2,  new double[dim*dim2])
-        var B = new M64(dim2, dim3,  new double[dim2*dim3])
+        double[] aData = new double[dim*dim2]
+        double[] bData = new double[dim2*dim3]
 
-        _fillIt64(A.data, 43)
-        _fillIt64(B.data, 87)
+        _fillIt64(aData, 43)
+        _fillIt64(bData, 87)
+
+        var A = new M64(dim, dim2,  aData)
+        var B = new M64(dim2, dim3,  bData)
 
         var C = _matmulF64(A,B)
 
@@ -104,11 +107,14 @@ class InternalMatMulTest
 
     private void _testFloats(int dim, int dim2, int dim3, int hash) {
 
-        var A = new M32(dim, dim2, new float[dim*dim2])
-        var B = new M32(dim2, dim3, new float[dim2*dim3])
+        float[] aData = new float[dim*dim2]
+        float[] bData = new float[dim2*dim3]
 
-        _fillIt32(A.data, 43)
-        _fillIt32(B.data, 87)
+        _fillIt32(aData, 43)
+        _fillIt32(bData, 87)
+
+        var A = new M32(dim, dim2, aData)
+        var B = new M32(dim2, dim3, bData)
 
         var C = _matmulF32(A,B)
 
