@@ -3,6 +3,7 @@ package ut.backend.core
 import groovy.transform.CompileStatic
 import neureka.backend.main.operations.linear.internal.M32
 import neureka.backend.main.operations.linear.internal.M64
+import neureka.backend.main.operations.linear.internal.blas.MatMul
 
 @CompileStatic
 class InternalMatMulTest
@@ -91,34 +92,30 @@ class InternalMatMulTest
 
     private void _testDoubles(int dim, int dim2, int dim3, int hash) {
 
-        double[] aData = new double[dim*dim2]
-        double[] bData = new double[dim2*dim3]
+        var aData = new double[ dim  * dim2 ]
+        var bData = new double[ dim2 * dim3 ]
+        var cData = new double[ dim  * dim3 ]
 
         _fillIt64(aData, 43)
         _fillIt64(bData, 87)
 
-        var A = new M64(dim, dim2,  aData)
-        var B = new M64(dim2, dim3,  bData)
+        MatMul.operationForF64( DO_ROW_MAJOR, dim, dim3 ).invoke( cData, aData, dim2, bData );
 
-        var C = _matmulF64(A,B)
-
-        assert _hash(C.getData()) ==  hash
+        assert _hash(cData) ==  hash
     }
 
     private void _testFloats(int dim, int dim2, int dim3, int hash) {
 
-        float[] aData = new float[dim*dim2]
-        float[] bData = new float[dim2*dim3]
+        var aData = new float[ dim  * dim2 ]
+        var bData = new float[ dim2 * dim3 ]
+        var data  = new float[ dim  * dim3 ]
 
         _fillIt32(aData, 43)
         _fillIt32(bData, 87)
 
-        var A = new M32(dim, dim2, aData)
-        var B = new M32(dim2, dim3, bData)
+        MatMul.operationForF32( DO_ROW_MAJOR, dim, dim3 ).invoke( data, aData, dim2, bData );
 
-        var C = _matmulF32(A,B)
-
-        assert _hash(C.getData()) == hash
+        assert _hash(data) == hash
     }
 
     private void _basicF64Test(Type type) {
@@ -132,7 +129,7 @@ class InternalMatMulTest
         _fillIt64(A.data, -339)
         _fillIt64(B.data, 543)
 
-        var C =  _matmulF64(A,B)
+        var C = A.multiply(DO_ROW_MAJOR, B, new double[2])
 
         /*
                         ( 5  -5 )
@@ -155,7 +152,7 @@ class InternalMatMulTest
         _fillIt64(A.data, -339)
         _fillIt64(B.data, 543)
 
-        C =  _matmulF64(A,B)
+        C = A.multiply(DO_ROW_MAJOR, B, new double[2*1])
 
         /*
                         ( 5)
@@ -184,7 +181,7 @@ class InternalMatMulTest
         _fillIt32(A.data, -339)
         _fillIt32(B.data, 543)
 
-        var C =  _matmulF32(A,B)
+        var C = A.multiply(DO_ROW_MAJOR, B, new float[2])
 
         /*
                         ( 5)
@@ -202,20 +199,6 @@ class InternalMatMulTest
         assert B.data == [5, -5] as float[]
         assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as float[]
 
-    }
-
-    private M32 _matmulF32(M32 A, M32 B) {
-        var data = new float[A.getRowDim()*B.getColDim()]
-        var C = A.multiply(DO_ROW_MAJOR, B, data)
-        assert C.data === data
-        return C
-    }
-
-    private M64 _matmulF64(M64 A, M64 B) {
-        var data = new double[A.getRowDim()*B.getColDim()]
-        var C = A.multiply(DO_ROW_MAJOR, B, data)
-        assert C.data === data
-        return C
     }
 
     private static int _hash(Object data) {

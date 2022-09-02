@@ -1,10 +1,9 @@
 package neureka.backend.main.operations.linear;
 
 import neureka.Tsr;
-import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.main.operations.linear.internal.M32;
-import neureka.backend.main.operations.linear.internal.M64;
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.main.operations.linear.internal.blas.MatMul;
 import neureka.devices.host.CPU;
 import neureka.ndim.config.NDConfiguration;
 
@@ -25,17 +24,13 @@ public class CPUMatMul implements ImplementationFor<CPU> {
                 }
             }
         */
-        M64 a = new M64(aRows, aCols, A);
-        M64 b = new M64(aCols, bCols, B);
-        a.multiply( rowMajor, b, C );
+        MatMul.operationForF64( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
     }
 
     public static void execute(
             boolean rowMajor, float[] A, float[] B, float[] C, int aRows, int aCols, int bCols
     ) {
-        M32 a = new M32(aRows, aCols, A);
-        M32 b = new M32(aCols, bCols, B);
-        a.multiply( rowMajor, b, C );
+        MatMul.operationForF32( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
     }
 
     @Override
