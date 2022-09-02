@@ -577,7 +577,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tsr<V> of( Class<V> type, List<Integer> shape, V data ) {
+    static <V> Tsr<V> of( Class<V> type, List<Integer> shape, Object data ) {
         return of( DataType.of(type), shape.stream().mapToInt(i -> i).toArray(), data );
     }
 

@@ -5,37 +5,30 @@ import neureka.backend.main.operations.linear.internal.M32
 import neureka.backend.main.operations.linear.internal.M64
 
 @CompileStatic
-class InternalMatMulTest {
-
-
-    private static boolean DO_ROW_MAJOR = true
-
+class InternalMatMulTest
+{
+    private boolean DO_ROW_MAJOR = true
 
     private enum Type {
         ROW_MAJOR, COL_MAJOR;
 
-        void set() {
-            if ( this == ROW_MAJOR )
-                DO_ROW_MAJOR = true
-            else
-                DO_ROW_MAJOR = false
-        }
+        boolean set() { return this == ROW_MAJOR  }
     }
 
     private static final int DIM = 1_028
 
     static void main(final String[] args) {
 
-        start()
+        new InternalMatMulTest().start()
 
     }
 
-    static void start() {
+    void start() {
 
-        Type.COL_MAJOR.set()
+        DO_ROW_MAJOR = Type.COL_MAJOR.set()
         _test(11,7,13,-1572171092)
 
-        Type.COL_MAJOR.set()
+        DO_ROW_MAJOR = Type.COL_MAJOR.set()
         _test(2,2,2,1621312579)
         _test(3,3,3,458449078)
         _test(4,4,4,-1394046135)
@@ -79,7 +72,7 @@ class InternalMatMulTest {
         _test(DIM,DIM,DIM,245517809)
 
         //---
-        Type.ROW_MAJOR.set()
+        DO_ROW_MAJOR = Type.ROW_MAJOR.set()
         _test(2,3,4, -34070530)
         _test(20,30,40, -237450937)
         _test(42,61,53, 1490187176)
@@ -91,12 +84,12 @@ class InternalMatMulTest {
         _basicF32Test(Type.COL_MAJOR)
     }
 
-    private static void _test(int d1, int d2, int d3, int hash1) {
+    private void _test(int d1, int d2, int d3, int hash1) {
         _testDoubles(d1,d2,d3,hash1)
         _testFloats(d1,d2,d3,hash1)
     }
 
-    private static void _testDoubles(int dim, int dim2, int dim3, int hash) {
+    private void _testDoubles(int dim, int dim2, int dim3, int hash) {
 
         var A = new M64(dim, dim2,  new double[dim*dim2])
         var B = new M64(dim2, dim3,  new double[dim2*dim3])
@@ -109,7 +102,7 @@ class InternalMatMulTest {
         assert _hash(C.getData()) ==  hash
     }
 
-    private static void _testFloats(int dim, int dim2, int dim3, int hash) {
+    private void _testFloats(int dim, int dim2, int dim3, int hash) {
 
         var A = new M32(dim, dim2, new float[dim*dim2])
         var B = new M32(dim2, dim3, new float[dim2*dim3])
@@ -122,9 +115,9 @@ class InternalMatMulTest {
         assert _hash(C.getData()) == hash
     }
 
-    private static void _basicF64Test(Type type) {
+    private void _basicF64Test(Type type) {
 
-        type.set()
+        DO_ROW_MAJOR = type.set()
 
         //---
 
@@ -176,9 +169,9 @@ class InternalMatMulTest {
 
     }
 
-    private static void _basicF32Test(Type type) {
+    private void _basicF32Test(Type type) {
 
-        type.set()
+        DO_ROW_MAJOR = type.set()
 
         M32 A = new M32(2, 2,  new float[4])
         M32 B = new M32(2, 1,  new float[2])
@@ -205,14 +198,14 @@ class InternalMatMulTest {
 
     }
 
-    private static M32 _matmulF32(M32 A, M32 B) {
+    private M32 _matmulF32(M32 A, M32 B) {
         var data = new float[A.getRowDim()*B.getColDim()]
         var C = A.multiply(DO_ROW_MAJOR, B, data)
         assert C.data === data
         return C
     }
 
-    private static M64 _matmulF64(M64 A, M64 B) {
+    private M64 _matmulF64(M64 A, M64 B) {
         var data = new double[A.getRowDim()*B.getColDim()]
         var C = A.multiply(DO_ROW_MAJOR, B, data)
         assert C.data === data

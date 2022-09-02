@@ -194,10 +194,10 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected abstract neureka.Data<V> _actualize(Tsr<?> tensor );
 
-    protected neureka.Data<V> _dataArrayOf(Object data ) {
+    protected <T extends V> neureka.Data<T> _dataArrayOf( Object data ) {
         assert !(data instanceof neureka.Data);
-        return new neureka.Data<V>() {
-            @Override public Device<V> owner() { return AbstractDevice.this; }
+        return new neureka.Data<T>() {
+            @Override public Device<T> owner() { return (Device<T>) AbstractDevice.this; }
             @Override public Object getRef() { return data; }
         };
     }

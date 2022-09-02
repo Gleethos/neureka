@@ -1,5 +1,6 @@
 package neureka.devices.host;
 
+import neureka.Data;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
@@ -241,7 +242,7 @@ public class CPU extends AbstractDevice<Object>
     ) {
         Object data = tensor.getUnsafe().getData() == null ? null : tensor.getUnsafe().getData().getRef();
         if ( data == null ) {
-            tensor.getUnsafe().setData(_dataArrayOf(array));
+            tensor.getUnsafe().setData( _dataArrayOf(array) );
             return;
         }
         Class<?> arrayType = data.getClass();

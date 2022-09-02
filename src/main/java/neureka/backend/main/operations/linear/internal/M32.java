@@ -24,8 +24,7 @@ public class M32 {
 
         M32 retVal = new M32(_rowCount, otherColCount, otherData);
 
-        MatMul
-                .operationForF32( rowMajor, _rowCount, otherColCount )
+        MatMul.operationForF32( rowMajor, _rowCount, otherColCount )
                 .invoke(
                         retVal._data, _data, _colCount, matrix._data
                 );
@@ -38,26 +37,6 @@ public class M32 {
 
     public float[] getData() {
         return _data;
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName()+"["+_rowCount+"x"+_colCount+"]"
-                + Tsr.of(
-                            Float.class,
-                            new int[]{_rowCount,_colCount},
-                            _data
-                        )
-                        .toString( it ->
-                                    it.setHasShape(false)
-                                      .setHasSlimNumbers(true)
-                                      .setHasValue(true)
-                                      .setIsMultiline(true)
-                                      .setIsLegacy(true)
-                                      .setIsScientific(true)
-                                      .setIsCellBound(true)
-                                      .setCellSize(4)
-                                );
     }
 
 }
