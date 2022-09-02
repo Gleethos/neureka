@@ -127,7 +127,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  This will be interpreted as an inline copy of the contents of the
      *  second parameter into this {@link Tsr} instance.
      *
-     * @return A new and completely empty / unitialized {@link Tsr} instance.
+     * @return A new and completely empty / uninitialized {@link Tsr} instance.
      */
     static Tsr<Object> newInstance() { return new TsrImpl<>(); }
 
@@ -208,7 +208,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     ) {
         return TsrImpl._of( e1, a, e2, b, e3, c, e4 );
     }
-
 
     /**
      *  This static {@link Tsr} factory method tries to interpret the provided
@@ -299,23 +298,23 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  instance with the corresponding rank and shape and whose values
      *  are of the provided type.
      *
-     * @param targetType The type of the tensor produced by this factory method.
+     * @param type The type of the tensor produced by this factory method.
      * @param conf A list of either values or nested lists which are themselves either or.
-     * @param <T> The type parameter of the tensor returned by this factoy method.
+     * @param <T> The type parameter of the tensor returned by this factory method.
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
-    static <T> Tsr<T> of( Class<T> targetType, List<Object> conf ) {
+    static <T> Tsr<T> of( Class<T> type, List<Object> conf ) {
         ListReader.Result result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
         Class<T> resultType;
         Object[] resultData;
         int[] shape = result.getShape().stream().mapToInt(i -> i).toArray();
-        if ( targetType == null ) {
+        if ( type == null ) {
             resultType = (Class<T>) result.getType();
             resultData = result.getData().toArray();
         } else {
             DataConverter converter = DataConverter.get();
-            resultType = targetType;
-            resultData = result.getData().parallelStream().map( v -> converter.convert(v, targetType) ).toArray();
+            resultType = type;
+            resultData = result.getData().parallelStream().map( v -> converter.convert(v, type) ).toArray();
         }
         return of( DataType.of(resultType), shape, resultData );
     }
@@ -327,9 +326,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  fluent {@link Tsr} builder API which will lead to the creation
      *  of a tensor storing values defined by the provided type class.
      *
+     * @param type The type class of the items stored by the tensor built by the exposed builder API.
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
-    static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> typeClass ) { return new NdaBuilder<>( typeClass ); }
+    static <V> WithShapeOrScalarOrVectorOnDevice<V> of( Class<V> type ) { return new NdaBuilder<>( type ); }
 
     /**
      *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
@@ -564,8 +564,8 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tsr<V> of( Class<V> typeClass, int[] shape, Object data ) {
-        return of( DataType.of(typeClass), shape, data );
+    static <V> Tsr<V> of( Class<V> type, int[] shape, Object data ) {
+        return of( DataType.of(type), shape, data );
     }
 
     /**
@@ -577,12 +577,12 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) {
-        return of( DataType.of(typeClass), shape.stream().mapToInt(i -> i).toArray(), data );
+    static <V> Tsr<V> of( Class<V> type, List<Integer> shape, V data ) {
+        return of( DataType.of(type), shape.stream().mapToInt(i -> i).toArray(), data );
     }
 
-    static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, List<V> data ) {
-        return of( DataType.of( typeClass ), shape.stream().mapToInt( e -> e ).toArray(), data );
+    static <V> Tsr<V> of( Class<V> type, List<Integer> shape, List<V> data ) {
+        return of( DataType.of( type ), shape.stream().mapToInt( e -> e ).toArray(), data );
     }
 
     static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
