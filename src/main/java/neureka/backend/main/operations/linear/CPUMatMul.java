@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.operations.linear.internal.blas.GEMM;
+import neureka.backend.main.operations.linear.internal.blas.IGEMM;
 import neureka.devices.host.CPU;
 import neureka.ndim.config.NDConfiguration;
 
@@ -31,6 +32,18 @@ public class CPUMatMul implements ImplementationFor<CPU> {
             boolean rowMajor, float[] A, float[] B, float[] C, int aRows, int aCols, int bCols
     ) {
         GEMM.operationForF32( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
+    }
+
+    public static void execute(
+            boolean rowMajor, long[] A, long[] B, long[] C, int aRows, int aCols, int bCols
+    ) {
+        IGEMM.operationForI64( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
+    }
+
+    public static void execute(
+            boolean rowMajor, int[] A, int[] B, int[] C, int aRows, int aCols, int bCols
+    ) {
+        IGEMM.operationForI32( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
     }
 
     @Override
@@ -70,13 +83,23 @@ public class CPUMatMul implements ImplementationFor<CPU> {
             double[] A = call.input(Double.class, 1).getUnsafe().getDataAs(double[].class);
             double[] B = call.input(Double.class, 2).getUnsafe().getDataAs(double[].class);
             double[] C = call.input(Double.class, 0).getUnsafe().getDataForWriting(double[].class);
-
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         } else if ( type == Float.class ) {
             float[] A = call.input(Float.class, 1).getUnsafe().getDataAs(float[].class);
             float[] B = call.input(Float.class, 2).getUnsafe().getDataAs(float[].class);
             float[] C = call.input(Float.class, 0).getUnsafe().getDataForWriting(float[].class);
-
+            execute( rowMajor, A, B, C, aRows, aCols, bCols );
+        }
+        else if ( type == Long.class ) {
+            long[] A = call.input(Long.class, 1).getUnsafe().getDataAs(long[].class);
+            long[] B = call.input(Long.class, 2).getUnsafe().getDataAs(long[].class);
+            long[] C = call.input(Long.class, 0).getUnsafe().getDataForWriting(long[].class);
+            execute( rowMajor, A, B, C, aRows, aCols, bCols );
+        }
+        else if ( type == Integer.class ) {
+            int[] A = call.input(Integer.class, 1).getUnsafe().getDataAs(int[].class);
+            int[] B = call.input(Integer.class, 2).getUnsafe().getDataAs(int[].class);
+            int[] C = call.input(Integer.class, 0).getUnsafe().getDataForWriting(int[].class);
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         }
         else

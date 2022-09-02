@@ -2,6 +2,7 @@ package ut.backend.core
 
 import groovy.transform.CompileStatic
 import neureka.backend.main.operations.linear.internal.blas.GEMM
+import neureka.backend.main.operations.linear.internal.blas.IGEMM
 
 @CompileStatic
 class InternalMatMulTest
@@ -86,33 +87,51 @@ class InternalMatMulTest
     private void _test(int d1, int d2, int d3, int hash1) {
         _testDoubles(d1,d2,d3,hash1)
         _testFloats(d1,d2,d3,hash1)
+        _testLongs(d1,d2,d3,hash1)
+        _testInts(d1,d2,d3,hash1)
     }
 
-    private void _testDoubles(int dim, int dim2, int dim3, int hash) {
-
+    private void _testDoubles(int dim, int dim2, int dim3, int hash)
+    {
         var aData = new double[ dim  * dim2 ]
         var bData = new double[ dim2 * dim3 ]
         var cData = new double[ dim  * dim3 ]
-
         _fillIt64(aData, 43)
         _fillIt64(bData, 87)
-
         GEMM.operationForF64( DO_ROW_MAJOR, dim, dim3 ).invoke( cData, aData, dim2, bData );
-
         assert _hash(cData) ==  hash
     }
 
-    private void _testFloats(int dim, int dim2, int dim3, int hash) {
-
+    private void _testFloats(int dim, int dim2, int dim3, int hash)
+    {
         var aData = new float[ dim  * dim2 ]
         var bData = new float[ dim2 * dim3 ]
         var data  = new float[ dim  * dim3 ]
-
         _fillIt32(aData, 43)
         _fillIt32(bData, 87)
-
         GEMM.operationForF32( DO_ROW_MAJOR, dim, dim3 ).invoke( data, aData, dim2, bData );
+        assert _hash(data) == hash
+    }
 
+    private void _testLongs(int dim, int dim2, int dim3, int hash)
+    {
+        var aData = new long[ dim  * dim2 ]
+        var bData = new long[ dim2 * dim3 ]
+        var cData = new long[ dim  * dim3 ]
+        _fillItI64(aData, 43)
+        _fillItI64(bData, 87)
+        IGEMM.operationForI64( DO_ROW_MAJOR, dim, dim3 ).invoke( cData, aData, dim2, bData );
+        assert _hash(cData) ==  hash
+    }
+
+    private void _testInts(int dim, int dim2, int dim3, int hash)
+    {
+        var aData = new int[ dim  * dim2 ]
+        var bData = new int[ dim2 * dim3 ]
+        var data  = new int[ dim  * dim3 ]
+        _fillItI32(aData, 43)
+        _fillItI32(bData, 87)
+        IGEMM.operationForI32( DO_ROW_MAJOR, dim, dim3 ).invoke( data, aData, dim2, bData );
         assert _hash(data) == hash
     }
 
@@ -127,9 +146,7 @@ class InternalMatMulTest
         _fillIt64(A, -339)
         _fillIt64(B, 543)
         var C = new double[2]
-
         GEMM.operationForF64( DO_ROW_MAJOR, 1, 2 ).invoke( C, A, 2, B );
-
         /*
                         ( 5  -5 )
                         (-4  -3 )
@@ -139,7 +156,6 @@ class InternalMatMulTest
                         (-5  -3 )
                 (-5 -4) (-5  32 )
         */
-
         assert A == [-5, -4] as double[]
         assert B == [5, -5, -4, -3] as double[]
         assert C == (type == Type.COL_MAJOR ? [-5, 32] : [-9, 37] ) as double[]
@@ -172,17 +188,15 @@ class InternalMatMulTest
 
     }
 
-    private void _basicF32Test(Type type) {
-
+    private void _basicF32Test(Type type)
+    {
         DO_ROW_MAJOR = type.set()
 
         var A = new float[4]
         var B = new float[2]
         _fillIt32(A, -339)
         _fillIt32(B, 543)
-
         var C = new float[2]
-
         GEMM.operationForF32( DO_ROW_MAJOR, 2, 1 ).invoke( C, A, 2, B );
 
         /*
@@ -204,6 +218,8 @@ class InternalMatMulTest
     }
 
     private static int _hash(Object data) {
+        if ( data instanceof int[] ) data = data as float[]
+        if ( data instanceof long[] ) data = data as double[]
         if ( data instanceof float[] )
             return Arrays.toString((float[])data).hashCode()
         else if ( data instanceof double[] )
@@ -223,6 +239,20 @@ class InternalMatMulTest
         long hash = (long)((32**seed) % 11)
         data.length.times {
             data[it] = ( (it + hash) % 11 - 5 )
+        }
+    }
+
+    private static void _fillItI64( long[] data, int seed ) {
+        long hash = (long)((32**seed) % 11)
+        data.length.times {
+            data[it] = ( (it + hash) % 11 - 5 )
+        }
+    }
+
+    private static void _fillItI32( int[] data, int seed ) {
+        long hash = (long)((32**seed) % 11)
+        data.length.times {
+            data[it] = (int) ( (it + hash) % 11 - 5 )
         }
     }
 
