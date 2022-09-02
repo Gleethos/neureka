@@ -5,13 +5,13 @@ import neureka.Tsr
 import neureka.backend.api.ExecutionCall
 import neureka.backend.main.operations.linear.internal.opencl.CLReduce
 import neureka.backend.main.operations.linear.internal.opencl.CLSum
-import neureka.backend.main.operations.linear.internal.opencl.GEMM
+import neureka.backend.main.operations.linear.internal.opencl.CLGEMM
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Specification
 import spock.lang.Subject
 
-@Subject([GEMM, CLReduce])
+@Subject([CLGEMM, CLReduce])
 class OpenCL_Kernel_Unit_Spec extends Specification
 {
     def 'The GEMM implementation for the OpenCLDevice has realistic behaviour'()
@@ -25,7 +25,7 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             var kernel = Mock(KernelCaller)
 
         when :
-            new GEMM().run( call )
+            new CLGEMM().run( call )
 
         then :
             (1.._) * call.input(Float, 0) >> c

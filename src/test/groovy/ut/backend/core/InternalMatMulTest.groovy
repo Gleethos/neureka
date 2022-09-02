@@ -1,7 +1,7 @@
 package ut.backend.core
 
 import groovy.transform.CompileStatic
-import neureka.backend.main.operations.linear.internal.blas.MatMul
+import neureka.backend.main.operations.linear.internal.blas.GEMM
 
 @CompileStatic
 class InternalMatMulTest
@@ -97,7 +97,7 @@ class InternalMatMulTest
         _fillIt64(aData, 43)
         _fillIt64(bData, 87)
 
-        MatMul.operationForF64( DO_ROW_MAJOR, dim, dim3 ).invoke( cData, aData, dim2, bData );
+        GEMM.operationForF64( DO_ROW_MAJOR, dim, dim3 ).invoke( cData, aData, dim2, bData );
 
         assert _hash(cData) ==  hash
     }
@@ -111,7 +111,7 @@ class InternalMatMulTest
         _fillIt32(aData, 43)
         _fillIt32(bData, 87)
 
-        MatMul.operationForF32( DO_ROW_MAJOR, dim, dim3 ).invoke( data, aData, dim2, bData );
+        GEMM.operationForF32( DO_ROW_MAJOR, dim, dim3 ).invoke( data, aData, dim2, bData );
 
         assert _hash(data) == hash
     }
@@ -128,7 +128,7 @@ class InternalMatMulTest
         _fillIt64(B, 543)
         var C = new double[2]
 
-        MatMul.operationForF64( DO_ROW_MAJOR, 1, 2 ).invoke( C, A, 2, B );
+        GEMM.operationForF64( DO_ROW_MAJOR, 1, 2 ).invoke( C, A, 2, B );
 
         /*
                         ( 5  -5 )
@@ -152,7 +152,7 @@ class InternalMatMulTest
         _fillIt64(B, 543)
         C = new double[2*1]
 
-        MatMul.operationForF64( DO_ROW_MAJOR, 2, 1 ).invoke( C, A, 2, B );
+        GEMM.operationForF64( DO_ROW_MAJOR, 2, 1 ).invoke( C, A, 2, B );
 
         /*
                         ( 5)
@@ -183,7 +183,7 @@ class InternalMatMulTest
 
         var C = new float[2]
 
-        MatMul.operationForF32( DO_ROW_MAJOR, 2, 1 ).invoke( C, A, 2, B );
+        GEMM.operationForF32( DO_ROW_MAJOR, 2, 1 ).invoke( C, A, 2, B );
 
         /*
                         ( 5)

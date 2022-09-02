@@ -11,7 +11,7 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.api.template.algorithms.FunDeviceAlgorithm;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
-import neureka.backend.main.operations.linear.internal.opencl.GEMM;
+import neureka.backend.main.operations.linear.internal.opencl.CLGEMM;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
@@ -116,7 +116,7 @@ public class MatMul extends AbstractOperation
                                 .all( t -> t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
                                 .isValid()
                         ) {
-                            return new GEMM().run( call );
+                            return new CLGEMM().run( call );
                         } else {
                             int M = call.input(1).shape(0);
                             int N = call.input(2).shape(1);

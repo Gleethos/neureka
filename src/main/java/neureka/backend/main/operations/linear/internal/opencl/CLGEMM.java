@@ -8,7 +8,7 @@ import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.function.Supplier;
 
-public class GEMM implements ImplementationFor<OpenCLDevice>
+public class CLGEMM implements ImplementationFor<OpenCLDevice>
 {
     @Override
     public Tsr<?> run(ExecutionCall<OpenCLDevice> call)

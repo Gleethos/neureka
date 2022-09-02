@@ -30,7 +30,7 @@ import neureka.devices.host.CPU;
  *  continuous arrays which are designed so that they can be vectorized by the
  *  JVMs JIT compiler (AVX instructions).
  */
-public class MatMul {
+public class GEMM {
 
     @FunctionalInterface
     public interface VectorOperationF32 {
@@ -57,26 +57,26 @@ public class MatMul {
     ) {
         if ( rows > CPU.PARALLELIZATION_THRESHOLD && columns > CPU.PARALLELIZATION_THRESHOLD) {
             return ( rowMajor
-                    ? MatMul::threaded_F32_MxN_RM
-                    : MatMul::threaded_F32_MxN_CM
+                    ? GEMM::threaded_F32_MxN_RM
+                    : GEMM::threaded_F32_MxN_CM
                 );
         }
         if ( columns == 1 ) {
             return ( rowMajor
-                    ? MatMul::full_F32_Mx1_RM
-                    : MatMul::full_F32_Mx1_CM
+                    ? GEMM::full_F32_Mx1_RM
+                    : GEMM::full_F32_Mx1_CM
                 );
         }
         if ( rows == 1 )
             return (
                     rowMajor
-                            ? MatMul::full_F32_1xN_RM
-                            : MatMul::full_F32_1xN_CM
+                            ? GEMM::full_F32_1xN_RM
+                            : GEMM::full_F32_1xN_CM
             );
         return (
                 rowMajor
-                        ? MatMul::full_F32_MxN_RM
-                        : MatMul::full_F32_MxN_CM
+                        ? GEMM::full_F32_MxN_RM
+                        : GEMM::full_F32_MxN_CM
             );
     }
 
@@ -85,42 +85,42 @@ public class MatMul {
     ) {
         if ( rows > CPU.PARALLELIZATION_THRESHOLD && columns > CPU.PARALLELIZATION_THRESHOLD )
             return ( rowMajor
-                ? MatMul::threaded_F64_MxN_RM
-                : MatMul::threaded_F64_MxN_CM
+                ? GEMM::threaded_F64_MxN_RM
+                : GEMM::threaded_F64_MxN_CM
             );
 
         if ( !rowMajor ) { // Supported in column major only!
-            if (rows == 5 && columns == 5) return MatMul::full_F64_5x5_CM;
-            if (rows == 4 && columns == 4) return MatMul::full_F64_4x4_CM;
-            if (rows == 3 && columns == 3) return MatMul::full_F64_3x3_CM;
-            if (rows == 2 && columns == 2) return MatMul::full_F64_2x2_CM;
-            if (rows == 1 && columns == 1) return MatMul::full_F64_1x1_CM;
+            if (rows == 5 && columns == 5) return GEMM::full_F64_5x5_CM;
+            if (rows == 4 && columns == 4) return GEMM::full_F64_4x4_CM;
+            if (rows == 3 && columns == 3) return GEMM::full_F64_3x3_CM;
+            if (rows == 2 && columns == 2) return GEMM::full_F64_2x2_CM;
+            if (rows == 1 && columns == 1) return GEMM::full_F64_1x1_CM;
         }
         if ( columns == 1 )
             return (
                 rowMajor
-                    ? MatMul::full_F64_Mx1_RM
-                    : MatMul::full_F64_Mx1_CM
+                    ? GEMM::full_F64_Mx1_RM
+                    : GEMM::full_F64_Mx1_CM
             );
 
         if ( !rowMajor ) { // Supported in column major only!
-            if ( rows == 10) return MatMul::full_F64_0xN_CM;
-            if ( rows == 9 ) return MatMul::full_F64_9xN_CM;
-            if ( rows == 8 ) return MatMul::full_F64_8xN_CM;
-            if ( rows == 7 ) return MatMul::full_F64_7xN_CM;
-            if ( rows == 6 ) return MatMul::full_F64_6xN_CM;
+            if ( rows == 10) return GEMM::full_F64_0xN_CM;
+            if ( rows == 9 ) return GEMM::full_F64_9xN_CM;
+            if ( rows == 8 ) return GEMM::full_F64_8xN_CM;
+            if ( rows == 7 ) return GEMM::full_F64_7xN_CM;
+            if ( rows == 6 ) return GEMM::full_F64_6xN_CM;
         }
         if ( rows == 1 )
             return (
                     rowMajor
-                            ? MatMul::full_F64_1xN_RM
-                            : MatMul::full_F64_1xN_CM
+                            ? GEMM::full_F64_1xN_RM
+                            : GEMM::full_F64_1xN_CM
                 );
 
         return (
                 rowMajor
-                        ? MatMul::full_F64_MxN_RM
-                        : MatMul::full_F64_MxN_CM
+                        ? GEMM::full_F64_MxN_RM
+                        : GEMM::full_F64_MxN_CM
             );
     }
 
@@ -310,7 +310,7 @@ public class MatMul {
            .threaded(
                 0,
                 right.length / complexity,
-                (f, l) -> MatMul.partial_F64_MxN_CM(product, f, l, left, complexity, right)
+                (f, l) -> GEMM.partial_F64_MxN_CM(product, f, l, left, complexity, right)
             );
     }
 
@@ -320,7 +320,7 @@ public class MatMul {
            .threaded(
                 0,
                 right.length / complexity,
-                (f, l) -> MatMul.partial_F32_MxN_CM(product, f, l, left, complexity, right)
+                (f, l) -> GEMM.partial_F32_MxN_CM(product, f, l, left, complexity, right)
             );
     }
 
@@ -330,7 +330,7 @@ public class MatMul {
            .threaded(
                 0,
                 left.length / complexity,
-                (f, l) -> MatMul.partial_F32_MxN_RM(product, f, l, left, complexity, right)
+                (f, l) -> GEMM.partial_F32_MxN_RM(product, f, l, left, complexity, right)
             );
     }
 
@@ -340,7 +340,7 @@ public class MatMul {
            .threaded(
                 0,
                 left.length / complexity,
-                (f, l) -> MatMul.partial_F64_MxN_RM(product, f, l, left, complexity, right)
+                (f, l) -> GEMM.partial_F64_MxN_RM(product, f, l, left, complexity, right)
             );
     }
 
@@ -932,7 +932,7 @@ public class MatMul {
             final int complexity,
             final double[] right
     ) {
-        MatMul.partial_F64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
+        GEMM.partial_F64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
     }
 
     static void full_F64_MxN_RM(
@@ -941,7 +941,7 @@ public class MatMul {
             final int complexity,
             final double[] right
     ) {
-        MatMul.partial_F64_MxN_RM(product, 0, left.length / complexity, left, complexity, right);
+        GEMM.partial_F64_MxN_RM(product, 0, left.length / complexity, left, complexity, right);
     }
 
     static void full_F32_MxN_CM(
@@ -950,7 +950,7 @@ public class MatMul {
             final int complexity,
             final float[] right
     ) {
-        MatMul.partial_F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
+        GEMM.partial_F32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);
     }
 
     static void full_F32_MxN_RM(
@@ -959,7 +959,7 @@ public class MatMul {
             final int complexity,
             final float[] right
     ) {
-        MatMul.partial_F32_MxN_RM(product, 0, left.length / complexity, left, complexity, right);
+        GEMM.partial_F32_MxN_RM(product, 0, left.length / complexity, left, complexity, right);
     }
 
 }

@@ -3,7 +3,7 @@ package neureka.backend.main.operations.linear;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.main.operations.linear.internal.blas.MatMul;
+import neureka.backend.main.operations.linear.internal.blas.GEMM;
 import neureka.devices.host.CPU;
 import neureka.ndim.config.NDConfiguration;
 
@@ -24,13 +24,13 @@ public class CPUMatMul implements ImplementationFor<CPU> {
                 }
             }
         */
-        MatMul.operationForF64( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
+        GEMM.operationForF64( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
     }
 
     public static void execute(
             boolean rowMajor, float[] A, float[] B, float[] C, int aRows, int aCols, int bCols
     ) {
-        MatMul.operationForF32( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
+        GEMM.operationForF32( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
     }
 
     @Override
