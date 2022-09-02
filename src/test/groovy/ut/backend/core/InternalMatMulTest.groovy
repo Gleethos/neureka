@@ -1,8 +1,6 @@
 package ut.backend.core
 
 import groovy.transform.CompileStatic
-import neureka.backend.main.operations.linear.internal.M32
-import neureka.backend.main.operations.linear.internal.M64
 import neureka.backend.main.operations.linear.internal.blas.MatMul
 
 @CompileStatic
@@ -178,12 +176,14 @@ class InternalMatMulTest
 
         DO_ROW_MAJOR = type.set()
 
-        M32 A = new M32(2, 2,  new float[4])
-        M32 B = new M32(2, 1,  new float[2])
-        _fillIt32(A.data, -339)
-        _fillIt32(B.data, 543)
+        var A = new float[4]
+        var B = new float[2]
+        _fillIt32(A, -339)
+        _fillIt32(B, 543)
 
-        var C = A.multiply(DO_ROW_MAJOR, B, new float[2])
+        var C = new float[2]
+
+        MatMul.operationForF32( DO_ROW_MAJOR, 2, 1 ).invoke( C, A, 2, B );
 
         /*
                         ( 5)
@@ -197,9 +197,9 @@ class InternalMatMulTest
                 (-4 -2) (-5)
         */
 
-        assert A.data == [-5, -4, -3, -2] as float[]
-        assert B.data == [5, -5] as float[]
-        assert C.data == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as float[]
+        assert A == [-5, -4, -3, -2] as float[]
+        assert B == [5, -5] as float[]
+        assert C == (type == Type.COL_MAJOR ? [-10, -10] : [-5, -5] ) as float[]
 
     }
 
