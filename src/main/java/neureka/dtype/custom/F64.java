@@ -93,7 +93,7 @@ public final class F64 extends AbstractNumericType<Double, double[], Double, dou
 
     @Override
     public double[] convertToHolderArray( Object from ) {
-        return new double[0];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override

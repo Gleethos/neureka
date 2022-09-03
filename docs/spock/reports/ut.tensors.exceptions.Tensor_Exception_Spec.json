@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.043 seconds"
+    "duration":"0.033 seconds"
   },
   "headers":["\n                <h2> Tensors Exception Behavior </h2>\n                <br> \n                <p>\n                    This specification covers the behavior of tensors\n                    in exceptional situations.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
@@ -33,7 +33,7 @@
     {
       "id":"Passing null to various methods of the tensor API will throw exceptions.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,7 +46,7 @@
 
         {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@402bb60c","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@76fea043","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@46fd26c1","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@5443efd3","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@7b5f2207","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@2299565","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@abe34f9","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@732d73a6","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@1b284095","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@34085118","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@584ef43b","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@70a9402","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@70aacc40"]}}
+        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@7248656","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@6a9fd1f1","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@14696886","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@26f5779a","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@2cfe92c0","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@1ab301b8","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@56d0af0e","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@7cd86cbf","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@236b8a23","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@42b36095","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@4a8eaad8","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@6496cc75","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@36f11aa3"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -86,7 +86,7 @@
     {
       "id":"Out of dimension bound causes descriptive exception!",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"Casting a tensor as something unusual will cuas an exception to be thrown.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

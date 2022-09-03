@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.393 seconds"
+    "duration":"0.380 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.217 seconds",
+      "duration":"0.215 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,7 +100,7 @@
     {
       "id":"We can use the \"sum\" method to sum the items of a tensor.",
       "result":"PASS",
-      "duration":"0.153 seconds",
+      "duration":"0.145 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

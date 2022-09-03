@@ -329,6 +329,16 @@ class Tensor_IO_Spec extends Specification
 
     def 'Tensors value type can be changed by calling "toType(...)".'()
     {
+        reportInfo("""
+            Warning! The `toType` method mutates the tensor!
+            This is especially problematic with respect to generics, 
+            because if the tensor is still used as a tensor of the old type, 
+            then the compiler will not be able to detect that the tensor has changed its type.
+            This is why we have to use the `unsafe` API exists.
+            Only use this method if there are urgent performance requirements and
+            you know exactly what you are doing!
+        """)
+
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             Tsr x = Tsr.of(3)
@@ -347,6 +357,46 @@ class Tensor_IO_Spec extends Specification
             x.data instanceof double[]
             x.getItemsAs( float[].class )[ 0 ]==3.0f
     }
+
+    def 'We can change the data type of all kinds of tensors.'(
+            Class<?> sourceType, Class<?> targetType
+    ) {
+        reportInfo("""
+            Warning! The `toType` method mutates the tensor!
+            This is especially problematic with respect to generics, 
+            because if the tensor is still used as a tensor of the old type, 
+            then the compiler will not be able to detect that the tensor has changed its type.
+            This is why we have to use the `unsafe` API exists.
+            Only use this method if there are urgent performance requirements and
+            you know exactly what you are doing!
+        """)
+
+        given : 'A simple tensor with a few initial values.'
+            var data = [-3, -12, 42, -42, 12, 3]
+            var a = Tsr.of(sourceType).withShape(data.size()).andFill(data)
+
+        when : 'We change the data type of the tensor using the unsafe "toType" method.'
+            var b = a.unsafe.toType(targetType)
+
+        then : 'The returned tensor has the expected data type.'
+            b.itemType == targetType
+        and : 'The returned tensor has the expected values.'
+            b.rawItems == data.collect({ it.asType(targetType) })
+        and : 'The returned tensor is in fact the original instance.'
+            a === b
+
+        where : 'We use the following data and matrix dimensions!'
+            sourceType | targetType
+            Double     | Double
+            Double     | Float
+            Double     | Long
+            Double     | Integer
+            Double     | Short
+            Double     | Byte
+            Float      | Double
+            Float      | Float
+    }
+
 
     def 'Vector tensors can be instantiated via factory methods.'(
         def data, Class<?> type, List<Integer> shape

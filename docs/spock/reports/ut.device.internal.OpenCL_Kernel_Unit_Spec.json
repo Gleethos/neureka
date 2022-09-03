@@ -16,7 +16,7 @@
     {
       "id":"The GEMM implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"The Reduce implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

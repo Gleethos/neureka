@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.024 seconds"
+    "duration":"0.021 seconds"
   },
   "headers":["\n            This specification ensures that functions can be created from String expressions\n            using factory methods on the interface neureka.calculus.Function interface.\n            The implementation details as to how exactly this leads to an abstract syntax tree\n            will not be covered here.\n            This is because the parsing procedure is rather complex and the only thing we care about \n            is the result.   \n            <br>\n            Within a given expression String passed to the parser, function inputs are\n            recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.\n            Functions accept arrays as their inputs,\n            which is why variables must be targeted in such a way.\n            There are also many mathematical function like 'sig(..)', 'tanh(..)', 'sin(..)', 'cos(..)' \n            and many more which are recognised by the parser. \n            Other than that the syntax is rather mundane with respect to traditional\n            operations like for example plus '+', minus '-', times '*', ... etc.      <br>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test parsed equations when building Function instances.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,7 +48,7 @@
     {
       "id":"Functions can derive themselves according to the provided index of the input which ought to be derived.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

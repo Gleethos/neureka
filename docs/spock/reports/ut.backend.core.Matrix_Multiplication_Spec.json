@@ -35,7 +35,7 @@
     {
       "id":"The internal matrix multiplication test script runs!",
       "result":"PASS",
-      "duration":"1.234 seconds",
+      "duration":"1.236 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

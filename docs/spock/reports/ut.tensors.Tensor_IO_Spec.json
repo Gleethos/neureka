@@ -4,19 +4,19 @@
   "narrative":"Tensors are complicated data structures with a wide range of different possible states.\n    They can host elements of different types residing on many kinds of different devices.\n    Here we want to define some basic stuff about how a tensor can be instantiated\n    and how we can read from and write to the state of a tensor.\n    Here we also specify how a tensor can be converted to another tensor of a different data type!",
   "subjects":[],
   "statistics":{
-    "runs":"16",
+    "runs":"17",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.037 seconds"
+    "duration":"0.043 seconds"
   },
   "headers":["\n            <h2>Tensor Instantiation and IO Tests</h2>\n            <p>\n                This specification covers some basic behaviour related to\n                tensor instantiation and modification.\n                This includes the instantiation of tensors with custom seeds, shapes and values...\n                Included are also tests covering static factory methods.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can be instantiated with String seed.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -174,7 +174,7 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -251,7 +251,7 @@
       "result":"PASS",
       "duration":"0",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":[]
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
       },
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tsr x = Tsr.of(3)"]},
@@ -263,6 +263,29 @@
         {"kind":"when","text":"","code":["x.unsafe.toType( Double.class )"]},
 
         {"kind":"then","text":"","code":["x.rawItems instanceof double[]","x.unsafe.data.ref instanceof double[]","x.data instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tsr.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.unsafe.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float"],"targetType":["class java.lang.Double","class java.lang.Float","class java.lang.Long","class java.lang.Integer","class java.lang.Short","class java.lang.Byte","class java.lang.Double","class java.lang.Float"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

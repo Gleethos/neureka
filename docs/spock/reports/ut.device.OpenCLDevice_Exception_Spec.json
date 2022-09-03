@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.206 seconds"
+    "duration":"0.205 seconds"
   },
   "headers":["\n            <p>\n                It is important that an OpenCLDevice gives insightful error messages\n                when encountering exceptional situations.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -39,7 +39,7 @@
     {
       "id":"Ad hoc compilation produces expected exceptions.",
       "result":"PASS",
-      "duration":"0.104 seconds",
+      "duration":"0.103 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Ad hoc compilation produces expected exceptions when duplication is found.",
       "result":"PASS",
-      "duration":"0.097 seconds",
+      "duration":"0.096 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -49,7 +49,9 @@ public final class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
 
     @Override
     public <T> byte[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        byte[] data = new byte[size];
+        for ( int i = 0; i < size; i++ ) data[ i ] = convertToHolder( iterator.next() );
+        return data;
     }
 
     @Override
@@ -61,7 +63,7 @@ public final class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
 
     @Override
     public <T> byte[] readForeignDataFrom( Iterator<T> iterator, int size ) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        return readAndConvertForeignDataFrom( iterator, size );
     }
 
     @Override
