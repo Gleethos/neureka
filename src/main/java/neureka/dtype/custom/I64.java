@@ -47,22 +47,24 @@ public final class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 
     @Override
     public long[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-        return new long[ 0 ];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override
     public <T> long[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
-        return new long[0];
+        long[] data = new long[size];
+        for ( int i = 0; i < size; i++ ) data[ i ] = convertToHolder( iterator.next() );
+        return data;
     }
 
     @Override
     public long[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-        return new long[0];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override
     public <T> long[] readForeignDataFrom( Iterator<T> iterator, int size ) {
-        return new long[0];
+        return readAndConvertForeignDataFrom( iterator, size );
     }
 
     @Override
@@ -72,7 +74,7 @@ public final class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 
     @Override
     public long[] convertToHolderArray( Object from ) {
-        return new long[0];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override

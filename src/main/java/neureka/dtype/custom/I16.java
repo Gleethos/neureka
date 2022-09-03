@@ -54,7 +54,7 @@ public final class I16 extends AbstractNumericType<Short, short[], Short, short[
 
     @Override
     public <T> short[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
-        return new short[0];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override
@@ -64,7 +64,7 @@ public final class I16 extends AbstractNumericType<Short, short[], Short, short[
 
     @Override
     public <T> short[] readForeignDataFrom( Iterator<T> iterator, int size ) {
-        return new short[0];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override
@@ -87,7 +87,7 @@ public final class I16 extends AbstractNumericType<Short, short[], Short, short[
 
     @Override
     public short[] convertToHolderArray( Object from ) {
-        return new short[0];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override

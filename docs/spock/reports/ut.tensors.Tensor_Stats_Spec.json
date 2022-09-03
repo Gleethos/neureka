@@ -4,19 +4,19 @@
   "narrative":"Various kinds of operations reduce tensors to scalars,\n    the most common ones being the min and max operations \n    which find the smallest as well as largest number among all \n    items of a tensor.\n    Neureka exposes various different ways to achieve this,\n    all of which are also differential (autograd support).",
   "subjects":["neureka.Tsr"],
   "statistics":{
-    "runs":"5",
+    "runs":"6",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.395 seconds"
+    "duration":"0.393 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.216 seconds",
+      "duration":"0.217 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,7 +100,7 @@
     {
       "id":"We can use the \"sum\" method to sum the items of a tensor.",
       "result":"PASS",
-      "duration":"0.159 seconds",
+      "duration":"0.153 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -109,7 +109,30 @@
 
         {"kind":"and","text":"We sum the items of the tensor:","code":["var sum = a.sum()"]},
 
-        {"kind":"expect","text":"The result is correct:","code":["sum.item() == 2029"]}
+        {"kind":"expect","text":"The result is correct:","code":["sum.item() == 5217.0"]},
+
+        {"kind":"and","text":"The result can be verified using other methods:","code":["sum.item() == sum.items.stream().reduce(0,(x,y)->x+y)","sum.item() == a.unsafe.data.ref.sum()"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The sum operation support autograd (back-propagation).",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a simple tensor of floats which requires gradients:","code":["var a = Tsr.of(1f, 2f, 3f, 4f).setRqsGradient(true)"]},
+
+        {"kind":"and","text":"We first do a simple operation to get another tensor:","code":["var b = a * 3"]},
+
+        {"kind":"and","text":"We then do a sum operation:","code":["var x = b.sum()"]},
+
+        {"kind":"when","text":"We back-propagate the path by calling backward:","code":["x.backward()"]},
+
+        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.items == [3f, 3f, 3f, 3f]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

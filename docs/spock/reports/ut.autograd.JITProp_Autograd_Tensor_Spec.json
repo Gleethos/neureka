@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.155 seconds"
+    "duration":"0.154 seconds"
   },
   "headers":["\n            <h2>Autograd Tensor Integration Tests</h2>\n            <p>\n                This specification contains tests which\n                cover the autograd behavior of tensors. <br>\n                The classes involved in governing the tested features are\n                the Tsr, GraphNode and Function (& implementations) classes.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -172,7 +172,7 @@
     {
       "id":"Test in-differential and JIT with auto apply",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

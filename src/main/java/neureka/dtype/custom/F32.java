@@ -48,7 +48,7 @@ public final class F32 extends AbstractNumericType<Float, float[], Float, float[
 
     @Override
     public float[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-        return new float[ 0 ];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override
@@ -61,7 +61,7 @@ public final class F32 extends AbstractNumericType<Float, float[], Float, float[
 
     @Override
     public float[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-        return new float[0];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override
@@ -90,7 +90,7 @@ public final class F32 extends AbstractNumericType<Float, float[], Float, float[
 
     @Override
     public float[] convertToHolderArray( Object from ) {
-        return new float[0];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override

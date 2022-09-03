@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"4.109 seconds"
+    "duration":"4.149 seconds"
   },
   "headers":["\n            <h2> OpenCLDevice Integration Tests </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -41,7 +41,7 @@
     {
       "id":"The \"getValue()\" method of an outsourced tensor will return the expected array type.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,13 +71,13 @@
       "blocks":[
         {"kind":"given","text":"A new tensor belonging to the first found OpenCLDevice instance.","code":["Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)"]},
 
-        {"kind":"and","text":"The tensor value is being fetched...","code":["def data = t.unsafe.data"]},
+        {"kind":"and","text":"The tensor value is being fetched...","code":["def data = t.unsafe.data.ref"]},
 
         {"kind":"expect","text":"The tensor start with having data stored within.","code":["data != null"]},
 
         {"kind":"when","text":"The tensor is being stored on the device...","code":["t.to(Device.get('first'))"]},
 
-        {"kind":"then","text":"The value variable is still not null.","code":["t.unsafe.data != null","t.unsafe.data !== data"]}
+        {"kind":"then","text":"The value variable is still not null.","code":["t.unsafe.data.ref != null","t.unsafe.data.ref !== data"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -85,7 +85,7 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"0.104 seconds",
+      "duration":"0.105 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"0.590 seconds",
+      "duration":"0.594 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +137,7 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"0.362 seconds",
+      "duration":"0.370 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -164,7 +164,7 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"0.840 seconds",
+      "duration":"0.868 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

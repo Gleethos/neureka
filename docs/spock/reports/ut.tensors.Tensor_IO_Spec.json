@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.036 seconds"
+    "duration":"0.037 seconds"
   },
   "headers":["\n            <h2>Tensor Instantiation and IO Tests</h2>\n            <p>\n                This specification covers some basic behaviour related to\n                tensor instantiation and modification.\n                This includes the instantiation of tensors with custom seeds, shapes and values...\n                Included are also tests covering static factory methods.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -137,11 +137,11 @@
 
         {"kind":"when","text":"Setting the value of the tensor...","code":["float[] value32 = new float[1]","value32[0] = 5","x.setItems(value32)"]},
 
-        {"kind":"then","text":"...the tensor will change as expected.","code":["!(x.getItems() instanceof float[])","!(x.unsafe.data instanceof float[])","!(x.data instanceof float[])","x.getItemsAs( float[].class )[ 0 ]==5.0f","x.getItemsAs( double[].class )[0]==5.0d"]},
+        {"kind":"then","text":"...the tensor will change as expected.","code":["!(x.getItems() instanceof float[])","!(x.unsafe.data.ref instanceof float[])","!(x.data instanceof float[])","x.getItemsAs( float[].class )[ 0 ]==5.0f","x.getItemsAs( double[].class )[0]==5.0d"]},
 
         {"kind":"when","text":"Doing the same with double array...","code":["double[] value64 = new double[1]","value64[0] = 4.0","x.setItems(value64)"]},
 
-        {"kind":"then","text":"...once again the tensor changes as expected.","code":["x.rawItems instanceof double[]","x.unsafe.data instanceof double[]","x.data instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==4.0f","x.getItemsAs( double[].class )[0]==4.0d","x.isLeave()","!x.isBranch()","!x.isOutsourced()","!x.isVirtual()","!x.isSlice()","!x.isSliceParent()","!x.belongsToGraph()","x.getDevice() !=null","x.getDevice() instanceof CPU","x.rank()==1","!x.rqsGradient()","x.size()==1"]},
+        {"kind":"then","text":"...once again the tensor changes as expected.","code":["x.rawItems instanceof double[]","x.unsafe.data.ref instanceof double[]","x.data instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==4.0f","x.getItemsAs( double[].class )[0]==4.0d","x.isLeave()","!x.isBranch()","!x.isOutsourced()","!x.isVirtual()","!x.isSlice()","!x.isSliceParent()","!x.belongsToGraph()","x.getDevice() !=null","x.getDevice() instanceof CPU","x.rank()==1","!x.rqsGradient()","x.size()==1"]},
 
         {"kind":"when","text":"","code":["x.unsafe.toType( Float.class )"]},
 
@@ -149,7 +149,7 @@
 
         {"kind":"when","text":"","code":["value64 = new double[1]","value64[0] = 7.0","x.setItems(value64)"]},
 
-        {"kind":"then","text":"","code":["!(x.rawItems instanceof double[])","!(x.unsafe.data instanceof double[])","!(x.data instanceof double[])","x.getItemsAs( float[].class )[ 0 ]==7.0f","x.getItemsAs( double[].class )[0]==7.0d"]}
+        {"kind":"then","text":"","code":["!(x.rawItems instanceof double[])","!(x.unsafe.data.ref instanceof double[])","!(x.data instanceof double[])","x.getItemsAs( float[].class )[ 0 ]==7.0f","x.getItemsAs( double[].class )[0]==7.0d"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -157,7 +157,7 @@
     {
       "id":"We turn a tensor into a scalar value or string through the \"as\" operator!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -174,7 +174,7 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -258,11 +258,11 @@
 
         {"kind":"when","text":"","code":["x.unsafe.toType( Float.class )"]},
 
-        {"kind":"then","text":"","code":["x.rawItems instanceof float[]","x.unsafe.data instanceof float[]","x.data instanceof float[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]},
+        {"kind":"then","text":"","code":["x.rawItems instanceof float[]","x.unsafe.data.ref instanceof float[]","x.data instanceof float[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]},
 
         {"kind":"when","text":"","code":["x.unsafe.toType( Double.class )"]},
 
-        {"kind":"then","text":"","code":["x.rawItems instanceof double[]","x.unsafe.data instanceof double[]","x.data instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]}
+        {"kind":"then","text":"","code":["x.rawItems instanceof double[]","x.unsafe.data.ref instanceof double[]","x.data instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -281,7 +281,7 @@
 
         {"kind":"and","text":"Also the expected shape.","code":["t.shape() == shape"]},
 
-        {"kind":"and","text":"The tensor has the expected data array.","code":["t.unsafe.data == data","t.data == data"]},
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.unsafe.data.ref == data","t.data == data"]},
 
         {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == data"]},
 
@@ -312,7 +312,7 @@
     {
       "id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -407,7 +407,7 @@
 
         {"kind":"then","text":"","code":["t.getDataAt( 1 ) == element"]},
 
-        {"kind":"and","text":"","code":["t.unsafe.data == expected","t.data == expected"]},
+        {"kind":"and","text":"","code":["t.unsafe.data.ref == expected","t.data == expected"]},
 
         {"kind":"when","text":"","code":["t = Tsr.of(type).withShape(shape).andFill(data)"]},
 
@@ -415,7 +415,7 @@
 
         {"kind":"then","text":"","code":["t.item( 1 ) == element"]},
 
-        {"kind":"and","text":"","code":["t.unsafe.data == expected","t.data == expected"]},
+        {"kind":"and","text":"","code":["t.unsafe.data.ref == expected","t.data == expected"]},
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Float","class java.lang.Double","class java.lang.Byte","class java.lang.Short","class java.lang.Long","class java.lang.Integer","class java.lang.Boolean","class java.lang.Character"],"shape":["[2, 2]","[2, 2]","[2, 2]","[2, 2]","[2, 2]","[2, 2]","[2, 1]","[2, 1]"],"data":["[-42.0, 24.0, 9.0, 3.0, -34.0]","[-42.0, 24.0, 9.0, 3.0, -34.0]","[-42, 24, 9, 3, -34]","[-42, 24, 9, 3, -34]","[-42, 24, 9, 3, -34]","[-42, 24, 9, 3, -34]","[false, true, false]","abc"],"element":["0.032","0.032","1","1","1","1","false","x"],"expected":["[-42.0, 0.032, 9.0, 3.0]","[-42.0, 0.032, 9.0, 3.0]","[-42, 1, 9, 3]","[-42, 1, 9, 3]","[-42, 1, 9, 3]","[-42, 1, 9, 3]","[false, false]","ax"]}}
       ],

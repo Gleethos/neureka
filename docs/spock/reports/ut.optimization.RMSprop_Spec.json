@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.019 seconds"
+    "duration":"0.018 seconds"
   },
   "headers":["\n                <h2> RMSprop Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the RMSprop class.        \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 

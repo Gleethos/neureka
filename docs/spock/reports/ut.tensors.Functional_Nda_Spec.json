@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.141 seconds"
+    "duration":"0.146 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -33,7 +33,7 @@
     {
       "id":"We can find both min and max items in an ND-array by providing a comparator.",
       "result":"PASS",
-      "duration":"0.069 seconds",
+      "duration":"0.073 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

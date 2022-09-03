@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.005 seconds"
+    "duration":"0.006 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -31,7 +31,7 @@
     {
       "id":"A deleted tensor will throw an exception when accessing its configuration.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -78,7 +78,7 @@
 
         {"kind":"expect","text":"This tensor should then know that it is deleted.","code":["t.isDeleted()"]},
 
-        {"kind":"when","text":"Trying to access the data object...","code":["t.unsafe.getData()"]},
+        {"kind":"when","text":"Trying to access the data object...","code":["t.unsafe.data.ref"]},
 
         {"kind":"then","text":"This should lead to a descriptive exception.","code":["def exception = thrown(IllegalAccessError)","exception.message == \"Trying to access the unsafe API of an already deleted tensor.\""]}
       ],

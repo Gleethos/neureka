@@ -54,7 +54,9 @@ public final class I32 extends AbstractNumericType<Integer, int[], Integer, int[
 
     @Override
     public <T> int[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
-        return new int[0];
+        int[] data = new int[size];
+        for ( int i = 0; i < size; i++ ) data[ i ] = convertToHolder( iterator.next() );
+        return data;
     }
 
     @Override
@@ -64,7 +66,7 @@ public final class I32 extends AbstractNumericType<Integer, int[], Integer, int[
 
     @Override
     public <T> int[] readForeignDataFrom( Iterator<T> iterator, int size ) {
-        return new int[0];
+        return readAndConvertForeignDataFrom( iterator, size );
     }
 
     @Override
@@ -87,7 +89,7 @@ public final class I32 extends AbstractNumericType<Integer, int[], Integer, int[
 
     @Override
     public int[] convertToHolderArray( Object from ) {
-        return new int[0];
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     @Override

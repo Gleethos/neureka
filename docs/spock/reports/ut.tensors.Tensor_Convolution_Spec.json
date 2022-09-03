@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.559 seconds"
+    "duration":"0.558 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"x\" (convolution) operator produces expected results (On the CPU).",
       "result":"PASS",
-      "duration":"0.138 seconds",
+      "duration":"0.140 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        ","\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        "]
       },
@@ -43,7 +43,7 @@
     {
       "id":"Manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.076 seconds",
+      "duration":"0.074 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Very simple manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.139 seconds",
+      "duration":"0.138 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
 
         {"kind":"then","text":"","code":["xAsStr.contains(\"(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]\")","yAsStr.contains(\"(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]\")","zAsStr.contains(\"(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]\")","rcAsStr.contains(\"(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]\")","kAsStr.contains(\"(2x2):[15.0, 18.0, 27.0, 30.0]\")","vAsStr.contains(\"(2x2):[12.0, 15.0, 24.0, 27.0]\")","jAsStr.contains(\"(2x2):[18.0, 21.0, 30.0, 33.0]\")","uAsStr.contains(\"(2x2):[5.0, 6.0, 9.0, 10.0]\")","colconvol.toString().contains(\"(2x2):[0.0, 0.0, 0.0, 0.0]\")"]},
 
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x22182d9a020],platform=OpenCLPlatform@79544bc2[pid=cl_platform_id[0x7ff9490b8000],context=cl_context[0x221fa9eb0a0],kernels=[..48..]]]"]}}
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x29f066d7020],platform=OpenCLPlatform@3538740a[pid=cl_platform_id[0x7fff7caa8000],context=cl_context[0x29f002258a0],kernels=[..48..]]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -104,7 +104,7 @@
     {
       "id":"Sime convolution works as expected eith autograd.",
       "result":"PASS",
-      "duration":"0.065 seconds",
+      "duration":"0.066 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,14 +129,14 @@
     {
       "id":"Tensors have the correct layout after convolution.",
       "result":"PASS",
-      "duration":"0.064 seconds",
+      "duration":"0.063 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Tsr<Double> t0 = Tsr.of([3, 2, 1], [","        1d, 2d,","        3d, 4d,","        5d, 6d","])","Tsr<Double> x0 = Tsr.of([1, 2, 3], [","        1d, 2d, 3d,","        4d, 5d, 6d","])"]},
 
-        {"kind":"expect","text":"","code":["t0.unsafe.data == [1, 2, 3, 4, 5, 6] as double[]","x0.unsafe.data == [1, 2, 3, 4, 5, 6] as double[]","t0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR","x0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR"]},
+        {"kind":"expect","text":"","code":["t0.unsafe.data.ref == [1, 2, 3, 4, 5, 6] as double[]","x0.unsafe.data.ref == [1, 2, 3, 4, 5, 6] as double[]","t0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR","x0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR"]},
 
         {"kind":"when","text":"","code":["Tsr<Double> out0 = Tsr.of(\"i0xi1\", [t0, x0] )"]},
 
@@ -144,7 +144,7 @@
 
         {"kind":"when","text":"","code":["t0.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","x0.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)"]},
 
-        {"kind":"then","text":"","code":["t0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR","x0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR","t0.unsafe.data == [1, 3, 5, 2, 4, 6] as double[]","x0.unsafe.data == [1, 4, 2, 5, 3, 6] as double[]"]},
+        {"kind":"then","text":"","code":["t0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR","x0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR","t0.unsafe.data.ref == [1, 3, 5, 2, 4, 6] as double[]","x0.unsafe.data.ref == [1, 4, 2, 5, 3, 6] as double[]"]},
 
         {"kind":"and","text":"","code":["t0.toString() == \"(3x2x1):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]\"","x0.toString() == \"(1x2x3):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]\""]},
 

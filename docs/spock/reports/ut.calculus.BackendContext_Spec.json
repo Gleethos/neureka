@@ -16,7 +16,7 @@
     {
       "id":"BackendContext instances can be created by cloning from Singleton instance.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
 
         {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
 
-        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@6fb4c518","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@45f5cfc8","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@5db28913"]}}
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@792220d8","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@6277a64","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@293ae37d"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

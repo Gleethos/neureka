@@ -9,27 +9,27 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.020 seconds"
+    "duration":"0.022 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A deep copy of a tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A tensor of ints with shape (2, 3).","code":["var t = Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)"]},
 
-        {"kind":"expect","text":"The underlying data array is as expected.","code":["t.unsafe.data == [1, 2 ,-9, 8, 3, -2]"]},
+        {"kind":"expect","text":"The underlying data array is as expected.","code":["t.unsafe.data.ref == [1, 2, -9, 8, 3, -2]"]},
 
         {"kind":"when","text":"We create a deep copy of the tensor.","code":["var deep = t.deepCopy()"]},
 
         {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t"]},
 
-        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.unsafe.data == t.unsafe.data","deep.unsafe.data !== t.unsafe.data"]},
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.unsafe.data.ref == t.unsafe.data.ref","deep.unsafe.data.ref !== t.unsafe.data.ref"]},
 
         {"kind":"and","text":"","code":["(0..<t.size).every({ int i -> deep.at(i) == t.at(i) })"]}
       ],
@@ -39,22 +39,22 @@
     {
       "id":"A deep copy of a slice tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A slice of ints with shape (2, 2) sliced in-place from a tensor of shape (3, 3).","code":["var s = Tsr.ofInts().withShape(3, 3).andFill(1, 2, -9, 8, 3, -2)[0..1, 1..2]"]},
 
-        {"kind":"expect","text":"The underlying items and data array is as expected.","code":["s.items == [2, -9, 3, -2]","s.data == [1, 2, -9, 8, 3, -2, 1, 2, -9]","s.unsafe.data == [1, 2, -9, 8, 3, -2, 1, 2, -9]"]},
+        {"kind":"expect","text":"The underlying items and data array is as expected.","code":["s.items == [2, -9, 3, -2]","s.data == [1, 2, -9, 8, 3, -2, 1, 2, -9]","s.unsafe.data.ref == [1, 2, -9, 8, 3, -2, 1, 2, -9]"]},
 
         {"kind":"when","text":"We create a deep copy of the tensor.","code":["var deep = s.deepCopy()"]},
 
         {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== s"]},
 
-        {"kind":"and","text":"The underlying items and data array are as expected.","code":["deep.items == [2, -9, 3, -2]","deep.data == [2, -9, 3, -2]","deep.unsafe.data == [2, -9, 3, -2]"]},
+        {"kind":"and","text":"The underlying items and data array are as expected.","code":["deep.items == [2, -9, 3, -2]","deep.data == [2, -9, 3, -2]","deep.unsafe.data.ref == [2, -9, 3, -2]"]},
 
-        {"kind":"and","text":"The slice and the copy have the same shape.","code":["deep.shape == s.shape","deep.items == s.items","deep.items !== s.items","deep.unsafe.data !== s.unsafe.data","deep.unsafe.data !== s.unsafe.data"]},
+        {"kind":"and","text":"The slice and the copy have the same shape.","code":["deep.shape == s.shape","deep.items == s.items","deep.items !== s.items","deep.unsafe.data.ref !== s.unsafe.data.ref","deep.unsafe.data.ref !== s.unsafe.data.ref"]},
 
         {"kind":"and","text":"We verify that they share the same ints through the \"every\" method.","code":["(0..<s.size).every({ int i -> deep.at(i) == s.at(i) })"]}
       ],
@@ -64,22 +64,22 @@
     {
       "id":"A shallow copy will share the same underlying data as its original tensor.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A tensor of ints with shape (2, 3).","code":["var t = Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)"]},
 
-        {"kind":"expect","text":"The underlying data array is as expected.","code":["t.unsafe.data == [1, 2 ,-9, 8, 3, -2]"]},
+        {"kind":"expect","text":"The underlying data array is as expected.","code":["t.unsafe.data.ref == [1, 2, -9, 8, 3, -2]"]},
 
         {"kind":"when","text":"We create a shallow copy of the tensor.","code":["var shallow = cloner(t)"]},
 
-        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["shallow !== t","shallow.shape == t.shape","shallow.unsafe.data == t.unsafe.data","shallow.unsafe.data === t.unsafe.data"]},
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["shallow !== t","shallow.shape == t.shape","shallow.unsafe.data.ref == t.unsafe.data.ref","shallow.unsafe.data.ref === t.unsafe.data.ref"]},
 
         {"kind":"and","text":"We verify that they share the same ints through the \"every\" method.","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) })"]},
 
-        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure4@78d35c6b","ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure5@497a1c64"]}}
+        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure4@23f3bddd","ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure5@1f30eb74"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -100,7 +100,7 @@
 
         {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t","deepSlice !== s"]},
 
-        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.unsafe.data == t.unsafe.data","deep.unsafe.data !== t.unsafe.data"]},
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.unsafe.data.ref == t.unsafe.data.ref","deep.unsafe.data.ref !== t.unsafe.data.ref"]},
 
         {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
 
