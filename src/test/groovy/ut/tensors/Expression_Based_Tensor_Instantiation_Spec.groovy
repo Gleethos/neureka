@@ -1,7 +1,8 @@
 package ut.tensors
 
-
+import neureka.Neureka
 import neureka.Tsr
+import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
@@ -18,6 +19,24 @@ import spock.lang.Title
 @Subject([Tsr])
 class Expression_Based_Tensor_Instantiation_Spec extends Specification
 {
+    def setup() {
+        Neureka.get().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 1
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
+        })
+    }
 
     def 'A tensor can be created from a function as expression.'()
     {
@@ -27,7 +46,7 @@ class Expression_Based_Tensor_Instantiation_Spec extends Specification
         when: Tsr y = Tsr.of("th(I[0])", x)
 
         then:
-            y.toString() == "(1):[ 0.99932 ]"
+            y.toString() == "(1):[0.99932]"
             y.isBranch()
             !y.isLeave()
             y.belongsToGraph()
