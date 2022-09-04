@@ -173,28 +173,46 @@ class Tensor_Function_Spec extends Specification
             t.getGradient().toString() == "(1x1x3x2x1):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
     }
 
-    def 'Executed tensors are intermediate tensors.'() {
-
-        given :
+    def 'Executed tensors are intermediate tensors.'() 
+    {
+        reportInfo """
+            Functions expose different kinds of methods for different kinds of
+            purposes, however there is one species of methods with a very important role
+            in ensuring memory efficiency.
+            These types of methods are the `execute` methods which 
+            distinguish themselves in that the tensors these methods
+            return are flagged as "intermediate".
+            If a tensor is an intermediate one, it becomes eligable 
+            for deletion when consumed by another function.
+            Note that internally every function is usually a composite
+            of other functions forming a syntax tree which will process
+            input tensors through the execute methods, which causes
+            intermediate results to be deleted automatically.
+            When executing a function as a user of Neureka
+            one should generally avoid using the `execute` method in order to avoid
+            accidental deletion of results.
+            This is mostly relevent for when designing custom operations.
+        """
+        given : 'We create a simple function taking one input.'
             var fun = Function.of('i0 * relu(i0) + 1')
-        and :
+        and : 'A vector tensor of 5 float numbers'
             var t = Tsr.of(1f, -5f, -3f, 2f, 8f)
-        expect :
+        expect : 'Both the tensor as well as the function were created successfully.'
             t.itemType == Float
             fun.toString() == "((I[0] * relu(I[0])) + 1.0)"
 
-        when :
+        when : 'We try different kinds of ways of passing the tensor to the function...
             var result1 = fun.call(t)
             var result2 = fun.invoke(t)
             var result3 = fun.execute(t)
 
-        then :
+        then : 'The "call" method will not return an intermediate result.'
             !result1.isIntermediate()
-        and :
+        and : 'The functionally identical synonym method "invoke" will also yield a non-intermediate result.
             !result2.isIntermediate()
-        and :
+        and : 'As expected, the tensor of the "execute" method is indeed intermediate.'
             result3.isIntermediate()
-        and :
+        and : 'Otherwise all 3 tensors are basically the same.'
             result1.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
             result2.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
             result3.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
