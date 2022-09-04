@@ -174,6 +174,8 @@ public final class DataConverter
         _set( BigInteger.class, Integer.class, BigInteger::intValue );
         _set( BigInteger.class, Short.class, BigInteger::shortValue );
         _set( BigInteger.class, Byte.class, BigInteger::byteValue );
+        _set( BigInteger.class, Boolean.class,   d -> !d.equals(BigInteger.ZERO) );
+        _set( BigInteger.class, Character.class, d -> (char) d.intValue() );
 
         _set( BigDecimal.class, Double.class, BigDecimal::doubleValue );
         _set( BigDecimal.class, Float.class, BigDecimal::floatValue );
@@ -181,21 +183,39 @@ public final class DataConverter
         _set( BigDecimal.class, Integer.class, BigDecimal::intValue );
         _set( BigDecimal.class, Short.class, BigDecimal::shortValue );
         _set( BigDecimal.class, Byte.class, BigDecimal::byteValue );
+        _set( BigDecimal.class, Boolean.class,   d -> !d.equals(BigDecimal.ZERO) );
+        _set( BigDecimal.class, Character.class, d -> (char) d.doubleValue() );
 
         _set( Integer.class, Double.class, Integer::doubleValue );
         _set( Integer.class, Float.class,  Integer::floatValue );
         _set( Integer.class, Byte.class,   Integer::byteValue );
         _set( Integer.class, Short.class,  Integer::shortValue );
         _set( Integer.class, Long.class,   Integer::longValue );
+        _set( Integer.class, Boolean.class,   d -> d != 0);
+        _set( Integer.class, Character.class, d -> (char) d.intValue() );
+
+        _set( Short.class, Long.class, Short::longValue );
+        _set( Short.class, Double.class, Short::doubleValue );
+        _set( Short.class, Float.class, Short::floatValue );
+        _set( Short.class, Integer.class, Short::intValue );
+        _set( Short.class, Byte.class, Short::byteValue );
+        _set( Short.class, Boolean.class,   d -> d != 0);
+        _set( Short.class, Character.class, d -> (char) d.intValue() );
 
         _set( Long.class, Integer.class,   Long::intValue );
+        _set( Long.class, Double.class,    Long::doubleValue );
+        _set( Long.class, Float.class,     Long::floatValue );
+        _set( Long.class, Short.class,     Long::shortValue );
+        _set( Long.class, Byte.class,      Long::byteValue );
+        _set( Long.class, Boolean.class,   d -> d != 0);
+        _set( Long.class, Character.class, d -> (char) d.intValue() );
 
         _set( Double.class, Float.class,   Double::floatValue );
         _set( Double.class, Integer.class, Double::intValue );
         _set( Double.class, Byte.class,    Double::byteValue );
         _set( Double.class, Short.class,   Double::shortValue );
         _set( Double.class, Long.class,    Double::longValue );
-        _set( Double.class, Boolean.class, d -> d != 0);
+        _set( Double.class, Boolean.class, d -> d != 0 );
         _set( Double.class, Character.class, d -> (char) d.doubleValue() );
 
         _set( Float.class, Double.class,  Float::doubleValue );
@@ -203,6 +223,16 @@ public final class DataConverter
         _set( Float.class, Byte.class,    Float::byteValue );
         _set( Float.class, Short.class,   Float::shortValue );
         _set( Float.class, Long.class,    Float::longValue );
+        _set( Float.class, Boolean.class, d -> d != 0 );
+        _set( Float.class, Character.class, d -> (char) d.floatValue() );
+
+        _set( Byte.class, Double.class,  Byte::doubleValue );
+        _set( Byte.class, Float.class,   Byte::floatValue );
+        _set( Byte.class, Integer.class, Byte::intValue );
+        _set( Byte.class, Short.class,   Byte::shortValue );
+        _set( Byte.class, Long.class,    Byte::longValue );
+        _set( Byte.class, Boolean.class, d -> d != 0 );
+        _set( Byte.class, Character.class, d -> (char) d.byteValue() );
 
         _set( Boolean.class, Double.class,   b -> b ? 1d : 0d );
         _set( Boolean.class, Float.class,    b -> b ? 1f : 0f );

@@ -395,6 +395,34 @@ class Tensor_IO_Spec extends Specification
             Double     | Byte
             Float      | Double
             Float      | Float
+            Float      | Long
+            Float      | Integer
+            Float      | Short
+            Float      | Byte
+            Long       | Double
+            Long       | Float
+            Long       | Long
+            Long       | Integer
+            Long       | Short
+            Long       | Byte
+            Integer    | Double
+            Integer    | Float
+            Integer    | Long
+            Integer    | Integer
+            Integer    | Short
+            Integer    | Byte
+            Short      | Double
+            Short      | Float
+            Short      | Long
+            Short      | Integer
+            Short      | Short
+            Short      | Byte
+            Byte       | Double
+            Byte       | Float
+            Byte       | Long
+            Byte       | Integer
+            Byte       | Short
+            Byte       | Byte
     }
 
 
