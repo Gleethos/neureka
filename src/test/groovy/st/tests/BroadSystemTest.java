@@ -237,9 +237,9 @@ public class BroadSystemTest
         );
         //---
         //=====================
-        tensor1 = Tsr.of(-3).setRqsGradient(true);
+        tensor1 = Tsr.of(-3d).setRqsGradient(true);
         tensor2 = Tsr.of(Double.class).scalar(4.0).setRqsGradient(true);
-        tensor3 = Tsr.of(2);
+        tensor3 = Tsr.of(2d);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2, tensor3},
                 "(relu(i0*i1)+i1)/i2",

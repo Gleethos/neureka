@@ -16,14 +16,14 @@
     {
       "id":"Momentum optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tsr g = Tsr.of(expectedWeight)"]},
 
-        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tsr.of( gradient ) )","w.applyGradient()"]},
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tsr.of( (double) gradient ) )","w.applyGradient()"]},
 
         {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.translation().hashCode()==g.translation().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
 

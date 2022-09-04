@@ -52,10 +52,10 @@ class Tensor_Gradient_Spec extends Specification
     def 'Tensors can have gradients but not require them.'()
     {
         given : 'A new simple tensor.'
-            Tsr t = Tsr.of(-3)
+            Tsr<Double> t = Tsr.of(-3d)
 
         and : 'A second tensor viewed as gradient.'
-            Tsr g = Tsr.of(9)
+            Tsr<Double> g = Tsr.of(9d)
 
         when : 'The gradient tensor is added to the prior tensor as component.'
             t.set( g )
@@ -70,10 +70,10 @@ class Tensor_Gradient_Spec extends Specification
     def 'Tensors that have gradients but do not require them still print them.'()
     {
         given : 'A new simple tensor.'
-            Tsr t = Tsr.of(-3)
+            Tsr<Double> t = Tsr.of(-3d)
 
         and : 'A second tensor viewed as gradient.'
-            Tsr g = Tsr.of(9)
+            Tsr<Double> g = Tsr.of(9d)
 
         when : 'The gradient tensor is added to the prior tensor as component.'
             t.set( g )
@@ -87,10 +87,10 @@ class Tensor_Gradient_Spec extends Specification
         boolean requiresGradient, String expected
     ) {
         given : 'A new simple tensor.'
-            Tsr t = Tsr.of(-3)
+            Tsr<Double> t = Tsr.of(-3d)
 
         and : 'A second tensor viewed as gradient.'
-            Tsr g = Tsr.of(9)
+            Tsr<Double> g = Tsr.of(9d)
 
         and : 'The gradient tensor is added to the prior tensor as component.'
             t.set( g )

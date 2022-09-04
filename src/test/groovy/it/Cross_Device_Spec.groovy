@@ -202,14 +202,14 @@ class Cross_Device_Spec extends Specification
             Tsr.ofInts().scalar(6.1f)  | CPU.get()            | String.class   | {"~$it"} || '(1):[~6]'
             //Tsr.ofInts().scalar(6.1f)  | Device.find('first') | String.class   | {"~$it"}|| '(1):[~6]' // TODO: Allow for ints on the GPU
 
-            Tsr.of( 3 )                | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.of(-1 )                | Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
+            Tsr.of( 3.0 )              | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]'
+            Tsr.of(-1.0 )              | Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
             Tsr.of(0.5)                | Device.get('first')  | Integer.class  | {it*10}  || '(1):[5.0]'
             Tsr.of(0.7)                | Device.get('first')  | Long.class     | {it*5}   || '(1):[3.0]'
             Tsr.of(0.9)                | Device.get('first')  | Byte.class     | {it*2}   || '(1):[1.0]'
             Tsr.of(3.8)                | Device.get('first')  | Short.class    | {it/2}   || '(1):[1.0]'
-            Tsr.of( 3 )                | CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.of(-1 )                | CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
+            Tsr.of(3.0 )               | CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
+            Tsr.of(-1.0)               | CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
             Tsr.of(0.5)                | CPU.get()            | Integer.class  | {it*10}  || '(1):[5.0]'
             Tsr.of(0.7)                | CPU.get()            | Long.class     | {it*5}   || '(1):[3.0]'
             Tsr.of(0.9)                | CPU.get()            | Byte.class     | {it*2}   || '(1):[1.0]'

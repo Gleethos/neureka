@@ -12,7 +12,7 @@ import spock.lang.Subject
 @Subject([Optimizer])
 class AdaGrad_Spec extends Specification
 {
-    @Shared Tsr<?> w = Tsr.of(0)
+    @Shared Tsr<?> w = Tsr.of(0d)
     @Shared Optimizer<?> o = new AdaGrad<>(w)
 
     def setupSpec()
@@ -53,7 +53,7 @@ class AdaGrad_Spec extends Specification
         given : 'A new scalar gradient tensor is being created.'
             Tsr g = Tsr.of(expectedWeight)
         and : 'The following input is being applied to the tensor (and internal optimizer)...'
-            w.set( Tsr.of( gradient ) )
+            w.set( Tsr.of( (double)gradient ) )
             w.applyGradient()
 
         expect : 'The following state emerges:'

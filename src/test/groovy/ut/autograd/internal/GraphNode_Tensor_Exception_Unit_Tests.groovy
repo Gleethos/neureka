@@ -38,7 +38,7 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
     def 'A tensor cannot be deleted if it is part of a graph and the tensor is used as derivative.'()
     {
         given : 'A new simple scalar tensor instance.'
-            Tsr t = Tsr.of( 1 )
+            Tsr<Double> t = Tsr.of( 1d )
         and : 'A GraphNode mock object which is being added to the tensor.'
             def node = Mock( GraphNode )
 

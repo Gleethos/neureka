@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.197 seconds"
+    "duration":"0.165 seconds"
   },
   "headers":["\n                <p>\n                    Here you can find out how the version number of a tensor is\n                    set and tracked.\n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Inline operations causes version incrementation.",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.060 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"2 tensors a and b.","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( safe_inline )","Tsr a = Tsr.of(4) + Tsr.of(2)","Tsr b = Tsr.of(-1) + Tsr.of(-3).setRqsGradient(true)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+        {"kind":"given","text":"2 tensors a and b.","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( safe_inline )","Tsr a = Tsr.of(4d) + Tsr.of(2d)","Tsr b = Tsr.of(-1d) + Tsr.of(-3d).setRqsGradient(true)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
 
         {"kind":"expect","text":"Initially both tensors have a version number of 0.","code":["a.getVersion() == 0","b.getVersion() == 0"]},
 
@@ -39,14 +39,14 @@
     {
       "id":"Non-inline operations do not cause version incrementation.",
       "result":"PASS",
-      "duration":"0.077 seconds",
+      "duration":"0.059 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( no_inline )"]},
 
-        {"kind":"and","text":"Two tensors, one requiring gradients and the other one not.","code":["Tsr a = Tsr.of(6).setRqsGradient(true)","Tsr b = Tsr.of(-4)"]},
+        {"kind":"and","text":"Two tensors, one requiring gradients and the other one not.","code":["Tsr a = Tsr.of(6d).setRqsGradient(true)","Tsr b = Tsr.of(-4d)"]},
 
         {"kind":"and","text":"A binding for both tensors as preparation for calling the Groovy shell.","code":["Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
 
@@ -66,16 +66,16 @@
     {
       "id":"Inline operations cause illegal state exceptions.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.024 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )","Tsr a = Tsr.of(4) + Tsr.of(2).setRqsGradient(true)","Tsr b = Tsr.of(-4)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )","Tsr a = Tsr.of(4d) + Tsr.of(2d).setRqsGradient(true)","Tsr b = Tsr.of(-4d)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
 
         {"kind":"expect","text":"","code":["a.getVersion() == 0","b.getVersion() == 0"]},
 
-        {"kind":"when","text":"The groovy code is being evaluated.","code":["Tsr c = new GroovyShell( binding ).evaluate( code )"]},
+        {"kind":"when","text":"The groovy code is being evaluated.","code":["Tsr<Double> c = new GroovyShell( binding ).evaluate( code )"]},
 
         {"kind":"then","text":"An illegal state exception is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message == message"]},
 

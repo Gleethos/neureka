@@ -61,7 +61,7 @@ class Autograd_Tensor_Spec extends Specification
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when: 'We call the "backward" method on this tensor...'
-            y.backward(Tsr.of(2))
+            y.backward(Tsr.of(2d))
         then : 'The source tensor which requires gradients will have the gradient "-16".'
             x.toString().contains("-16.0")
 
@@ -71,7 +71,7 @@ class Autograd_Tensor_Spec extends Specification
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when : 'We also call the "backward" method again...'
-            y.backward(Tsr.of(1))
+            y.backward(Tsr.of(1d))
         then : 'The accumulated gradient in the source tensor which requires gradients will be as expected.'
             x.toString().contains("-24.0")
 
@@ -81,7 +81,7 @@ class Autograd_Tensor_Spec extends Specification
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when : 'We call "backward" with -1 as error...'
-            y.backward(Tsr.of(-1))
+            y.backward(Tsr.of(-1d))
         then : 'This will change the gradient of "x" accordingly.'
             x.toString().contains("-16.0")
     }
@@ -172,10 +172,10 @@ class Autograd_Tensor_Spec extends Specification
     def 'A tensor used as derivative within a computation graph will throw exception when trying to deleting it.'()
     {
         given : 'A new tensor "a" requiring autograd.'
-            Tsr a = Tsr.of(1).setRqsGradient(true)
+            Tsr a = Tsr.of(1d).setRqsGradient(true)
 
         and : 'A second tensor "b".'
-            Tsr b = Tsr.of(2)
+            Tsr b = Tsr.of(2d)
 
         when : 'Both tensors are being multiplied via the "dot" method.'
             Tsr c = a.convDot(b)

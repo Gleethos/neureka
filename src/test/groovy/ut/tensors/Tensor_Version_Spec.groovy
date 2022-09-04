@@ -74,8 +74,8 @@ class Tensor_Version_Spec extends Specification
     ) {
         given : '2 tensors a and b.'
             Neureka.get().settings().autograd().setIsPreventingInlineOperations( safe_inline )
-            Tsr a = Tsr.of(4) + Tsr.of(2)
-            Tsr b = Tsr.of(-1) + Tsr.of(-3).setRqsGradient(true)
+            Tsr a = Tsr.of(4d) + Tsr.of(2d)
+            Tsr b = Tsr.of(-1d) + Tsr.of(-3d).setRqsGradient(true)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -121,8 +121,8 @@ class Tensor_Version_Spec extends Specification
         given :
             Neureka.get().settings().autograd().setIsPreventingInlineOperations( no_inline )
         and : 'Two tensors, one requiring gradients and the other one not.'
-            Tsr a = Tsr.of(6).setRqsGradient(true)
-            Tsr b = Tsr.of(-4)
+            Tsr a = Tsr.of(6d).setRqsGradient(true)
+            Tsr b = Tsr.of(-4d)
         and : 'A binding for both tensors as preparation for calling the Groovy shell.'
             Binding binding = new Binding()
             binding.setVariable('a', a)
@@ -167,8 +167,8 @@ class Tensor_Version_Spec extends Specification
     ) {
         given :
             Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )
-            Tsr a = Tsr.of(4) + Tsr.of(2).setRqsGradient(true)
-            Tsr b = Tsr.of(-4)
+            Tsr a = Tsr.of(4d) + Tsr.of(2d).setRqsGradient(true)
+            Tsr b = Tsr.of(-4d)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -178,7 +178,7 @@ class Tensor_Version_Spec extends Specification
             b.getVersion() == 0
 
         when : 'The groovy code is being evaluated.'
-            Tsr c = new GroovyShell( binding ).evaluate( code )
+            Tsr<Double> c = new GroovyShell( binding ).evaluate( code )
 
         then : 'An illegal state exception is being thrown.'
             def exception = thrown(IllegalStateException)

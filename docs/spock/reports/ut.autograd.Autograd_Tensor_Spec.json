@@ -31,7 +31,7 @@
 
         {"kind":"then","text":"The resulting tensor should contain \"[1]:(4.0); ->d[1]:(-8.0), \" where the last part is a derivative.","code":["y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
 
-        {"kind":"when","text":"We call the \"backward\" method on this tensor...","code":["y.backward(Tsr.of(2))"]},
+        {"kind":"when","text":"We call the \"backward\" method on this tensor...","code":["y.backward(Tsr.of(2d))"]},
 
         {"kind":"then","text":"The source tensor which requires gradients will have the gradient \"-16\".","code":["x.toString().contains(\"-16.0\")"]},
 
@@ -39,7 +39,7 @@
 
         {"kind":"then","text":"The will produce the same result once again.","code":["y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
 
-        {"kind":"when","text":"We also call the \"backward\" method again...","code":["y.backward(Tsr.of(1))"]},
+        {"kind":"when","text":"We also call the \"backward\" method again...","code":["y.backward(Tsr.of(1d))"]},
 
         {"kind":"then","text":"The accumulated gradient in the source tensor which requires gradients will be as expected.","code":["x.toString().contains(\"-24.0\")"]},
 
@@ -47,7 +47,7 @@
 
         {"kind":"then","text":"The result will be as expected.","code":["y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
 
-        {"kind":"when","text":"We call \"backward\" with -1 as error...","code":["y.backward(Tsr.of(-1))"]},
+        {"kind":"when","text":"We call \"backward\" with -1 as error...","code":["y.backward(Tsr.of(-1d))"]},
 
         {"kind":"then","text":"This will change the gradient of \"x\" accordingly.","code":["x.toString().contains(\"-16.0\")"]}
       ],
@@ -127,9 +127,9 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new tensor \"a\" requiring autograd.","code":["Tsr a = Tsr.of(1).setRqsGradient(true)"]},
+        {"kind":"given","text":"A new tensor \"a\" requiring autograd.","code":["Tsr a = Tsr.of(1d).setRqsGradient(true)"]},
 
-        {"kind":"and","text":"A second tensor \"b\".","code":["Tsr b = Tsr.of(2)"]},
+        {"kind":"and","text":"A second tensor \"b\".","code":["Tsr b = Tsr.of(2d)"]},
 
         {"kind":"when","text":"Both tensors are being multiplied via the \"dot\" method.","code":["Tsr c = a.convDot(b)"]},
 

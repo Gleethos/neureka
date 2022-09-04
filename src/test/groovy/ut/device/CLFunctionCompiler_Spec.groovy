@@ -46,9 +46,9 @@ class CLFunctionCompiler_Spec extends Specification {
         given : 'We get the first available OpenCLDevice we can find in the CLContext!'
             def device = Neureka.get().backend().get(CLContext.class).platforms[0].devices[0]
         and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
-            Tsr<Double> t1 = Tsr.of(-2).to(device)
-            Tsr<Double> t2 = Tsr.of(5).to(device)
-            Tsr<Double> t3 = Tsr.of(2).to(device)
+            Tsr<Double> t1 = Tsr.of(-2d).to(device)
+            Tsr<Double> t2 = Tsr.of(5d).to(device)
+            Tsr<Double> t3 = Tsr.of(2d).to(device)
 
         and : 'A test function which will be the optimization target for this test.'
             def funToBeOptimized = Function.of("i2 + (i0 / i1)") // 2 + (-2 / 5)

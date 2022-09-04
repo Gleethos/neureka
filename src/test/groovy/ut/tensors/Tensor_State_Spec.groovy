@@ -196,12 +196,12 @@ class Tensor_State_Spec extends Specification
     def 'We can create scalar tensors.'()
     {
         given: 'A new instance of a scalar tensor.'
-            Tsr t = Tsr.of( 6 )
+            Tsr<Double> t = Tsr.of( 6d )
         expect: 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
         and : 'The tensor contains the expected data.'
             t.unsafe.data.ref == [6] as double[]
-            t.items == [6]
+            t.items == [6d]
             t.rawItems == [6] as double[]
         and : 'We can read the data in various array types:'
             t.getItemsAs( double[].class ) == [6] as double[]
@@ -213,7 +213,7 @@ class Tensor_State_Spec extends Specification
     def 'Tensor created from shape and datatype has expected state.'()
     {
         given : 'A new vector tensor is being instantiated.'
-            Tsr t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )
+            Tsr<Byte> t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )
         expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
             t.getItemsAs( double[].class ) == [0, 0] as double[]
@@ -243,7 +243,7 @@ class Tensor_State_Spec extends Specification
         and : 'They so however share the same underlying data.'
             v.unsafe.data.ref == s.unsafe.data.ref
         and :
-            s.items == [4]
+            s.items == [4f]
 
         where : 'We test the following devices:'
             device << ['CPU']

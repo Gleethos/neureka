@@ -33,9 +33,9 @@ class CLFunctionCompiler_Spec extends Specification
         given : 'A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.'
             var mockDevice = Mock(OpenCLDevice)
         and : 'Three simple scalar tensors (of doubles) which we will keep in RAM (not outsource to a device).'
-            Tsr<Number> t1 = Tsr.of( 1 )
-            Tsr<Number> t2 = Tsr.of(-2 )
-            Tsr<Number> t3 = Tsr.of( 5 )
+            Tsr<Number> t1 = Tsr.of( 1d )
+            Tsr<Number> t2 = Tsr.of(-2d )
+            Tsr<Number> t3 = Tsr.of( 5d )
         and : 'A simple test function which will serve as the basis for the optimization.'
             var funToBeOptimized = Function.of("i2 - (i0 / i1)")
         and : 'Finally we instantiate the compiler which uses the mocked device and the test function for optimization.'
@@ -158,7 +158,7 @@ class CLFunctionCompiler_Spec extends Specification
             algorithm
                 .getImplementationFor(OpenCLDevice.class)
                 .run(
-                        ExecutionCall.of(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))
+                        ExecutionCall.of(Tsr.of(0d), Tsr.of(1d), Tsr.of(2d), Tsr.of(3d))
                                         .running(resultOperation)
                                         .algorithm(algorithm)
                                         .on(mockDevice) as ExecutionCall<OpenCLDevice>

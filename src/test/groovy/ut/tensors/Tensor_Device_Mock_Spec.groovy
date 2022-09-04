@@ -43,7 +43,7 @@ class Tensor_Device_Mock_Spec extends Specification
     {
         given : 'A mock device and a simple tensor instance.'
             def device = Mock(Device)
-            Tsr t = Tsr.of(2)
+            Tsr t = Tsr.of(2d)
             device.has(t) >>> [false, true, true]
 
         when : 'The mock device is being added to the tensor...'
@@ -64,7 +64,7 @@ class Tensor_Device_Mock_Spec extends Specification
         given : 'A simple tensor having a device as component'
             def device = Mock(Device)
             device.has(_) >>> [false, true, true] // Some realistic return values to simulate tensor reception!
-            Tsr t = Tsr.of(1)
+            Tsr t = Tsr.of(1d)
 
         when :
             t.to(device)

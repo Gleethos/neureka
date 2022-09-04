@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"0.005 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a scalar tensor and then immediately delete it.","code":["Tsr t = Tsr.of(-2).getUnsafe().delete()"]},
+        {"kind":"given","text":"We create a scalar tensor and then immediately delete it.","code":["Tsr t = Tsr.of(-2d).getUnsafe().delete()"]},
 
         {"kind":"expect","text":"This tensor will tell you that it is deleted through the \"toString\" method.","code":["t.toString() == \"deleted\""]}
       ],

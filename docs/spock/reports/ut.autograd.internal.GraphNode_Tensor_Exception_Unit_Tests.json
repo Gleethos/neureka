@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new simple scalar tensor instance.","code":["Tsr t = Tsr.of( 1 )"]},
+        {"kind":"given","text":"A new simple scalar tensor instance.","code":["Tsr<Double> t = Tsr.of( 1d )"]},
 
         {"kind":"and","text":"A GraphNode mock object which is being added to the tensor.","code":["def node = Mock( GraphNode )"]},
 

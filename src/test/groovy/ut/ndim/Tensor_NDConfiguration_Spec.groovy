@@ -49,8 +49,8 @@ class Tensor_NDConfiguration_Spec extends Specification
     def 'NDConfiguration instances of tensors have expected state.'()
     {
         given: 'Two scalar tensors "a" and "b" storing values "1" and "2".'
-            Tsr a = Tsr.of(1)
-            Tsr b = Tsr.of(2)
+            Tsr a = Tsr.of(1d)
+            Tsr b = Tsr.of(2d)
 
         expect: 'Tensor "a" contains an instance of the "SimpleScalarConfiguration".'
             a.NDConf instanceof Simple0DConfiguration

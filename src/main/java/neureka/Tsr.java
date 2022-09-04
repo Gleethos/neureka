@@ -401,6 +401,12 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Float> of( float... value ) { return of( Float.class, new int[]{ value.length }, value ); }
 
     /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar float tensor.
+     */
+    static Tsr<Float> of( float value ) { return of( Float.class, new int[]{ 1 }, value ); }
+
+    /**
      *  Constructs a vector of doubles based on the provided array.
      *
      * @param value The array of doubles from which a 1D tensor ought to be constructed.

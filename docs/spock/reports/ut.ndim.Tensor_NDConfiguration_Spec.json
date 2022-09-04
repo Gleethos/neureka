@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":["\n                For certain situations the \"Tsr\" class should use the correct \n                implementations of said interface as configuration for internal index mapping...\n\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"NDConfiguration instances of tensors have expected state.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Two scalar tensors \"a\" and \"b\" storing values \"1\" and \"2\".","code":["Tsr a = Tsr.of(1)","Tsr b = Tsr.of(2)"]},
+        {"kind":"given","text":"Two scalar tensors \"a\" and \"b\" storing values \"1\" and \"2\".","code":["Tsr a = Tsr.of(1d)","Tsr b = Tsr.of(2d)"]},
 
         {"kind":"expect","text":"Tensor \"a\" contains an instance of the \"SimpleScalarConfiguration\".","code":["a.NDConf instanceof Simple0DConfiguration"]},
 

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.004 seconds"
+    "duration":"0.003 seconds"
   },
   "headers":["\n                <h2> Tensor Gradient Unit Tests </h2>\n                <br>\n                <b>Why is there a difference between \"rqsGradient()\" and \"hasGradient()\" ? :</b>\n                <br><br>\n                <p>\n                    The latter property simply tells if a tensor has another tensor as component.\n                    This however does not necessitate it to also require gradients via the autograd system.\n                    This is what the prior property is for.            \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
@@ -21,9 +21,9 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new simple tensor.","code":["Tsr t = Tsr.of(-3)"]},
+        {"kind":"given","text":"A new simple tensor.","code":["Tsr<Double> t = Tsr.of(-3d)"]},
 
-        {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr g = Tsr.of(9)"]},
+        {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr<Double> g = Tsr.of(9d)"]},
 
         {"kind":"when","text":"The gradient tensor is added to the prior tensor as component.","code":["t.set( g )"]},
 
@@ -40,9 +40,9 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new simple tensor.","code":["Tsr t = Tsr.of(-3)"]},
+        {"kind":"given","text":"A new simple tensor.","code":["Tsr<Double> t = Tsr.of(-3d)"]},
 
-        {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr g = Tsr.of(9)"]},
+        {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr<Double> g = Tsr.of(9d)"]},
 
         {"kind":"when","text":"The gradient tensor is added to the prior tensor as component.","code":["t.set( g )"]},
 
@@ -59,9 +59,9 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new simple tensor.","code":["Tsr t = Tsr.of(-3)"]},
+        {"kind":"given","text":"A new simple tensor.","code":["Tsr<Double> t = Tsr.of(-3d)"]},
 
-        {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr g = Tsr.of(9)"]},
+        {"kind":"and","text":"A second tensor viewed as gradient.","code":["Tsr<Double> g = Tsr.of(9d)"]},
 
         {"kind":"and","text":"The gradient tensor is added to the prior tensor as component.","code":["t.set( g )"]},
 

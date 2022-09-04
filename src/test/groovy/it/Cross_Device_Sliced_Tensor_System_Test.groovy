@@ -126,14 +126,14 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when:
-            y.backward(Tsr.of(2))
+            y.backward(Tsr.of(2d))
             y = ( ( x + b ) * w )**2
 
         then:
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when:
-            y.backward(Tsr.of(2))
+            y.backward(Tsr.of(2d))
             x.toString().contains("-32.0")
             y = b + w * x
 

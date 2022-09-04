@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":["    \n            <h2>Tensor Device Mock Tests</h2>\n            <p>\n                This unit test specification covers \n                the expected behavior of tensors when interacting\n                with instances of implementations of the Device interface.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors try to migrate themselves to a device that is being added to them as component.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A mock device and a simple tensor instance.","code":["def device = Mock(Device)","Tsr t = Tsr.of(2)","device.has(t) >>> [false, true, true]"]},
+        {"kind":"given","text":"A mock device and a simple tensor instance.","code":["def device = Mock(Device)","Tsr t = Tsr.of(2d)","device.has(t) >>> [false, true, true]"]},
 
         {"kind":"when","text":"The mock device is being added to the tensor...","code":["t.to(device)"]},
 
@@ -42,7 +42,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A simple tensor having a device as component","code":["def device = Mock(Device)","device.has(_) >>> [false, true, true]","Tsr t = Tsr.of(1)"]},
+        {"kind":"given","text":"A simple tensor having a device as component","code":["def device = Mock(Device)","device.has(_) >>> [false, true, true]","Tsr t = Tsr.of(1d)"]},
 
         {"kind":"when","text":"","code":["t.to(device)"]},
 

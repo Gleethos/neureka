@@ -376,9 +376,9 @@ class Tensor_Operation_Spec extends Specification
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            Tsr x = Tsr.of(3).setRqsGradient(true)
-            Tsr b = Tsr.of(-4)
-            Tsr w = Tsr.of(2)
+            Tsr x = Tsr.of(3d).setRqsGradient(true)
+            Tsr b = Tsr.of(-4d)
+            Tsr w = Tsr.of(2d)
 
         when : Tsr y = ( (x+b)*w )**2
 
@@ -390,7 +390,7 @@ class Tensor_Operation_Spec extends Specification
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)
 
         when :
-            y.backward(Tsr.of(1))
+            y.backward(Tsr.of(1d))
         and :
             Tsr t2 = Tsr.of( "Ig[0]", [x] )
             Tsr t1 = Tsr.of( "Ig[0]", [y] ) // The input does not have a gradient!

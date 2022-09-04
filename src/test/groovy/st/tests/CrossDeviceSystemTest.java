@@ -151,7 +151,7 @@ public class CrossDeviceSystemTest
          */
         Tsr<Double> y = Tsr.of("((i0+i1)*i2)**2", x, b, w);
         tester.testTensor(y, new String[]{"[1]:(4.0); ->d[1]:(-8.0)"});
-        y.backward(Tsr.of(2));
+        y.backward(Tsr.of(2d));
         tester.testTensor(x, new String[]{"-16.0"});
         tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
         //---

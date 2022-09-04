@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.023 seconds"
+    "duration":"0.024 seconds"
   },
   "headers":["    \n\n        "],"tags":{},"see":[],
   "features":[ 
@@ -71,7 +71,7 @@
     {
       "id":"Tensors as String can be formatted depending on shape.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -103,11 +103,11 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new instance of a scalar tensor.","code":["Tsr t = Tsr.of( 6 )"]},
+        {"kind":"given","text":"A new instance of a scalar tensor.","code":["Tsr<Double> t = Tsr.of( 6d )"]},
 
         {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()"]},
 
-        {"kind":"and","text":"The tensor contains the expected data.","code":["t.unsafe.data.ref == [6] as double[]","t.items == [6]","t.rawItems == [6] as double[]"]},
+        {"kind":"and","text":"The tensor contains the expected data.","code":["t.unsafe.data.ref == [6] as double[]","t.items == [6d]","t.rawItems == [6] as double[]"]},
 
         {"kind":"and","text":"We can read the data in various array types:","code":["t.getItemsAs( double[].class ) == [6] as double[]","t.getItemsAs( float[].class  ) == [6] as float[]","t.getDataAs( double[].class ) == [6] as double[]","t.getDataAs( float[].class  ) == [6] as float[]"]}
       ],
@@ -122,7 +122,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new vector tensor is being instantiated.","code":["Tsr t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )"]},
+        {"kind":"given","text":"A new vector tensor is being instantiated.","code":["Tsr<Byte> t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )"]},
 
         {"kind":"expect","text":"The tensor is not stored on another device, meaning that it is not \"outsourced\".","code":["!t.isOutsourced()","t.getItemsAs( double[].class ) == [0, 0] as double[]","t.getItemsAs( float[].class ) == [0, 0] as float[]","t.unsafe.data.ref == [0] as byte[]","t.items == [0, 0] as byte[]","t.isVirtual()"]}
       ],
@@ -149,7 +149,7 @@
 
         {"kind":"and","text":"They so however share the same underlying data.","code":["v.unsafe.data.ref == s.unsafe.data.ref"]},
 
-        {"kind":"and","text":"","code":["s.items == [4]"]},
+        {"kind":"and","text":"","code":["s.items == [4f]"]},
 
         {"kind":"where","text":"We test the following devices:","code":{"device":["CPU"]}}
       ],

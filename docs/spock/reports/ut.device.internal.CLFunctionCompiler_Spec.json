@@ -16,14 +16,14 @@
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.","code":["var mockDevice = Mock(OpenCLDevice)"]},
 
-        {"kind":"and","text":"Three simple scalar tensors (of doubles) which we will keep in RAM (not outsource to a device).","code":["Tsr<Number> t1 = Tsr.of( 1 )","Tsr<Number> t2 = Tsr.of(-2 )","Tsr<Number> t3 = Tsr.of( 5 )"]},
+        {"kind":"and","text":"Three simple scalar tensors (of doubles) which we will keep in RAM (not outsource to a device).","code":["Tsr<Number> t1 = Tsr.of( 1d )","Tsr<Number> t2 = Tsr.of(-2d )","Tsr<Number> t3 = Tsr.of( 5d )"]},
 
         {"kind":"and","text":"A simple test function which will serve as the basis for the optimization.","code":["var funToBeOptimized = Function.of(\"i2 - (i0 / i1)\")"]},
 
@@ -96,7 +96,7 @@
 
         {"kind":"and","text":"...as well as an OpenCLDevice specific implementation within the algorithm.","code":["algorithm.getImplementationFor(OpenCLDevice.class) != null"]},
 
-        {"kind":"when","text":"We call the OpenCLDevice specific implementation by passing a well populated ExecutionCall.","code":["algorithm",".getImplementationFor(OpenCLDevice.class)",".run(","        ExecutionCall.of(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))","                        .running(resultOperation)","                        .algorithm(algorithm)","                        .on(mockDevice) as ExecutionCall<OpenCLDevice>",")"]},
+        {"kind":"when","text":"We call the OpenCLDevice specific implementation by passing a well populated ExecutionCall.","code":["algorithm",".getImplementationFor(OpenCLDevice.class)",".run(","        ExecutionCall.of(Tsr.of(0d), Tsr.of(1d), Tsr.of(2d), Tsr.of(3d))","                        .running(resultOperation)","                        .algorithm(algorithm)","                        .on(mockDevice) as ExecutionCall<OpenCLDevice>",")"]},
 
         {"kind":"then","text":"We expect that the implementation first checks with an optimized kernel already exists...","code":["1 * mockDevice.hasAdHocKernel(\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\") >> false"]},
 

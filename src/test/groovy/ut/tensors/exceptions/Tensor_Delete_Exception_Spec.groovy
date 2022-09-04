@@ -10,7 +10,7 @@ class Tensor_Delete_Exception_Spec extends Specification
     def 'A deleted tensor will tell you that it has been deleted.'() {
 
         given : 'We create a scalar tensor and then immediately delete it.'
-            Tsr t = Tsr.of(-2).getUnsafe().delete()
+            Tsr t = Tsr.of(-2d).getUnsafe().delete()
 
         expect: 'This tensor will tell you that it is deleted through the "toString" method.'
             t.toString() == "deleted"

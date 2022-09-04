@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.144 seconds"
+    "duration":"0.143 seconds"
   },
   "headers":[" \n                <p>\n                    This specification covers the behavior of tensors when being sliced\n                    on multiple different device types in conjunction with \n                    the autograd system.\n                    Autograd should work on slices as well.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.044 seconds",
+      "duration":"0.041 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
 
         {"kind":"then","text":"","code":["y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
 
-        {"kind":"where","text":"","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x2164e35e0b0],platform=OpenCLPlatform@1646e8ec[pid=cl_platform_id[0x7fff7caa8000],context=cl_context[0x21647a82f20],kernels=[..48..]]]","CPU[coreCount=32]"]}}
+        {"kind":"where","text":"","code":{"device":["OpenCLDevice[deviceId=cl_device_id[0x2dfea8f0d40],platform=OpenCLPlatform@6e7a4e3a[pid=cl_platform_id[0x7fff67b48000],context=cl_context[0x2dfe40d6aa0],kernels=[..48..]]]","CPU[coreCount=32]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -41,7 +41,7 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.091 seconds",
+      "duration":"0.093 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,11 +52,11 @@
 
         {"kind":"then","text":"","code":["y.indicesMap() != null","y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
 
-        {"kind":"when","text":"","code":["y.backward(Tsr.of(2))","y = ( ( x + b ) * w )**2"]},
+        {"kind":"when","text":"","code":["y.backward(Tsr.of(2d))","y = ( ( x + b ) * w )**2"]},
 
         {"kind":"then","text":"","code":["y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
 
-        {"kind":"when","text":"","code":["y.backward(Tsr.of(2))","x.toString().contains(\"-32.0\")","y = b + w * x","Tsr a = Tsr.of([4, 6], [","        1d, 2d, 3d, 4d, 5d, 6d,","        7d, 8d, 9d, 1d, 2d, 3d,","        4d, 5d, 6d, 7d, 8d, 9d,","        1d, 2d, 3d, 4d, 5d, 6d","])","device.store(a)","b = a[[-1..-3, -6..-3]]","var s = a[[1, -2]]"]},
+        {"kind":"when","text":"","code":["y.backward(Tsr.of(2d))","x.toString().contains(\"-32.0\")","y = b + w * x","Tsr a = Tsr.of([4, 6], [","        1d, 2d, 3d, 4d, 5d, 6d,","        7d, 8d, 9d, 1d, 2d, 3d,","        4d, 5d, 6d, 7d, 8d, 9d,","        1d, 2d, 3d, 4d, 5d, 6d","])","device.store(a)","b = a[[-1..-3, -6..-3]]","var s = a[[1, -2]]"]},
 
         {"kind":"then","text":"","code":["s.toString() == \"[1x1]:(2.0)\"","s.item(0) == 2.0","b.toString().contains(\"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0\")","b.spread() != null"]},
 
@@ -96,7 +96,7 @@
 
         {"kind":"then","text":"","code":["x.toString().contains(\"[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)\")"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2164e35e0b0],platform=OpenCLPlatform@1646e8ec[pid=cl_platform_id[0x7fff7caa8000],context=cl_context[0x21647a82f20],kernels=[..48..]]]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2dfea8f0d40],platform=OpenCLPlatform@6e7a4e3a[pid=cl_platform_id[0x7fff67b48000],context=cl_context[0x2dfe40d6aa0],kernels=[..48..]]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

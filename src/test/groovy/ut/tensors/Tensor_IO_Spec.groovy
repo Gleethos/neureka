@@ -71,9 +71,9 @@ class Tensor_IO_Spec extends Specification
     def 'Smart tensor constructors yield expected results.'()
     {
         given : 'Three scalar tensors.'
-            Tsr a = Tsr.of(3)
-            Tsr b = Tsr.of(2)
-            Tsr c = Tsr.of(-1)
+            Tsr a = Tsr.of(3d)
+            Tsr b = Tsr.of(2d)
+            Tsr c = Tsr.of(-1d)
 
         when : Tsr t = Tsr.of("1+", a, "*", b)
         then : t.toString().contains("7.0")
@@ -157,7 +157,7 @@ class Tensor_IO_Spec extends Specification
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'A new tensor instance.'
-            Tsr x = Tsr.of(3)
+            Tsr x = Tsr.of(3d)
 
         when : 'Setting the value of the tensor...'
             float[] value32 = new float[1]
@@ -341,7 +341,7 @@ class Tensor_IO_Spec extends Specification
 
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            Tsr x = Tsr.of(3)
+            Tsr x = Tsr.of(3d)
 
         when : x.unsafe.toType( Float.class )
         then :
@@ -458,7 +458,7 @@ class Tensor_IO_Spec extends Specification
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'A simple scalar tensor containing the number "4".'
-            Tsr x = Tsr.of(4)
+            Tsr x = Tsr.of(4d)
 
         when: Tsr y = Tsr.of("th(I[0])", x)
 

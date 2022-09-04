@@ -27,18 +27,18 @@ class Calculus_Function_Spec extends Specification
     {
         given :
             var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                            var outputs = [Tsr.of(1)]
+                                            var outputs = [Tsr.of(1d)]
                                             tensors.length.times { outputs.add(tensors[it]) }
                                             return outputs[0]
                                         })
         and :
             var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                            var outputs = [Tsr.of(1)]
+                                            var outputs = [Tsr.of(1d)]
                                             tensors.length.times { outputs.add(tensors[it]) }
                                             return outputs[0].unsafe.setIsIntermediate(true)
                                         })
         and :
-            var a = Tsr.of(3)
+            var a = Tsr.of(3d)
             var b = Tsr.of(-2.5)
         expect :
             !a.isIntermediate()
@@ -72,7 +72,7 @@ class Calculus_Function_Spec extends Specification
                                     return tensors[0].unsafe.setIsIntermediate( true ) // This should fail!
                                 })
         and :
-            var a = Tsr.of(3)
+            var a = Tsr.of(3.0)
             var b = Tsr.of(-2.5)
         expect :
             !a.isIntermediate()
@@ -105,7 +105,7 @@ class Calculus_Function_Spec extends Specification
                                     })
 
         and :
-            var a = Tsr.of(3)
+            var a = Tsr.of(3d)
             var b = Tsr.of(-2.5)
         expect :
             !a.isIntermediate()
