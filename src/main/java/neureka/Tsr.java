@@ -387,6 +387,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static WithShapeOrScalarOrVectorOnDevice<Byte> ofBytes() { return of(Byte.class); }
 
     /**
+     *  Constructs a vector of doubles based on the provided array.
+     *
+     * @param value The array of doubles from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of doubles.
+     */
+    static Tsr<Double> of( double... value ) { return of( Double.class, new int[]{ value.length }, value ); }
+
+    /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar double tensor.
      */
@@ -407,20 +415,18 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Float> of( float value ) { return of( Float.class, new int[]{ 1 }, value ); }
 
     /**
-     *  Constructs a vector of doubles based on the provided array.
-     *
-     * @param value The array of doubles from which a 1D tensor ought to be constructed.
-     * @return A vector / 1D tensor of doubles.
-     */
-    static Tsr<Double> of( double... value ) { return of( Double.class, new int[]{ value.length }, value ); }
-
-    /**
      *  Constructs a vector of bytes based on the provided array.
      *
      * @param value The array of bytes from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of bytes.
      */
     static Tsr<Byte> of( byte... value ) { return of( Byte.class, new int[]{ value.length }, value ); }
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar byte tensor.
+     */
+    static Tsr<Byte> of( byte value ) { return of( Byte.class, new int[]{ 1 }, value ); }
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -431,6 +437,12 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Integer> of( int... value ) { return of( Integer.class, new int[]{ value.length }, value ); }
 
     /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar int tensor.
+     */
+    static Tsr<Integer> of( int value ) { return of( Integer.class, new int[]{ 1 }, value ); }
+
+    /**
      *  Constructs a vector of longs based on the provided array.
      *
      * @param value The array of longs from which a 1D tensor ought to be constructed.
@@ -439,12 +451,24 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Long> of( long... value ) { return of( Long.class, new int[]{ value.length }, value ); }
 
     /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar long tensor.
+     */
+    static Tsr<Long> of( long value ) { return of( Long.class, new int[]{ 1 }, value ); }
+
+    /**
      *  Constructs a vector of shorts based on the provided array.
      *
      * @param value The array of shorts from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
     static Tsr<Short> of( short... value ) { return of( Short.class, new int[]{ value.length }, value ); }
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar short tensor.
+     */
+    static Tsr<Short> of( short value ) { return of( Short.class, new int[]{ 1 }, value ); }
 
     /**
      *  Constructs a vector of booleans based on the provided array.

@@ -16,7 +16,7 @@ import spock.lang.*
     enable reading to or writing from the tensors they store.
 
 ''')
-@Subject([Device])
+@Subject([Device, Tsr])
 class Cross_Device_IO_Spec extends Specification
 {
 

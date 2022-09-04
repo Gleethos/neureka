@@ -12,14 +12,12 @@ import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
 
-@Title("The Tensor state Input and Output Specification")
+@Title("Reading and Writing Tensor Items")
 @Narrative('''
 
     Tensors are complicated data structures with a wide range of different possible states.
     They can host elements of different types residing on many kinds of different devices.
-    Here we want to define some basic stuff about how a tensor can be instantiated
-    and how we can read from and write to the state of a tensor.
-    Here we also specify how a tensor can be converted to another tensor of a different data type!
+    Here we want to read from and write to the state of a tensor.
                     
 ''')
 class Tensor_IO_Spec extends Specification
@@ -27,13 +25,8 @@ class Tensor_IO_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-            <h2>Tensor Instantiation and IO Tests</h2>
-            <p>
                 This specification covers some basic behaviour related to
-                tensor instantiation and modification.
-                This includes the instantiation of tensors with custom seeds, shapes and values...
-                Included are also tests covering static factory methods.
-            </p>
+                reading and modifying the data inside a tensor.
         """
     }
 
@@ -54,56 +47,6 @@ class Tensor_IO_Spec extends Specification
             it.prefix            = ""
             it.hasSlimNumbers    = false
         })
-    }
-
-    def 'Tensors can be instantiated with String seed.'()
-    {
-        given : 'Three seeded 2D tensors are being instantiated.'
-            Tsr t1 = Tsr.of([2, 3], "I am a seed! :)")
-            Tsr t2 = Tsr.of([2, 3], "I am a seed! :)")
-            Tsr t3 = Tsr.of([2, 3], "I am also a seed! But different. :)")
-
-        expect : 'Equal seeds produce equal values.'
-            t1.toString() == t2.toString()
-            t1.toString() != t3.toString()
-    }
-
-    def 'Smart tensor constructors yield expected results.'()
-    {
-        given : 'Three scalar tensors.'
-            Tsr a = Tsr.of(3d)
-            Tsr b = Tsr.of(2d)
-            Tsr c = Tsr.of(-1d)
-
-        when : Tsr t = Tsr.of("1+", a, "*", b)
-        then : t.toString().contains("7.0")
-        when : t = Tsr.of("1", "+", a, "*", b)
-        then : t.toString().contains("7.0")
-        when : t = Tsr.of("(","1+", a,")", "*", b)
-        then : t.toString().contains("8.0")
-        when : t = Tsr.of("(","1", "+", a,")", "*", b)
-        then : t.toString().contains("8.0")
-        when : t = Tsr.of("(", c, "*3)+", "(","1+", a,")", "*", b)
-        then : t.toString().contains("5.0")
-        when : t = Tsr.of("(", c, "*","3)+", "(","1+", a,")", "*", b)
-        then : t.toString().contains("5.0")
-        when : t = Tsr.of("(", c, "*","3", ")+", "(","1+", a,")", "*", b)
-        then : t.toString().contains("5.0")
-
-        when : t = Tsr.of([2, 2], [2, 4, 4])
-        then : t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
-        when : t = Tsr.of([2], [3, 5, 7])
-        then :
-            t.toString().contains("(2):[3.0, 5.0]")
-            t.getItemsAs( double[].class ).length==2
-
-        // Now the same with primitive array ! :
-        when : t = Tsr.of(new int[]{2, 2}, new double[]{2, 4, 4})
-        then : t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
-        when : t = Tsr.of(new int[]{2}, new double[]{3, 5, 7})
-        then :
-            t.toString().contains("(2):[3.0, 5.0]")
-            t.getItemsAs( double[].class ).length==2
     }
 
     def 'Indexing after reshaping works as expected.'()
@@ -141,15 +84,6 @@ class Tensor_IO_Spec extends Specification
 
             t1.toString().contains("[4x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0)")
             t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.0, 9.0, 12.0)")
-    }
-
-
-    def 'Passing String seed to tensor produces expected values.'()
-    {
-        when : Tsr r = Tsr.of([2, 2], "jnrejn")
-        then : r.toString().contains("0.02847, -0.69068, 0.15386, 1.81382")
-        when : r = Tsr.of([2, 2], "jnrejn2")
-        then : !r.toString().contains("0.02600, -2.06129, -0.48373, 0.94884")
     }
 
     def 'Tensor value type can not be changed by passing float or double arrays to it.'()
@@ -210,21 +144,6 @@ class Tensor_IO_Spec extends Specification
             !(x.data instanceof double[])
             x.getItemsAs( float[].class )[ 0 ]==7.0f
             x.getItemsAs( double[].class )[0]==7.0d
-    }
-
-    def 'We turn a tensor into a scalar value or string through the "as" operator!'()
-    {
-        given : 'A tensor of 3 floats:'
-            var t = Tsr.ofFloats().vector(42, 42, 42)
-
-        expect : 'We can now turn the tensor int other data types!'
-            (t as Integer) == 42
-            (t as Double) == 42
-            (t as Short) == 42
-            (t as Byte) == 42
-            (t as Long) == 42
-        and : 'Also use it instead of the "toString" method.'
-            (t as String) == t.toString()
     }
 
     @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
@@ -324,150 +243,6 @@ class Tensor_IO_Spec extends Specification
             //'CPU'  | Integer
             //'CPU'  | Long
             //'GPU'  | Float
-    }
-
-
-    def 'Tensors value type can be changed by calling "toType(...)".'()
-    {
-        reportInfo("""
-            Warning! The `toType` method mutates the tensor!
-            This is especially problematic with respect to generics, 
-            because if the tensor is still used as a tensor of the old type, 
-            then the compiler will not be able to detect that the tensor has changed its type.
-            This is why we have to use the `unsafe` API exists.
-            Only use this method if there are urgent performance requirements and
-            you know exactly what you are doing!
-        """)
-
-        given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            Tsr x = Tsr.of(3d)
-
-        when : x.unsafe.toType( Float.class )
-        then :
-            x.rawItems instanceof float[]
-            x.unsafe.data.ref instanceof float[]
-            x.data instanceof float[]
-            x.getItemsAs( float[].class )[ 0 ]==3.0f
-
-        when : x.unsafe.toType( Double.class )
-        then :
-            x.rawItems instanceof double[]
-            x.unsafe.data.ref instanceof double[]
-            x.data instanceof double[]
-            x.getItemsAs( float[].class )[ 0 ]==3.0f
-    }
-
-    def 'We can change the data type of all kinds of tensors.'(
-            Class<?> sourceType, Class<?> targetType
-    ) {
-        reportInfo("""
-            Warning! The `toType` method mutates the tensor!
-            This is especially problematic with respect to generics, 
-            because if the tensor is still used as a tensor of the old type, 
-            then the compiler will not be able to detect that the tensor has changed its type.
-            This is why we have to use the `unsafe` API exists.
-            Only use this method if there are urgent performance requirements and
-            you know exactly what you are doing!
-        """)
-
-        given : 'A simple tensor with a few initial values.'
-            var data = [-3, -12, 42, -42, 12, 3]
-            var a = Tsr.of(sourceType).withShape(data.size()).andFill(data)
-
-        when : 'We change the data type of the tensor using the unsafe "toType" method.'
-            var b = a.unsafe.toType(targetType)
-
-        then : 'The returned tensor has the expected data type.'
-            b.itemType == targetType
-        and : 'The returned tensor has the expected values.'
-            b.rawItems == data.collect({ it.asType(targetType) })
-        and : 'The returned tensor is in fact the original instance.'
-            a === b
-
-        where : 'We use the following data and matrix dimensions!'
-            sourceType | targetType
-            Double     | Double
-            Double     | Float
-            Double     | Long
-            Double     | Integer
-            Double     | Short
-            Double     | Byte
-            Float      | Double
-            Float      | Float
-            Float      | Long
-            Float      | Integer
-            Float      | Short
-            Float      | Byte
-            Long       | Double
-            Long       | Float
-            Long       | Long
-            Long       | Integer
-            Long       | Short
-            Long       | Byte
-            Integer    | Double
-            Integer    | Float
-            Integer    | Long
-            Integer    | Integer
-            Integer    | Short
-            Integer    | Byte
-            Short      | Double
-            Short      | Float
-            Short      | Long
-            Short      | Integer
-            Short      | Short
-            Short      | Byte
-            Byte       | Double
-            Byte       | Float
-            Byte       | Long
-            Byte       | Integer
-            Byte       | Short
-            Byte       | Byte
-    }
-
-
-    def 'Vector tensors can be instantiated via factory methods.'(
-        def data, Class<?> type, List<Integer> shape
-    ) {
-        given : 'We create a vector tensor using the "of" factory method.'
-            Tsr<?> t = Tsr.of(data)
-            // In practise this might be something like: Tsr.of(42, 666, 73, 64)
-
-        expect : 'The resulting tensor has the expected item type class.'
-            t.itemType == type
-        and : 'Also the expected shape.'
-            t.shape() == shape
-        and : 'The tensor has the expected data array.'
-            t.unsafe.data.ref == data
-            t.data == data
-        and : 'The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.'
-            t.items == data
-
-        where :
-            data                        ||  type  | shape
-            new double[]{1.1, 2.2, 3.3} || Double | [ 3 ]
-            new float[]{-0.21, 543.3}   || Float  | [ 2 ]
-            new boolean[]{true, false}  || Boolean| [ 2 ]
-            new short[]{1, 2, 99, -123} || Short  | [ 4 ]
-            new long[]{3, 8, 4, 2, 3, 0}|| Long   | [ 6 ]
-            new int[]{66, 1, 4, 42, -40}|| Integer| [ 5 ]
-    }
-
-    def 'A tensor produced by a function has expected properties.'()
-    {
-        given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-        and : 'A simple scalar tensor containing the number "4".'
-            Tsr x = Tsr.of(4d)
-
-        when: Tsr y = Tsr.of("th(I[0])", x)
-
-        then:
-            y.isBranch()
-            !y.isLeave()
-            y.belongsToGraph()
-            x.belongsToGraph()
-            y.toString().contains("[1]:(0.99932)")
     }
 
     def 'A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.'()
@@ -585,27 +360,6 @@ class Tensor_IO_Spec extends Specification
             Integer  | [2,2] | [-42, 24, 9, 3, -34] as int[]    | 1 as int       || [-42, 1, 9, 3] as int[]
             Boolean  | [2,1] | [false, true, false] as boolean[]| false          || [false, false] as boolean[]
             Character| [2,1] | ['a', 'b', 'c'] as char[]        | 'x' as char    || ['a', 'x'] as char[]
-    }
-
-    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
-    def 'Adding OpenCL device to tensor makes tensor be "outsourced" and contain the Device instance as component.'()
-    {
-        given : 'Neureka can access OpenCL (JOCL).'
-            Device gpu = Device.get("gpu")
-            Tsr t = Tsr.of([3, 4, 1], 3)
-
-        expect : 'The following is to be expected with respect to the given :'
-            !t.has(Device.class)
-            !t.isOutsourced()
-            !gpu.has(t)
-
-        when : 'The tensor is being added to the OpenCL device...'
-            t.to(gpu)
-
-        then : 'The now "outsourced" tensor has a reference to the device and vice versa!'
-            t.has(Device.class)
-            t.isOutsourced()
-            gpu.has(t)
     }
 
 }

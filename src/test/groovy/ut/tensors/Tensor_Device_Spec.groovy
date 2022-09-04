@@ -5,18 +5,26 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.view.NDPrintSettings
+import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
-class Tensor_Device_Mock_Spec extends Specification
+@Title("Tensors on Devices")
+@Narrative('''
+
+    This unit test specification covers 
+    the expected behavior of tensors when interacting
+    with instances of implementations of the Device interface.
+
+''')
+class Tensor_Device_Spec extends Specification
 {
     def setupSpec() {
-        reportHeader """    
-            <h2>Tensor Device Mock Tests</h2>
-            <p>
-                This unit test specification covers 
-                the expected behavior of tensors when interacting
-                with instances of implementations of the Device interface.
-            </p>
+        reportHeader """
+            Here you will find out how to store tensors on devices,
+            how to move tensors between devices and how to use
+            the device specific methods of the tensor class.
         """
     }
 
@@ -38,6 +46,30 @@ class Tensor_Device_Mock_Spec extends Specification
             it.hasSlimNumbers    = false
         })
     }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
+    def 'Adding OpenCL device to tensor makes tensor be "outsourced" and contain the Device instance as component.'()
+    {
+        given : 'We get a device instance representing the GPU.'
+            Device gpu = Device.get("gpu")
+        and : 'We create a simple tensor.'
+            Tsr t = Tsr.of([3, 4, 1], 3f)
+
+        expect : 'The following is to be expected with respect to the given :'
+            !t.has(Device.class)
+            !t.isOutsourced()
+            !gpu.has(t)
+
+        when : 'The tensor is being added to the OpenCL device...'
+            t.to(gpu)
+
+        then : 'The now "outsourced" tensor has a reference to the device and vice versa!'
+            t.has(Device.class)
+            t.isOutsourced()
+            gpu.has(t)
+    }
+
+
 
     def 'Tensors try to migrate themselves to a device that is being added to them as component.'()
     {
