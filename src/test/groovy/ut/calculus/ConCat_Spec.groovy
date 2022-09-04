@@ -57,18 +57,18 @@ class ConCat_Spec extends Specification
         and : 'A function which should perform the concatenation.'
             var cat = Function.of('concat(I[0], I[1])')
 
-        when : 'We call the previously created function alongside the axis alongside we want to concatenate.'
+        when : 'We call the previously created function with the axis alongside we want to concatenate.'
             var c = cat.with(Arg.Axis.of(1)).call(a, b)
 
         then : 'The resulting tensor should have the expected shape.'
             c.shape() == [4, 5]
 
-        when :
+        when : 'We perform some more operations on top of the previous concatenation...'
             var y = c * 5 + 1
-        and :
+        and : 'Then we trigger autograd on the most recent result...'
             y.backward(-2)
 
-        then :
+        then : 'The original leave tensors used for the merging have received the expected gradients.'
             a.gradient.every( it -> it == -10 )
             b.gradient.every( it -> it == -10 )
     }
