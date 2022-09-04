@@ -35,7 +35,7 @@
     {
       "id":"GraphNode instantiation works as expected when the context argument is an ExecutionCall.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

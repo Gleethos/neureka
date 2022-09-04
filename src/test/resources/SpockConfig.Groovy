@@ -6,7 +6,7 @@ spockReports {
     set 'com.athaydes.spockframework.report.IReportCreator':'com.athaydes.spockframework.report.template.TemplateReportCreator'
 
     set 'com.athaydes.spockframework.report.outputDir':'docs/spock/reports' // Output directory (where the spock reports will be created) - relative to working directory
-    set 'com.athaydes.spockframework.report.aggregatedJsonReportDir':'docs/spock/json'
+    set 'com.athaydes.spockframework.report.aggregatedJsonReportDir':'docs/spock/aggregated'
     set 'com.athaydes.spockframework.report.internal.HtmlReportCreator.excludeToc':false
     set 'com.athaydes.spockframework.report.hideEmptyBlocks':false // If set to true, hides blocks which do not have any description
     set 'com.athaydes.spockframework.report.projectName':PROJECT

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.204 seconds"
+    "duration":"0.217 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"One can write a simple neural network with custom back-prop in 11 lines of code!",
       "result":"PASS",
-      "duration":"0.049 seconds",
+      "duration":"0.050 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
     {
       "id":"One can write a simple neural network in less than 11 lines of code!",
       "result":"PASS",
-      "duration":"0.052 seconds",
+      "duration":"0.054 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,7 +46,7 @@
     {
       "id":"One can write a simple float based neural network in less than 11 lines of java like code!",
       "result":"PASS",
-      "duration":"0.042 seconds",
+      "duration":"0.044 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +61,7 @@
     {
       "id":"One can write a simple double based neural network in less than 11 lines of java like code using the \"@\" operator!",
       "result":"PASS",
-      "duration":"0.056 seconds",
+      "duration":"0.061 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

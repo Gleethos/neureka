@@ -16,7 +16,7 @@
     {
       "id":"NDConfiguration instances of tensors have expected state.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

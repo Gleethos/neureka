@@ -16,7 +16,7 @@
     {
       "id":"The Reduce implementation for the CPU has realistic behaviour",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

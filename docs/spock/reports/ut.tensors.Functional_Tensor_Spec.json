@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.578 seconds"
+    "duration":"0.617 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can initialize a tensor using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.064 seconds",
+      "duration":"0.069 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"Tensor mapping lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.143 seconds",
+      "duration":"0.148 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -77,7 +77,7 @@
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
       "result":"PASS",
-      "duration":"0.139 seconds",
+      "duration":"0.149 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +98,7 @@
     {
       "id":"We can find both min and max items in a tensor by providing a comparator.",
       "result":"PASS",
-      "duration":"0.080 seconds",
+      "duration":"0.099 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

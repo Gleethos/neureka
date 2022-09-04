@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.013 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -89,7 +89,7 @@
 
         {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
 
-        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@1aeb3154","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@1fdc1bff","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@1aed5f9a"]}}
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@262b587c","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@37234852","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@c888f2d"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

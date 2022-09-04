@@ -2,14 +2,14 @@
   "className":"ut.device.Cross_Device_IO_Spec",
   "title":"Devices manage the states of the tensors they store!",
   "narrative":"Tensors should not manage their states\n    themselves, simply because the type and location\n    of the data is dependent on the device onto which they are stored.\n    This specification tests of various device implementations\n    enable reading to or writing from the tensors they store.",
-  "subjects":["neureka.devices.Device"],
+  "subjects":["neureka.devices.Device","neureka.Tsr"],
   "statistics":{
     "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.023 seconds"
+    "duration":"0.025 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -43,7 +43,7 @@
     {
       "id":"We can use the access device API to write to a tensor",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

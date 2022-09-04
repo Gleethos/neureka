@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.023 seconds"
+    "duration":"0.024 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can concatenate 2 tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,7 +106,7 @@
 
         {"kind":"then","text":"","code":["a.gradient.items == [-0.5, 0.25, -0.05] as float[]","b.gradient.items == [1.0, 1.5, 2.0] as float[]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2dfea8f0d40],platform=OpenCLPlatform@6e7a4e3a[pid=cl_platform_id[0x7fff67b48000],context=cl_context[0x2dfe40d6aa0],kernels=[..48..]]]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x19d72c50b70],platform=OpenCLPlatform@5810eb0d[pid=cl_platform_id[0x7fff67b48000],context=cl_context[0x19d676b0a20],kernels=[..48..]]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -114,7 +114,7 @@
     {
       "id":"We can concatenate and then back-propagate 3 simple float tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -133,7 +133,7 @@
 
         {"kind":"then","text":"","code":["a.gradient.items == [-16, -16, 7] as float[]","b.gradient.items == [30, 0.2, 16] as float[]","c.gradient.items == [0.30829078, -3.1254156, -0.52700233] as float[]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x2dfea8f0d40],platform=OpenCLPlatform@6e7a4e3a[pid=cl_platform_id[0x7fff67b48000],context=cl_context[0x2dfe40d6aa0],kernels=[..48..]]]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[coreCount=32]","OpenCLDevice[deviceId=cl_device_id[0x19d72c50b70],platform=OpenCLPlatform@5810eb0d[pid=cl_platform_id[0x7fff67b48000],context=cl_context[0x19d676b0a20],kernels=[..48..]]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }
