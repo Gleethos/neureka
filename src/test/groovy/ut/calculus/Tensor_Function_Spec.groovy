@@ -201,14 +201,14 @@ class Tensor_Function_Spec extends Specification
             t.itemType == Float
             fun.toString() == "((I[0] * relu(I[0])) + 1.0)"
 
-        when : 'We try different kinds of ways of passing the tensor to the function...
+        when : 'We try different kinds of ways of passing the tensor to the function...'
             var result1 = fun.call(t)
             var result2 = fun.invoke(t)
             var result3 = fun.execute(t)
 
         then : 'The "call" method will not return an intermediate result.'
             !result1.isIntermediate()
-        and : 'The functionally identical synonym method "invoke" will also yield a non-intermediate result.
+        and : 'The functionally identical synonym method "invoke" will also yield a non-intermediate result.'
             !result2.isIntermediate()
         and : 'As expected, the tensor of the "execute" method is indeed intermediate.'
             result3.isIntermediate()
