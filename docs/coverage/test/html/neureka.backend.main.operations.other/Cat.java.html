@@ -22,13 +22,13 @@ public class Cat extends AbstractOperation
     {
 <span class="fc" id="L23">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L25">                .setIdentifier(       &quot;concat&quot;    )</span>
-<span class="fc" id="L26">                .setOperator(         &quot;concat&quot;    )</span>
-<span class="fc" id="L27">                .setArity(            -1          ) // Any number of arguments</span>
-<span class="fc" id="L28">                .setIsOperator(       false       )</span>
-<span class="fc" id="L29">                .setIsIndexer(        false       )</span>
-<span class="fc" id="L30">                .setIsDifferentiable( true        )</span>
-<span class="fc" id="L31">                .setIsInline(         false       )</span>
+<span class="fc" id="L25">                .identifier(       &quot;concat&quot;    )</span>
+<span class="fc" id="L26">                .operator(         &quot;concat&quot;    )</span>
+<span class="fc" id="L27">                .arity(            -1          ) // Any number of arguments</span>
+<span class="fc" id="L28">                .isOperator(       false       )</span>
+<span class="fc" id="L29">                .isIndexer(        false       )</span>
+<span class="fc" id="L30">                .isDifferentiable( true        )</span>
+<span class="fc" id="L31">                .isInline(         false       )</span>
         );
 <span class="fc" id="L33">        setAlgorithm(</span>
             Algorithm
@@ -89,20 +89,6 @@ public class Cat extends AbstractOperation
 <span class="fc" id="L89">    }</span>
 
     @Override
-    public String stringify( String[] children ) {
-<span class="fc" id="L93">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L94" title="3 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
-<span class="nc" id="L95">            return &quot;concat&quot; + expression;</span>
-        }
-<span class="fc" id="L97">        return &quot;concat&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
-    }
-
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L102">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
-    }
-
-    @Override
-<span class="nc" id="L106">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
+<span class="nc" id="L92">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

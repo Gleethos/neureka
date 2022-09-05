@@ -2,15 +2,15 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.ADAgentSupplier;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
-import neureka.backend.api.AutoDiffMode;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.WithForward;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.calculus.args.Arg;
-import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
@@ -38,7 +38,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L38">                    .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
 <span class="fc" id="L39">                    .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
         );
-<span class="fc" id="L41">        setDeviceExecution( (context, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), callback), (ADAgentSupplier) null );</span>
+<span class="fc" id="L41">        setDeviceExecution( (call, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback), (ADAgentSupplier) null );</span>
 <span class="fc" id="L42">        setCallPreparation(</span>
             call -&gt; {
 <span class="fc" id="L44">                Device device = call.getDeviceFor(Number.class);</span>
@@ -120,7 +120,7 @@ import neureka.ndim.iterator.NDIterator;
 
 <span class="fc bfc" id="L121" title="All 2 branches covered.">            if ( rightTypeClass == Integer.class )</span>
             {
-<span class="fc" id="L123">                int[] t1_value = (int[]) t1_src.getUnsafe().getData();</span>
+<span class="fc" id="L123">                int[] t1_value = (int[]) t1_src.getUnsafe().getData().getRef();</span>
 <span class="fc" id="L124">                workload = (i, end) -&gt; {</span>
 <span class="fc" id="L125">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
 <span class="fc" id="L126">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
@@ -190,7 +190,7 @@ import neureka.ndim.iterator.NDIterator;
         {
 <span class="fc" id="L191">            Fun.I32ToI32 fun = funs.get(Fun.I32ToI32.class).get(d);</span>
 <span class="pc bpc" id="L192" title="2 of 4 branches missed.">            assert fun != null;</span>
-<span class="fc" id="L193">            int[] t0_value = (int[]) t0_drn.getUnsafe().getData();</span>
+<span class="fc" id="L193">            int[] t0_value = (int[]) t0_drn.getUnsafe().getData().getRef();</span>
 <span class="fc" id="L194">            int[] t1_value = t1_src.getUnsafe().getDataAs(int[].class);</span>
 <span class="fc bfc" id="L195" title="All 2 branches covered.">            if ( isSimple )</span>
 <span class="fc" id="L196">                workload = (start, end) -&gt; {</span>
@@ -216,7 +216,7 @@ import neureka.ndim.iterator.NDIterator;
         {
 <span class="fc" id="L217">            Fun.I64ToI64 fun = funs.get(Fun.I64ToI64.class).get(d);</span>
 <span class="pc bpc" id="L218" title="2 of 4 branches missed.">            assert fun != null;</span>
-<span class="fc" id="L219">            long[] t0_value = (long[]) t0_drn.getUnsafe().getData();</span>
+<span class="fc" id="L219">            long[] t0_value = (long[]) t0_drn.getUnsafe().getData().getRef();</span>
 <span class="fc" id="L220">            long[] t1_value = t1_src.getUnsafe().getDataAs(long[].class);</span>
 <span class="fc bfc" id="L221" title="All 2 branches covered.">            if ( isSimple )</span>
 <span class="fc" id="L222">                workload = (start, end) -&gt; {</span>
@@ -242,7 +242,7 @@ import neureka.ndim.iterator.NDIterator;
         {
 <span class="fc" id="L243">            Fun.I8ToI8 fun = funs.get(Fun.I8ToI8.class).get(d);</span>
 <span class="pc bpc" id="L244" title="2 of 4 branches missed.">            assert fun != null;</span>
-<span class="fc" id="L245">            byte[] t0_value = (byte[]) t0_drn.getUnsafe().getData();</span>
+<span class="fc" id="L245">            byte[] t0_value = (byte[]) t0_drn.getUnsafe().getData().getRef();</span>
 <span class="fc" id="L246">            byte[] t1_value = t1_src.getUnsafe().getDataAs(byte[].class);</span>
 <span class="fc bfc" id="L247" title="All 2 branches covered.">            if ( isSimple )</span>
 <span class="fc" id="L248">                workload = (start, end) -&gt; {</span>
@@ -268,7 +268,7 @@ import neureka.ndim.iterator.NDIterator;
         {
 <span class="fc" id="L269">            Fun.I16ToI16 fun = funs.get(Fun.I16ToI16.class).get(d);</span>
 <span class="pc bpc" id="L270" title="2 of 4 branches missed.">            assert fun != null;</span>
-<span class="fc" id="L271">            short[] t0_value = (short[]) t0_drn.getUnsafe().getData();</span>
+<span class="fc" id="L271">            short[] t0_value = (short[]) t0_drn.getUnsafe().getData().getRef();</span>
 <span class="fc" id="L272">            short[] t1_value = t1_src.getUnsafe().getDataAs(short[].class);</span>
 <span class="fc bfc" id="L273" title="All 2 branches covered.">            if ( isSimple )</span>
 <span class="fc" id="L274">                workload = (start, end) -&gt; {</span>
@@ -294,7 +294,7 @@ import neureka.ndim.iterator.NDIterator;
         {
 <span class="fc" id="L295">            Fun.BoolToBool fun = funs.get(Fun.BoolToBool.class).get(d);</span>
 <span class="pc bpc" id="L296" title="2 of 4 branches missed.">            assert fun != null;</span>
-<span class="fc" id="L297">            boolean[] t0_value = (boolean[]) t0_drn.getUnsafe().getData();</span>
+<span class="fc" id="L297">            boolean[] t0_value = (boolean[]) t0_drn.getUnsafe().getData().getRef();</span>
 <span class="fc" id="L298">            boolean[] t1_value = t1_src.getUnsafe().getDataAs(boolean[].class);</span>
 <span class="fc bfc" id="L299" title="All 2 branches covered.">            if ( isSimple )</span>
 <span class="fc" id="L300">                workload = (start, end) -&gt; {</span>
@@ -320,7 +320,7 @@ import neureka.ndim.iterator.NDIterator;
         {
 <span class="fc" id="L321">            Fun.CharToChar fun = funs.get(Fun.CharToChar.class).get(d);</span>
 <span class="pc bpc" id="L322" title="2 of 4 branches missed.">            assert fun != null;</span>
-<span class="fc" id="L323">            char[] t0_value = (char[]) t0_drn.getUnsafe().getData();</span>
+<span class="fc" id="L323">            char[] t0_value = (char[]) t0_drn.getUnsafe().getData().getRef();</span>
 <span class="fc" id="L324">            char[] t1_value = t1_src.getUnsafe().getDataAs(char[].class);</span>
 <span class="fc bfc" id="L325" title="All 2 branches covered.">            if ( isSimple )</span>
 <span class="fc" id="L326">                workload = (start, end) -&gt; {</span>
@@ -345,7 +345,7 @@ import neureka.ndim.iterator.NDIterator;
             try {
 <span class="fc" id="L346">                Fun.ObjToObj fun = funs.get(Fun.ObjToObj.class).get(d);</span>
 <span class="pc bpc" id="L347" title="2 of 4 branches missed.">                assert fun != null;</span>
-<span class="fc" id="L348">                Object[] t0_value = (Object[]) t0_drn.getUnsafe().getData();</span>
+<span class="fc" id="L348">                Object[] t0_value = (Object[]) t0_drn.getUnsafe().getData().getRef();</span>
 <span class="fc" id="L349">                Object[] t1_value = t1_src.getUnsafe().getDataAs(Object[].class);</span>
 <span class="fc bfc" id="L350" title="All 2 branches covered.">                if (isSimple)</span>
 <span class="fc" id="L351">                    workload = (start, end) -&gt; {</span>

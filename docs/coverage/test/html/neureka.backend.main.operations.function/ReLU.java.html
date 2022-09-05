@@ -7,31 +7,26 @@ public final class ReLU extends AbstractActivationOperation
 <span class="fc" id="L7">    public ReLU() { super( &quot;relu&quot; ); }</span>
 
     @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L11">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
-    }
-
-    @Override
     protected String _activationCode() {
-<span class="fc" id="L16">        return &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;;</span>
+<span class="fc" id="L11">        return &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;;</span>
     }
 
     @Override
     protected String _derivationCode() {
-<span class="fc" id="L21">        return &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;;</span>
+<span class="fc" id="L16">        return &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;;</span>
     }
 
     @Override
-<span class="fc bfc" id="L25" title="All 2 branches covered.">    protected double _activate(double x) { return ( x &gt;= 0 ? x : x * .01 ); }</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">    protected double _activate(double x) { return ( x &gt;= 0 ? x : x * .01 ); }</span>
 
     @Override
-<span class="fc bfc" id="L28" title="All 2 branches covered.">    protected float _activate(float x) { return ( x &gt;= 0 ? x : x * .01f ); }</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">    protected float _activate(float x) { return ( x &gt;= 0 ? x : x * .01f ); }</span>
 
     @Override
-<span class="fc bfc" id="L31" title="All 2 branches covered.">    protected double _derive(double x) { return ( x &gt;= 0 ? 1 : .01); }</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">    protected double _derive(double x) { return ( x &gt;= 0 ? 1 : .01); }</span>
 
     @Override
-<span class="nc bnc" id="L34" title="All 2 branches missed.">    protected float _derive(float x) { return ( x &gt;= 0 ? 1f : .01f ); }</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">    protected float _derive(float x) { return ( x &gt;= 0 ? 1f : .01f ); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

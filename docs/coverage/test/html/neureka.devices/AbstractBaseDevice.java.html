@@ -39,18 +39,17 @@ import neureka.Tsr;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Spliterator;
-import java.util.function.IntFunction;
 
 /**
  * @param &lt;V&gt; The value type parameter representing a common super type for all values supported by the device.
  */
-<span class="fc" id="L47">public abstract class AbstractBaseDevice&lt;V&gt; implements Device&lt;V&gt;</span>
+<span class="fc" id="L46">public abstract class AbstractBaseDevice&lt;V&gt; implements Device&lt;V&gt;</span>
 {
     @Override
     public int size() {
-<span class="fc" id="L51">        Collection&lt;Tsr&lt;V&gt;&gt; tensors = this.getTensors();</span>
-<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if ( tensors == null ) return 0;</span>
-<span class="fc" id="L53">        return tensors.size();</span>
+<span class="fc" id="L50">        Collection&lt;Tsr&lt;V&gt;&gt; tensors = this.getTensors();</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if ( tensors == null ) return 0;</span>
+<span class="fc" id="L52">        return tensors.size();</span>
     }
 
     /**
@@ -59,16 +58,16 @@ import java.util.function.IntFunction;
      * @return The truth value determining if there are no tensors stored on this device.
      */
     @Override
-<span class="fc bfc" id="L62" title="All 2 branches covered.">    public boolean isEmpty() { return this.size() == 0; }</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">    public boolean isEmpty() { return this.size() == 0; }</span>
 
     @Override
-<span class="fc" id="L65">    public boolean contains( Tsr&lt;V&gt; o ) { return this.getTensors().contains( o ); }</span>
+<span class="fc" id="L64">    public boolean contains( Tsr&lt;V&gt; o ) { return this.getTensors().contains( o ); }</span>
 
     @Override
-<span class="nc" id="L68">    public Iterator&lt;Tsr&lt;V&gt;&gt; iterator() { return this.getTensors().iterator(); }</span>
+<span class="nc" id="L67">    public Iterator&lt;Tsr&lt;V&gt;&gt; iterator() { return this.getTensors().iterator(); }</span>
 
     @Override
-<span class="nc" id="L71">    public Spliterator&lt;Tsr&lt;V&gt;&gt; spliterator() { return getTensors().spliterator(); }</span>
+<span class="nc" id="L70">    public Spliterator&lt;Tsr&lt;V&gt;&gt; spliterator() { return getTensors().spliterator(); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -7,31 +7,26 @@ public final class Tanh extends AbstractActivationOperation
 <span class="fc" id="L7">    public Tanh() { super( &quot;tanh&quot; ); }</span>
 
     @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L11">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
-    }
-
-    @Override
     protected String _activationCode() {
-<span class="fc" id="L16">        return &quot;output = tanh(input);\n&quot;;</span>
+<span class="fc" id="L11">        return &quot;output = tanh(input);\n&quot;;</span>
     }
 
     @Override
     protected String _derivationCode() {
-<span class="fc" id="L21">        return &quot;output = 1 - pow( tanh(input), 2.0f );\n&quot;;</span>
+<span class="fc" id="L16">        return &quot;output = 1 - pow( tanh(input), 2.0f );\n&quot;;</span>
     }
 
-<span class="fc" id="L24">    @Override protected double _activate(double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }</span>
+<span class="fc" id="L19">    @Override protected double _activate(double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }</span>
 
-<span class="fc" id="L26">    @Override protected float _activate( float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }</span>
+<span class="fc" id="L21">    @Override protected float _activate( float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }</span>
 
-<span class="fc" id="L28">    @Override protected double _derive( double x ) { return  1 - Math.pow( tanh( x ), 2 ); }</span>
+<span class="fc" id="L23">    @Override protected double _derive( double x ) { return  1 - Math.pow( tanh( x ), 2 ); }</span>
 
-<span class="nc" id="L30">    @Override protected float _derive( float x ) { return (float) (1 - Math.pow( tanh( x ), 2 )); }</span>
+<span class="nc" id="L25">    @Override protected float _derive( float x ) { return (float) (1 - Math.pow( tanh( x ), 2 )); }</span>
 
-<span class="fc" id="L32">    public static double tanh( double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }</span>
+<span class="fc" id="L27">    public static double tanh( double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }</span>
 
-<span class="fc" id="L34">    public static float tanh( float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }</span>
+<span class="fc" id="L29">    public static float tanh( float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }</span>
 
 }
 

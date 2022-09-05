@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Sum.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">Sum.java</span></div><h1>Sum.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
+
+import neureka.Tsr;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.DeviceAlgorithm;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.operations.AbstractOperation;
+import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.backend.main.operations.linear.internal.opencl.CLSum;
+import neureka.backend.main.operations.other.internal.CPUSum;
+import neureka.calculus.Function;
+import neureka.devices.host.CPU;
+import neureka.devices.opencl.OpenCLDevice;
+
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">public class Sum extends AbstractOperation</span>
+{
+    public Sum()
+    {
+<span class="fc" id="L20">        super(</span>
+            new OperationBuilder()
+<span class="fc" id="L22">                .identifier(       &quot;sumItems&quot;       )</span>
+<span class="fc" id="L23">                .operator(         &quot;sumItems&quot;       )</span>
+<span class="fc" id="L24">                .arity(            1           )</span>
+<span class="fc" id="L25">                .isOperator(       false       )</span>
+<span class="fc" id="L26">                .isIndexer(        false       )</span>
+<span class="fc" id="L27">                .isDifferentiable( true        )</span>
+<span class="fc" id="L28">                .isInline(         false       )</span>
+        );
+
+<span class="fc" id="L31">        setAlgorithm(</span>
+            DeviceAlgorithm
+<span class="fc" id="L33">            .withName(&quot;sum_algorithm&quot;)</span>
+<span class="fc" id="L34">            .setIsSuitableFor(</span>
+<span class="fc" id="L35">                call -&gt; call.validate()</span>
+<span class="fc" id="L36">                            .allNotNull( t -&gt; Number.class.isAssignableFrom(t.getItemType()) )</span>
+<span class="fc" id="L37">                            .basicSuitability()</span>
+            )
+<span class="fc" id="L39">            .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
+<span class="fc" id="L40">            .setExecution( (caller, call) -&gt; {</span>
+<span class="fc" id="L41">                Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();</span>
+<span class="fc" id="L42">                call = call.withInputs(inputs);</span>
+<span class="fc" id="L43">                Tsr&lt;?&gt; result = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);</span>
+<span class="fc" id="L44">                int[] originalShape = call.input(0).getNDConf().shape();</span>
+<span class="fc" id="L45">                return Result.of(</span>
+<span class="fc" id="L46">                            result.getUnsafe().setIsIntermediate(true)</span>
+                        )
+<span class="fc" id="L48">                        .withADAction( target -&gt; {</span>
+<span class="fc" id="L49">                            Tsr&lt;Object&gt; error = (Tsr&lt;Object&gt;) target.error();</span>
+<span class="pc bpc" id="L50" title="2 of 4 branches missed.">                            assert error.size() == 1;</span>
+<span class="fc" id="L51">                            return Tsr.of(error.itemType(), originalShape, error.item()).to(error.getDevice());</span>
+                        });
+            })
+<span class="fc" id="L54">            .setCallPreparation( call -&gt;</span>
+             {
+<span class="nc bnc" id="L56" title="All 2 branches missed.">                 if ( call.input( 0 ) == null )</span>
+<span class="nc" id="L57">                     call = call.withInputAt( 0, call.input( 1 ) );</span>
+
+<span class="nc" id="L59">                 return call;</span>
+             })
+<span class="fc" id="L61">            .buildFunAlgorithm()</span>
+<span class="fc" id="L62">            .setImplementationFor( CPU.class, new CPUSum() )</span>
+<span class="fc" id="L63">            .setImplementationFor( OpenCLDevice.class, new CLSum() )</span>
+        );
+<span class="fc" id="L65">    }</span>
+
+    @Override
+<span class="nc" id="L68">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

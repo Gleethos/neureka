@@ -4,19 +4,19 @@
   "narrative":"In this specification we cover the behaviour of tensors with respect to their copy methods.\n    There are to main ways to copy a tensor: <br>\n    1. .shallowCopy() <br>\n    2. .deepCopy() <br>\n    <br>\n    The first method creates a new tensor with the same underlying data array as the original tensor. <br>\n    The second method on the other hand creates a new tensor with a new data array. <br>\n    <br>\n    The first method is the most efficient, but it is not as safe as the second method. <br>\n    The second method is the most safe, but it is not as efficient. <br>\n    <br>\n    Besides these 2 main requirements, there are als some corner cases with respect to\n    the components of a tensor (like for example its computation graph) which\n    will be covered in this specification as well.",
   "subjects":["neureka.Tsr"],
   "statistics":{
-    "runs":"4",
+    "runs":"5",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.019 seconds"
+    "duration":"0.021 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A deep copy of a tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,9 +37,38 @@
     },
   
     {
-      "id":"A deep copy of a slice tensor is also a deep copy of the underlying data array.",
+      "id":"A shallow copy of a tensor will be flagged as such.",
       "result":"PASS",
       "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The tensor we will use for copying is not flagged as a shallow copy.","code":["!t.isShallowCopy()"]},
+
+        {"kind":"when","text":"We create a shallow copy of the tensor.","code":["var shallow = t.shallowCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["shallow !== t"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["shallow.shape == t.shape","shallow.unsafe.data.ref == t.unsafe.data.ref","shallow.unsafe.data.ref === t.unsafe.data.ref","shallow.unsafe.data === t.unsafe.data"]},
+
+        {"kind":"and","text":"","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) })"]},
+
+        {"kind":"and","text":"The shallow copy is flagged as such.","code":["shallow.isShallowCopy()"]},
+
+        {"kind":"and","text":"Because shallow copies are merely \"fully slices\" we expect this flag to be set as well.","code":["shallow.isFullSlice()"]},
+
+        {"kind":"and","text":"The inverse property is false:","code":["!shallow.isPartialSlice()"]},
+
+        {"kind":"where","text":"","code":{"t":["(2x3):[1.0, 2.0, -9.0, 8.0, 3.0, -2.0]","(5):[8.0, 2.0, -7.0, 3.0, 0.0]","(3):[3.0, 4.0, 5.0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A deep copy of a slice tensor is also a deep copy of the underlying data array.",
+      "result":"PASS",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -79,7 +108,7 @@
 
         {"kind":"and","text":"We verify that they share the same ints through the \"every\" method.","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) })"]},
 
-        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure4@58c57ee","ut.tensors.Copy_Spec$__spock_feature_0_2prov0_closure5@149d33cc"]}}
+        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_3prov0_closure5@347ffb7f","ut.tensors.Copy_Spec$__spock_feature_0_3prov0_closure6@c398990"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

@@ -36,7 +36,7 @@ SOFTWARE.
 package neureka.dtype;
 
 
-import neureka.DataArray;
+import neureka.Data;
 import neureka.common.utility.LogUtil;
 import neureka.devices.host.CPU;
 import neureka.dtype.custom.*;
@@ -149,9 +149,9 @@ import java.util.*;
 <span class="fc" id="L149">            return Object[].class;</span>
     }
 
-    public DataArray virtualize( DataArray dataArray )
+    public Data virtualize(Data data)
     {
-<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        Object value = dataArray == null ? null : dataArray.get();</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        Object value = data == null ? null : data.getRef();</span>
 <span class="pc bpc" id="L155" title="2 of 4 branches missed.">        assert value != null;</span>
         Object newValue;
 <span class="fc bfc" id="L157" title="All 2 branches covered.">        if ( _typeClass == F64.class )</span>

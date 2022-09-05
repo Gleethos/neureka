@@ -6,6 +6,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
+import neureka.calculus.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 public abstract class AbstractOperation implements Operation
 {
-<span class="fc" id="L26">    private static final Logger _LOG = LoggerFactory.getLogger( AbstractOperation.class );</span>
+<span class="fc" id="L27">    private static final Logger _LOG = LoggerFactory.getLogger( AbstractOperation.class );</span>
 
     /**
      *  An operation may have two ways in which it can describe itself as String within a Function AST.
@@ -45,7 +46,7 @@ public abstract class AbstractOperation implements Operation
      *      &lt;li&gt; Operator: '+';   Example: 'I[0] + 3 + 5 * I[1]'
      *      &lt;li&gt; Function: 'add'; Example: 'add( I[0], 3, 5*I[1] )'
      * &lt;/ul&gt;
-     * The following String is the primer way of representing the operation, namely: as an operator.
+     * The following String is the primary way of representing the operation, namely: as an operator.
      */
     protected final String _operator;
 
@@ -79,7 +80,7 @@ public abstract class AbstractOperation implements Operation
     protected final boolean _isInline;
     protected final boolean _isOperator;
 
-<span class="fc" id="L82">    private final Map&lt;Class&lt;?&gt;, Algorithm&gt; _algorithms = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L83">    private final Map&lt;Class&lt;?&gt;, Algorithm&gt; _algorithms = new LinkedHashMap&lt;&gt;();</span>
 
     /**
      *  This is the default algorithm for every Operation extending this class.
@@ -98,21 +99,21 @@ public abstract class AbstractOperation implements Operation
     private final FallbackAlgorithm _defaultAlgorithm;
 
     public AbstractOperation( OperationBuilder builder )
-<span class="fc" id="L101">    {</span>
-<span class="fc" id="L102">        builder.dispose();</span>
+<span class="fc" id="L102">    {</span>
+<span class="fc" id="L103">        builder.dispose();</span>
 
-<span class="fc" id="L104">        _function         = builder.getIdentifier();</span>
-<span class="fc" id="L105">        _arity            = builder.getArity();</span>
-<span class="fc" id="L106">        _operator         = builder.getOperator();</span>
-<span class="fc" id="L107">        _isOperator       = builder.getIsOperator();</span>
-<span class="fc" id="L108">        _isIndexer        = builder.getIsIndexer();</span>
-<span class="fc" id="L109">        _isDifferentiable = builder.getIsDifferentiable();</span>
-<span class="fc" id="L110">        _isInline         = builder.getIsInline();</span>
-<span class="fc" id="L111">        _defaultAlgorithm = new FallbackAlgorithm( &quot;default&quot;, _arity, this );</span>
-<span class="fc" id="L112">    }</span>
+<span class="fc" id="L105">        _function         = builder.getIdentifier();</span>
+<span class="fc" id="L106">        _arity            = builder.getArity();</span>
+<span class="fc" id="L107">        _operator         = builder.getOperator();</span>
+<span class="fc" id="L108">        _isOperator       = builder.getIsOperator();</span>
+<span class="fc" id="L109">        _isIndexer        = builder.getIsIndexer();</span>
+<span class="fc" id="L110">        _isDifferentiable = builder.getIsDifferentiable();</span>
+<span class="fc" id="L111">        _isInline         = builder.getIsInline();</span>
+<span class="fc" id="L112">        _defaultAlgorithm = new FallbackAlgorithm( &quot;default&quot;, _arity, this );</span>
+<span class="fc" id="L113">    }</span>
 
     @Override
-<span class="fc" id="L115">    public final Algorithm[] getAllAlgorithms() { return _algorithms.values().toArray(new Algorithm[0]); }</span>
+<span class="fc" id="L116">    public final Algorithm[] getAllAlgorithms() { return _algorithms.values().toArray(new Algorithm[0]); }</span>
 
     /**
      *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
@@ -127,16 +128,16 @@ public abstract class AbstractOperation implements Operation
      */
     @Override
     public final &lt;T extends Algorithm&gt; T getAlgorithm( Class&lt;T&gt; type ) {
-<span class="fc" id="L130">        T found = (T) _algorithms.get( type );</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">        if ( found == null ) // Maybe the provided type is a superclass of one of the entries...</span>
-<span class="fc" id="L132">            return _algorithms.entrySet()</span>
-<span class="fc" id="L133">                                    .stream()</span>
-<span class="fc" id="L134">                                    .filter( e -&gt; type.isAssignableFrom( e.getKey() ) )</span>
-<span class="fc" id="L135">                                    .map( e -&gt; (T) e.getValue() )</span>
-<span class="fc" id="L136">                                    .findFirst()</span>
-<span class="fc" id="L137">                                    .orElse( null );</span>
+<span class="fc" id="L131">        T found = (T) _algorithms.get( type );</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if ( found == null ) // Maybe the provided type is a superclass of one of the entries...</span>
+<span class="fc" id="L133">            return _algorithms.entrySet()</span>
+<span class="fc" id="L134">                                    .stream()</span>
+<span class="fc" id="L135">                                    .filter( e -&gt; type.isAssignableFrom( e.getKey() ) )</span>
+<span class="fc" id="L136">                                    .map( e -&gt; (T) e.getValue() )</span>
+<span class="fc" id="L137">                                    .findFirst()</span>
+<span class="fc" id="L138">                                    .orElse( null );</span>
         else
-<span class="fc" id="L139">            return found;</span>
+<span class="fc" id="L140">            return found;</span>
     }
 
     /**
@@ -149,7 +150,7 @@ public abstract class AbstractOperation implements Operation
      */
     @Override
     public final &lt;T extends Algorithm&gt; boolean supportsAlgorithm( Class&lt;T&gt; type ) {
-<span class="fc" id="L152">        return _algorithms.containsKey( type );</span>
+<span class="fc" id="L153">        return _algorithms.containsKey( type );</span>
     }
 
     /**
@@ -165,74 +166,104 @@ public abstract class AbstractOperation implements Operation
      */
     @Override
     public final &lt;T extends Algorithm&gt; Operation setAlgorithm( Class&lt;T&gt; type, T instance ) {
-<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        if ( _algorithms.containsKey( type ) )</span>
-<span class="nc" id="L169">            throw new IllegalArgumentException(</span>
-<span class="nc" id="L170">                        &quot;Algorithm of type '&quot;+type.getSimpleName()+&quot;' already defined for this operation!&quot;</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if ( _algorithms.containsKey( type ) )</span>
+<span class="nc" id="L170">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L171">                        &quot;Algorithm of type '&quot;+type.getSimpleName()+&quot;' already defined for this operation!&quot;</span>
                     );
 
-<span class="fc" id="L173">        _algorithms.put( type, instance );</span>
-<span class="fc" id="L174">        return this;</span>
+<span class="fc" id="L174">        _algorithms.put( type, instance );</span>
+<span class="fc" id="L175">        return this;</span>
     }
 
     @Override
     public final Algorithm getAlgorithmFor( ExecutionCall&lt;?&gt; call )
     {
-<span class="fc" id="L180">        float bestScore = 0f;</span>
-<span class="fc" id="L181">        Algorithm bestImpl = null;</span>
-<span class="fc bfc" id="L182" title="All 2 branches covered.">        for( Algorithm impl : _algorithms.values() ) {</span>
-<span class="fc" id="L183">            float currentScore = impl.isSuitableFor( call );</span>
-<span class="fc bfc" id="L184" title="All 2 branches covered.">            if ( currentScore &gt; bestScore ) {</span>
-<span class="pc bpc" id="L185" title="1 of 2 branches missed.">                if ( currentScore == 1.0 ) return impl;</span>
+<span class="fc" id="L181">        float bestScore = 0f;</span>
+<span class="fc" id="L182">        Algorithm bestImpl = null;</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        for( Algorithm impl : _algorithms.values() ) {</span>
+<span class="fc" id="L184">            float currentScore = impl.isSuitableFor( call );</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            if ( currentScore &gt; bestScore ) {</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">                if ( currentScore == 1.0 ) return impl;</span>
                 else {
-<span class="fc" id="L187">                    bestScore = currentScore;</span>
-<span class="fc" id="L188">                    bestImpl = impl;</span>
+<span class="fc" id="L188">                    bestScore = currentScore;</span>
+<span class="fc" id="L189">                    bestImpl = impl;</span>
                 }
             }
-<span class="fc" id="L191">        }</span>
-<span class="fc" id="L192">        float defaultSuitability = _defaultAlgorithm.isSuitableFor( call );</span>
+<span class="fc" id="L192">        }</span>
+<span class="fc" id="L193">        float defaultSuitability = _defaultAlgorithm.isSuitableFor( call );</span>
 
-<span class="fc bfc" id="L194" title="All 2 branches covered.">        if ( defaultSuitability &gt; bestScore ) {</span>
-<span class="fc" id="L195">            _LOG.debug(&quot;Default algorithm picked for call targeting operation '&quot;+call.getOperation()+&quot;'.&quot;);</span>
-<span class="fc" id="L196">            return _defaultAlgorithm;</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        if ( defaultSuitability &gt; bestScore ) {</span>
+<span class="fc" id="L196">            _LOG.debug(&quot;Default algorithm picked for call targeting operation '&quot;+call.getOperation()+&quot;'.&quot;);</span>
+<span class="fc" id="L197">            return _defaultAlgorithm;</span>
         }
 
-<span class="pc bpc" id="L199" title="1 of 2 branches missed.">        if ( bestImpl == null ) {</span>
-<span class="nc" id="L200">            String message = &quot;No suitable implementation for execution call '&quot;+call+&quot;' could be found.\n&quot; +</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        if ( bestImpl == null ) {</span>
+<span class="nc" id="L201">            String message = &quot;No suitable implementation for execution call '&quot;+call+&quot;' could be found.\n&quot; +</span>
                                 &quot;Execution process aborted.&quot;;
-<span class="nc" id="L202">            _LOG.error( message );</span>
-<span class="nc" id="L203">            throw new IllegalStateException( message );</span>
+<span class="nc" id="L203">            _LOG.error( message );</span>
+<span class="nc" id="L204">            throw new IllegalStateException( message );</span>
         }
-<span class="fc" id="L205">        return bestImpl;</span>
+<span class="fc" id="L206">        return bestImpl;</span>
     }
 
     @Override
     public final &lt;T extends Algorithm&gt; boolean supports( Class&lt;T&gt; implementation ) {
-<span class="fc" id="L210">        return _algorithms.containsKey( implementation );</span>
+<span class="fc" id="L211">        return _algorithms.containsKey( implementation );</span>
     }
 
-<span class="fc" id="L213">    @Override public final boolean isOperator() { return _isOperator; }</span>
+<span class="fc" id="L214">    @Override public final boolean isOperator() { return _isOperator; }</span>
 
-<span class="fc" id="L215">    @Override public String getIdentifier() { return _function; }</span>
+<span class="fc" id="L216">    @Override public String getIdentifier() { return _function; }</span>
 
-<span class="fc" id="L217">    @Override public final String getOperator() { return _operator; }</span>
+<span class="fc" id="L218">    @Override public final String getOperator() { return _operator; }</span>
 
-<span class="fc" id="L219">    @Override public final int getArity() { return _arity; }</span>
+<span class="fc" id="L220">    @Override public final int getArity() { return _arity; }</span>
 
-<span class="fc" id="L221">    @Override public final boolean isIndexer() { return _isIndexer; }</span>
+<span class="fc" id="L222">    @Override public final boolean isIndexer() { return _isIndexer; }</span>
 
-<span class="nc" id="L223">    @Override public final boolean isDifferentiable() { return _isDifferentiable; }</span>
+<span class="nc" id="L224">    @Override public final boolean isDifferentiable() { return _isDifferentiable; }</span>
 
-<span class="fc" id="L225">    @Override public boolean isInline() { return _isInline; }</span>
+<span class="fc" id="L226">    @Override public boolean isInline() { return _isInline; }</span>
 
-<span class="fc" id="L227">    public final FallbackAlgorithm getDefaultAlgorithm() { return _defaultAlgorithm; }</span>
+<span class="fc" id="L228">    public final FallbackAlgorithm getDefaultAlgorithm() { return _defaultAlgorithm; }</span>
+
+    /** {@inheritDoc} */
+    @Override
+    public String asDerivative(Function[] children, int derivationIndex) {
+<span class="nc" id="L233">        throw new IllegalStateException(&quot;Operation '&quot;+this.getIdentifier()+&quot;' does not support dynamic derivation!&quot;);</span>
+    }
+
+    /** {@inheritDoc} */
+    
+    @Override
+    public String stringify( String[] children ) {
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        if ( this.isOperator() ) {</span>
+<span class="fc" id="L241">            StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">            for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L243">                reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">                if ( i &lt; children.length - 1 )</span>
+<span class="fc" id="L245">                    reconstructed</span>
+<span class="fc" id="L246">                            .append(&quot; &quot;)</span>
+<span class="fc" id="L247">                            .append(this.getOperator())</span>
+<span class="fc" id="L248">                            .append(&quot; &quot;);</span>
+            }
+<span class="fc" id="L250">            return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+        } else {
+<span class="fc" id="L252">            String expression = String.join(&quot;, &quot;, children);</span>
+<span class="pc bpc" id="L253" title="1 of 4 branches missed.">            if (expression.charAt(0) == '(' &amp;&amp; expression.charAt(expression.length() - 1) == ')')</span>
+<span class="fc" id="L254">                return getIdentifier() + expression;</span>
+            else
+<span class="fc" id="L256">                return getIdentifier() + &quot;(&quot; + expression + &quot;)&quot;;</span>
+        }
+    }
 
     @Override
     public final String toString() {
-<span class="fc" id="L231">        String operationName = operationName().trim();</span>
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        operationName = operationName.isEmpty() ? &quot;AnonymousOperation&quot; : operationName;</span>
-<span class="fc" id="L233">        String asString = operationName+&quot;@&quot;+Integer.toHexString(hashCode());</span>
-<span class="fc" id="L234">        asString = asString + &quot;[identifier='&quot; + _function + &quot;',operator='&quot;+_operator+&quot;']&quot;;</span>
-<span class="fc" id="L235">        return asString;</span>
+<span class="fc" id="L262">        String operationName = operationName().trim();</span>
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">        operationName = operationName.isEmpty() ? &quot;AnonymousOperation&quot; : operationName;</span>
+<span class="fc" id="L264">        String asString = operationName+&quot;@&quot;+Integer.toHexString(hashCode());</span>
+<span class="fc" id="L265">        asString = asString + &quot;[identifier='&quot; + _function + &quot;',operator='&quot;+_operator+&quot;']&quot;;</span>
+<span class="fc" id="L266">        return asString;</span>
     }
 
     /**
@@ -242,7 +273,7 @@ public abstract class AbstractOperation implements Operation
      * @return The simple class name, or something else if overridden.
      */
     protected String operationName() {
-<span class="fc" id="L245">        return this.getClass().getSimpleName();</span>
+<span class="fc" id="L276">        return this.getClass().getSimpleName();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

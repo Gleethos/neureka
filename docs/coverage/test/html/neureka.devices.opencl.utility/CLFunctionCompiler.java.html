@@ -54,14 +54,14 @@ public final class CLFunctionCompiler
 <span class="nc" id="L54">            numberOfArgs = -1; // The function is an indexer which means that it can have any number of arguments...</span>
 <span class="fc" id="L55">        return Operation</span>
 <span class="fc" id="L56">                .builder()</span>
-<span class="fc" id="L57">                .setIdentifier( _functionName )</span>
-<span class="fc" id="L58">                .setOperator( _functionName )</span>
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">                .setArity( numberOfArgs )</span>
-<span class="fc" id="L60">                .setIsIndexer( numberOfArgs &lt; 0 )</span>
-<span class="fc" id="L61">                .setIsOperator( false )</span>
-<span class="fc" id="L62">                .setIsDifferentiable( true )</span>
-<span class="fc" id="L63">                .setIsInline( false )</span>
-<span class="fc" id="L64">                .setStringifier(</span>
+<span class="fc" id="L57">                .identifier( _functionName )</span>
+<span class="fc" id="L58">                .operator( _functionName )</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">                .arity( numberOfArgs )</span>
+<span class="fc" id="L60">                .isIndexer( numberOfArgs &lt; 0 )</span>
+<span class="fc" id="L61">                .isOperator( false )</span>
+<span class="fc" id="L62">                .isDifferentiable( true )</span>
+<span class="fc" id="L63">                .isInline( false )</span>
+<span class="fc" id="L64">                .stringifier(</span>
                     children -&gt; {
 <span class="fc" id="L66">                        String expression = String.join( &quot;, &quot;, children );</span>
 <span class="pc bpc" id="L67" title="3 of 4 branches missed.">                        if ( expression.charAt(0) == '(' &amp;&amp; expression.charAt(expression.length() - 1) == ')' )</span>
@@ -76,7 +76,7 @@ public final class CLFunctionCompiler
 <span class="fc" id="L76">                        .setIsSuitableFor( call -&gt; SuitabilityPredicate.GOOD )</span>
 <span class="fc" id="L77">                        .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
 <span class="fc" id="L78">                        .setDeviceExecution(</span>
-<span class="fc" id="L79">                            (context, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm(context.call(), callback),</span>
+<span class="fc" id="L79">                            (call, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback),</span>
 <span class="nc" id="L80">                            (caller, call) -&gt; ADAgent.withAD( target -&gt; Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )</span>
                         )
 <span class="fc" id="L82">                        .setCallPreparation(</span>

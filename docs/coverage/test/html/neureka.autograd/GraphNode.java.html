@@ -154,7 +154,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="fc" id="L154">            data = new NodePayload&lt;&gt;( out.get(), ()-&gt;{</span>
 <span class="fc" id="L155">                boolean allChildrenUseForwardAD = true;</span>
 <span class="fc bfc" id="L156" title="All 2 branches covered.">                if ( _children != null ) {</span>
-<span class="fc bfc" id="L157" title="All 2 branches covered.">                    for ( WeakReference&lt;GraphNode&lt;V&gt;&gt; childRef : _children ) {</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">                    for ( WeakReference&lt;GraphNode&lt;V&gt;&gt; childRef : new ArrayList&lt;&gt;(_children) ) {</span>
 <span class="fc" id="L158">                        GraphNode&lt;V&gt; childNode = childRef.get();</span>
 <span class="pc bpc" id="L159" title="1 of 4 branches missed.">                        if ( childNode != null &amp;&amp; childNode.usesReverseAD() ) allChildrenUseForwardAD = false;</span>
 <span class="fc" id="L160">                    }</span>

@@ -1,4 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Hardware.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host.machine</a> &gt; <span class="el_source">Hardware.java</span></div><h1>Hardware.java</h1><pre class="source lang-java linenums">/*&lt;#LICENSE#&gt;*/
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Hardware.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host.machine</a> &gt; <span class="el_source">Hardware.java</span></div><h1>Hardware.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package neureka.devices.host.machine;
 
 import neureka.backend.main.operations.linear.internal.blas.COPY;
@@ -8,6 +30,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
+ *  This models the cache levels and threads of a CPU
+ *  using an array of where each entry represents a memory level.
  * &lt;ul&gt;
  * &lt;li&gt;The first element in the array should correspond to total system resources; the total amount of RAM and
  * the total number of threads (Typically the same as what is returned by
@@ -20,12 +44,9 @@ import java.util.TreeSet;
  * &lt;li&gt;The array must have at least 2 elements. You must describe the total system resources and the L1 cache.
  * It is strongly recommended to also describe the L2 cache. The L3 cache, if it exists, is less important to
  * describe. The derived attributes &lt;code&gt;processors&lt;/code&gt;, &lt;code&gt;cores&lt;/code&gt; and &lt;code&gt;units&lt;/code&gt; may be
- * incorrectly calculated if you fail to specify the caches. Known issue: If you have more than one processor,
- * nut no L3 cache; the &lt;code&gt;processors&lt;/code&gt; attribute will be incorrectly set 1. A workaround that
- * currently works is to define an L3 cache anyway and set the memory/size of that cache to 0bytes. This
- * workoround may stop working in the future.&lt;/li&gt;
- * &lt;li&gt;&lt;code&gt;new MemoryThreads[] { SYSTEM, L3, L2, L1 }&lt;/code&gt; or
- * &lt;code&gt;new MemoryThreads[] { SYSTEM, L2, L1 }&lt;/code&gt; or &lt;code&gt;new MemoryThreads[] { SYSTEM, L1 }&lt;/code&gt;&lt;/li&gt;
+ * incorrectly calculated if you fail to specify the caches.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;Define new entries using this pattern: [SYSTEM, L3, L2, L1]&lt;/code&gt; or
+ * &lt;code&gt;[SYSTEM, L2, L1]&lt;/code&gt; or &lt;code&gt;[SYSTEM, L1]&lt;/code&gt;&lt;/li&gt;
  * &lt;/ul&gt;
  *
  */
@@ -39,7 +60,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
     /**
      * Should contain all available hardware in ascending &quot;power&quot; order.
      */
-<span class="fc" id="L42">    public static final Set&lt;Hardware&gt; PREDEFINED = new TreeSet&lt;&gt;();</span>
+<span class="fc" id="L63">    public static final Set&lt;Hardware&gt; PREDEFINED = new TreeSet&lt;&gt;();</span>
 
     /**
      * &lt;ul&gt;
@@ -56,7 +77,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L59">    static final Hardware PPC__01 =</span>
+<span class="fc" id="L80">    static final Hardware PPC__01 =</span>
             new Hardware(&quot;ppc&quot;,
                 new BasicMachine[] {
                         new BasicMachine(5L * 256L * K * K, 1),
@@ -79,7 +100,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L82">    static final Hardware X86__01 =</span>
+<span class="fc" id="L103">    static final Hardware X86__01 =</span>
             new Hardware(&quot;x86&quot;,
                 new BasicMachine[] {
                         new BasicMachine(1L * K * K * K, 1),
@@ -102,7 +123,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L105">    static final Hardware X86__02 =</span>
+<span class="fc" id="L126">    static final Hardware X86__02 =</span>
             new Hardware(&quot;x86&quot;,
                 new BasicMachine[] {
                         new BasicMachine(7L * 512L * K * K, 2),
@@ -125,7 +146,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L128">    static final Hardware X86_64__02 =</span>
+<span class="fc" id="L149">    static final Hardware X86_64__02 =</span>
             new Hardware(&quot;x86_64&quot;,
                 new BasicMachine[] {
                         new BasicMachine(3L * K * K * K, 2),
@@ -136,7 +157,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
     /**
      * Combination of {@link #X86_64__04_1_L2}, {@link #X86_64__04_1_L3} and {@link #X86_64__04_2}
      */
-<span class="fc" id="L139">    static final Hardware X86_64__04 =</span>
+<span class="fc" id="L160">    static final Hardware X86_64__04 =</span>
             new Hardware(&quot;x86_64&quot;,
                     new BasicMachine[] {
                             new BasicMachine(32L * K * K * K, 4),
@@ -171,7 +192,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L174">    static final Hardware X86_64__04_1_L2 =</span>
+<span class="fc" id="L195">    static final Hardware X86_64__04_1_L2 =</span>
             new Hardware(&quot;x86_64&quot;,
                 new BasicMachine[] {
                         new BasicMachine(8L * K * K * K, 4),
@@ -207,7 +228,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L210">    static final Hardware X86_64__04_1_L3 =</span>
+<span class="fc" id="L231">    static final Hardware X86_64__04_1_L3 =</span>
             new Hardware(&quot;x86_64&quot;,
                     new BasicMachine[] {
                             new BasicMachine(32L * K * K * K, 4),
@@ -256,7 +277,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L259">    static final Hardware X86_64__04_2 =</span>
+<span class="fc" id="L280">    static final Hardware X86_64__04_2 =</span>
             new Hardware(&quot;x86_64&quot;,
                     new BasicMachine[] {
                             new BasicMachine(8L * K * K * K, 4),
@@ -329,7 +350,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L332">    static final Hardware X86_64__08 =</span>
+<span class="fc" id="L353">    static final Hardware X86_64__08 =</span>
             new Hardware(&quot;x86_64&quot;,
                     new BasicMachine[] {
                             new BasicMachine(32L * K * K * K, 8),
@@ -362,7 +383,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L365">    static final Hardware X86_64__12 =</span>
+<span class="fc" id="L386">    static final Hardware X86_64__12 =</span>
             new Hardware(&quot;x86_64&quot;,
                     new BasicMachine[] {
                             new BasicMachine(12L * K * K * K, 12),
@@ -399,7 +420,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L402">    static final Hardware X86_64__16 =</span>
+<span class="fc" id="L423">    static final Hardware X86_64__16 =</span>
             new Hardware(&quot;x86_64&quot;,
                     new BasicMachine[] {
                             new BasicMachine(64L * K * K * K, 16),
@@ -436,7 +457,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L439">    static final Hardware X86_64__64 =</span>
+<span class="fc" id="L460">    static final Hardware X86_64__64 =</span>
             new Hardware(&quot;x86_64&quot;,
                     new BasicMachine[] {
                             new BasicMachine(512L * K * K * K, 64),
@@ -461,7 +482,7 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
      * &lt;/li&gt;
      * &lt;/ul&gt;
      */
-<span class="fc" id="L464">    static final Hardware X86_64__96 =</span>
+<span class="fc" id="L485">    static final Hardware X86_64__96 =</span>
             new Hardware(&quot;x86_64&quot;,
                     new BasicMachine[] {
                             new BasicMachine(512L * K * K * K, 96),
@@ -471,56 +492,56 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
                 });
 
     static {
-<span class="fc" id="L474">        PREDEFINED.add(PPC__01);</span>
-<span class="fc" id="L475">        PREDEFINED.add(X86__01);</span>
-<span class="fc" id="L476">        PREDEFINED.add(X86__02);</span>
-<span class="fc" id="L477">        PREDEFINED.add(X86_64__02);</span>
-<span class="fc" id="L478">        PREDEFINED.add(X86_64__04);</span>
-<span class="fc" id="L479">        PREDEFINED.add(X86_64__04_2);</span>
-<span class="fc" id="L480">        PREDEFINED.add(X86_64__04_1_L2);</span>
-<span class="fc" id="L481">        PREDEFINED.add(X86_64__04_1_L3);</span>
-<span class="fc" id="L482">        PREDEFINED.add(X86_64__08);</span>
-<span class="fc" id="L483">        PREDEFINED.add(X86_64__12);</span>
-<span class="fc" id="L484">        PREDEFINED.add(X86_64__16);</span>
-<span class="fc" id="L485">        PREDEFINED.add(X86_64__64);</span>
-<span class="fc" id="L486">        PREDEFINED.add(X86_64__96);</span>
-<span class="fc" id="L487">    }</span>
+<span class="fc" id="L495">        PREDEFINED.add(PPC__01);</span>
+<span class="fc" id="L496">        PREDEFINED.add(X86__01);</span>
+<span class="fc" id="L497">        PREDEFINED.add(X86__02);</span>
+<span class="fc" id="L498">        PREDEFINED.add(X86_64__02);</span>
+<span class="fc" id="L499">        PREDEFINED.add(X86_64__04);</span>
+<span class="fc" id="L500">        PREDEFINED.add(X86_64__04_2);</span>
+<span class="fc" id="L501">        PREDEFINED.add(X86_64__04_1_L2);</span>
+<span class="fc" id="L502">        PREDEFINED.add(X86_64__04_1_L3);</span>
+<span class="fc" id="L503">        PREDEFINED.add(X86_64__08);</span>
+<span class="fc" id="L504">        PREDEFINED.add(X86_64__12);</span>
+<span class="fc" id="L505">        PREDEFINED.add(X86_64__16);</span>
+<span class="fc" id="L506">        PREDEFINED.add(X86_64__64);</span>
+<span class="fc" id="L507">        PREDEFINED.add(X86_64__96);</span>
+<span class="fc" id="L508">    }</span>
 
     public static Hardware makeSimple() {
-<span class="nc" id="L490">        return Hardware.makeSimple(ConcreteMachine.getArchitecture(), ConcreteMachine.getMemory(), ConcreteMachine.getThreads());</span>
+<span class="nc" id="L511">        return Hardware.makeSimple(ConcreteMachine.getArchitecture(), ConcreteMachine.getMemory(), ConcreteMachine.getThreads());</span>
     }
 
     public static Hardware makeSimple(final String systemArchitecture, final long systemMemory, final int systemThreads) {
 
-<span class="pc bpc" id="L495" title="1 of 2 branches missed.">        if (systemThreads &gt; 8) {</span>
+<span class="pc bpc" id="L516" title="1 of 2 branches missed.">        if (systemThreads &gt; 8) {</span>
             // Assume hyperthreading, L3 cache and more than 1 CPU
 
-<span class="fc" id="L498">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 2); //Hyperthreading</span>
-<span class="fc" id="L499">            final BasicMachine tmpL2Machine = new BasicMachine(256L * K, tmpL1Machine.threads);</span>
-<span class="fc" id="L500">            final BasicMachine tmpL3Machine = new BasicMachine(4L * K * K, systemThreads / ((systemThreads + 7) / 8)); //More than 1 CPU</span>
-<span class="fc" id="L501">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
-<span class="fc" id="L502">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL3Machine, tmpL2Machine, tmpL1Machine });</span>
+<span class="fc" id="L519">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 2); //Hyperthreading</span>
+<span class="fc" id="L520">            final BasicMachine tmpL2Machine = new BasicMachine(256L * K, tmpL1Machine.threads);</span>
+<span class="fc" id="L521">            final BasicMachine tmpL3Machine = new BasicMachine(4L * K * K, systemThreads / ((systemThreads + 7) / 8)); //More than 1 CPU</span>
+<span class="fc" id="L522">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
+<span class="fc" id="L523">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL3Machine, tmpL2Machine, tmpL1Machine });</span>
 
-<span class="nc bnc" id="L504" title="All 2 branches missed.">        } else if (systemThreads &gt;= 4) {</span>
+<span class="nc bnc" id="L525" title="All 2 branches missed.">        } else if (systemThreads &gt;= 4) {</span>
             // Assume hyperthreading, L3 cache but only 1 CPU
 
-<span class="nc" id="L507">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 2); //Hyperthreading</span>
-<span class="nc" id="L508">            final BasicMachine tmpL2Machine = new BasicMachine(256L * K, tmpL1Machine.threads);</span>
-<span class="nc" id="L509">            final BasicMachine tmpL3Machine = new BasicMachine(3L * K * K, systemThreads);</span>
-<span class="nc" id="L510">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
-<span class="nc" id="L511">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL3Machine, tmpL2Machine, tmpL1Machine });</span>
+<span class="nc" id="L528">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 2); //Hyperthreading</span>
+<span class="nc" id="L529">            final BasicMachine tmpL2Machine = new BasicMachine(256L * K, tmpL1Machine.threads);</span>
+<span class="nc" id="L530">            final BasicMachine tmpL3Machine = new BasicMachine(3L * K * K, systemThreads);</span>
+<span class="nc" id="L531">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
+<span class="nc" id="L532">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL3Machine, tmpL2Machine, tmpL1Machine });</span>
 
         } else {
             // No hyperthreading, no L3 cache and 1 CPU
 
-<span class="nc" id="L516">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 1); //No hyperthreading</span>
-<span class="nc" id="L517">            final BasicMachine tmpL2Machine = new BasicMachine(2L * K * K, tmpL1Machine.threads);</span>
-<span class="nc" id="L518">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
-<span class="nc" id="L519">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL2Machine, tmpL1Machine });</span>
+<span class="nc" id="L537">            final BasicMachine tmpL1Machine = new BasicMachine(32L * K, 1); //No hyperthreading</span>
+<span class="nc" id="L538">            final BasicMachine tmpL2Machine = new BasicMachine(2L * K * K, tmpL1Machine.threads);</span>
+<span class="nc" id="L539">            final BasicMachine tmpSystemMachine = new BasicMachine(systemMemory, systemThreads);</span>
+<span class="nc" id="L540">            return new Hardware(systemArchitecture, new BasicMachine[] { tmpSystemMachine, tmpL2Machine, tmpL1Machine });</span>
         }
     }
 
-    private final BasicMachine[] myLevels;
+    private final BasicMachine[] _levels;
 
     /**
      * &lt;code&gt;new BasicMachine[] { SYSTEM, L3, L2, L1 }&lt;/code&gt; or
@@ -535,83 +556,83 @@ public final class Hardware extends CommonMachine implements Comparable&lt;Hardw
             final BasicMachine[] levels
     ) {
 
-<span class="fc" id="L538">        super(architecture, levels);</span>
+<span class="fc" id="L559">        super(architecture, levels);</span>
 
-<span class="pc bpc" id="L540" title="1 of 2 branches missed.">        if (levels.length &lt; 2) {</span>
-<span class="nc" id="L541">            throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L561" title="1 of 2 branches missed.">        if (levels.length &lt; 2) {</span>
+<span class="nc" id="L562">            throw new IllegalArgumentException();</span>
         }
 
-<span class="fc" id="L544">        myLevels = COPY.copyOf(levels);</span>
-<span class="fc" id="L545">    }</span>
+<span class="fc" id="L565">        _levels = COPY.copyOf(levels);</span>
+<span class="fc" id="L566">    }</span>
 
     public int compareTo(final Hardware other) {
-<span class="fc bfc" id="L548" title="All 2 branches covered.">        if (cores != other.cores) {</span>
-<span class="fc" id="L549">            return cores - other.cores;</span>
-<span class="fc bfc" id="L550" title="All 2 branches covered.">        } else if (threads != other.threads) {</span>
-<span class="fc" id="L551">            return threads - other.threads;</span>
-<span class="fc bfc" id="L552" title="All 2 branches covered.">        } else if (cache != other.cache) {</span>
-<span class="fc" id="L553">            return (int) (cache - other.cache);</span>
-<span class="pc bpc" id="L554" title="1 of 2 branches missed.">        } else if (units != other.units) {</span>
-<span class="nc" id="L555">            return units - other.units;</span>
-<span class="fc bfc" id="L556" title="All 2 branches covered.">        } else if (memory != other.memory) {</span>
-<span class="fc" id="L557">            return (int) (memory - other.memory);</span>
+<span class="fc bfc" id="L569" title="All 2 branches covered.">        if (cores != other.cores) {</span>
+<span class="fc" id="L570">            return cores - other.cores;</span>
+<span class="fc bfc" id="L571" title="All 2 branches covered.">        } else if (threads != other.threads) {</span>
+<span class="fc" id="L572">            return threads - other.threads;</span>
+<span class="fc bfc" id="L573" title="All 2 branches covered.">        } else if (cache != other.cache) {</span>
+<span class="fc" id="L574">            return (int) (cache - other.cache);</span>
+<span class="pc bpc" id="L575" title="1 of 2 branches missed.">        } else if (units != other.units) {</span>
+<span class="nc" id="L576">            return units - other.units;</span>
+<span class="fc bfc" id="L577" title="All 2 branches covered.">        } else if (memory != other.memory) {</span>
+<span class="fc" id="L578">            return (int) (memory - other.memory);</span>
         } else {
-<span class="fc" id="L559">            return 0;</span>
+<span class="fc" id="L580">            return 0;</span>
         }
     }
 
     @Override
     public boolean equals(final Object obj) {
-<span class="nc bnc" id="L565" title="All 2 branches missed.">        if (this == obj) {</span>
-<span class="nc" id="L566">            return true;</span>
+<span class="nc bnc" id="L586" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L587">            return true;</span>
         }
-<span class="nc bnc" id="L568" title="All 2 branches missed.">        if (!super.equals(obj)) {</span>
-<span class="nc" id="L569">            return false;</span>
+<span class="nc bnc" id="L589" title="All 2 branches missed.">        if (!super.equals(obj)) {</span>
+<span class="nc" id="L590">            return false;</span>
         }
-<span class="nc bnc" id="L571" title="All 2 branches missed.">        if (!(obj instanceof Hardware)) {</span>
-<span class="nc" id="L572">            return false;</span>
+<span class="nc bnc" id="L592" title="All 2 branches missed.">        if (!(obj instanceof Hardware)) {</span>
+<span class="nc" id="L593">            return false;</span>
         }
-<span class="nc" id="L574">        final Hardware other = (Hardware) obj;</span>
-<span class="nc bnc" id="L575" title="All 2 branches missed.">        if (!Arrays.equals(myLevels, other.myLevels)) {</span>
-<span class="nc" id="L576">            return false;</span>
+<span class="nc" id="L595">        final Hardware other = (Hardware) obj;</span>
+<span class="nc bnc" id="L596" title="All 2 branches missed.">        if (!Arrays.equals(_levels, other._levels)) {</span>
+<span class="nc" id="L597">            return false;</span>
         }
-<span class="nc" id="L578">        return true;</span>
+<span class="nc" id="L599">        return true;</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L583">        final int prime = 31;</span>
-<span class="nc" id="L584">        int result = super.hashCode();</span>
-<span class="nc" id="L585">        result = (prime * result) + Arrays.hashCode(myLevels);</span>
-<span class="nc" id="L586">        return result;</span>
+<span class="nc" id="L604">        final int prime = 31;</span>
+<span class="nc" id="L605">        int result = super.hashCode();</span>
+<span class="nc" id="L606">        result = (prime * result) + Arrays.hashCode(_levels);</span>
+<span class="nc" id="L607">        return result;</span>
     }
 
     public boolean isL2Specified() {
-<span class="nc bnc" id="L590" title="All 2 branches missed.">        return myLevels.length &gt; 2;</span>
+<span class="nc bnc" id="L611" title="All 2 branches missed.">        return _levels.length &gt; 2;</span>
     }
 
     public boolean isL3Specified() {
-<span class="nc bnc" id="L594" title="All 2 branches missed.">        return myLevels.length &gt; 3;</span>
+<span class="nc bnc" id="L615" title="All 2 branches missed.">        return _levels.length &gt; 3;</span>
     }
 
     @Override
     public String toString() {
 
-<span class="nc" id="L600">        final StringBuilder retVal = new StringBuilder(&quot;HW=&quot;);</span>
+<span class="nc" id="L621">        final StringBuilder retVal = new StringBuilder(&quot;HW=&quot;);</span>
 
-<span class="nc" id="L602">        retVal.append(myLevels[0].toString());</span>
-<span class="nc bnc" id="L603" title="All 2 branches missed.">        if (this.isL3Specified()) {</span>
-<span class="nc" id="L604">            retVal.append(',').append(units).append(&quot;xL3:&quot;).append(myLevels[myLevels.length - 3]);</span>
-<span class="nc bnc" id="L605" title="All 2 branches missed.">        } else if (this.isL2Specified()) {</span>
-<span class="nc" id="L606">            retVal.append(',').append(units).append(&quot;xL2:&quot;).append(myLevels[myLevels.length - 2]);</span>
+<span class="nc" id="L623">        retVal.append(_levels[0].toString());</span>
+<span class="nc bnc" id="L624" title="All 2 branches missed.">        if (this.isL3Specified()) {</span>
+<span class="nc" id="L625">            retVal.append(',').append(units).append(&quot;xL3:&quot;).append(_levels[_levels.length - 3]);</span>
+<span class="nc bnc" id="L626" title="All 2 branches missed.">        } else if (this.isL2Specified()) {</span>
+<span class="nc" id="L627">            retVal.append(',').append(units).append(&quot;xL2:&quot;).append(_levels[_levels.length - 2]);</span>
         }
-<span class="nc" id="L608">        retVal.append(',').append(cores).append(&quot;cores:&quot;).append(myLevels[myLevels.length - 1]);</span>
+<span class="nc" id="L629">        retVal.append(',').append(cores).append(&quot;cores:&quot;).append(_levels[_levels.length - 1]);</span>
 
-<span class="nc" id="L610">        return retVal.toString();</span>
+<span class="nc" id="L631">        return retVal.toString();</span>
     }
 
     public ConcreteMachine virtualize() {
-<span class="fc" id="L614">        return new ConcreteMachine(this, Runtime.getRuntime());</span>
+<span class="fc" id="L635">        return new ConcreteMachine(this, Runtime.getRuntime());</span>
     }
 
 }

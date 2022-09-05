@@ -16,7 +16,7 @@
     {
       "id":"A tensor can be created from a function as expression.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"when","text":"","code":["Tsr y = Tsr.of(\"th(I[0])\", x)"]},
 
-        {"kind":"then","text":"","code":["y.toString() == \"(1):[ 0.99932 ]\"","y.isBranch()","!y.isLeave()","y.belongsToGraph()","x.belongsToGraph()"]}
+        {"kind":"then","text":"","code":["y.toString() == \"(1):[0.99932]\"","y.isBranch()","!y.isLeave()","y.belongsToGraph()","x.belongsToGraph()"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

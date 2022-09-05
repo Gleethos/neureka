@@ -4,19 +4,38 @@
   "narrative":"The tensor API exposes a useful method for Matrix Multiplication.\n    This specification not only demonstrates how to use this method\n    but also shows how matrix multiplication work \n    for tensors with both row and column major layouts.\n    (typically, column major is faster)",
   "subjects":[],
   "statistics":{
-    "runs":"1",
+    "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.016 seconds"
+    "duration":"0.019 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
+      "id":"The \"matMul\" method allows us to perform matrix multiplication.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create 2 simple tensors with the shapes (1x7) and (7x8).","code":["var a = Tsr.of(type).withShape(1,7).andFill(1, 2, 3)","var b = Tsr.of(type).withShape(7,8).andFill(2, -4, -1)"]},
+
+        {"kind":"when","text":"We perform matrix multiplication.","code":["var c = a.matMul(b)"]},
+
+        {"kind":"then","text":"The result is a tensor with the shape (1x8).","code":["c.shape == [1, 8]","c.items == [-22, -10, -7, -22, -10, -7, -22, -10]"]},
+
+        {"kind":"where","text":"We can use the following data types:","code":{"type":["class java.lang.Integer","class java.lang.Long","class java.lang.Double","class java.lang.Float"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
       "id":"The simple CPU matrix multiplication implementation works as expected.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        "]
       },

@@ -1,4 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorkScheduler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host.concurrent</a> &gt; <span class="el_source">WorkScheduler.java</span></div><h1>WorkScheduler.java</h1><pre class="source lang-java linenums">/*&lt;#LICENSE#&gt;*/
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorkScheduler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host.concurrent</a> &gt; <span class="el_source">WorkScheduler.java</span></div><h1>WorkScheduler.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package neureka.devices.host.concurrent;
 
 import neureka.devices.host.CPU;
@@ -16,7 +38,7 @@ import java.util.function.IntSupplier;
  */
 public abstract class WorkScheduler {
 
-<span class="nc" id="L19">    public WorkScheduler() { super(); }</span>
+<span class="nc" id="L41">    public WorkScheduler() { super(); }</span>
 
     /**
      * Synchronous execution - wait until it's finished.
@@ -31,8 +53,8 @@ public abstract class WorkScheduler {
             final int limit,
             final int threshold
     ) {
-<span class="nc" id="L34">        int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;</span>
-<span class="nc" id="L35">        Divider._divide(</span>
+<span class="nc" id="L56">        int availableWorkers = ConcreteMachine.ENVIRONMENT.threads;</span>
+<span class="nc" id="L57">        Divider._divide(</span>
             executor,
             first,
             limit,
@@ -40,7 +62,7 @@ public abstract class WorkScheduler {
             availableWorkers,
             this::_work
         );
-<span class="nc" id="L43">    }</span>
+<span class="nc" id="L65">    }</span>
 
     protected abstract void _work(final int first, final int limit);
 
@@ -54,42 +76,57 @@ public abstract class WorkScheduler {
     {
         private final ExecutorService _executor;
 
-<span class="fc" id="L57">        private IntSupplier _parallelism = Parallelism.THREADS;</span>
+<span class="fc" id="L79">        private IntSupplier _parallelism = Parallelism.THREADS;</span>
 
-<span class="fc" id="L59">        private int _threshold = 128;</span>
+<span class="fc" id="L81">        private int _threshold = 128;</span>
 
         public Divider( final ExecutorService executor ) {
-<span class="fc" id="L62">            super();</span>
-<span class="fc" id="L63">            _executor = executor;</span>
-<span class="fc" id="L64">        }</span>
+<span class="fc" id="L84">            super();</span>
+<span class="fc" id="L85">            _executor = executor;</span>
+<span class="fc" id="L86">        }</span>
 
         public void divide( final int limit, final CPU.RangeWorkload rangeWorkload ) {
-<span class="nc" id="L67">            divide(0, limit, rangeWorkload);</span>
-<span class="nc" id="L68">        }</span>
+<span class="nc" id="L89">            divide(0, limit, rangeWorkload);</span>
+<span class="nc" id="L90">        }</span>
 
         public void divide(
             final int first, final int limit, final CPU.RangeWorkload rangeWorkload
         ) {
-<span class="fc" id="L73">            _divide(</span>
+<span class="fc" id="L95">            _divide(</span>
                 _executor,
                 first,
                 limit,
                 _threshold,
-<span class="fc" id="L78">                _parallelism.getAsInt(),</span>
+<span class="fc" id="L100">                _parallelism.getAsInt(),</span>
                 rangeWorkload
             );
-<span class="fc" id="L81">        }</span>
+<span class="fc" id="L103">        }</span>
+
+        public void submit( final int limit, final CPU.IndexedWorkload rangeWorkload ) {
+<span class="fc" id="L106">            Future&lt;?&gt;[] futures = new Future&lt;?&gt;[limit];</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            for ( int i = 0; i &lt; limit; ++i ) {</span>
+<span class="fc" id="L108">                int finalI = i;</span>
+<span class="fc" id="L109">                futures[i] = _executor.submit( () -&gt; rangeWorkload.execute(finalI) );</span>
+            }
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            for ( Future&lt;?&gt; future : futures ) {</span>
+                try {
+<span class="fc" id="L113">                    future.get();</span>
+<span class="nc" id="L114">                } catch (InterruptedException | ExecutionException e) {</span>
+<span class="nc" id="L115">                    throw new RuntimeException(e);</span>
+<span class="fc" id="L116">                }</span>
+            }
+<span class="fc" id="L118">        }</span>
 
         public Divider parallelism(
                 final IntSupplier parallelism
         ) {
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">            if ( parallelism != null ) _parallelism = parallelism;</span>
-<span class="fc" id="L87">            return this;</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">            if ( parallelism != null ) _parallelism = parallelism;</span>
+<span class="fc" id="L124">            return this;</span>
         }
 
         public Divider threshold( final int threshold ) {
-<span class="fc" id="L91">            _threshold = threshold;</span>
-<span class="fc" id="L92">            return this;</span>
+<span class="fc" id="L128">            _threshold = threshold;</span>
+<span class="fc" id="L129">            return this;</span>
         }
 
         private static void _divide(
@@ -100,26 +137,26 @@ public abstract class WorkScheduler {
                 final int workers,
                 final CPU.RangeWorkload rangeWorkload
         ) {
-<span class="fc" id="L103">            int workload = end - start;</span>
+<span class="fc" id="L140">            int workload = end - start;</span>
 
-<span class="fc bfc" id="L105" title="All 4 branches covered.">            if ( workload &gt; threshold &amp;&amp; workers &gt; 1 ) {</span>
+<span class="fc bfc" id="L142" title="All 4 branches covered.">            if ( workload &gt; threshold &amp;&amp; workers &gt; 1 ) {</span>
 
-<span class="fc" id="L107">                int split = start + workload / 2;</span>
-<span class="fc" id="L108">                int nextWorkers = workers / 2;</span>
+<span class="fc" id="L144">                int split = start + workload / 2;</span>
+<span class="fc" id="L145">                int nextWorkers = workers / 2;</span>
 
-<span class="fc" id="L110">                Future&lt;?&gt; firstPart = executor.submit( () -&gt; _divide(executor, start, split, threshold, nextWorkers, rangeWorkload) );</span>
-<span class="fc" id="L111">                Future&lt;?&gt; secondPart = executor.submit( () -&gt; _divide(executor, split, end, threshold, nextWorkers, rangeWorkload) );</span>
+<span class="fc" id="L147">                Future&lt;?&gt; firstPart  = executor.submit( () -&gt; _divide(executor, start, split, threshold, nextWorkers, rangeWorkload) );</span>
+<span class="fc" id="L148">                Future&lt;?&gt; secondPart = executor.submit( () -&gt; _divide(executor, split, end, threshold, nextWorkers, rangeWorkload) );</span>
 
                 try {
-<span class="fc" id="L114">                    firstPart.get();</span>
-<span class="fc" id="L115">                    secondPart.get();</span>
-<span class="nc" id="L116">                } catch ( final InterruptedException | ExecutionException cause ) {</span>
-<span class="nc" id="L117">                    throw new RuntimeException(cause);</span>
-<span class="fc" id="L118">                }</span>
-<span class="fc" id="L119">            }</span>
+<span class="fc" id="L151">                    firstPart.get();</span>
+<span class="fc" id="L152">                    secondPart.get();</span>
+<span class="nc" id="L153">                } catch ( final InterruptedException | ExecutionException cause ) {</span>
+<span class="nc" id="L154">                    throw new RuntimeException(cause);</span>
+<span class="fc" id="L155">                }</span>
+<span class="fc" id="L156">            }</span>
             else
-<span class="fc" id="L121">                rangeWorkload.execute(start, end);</span>
-<span class="fc" id="L122">        }</span>
+<span class="fc" id="L158">                rangeWorkload.execute(start, end);</span>
+<span class="fc" id="L159">        }</span>
 
     }
 

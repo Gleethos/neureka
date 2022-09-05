@@ -1,4 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AXPY.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear.internal.blas</a> &gt; <span class="el_source">AXPY.java</span></div><h1>AXPY.java</h1><pre class="source lang-java linenums">/*&lt;#LICENSE#&gt;*/
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AXPY.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear.internal.blas</a> &gt; <span class="el_source">AXPY.java</span></div><h1>AXPY.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package neureka.backend.main.operations.linear.internal.blas;
 
 /**
@@ -6,7 +28,7 @@ package neureka.backend.main.operations.linear.internal.blas;
  * are vectors each with a number of elements that equals n. &lt;code&gt;y[] += a * x[]&lt;/code&gt;
  *
  */
-<span class="nc" id="L9">public final class AXPY {</span>
+<span class="nc" id="L31">public final class AXPY {</span>
 
     public static void invoke(
             final double[] y,
@@ -17,10 +39,10 @@ package neureka.backend.main.operations.linear.internal.blas;
             final int start,
             final int limit
     ) {
-<span class="fc bfc" id="L20" title="All 2 branches covered.">        for (int i = start; i &lt; limit; i++) {</span>
-<span class="fc" id="L21">            y[yOffset + i] += multiplier * x[xOffset + i];</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (int i = start; i &lt; limit; i++) {</span>
+<span class="fc" id="L43">            y[yOffset + i] += multiplier * x[xOffset + i];</span>
         }
-<span class="fc" id="L23">    }</span>
+<span class="fc" id="L45">    }</span>
 
     public static void invoke(
             final float[] y,
@@ -31,10 +53,10 @@ package neureka.backend.main.operations.linear.internal.blas;
             final int first,
             final int limit
     ) {
-<span class="fc bfc" id="L34" title="All 2 branches covered.">        for (int i = first; i &lt; limit; i++) {</span>
-<span class="fc" id="L35">            y[basey + i] += a * x[basex + i];</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        for (int i = first; i &lt; limit; i++) {</span>
+<span class="fc" id="L57">            y[basey + i] += a * x[basex + i];</span>
         }
-<span class="fc" id="L37">    }</span>
+<span class="fc" id="L59">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

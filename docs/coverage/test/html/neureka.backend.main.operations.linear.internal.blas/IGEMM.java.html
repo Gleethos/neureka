@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IGEMM.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear.internal.blas</a> &gt; <span class="el_source">IGEMM.java</span></div><h1>IGEMM.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+package neureka.backend.main.operations.linear.internal.blas;
+
+import neureka.devices.host.CPU;
+
+/**
+ *  A collection of primitive sub-routines for matrix multiplication performed on
+ *  continuous arrays which are designed so that they can be vectorized by the
+ *  JVMs JIT compiler (AVX instructions).
+ */
+<span class="nc" id="L33">public class IGEMM {</span>
+
+    @FunctionalInterface
+    public interface VectorOperationI32 {
+        void invoke(
+                int[] product,
+                int[] left,
+                int complexity,
+                int[] right
+        );
+    }
+
+    @FunctionalInterface
+    public interface VectorOperationI64 {
+        void invoke(
+                long[] product,
+                long[] left,
+                int complexity,
+                long[] right
+        );
+    }
+
+    public static VectorOperationI32 operationForI32(
+            boolean rowMajor, final long rows, final long columns
+    ) {
+<span class="pc bpc" id="L58" title="1 of 4 branches missed.">        if ( rows &gt; CPU.PARALLELIZATION_THRESHOLD &amp;&amp; columns &gt; CPU.PARALLELIZATION_THRESHOLD) {</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            return ( rowMajor</span>
+<span class="fc" id="L60">                    ? IGEMM::threaded_I32_MxN_RM</span>
+<span class="fc" id="L61">                    : IGEMM::threaded_I32_MxN_CM</span>
+            );
+        }
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if ( columns == 1 ) {</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            return ( rowMajor</span>
+<span class="fc" id="L66">                    ? IGEMM::full_I32_Mx1_RM</span>
+<span class="fc" id="L67">                    : IGEMM::full_I32_Mx1_CM</span>
+            );
+        }
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if ( rows == 1 )</span>
+<span class="fc" id="L71">            return (</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">                    rowMajor</span>
+<span class="fc" id="L73">                            ? IGEMM::full_I32_1xN_RM</span>
+<span class="fc" id="L74">                            : IGEMM::full_I32_1xN_CM</span>
+            );
+<span class="fc" id="L76">        return (</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                rowMajor</span>
+<span class="fc" id="L78">                        ? IGEMM::full_I32_MxN_RM</span>
+<span class="fc" id="L79">                        : IGEMM::full_I32_MxN_CM</span>
+        );
+    }
+
+    public static VectorOperationI64 operationForI64(
+            boolean rowMajor, final long rows, final long columns
+    ) {
+<span class="pc bpc" id="L86" title="1 of 4 branches missed.">        if ( rows &gt; CPU.PARALLELIZATION_THRESHOLD &amp;&amp; columns &gt; CPU.PARALLELIZATION_THRESHOLD )</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            return ( rowMajor</span>
+<span class="fc" id="L88">                    ? IGEMM::threaded_I64_MxN_RM</span>
+<span class="fc" id="L89">                    : IGEMM::threaded_I64_MxN_CM</span>
+            );
+
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if ( !rowMajor ) { // Supported in column major only!</span>
+<span class="fc bfc" id="L93" title="All 4 branches covered.">            if (rows == 5 &amp;&amp; columns == 5) return IGEMM::full_I64_5x5_CM;</span>
+<span class="fc bfc" id="L94" title="All 4 branches covered.">            if (rows == 4 &amp;&amp; columns == 4) return IGEMM::full_I64_4x4_CM;</span>
+<span class="fc bfc" id="L95" title="All 4 branches covered.">            if (rows == 3 &amp;&amp; columns == 3) return IGEMM::full_I64_3x3_CM;</span>
+<span class="fc bfc" id="L96" title="All 4 branches covered.">            if (rows == 2 &amp;&amp; columns == 2) return IGEMM::full_I64_2x2_CM;</span>
+<span class="fc bfc" id="L97" title="All 4 branches covered.">            if (rows == 1 &amp;&amp; columns == 1) return IGEMM::full_I64_1x1_CM;</span>
+        }
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if ( columns == 1 )</span>
+<span class="fc" id="L100">            return (</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">                    rowMajor</span>
+<span class="fc" id="L102">                            ? IGEMM::full_I64_Mx1_RM</span>
+<span class="fc" id="L103">                            : IGEMM::full_I64_Mx1_CM</span>
+            );
+
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if ( !rowMajor ) { // Supported in column major only!</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if ( rows == 10) return IGEMM::full_I64_0xN_CM;</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">            if ( rows == 9 ) return IGEMM::full_I64_9xN_CM;</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if ( rows == 8 ) return IGEMM::full_I64_8xN_CM;</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            if ( rows == 7 ) return IGEMM::full_I64_7xN_CM;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            if ( rows == 6 ) return IGEMM::full_I64_6xN_CM;</span>
+        }
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if ( rows == 1 )</span>
+<span class="fc" id="L114">            return (</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">                    rowMajor</span>
+<span class="fc" id="L116">                            ? IGEMM::full_I64_1xN_RM</span>
+<span class="fc" id="L117">                            : IGEMM::full_I64_1xN_CM</span>
+            );
+
+<span class="fc" id="L120">        return (</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">                rowMajor</span>
+<span class="fc" id="L122">                        ? IGEMM::full_I64_MxN_RM</span>
+<span class="fc" id="L123">                        : IGEMM::full_I64_MxN_CM</span>
+        );
+    }
+
+    static void full_I64_Mx1_CM(
+            final long[] product,
+            final long[] left,
+            final int colCount,
+            final long[] right
+    ) {
+<span class="fc" id="L133">        int rowCount = product.length;</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        for ( int c = 0; c &lt; colCount; c++ ) {</span>
+<span class="fc" id="L135">            IAXPY.invoke(</span>
+                    product,
+                    0,
+                    right[c],
+                    left,
+                    c * rowCount,
+                    0,
+                    rowCount
+            );
+        }
+<span class="fc" id="L145">    }</span>
+
+    static void full_I64_Mx1_RM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc" id="L153">        int colCount = right.length;</span>
+<span class="fc" id="L154">        int leftRowCount = left.length / complexity;</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        for (int ri = 0; ri &lt; leftRowCount; ri++) {</span>
+<span class="fc" id="L156">            product[ri] =</span>
+<span class="fc" id="L157">                    IDOT.invoke(</span>
+                            left,
+                            ri * complexity,
+                            right,
+                            0,
+                            0,
+                            colCount
+                    );
+        }
+<span class="fc" id="L166">    }</span>
+
+    static void full_I32_Mx1_CM(
+            final int[] product,
+            final int[] left,
+            final int complexity,
+            final int[] right
+    ) {
+<span class="fc" id="L174">        int nbRows = product.length;</span>
+
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L177">            IAXPY.invoke(</span>
+                    product,
+                    0,
+                    right[c],
+                    left,
+                    c * nbRows,
+                    0, nbRows
+            );
+        }
+<span class="fc" id="L186">    }</span>
+
+    static void full_I32_Mx1_RM(
+            final int[] product,
+            final int[] left,
+            final int complexity,
+            final int[] right
+    ) {
+<span class="fc" id="L194">        int colCount = right.length;</span>
+<span class="fc" id="L195">        int leftRowCount = left.length / complexity;</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        for ( int ri = 0; ri &lt; leftRowCount; ri++ ) {</span>
+<span class="fc" id="L197">            product[ri] =</span>
+<span class="fc" id="L198">                    IDOT.invoke(</span>
+                            left,
+                            ri * complexity,
+                            right,
+                            0,
+                            0,
+                            colCount
+                    );
+        }
+<span class="fc" id="L207">    }</span>
+
+    static void partial_I64_MxN_CM(
+            final long[] product,
+            final int firstColumn,
+            final int columnLimit,
+            final long[] left,
+            final int commonColumnCount,
+            final long[] right
+    ) {
+<span class="fc" id="L217">        int leftRowCount = left.length / commonColumnCount;</span>
+
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        for ( int ci = 0; ci &lt; commonColumnCount; ci++ ) {</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            for ( int j = firstColumn; j &lt; columnLimit; j++ ) {</span>
+<span class="fc" id="L221">                IAXPY.invoke(</span>
+                        product,
+                        j * leftRowCount,
+                        right[ci + j * commonColumnCount],
+                        left,
+                        ci * leftRowCount,
+                        0,
+                        leftRowCount
+                );
+            }
+        }
+<span class="fc" id="L232">    }</span>
+
+    static void partial_I64_MxN_RM(
+            final long[] product,
+            final int firstRow,
+            final int rowLimit,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc" id="L242">        int rightCols = right.length / complexity;</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        for ( int c = 0; c &lt; complexity; c++ ) {</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">            for ( int j = firstRow; j &lt; rowLimit; j++ ) {</span>
+<span class="fc" id="L245">                IAXPY.invoke(</span>
+                        product,
+                        j * rightCols,
+                        left[c + j * complexity],
+                        right,
+                        c * rightCols,
+                        0,
+                        rightCols
+                );
+            }
+        }
+<span class="fc" id="L256">    }</span>
+
+    static void partial_I32_MxN_CM(
+            final int[] product,
+            final int firstColumn, // right column
+            final int columnLimit,
+            final int[] left,
+            final int complexity,
+            final int[] right
+    ) {
+<span class="fc" id="L266">        int nbRows = left.length / complexity;</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        for ( int c = 0; c &lt; complexity; c++ ) {</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">            for ( int j = firstColumn; j &lt; columnLimit; j++ ) {</span>
+<span class="fc" id="L269">                IAXPY.invoke(</span>
+                        product,
+                        j * nbRows,
+                        right[c + j * complexity],
+                        left,
+                        c * nbRows,
+                        0,
+                        nbRows
+                );
+            }
+        }
+<span class="fc" id="L280">    }</span>
+
+    static void partial_I32_MxN_RM(
+            final int[] product,
+            final int firstRow, // left row
+            final int rowLimit,
+            final int[] left,
+            final int complexity,
+            final int[] right
+    ) {
+<span class="fc" id="L290">        int rightCols = right.length / complexity;</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        for ( int c = 0; c &lt; complexity; c++ ) {</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">            for ( int j = firstRow; j &lt; rowLimit; j++ ) {</span>
+<span class="fc" id="L293">                IAXPY.invoke(</span>
+                        product,
+                        j * rightCols,
+                        left[c + j * complexity],
+                        right,
+                        c * rightCols,
+                        0,
+                        rightCols
+                );
+            }
+        }
+<span class="fc" id="L304">    }</span>
+
+
+    static void threaded_I64_MxN_CM(final long[] product, final long[] left, final int complexity, final long[] right) {
+<span class="fc" id="L308">        CPU.get()</span>
+<span class="fc" id="L309">                .getExecutor()</span>
+<span class="fc" id="L310">                .threaded(</span>
+                        0,
+                        right.length / complexity,
+<span class="fc" id="L313">                        (f, l) -&gt; IGEMM.partial_I64_MxN_CM(product, f, l, left, complexity, right)</span>
+                );
+<span class="fc" id="L315">    }</span>
+
+    static void threaded_I32_MxN_CM(final int[] product, final int[] left, final int complexity, final int[] right) {
+<span class="fc" id="L318">        CPU.get()</span>
+<span class="fc" id="L319">                .getExecutor()</span>
+<span class="fc" id="L320">                .threaded(</span>
+                        0,
+                        right.length / complexity,
+<span class="fc" id="L323">                        (f, l) -&gt; IGEMM.partial_I32_MxN_CM(product, f, l, left, complexity, right)</span>
+                );
+<span class="fc" id="L325">    }</span>
+
+    static void threaded_I32_MxN_RM(final int[] product, final int[] left, final int complexity, final int[] right) {
+<span class="fc" id="L328">        CPU.get()</span>
+<span class="fc" id="L329">                .getExecutor()</span>
+<span class="fc" id="L330">                .threaded(</span>
+                        0,
+                        left.length / complexity,
+<span class="fc" id="L333">                        (f, l) -&gt; IGEMM.partial_I32_MxN_RM(product, f, l, left, complexity, right)</span>
+                );
+<span class="fc" id="L335">    }</span>
+
+    static void threaded_I64_MxN_RM(final long[] product, final long[] left, final int complexity, final long[] right) {
+<span class="fc" id="L338">        CPU.get()</span>
+<span class="fc" id="L339">                .getExecutor()</span>
+<span class="fc" id="L340">                .threaded(</span>
+                        0,
+                        left.length / complexity,
+<span class="fc" id="L343">                        (f, l) -&gt; IGEMM.partial_I64_MxN_RM(product, f, l, left, complexity, right)</span>
+                );
+<span class="fc" id="L345">    }</span>
+
+    static void full_I64_0xN_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+
+<span class="fc" id="L354">        int tmpRowDim = 10;</span>
+<span class="fc" id="L355">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L357" title="All 2 branches covered.">        for ( int j = 0; j &lt; tmpColDim; j++ ) {</span>
+
+<span class="fc" id="L359">            long tmp0J = 0;</span>
+<span class="fc" id="L360">            long tmp1J = 0;</span>
+<span class="fc" id="L361">            long tmp2J = 0;</span>
+<span class="fc" id="L362">            long tmp3J = 0;</span>
+<span class="fc" id="L363">            long tmp4J = 0;</span>
+<span class="fc" id="L364">            long tmp5J = 0;</span>
+<span class="fc" id="L365">            long tmp6J = 0;</span>
+<span class="fc" id="L366">            long tmp7J = 0;</span>
+<span class="fc" id="L367">            long tmp8J = 0;</span>
+<span class="fc" id="L368">            long tmp9J = 0;</span>
+
+<span class="fc" id="L370">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L371" title="All 2 branches covered.">            for ( int c = 0; c &lt; complexity; c++ ) {</span>
+<span class="fc" id="L372">                long tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L373">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L374">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L375">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L376">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L377">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L378">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L379">                tmp6J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L380">                tmp7J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L381">                tmp8J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L382">                tmp9J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L385">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L386">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L387">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L388">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L389">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L390">            product[++tmpIndex] = tmp5J;</span>
+<span class="fc" id="L391">            product[++tmpIndex] = tmp6J;</span>
+<span class="fc" id="L392">            product[++tmpIndex] = tmp7J;</span>
+<span class="fc" id="L393">            product[++tmpIndex] = tmp8J;</span>
+<span class="fc" id="L394">            product[++tmpIndex] = tmp9J;</span>
+        }
+<span class="fc" id="L396">    }</span>
+
+    static void full_I64_1x1_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc" id="L404">        long tmp00 = 0;</span>
+
+<span class="fc" id="L406">        int nbRows = left.length / complexity;</span>
+
+<span class="fc bfc" id="L408" title="All 2 branches covered.">        for ( int c = 0; c &lt; complexity; c++ )</span>
+<span class="fc" id="L409">            tmp00 += left[c * nbRows] * right[c];</span>
+
+<span class="fc" id="L411">        product[0] = tmp00;</span>
+<span class="fc" id="L412">    }</span>
+
+    static void full_I64_1xN_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc bfc" id="L420" title="All 2 branches covered.">        for ( int j = 0, nbCols = product.length; j &lt; nbCols; j++ )</span>
+<span class="fc" id="L421">            product[j] = IDOT.invoke(left, 0, right, j * complexity, 0, complexity);</span>
+<span class="fc" id="L422">    }</span>
+
+    static void full_I64_1xN_RM(
+            final long[] product,
+            final long[] left,
+            final int rowCount,
+            final long[] right
+    ) {//...
+<span class="fc" id="L430">        int rightColCount = right.length / rowCount;</span>
+<span class="fc bfc" id="L431" title="All 2 branches covered.">        for ( int ci = 0; ci &lt; rowCount; ci++ ) {</span>
+<span class="fc" id="L432">            IAXPY.invoke(</span>
+                product,
+                0,
+                left[ci],
+                right,
+                ci * rightColCount,
+                0,
+                rightColCount
+            );
+        }
+<span class="fc" id="L442">    }</span>
+
+    static void full_I32_1xN_CM(
+            final int[] product,
+            final int[] left,
+            final int complexity,
+            final int[] right
+    ) {
+<span class="fc bfc" id="L450" title="All 2 branches covered.">        for (int j = 0, nbCols = product.length; j &lt; nbCols; j++) {</span>
+<span class="fc" id="L451">            product[j] = IDOT.invoke(left, 0, right, j * complexity, 0, complexity);</span>
+        }
+<span class="fc" id="L453">    }</span>
+
+
+    static void full_I32_1xN_RM(
+            final int[] product,
+            final int[] left,
+            final int rowCount,
+            final int[] right
+    ) {//...
+<span class="fc" id="L462">        int rightColCount = right.length / rowCount;</span>
+<span class="fc bfc" id="L463" title="All 2 branches covered.">        for ( int ci = 0; ci &lt; rowCount; ci++ ) {</span>
+<span class="fc" id="L464">            IAXPY.invoke(</span>
+                product,
+                0,
+                left[ci],
+                right,
+                ci * rightColCount,
+                0,
+                rightColCount
+            );
+        }
+<span class="fc" id="L474">    }</span>
+
+
+    static void full_I64_2x2_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc" id="L483">        long tmp00 = 0;</span>
+<span class="fc" id="L484">        long tmp10 = 0;</span>
+<span class="fc" id="L485">        long tmp01 = 0;</span>
+<span class="fc" id="L486">        long tmp11 = 0;</span>
+
+        int tmpIndex;
+<span class="fc bfc" id="L489" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+
+<span class="fc" id="L491">            tmpIndex = c * 2;</span>
+<span class="fc" id="L492">            long tmpLeft0 = left[tmpIndex];</span>
+<span class="fc" id="L493">            tmpIndex++;</span>
+<span class="fc" id="L494">            long tmpLeft1 = left[tmpIndex];</span>
+<span class="fc" id="L495">            tmpIndex = c;</span>
+<span class="fc" id="L496">            long tmpRight0 = right[tmpIndex];</span>
+<span class="fc" id="L497">            tmpIndex += complexity;</span>
+<span class="fc" id="L498">            long tmpRight1 = right[tmpIndex];</span>
+
+<span class="fc" id="L500">            tmp00 += tmpLeft0 * tmpRight0;</span>
+<span class="fc" id="L501">            tmp10 += tmpLeft1 * tmpRight0;</span>
+<span class="fc" id="L502">            tmp01 += tmpLeft0 * tmpRight1;</span>
+<span class="fc" id="L503">            tmp11 += tmpLeft1 * tmpRight1;</span>
+        }
+
+<span class="fc" id="L506">        product[0] = tmp00;</span>
+<span class="fc" id="L507">        product[1] = tmp10;</span>
+<span class="fc" id="L508">        product[2] = tmp01;</span>
+<span class="fc" id="L509">        product[3] = tmp11;</span>
+<span class="fc" id="L510">    }</span>
+
+    static void full_I64_3x3_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc" id="L518">        long tmp00 = 0;</span>
+<span class="fc" id="L519">        long tmp10 = 0;</span>
+<span class="fc" id="L520">        long tmp20 = 0;</span>
+<span class="fc" id="L521">        long tmp01 = 0;</span>
+<span class="fc" id="L522">        long tmp11 = 0;</span>
+<span class="fc" id="L523">        long tmp21 = 0;</span>
+<span class="fc" id="L524">        long tmp02 = 0;</span>
+<span class="fc" id="L525">        long tmp12 = 0;</span>
+<span class="fc" id="L526">        long tmp22 = 0;</span>
+
+        int tmpIndex;
+<span class="fc bfc" id="L529" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+
+<span class="fc" id="L531">            tmpIndex = c * 3;</span>
+<span class="fc" id="L532">            long tmpLeft0 = left[tmpIndex];</span>
+<span class="fc" id="L533">            tmpIndex++;</span>
+<span class="fc" id="L534">            long tmpLeft1 = left[tmpIndex];</span>
+<span class="fc" id="L535">            tmpIndex++;</span>
+<span class="fc" id="L536">            long tmpLeft2 = left[tmpIndex];</span>
+<span class="fc" id="L537">            tmpIndex = c;</span>
+<span class="fc" id="L538">            long tmpRight0 = right[tmpIndex];</span>
+<span class="fc" id="L539">            tmpIndex += complexity;</span>
+<span class="fc" id="L540">            long tmpRight1 = right[tmpIndex];</span>
+<span class="fc" id="L541">            tmpIndex += complexity;</span>
+<span class="fc" id="L542">            long tmpRight2 = right[tmpIndex];</span>
+
+<span class="fc" id="L544">            tmp00 += tmpLeft0 * tmpRight0;</span>
+<span class="fc" id="L545">            tmp10 += tmpLeft1 * tmpRight0;</span>
+<span class="fc" id="L546">            tmp20 += tmpLeft2 * tmpRight0;</span>
+<span class="fc" id="L547">            tmp01 += tmpLeft0 * tmpRight1;</span>
+<span class="fc" id="L548">            tmp11 += tmpLeft1 * tmpRight1;</span>
+<span class="fc" id="L549">            tmp21 += tmpLeft2 * tmpRight1;</span>
+<span class="fc" id="L550">            tmp02 += tmpLeft0 * tmpRight2;</span>
+<span class="fc" id="L551">            tmp12 += tmpLeft1 * tmpRight2;</span>
+<span class="fc" id="L552">            tmp22 += tmpLeft2 * tmpRight2;</span>
+        }
+
+<span class="fc" id="L555">        product[0] = tmp00;</span>
+<span class="fc" id="L556">        product[1] = tmp10;</span>
+<span class="fc" id="L557">        product[2] = tmp20;</span>
+<span class="fc" id="L558">        product[3] = tmp01;</span>
+<span class="fc" id="L559">        product[4] = tmp11;</span>
+<span class="fc" id="L560">        product[5] = tmp21;</span>
+<span class="fc" id="L561">        product[6] = tmp02;</span>
+<span class="fc" id="L562">        product[7] = tmp12;</span>
+<span class="fc" id="L563">        product[8] = tmp22;</span>
+<span class="fc" id="L564">    }</span>
+
+    static void full_I64_4x4_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc" id="L572">        long tmp00 = 0;</span>
+<span class="fc" id="L573">        long tmp10 = 0;</span>
+<span class="fc" id="L574">        long tmp20 = 0;</span>
+<span class="fc" id="L575">        long tmp30 = 0;</span>
+<span class="fc" id="L576">        long tmp01 = 0;</span>
+<span class="fc" id="L577">        long tmp11 = 0;</span>
+<span class="fc" id="L578">        long tmp21 = 0;</span>
+<span class="fc" id="L579">        long tmp31 = 0;</span>
+<span class="fc" id="L580">        long tmp02 = 0;</span>
+<span class="fc" id="L581">        long tmp12 = 0;</span>
+<span class="fc" id="L582">        long tmp22 = 0;</span>
+<span class="fc" id="L583">        long tmp32 = 0;</span>
+<span class="fc" id="L584">        long tmp03 = 0;</span>
+<span class="fc" id="L585">        long tmp13 = 0;</span>
+<span class="fc" id="L586">        long tmp23 = 0;</span>
+<span class="fc" id="L587">        long tmp33 = 0;</span>
+
+        int tmpIndex;
+<span class="fc bfc" id="L590" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+
+<span class="fc" id="L592">            tmpIndex = c * 4;</span>
+<span class="fc" id="L593">            long tmpLeft0 = left[tmpIndex];</span>
+<span class="fc" id="L594">            tmpIndex++;</span>
+<span class="fc" id="L595">            long tmpLeft1 = left[tmpIndex];</span>
+<span class="fc" id="L596">            tmpIndex++;</span>
+<span class="fc" id="L597">            long tmpLeft2 = left[tmpIndex];</span>
+<span class="fc" id="L598">            tmpIndex++;</span>
+<span class="fc" id="L599">            long tmpLeft3 = left[tmpIndex];</span>
+<span class="fc" id="L600">            tmpIndex = c;</span>
+<span class="fc" id="L601">            long tmpRight0 = right[tmpIndex];</span>
+<span class="fc" id="L602">            tmpIndex += complexity;</span>
+<span class="fc" id="L603">            long tmpRight1 = right[tmpIndex];</span>
+<span class="fc" id="L604">            tmpIndex += complexity;</span>
+<span class="fc" id="L605">            long tmpRight2 = right[tmpIndex];</span>
+<span class="fc" id="L606">            tmpIndex += complexity;</span>
+<span class="fc" id="L607">            long tmpRight3 = right[tmpIndex];</span>
+
+<span class="fc" id="L609">            tmp00 += tmpLeft0 * tmpRight0;</span>
+<span class="fc" id="L610">            tmp10 += tmpLeft1 * tmpRight0;</span>
+<span class="fc" id="L611">            tmp20 += tmpLeft2 * tmpRight0;</span>
+<span class="fc" id="L612">            tmp30 += tmpLeft3 * tmpRight0;</span>
+<span class="fc" id="L613">            tmp01 += tmpLeft0 * tmpRight1;</span>
+<span class="fc" id="L614">            tmp11 += tmpLeft1 * tmpRight1;</span>
+<span class="fc" id="L615">            tmp21 += tmpLeft2 * tmpRight1;</span>
+<span class="fc" id="L616">            tmp31 += tmpLeft3 * tmpRight1;</span>
+<span class="fc" id="L617">            tmp02 += tmpLeft0 * tmpRight2;</span>
+<span class="fc" id="L618">            tmp12 += tmpLeft1 * tmpRight2;</span>
+<span class="fc" id="L619">            tmp22 += tmpLeft2 * tmpRight2;</span>
+<span class="fc" id="L620">            tmp32 += tmpLeft3 * tmpRight2;</span>
+<span class="fc" id="L621">            tmp03 += tmpLeft0 * tmpRight3;</span>
+<span class="fc" id="L622">            tmp13 += tmpLeft1 * tmpRight3;</span>
+<span class="fc" id="L623">            tmp23 += tmpLeft2 * tmpRight3;</span>
+<span class="fc" id="L624">            tmp33 += tmpLeft3 * tmpRight3;</span>
+        }
+
+<span class="fc" id="L627">        product[0] = tmp00;</span>
+<span class="fc" id="L628">        product[1] = tmp10;</span>
+<span class="fc" id="L629">        product[2] = tmp20;</span>
+<span class="fc" id="L630">        product[3] = tmp30;</span>
+<span class="fc" id="L631">        product[4] = tmp01;</span>
+<span class="fc" id="L632">        product[5] = tmp11;</span>
+<span class="fc" id="L633">        product[6] = tmp21;</span>
+<span class="fc" id="L634">        product[7] = tmp31;</span>
+<span class="fc" id="L635">        product[8] = tmp02;</span>
+<span class="fc" id="L636">        product[9] = tmp12;</span>
+<span class="fc" id="L637">        product[10] = tmp22;</span>
+<span class="fc" id="L638">        product[11] = tmp32;</span>
+<span class="fc" id="L639">        product[12] = tmp03;</span>
+<span class="fc" id="L640">        product[13] = tmp13;</span>
+<span class="fc" id="L641">        product[14] = tmp23;</span>
+<span class="fc" id="L642">        product[15] = tmp33;</span>
+<span class="fc" id="L643">    }</span>
+
+    static void full_I64_5x5_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc" id="L651">        long tmp00 = 0;</span>
+<span class="fc" id="L652">        long tmp10 = 0;</span>
+<span class="fc" id="L653">        long tmp20 = 0;</span>
+<span class="fc" id="L654">        long tmp30 = 0;</span>
+<span class="fc" id="L655">        long tmp40 = 0;</span>
+<span class="fc" id="L656">        long tmp01 = 0;</span>
+<span class="fc" id="L657">        long tmp11 = 0;</span>
+<span class="fc" id="L658">        long tmp21 = 0;</span>
+<span class="fc" id="L659">        long tmp31 = 0;</span>
+<span class="fc" id="L660">        long tmp41 = 0;</span>
+<span class="fc" id="L661">        long tmp02 = 0;</span>
+<span class="fc" id="L662">        long tmp12 = 0;</span>
+<span class="fc" id="L663">        long tmp22 = 0;</span>
+<span class="fc" id="L664">        long tmp32 = 0;</span>
+<span class="fc" id="L665">        long tmp42 = 0;</span>
+<span class="fc" id="L666">        long tmp03 = 0;</span>
+<span class="fc" id="L667">        long tmp13 = 0;</span>
+<span class="fc" id="L668">        long tmp23 = 0;</span>
+<span class="fc" id="L669">        long tmp33 = 0;</span>
+<span class="fc" id="L670">        long tmp43 = 0;</span>
+<span class="fc" id="L671">        long tmp04 = 0;</span>
+<span class="fc" id="L672">        long tmp14 = 0;</span>
+<span class="fc" id="L673">        long tmp24 = 0;</span>
+<span class="fc" id="L674">        long tmp34 = 0;</span>
+<span class="fc" id="L675">        long tmp44 = 0;</span>
+
+        int tmpIndex;
+<span class="fc bfc" id="L678" title="All 2 branches covered.">        for (int c = 0; c &lt; complexity; c++) {</span>
+
+<span class="fc" id="L680">            tmpIndex = c * 5;</span>
+<span class="fc" id="L681">            long tmpLeft0 = left[tmpIndex];</span>
+<span class="fc" id="L682">            tmpIndex++;</span>
+<span class="fc" id="L683">            long tmpLeft1 = left[tmpIndex];</span>
+<span class="fc" id="L684">            tmpIndex++;</span>
+<span class="fc" id="L685">            long tmpLeft2 = left[tmpIndex];</span>
+<span class="fc" id="L686">            tmpIndex++;</span>
+<span class="fc" id="L687">            long tmpLeft3 = left[tmpIndex];</span>
+<span class="fc" id="L688">            tmpIndex++;</span>
+<span class="fc" id="L689">            long tmpLeft4 = left[tmpIndex];</span>
+<span class="fc" id="L690">            tmpIndex = c;</span>
+<span class="fc" id="L691">            long tmpRight0 = right[tmpIndex];</span>
+<span class="fc" id="L692">            tmpIndex += complexity;</span>
+<span class="fc" id="L693">            long tmpRight1 = right[tmpIndex];</span>
+<span class="fc" id="L694">            tmpIndex += complexity;</span>
+<span class="fc" id="L695">            long tmpRight2 = right[tmpIndex];</span>
+<span class="fc" id="L696">            tmpIndex += complexity;</span>
+<span class="fc" id="L697">            long tmpRight3 = right[tmpIndex];</span>
+<span class="fc" id="L698">            tmpIndex += complexity;</span>
+<span class="fc" id="L699">            long tmpRight4 = right[tmpIndex];</span>
+
+<span class="fc" id="L701">            tmp00 += tmpLeft0 * tmpRight0;</span>
+<span class="fc" id="L702">            tmp10 += tmpLeft1 * tmpRight0;</span>
+<span class="fc" id="L703">            tmp20 += tmpLeft2 * tmpRight0;</span>
+<span class="fc" id="L704">            tmp30 += tmpLeft3 * tmpRight0;</span>
+<span class="fc" id="L705">            tmp40 += tmpLeft4 * tmpRight0;</span>
+<span class="fc" id="L706">            tmp01 += tmpLeft0 * tmpRight1;</span>
+<span class="fc" id="L707">            tmp11 += tmpLeft1 * tmpRight1;</span>
+<span class="fc" id="L708">            tmp21 += tmpLeft2 * tmpRight1;</span>
+<span class="fc" id="L709">            tmp31 += tmpLeft3 * tmpRight1;</span>
+<span class="fc" id="L710">            tmp41 += tmpLeft4 * tmpRight1;</span>
+<span class="fc" id="L711">            tmp02 += tmpLeft0 * tmpRight2;</span>
+<span class="fc" id="L712">            tmp12 += tmpLeft1 * tmpRight2;</span>
+<span class="fc" id="L713">            tmp22 += tmpLeft2 * tmpRight2;</span>
+<span class="fc" id="L714">            tmp32 += tmpLeft3 * tmpRight2;</span>
+<span class="fc" id="L715">            tmp42 += tmpLeft4 * tmpRight2;</span>
+<span class="fc" id="L716">            tmp03 += tmpLeft0 * tmpRight3;</span>
+<span class="fc" id="L717">            tmp13 += tmpLeft1 * tmpRight3;</span>
+<span class="fc" id="L718">            tmp23 += tmpLeft2 * tmpRight3;</span>
+<span class="fc" id="L719">            tmp33 += tmpLeft3 * tmpRight3;</span>
+<span class="fc" id="L720">            tmp43 += tmpLeft4 * tmpRight3;</span>
+<span class="fc" id="L721">            tmp04 += tmpLeft0 * tmpRight4;</span>
+<span class="fc" id="L722">            tmp14 += tmpLeft1 * tmpRight4;</span>
+<span class="fc" id="L723">            tmp24 += tmpLeft2 * tmpRight4;</span>
+<span class="fc" id="L724">            tmp34 += tmpLeft3 * tmpRight4;</span>
+<span class="fc" id="L725">            tmp44 += tmpLeft4 * tmpRight4;</span>
+        }
+
+<span class="fc" id="L728">        product[0] = tmp00;</span>
+<span class="fc" id="L729">        product[1] = tmp10;</span>
+<span class="fc" id="L730">        product[2] = tmp20;</span>
+<span class="fc" id="L731">        product[3] = tmp30;</span>
+<span class="fc" id="L732">        product[4] = tmp40;</span>
+<span class="fc" id="L733">        product[5] = tmp01;</span>
+<span class="fc" id="L734">        product[6] = tmp11;</span>
+<span class="fc" id="L735">        product[7] = tmp21;</span>
+<span class="fc" id="L736">        product[8] = tmp31;</span>
+<span class="fc" id="L737">        product[9] = tmp41;</span>
+<span class="fc" id="L738">        product[10] = tmp02;</span>
+<span class="fc" id="L739">        product[11] = tmp12;</span>
+<span class="fc" id="L740">        product[12] = tmp22;</span>
+<span class="fc" id="L741">        product[13] = tmp32;</span>
+<span class="fc" id="L742">        product[14] = tmp42;</span>
+<span class="fc" id="L743">        product[15] = tmp03;</span>
+<span class="fc" id="L744">        product[16] = tmp13;</span>
+<span class="fc" id="L745">        product[17] = tmp23;</span>
+<span class="fc" id="L746">        product[18] = tmp33;</span>
+<span class="fc" id="L747">        product[19] = tmp43;</span>
+<span class="fc" id="L748">        product[20] = tmp04;</span>
+<span class="fc" id="L749">        product[21] = tmp14;</span>
+<span class="fc" id="L750">        product[22] = tmp24;</span>
+<span class="fc" id="L751">        product[23] = tmp34;</span>
+<span class="fc" id="L752">        product[24] = tmp44;</span>
+<span class="fc" id="L753">    }</span>
+
+    static void full_I64_6xN_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+
+<span class="fc" id="L762">        int tmpRowDim = 6;</span>
+<span class="fc" id="L763">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L765" title="All 2 branches covered.">        for (int j = 0; j &lt; tmpColDim; j++) {</span>
+
+<span class="fc" id="L767">            long tmp0J = 0;</span>
+<span class="fc" id="L768">            long tmp1J = 0;</span>
+<span class="fc" id="L769">            long tmp2J = 0;</span>
+<span class="fc" id="L770">            long tmp3J = 0;</span>
+<span class="fc" id="L771">            long tmp4J = 0;</span>
+<span class="fc" id="L772">            long tmp5J = 0;</span>
+
+<span class="fc" id="L774">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L775" title="All 2 branches covered.">            for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L776">                long tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L777">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L778">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L779">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L780">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L781">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L782">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L785">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L786">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L787">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L788">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L789">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L790">            product[++tmpIndex] = tmp5J;</span>
+        }
+<span class="fc" id="L792">    }</span>
+
+    static void full_I64_7xN_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+
+<span class="fc" id="L801">        int tmpRowDim = 7;</span>
+<span class="fc" id="L802">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L804" title="All 2 branches covered.">        for (int j = 0; j &lt; tmpColDim; j++) {</span>
+
+<span class="fc" id="L806">            long tmp0J = 0;</span>
+<span class="fc" id="L807">            long tmp1J = 0;</span>
+<span class="fc" id="L808">            long tmp2J = 0;</span>
+<span class="fc" id="L809">            long tmp3J = 0;</span>
+<span class="fc" id="L810">            long tmp4J = 0;</span>
+<span class="fc" id="L811">            long tmp5J = 0;</span>
+<span class="fc" id="L812">            long tmp6J = 0;</span>
+
+<span class="fc" id="L814">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L815" title="All 2 branches covered.">            for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L816">                long tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L817">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L818">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L819">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L820">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L821">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L822">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L823">                tmp6J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L826">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L827">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L828">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L829">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L830">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L831">            product[++tmpIndex] = tmp5J;</span>
+<span class="fc" id="L832">            product[++tmpIndex] = tmp6J;</span>
+        }
+<span class="fc" id="L834">    }</span>
+
+    static void full_I64_8xN_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+
+<span class="fc" id="L843">        int tmpRowDim = 8;</span>
+<span class="fc" id="L844">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L846" title="All 2 branches covered.">        for (int j = 0; j &lt; tmpColDim; j++) {</span>
+
+<span class="fc" id="L848">            long tmp0J = 0;</span>
+<span class="fc" id="L849">            long tmp1J = 0;</span>
+<span class="fc" id="L850">            long tmp2J = 0;</span>
+<span class="fc" id="L851">            long tmp3J = 0;</span>
+<span class="fc" id="L852">            long tmp4J = 0;</span>
+<span class="fc" id="L853">            long tmp5J = 0;</span>
+<span class="fc" id="L854">            long tmp6J = 0;</span>
+<span class="fc" id="L855">            long tmp7J = 0;</span>
+
+<span class="fc" id="L857">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L858" title="All 2 branches covered.">            for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L859">                long tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L860">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L861">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L862">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L863">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L864">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L865">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L866">                tmp6J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L867">                tmp7J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L870">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L871">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L872">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L873">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L874">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L875">            product[++tmpIndex] = tmp5J;</span>
+<span class="fc" id="L876">            product[++tmpIndex] = tmp6J;</span>
+<span class="fc" id="L877">            product[++tmpIndex] = tmp7J;</span>
+        }
+<span class="fc" id="L879">    }</span>
+
+    static void full_I64_9xN_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+
+<span class="fc" id="L888">        int tmpRowDim = 9;</span>
+<span class="fc" id="L889">        int tmpColDim = right.length / complexity;</span>
+
+<span class="fc bfc" id="L891" title="All 2 branches covered.">        for (int j = 0; j &lt; tmpColDim; j++) {</span>
+
+<span class="fc" id="L893">            long tmp0J = 0;</span>
+<span class="fc" id="L894">            long tmp1J = 0;</span>
+<span class="fc" id="L895">            long tmp2J = 0;</span>
+<span class="fc" id="L896">            long tmp3J = 0;</span>
+<span class="fc" id="L897">            long tmp4J = 0;</span>
+<span class="fc" id="L898">            long tmp5J = 0;</span>
+<span class="fc" id="L899">            long tmp6J = 0;</span>
+<span class="fc" id="L900">            long tmp7J = 0;</span>
+<span class="fc" id="L901">            long tmp8J = 0;</span>
+
+<span class="fc" id="L903">            int tmpIndex = 0;</span>
+<span class="fc bfc" id="L904" title="All 2 branches covered.">            for (int c = 0; c &lt; complexity; c++) {</span>
+<span class="fc" id="L905">                long tmpRightCJ = right[c + j * complexity];</span>
+<span class="fc" id="L906">                tmp0J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L907">                tmp1J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L908">                tmp2J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L909">                tmp3J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L910">                tmp4J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L911">                tmp5J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L912">                tmp6J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L913">                tmp7J += left[tmpIndex++] * tmpRightCJ;</span>
+<span class="fc" id="L914">                tmp8J += left[tmpIndex++] * tmpRightCJ;</span>
+            }
+
+<span class="fc" id="L917">            product[tmpIndex = j * tmpRowDim] = tmp0J;</span>
+<span class="fc" id="L918">            product[++tmpIndex] = tmp1J;</span>
+<span class="fc" id="L919">            product[++tmpIndex] = tmp2J;</span>
+<span class="fc" id="L920">            product[++tmpIndex] = tmp3J;</span>
+<span class="fc" id="L921">            product[++tmpIndex] = tmp4J;</span>
+<span class="fc" id="L922">            product[++tmpIndex] = tmp5J;</span>
+<span class="fc" id="L923">            product[++tmpIndex] = tmp6J;</span>
+<span class="fc" id="L924">            product[++tmpIndex] = tmp7J;</span>
+<span class="fc" id="L925">            product[++tmpIndex] = tmp8J;</span>
+        }
+<span class="fc" id="L927">    }</span>
+
+    static void full_I64_MxN_CM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc" id="L935">        IGEMM.partial_I64_MxN_CM(product, 0, right.length / complexity, left, complexity, right);</span>
+<span class="fc" id="L936">    }</span>
+
+    static void full_I64_MxN_RM(
+            final long[] product,
+            final long[] left,
+            final int complexity,
+            final long[] right
+    ) {
+<span class="fc" id="L944">        IGEMM.partial_I64_MxN_RM(product, 0, left.length / complexity, left, complexity, right);</span>
+<span class="fc" id="L945">    }</span>
+
+    static void full_I32_MxN_CM(
+            final int[] product,
+            final int[] left,
+            final int complexity,
+            final int[] right
+    ) {
+<span class="fc" id="L953">        IGEMM.partial_I32_MxN_CM(product, 0, right.length / complexity, left, complexity, right);</span>
+<span class="fc" id="L954">    }</span>
+
+    static void full_I32_MxN_RM(
+            final int[] product,
+            final int[] left,
+            final int complexity,
+            final int[] right
+    ) {
+<span class="fc" id="L962">        IGEMM.partial_I32_MxN_RM(product, 0, left.length / complexity, left, complexity, right);</span>
+<span class="fc" id="L963">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

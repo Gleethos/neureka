@@ -73,7 +73,7 @@ import java.util.Arrays;
     /**
      *  An instance of an implementation of the {@link NDConfiguration} interface defining
      *  the dimensionality of this {@link AbstractNda} in terms of certain index properties
-     *  which imply individual access patterns for the underlying {@link #_dataArray}.
+     *  which imply individual access patterns for the underlying {@link #_data}.
      */
     private NDConfiguration _NDConf;
     /**
@@ -83,7 +83,7 @@ import java.util.Arrays;
     /**
      *  The heart and sole of the nd-array / tensor: its underlying data array.
      */
-    private DataArray&lt;V&gt; _dataArray;
+    private Data&lt;V&gt; _data;
 
     /**
      *  This integer represents the version of the data (accessible through {@link #getData()})
@@ -126,10 +126,10 @@ import java.util.Arrays;
      @Override
 <span class="fc" id="L127">    public DataType&lt;V&gt; getDataType() { _guardGet(&quot;data type&quot;); return (DataType&lt;V&gt;) _dataType; }</span>
 
-<span class="fc" id="L129">    protected final DataArray&lt;V&gt; _getData() { _guardGet(&quot;data object&quot;); return _dataArray; }</span>
+<span class="fc" id="L129">    protected final Data&lt;V&gt; _getData() { _guardGet(&quot;data object&quot;); return _data; }</span>
 
     protected final Object _getRawData() {
-<span class="fc bfc" id="L132" title="All 2 branches covered.">        return  _getData() == null ? null : _getData().get();</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        return  _getData() == null ? null : _getData().getRef();</span>
     }
 
     /** {@inheritDoc} */
@@ -170,10 +170,10 @@ import java.util.Arrays;
      * @param array The data array managing the underlying data of this tensor/nd-array.
      *             This will be the same instance returned by {@link #_getData()}.
      */
-    protected final void _setData( DataArray array )
+    protected final void _setData( Data&lt;V&gt; array )
     {
 <span class="fc" id="L175">        _guardSet( &quot;data object&quot; );</span>
-<span class="fc bfc" id="L176" title="All 2 branches covered.">        Object data = array == null ? null : array.get();</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        Object data = array == null ? null : array.getRef();</span>
 <span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if ( _dataType == null ) {</span>
 <span class="nc" id="L178">            String message = &quot;Trying to set data in a tensor which does not have a DataTyp instance.&quot;;</span>
 <span class="nc" id="L179">            _LOG.error( message );</span>
@@ -189,18 +189,18 @@ import java.util.Arrays;
             }
         }
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-<span class="pc bpc" id="L192" title="2 of 8 branches missed.">        if ( _dataArray != null &amp;&amp; _dataArray.get() != data &amp;&amp; data != null &amp;&amp; _dataArray.get() != null ) {</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">            boolean isProbablyDeviceTransfer = ( _dataArray.get().getClass().isArray() != data.getClass().isArray() );</span>
+<span class="pc bpc" id="L192" title="2 of 8 branches missed.">        if ( _data != null &amp;&amp; _data.getRef() != data &amp;&amp; data != null &amp;&amp; _data.getRef() != null ) {</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">            boolean isProbablyDeviceTransfer = ( _data.getRef().getClass().isArray() != data.getClass().isArray() );</span>
 <span class="fc bfc" id="L194" title="All 2 branches covered.">            if ( !isProbablyDeviceTransfer)</span>
 <span class="fc" id="L195">                _version++; // Autograd must be warned!</span>
         }
-<span class="fc" id="L197">        _dataArray = array;</span>
+<span class="fc" id="L197">        _data = array;</span>
 <span class="fc" id="L198">    }</span>
 
-    protected &lt;T&gt; void _initData( Filler&lt;T&gt; filler )
+    protected &lt;T&gt; void _initDataArrayFrom( Filler&lt;T&gt; filler )
     {
 <span class="fc" id="L202">        CPU.JVMExecutor executor = CPU.get().getExecutor();</span>
-<span class="fc" id="L203">        Object data = _getData().get();</span>
+<span class="fc" id="L203">        Object data = _getData().getRef();</span>
 <span class="fc bfc" id="L204" title="All 2 branches covered.">        if ( data instanceof double[] )</span>
 <span class="fc" id="L205">            executor.threaded( ( (double[]) data ).length, ( start, end ) -&gt; {</span>
 <span class="fc bfc" id="L206" title="All 2 branches covered.">                for (int i = start; i &lt; end; i++)</span>
@@ -258,7 +258,7 @@ import java.util.Arrays;
      *
      * @param size The size of the data array which ought to be allocated.
      */
-<span class="nc" id="L261">    protected final void _allocate( int size ) { _dataArray = getDevice().allocate( this.getDataType(), size ); }</span>
+<span class="nc" id="L261">    protected final void _allocate( int size ) { _data = getDevice().allocate( this.getDataType(), size ); }</span>
 
     /**
      *  The internal implementation handling {@link #setIsVirtual(boolean)}.
@@ -285,7 +285,7 @@ import java.util.Arrays;
 <span class="fc" id="L285">                new TsrConstructor.API() {</span>
 <span class="fc" id="L286">                    @Override public void   setType( DataType&lt;?&gt; type       ) { nda.getUnsafe().setDataType( type ); }</span>
 <span class="fc" id="L287">                    @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }</span>
-<span class="fc" id="L288">                    @Override public void   setData( DataArray&lt;?&gt; o         ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }</span>
+<span class="fc" id="L288">                    @Override public void   setData( Data o                 ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }</span>
 <span class="fc" id="L289">                    @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }</span>
                 }
             );
@@ -300,7 +300,7 @@ import java.util.Arrays;
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  &lt;br&gt;
      */
-<span class="fc" id="L303">    protected final void _virtualize() { _dataArray = _dataType.virtualize(_dataArray); }</span>
+<span class="fc" id="L303">    protected final void _virtualize() { _data = _dataType.virtualize(_data); }</span>
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. &lt;br&gt;
@@ -312,7 +312,7 @@ import java.util.Arrays;
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... &lt;br&gt;
      */
-<span class="fc" id="L315">    protected final void _actualize() { _dataArray = getDevice().access(this).actualize(); }</span>
+<span class="fc" id="L315">    protected final void _actualize() { _data = getDevice().access(this).actualize(); }</span>
 
     protected Object _convertedDataOfType( Class&lt;?&gt; typeClass )
     {
@@ -339,25 +339,23 @@ import java.util.Arrays;
     }
 
     /**
-     *  This method sets the NDConfiguration of this NDArray.
-     *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
+     * This method sets the NDConfiguration of this NDArray.
+     * Therefore, it should not be used lightly as it can cause major internal inconsistencies.
      *
      * @param ndConfiguration The new NDConfiguration instance which ought to be set.
-     * @return The final instance type of this class which enables method chaining.
      */
-    protected C _setNDConf( NDConfiguration ndConfiguration )
+    protected void _setNDConf(NDConfiguration ndConfiguration )
     {
-<span class="fc" id="L350">        _guardSet( &quot;ND-Configuration&quot; );</span>
-<span class="fc bfc" id="L351" title="All 4 branches covered.">        if ( _NDConf != null &amp;&amp; ndConfiguration != null ) {</span>
-<span class="fc" id="L352">            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
-<span class="fc" id="L353">            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
-<span class="pc bpc" id="L354" title="2 of 4 branches missed.">            assert s1 == s2;</span>
+<span class="fc" id="L349">        _guardSet( &quot;ND-Configuration&quot; );</span>
+<span class="fc bfc" id="L350" title="All 4 branches covered.">        if ( _NDConf != null &amp;&amp; ndConfiguration != null ) {</span>
+<span class="fc" id="L351">            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
+<span class="fc" id="L352">            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a*b );</span>
+<span class="pc bpc" id="L353" title="2 of 4 branches missed.">            assert s1 == s2;</span>
         }
-<span class="fc" id="L356">        _NDConf = ndConfiguration;</span>
-<span class="fc" id="L357">        getDevice().access(this).updateNDConf();</span>
+<span class="fc" id="L355">        _NDConf = ndConfiguration;</span>
+<span class="fc" id="L356">        getDevice().access(this).updateNDConf();</span>
 
-<span class="fc" id="L359">        return (C) this;</span>
-    }
+<span class="fc" id="L358">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

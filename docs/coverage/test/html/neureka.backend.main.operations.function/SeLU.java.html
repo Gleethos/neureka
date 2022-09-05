@@ -22,45 +22,41 @@ public class SeLU extends AbstractActivationOperation
 
 <span class="fc" id="L23">    public SeLU() { super( &quot;selu&quot; ); }</span>
 
-    @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-<span class="nc" id="L27">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
-    }
 
     @Override protected String _activationCode() {
-<span class="fc" id="L31">        return &quot;if      ( input &gt; 0  ) output = &quot;+SCALE_F32+&quot;f * input;\n&quot; +</span>
+<span class="fc" id="L27">        return &quot;if      ( input &gt; 0  ) output = &quot;+SCALE_F32+&quot;f * input;\n&quot; +</span>
                &quot;else if ( input &lt;= 0 ) output = &quot;+SCALE_F32+&quot;f * &quot;+ALPHA_F32+&quot;f * (exp(input) - 1.0f);\n&quot; +
                &quot;else                   output = 0.0f;\n&quot;;
     }
 
     @Override protected String _derivationCode() {
-<span class="fc" id="L37">        return &quot;if      ( input &gt;  0 ) output = &quot;+SCALE_F32+&quot;f;\n&quot; +</span>
+<span class="fc" id="L33">        return &quot;if      ( input &gt;  0 ) output = &quot;+SCALE_F32+&quot;f;\n&quot; +</span>
                &quot;else if ( input &lt;= 0 ) output = &quot;+SCALE_F32+&quot;f * &quot;+ALPHA_F32+&quot;f * exp(input);\n&quot; +
                &quot;else                   output = 1.0f;\n&quot;;
     }
 
-<span class="fc" id="L42">    @Override protected double _activate(double x) { return selu(x); }</span>
+<span class="fc" id="L38">    @Override protected double _activate(double x) { return selu(x); }</span>
 
-<span class="fc" id="L44">    @Override protected float _activate(float x) { return (float) selu(x); }</span>
+<span class="fc" id="L40">    @Override protected float _activate(float x) { return (float) selu(x); }</span>
 
     @Override
     protected double _derive(double x) {
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        if      ( x &gt;  0 ) return SCALE;</span>
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        else if ( x &lt;= 0 ) return SCALE * ALPHA * Math.exp(x);</span>
-<span class="nc" id="L50">        else               return Double.NaN;</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if      ( x &gt;  0 ) return SCALE;</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        else if ( x &lt;= 0 ) return SCALE * ALPHA * Math.exp(x);</span>
+<span class="nc" id="L46">        else               return Double.NaN;</span>
     }
 
     @Override
     protected float _derive(float x) {
-<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if      ( x &gt;  0 ) return SCALE_F32;</span>
-<span class="nc bnc" id="L56" title="All 2 branches missed.">        else if ( x &lt;= 0 ) return (float) ( SCALE * ALPHA * Math.exp(x) );</span>
-<span class="nc" id="L57">        else               return Float.NaN;</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if      ( x &gt;  0 ) return SCALE_F32;</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        else if ( x &lt;= 0 ) return (float) ( SCALE * ALPHA * Math.exp(x) );</span>
+<span class="nc" id="L53">        else               return Float.NaN;</span>
     }
 
     public static double selu(double x) {
-<span class="fc bfc" id="L61" title="All 2 branches covered.">        if      ( x &gt;  0 ) return SCALE * x;</span>
-<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        else if ( x &lt;= 0 ) return SCALE * ALPHA * (Math.exp(x) - 1);</span>
-<span class="nc" id="L63">        else               return Float.NaN;</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if      ( x &gt;  0 ) return SCALE * x;</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        else if ( x &lt;= 0 ) return SCALE * ALPHA * (Math.exp(x) - 1);</span>
+<span class="nc" id="L59">        else               return Float.NaN;</span>
     }
 
 }

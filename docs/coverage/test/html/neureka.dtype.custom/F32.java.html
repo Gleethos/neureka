@@ -48,7 +48,7 @@ public final class F32 extends AbstractNumericType&lt;Float, float[], Float, flo
 
     @Override
     public float[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L51">        return new float[ 0 ];</span>
+<span class="nc" id="L51">        throw new UnsupportedOperationException(&quot;Not implemented yet!&quot;);</span>
     }
 
     @Override
@@ -61,7 +61,7 @@ public final class F32 extends AbstractNumericType&lt;Float, float[], Float, flo
 
     @Override
     public float[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L64">        return new float[0];</span>
+<span class="nc" id="L64">        throw new UnsupportedOperationException(&quot;Not implemented yet!&quot;);</span>
     }
 
     @Override
@@ -72,16 +72,16 @@ public final class F32 extends AbstractNumericType&lt;Float, float[], Float, flo
     @Override
     public Float convertToHolder( Object from )
     {
-<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if ( Byte.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L76">            return ( (Byte) from ).floatValue();</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if ( Byte.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L76">            return ( (Byte) from ).floatValue();</span>
 <span class="fc bfc" id="L77" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
 <span class="fc" id="L78">            return ( (Integer) from ).floatValue();</span>
 <span class="fc bfc" id="L79" title="All 2 branches covered.">        else if ( Double.class.equals( from.getClass() ) )</span>
 <span class="fc" id="L80">            return ( (Double) from ).floatValue();</span>
-<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        else if ( Short.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L82">            return ( (Short) from ).floatValue();</span>
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        else if ( Long.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L84">            return ( (Long) from ).floatValue();</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        else if ( Short.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L82">            return ( (Short) from ).floatValue();</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        else if ( Long.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L84">            return ( (Long) from ).floatValue();</span>
 <span class="pc bpc" id="L85" title="1 of 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
 <span class="fc" id="L86">            return ( (Float) from );</span>
         else
@@ -90,7 +90,7 @@ public final class F32 extends AbstractNumericType&lt;Float, float[], Float, flo
 
     @Override
     public float[] convertToHolderArray( Object from ) {
-<span class="nc" id="L93">        return new float[0];</span>
+<span class="nc" id="L93">        throw new UnsupportedOperationException(&quot;Not implemented yet!&quot;);</span>
     }
 
     @Override

@@ -33,14 +33,9 @@ class Tensor_Framing_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """
-                <h2> Framing Behavior </h2>
-                <br> 
-                <p>
                     This specification covers the behavior
-                    of the classes contained in the "framing" package, which 
-                    contains logic in order to set aliases for
-                    tensor indices.          
-                </p>
+                    of with respect to specifying aliases for
+                    tensor indices and then using them for slicing.     
             """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
@@ -193,8 +188,9 @@ class Tensor_Framing_Spec extends Specification
             t.contains(x)
         and: 'The String representation is as expected.'
             x.toString().contains("[1x2]:(8.0, 6.0)")
-        and: 'The tensor "x" is of course a slice:'
+        and: 'The tensor "x" is of course a (partial) slice:'
             x.isSlice()
+            x.isPartialSlice()
         and: 'The original tensor "t" is a "parent":'
             t.isSliceParent()
 
@@ -214,6 +210,7 @@ class Tensor_Framing_Spec extends Specification
             t.contains(x)
             x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")
             x.isSlice()
+            x.isPartialSlice()
             t.isSliceParent()
 
         when: 'Calling the "getAt" method manually with "ranges" as String arrays...'
@@ -223,6 +220,7 @@ class Tensor_Framing_Spec extends Specification
             t.contains(x)
             x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")
             x.isSlice()
+            x.isPartialSlice()
             t.isSliceParent()
     }
 
@@ -304,7 +302,7 @@ class Tensor_Framing_Spec extends Specification
             !x.isVirtual() // This might change if possible (technically difficult)
 
 
-        when :
+        when : 'We slice the tensor t by passing a map of start and end labels as keys and strides as values.'
             x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]]
         then :
             x in t
@@ -334,7 +332,8 @@ class Tensor_Framing_Spec extends Specification
             t.isSliceParent()
             t.sliceCount()==2
 
-        when : x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]]
+        when : 'We slice the tensor t by passing a map of start and end labels as keys and strides as values.'
+            x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]]
         then :
             x in t
             t.contains(x)
@@ -426,7 +425,7 @@ class Tensor_Framing_Spec extends Specification
                 ["tim", "tom"] // We only label 2 of 4
             ])
 
-        expect: 'When the tensor is converted to a String then the labels will be included:'
+        expect: 'When the tensor is converted to a String then the specified labels will be included:'
             t.toString({
                 it.isMultiline=true; it.isCellBound=true; it.cellSize=7;it.isLegacy=false
             }) == "(2x3x4):[\n" +

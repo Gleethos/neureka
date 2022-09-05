@@ -23,13 +23,13 @@ public class AssignLeft extends AbstractOperation
     public AssignLeft() {
 <span class="fc" id="L24">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L26">                .setIdentifier(       &quot;left_inline&quot;  )</span>
-<span class="fc" id="L27">                .setOperator(         &quot;&lt;&quot;            )</span>
-<span class="fc" id="L28">                .setArity(            -2             )</span>
-<span class="fc" id="L29">                .setIsOperator(       true           )</span>
-<span class="fc" id="L30">                .setIsIndexer(        false          )</span>
-<span class="fc" id="L31">                .setIsDifferentiable( false          )</span>
-<span class="fc" id="L32">                .setIsInline(         true           )</span>
+<span class="fc" id="L26">                .identifier(       &quot;left_inline&quot;  )</span>
+<span class="fc" id="L27">                .operator(         &quot;&lt;&quot;            )</span>
+<span class="fc" id="L28">                .arity(            -2             )</span>
+<span class="fc" id="L29">                .isOperator(       true           )</span>
+<span class="fc" id="L30">                .isIndexer(        false          )</span>
+<span class="fc" id="L31">                .isDifferentiable( false          )</span>
+<span class="fc" id="L32">                .isInline(         true           )</span>
         );
 
 <span class="fc" id="L35">        setAlgorithm(</span>
@@ -45,7 +45,7 @@ public class AssignLeft extends AbstractOperation
                }
             )
 <span class="pc" id="L47">            .setAutogradModeFor( call -&gt; AutoDiffMode.NOT_SUPPORTED)</span>
-<span class="fc" id="L48">            .setDeviceExecution( (context, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )</span>
+<span class="fc" id="L48">            .setDeviceExecution( (call, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )</span>
 <span class="fc" id="L49">            .setCallPreparation(</span>
                 call -&gt; {
 <span class="pc bpc" id="L51" title="1 of 2 branches missed.">                    int offset = ( call.input( 0 ) == null ? 1 : 0 );</span>
@@ -110,7 +110,7 @@ public class AssignLeft extends AbstractOperation
 <span class="fc" id="L110">                        .suitabilityIfValid(SuitabilityPredicate.EXCELLENT)</span>
             )
 <span class="fc" id="L112">            .setAutogradModeFor( call -&gt; AutoDiffMode.NOT_SUPPORTED)</span>
-<span class="fc" id="L113">            .setDeviceExecution( (context, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( context.call(), callback ) )</span>
+<span class="fc" id="L113">            .setDeviceExecution( (call, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )</span>
 <span class="fc" id="L114">            .setCallPreparation(</span>
                     call -&gt; {
 <span class="pc bpc" id="L116" title="1 of 2 branches missed.">                        int offset = ( call.input( 0 ) == null ? 1 : 0 );</span>
@@ -156,13 +156,8 @@ public class AssignLeft extends AbstractOperation
     }
 
     @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L160">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
-    }
-
-    @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L165">            return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L160">            return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

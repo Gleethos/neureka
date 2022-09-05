@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Data.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka</a> &gt; <span class="el_source">Data.java</span></div><h1>Data.java</h1><pre class="source lang-java linenums">package neureka;
+
+import neureka.devices.Device;
+
+/**
+ *  A wrapper type for the raw data array of a tensor/nd-array,
+ *  which is provided by implementations of the {@link Device} interface.
+ *  This is used to interface with the raw data as well as check where it comes from.
+ *
+ * @param &lt;V&gt; The type of the data array.
+ */
+public interface Data&lt;V&gt; {
+
+    /**
+     * @return The owner of this data array wrapper (the device which allocated the memory).
+     */
+    Device&lt;V&gt; owner();
+
+    /**
+     *  This returns the underlying raw data object of a nd-array or tensor.
+     *  Contrary to the {@link Nda#getItems()} ()} method, this will
+     *  return an unbiased view on the raw data of this tensor.
+     *  Be careful using this, as it exposes mutable state!
+     *
+     * @return The raw data object underlying an nd-array/tensor.
+     */
+    Object getRef();
+
+    /**
+     *  This returns the underlying raw data object of a nd-array or tensor.
+     *  Contrary to the {@link Nda#getItems()} ()} method, this will
+     *  return an unbiased view on the raw data of this tensor.
+     *  Be careful using this, as it exposes mutable state!
+     *
+     * @param dataType The type the underlying reference object is expected to have (this may be a JVM array or something device specific).
+     * @return The raw data object underlying a nd-array/tensor.
+     */
+    default &lt;D&gt; D getRef(Class&lt;D&gt; dataType) {
+<span class="fc" id="L39">        Object data = getRef();</span>
+<span class="pc bpc" id="L40" title="2 of 4 branches missed.">        if ( data != null &amp;&amp; !dataType.isAssignableFrom(data.getClass()) )</span>
+<span class="nc" id="L41">            throw new IllegalArgumentException(&quot;Provided data type '&quot;+dataType+&quot;' is not assignable from '&quot;+data.getClass()+&quot;'.&quot;);</span>
+<span class="fc" id="L42">        return (D) data;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

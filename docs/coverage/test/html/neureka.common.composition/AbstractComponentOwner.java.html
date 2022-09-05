@@ -330,13 +330,13 @@ import java.util.function.Consumer;
      * into the provided Consumer lambda.
      * If however no component was found then this lambda is being left untouched.
      *
-     * @param cc Component class of whose type the requested component is.
+     * @param componentClass Component class of whose type the requested component is.
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
     @Override
-    public &lt;T extends Component&lt;C&gt;&gt; boolean forComponent(Class&lt;T&gt; cc, Consumer&lt;T&gt; action) {
-<span class="fc" id="L339">        T component = this.get( cc );</span>
+    public &lt;T extends Component&lt;C&gt;&gt; boolean forComponent( Class&lt;T&gt; componentClass, Consumer&lt;T&gt; action ) {
+<span class="fc" id="L339">        T component = this.get( componentClass );</span>
 <span class="fc bfc" id="L340" title="All 2 branches covered.">        if ( component != null ) {</span>
 <span class="fc" id="L341">            action.accept( component );</span>
 <span class="fc" id="L342">            return true;</span>

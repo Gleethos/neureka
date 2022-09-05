@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConvUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations</a> &gt; <span class="el_source">ConvUtil.java</span></div><h1>ConvUtil.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations;
 
-import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.Convolution;
@@ -12,172 +10,109 @@ import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
-import org.jetbrains.annotations.Contract;
 
-<span class="pc bpc" id="L19" title="1 of 2 branches missed.">public class ConvUtil {</span>
-
-    /**
-     *  There will always only be a single convolution instance
-     *  shared among all 3 convolution operations.
-     */
-<span class="fc" id="L25">    private static Convolution conv = null;</span>
-
-    public static Convolution createDeconvolutionFor( String operator ) {
-<span class="fc" id="L28">        return new Convolution()</span>
-<span class="fc" id="L29">                .setAutogradModeFor( call -&gt; {</span>
-<span class="fc bfc" id="L30" title="All 2 branches covered.">                    if ( call.getOperation().supports( Convolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;</span>
-<span class="fc" id="L31">                    Tsr&lt;?&gt; last = null;</span>
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                    for ( Tsr&lt;?&gt; t : call.inputs() ) {</span>
-<span class="nc bnc" id="L33" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return AutoDiffMode.BACKWARD_ONLY;</span>
-<span class="nc" id="L34">                        last = t; // Note: shapes are cached!</span>
+<span class="nc" id="L15">public class ConvUtil</span>
+{
+    public static Convolution createDeconvolutionFor( String op ) {
+<span class="fc" id="L18">        return new Convolution()</span>
+<span class="fc" id="L19">                .setAutogradModeFor( call -&gt; {</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">                    if ( call.getOperation().supports( Convolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;</span>
+<span class="nc" id="L21">                    Tsr&lt;?&gt; last = null;</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">                    for ( Tsr&lt;?&gt; t : call.inputs() ) {</span>
+<span class="nc bnc" id="L23" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return AutoDiffMode.BACKWARD_ONLY;</span>
+<span class="nc" id="L24">                        last = t; // Note: shapes are cached!</span>
                     }
-<span class="fc" id="L36">                    return AutoDiffMode.FORWARD_AND_BACKWARD;</span>
+<span class="nc" id="L26">                    return AutoDiffMode.FORWARD_AND_BACKWARD;</span>
                 })
-<span class="fc" id="L38">                .setDeviceExecution(</span>
-                    (context, executor) -&gt;
+<span class="fc" id="L28">                .setDeviceExecution(</span>
+                    (call, executor) -&gt;
                     {
-<span class="fc" id="L41">                        ExecutionCall&lt;?&gt; call = context.initialCall();</span>
-<span class="fc" id="L42">                        Function caller = context.caller();</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">                        if ( call.getOperation().getOperator().equals(&quot;x&quot;) ) {</span>
-<span class="fc" id="L44">                            Tsr&lt;?&gt;[] tensors = new Tsr[]{null, call.input( 0 ), call.input( 1 )};</span>
-<span class="fc" id="L45">                            tensors[ 0 ] =</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">                                (call.getValOf( Arg.DerivIdx.class ) &lt; 0)</span>
-<span class="fc" id="L47">                                        ? Tsr.of(</span>
-<span class="fc" id="L48">                                                call.input(0).getItemType(),</span>
-<span class="fc" id="L49">                                                _shapeOfCon( tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape() ),</span>
-<span class="fc" id="L50">                                                0</span>
-                                        )
-<span class="fc" id="L52">                                        .getUnsafe()</span>
-<span class="fc" id="L53">                                        .setIsIntermediate( true )</span>
-<span class="fc" id="L54">                                        : null;</span>
-
-<span class="fc bfc" id="L56" title="All 4 branches covered.">                            for ( Tsr&lt;?&gt; t : tensors ) if ( t != null ) t.setIsVirtual( false );</span>
-
-<span class="fc" id="L58">                            ExecutionCall&lt;?&gt; prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );</span>
-<span class="fc" id="L59">                            return AbstractDeviceAlgorithm.executeOnCommonDevice(prepared,()-&gt;ConvUtil._executeRecursively( prepared, null/*recursion is not expected to happen here*/ ));</span>
-                        } else {
-<span class="fc" id="L61">                            Tsr&lt;?&gt;[] tensors = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();</span>
-<span class="fc" id="L62">                            Reshape.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)</span>
-<span class="fc bfc" id="L63" title="All 2 branches covered.">                            for ( Tsr&lt;?&gt; t : tensors ) t.setIsVirtual( false );</span>
-<span class="fc" id="L64">                            tensors[ 0 ] = AbstractDeviceAlgorithm.prepareAndExecuteRecursively(</span>
-<span class="fc" id="L65">                                                    ExecutionCall.of( tensors )</span>
-<span class="fc" id="L66">                                                            .andArgs( Arg.DerivIdx.of(0) )</span>
-<span class="fc" id="L67">                                                            .running( call.getOperation() )</span>
-<span class="fc" id="L68">                                                            .on( call.getDevice() ),</span>
-                                                    ConvUtil::_executeRecursively
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">                        int offset = ( call.input(0) == null ? 1 : 0 );</span>
+<span class="fc" id="L32">                        Tsr&lt;?&gt;[] tensors = new Tsr[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};</span>
+<span class="fc" id="L33">                        Reshape.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">                        for ( Tsr&lt;?&gt; t : tensors ) t.setIsVirtual( false );</span>
+<span class="fc" id="L35">                        return AbstractDeviceAlgorithm.prepareAndExecuteRecursively(</span>
+<span class="fc" id="L36">                                                ExecutionCall.of( tensors )</span>
+<span class="fc" id="L37">                                                        .andArgs( Arg.DerivIdx.of(0) )</span>
+<span class="fc" id="L38">                                                        .running( call.getOperation() )</span>
+<span class="fc" id="L39">                                                        .on( call.getDevice() ),</span>
+<span class="fc" id="L40">                                                (a, b) -&gt; ConvUtil.executeRecursively(op, a, b)</span>
                                             );
-
-<span class="fc" id="L72">                            return tensors[ 0 ];</span>
-                        }
                     },
-                    ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; adCall ) -&gt;
-                    {
-<span class="fc" id="L77">                        int d = adCall.getDerivativeIndex();</span>
-<span class="fc" id="L78">                        Function deConv = new FunctionParser( Neureka.get().backend() ).parse(</span>
-                                &quot;I[ 0 ]&quot; + operator + &quot;&gt;&gt;I[ 1 ]&quot; + operator + &quot;&gt;&gt;I[ 2 ]&quot;,
-                                false
-                        );
-<span class="fc" id="L82">                        Tsr&lt;?&gt; derivative = f.derive( (Tsr[]) adCall.inputs(), d );</span>
-<span class="pc bpc" id="L83" title="3 of 6 branches missed.">                        assert d &gt;= 0 &amp;&amp; d &lt;= 1;</span>
-<span class="pc bpc" id="L84" title="2 of 4 branches missed.">                        assert derivative != null;</span>
-<span class="pc bpc" id="L85" title="2 of 4 branches missed.">                        assert deConv != null;</span>
-<span class="pc bpc" id="L86" title="3 of 6 branches missed.">                        assert adCall.arity() &gt;= 2 &amp;&amp; adCall.arity() &lt;= 3;</span>
-                        // Now we need to remember the shape of the input which is targeted for back prop.
-<span class="fc bfc" id="L88" title="All 2 branches covered.">                        int[] shape = adCall.input( adCall.arity() &gt; 2 ? d + 1 : d ).getNDConf().shape();</span>
-                        // This is because it will be the shape of the output to the de-convolution!
-<span class="fc" id="L90">                        return ADAgent.of( derivative )</span>
-<span class="fc" id="L91">                                .withAD( target -&gt;</span>
-<span class="fc" id="L92">                                        deConv.execute(</span>
-<span class="fc" id="L93">                                                target.error(),</span>
-                                                derivative,
-<span class="fc" id="L95">                                                Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )</span>
-                                        )
-                                );
+                    ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; adCall ) -&gt; {
+<span class="nc" id="L44">                        throw new UnsupportedOperationException(&quot;Not yet implemented!&quot;);</span>
                     }
                 )
-<span class="fc" id="L100">                .setCallPreparation(</span>
+<span class="fc" id="L47">                .setCallPreparation(</span>
                      call -&gt; {
-<span class="fc" id="L102">                         Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">                         if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
-                         {
-<span class="fc" id="L105">                             int[] shp = _shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());</span>
-<span class="fc" id="L106">                             Tsr&lt;Double&gt; output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );</span>
-<span class="fc" id="L107">                             output.setIsVirtual( false );</span>
-<span class="fc" id="L108">                             device.store( output );</span>
-<span class="fc" id="L109">                             return call.withInputAt( 0, output );</span>
-                         }
-<span class="fc" id="L111">                         return call;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                         if ( call.input( 0 ) == null )</span>
+<span class="fc" id="L50">                             return call.withRemovedInputAt( 0 );</span>
+<span class="fc" id="L51">                         return call;</span>
                      }
                 )
-<span class="fc" id="L114">                .buildFunAlgorithm();</span>
+<span class="fc" id="L54">                .buildFunAlgorithm();</span>
     }
 
-    public static Convolution getConv() {
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        if ( conv == null )</span>
-<span class="fc" id="L119">            conv = createDeconvolutionFor(&quot;x&quot;);</span>
-<span class="fc" id="L120">        return ConvUtil.conv;</span>
-    }
-
-    @Contract(pure = true)
-    private static int[] _shapeOfCon( int[] shape1, int[] shape2 ) {
-<span class="fc" id="L125">        int[] shape = new int[ ( shape1.length + shape2.length ) / 2 ];</span>
-<span class="fc bfc" id="L126" title="All 4 branches covered.">        for ( int i = 0; i &lt; shape1.length &amp;&amp; i &lt; shape2.length; i++ )</span>
-<span class="fc" id="L127">            shape[ i ] = Math.abs( shape1[ i ] - shape2[ i ] ) + 1;</span>
-<span class="fc" id="L128">        return shape;</span>
+    
+    public static int[] shapeOfCon(int[] shape1, int[] shape2 ) {
+<span class="fc" id="L59">        int[] shape = new int[ ( shape1.length + shape2.length ) / 2 ];</span>
+<span class="pc bpc" id="L60" title="1 of 4 branches missed.">        for ( int i = 0; i &lt; shape1.length &amp;&amp; i &lt; shape2.length; i++ )</span>
+<span class="fc" id="L61">            shape[ i ] = Math.abs( shape1[ i ] - shape2[ i ] ) + 1;</span>
+<span class="fc" id="L62">        return shape;</span>
     }
 
 
-    @Contract( pure = true )
-    private static Tsr&lt;?&gt; _executeRecursively(
+    
+    public static Tsr&lt;?&gt; executeRecursively(
+            String op,
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-<span class="fc" id="L137">        call = call.withInputs(call.inputs().clone()); // Let's make sure we don't have any side effects!</span>
-<span class="fc" id="L138">        Device&lt;?&gt; device = call.getDevice();</span>
-<span class="fc" id="L139">        int d = call.getValOf( Arg.DerivIdx.class );</span>
-<span class="fc" id="L140">        Operation operation = call.getOperation();</span>
+<span class="fc" id="L72">        call = call.withInputs(call.inputs().clone()); // Let's make sure we don't have any side effects!</span>
+<span class="fc" id="L73">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L74">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L75">        Operation operation = call.getOperation();</span>
 
-<span class="fc" id="L142">        Tsr&lt;?&gt; result = null;</span>
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        if ( call.arity() &gt; 3 ) {</span>
-<span class="nc bnc" id="L144" title="All 2 branches missed.">            if ( d &lt; 0 ) {</span>
-<span class="nc" id="L145">                Tsr&lt;?&gt;[] reduction = new Tsr[]{ call.input( 0 ), call.input( 1 ), call.input( 2 ) };</span>
-<span class="nc" id="L146">                result = recursiveExecutor.execute(</span>
-<span class="nc" id="L147">                        ExecutionCall.of( reduction )</span>
-<span class="nc" id="L148">                                .andArgs( Arg.DerivIdx.of(d) )</span>
-<span class="nc" id="L149">                                .running( operation )</span>
-<span class="nc" id="L150">                                .on(device)</span>
+<span class="fc" id="L77">        Tsr&lt;?&gt; result = null;</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if ( call.arity() &gt; 3 ) {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if ( d &lt; 0 ) {</span>
+<span class="nc" id="L80">                Tsr&lt;?&gt;[] reduction = new Tsr[]{ call.input( 0 ), call.input( 1 ), call.input( 2 ) };</span>
+<span class="nc" id="L81">                result = recursiveExecutor.execute(</span>
+<span class="nc" id="L82">                        ExecutionCall.of( reduction )</span>
+<span class="nc" id="L83">                                .andArgs( Arg.DerivIdx.of(d) )</span>
+<span class="nc" id="L84">                                .running( operation )</span>
+<span class="nc" id="L85">                                .on(device)</span>
                 );
-<span class="nc" id="L152">                call = call.withInputAt( 0, result );</span>
+<span class="nc" id="L87">                call = call.withInputAt( 0, result );</span>
 
-<span class="nc" id="L154">                reduction = Operation.Utility.offsetted(call.inputs(), 1);</span>
-<span class="nc" id="L155">                result = recursiveExecutor.execute(</span>
-<span class="nc" id="L156">                        ExecutionCall.of( reduction )</span>
-<span class="nc" id="L157">                                .andArgs(Arg.DerivIdx.of(d))</span>
-<span class="nc" id="L158">                                .running(operation)</span>
-<span class="nc" id="L159">                                .on(device)</span>
+<span class="nc" id="L89">                reduction = Operation.Utility.offsetted(call.inputs(), 1);</span>
+<span class="nc" id="L90">                result = recursiveExecutor.execute(</span>
+<span class="nc" id="L91">                        ExecutionCall.of( reduction )</span>
+<span class="nc" id="L92">                                .andArgs(Arg.DerivIdx.of(d))</span>
+<span class="nc" id="L93">                                .running(operation)</span>
+<span class="nc" id="L94">                                .on(device)</span>
                 );
-<span class="nc" id="L161">                call = call.withInputAt( 0, result );</span>
+<span class="nc" id="L96">                call = call.withInputAt( 0, result );</span>
             }
-<span class="nc bnc" id="L163" title="All 2 branches missed.">            if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );</span>
-<span class="nc" id="L164">            return result;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );</span>
+<span class="nc" id="L99">            return result;</span>
         } else {
-<span class="fc bfc" id="L166" title="All 2 branches covered.">            if ( call.getOperation().getOperator().equals(&quot;x&quot;) ) {</span>
-<span class="fc bfc" id="L167" title="All 2 branches covered.">                if ( d &gt;= 0 ) {</span>
-<span class="fc bfc" id="L168" title="All 2 branches covered.">                    if ( d == 0 )</span>
-<span class="fc" id="L169">                        call = call.withInputAt( 0, call.input( 2 ) );</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if ( op.equals(&quot;x&quot;) ) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                if ( d &gt;= 0 ) {</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                    if ( d == 0 )</span>
+<span class="fc" id="L104">                        call = call.withInputAt( 0, call.input( 2 ) );</span>
                     else
-<span class="fc" id="L171">                        call = call.withInputAt( 0, call.input( 1 ) );</span>
-<span class="fc" id="L172">                    return</span>
-<span class="fc" id="L173">                        call.input( 0 );</span>
+<span class="fc" id="L106">                        call = call.withInputAt( 0, call.input( 1 ) );</span>
+<span class="fc" id="L107">                    return</span>
+<span class="fc" id="L108">                        call.input( 0 );</span>
                 } else {
-<span class="fc" id="L175">                    call.rearrangeInputs( 0, 1, 2 );</span>
+<span class="fc" id="L110">                    call.rearrangeInputs( 0, 1, 2 );</span>
                 }
-<span class="fc bfc" id="L177" title="All 2 branches covered.">            } else if ( call.getOperation().getOperator().equals(&quot;x&quot;+ ((char) 187)) ) {</span>
-<span class="fc" id="L178">                call.rearrangeInputs( 2, 1, 0 );</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">            } else if ( op.equals(&quot;x&quot;+ ((char) 187)) ) {</span>
+<span class="fc" id="L113">                call.rearrangeInputs( 2, 1, 0 );</span>
             }
-<span class="fc" id="L180">            return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );</span>
+<span class="fc" id="L115">            return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );</span>
         }
     }
 

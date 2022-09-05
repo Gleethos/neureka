@@ -10,18 +10,13 @@ public final class Softplus extends AbstractActivationOperation
 {
 <span class="fc" id="L11">    public Softplus() { super( &quot;softplus&quot; ); }</span>
 
-    @Override
-    public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L15">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
-    }
+<span class="fc" id="L13">    @Override protected String _activationCode() { return &quot;output = log( 1.0f + exp( input ) );&quot;; }</span>
 
-<span class="fc" id="L18">    @Override protected String _activationCode() { return &quot;output = log( 1.0f + exp( input ) );&quot;; }</span>
+<span class="fc" id="L15">    @Override protected String _derivationCode() { return &quot;output = 1.0f / ( 1.0f + exp( -input ) );\n&quot;; }</span>
 
-<span class="fc" id="L20">    @Override protected String _derivationCode() { return &quot;output = 1.0f / ( 1.0f + exp( -input ) );\n&quot;; }</span>
+<span class="fc" id="L17">    @Override protected double _activate(double x) { return Math.log( 1d + Math.exp( x ) ); }</span>
 
-<span class="fc" id="L22">    @Override protected double _activate(double x) { return Math.log( 1d + Math.exp( x ) ); }</span>
-
-<span class="fc" id="L24">    @Override protected double _derive(double x) { return 1d / ( 1d + Math.exp( -x ) ); }</span>
+<span class="fc" id="L19">    @Override protected double _derive(double x) { return 1d / ( 1d + Math.exp( -x ) ); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

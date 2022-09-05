@@ -49,52 +49,54 @@ public final class I8 extends AbstractNumericType&lt;Byte, byte[], Byte, byte[]&
 
     @Override
     public &lt;T&gt; byte[] readAndConvertForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
-<span class="nc" id="L52">        return new byte[0];</span>
+<span class="fc" id="L52">        byte[] data = new byte[size];</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) data[ i ] = convertToHolder( iterator.next() );</span>
+<span class="fc" id="L54">        return data;</span>
     }
 
     @Override
     public byte[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L57">        byte[] bytes = new byte[size];</span>
-<span class="nc" id="L58">        stream.readFully(bytes, size, size);</span>
-<span class="nc" id="L59">        return bytes;</span>
+<span class="nc" id="L59">        byte[] bytes = new byte[size];</span>
+<span class="nc" id="L60">        stream.readFully(bytes, size, size);</span>
+<span class="nc" id="L61">        return bytes;</span>
     }
 
     @Override
     public &lt;T&gt; byte[] readForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
-<span class="nc" id="L64">        return new byte[0];</span>
+<span class="fc" id="L66">        return readAndConvertForeignDataFrom( iterator, size );</span>
     }
 
     @Override
     public Byte convertToHolder( Object from ) {
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        if ( Byte.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L70">            return ( (Byte) from );</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L72">            return ( (Integer) from ).byteValue();</span>
-<span class="fc bfc" id="L73" title="All 2 branches covered.">        else if ( Double.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L74">            return ( (Double) from ).byteValue();</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">        else if ( Short.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L76">            return ( (Short) from ).byteValue();</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">        else if ( Long.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L78">            return ( (Long) from ).byteValue();</span>
-<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L80">            return ( (Float) from ).byteValue();</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if ( Byte.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L72">            return ( (Byte) from );</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L74">            return ( (Integer) from ).byteValue();</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        else if ( Double.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L76">            return ( (Double) from ).byteValue();</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        else if ( Short.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L78">            return ( (Short) from ).byteValue();</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        else if ( Long.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L80">            return ( (Long) from ).byteValue();</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L82">            return ( (Float) from ).byteValue();</span>
         else
-<span class="nc" id="L82">            return null;</span>
+<span class="nc" id="L84">            return null;</span>
     }
 
     @Override
     public byte[] convertToHolderArray( Object from ) {
-<span class="nc" id="L87">        return new byte[0];</span>
+<span class="nc" id="L89">        throw new UnsupportedOperationException(&quot;Not implemented yet!&quot;);</span>
     }
 
     @Override
     public Byte convertToTarget( Object from ) {
-<span class="nc" id="L92">        return convertToHolder( from );</span>
+<span class="nc" id="L94">        return convertToHolder( from );</span>
     }
 
     @Override
     public byte[] convertToTargetArray( Object from ) {
-<span class="fc" id="L97">        return DataConverter.get().convert( from, byte[].class );</span>
+<span class="fc" id="L99">        return DataConverter.get().convert( from, byte[].class );</span>
     }
 
 

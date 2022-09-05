@@ -177,18 +177,18 @@ compileTestKotlin {
 
 
 test {
-    //filter { includeTestsMatching "*" } // Filter for tests scenarios!
+    //filter { includeTestsMatching "*" } // Here you can specify a filter for the tests.
 
     // Spock-Reports configuration can be found in the test resources: src/test/resources/SpockConfig.Groovy
 
-    useJUnitPlatform() // ...otherwise tests will not be received by gradle...
+    useJUnitPlatform() // ...otherwise spock tests will not be received by gradle...
 
     // Memory :
     minHeapSize = "1g"
     maxHeapSize = "5g"
 
     // Number of threads used for testing :
-    maxParallelForks = (int) Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
+    maxParallelForks = Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
 }
 
 

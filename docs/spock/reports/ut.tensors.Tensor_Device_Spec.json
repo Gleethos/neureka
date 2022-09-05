@@ -58,7 +58,7 @@
     {
       "id":"The device of a tensor can be accessed via the \"device()\" method.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

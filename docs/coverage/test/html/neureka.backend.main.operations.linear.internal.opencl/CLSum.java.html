@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLSum.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear.internal.opencl</a> &gt; <span class="el_source">CLSum.java</span></div><h1>CLSum.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.linear.internal.opencl;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
+import neureka.devices.opencl.KernelCaller;
+import neureka.devices.opencl.OpenCLDevice;
+
+import java.util.function.Supplier;
+
+<span class="fc" id="L11">public class CLSum implements ImplementationFor&lt;OpenCLDevice&gt;</span>
+{
+    @Override
+    public Tsr&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
+<span class="fc" id="L15">        return _partialSum(call.input(Float.class, 0), call.getDevice());</span>
+    }
+
+    /**
+     *  This method compiles and executes the kernel that will return the sum of the
+     *  elements in the {@code in} tensor.
+     */
+    private static Tsr&lt;Float&gt; _partialSum(
+        Tsr&lt;Float&gt; in, OpenCLDevice device
+    ) {
+<span class="fc" id="L25">        final long RTS = device.maxWorkGroupSize(); // Register tile size</span>
+<span class="fc" id="L26">        final int SIZE = in.size();</span>
+<span class="fc" id="L27">        long localSize = device.maxWorkGroupSize();</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        while (SIZE % localSize != 0) { localSize--; } // We want to have a multiple of the max workgroup size + as large as possible</span>
+<span class="fc" id="L29">        final int N = (int) (SIZE / localSize); // The number of partial sums</span>
+
+<span class="fc" id="L31">        long[] local  = new long[]{ localSize };</span>
+<span class="fc" id="L32">        long[] global = new long[]{(long) SIZE };</span>
+
+        Tsr&lt;Float&gt; out;
+
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if ( localSize == 1 ) { // Oh, the user wants to process a prime number of elements... sigh! Ok let's do it (slower)!</span>
+<span class="nc" id="L37">            double fraction = (double) SIZE / (double) RTS;</span>
+            final int newN;
+            // Determining optimal number of tiles!
+            // Check if fraction is an integer
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            if ( fraction == Math.floor(fraction) )</span>
+<span class="nc" id="L42">                newN = (int) fraction;</span>
+            else
+<span class="nc" id="L44">                newN = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)</span>
+
+<span class="nc" id="L46">            out = Tsr.of(Float.class, new int[]{newN}, 0).to(device).setIsVirtual(false);</span>
+<span class="nc" id="L47">            KernelCaller caller = _processPrivate(RTS, device);</span>
+<span class="nc" id="L48">            caller.pass(SIZE).pass(in).pass(out).call(global, local);</span>
+<span class="nc" id="L49">        }</span>
+        else
+        {
+<span class="fc" id="L52">            out = Tsr.of(Float.class, new int[]{N}, 0).to(device).setIsVirtual(false);</span>
+<span class="fc" id="L53">            KernelCaller caller = _processLocal(device);</span>
+<span class="fc" id="L54">            caller.pass(in).pass(out).passLocalFloats((int) localSize).call(global, local);</span>
+        }
+
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if ( N &gt; 1 ) {</span>
+<span class="fc" id="L58">            Tsr&lt;Float&gt; reduced = _partialSum(out, device);</span>
+<span class="fc" id="L59">            out.getUnsafe().delete();</span>
+<span class="fc" id="L60">            return reduced;</span>
+        }
+<span class="fc" id="L62">        return out;</span>
+    }
+
+    private static KernelCaller _processPrivate( long RTS, OpenCLDevice device )
+    {
+<span class="nc" id="L67">        String kernelName = &quot;fast_private_sum_reduction_RTS&quot;+RTS;</span>
+<span class="nc" id="L68">        Supplier&lt;String&gt; code = () -&gt;</span>
+<span class="nc" id="L69">                        &quot;   #define RTS &quot;+RTS+&quot;                                                                    \n&quot; +</span>
+                        &quot;   __kernel void &quot;+kernelName+&quot;(                                                          \n&quot; +
+                        &quot;               const int size,                                                            \n&quot; +
+                        &quot;               const __global float* in,                                                  \n&quot; +
+                        &quot;                     __global float* out                                                  \n&quot; +
+                        &quot;   ) {                                                                                    \n&quot; +
+                        &quot;       size_t ni = get_global_id(0); //   global N-tile id                                \n&quot; +
+                        &quot;                                                                                          \n&quot; +
+                        &quot;       int offset = ni * RTS;                                                             \n&quot; +
+                        &quot;       int limit = min( offset + RTS, size ); // Boundary condition!                      \n&quot; +
+                        &quot;       float value = in[offset];                                                          \n&quot; +
+                        &quot;       offset++;                                                                          \n&quot; +
+                        &quot;                                                                                          \n&quot; +
+                        &quot;       #pragma unroll                                                                     \n&quot; +
+                        &quot;       for ( uint i=offset; i &lt; limit; ++i )                                              \n&quot; +
+                        &quot;           value += in[i];                                                                \n&quot; +
+                        &quot;                                                                                          \n&quot; +
+                        &quot;       out[ni] = value;                                                                   \n&quot; +
+                        &quot;   }                                                                                      \n&quot;;
+<span class="nc" id="L88">        return</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            device.hasAdHocKernel(kernelName)</span>
+<span class="nc" id="L90">                    ? device.getAdHocKernel(kernelName)</span>
+<span class="nc" id="L91">                    : device.compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);</span>
+    }
+
+    private static KernelCaller _processLocal(
+            OpenCLDevice device
+    ) {
+<span class="fc" id="L97">        String kernelName = &quot;fast_local_mem_based_sum&quot;;</span>
+<span class="fc" id="L98">        Supplier&lt;String&gt; code = () -&gt;</span>
+<span class="fc" id="L99">                &quot;                                                                                                  \n&quot; +</span>
+                &quot;    int div(int i) { return i % 2 == 1 ? (i+1) / 2 : i / 2;  }                                    \n&quot; +
+                &quot;                                                                                                  \n&quot; +
+                &quot;    __kernel void &quot;+kernelName+&quot; (                                                                \n&quot; +
+                &quot;       __global const float *input,                                                               \n&quot; +
+                &quot;       __global float *partialSums,                                                               \n&quot; +
+                &quot;       __local float *localSums                                                                   \n&quot; +
+                &quot;    ){                                                                                            \n&quot; +
+                &quot;        uint local_id = get_local_id(0);                                                          \n&quot; +
+                &quot;        uint group_size = get_local_size(0);                                                      \n&quot; +
+                &quot;                                                                                                  \n&quot; +
+                &quot;        // Copy from global to local memory                                                       \n&quot; +
+                &quot;        localSums[local_id] = input[get_global_id(0)];                                            \n&quot; +
+                &quot;                                                                                                  \n&quot; +
+                &quot;        // Loop for computing localSums : divide WorkGroup into 2 parts                           \n&quot; +
+                &quot;        uint last = group_size;                                                                   \n&quot; +
+                &quot;        for (uint stride = div(group_size); stride &gt; 0 &amp;&amp; last &gt; stride; stride=div(stride))      \n&quot; +
+                &quot;        {                                                                                         \n&quot; +
+                &quot;             // Waiting for each 2x2 addition into given workgroup                                \n&quot; +
+                &quot;             barrier(CLK_LOCAL_MEM_FENCE);                                                        \n&quot; +
+                &quot;                                                                                                  \n&quot; +
+                &quot;             // Add elements 2 by 2 between local_id and local_id + stride                        \n&quot; +
+                &quot;             uint right_id = local_id + stride; // We copy from the right part.                   \n&quot; +
+                &quot;             if (local_id &lt; stride &amp;&amp; right_id &lt; last )                                           \n&quot; +
+                &quot;                 localSums[local_id] += localSums[local_id + stride];                             \n&quot; +
+                &quot;             last = stride;                                                                       \n&quot; +
+                &quot;        }                                                                                         \n&quot; +
+                &quot;                                                                                                  \n&quot; +
+                &quot;        // Write result into partialSums[nWorkGroups]                                             \n&quot; +
+                &quot;        if (local_id == 0)                                                                        \n&quot; +
+                &quot;            partialSums[get_group_id(0)] = localSums[0];                                          \n&quot; +
+                &quot;    }                                                                                             \n&quot;;
+
+<span class="fc" id="L132">        return</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">                device.hasAdHocKernel(kernelName)</span>
+<span class="fc" id="L134">                        ? device.getAdHocKernel(kernelName)</span>
+<span class="fc" id="L135">                        : device.compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

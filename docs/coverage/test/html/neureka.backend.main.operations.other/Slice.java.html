@@ -23,13 +23,13 @@ public class Slice extends AbstractOperation
     {
 <span class="fc" id="L24">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L26">                .setIdentifier(       &quot;slice&quot;     )</span>
-<span class="fc" id="L27">                .setOperator(         &quot;slice&quot;     )</span>
-<span class="fc" id="L28">                .setArity(            1           )</span>
-<span class="fc" id="L29">                .setIsOperator(       false       )</span>
-<span class="fc" id="L30">                .setIsIndexer(        false       )</span>
-<span class="fc" id="L31">                .setIsDifferentiable( true        )</span>
-<span class="fc" id="L32">                .setIsInline(         false       )</span>
+<span class="fc" id="L26">                .identifier(       &quot;slice&quot;     )</span>
+<span class="fc" id="L27">                .operator(         &quot;slice&quot;     )</span>
+<span class="fc" id="L28">                .arity(            1           )</span>
+<span class="fc" id="L29">                .isOperator(       false       )</span>
+<span class="fc" id="L30">                .isIndexer(        false       )</span>
+<span class="fc" id="L31">                .isDifferentiable( true        )</span>
+<span class="fc" id="L32">                .isInline(         false       )</span>
         );
 <span class="fc" id="L34">        setAlgorithm(</span>
 <span class="fc" id="L35">            Algorithm.withName(&quot;slice&quot;)</span>
@@ -142,7 +142,7 @@ public class Slice extends AbstractOperation
 <span class="fc" id="L142">                        Tsr.of(</span>
 <span class="fc" id="L143">                            input.getDataType(),</span>
 <span class="fc" id="L144">                            NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),</span>
-<span class="fc" id="L145">                            input.getUnsafe().getDataArray()</span>
+<span class="fc" id="L145">                            input.getUnsafe().getData()</span>
                         );
 
 <span class="fc" id="L148">        subset.set( new Relation().addParent( input ) );</span>
@@ -161,21 +161,7 @@ public class Slice extends AbstractOperation
     }
 
     @Override
-    public String stringify( String[] children ) {
-<span class="fc" id="L165">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L166" title="3 of 4 branches missed.">        if ( expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')' ) {</span>
-<span class="nc" id="L167">            return &quot;slice&quot; + expression;</span>
-        }
-<span class="fc" id="L169">        return &quot;slice&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
-    }
-
-    @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-<span class="nc" id="L174">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
-    }
-
-    @Override
-<span class="nc" id="L178">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
+<span class="nc" id="L164">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

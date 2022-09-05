@@ -36,7 +36,6 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.DataArray;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.BackendContext;
@@ -78,7 +77,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static Optional&lt;Device&lt;Object&gt;&gt; find( String... searchKeys ) {
-<span class="fc" id="L81">        return Optional.ofNullable( Query.query( Device.class, searchKeys ) );</span>
+<span class="fc" id="L80">        return Optional.ofNullable( Query.query( Device.class, searchKeys ) );</span>
     }
 
     /**
@@ -92,7 +91,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static &lt;T, D extends Device&lt;T&gt;&gt; Optional&lt;D&gt; find( Class&lt;D&gt; deviceType, String... searchKeys ) {
-<span class="fc" id="L95">        return Optional.ofNullable( Query.query( deviceType, searchKeys ) );</span>
+<span class="fc" id="L94">        return Optional.ofNullable( Query.query( deviceType, searchKeys ) );</span>
     }
 
     /**
@@ -104,8 +103,8 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static Device&lt;Object&gt; any( String... searchKeys ) {
-<span class="fc" id="L107">        Device&lt;Object&gt; found = get( Device.class, searchKeys );</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">        return ( found == null ? CPU.get() : found );</span>
+<span class="fc" id="L106">        Device&lt;Object&gt; found = get( Device.class, searchKeys );</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        return ( found == null ? CPU.get() : found );</span>
     }
 
     /**
@@ -117,8 +116,8 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return The found {@link Device} instance or simply {@code null} by default.
      */
     static Device&lt;Object&gt; get( String... searchKeys ) {
-<span class="fc" id="L120">        LogUtil.nullArgCheck( searchKeys, &quot;searchKeys&quot;, String.class );</span>
-<span class="fc" id="L121">        return get( Device.class, searchKeys );</span>
+<span class="fc" id="L119">        LogUtil.nullArgCheck( searchKeys, &quot;searchKeys&quot;, String.class );</span>
+<span class="fc" id="L120">        return get( Device.class, searchKeys );</span>
     }
 
     /**
@@ -132,8 +131,9 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * @return The found {@link Device} instance or null if nothing was found which matches the provided search hints well enough.
      */
     static &lt;T, D extends Device&lt;T&gt;&gt; D get( Class&lt;D&gt; deviceType, String... searchKeys ) {
-<span class="fc" id="L135">        LogUtil.nullArgCheck( deviceType, &quot;deviceType&quot;, Class.class );</span>
-<span class="fc" id="L136">        LogUtil.nullArgCheck( searchKeys, &quot;searchKeys&quot;, String.class );</span>
+<span class="fc" id="L134">        LogUtil.nullArgCheck( deviceType, &quot;deviceType&quot;, Class.class );</span>
+<span class="fc" id="L135">        LogUtil.nullArgCheck( searchKeys, &quot;searchKeys&quot;, String.class );</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        if ( searchKeys.length == 0 ) searchKeys = new String[] { &quot;first&quot; };</span>
 <span class="fc" id="L137">        return Query.query( deviceType, searchKeys );</span>
     }
 
@@ -189,11 +189,11 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      */
     Collection&lt;Tsr&lt;V&gt;&gt; getTensors();
 
-    DataArray allocate( DataType&lt;?&gt; dataType, int size );
+    neureka.Data allocate(DataType&lt;?&gt; dataType, int size );
 
-    &lt;V&gt; DataArray allocate(DataType&lt;V&gt; dataType, int size, V initialValue );
+    &lt;V&gt; neureka.Data allocate(DataType&lt;V&gt; dataType, int size, V initialValue );
 
-    DataArray allocate( Object jvmData, int desiredSize );
+    neureka.Data allocate(Object jvmData, int desiredSize );
 
     /**
      *  This method tries to allow this device to produce an optimized {@link Operation}
@@ -367,7 +367,7 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
          */
         void updateNDConf();
 
-        DataArray actualize();
+        neureka.Data actualize();
     }
 
     /**

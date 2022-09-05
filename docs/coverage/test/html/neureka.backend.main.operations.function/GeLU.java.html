@@ -16,38 +16,33 @@ public class GeLU extends AbstractActivationOperation
 
 <span class="fc" id="L17">    public GeLU() { super( &quot;gelu&quot; ); }</span>
 
-    @Override
-    public String asDerivative(Function[] children, int derivationIndex) {
-<span class="nc" id="L21">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
-    }
-
-<span class="fc" id="L24">    @Override protected String _activationCode() { return &quot;output = input / ( 1 + (float) exp(-input * 1.702) );\n&quot;; }</span>
+<span class="fc" id="L19">    @Override protected String _activationCode() { return &quot;output = input / ( 1 + (float) exp(-input * 1.702) );\n&quot;; }</span>
 
     @Override protected String _derivationCode() {
-<span class="fc" id="L27">        return &quot;float sig = 1.0f / ( 1.0f + exp( -input * 1.702f ) );&quot; +</span>
+<span class="fc" id="L22">        return &quot;float sig = 1.0f / ( 1.0f + exp( -input * 1.702f ) );&quot; +</span>
                &quot;float ds = sig * ( 1.0f - sig );&quot; +
                &quot;output = sig + ds * input * 1.702;\n&quot;;
     }
 
-<span class="fc" id="L32">    @Override protected double _activate(double x) { return gelu(x); }</span>
+<span class="fc" id="L27">    @Override protected double _activate(double x) { return gelu(x); }</span>
 
-<span class="fc" id="L34">    @Override protected float _activate(float x) { return (float) gelu(x); }</span>
+<span class="fc" id="L29">    @Override protected float _activate(float x) { return (float) gelu(x); }</span>
 
     @Override
     protected double _derive(double x) {
-<span class="fc" id="L38">        double sig = Sigmoid.sig(x * MOD_F64);</span>
-<span class="fc" id="L39">        double ds = sig * ( 1d - sig );</span>
-<span class="fc" id="L40">        return sig + ds * x * MOD_F64;</span>
+<span class="fc" id="L33">        double sig = Sigmoid.sig(x * MOD_F64);</span>
+<span class="fc" id="L34">        double ds = sig * ( 1d - sig );</span>
+<span class="fc" id="L35">        return sig + ds * x * MOD_F64;</span>
     }
 
     @Override
     protected float _derive(float x) {
-<span class="fc" id="L45">        float sig = (float) Sigmoid.sig(x * MOD_F64);</span>
-<span class="fc" id="L46">        float ds = sig * ( 1f - sig );</span>
-<span class="fc" id="L47">        return sig + ds * x * MOD_F32;</span>
+<span class="fc" id="L40">        float sig = (float) Sigmoid.sig(x * MOD_F64);</span>
+<span class="fc" id="L41">        float ds = sig * ( 1f - sig );</span>
+<span class="fc" id="L42">        return sig + ds * x * MOD_F32;</span>
     }
 
-<span class="fc" id="L50">    public static double gelu(double x) { return x * Sigmoid.sig(x * 1.702); }</span>
+<span class="fc" id="L45">    public static double gelu(double x) { return x * Sigmoid.sig(x * 1.702); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
