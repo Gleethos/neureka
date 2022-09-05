@@ -427,16 +427,16 @@ public class GEMM {
             final int rowCount,
             final double[] right
     ) {//...
-        int colCount = product.length;
-        for ( int ci = 0; ci < colCount; ci++ ) {
+        int rightColCount = right.length / rowCount;
+        for ( int ci = 0; ci < rowCount; ci++ ) {
             AXPY.invoke(
                     product,
                     0,
                     left[ci],
                     right,
-                    ci * rowCount,
+                    ci * rightColCount,
                     0,
-                    rowCount
+                    rightColCount
             );
         }
     }
@@ -459,26 +459,26 @@ public class GEMM {
             final int rowCount,
             final float[] right
     ) {//...
-        int colCount = product.length;
-        for (int ci = 0; ci < colCount; ci++) {
+        int rightColCount = right.length / rowCount;
+        for ( int ci = 0; ci < rowCount; ci++ ) {
             AXPY.invoke(
-                    product,
-                    0,
-                    left[ci],
-                    right,
-                    ci * rowCount,
-                    0,
-                    rowCount
+                product,
+                0,
+                left[ci],
+                right,
+                ci * rightColCount,
+                0,
+                rightColCount
             );
         }
     }
 
 
     static void full_F64_2x2_CM(
-            final double[] product,
-            final double[] left,
-            final int complexity,
-            final double[] right
+        final double[] product,
+        final double[] left,
+        final int complexity,
+        final double[] right
     ) {
         double tmp00 = 0.0;
         double tmp10 = 0.0;

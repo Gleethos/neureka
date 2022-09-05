@@ -2,9 +2,7 @@ package ut.autograd.internal
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.TsrImpl
 import neureka.autograd.GraphNode
-import org.slf4j.Logger
 import spock.lang.Shared
 import spock.lang.Specification
 

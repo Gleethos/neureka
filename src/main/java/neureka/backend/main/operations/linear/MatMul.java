@@ -178,6 +178,8 @@ public class MatMul extends AbstractOperation
                     !_isSimpleRowMajorMatrix( call.input( i ) )
                             &&
                     !_isSimpleColumnMajorMatrix( call.input( i ) )
+                            ||
+                    (call.input( i ).isSlice() && !call.input( i ).isView())
             ) {
                 _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
                 call = call.withInputAt( i, call.input( i ).deepCopy().getUnsafe().setIsIntermediate( true ) );

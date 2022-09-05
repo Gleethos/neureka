@@ -982,6 +982,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return ( child != null && child.hasParent() );
     }
 
+    default boolean isView() {
+        Relation<V> child = get( Relation.class );
+        boolean isSlice = child != null && child.hasParent();
+        if ( isSlice ) {
+            Tsr<V> parent = child.getParent();
+            return parent != null && parent.size() == this.size();
+        }
+        return false;
+    }
+
+
     /** {@inheritDoc} */
     @Override
     default int sliceCount() {
@@ -1099,6 +1110,8 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                         "Trying to attach a tensor as gradient component to a tensor with different shape."
                 );
             }
+            // If a tensor becomes a gradient, we need to make sure that it does not get deleted.
+            this.getUnsafe().setIsIntermediate( false ); // So we mark it as non-intermediate.
         }
         changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         // If the change request type is set to "REPLACED" then
@@ -1279,22 +1292,22 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         remove( JITProp.class );
         // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class as key).
         forComponent(
-                Tsr.class,
-                g -> {
-                    // If an optimizer is present then we also optimize the gradient first!
-                    if ( this.has( Optimizer.class ) )
-                        g = this.get(Optimizer.class).optimize( this );
-                    // And then we remove the gradient because it is no longer needed.
-                    remove( Tsr.class );
-                    // We are now ready to apply the gradient to the tensor. This is an inline operation!
-                    // Therefore, we need to turn off the inline operation safety net:
-                    boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();
-                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );
-                    // INLINE OPERATION :
-                    Neureka.get().backend().getFunction().plusAssign().call( this, g ); //-> Finally applying the gradient!
-                    // INLINE END ! -> We can now revert to the previous setting:
-                    if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );
-                }
+            Tsr.class,
+            g -> {
+                // If an optimizer is present then we also optimize the gradient first!
+                if ( this.has( Optimizer.class ) )
+                    g = this.get(Optimizer.class).optimize( this );
+                // And then we remove the gradient because it is no longer needed.
+                remove( Tsr.class );
+                // We are now ready to apply the gradient to the tensor. This is an inline operation!
+                // Therefore, we need to turn off the inline operation safety net:
+                boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();
+                if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );
+                // INLINE OPERATION :
+                Neureka.get().backend().getFunction().plusAssign().call( this, g ); //-> Finally applying the gradient!
+                // INLINE END ! -> We can now revert to the previous setting:
+                if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );
+            }
         );
     }
 

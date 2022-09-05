@@ -427,16 +427,16 @@ public class IGEMM {
             final int rowCount,
             final long[] right
     ) {//...
-        int colCount = product.length;
-        for ( int ci = 0; ci < colCount; ci++ ) {
+        int rightColCount = right.length / rowCount;
+        for ( int ci = 0; ci < rowCount; ci++ ) {
             IAXPY.invoke(
-                    product,
-                    0,
-                    left[ci],
-                    right,
-                    ci * rowCount,
-                    0,
-                    rowCount
+                product,
+                0,
+                left[ci],
+                right,
+                ci * rightColCount,
+                0,
+                rightColCount
             );
         }
     }
@@ -459,16 +459,16 @@ public class IGEMM {
             final int rowCount,
             final int[] right
     ) {//...
-        int colCount = product.length;
-        for (int ci = 0; ci < colCount; ci++) {
+        int rightColCount = right.length / rowCount;
+        for ( int ci = 0; ci < rowCount; ci++ ) {
             IAXPY.invoke(
-                    product,
-                    0,
-                    left[ci],
-                    right,
-                    ci * rowCount,
-                    0,
-                    rowCount
+                product,
+                0,
+                left[ci],
+                right,
+                ci * rightColCount,
+                0,
+                rightColCount
             );
         }
     }
