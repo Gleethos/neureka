@@ -107,8 +107,36 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  Slices can be created by calling the variations of the "{@link Nda#getAt}" method.
      *
      * @return The truth value determining if this nd-array is a slice of another nd-array.
+     * @see Nda#getAt(int...)
+     * @see Nda#slice()
      */
     boolean isSlice();
+
+    /**
+     * If this nd-array is a shallow copy of a parent nd-array then this method will yield true.
+     * Shallow copies can be created by calling the "{@link Nda#shallowCopy()}" method.
+     * @return The truth value determining if this nd-array is a shallow copy of another nd-array.
+     * @see Nda#shallowCopy()
+     */
+    boolean isShallowCopy();
+
+    /**
+     *  If this nd-array is a partial slice of a parent nd-array then this method will yield true.
+     *  A partial slice is a slice which does not view all the parents items.
+     *  Partial slices can be created by calling the variations of the "{@link Nda#getAt}" method.
+     *  This is the inverse of {@link Nda#isFullSlice()}.
+     * @return The truth value determining if this nd-array is a partial slice of another nd-array.
+     */
+    boolean isPartialSlice();
+
+    /**
+     *  If this nd-array is a full slice of a parent nd-array then this method will yield true.
+     *  A full slice is a slice which views all the parents items.
+     *  Full slices can be created by calling the variations of the "{@link Nda#getAt}" method.
+     *  This is the inverse of {@link Nda#isPartialSlice()}.
+     * @return The truth value determining if this nd-array is a full slice of another nd-array.
+     */
+    default boolean isFullSlice() { return isSlice() && !isPartialSlice(); }
 
     /**
      *  This method returns the number of slices which have been

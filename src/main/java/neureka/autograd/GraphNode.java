@@ -154,7 +154,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             data = new NodePayload<>( out.get(), ()->{
                 boolean allChildrenUseForwardAD = true;
                 if ( _children != null ) {
-                    for ( WeakReference<GraphNode<V>> childRef : _children ) {
+                    for ( WeakReference<GraphNode<V>> childRef : new ArrayList<>(_children) ) {
                         GraphNode<V> childNode = childRef.get();
                         if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
                     }

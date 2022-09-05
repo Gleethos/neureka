@@ -100,15 +100,18 @@ public interface NDConfiguration
     }
 
     /**
-     * The layout of a tensor can either be row major or column major.
+     * The layout of most tensors is either row major or column major.
      * Row major means that row elements are right next to one another
      * in the underlying data array of a tensor.
      * Column major is the exact opposite...
+     * A tensor can also be symmetric, meaning it supports both column major and row major (scalar tensors have this property).
+     * Other than that there are also tensors which are unspecific, meaning they are not row major or column major.
+     * This is the case for tensors which are slices of other tensors or tensors which have been reshaped.
      *
      * @return The layout of the underlying data array of a tensor.
      */
     default Layout getLayout() {
-        if (!this.isCompact())
+        if ( !this.isCompact() ) // Non-compact tensors have at least 1 stride greater than 1 AND at least 1 offset greater than 0!
             return Layout.UNSPECIFIC;
         else {
             int[] translationRM = Layout.ROW_MAJOR.newTranslationFor(this.shape());

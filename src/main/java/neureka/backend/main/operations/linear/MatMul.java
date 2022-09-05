@@ -175,11 +175,9 @@ public class MatMul extends AbstractOperation
     private static ExecutionCall<?> _autoClone( ExecutionCall<?> call ) {
         for (int i = 0; i < call.arity(); i++ ) {
             if (
-                    !_isSimpleRowMajorMatrix( call.input( i ) )
-                            &&
-                    !_isSimpleColumnMajorMatrix( call.input( i ) )
+                    (!_isSimpleRowMajorMatrix( call.input( i ) ) && !_isSimpleColumnMajorMatrix( call.input( i ) ))
                             ||
-                    (call.input( i ).isSlice() && !call.input( i ).isView())
+                    call.input( i ).isPartialSlice()
             ) {
                 _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
                 call = call.withInputAt( i, call.input( i ).deepCopy().getUnsafe().setIsIntermediate( true ) );

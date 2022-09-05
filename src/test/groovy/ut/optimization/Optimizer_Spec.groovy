@@ -3,7 +3,6 @@ package ut.optimization
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.calculus.assembly.ParseUtil
 import neureka.ndim.config.types.views.SimpleReshapeView
 import neureka.optimization.Optimizer
 import neureka.optimization.implementations.ADAM
@@ -105,16 +104,6 @@ class Optimizer_Spec extends Specification
             w2.gradient.items.collect({it.round(2)}) == []
             w3.gradient.items.collect({it.round(2)}) == []
 
-    }
-
-    def 'Matrix mul works'() {
-        given :
-            var a = Tsr.ofDoubles().withShape(1,7).andFill(1, 2, 3)
-            var b = Tsr.ofDoubles().withShape(7,8).andFill(2, -4, -1)
-        when :
-            var c = a.dot(b)
-        then :
-            c.toString() == "(1x8):[-22.0, -10.0, -7.0, -22.0, -10.0, -7.0, -22.0, -10.0]"
     }
 
 }

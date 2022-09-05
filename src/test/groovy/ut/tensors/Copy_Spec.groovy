@@ -48,6 +48,37 @@ class Copy_Spec extends Specification
             (0..<t.size).every({ int i -> deep.at(i) == t.at(i) }) // The values are the same!
     }
 
+    def 'A shallow copy of a tensor will be flagged as such.'(
+       Tsr<?> t
+    ) {
+        expect : 'The tensor we will use for copying is not flagged as a shallow copy.'
+            !t.isShallowCopy()
+
+        when : 'We create a shallow copy of the tensor.'
+            var shallow = t.shallowCopy()
+        then : 'The copy is not the same instance as the original tensor.'
+            shallow !== t // It's not the same instance!
+        and : 'The shape and underlying data array are equal to the original tensor but the data is not identical.'
+            shallow.shape == t.shape
+            shallow.unsafe.data.ref == t.unsafe.data.ref // The tensors share the same values...
+            shallow.unsafe.data.ref === t.unsafe.data.ref // ...as well as the same array!
+            shallow.unsafe.data === t.unsafe.data // In fact, their data container is the same instance.
+        and :
+            (0..<t.size).every({ int i -> shallow.at(i) == t.at(i) }) // The values are the same!
+        and : 'The shallow copy is flagged as such.'
+            shallow.isShallowCopy()
+        and : 'Because shallow copies are merely "fully slices" we expect this flag to be set as well.'
+            shallow.isFullSlice()
+        and : 'The inverse property is false:'
+            !shallow.isPartialSlice()
+
+        where :
+            t << [
+                    Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2),
+                    Tsr.ofBytes().withShape(5).andFill(8, 2, -7, 3, 0),
+                    Tsr.of(1d, 2d, 3d, 4d, 5d, 6d, 7d)[2..4]
+            ]
+    }
 
     def 'A deep copy of a slice tensor is also a deep copy of the underlying data array.'()
     {

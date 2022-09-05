@@ -982,16 +982,41 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return ( child != null && child.hasParent() );
     }
 
-    default boolean isView() {
+    /** {@inheritDoc} */
+    @Override
+    default boolean isShallowCopy() {
         Relation<V> child = get( Relation.class );
         boolean isSlice = child != null && child.hasParent();
         if ( isSlice ) {
             Tsr<V> parent = child.getParent();
-            return parent != null && parent.size() == this.size();
+            return parent != null && parent.getNDConf().equals(this.getNDConf());
+            /*
+                Note:
+                A shallow copy is conceptually always a "full slice" of the parent tensor.
+                This means that the parent tensor and the shallow copy
+                share the same nd-configurations (shape and data access pattern).
+             */
         }
         return false;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    default boolean isPartialSlice() {
+        Relation<V> child = get( Relation.class );
+        boolean isSlice = child != null && child.hasParent();
+        if ( isSlice ) {
+            Tsr<V> parent = child.getParent();
+            if ( parent == null ) return false;
+            return parent.size() > this.size();
+            /*
+                Note:
+                A partial slice is a slice which does not have the same size as the parent tensor
+                but still sharing the same underlying data as the parent tensor.
+             */
+        }
+        return false;
+    }
 
     /** {@inheritDoc} */
     @Override

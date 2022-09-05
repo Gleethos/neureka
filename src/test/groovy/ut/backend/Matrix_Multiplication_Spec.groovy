@@ -18,6 +18,21 @@ import spock.lang.Title
 ''')
 class Matrix_Multiplication_Spec extends Specification
 {
+    def 'The "matMul" method allows us to perform matrix multiplication.'(Class<?> type)
+    {
+        given : 'We create 2 simple tensors with the shapes (1x7) and (7x8).'
+            var a = Tsr.of(type).withShape(1,7).andFill(1, 2, 3)
+            var b = Tsr.of(type).withShape(7,8).andFill(2, -4, -1)
+        when : 'We perform matrix multiplication.'
+            var c = a.matMul(b)
+        then : 'The result is a tensor with the shape (1x8).'
+            c.shape == [1, 8]
+            c.items == [-22, -10, -7, -22, -10, -7, -22, -10]
+
+        where : 'We can use the following data types:'
+            type << [Integer, Long, Double, Float]
+    }
+
     def 'The simple CPU matrix multiplication implementation works as expected.'(
             String layout, Class<Object> type, int M, int K, int N, Object A, Object B, def expectedC
     ) {
