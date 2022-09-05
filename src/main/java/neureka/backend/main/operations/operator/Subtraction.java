@@ -147,44 +147,41 @@ public class Subtraction extends AbstractOperation
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast =
-                (Broadcast)
-                new Broadcast(ElemWiseUtil::forSubtractions)
-                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<? extends Device<?>> call ) ->
-                        {
-                            if ( call.autogradMode().allowsForward() )
-                                throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                            Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                            assert ctxDerivative == null;
-                            int d = call.getDerivativeIndex();
-                            Tsr<?> derivative = ElemWiseUtil.newTsrLike( call.input( d==0?1:0 ), 0 );
-                            Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike( call.input( d ), 0 );
-                            Device device = call.getDevice();
-                            return ADAgent.of( derivative )
-                                        .withAD(
-                                            target ->
-                                                this.getAlgorithm( Broadcast.class )
-                                                    .getImplementationFor( device )
-                                                    .run(
-                                                            ExecutionCall.of(
-                                                                        toBeDerived.setIsVirtual(false),
-                                                                        derivative,
-                                                                        target.error()
-                                                                    )
-                                                                    .andArgs( Arg.DerivIdx.of(d) )
-                                                                    .running( this )
-                                                                    .on( device )
-                                                    )
-                                    );
-                        }
-                )
-                .buildFunAlgorithm();
-
         setAlgorithm(
             Broadcast.class,
-            broadcast
+            new Broadcast(ElemWiseUtil::forSubtractions)
+                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
+                .setSupplyADAgentFor(
+                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
+                    {
+                        if ( call.autogradMode().allowsForward() )
+                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                        assert ctxDerivative == null;
+                        int d = call.getDerivativeIndex();
+                        Tsr<?> derivative = ElemWiseUtil.newTsrLike( call.input( d==0?1:0 ), 0 );
+                        Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike( call.input( d ), 0 );
+                        Device device = call.getDevice();
+                        return
+                            ADAgent.of( derivative )
+                            .withAD(
+                                target ->
+                                    this.getAlgorithm( Broadcast.class )
+                                        .getImplementationFor( device )
+                                        .run(
+                                                ExecutionCall.of(
+                                                            toBeDerived.setIsVirtual(false),
+                                                            derivative,
+                                                            target.error()
+                                                        )
+                                                        .andArgs( Arg.DerivIdx.of(d) )
+                                                        .running( this )
+                                                        .on( device )
+                                        )
+                            );
+                    }
+                )
+                .buildFunAlgorithm()
                 .setImplementationFor(
                     CPU.class,
                     Broadcast.implementationForCPU()

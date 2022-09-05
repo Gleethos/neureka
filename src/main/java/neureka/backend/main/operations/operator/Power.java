@@ -163,30 +163,29 @@ public class Power extends AbstractOperation
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast(rja)
-                .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
-                    {
-                        if ( call.autogradMode().allowsForward() )
-                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        Function mul = Neureka.get().backend().getFunction().mul();
-                        if ( ctxDerivative != null ) {
-                            return ADAgent.of( ctxDerivative )
-                                    .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
-                        }
-                        int d = call.getDerivativeIndex();
-                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                        return ADAgent.of( derivative )
-                                .withAD( target -> mul.execute( target.error(), derivative ) );
-                    }
-                )
-                .buildFunAlgorithm();
-
         setAlgorithm(
             Broadcast.class,
-            broadcast.setImplementationFor(
+            new Broadcast(rja)
+            .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
+            .setSupplyADAgentFor(
+                ( Function f, ExecutionCall<? extends Device<?>> call ) ->
+                {
+                    if ( call.autogradMode().allowsForward() )
+                        throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                    Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                    Function mul = Neureka.get().backend().getFunction().mul();
+                    if ( ctxDerivative != null ) {
+                        return ADAgent.of( ctxDerivative )
+                                .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
+                    }
+                    int d = call.getDerivativeIndex();
+                    Tsr<?> derivative = f.executeDerive( call.inputs(), d );
+                    return ADAgent.of( derivative )
+                            .withAD( target -> mul.execute( target.error(), derivative ) );
+                }
+            )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 Broadcast.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
@@ -212,16 +211,14 @@ public class Power extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        Scalarization scalarization =
-            new Scalarization()
-                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setDeviceExecution( (call, callback) -> rja.execute(call, callback) )
-                .buildFunAlgorithm();
-
         setAlgorithm(
             Scalarization.class,
-            scalarization.setImplementationFor(
+            new Scalarization()
+            .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
+            .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
+            .setDeviceExecution( (call, callback) -> rja.execute(call, callback) )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 Scalarization.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
@@ -246,7 +243,7 @@ public class Power extends AbstractOperation
                 CLImplementation
                     .compiler()
                     .arity( 3 )
-                    .kernelSource( scalarization. getKernelSource() )
+                    .kernelSource( Scalarization.getKernelSource() )
                     .activationSource( "output = pow( input1, value );" )
                     .differentiationSource(
                         "if ( d == 0 ) {                                      \n" +
