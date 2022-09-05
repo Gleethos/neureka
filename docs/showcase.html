@@ -171,22 +171,33 @@
                                 </div>
                             </div>
                             <div class="specDocTab" style="display:none">
-
                                 <div class="MainContentWrapper">
                                     <div class=container-fluid>
-                                        <p>
-                                            Use the search bar below to query the test suite of Neureka.
-                                        </p>
-                                        <br>
-                                        <input id="spec_search" style="width:16em;" placeholder="how to instantiate a tensor?">
-                                        <button onclick="clearLivingDocs('#TARGET')">clear</button>
-                                        <div class="ContentBox" id="TARGET"></div>
-                            <script>
-                                $(document).ready(()=>{ loadReportUI("#TARGET", "#spec_search"); });
-                            </script>
+                                        <div class="row g-2">
+                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                <p><b>
+                                                    Use the search bar below to query the test suite of Neureka.
+                                                </b></p>
+                                            </div>
+
+                                            <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
+                                            <div class="col-9 col-sm-7 col-md-6 col-lg-5">
+                                                <input id="spec_search" style="width:100%;" placeholder="how to instantiate a tensor?">
+                                            </div>
+                                            <div class="col-3 col-sm-3 col-md-2 col-lg-1">
+                                                <button style="width:100%;border:none; border-radius:0.1em;height:100%" onclick="clearLivingDocs('#TARGET')">clear</button>
+                                            </div>
+                                            <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
+
+                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                <div class="ContentBox" id="TARGET"></div>
+                                                <script>
+                                                    $(document).ready(()=>{ loadReportUI("#TARGET", "#spec_search"); });
+                                                </script>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
