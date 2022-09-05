@@ -13,6 +13,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
+import neureka.backend.main.operations.operator.impl.CLBroadcastAddition;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
@@ -24,41 +25,6 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class Addition extends AbstractOperation {
-
-    private final Broadcast _broadcast =
-            (Broadcast)
-                new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
-                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
-                    {
-                        if ( call.autogradMode().allowsForward() )
-                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        assert ctxDerivative == null;
-                        int d = call.getDerivativeIndex();
-                        Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
-                        Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
-                        Device device = call.getDeviceFor(Number.class);
-                        return ADAgent.of( derivative )
-                                        .withAD(
-                                            target ->
-                                                this.getAlgorithm( Broadcast.class )
-                                                     .getImplementationFor( device )
-                                                     .run(
-                                                             ExecutionCall.of(
-                                                                     toBeDerived.setIsVirtual(false),
-                                                                     derivative,
-                                                                     target.error()
-                                                             )
-                                                             .andArgs( Arg.DerivIdx.of(d) )
-                                                             .running( this )
-                                                             .on( device )
-                                                     )
-                                        );
-                    }
-                )
-                .buildFunAlgorithm();
 
     public Addition()
     {
@@ -129,7 +95,38 @@ public class Addition extends AbstractOperation {
         // BROADCASTING :
 
         setAlgorithm(
-                _broadcast
+                new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
+                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
+                .setSupplyADAgentFor(
+                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
+                    {
+                        if ( call.autogradMode().allowsForward() )
+                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                        assert ctxDerivative == null;
+                        int d = call.getDerivativeIndex();
+                        Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
+                        Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
+                        Device device = call.getDeviceFor(Number.class);
+                        return ADAgent.of( derivative )
+                                        .withAD(
+                                            target ->
+                                                this.getAlgorithm( Broadcast.class )
+                                                     .getImplementationFor( device )
+                                                     .run(
+                                                             ExecutionCall.of(
+                                                                     toBeDerived.setIsVirtual(false),
+                                                                     derivative,
+                                                                     target.error()
+                                                             )
+                                                             .andArgs( Arg.DerivIdx.of(d) )
+                                                             .running( this )
+                                                             .on( device )
+                                                     )
+                                        );
+                    }
+                )
+                .buildFunAlgorithm()
                 .setImplementationFor(
                     CPU.class,
                     Broadcast.implementationForCPU()
@@ -157,9 +154,7 @@ public class Addition extends AbstractOperation {
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    Broadcast.implementationForGPU( this.getIdentifier() )
-                            .with( "value += src1 + src2;\n" )
-                            .and( "value += src1 + src2;\n" )
+                    new CLBroadcastAddition( this.getIdentifier() )
                 )
         );
 

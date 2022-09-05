@@ -14,6 +14,7 @@ import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
+import neureka.backend.main.operations.operator.impl.CLBroadcastModulo;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
@@ -136,15 +137,7 @@ public class Modulo extends AbstractOperation {
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Broadcast.implementationForGPU( this.getIdentifier() )
-                        .with( "value = ((int)src1) % ((int)src2);\n" )
-                        .and(
-                            "if ( d == 0 ) {\n" +
-                            "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
-                            "} else {\n" +
-                            "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
-                            "}"
-                        )
+                new CLBroadcastModulo( this.getIdentifier() )
             )
         );
 

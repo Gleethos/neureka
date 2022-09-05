@@ -8,7 +8,8 @@ import neureka.devices.opencl.OpenCLDevice;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ParsedCLImplementation extends CLImplementation {
+public class ParsedCLImplementation extends CLImplementation
+{
 
     private final java.util.function.Function<String, String> _aliasSwapper =
             s ->
@@ -34,12 +35,26 @@ public class ParsedCLImplementation extends CLImplementation {
 
     private KernelCode _kernel;
 
-    public ParsedCLImplementation(   ImplementationFor<OpenCLDevice> lambda,
-                                     int arity,
-                                     String kernelSource,
-                                     String activationSource,
-                                     String differentiationSource,
-                                     String postfix
+    protected ParsedCLImplementation(
+        Builder builder
+    ) {
+        this(
+            builder.lambda,
+            builder.arity,
+            builder.kernelSource,
+            builder.activationSource,
+            builder.differentiationSource,
+            builder.type
+        );
+    }
+
+    public ParsedCLImplementation(
+        ImplementationFor<OpenCLDevice> lambda,
+        int arity,
+        String kernelSource,
+        String activationSource,
+        String differentiationSource,
+        String postfix
     ) {
         super( lambda, arity );
         boolean templateFound;
@@ -65,8 +80,6 @@ public class ParsedCLImplementation extends CLImplementation {
             }
         }
     }
-
-
 
     private Map<String, String> _getParsedKernelsFromTemplate(
             String templateName,
@@ -102,7 +115,7 @@ public class ParsedCLImplementation extends CLImplementation {
                 postfix,
                 activationSource,
                 differentiationSource
-        );
+            );
         return code;
     }
 
@@ -115,5 +128,29 @@ public class ParsedCLImplementation extends CLImplementation {
     {
         void apply( String name, String first, String second );
     }
+
+    public static class Builder {
+        private ImplementationFor<OpenCLDevice> lambda;
+        private int arity;
+        private String kernelSource;
+        private String activationSource;
+        private String differentiationSource;
+        private String type;
+
+        Builder() { }
+
+        public Builder execution(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
+        public Builder arity(int arity) { this.arity = arity; return this; }
+        public Builder kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
+        public Builder activationSource(String activationSource) { this.activationSource = activationSource;return this; }
+        public Builder differentiationSource(String differentiationSource) { this.differentiationSource = differentiationSource;return this; }
+        public Builder kernelPostfix(String type) { this.type = type;return this; }
+        public CLImplementation build() {
+            if ( lambda == null )
+                throw new IllegalStateException( CLImplementation.class.getSimpleName()+" builder not satisfied." );
+            return new ParsedCLImplementation(lambda, arity, kernelSource, activationSource, differentiationSource, type);
+        }
+    }
+
 
 }

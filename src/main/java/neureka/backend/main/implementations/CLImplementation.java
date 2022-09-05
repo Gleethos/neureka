@@ -27,8 +27,8 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
         return new SourceBuilder();
     }
 
-    public static Compiler compiler() {
-        return new Compiler();
+    public static ParsedCLImplementation.Builder compiler() {
+        return new ParsedCLImplementation.Builder();
     }
 
     public static AdHocCompiler adHoc( KernelSource kernelProvider ) {
@@ -57,30 +57,6 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
         public SourceBuilder kernelName(String kernelName) { this.kernelName = kernelName;return this; }
         public SourceBuilder kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
         public CLImplementation build() { return new SimpleCLImplementation(lambda, arity, kernelName, kernelSource); }
-    }
-
-    public static class Compiler {
-        private ImplementationFor<OpenCLDevice> lambda;
-        private int arity;
-        private String kernelSource;
-        private String activationSource;
-        private String differentiationSource;
-        private String type;
-
-        private Compiler() { }
-
-        public Compiler execution(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
-        public Compiler arity(int arity) { this.arity = arity; return this; }
-        public Compiler kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
-        public Compiler activationSource(String activationSource) { this.activationSource = activationSource;return this; }
-        public Compiler differentiationSource(String differentiationSource) { this.differentiationSource = differentiationSource;return this; }
-        public Compiler kernelPostfix(String type) { this.type = type;return this; }
-        public CLImplementation build() {
-            if ( lambda == null ) throw new IllegalStateException(
-                    CLImplementation.class.getSimpleName()+" builder not satisfied."
-            );
-            return new ParsedCLImplementation(lambda, arity, kernelSource, activationSource, differentiationSource, type);
-        }
     }
 
     public static class AdHocCompiler {

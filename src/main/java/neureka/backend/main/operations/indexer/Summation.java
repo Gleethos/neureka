@@ -13,6 +13,7 @@ import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
+import neureka.backend.main.operations.operator.impl.CLBroadcastAddition;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -87,9 +88,7 @@ public final class Summation extends AbstractOperation
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    Broadcast.implementationForGPU( this.getIdentifier() )
-                            .with( "value = src1 + src2;\n" )
-                            .and( "value += 1 * drain;\n" )
+                    new CLBroadcastAddition( this.getIdentifier() )
                 )
         );
 

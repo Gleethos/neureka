@@ -14,6 +14,7 @@ import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
+import neureka.backend.main.operations.operator.impl.CLBroadcastDivision;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -135,15 +136,7 @@ public class Division extends AbstractOperation
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    Broadcast.implementationForGPU( this.getIdentifier() )
-                            .with( "value = src1 / src2;\n" )
-                            .and(
-                                "    if (d==0) {                                                         \n" +
-                                        "        value += (1/handle) * drain;                                    \n" +
-                                        "    } else {                                                            \n" +
-                                        "        value += (-(handle /(float)pow(target, (float)2)) ) * drain;    \n" +
-                                        "    }                                                                   \n"
-                            )
+                    new CLBroadcastDivision( this.getIdentifier() )
                 )
         );
 

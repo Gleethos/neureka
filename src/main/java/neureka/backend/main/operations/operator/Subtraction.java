@@ -13,6 +13,7 @@ import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
+import neureka.backend.main.operations.operator.impl.CLBroadcastSubtraction;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -182,32 +183,30 @@ public class Subtraction extends AbstractOperation
                 .buildFunAlgorithm();
 
         setAlgorithm(
-                Broadcast.class,
-                broadcast
-                    .setImplementationFor(
-                        CPU.class,
-                        Broadcast.implementationForCPU()
-                                .with(Fun.F64F64ToF64.triple(
-                                        ( a, b ) -> a - b,
-                                        // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                                        ( a, b ) -> a + b, // Deriving at input 0
-                                        ( a, b ) -> a - b // deriving input 1
-                                ))
-                                .with(Fun.F32F32ToF32.triple(
-                                        ( a, b ) -> a - b,
-                                        // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                                        ( a, b ) -> a + b, // Deriving at input 0
-                                        ( a, b ) -> a - b // deriving input 1
-                                ))
-                                .get()
-                    )
-                    .setImplementationFor(
-                            OpenCLDevice.class,
-                            Broadcast.implementationForGPU( this.getIdentifier() )
-                                    .with( "value += src1 - src2;\n" )
-                                    .and( "value += src1 + src2 * -((d * 2) -1);\n" )
-                    )
-                );
+            Broadcast.class,
+            broadcast
+                .setImplementationFor(
+                    CPU.class,
+                    Broadcast.implementationForCPU()
+                            .with(Fun.F64F64ToF64.triple(
+                                    ( a, b ) -> a - b,
+                                    // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
+                                    ( a, b ) -> a + b, // Deriving at input 0
+                                    ( a, b ) -> a - b // deriving input 1
+                            ))
+                            .with(Fun.F32F32ToF32.triple(
+                                    ( a, b ) -> a - b,
+                                    // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
+                                    ( a, b ) -> a + b, // Deriving at input 0
+                                    ( a, b ) -> a - b // deriving input 1
+                            ))
+                            .get()
+                )
+                .setImplementationFor(
+                    OpenCLDevice.class,
+                    new CLBroadcastSubtraction( this.getIdentifier() )
+                )
+            );
     }
 
     @Override

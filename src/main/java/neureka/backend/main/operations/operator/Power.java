@@ -14,6 +14,7 @@ import neureka.backend.main.algorithms.Operator;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
+import neureka.backend.main.operations.operator.impl.CLBroadcastPower;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
@@ -204,15 +205,7 @@ public class Power extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Broadcast.implementationForGPU( this.getIdentifier() )
-                        .with( "value += pow(src1, src2);" )
-                        .and(
-                            "if ( d == 0 ) {\n" +
-                            "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
-                            "} else {\n" +
-                            "    value += (pow(target, handle) * log(handle)) * drain;\n" +
-                            "}"
-                        )
+                new CLBroadcastPower( this.getIdentifier() )
             )
         );
 

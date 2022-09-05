@@ -12,6 +12,7 @@ import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
+import neureka.backend.main.operations.operator.impl.CLBroadcastMultiplication;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -82,9 +83,7 @@ public final class Product extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Broadcast.implementationForGPU( this.getIdentifier() )
-                    .with( "value = src1 * src2;\n" )
-                    .and( "value += handle * drain;\n" )
+                new CLBroadcastMultiplication( this.getIdentifier() )
             )
         );
 

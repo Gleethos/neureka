@@ -1,6 +1,5 @@
 package neureka.backend.main.algorithms;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -8,11 +7,8 @@ import neureka.backend.api.fun.ADAgentSupplier;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.main.algorithms.internal.Fun;
-import neureka.backend.main.algorithms.internal.WithForward;
-import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.backend.main.operations.other.Reshape;
-import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
@@ -102,35 +98,6 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                 return call;
             }
         );
-    }
-
-    public static WithForward<String> implementationForGPU(String postfix ) {
-        return
-            forward ->
-                backward ->
-                    CLImplementation.compiler()
-                        .arity( 3 )
-                        .kernelSource( Neureka.get().utility().readResource("kernels/broadcast_template.cl") )
-                        .activationSource( forward )
-                        .differentiationSource( backward )
-                        .kernelPostfix( postfix )
-                        .execution(
-                            call -> {
-                                int offset = ( call.input( Number.class, 0 ) != null ) ? 0 : 1;
-                                int gwz = ( call.input( Number.class, 0 ) != null ) ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();
-                                call.getDevice()
-                                    .getKernel(call)
-                                    .passAllOf( call.input( Number.class, offset ) )
-                                    .passAllOf( call.input( Number.class, offset + 1 ) )
-                                    .passAllOf( call.input( Number.class, offset + 2 ) )
-                                    .pass( call.input( Number.class, 0 ).rank() )
-                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                    .call( gwz );
-
-                                return call.input( 0 );
-                            }
-                        )
-                        .build();
     }
 
     public static Functions.Builder<Fun> implementationForCPU() {
