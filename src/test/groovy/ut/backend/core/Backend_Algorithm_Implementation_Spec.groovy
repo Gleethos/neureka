@@ -10,7 +10,7 @@ import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
 import neureka.backend.main.algorithms.Activation
-import neureka.backend.main.algorithms.Operator
+import neureka.backend.main.algorithms.ElementWise
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
@@ -46,8 +46,8 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                         e ->
                                     e.isOperator() &&
                                     e.getOperator().length() == 1 &&
-                                    e.supports( Operator.class )
-                    ).map( e -> e.getAlgorithm( Operator.class ) )
+                                    e.supports( ElementWise.class )
+                    ).map( e -> e.getAlgorithm( ElementWise.class ) )
 
     }
 
@@ -122,9 +122,9 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                                     e ->
                                             e.isOperator() &&
                                                     e.getOperator().length() == 1 &&
-                                                    e.supports( Operator.class )
+                                                    e.supports( ElementWise.class )
                             )
-                            .map( e -> e.getAlgorithm( Operator.class ) )
+                            .map( e -> e.getAlgorithm( ElementWise.class ) )
 
     }
 
@@ -162,9 +162,9 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                                     e ->
                                             e.isOperator() &&
                                             e.getOperator().length() == 1 &&
-                                            e.supports( Operator.class )
+                                            e.supports( ElementWise.class )
                             )
-                            .map( e -> e.getAlgorithm( Operator.class ) )
+                            .map( e -> e.getAlgorithm( ElementWise.class ) )
 
     }
 

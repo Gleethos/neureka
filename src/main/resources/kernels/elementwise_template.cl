@@ -11,7 +11,7 @@
 
 //======================================================================================================================
 
-    __kernel void operator_template(
+    __kernel void elementwise_template(
         __global float *drn, __global int *drn_conf,
         __global float *src1, __global int *src1_conf,
         __global float *src2, __global int *src2_conf,

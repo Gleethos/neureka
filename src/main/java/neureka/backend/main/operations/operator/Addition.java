@@ -7,13 +7,13 @@ import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Operator;
+import neureka.backend.main.algorithms.ElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
-import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastAddition;
+import neureka.backend.main.operations.operator.impl.CLScalarBroadcastAddition;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
@@ -42,15 +42,15 @@ public class Addition extends AbstractOperation {
         //_____________________
         // DEFAULT OPERATION :
 
-        Operator operator = new Operator(ElemWiseUtil::forAdditions)
+        ElementWise elementWise = new ElementWise(ElemWiseUtil::forAdditions)
                                     .setSupplyADAgentFor( getDefaultAlgorithm() )
                                     .buildFunAlgorithm();
 
         setAlgorithm(
-            operator
+            elementWise
                 .setImplementationFor(
                     CPU.class,
-                    Operator.implementationForCPU()
+                    ElementWise.implementationForCPU()
                         .with(Fun.F64F64ToF64.triple(
                             ( a, b ) -> a + b,
                             ( a, b ) -> 1d, // Deriving at input 0
@@ -85,7 +85,7 @@ public class Addition extends AbstractOperation {
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    Operator.implementationForGPU( this.getIdentifier() )
+                    ElementWise.implementationForGPU( this.getIdentifier() )
                                     .with( "output = input1 + input2;\n" )
                                     .and( "output = 1;\n" )
             )
@@ -161,13 +161,11 @@ public class Addition extends AbstractOperation {
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        Scalarization scalarization =
-            new Scalarization()
-                .setDeviceExecution( (call, callback) -> ElemWiseUtil.forAdditions(call, callback) )
-                .buildFunAlgorithm();
-
         setAlgorithm(
-            scalarization.setImplementationFor(
+            new Scalarization()
+            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forAdditions(call, callback) )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 CPUImplementation
                     .withArity(3)
@@ -219,36 +217,7 @@ public class Addition extends AbstractOperation {
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                CLImplementation
-                    .compiler()
-                    .arity( 3 )
-                    .kernelSource( Scalarization.getKernelSource() )
-                    .activationSource( "output = input1 + value;\n" )
-                    .differentiationSource( "output = 1;\n" )
-                    .kernelPostfix( this.getIdentifier() )
-                    .execution(
-                        call -> {
-                            assert call.arity() == 3;
-                            if ( call.getDerivativeIndex() == 0 )
-                                 return Tsr.of( call.input(1).shape(), 1d ).getUnsafe().setIsIntermediate( true );
-                            else if ( call.getDerivativeIndex() == 1 )
-                                return Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
-                            else {
-                                int gwz = call.input(Number.class, 0).size();
-                                float value = call.input(Number.class, 2).item(0).floatValue();
-                                call.getDevice()
-                                    .getKernel(call)
-                                    .passAllOf(call.input(Number.class, 0))
-                                    .passAllOf(call.input(Number.class, 1))
-                                    .pass(value)
-                                    .pass(call.input(Number.class, 0).rank())
-                                    .pass(call.getValOf(Arg.DerivIdx.class))
-                                    .call(gwz);
-                            }
-                            return call.input( 0 );
-                        }
-                    )
-                    .build()
+                new CLScalarBroadcastAddition( this.getIdentifier() )
             )
         );
     }

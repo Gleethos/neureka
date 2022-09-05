@@ -1,6 +1,6 @@
 package neureka.backend.main.algorithms.internal;
 
-import neureka.backend.main.algorithms.Operator;
+import neureka.backend.main.algorithms.ElementWise;
 
 public interface Fun
 {
@@ -95,11 +95,11 @@ public interface Fun
                 ObjObjToObj derivation,
                 ObjObjToObj derivation2
         ) {
-            return new Operator.FunTriple<>( activation, derivation, derivation2 );
+            return new ElementWise.FunTriple<>( activation, derivation, derivation2 );
         }
 
         static FunTuple<ObjObjToObj> of(ObjObjToObj activation ) {
-            return new Operator.FunTriple<>( activation, null, null );
+            return new ElementWise.FunTriple<>( activation, null, null );
         }
     }
 
@@ -112,11 +112,11 @@ public interface Fun
                 F64F64ToF64 derivation1,
                 F64F64ToF64 derivation2
         ) {
-            return new Operator.FunTriple<>(activation, derivation1, derivation2);
+            return new ElementWise.FunTriple<>(activation, derivation1, derivation2);
         }
 
         static FunTuple<F64F64ToF64> of(F64F64ToF64 activation ) {
-            return new Operator.FunTriple<>(activation, null, null);
+            return new ElementWise.FunTriple<>(activation, null, null);
         }
     }
 
@@ -129,11 +129,11 @@ public interface Fun
                 F32F32ToF32 derivation1,
                 F32F32ToF32 derivation2
         ) {
-            return new Operator.FunTriple<>(activation, derivation1, derivation2);
+            return new ElementWise.FunTriple<>(activation, derivation1, derivation2);
         }
 
         static FunTuple<F32F32ToF32> of(F32F32ToF32 activation ) {
-            return new Operator.FunTriple<>(activation, null, null);
+            return new ElementWise.FunTriple<>(activation, null, null);
         }
     }
 
@@ -142,7 +142,7 @@ public interface Fun
         int invoke( int x, int y );
 
         static FunTuple<I32I32ToI32> of(I32I32ToI32 activation ) {
-            return new Operator.FunTriple<>(activation, null, null);
+            return new ElementWise.FunTriple<>(activation, null, null);
         }
 
         static FunTuple<I32I32ToI32> triple(
@@ -150,7 +150,7 @@ public interface Fun
                 I32I32ToI32 derivation1,
                 I32I32ToI32 derivation2
         ) {
-            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+            return new ElementWise.FunTriple<>( activation, derivation1, derivation2 );
         }
     }
 
@@ -159,7 +159,7 @@ public interface Fun
         long invoke( long x, long y );
 
         static FunTuple<I64I64ToI64> of(I64I64ToI64 activation ) {
-            return new Operator.FunTriple<>(activation, null, null);
+            return new ElementWise.FunTriple<>(activation, null, null);
         }
 
         static FunTuple<I64I64ToI64> triple(
@@ -167,7 +167,7 @@ public interface Fun
                 I64I64ToI64 derivation1,
                 I64I64ToI64 derivation2
         ) {
-            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+            return new ElementWise.FunTriple<>( activation, derivation1, derivation2 );
         }
     }
 
@@ -176,7 +176,7 @@ public interface Fun
         byte invoke( byte x, byte y );
 
         static FunTuple<I8I8ToI8> of(I8I8ToI8 activation ) {
-            return new Operator.FunTriple<>(activation, null, null);
+            return new ElementWise.FunTriple<>(activation, null, null);
         }
 
         static FunTuple<I8I8ToI8> triple(
@@ -184,7 +184,7 @@ public interface Fun
                 I8I8ToI8 derivation1,
                 I8I8ToI8 derivation2
         ) {
-            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+            return new ElementWise.FunTriple<>( activation, derivation1, derivation2 );
         }
     }
 
@@ -193,7 +193,7 @@ public interface Fun
         boolean invoke( boolean x, boolean y );
 
         static FunTuple<BoolBoolToBool> of(BoolBoolToBool activation ) {
-            return new Operator.FunTriple<>(activation, null, null);
+            return new ElementWise.FunTriple<>(activation, null, null);
         }
 
         static FunTuple<BoolBoolToBool> triple(
@@ -201,7 +201,7 @@ public interface Fun
                 BoolBoolToBool derivation1,
                 BoolBoolToBool derivation2
         ) {
-            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+            return new ElementWise.FunTriple<>( activation, derivation1, derivation2 );
         }
     }
 
@@ -210,7 +210,7 @@ public interface Fun
         char invoke( char x, char y );
 
         static FunTuple<CharCharToChar> of(CharCharToChar activation ) {
-            return new Operator.FunTriple<>(activation, null, null);
+            return new ElementWise.FunTriple<>(activation, null, null);
         }
 
         static FunTuple<CharCharToChar> triple(
@@ -218,7 +218,7 @@ public interface Fun
                 CharCharToChar derivation1,
                 CharCharToChar derivation2
         ) {
-            return new Operator.FunTriple<>( activation, derivation1, derivation2 );
+            return new ElementWise.FunTriple<>( activation, derivation1, derivation2 );
         }
     }
 }

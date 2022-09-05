@@ -9,7 +9,7 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Operator;
+import neureka.backend.main.algorithms.ElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
@@ -41,16 +41,16 @@ public class Modulo extends AbstractOperation {
         //_____________________
         // DEFAULT OPERATION :
 
-        Operator operator =
-                new Operator(ElemWiseUtil::forDivisionsOrModuli)
+        ElementWise elementWise =
+                new ElementWise(ElemWiseUtil::forDivisionsOrModuli)
                        .setSupplyADAgentFor( getDefaultAlgorithm() )
                        .buildFunAlgorithm();
 
         setAlgorithm(
-            Operator.class,
-            operator.setImplementationFor(
+            ElementWise.class,
+            elementWise.setImplementationFor(
                 CPU.class,
-                Operator.implementationForCPU()
+                ElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> a % b,
                         ( a, b ) -> 1 / b, // Deriving at input 0
@@ -75,7 +75,7 @@ public class Modulo extends AbstractOperation {
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Operator.implementationForGPU( this.getIdentifier() )
+                ElementWise.implementationForGPU( this.getIdentifier() )
                         .with( "output = ((int)input1) % ((int)input2);\n" )
                         .and(
                                 "if ( d==0 ) {                                        \n" +

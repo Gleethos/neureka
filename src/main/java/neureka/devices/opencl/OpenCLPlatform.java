@@ -116,7 +116,7 @@ public class OpenCLPlatform
                 "activation_template.cl",
                 "broadcast_template.cl",
                 "convolution_template.cl",
-                "operator_template.cl",
+                "elementwise_template.cl",
                 "scalarization_template.cl",
                 "scalar_broadcast.cl",
                 "utility.cl"
@@ -150,8 +150,8 @@ public class OpenCLPlatform
                     for ( Operation type : Neureka.get().backend().getOperations() ) {
                         if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) )
                             impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
-                        else if ( preName.contains("operator") && type.supportsAlgorithm(Operator.class) )
-                            impl = type.getAlgorithm(Operator.class).getImplementationFor( OpenCLDevice.class );
+                        else if ( preName.contains("elementwise") && type.supportsAlgorithm(ElementWise.class) )
+                            impl = type.getAlgorithm(ElementWise.class).getImplementationFor( OpenCLDevice.class );
                         else if ( preName.contains("scalarization") && type.supportsAlgorithm(Scalarization.class) )
                             impl = type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );
                         else if ( preName.contains("broadcast") && type.supportsAlgorithm(Broadcast.class) )

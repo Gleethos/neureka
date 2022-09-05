@@ -17,10 +17,10 @@ import neureka.dtype.NumericType;
 import neureka.ndim.NDimensional;
 import neureka.ndim.iterator.NDIterator;
 
-public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
+public final class ElementWise extends AbstractFunDeviceAlgorithm<ElementWise>
 {
-    public Operator( RecursiveExecutor finalExecutor ) {
-        super("operator");
+    public ElementWise(RecursiveExecutor finalExecutor ) {
+        super("elementwise");
         setIsSuitableFor(
             call -> call
                     .validate()
@@ -60,7 +60,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
                     CLImplementation
                         .compiler()
                         .arity( -1 )
-                        .kernelSource( Neureka.get().utility().readResource("kernels/operator_template.cl") )
+                        .kernelSource( Neureka.get().utility().readResource("kernels/elementwise_template.cl") )
                         .activationSource( forward )
                         .differentiationSource( backward )
                         .kernelPostfix( postfix )
@@ -84,7 +84,7 @@ public final class Operator extends AbstractFunDeviceAlgorithm<Operator>
     }
 
     public static Functions.Builder<Fun> implementationForCPU() {
-        return Functions.implementation( -1, Operator::_newWorkloadFor );
+        return Functions.implementation( -1, ElementWise::_newWorkloadFor );
     }
 
     private static CPU.RangeWorkload _newWorkloadFor(

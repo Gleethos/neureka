@@ -10,7 +10,7 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Operator;
+import neureka.backend.main.algorithms.ElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
@@ -116,14 +116,14 @@ public class Power extends AbstractOperation
             return result;
         };
 
-        Operator operator = new Operator( rja )
+        ElementWise elementWise = new ElementWise( rja )
                                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                                 .buildFunAlgorithm();
 
-        setAlgorithm(Operator.class,
-            operator.setImplementationFor(
+        setAlgorithm(ElementWise.class,
+            elementWise.setImplementationFor(
                 CPU.class,
-                Operator.implementationForCPU()
+                ElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> Math.pow( a, b ),
                         ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
@@ -148,7 +148,7 @@ public class Power extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Operator.implementationForGPU( this.getIdentifier() )
+                ElementWise.implementationForGPU( this.getIdentifier() )
                         .with( "output = pow(input1, input2);" )
                         .and(
                             "if ( d == 0 ) {                                    \n" +
