@@ -13,6 +13,7 @@ import neureka.devices.opencl.OpenCLDevice
 import neureka.view.NDPrintSettings
 import spock.lang.Ignore
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Title
@@ -20,14 +21,28 @@ import testutility.mock.DummyDevice
 
 import java.util.function.BiConsumer
 
-@Title("Cross Device-Type Unit Tests")
+@Title("Finding Device Types")
+@Narrative('''
+
+    Neureka introduces a the concept of a `Device` which is an interface
+    that represents a computational device used for executing tensor / nd-array operations on them.
+    The `Device` interface is implemented by various classes which represent
+    different types of devices such as `CPU`, `GPU`, `TPU`, `FPGA`, `OpenCLDevice`, `FileDevice` etc.
+    These various types of devices can not be instantiated directly because they model 
+    the concrete and finite hardware that is available on any given system Neureka is running on.
+    This means that they are usually instantiated lazily upon access request or 
+    upfront by the library backend (usually a backend extension built fo a specific device).
+    In order to find these instances embedded in the library backend the `Device` interface
+    exposes various static methods which can be used to find a device instance by name or type.
+
+''')
 @Subject([Device])
 class Cross_Device_Type_Spec extends Specification
 {
     def setupSpec()
     {
         reportHeader """
-                Specified below are strict tests for the factory methods in the
+                Specified below is the behaviour of the factory methods in the
                 Device interface as well as its various implementations 
                 which should adhere to a certain set of common behaviours.
         """
@@ -218,12 +233,13 @@ class Cross_Device_Type_Spec extends Specification
 
     }
 
-    /**
-     *  Device implementations always also behave as storage units for tensors.
-     */
     def 'Devices store tensors which can also be restored.'(
             Device device
     ) {
+        reportInfo """
+            Device implementations also behave like storage units for tensors,
+            which you can see below.
+        """
 
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
@@ -269,7 +285,7 @@ class Cross_Device_Type_Spec extends Specification
                     CPU.get(),
                     Device.get( "openCL" ),
                     FileDevice.at( "build/test-can" )
-            ]
+                ]
 
     }
 
