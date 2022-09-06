@@ -473,6 +473,9 @@ header p {
 
 .MainContentWrapper code {
     text-align: left;
+    margin-top: 0.34em;
+    margin-bottom: 0.33em;
+    border-radius: 0.2em;
 }
 
 .MainContentWrapper h1 {
@@ -511,13 +514,6 @@ header p {
     margin-top: 0.33em;
     margin-bottom: 0.33em;
 }
-
-.MainContentWrapper code {
-    margin-top: 0.34em;
-    margin-bottom: 0.33em;
-    border-radius: 0.2em;
-}
-
 
 .ContentBox {
     background-color: rgb(217, 253, 255);
