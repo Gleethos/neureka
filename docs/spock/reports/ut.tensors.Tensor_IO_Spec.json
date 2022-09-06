@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.029 seconds"
+    "duration":"0.031 seconds"
   },
   "headers":["\n                This specification covers some basic behaviour related to\n                reading and modifying the data inside a tensor.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -66,7 +66,7 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -16,7 +16,7 @@
     {
       "id":"Tensor can be converted to buffered images.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

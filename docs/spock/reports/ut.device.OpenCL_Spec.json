@@ -1,7 +1,7 @@
 {
   "className":"ut.device.OpenCL_Spec",
   "title":"Working with OpenCL",
-  "narrative":"Neureka models the OpenCL API through various types of classes.\n    The most fundamental of these is the OpenCLDevice class which\n    represents a single OpenCL device.\n    Besides that, there is also the OpenCLContext class which\n    represents a OpenCL context, representing OpenCL platforms and multiple devices...",
+  "narrative":"Neureka models the OpenCL API through various types of classes.\n    The most fundamental of these is the `OpenCLDevice` class which\n    represents a single device with OpenCL support.\n    Besides that, there is also the `OpenCLContext` class which\n    represents a OpenCL contexts, platforms and multiple devices on said platforms...",
   "subjects":["neureka.devices.opencl.CLContext","neureka.devices.opencl.OpenCLDevice","neureka.devices.opencl.utility.DeviceQuery","neureka.devices.Device"],
   "statistics":{
     "runs":"5",
@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.473 seconds"
+    "duration":"2.628 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -90,7 +90,7 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.448 seconds",
+      "duration":"2.604 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

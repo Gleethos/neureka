@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.026 seconds"
+    "duration":"0.030 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can make slices of tensors random.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

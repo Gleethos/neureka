@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.205 seconds"
+    "duration":"0.197 seconds"
   },
   "headers":["\n                    This specification covers the behavior\n                    of with respect to specifying aliases for\n                    tensor indices and then using them for slicing.     \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Added labels to tensors are accessible through the \"index()\" method.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,7 +84,7 @@
     {
       "id":"Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.190 seconds",
+      "duration":"0.182 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

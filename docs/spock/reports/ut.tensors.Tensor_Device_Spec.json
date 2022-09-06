@@ -83,7 +83,7 @@
     {
       "id":"When creating slices of tensors then this should trigger a \"parent - child\" relation noticeable to the device!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

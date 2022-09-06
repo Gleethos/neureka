@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.147 seconds"
+    "duration":"0.142 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can initialize an ND-Array using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.071 seconds",
+      "duration":"0.070 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"We can find both min and max items in an ND-array by providing a comparator.",
       "result":"PASS",
-      "duration":"0.072 seconds",
+      "duration":"0.069 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -16,7 +16,7 @@
     {
       "id":"Vector tensors can be instantiated via factory methods.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

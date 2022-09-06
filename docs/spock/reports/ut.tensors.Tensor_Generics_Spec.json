@@ -9,9 +9,9 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.005 seconds"
+    "duration":"0.006 seconds"
   },
-  "headers":["\n                <p>\n                    Here you will find out how to create a tensor of any kind of data.          \n                </p>\n            "],"tags":{},"see":[],
+  "headers":["\n                    Here you will find out how to create a tensor of any kind of data.          \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Anonymous tensor instance has the default datatype class as defined in Neureka settings.",
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Tsr<Double> t = Tsr.newInstance()"]},
+        {"kind":"given","text":"We create a completely uninitialized tensor instance.","code":["Tsr<Double> t = Tsr.newInstance()"]},
 
         {"kind":"expect","text":"","code":["t.getRepresentativeItemClass() == Neureka.get().settings().dtype().defaultDataTypeClass"]},
 
@@ -31,16 +31,16 @@
     },
   
     {
-      "id":"String tensor instance discovers expected class.",
+      "id":"We can create a tensor of strings.",
       "result":"PASS",
       "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Tsr t = Tsr.of([2, 4], [\"Hi\", \"I'm\", \"a\", \"String\", \"list\"])"]},
+        {"kind":"given","text":"We create a tensor of strings.","code":["Tsr<String> t = Tsr.of([2, 4], [\"Hi\", \"I'm\", \"a\", \"String\", \"list\"])"]},
 
-        {"kind":"expect","text":"","code":["t.getItemType() == String.class"]},
+        {"kind":"expect","text":"The tensor has the correct item type.","code":["t.itemType == String.class"]},
 
         {"kind":"and","text":"","code":["t.getRepresentativeItemClass() == String.class"]},
 

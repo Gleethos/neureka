@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.021 seconds"
+    "duration":"0.020 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"The exception tells us this:","code":["exception.message == \"Trying use an instance of 'TestAlgorithm' with name 'test_name' which was not fully built!\""]},
 
-        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@75e918f7","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@36c1257f","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@7185f8fa","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@5598b60c"]}}
+        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@4ea51796","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@270884d5","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@1fde01a2","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@59976fbd"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -81,7 +81,7 @@
 
         {"kind":"cleanup","text":"","code":["System.err = oldStream"]},
 
-        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@2fe0f4eb","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@48e59fd1","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@63ff0de8"]}}
+        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@3db682cd","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@5f4d5349","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@4c189bcb"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.407 seconds"
+    "duration":"0.404 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The DeviceCleaner triggers registersd cleaner actions when things are eligable for GC.",
       "result":"PASS",
-      "duration":"0.405 seconds",
+      "duration":"0.401 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
