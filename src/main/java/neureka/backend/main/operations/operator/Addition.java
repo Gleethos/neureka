@@ -2,8 +2,9 @@ package neureka.backend.main.operations.operator;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
@@ -14,9 +15,9 @@ import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastAddition;
 import neureka.backend.main.operations.operator.impl.CLScalarBroadcastAddition;
+import neureka.backend.main.operations.operator.impl.CPUBroadcastAddition;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -109,48 +110,27 @@ public class Addition extends AbstractOperation {
                         Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
                         Device device = call.getDeviceFor(Number.class);
                         return ADAgent.of( derivative )
-                                        .withAD(
-                                            target ->
-                                                this.getAlgorithm( Broadcast.class )
-                                                     .getImplementationFor( device )
-                                                     .run(
-                                                             ExecutionCall.of(
-                                                                     toBeDerived.setIsVirtual(false),
-                                                                     derivative,
-                                                                     target.error()
-                                                             )
-                                                             .andArgs( Arg.DerivIdx.of(d) )
-                                                             .running( this )
-                                                             .on( device )
-                                                     )
-                                        );
+                                .withAD(
+                                    target ->
+                                        this.getAlgorithm( Broadcast.class )
+                                             .getImplementationFor( device )
+                                             .run(
+                                                 ExecutionCall.of(
+                                                     toBeDerived.setIsVirtual(false),
+                                                     derivative,
+                                                     target.error()
+                                                 )
+                                                 .andArgs( Arg.DerivIdx.of(d) )
+                                                 .running( this )
+                                                 .on( device )
+                                             )
+                                );
                     }
                 )
                 .buildFunAlgorithm()
                 .setImplementationFor(
                     CPU.class,
-                    Broadcast.implementationForCPU()
-                            .with(Fun.F64F64ToF64.triple(
-                                ( a, b ) -> a + b,
-                                ( a, b ) -> a + b, // Deriving at input 0
-                                ( a, b ) -> a + b  // deriving input 1
-                            ))
-                            .with(Fun.F32F32ToF32.triple(
-                                ( a, b ) -> a + b,
-                                ( a, b ) -> a + b, // Deriving at input 0
-                                ( a, b ) -> a + b  // deriving input 1
-                            ))
-                            .with(Fun.BoolBoolToBool.triple(
-                                ( a, b ) -> a && b,
-                                ( a, b ) -> a && b,
-                                ( a, b ) -> a && b
-                            ))
-                            .with(Fun.CharCharToChar.triple(
-                                ( a, b ) -> (char) (((int)a)+((int)b)),
-                                ( a, b ) -> (char) (((int)a)+((int)b)),
-                                ( a, b ) -> (char) (((int)a)+((int)b))
-                            ))
-                            .get()
+                    new CPUBroadcastAddition()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,

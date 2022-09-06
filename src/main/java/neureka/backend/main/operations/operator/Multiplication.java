@@ -3,8 +3,8 @@ package neureka.backend.main.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
@@ -16,6 +16,7 @@ import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastMultiplication;
+import neureka.backend.main.operations.operator.impl.CPUBroadcastMultiplication;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -44,13 +45,12 @@ public class Multiplication extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        ElementWise elementWise = new ElementWise(ElemWiseUtil::forMultiplications)
-                                   .setSupplyADAgentFor( getDefaultAlgorithm() )
-                                   .buildFunAlgorithm();
-
         setAlgorithm(
             ElementWise.class,
-            elementWise.setImplementationFor(
+            new ElementWise(ElemWiseUtil::forMultiplications)
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 ElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
@@ -80,55 +80,39 @@ public class Multiplication extends AbstractOperation
 
 
         //________________
-        // BROADCASTING :
-
-        Broadcast broadcast = new Broadcast( ElemWiseUtil::forMultiplications )
-                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
-                    {
-                        if ( call.autogradMode().allowsForward() )
-                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        Function mul = Neureka.get().backend().getFunction().mul();
-                        if ( ctxDerivative != null ) {
-                            return ADAgent.of( ctxDerivative )
-                                            .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
-                        }
-                        int d = call.getDerivativeIndex();
-                        Tsr<?> derivative = MemUtil.keep( call.inputs(), () -> f.executeDerive( call.inputs(), d ) );
-                        return ADAgent.of( derivative )
-                                .withAD( target -> mul.execute( target.error(), derivative ) );
-                    }
-                )
-                .buildFunAlgorithm();
+        // BROADCASTING :;
 
         setAlgorithm(
             Broadcast.class,
-            broadcast
-                .setImplementationFor(
-                    CPU.class,
-                    Broadcast.implementationForCPU()
-                            .with(Fun.F64F64ToF64.triple(
-                                ( a, b ) -> a * b,
-                                ( a, b ) -> b, // Deriving at input 0
-                                ( a, b ) -> a  // deriving input 1
-                            ))
-                            .with(Fun.F32F32ToF32.triple(
-                                ( a, b ) -> a * b,
-                                ( a, b ) -> b, // Deriving at input 0
-                                ( a, b ) -> a  // deriving input 1
-                            ))
-                            .get()
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLBroadcastMultiplication( this.getIdentifier() )
+            new Broadcast( ElemWiseUtil::forMultiplications )
+            .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
+            .setSupplyADAgentFor(
+                ( Function f, ExecutionCall<? extends Device<?>> call ) ->
+                {
+                    if ( call.autogradMode().allowsForward() )
+                        throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                    Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                    Function mul = Neureka.get().backend().getFunction().mul();
+                    if ( ctxDerivative != null ) {
+                        return ADAgent.of( ctxDerivative )
+                                        .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
+                    }
+                    int d = call.getDerivativeIndex();
+                    Tsr<?> derivative = MemUtil.keep( call.inputs(), () -> f.executeDerive( call.inputs(), d ) );
+                    return ADAgent.of( derivative )
+                            .withAD( target -> mul.execute( target.error(), derivative ) );
+                }
+            )
+            .buildFunAlgorithm()
+            .setImplementationFor(
+                CPU.class,
+                new CPUBroadcastMultiplication()
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                new CLBroadcastMultiplication( this.getIdentifier() )
             )
         );
-
-
-
 
         //___________________________
         // TENSOR SCALAR OPERATION :
@@ -218,9 +202,9 @@ public class Multiplication extends AbstractOperation
                             String derivative = child.getDerivative(derivationIndex).toString();
                             return ( (derivative.equals("1.0") ) ? "" : " * " ) +
                                     Arrays.stream( children )
-                                            .filter( inner -> inner != child )
-                                            .map( Object::toString )
-                                            .collect( Collectors.joining( " * " ) );
+                                        .filter( inner -> inner != child )
+                                        .map( Object::toString )
+                                        .collect( Collectors.joining( " * " ) );
                         }
                 )
                 .map( Object::toString )

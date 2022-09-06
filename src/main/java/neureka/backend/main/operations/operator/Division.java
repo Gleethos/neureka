@@ -15,6 +15,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastDivision;
 import neureka.backend.main.operations.operator.impl.CLScalarBroadcastDivision;
+import neureka.backend.main.operations.operator.impl.CPUBroadcastDivision;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -118,19 +119,8 @@ public class Division extends AbstractOperation
                 )
                 .buildFunAlgorithm()
                 .setImplementationFor(
-                CPU.class,
-                Broadcast.implementationForCPU()
-                    .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> a / b,
-                        ( a, b ) -> 1 / b, // Deriving at input 0
-                        ( a, b ) -> -( a / Math.pow( b, 2 ) ) // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> a / b,
-                        ( a, b ) -> 1 / b, // Deriving at input 0
-                        ( a, b ) -> (float) -( a / Math.pow( b, 2 ) ) // deriving input 1
-                    ))
-                    .get()
+                    CPU.class,
+                    new CPUBroadcastDivision()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,

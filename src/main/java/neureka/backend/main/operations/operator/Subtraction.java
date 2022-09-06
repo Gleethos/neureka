@@ -14,6 +14,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastSubtraction;
+import neureka.backend.main.operations.operator.impl.CPUBroadcastSubtraction;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -169,14 +170,14 @@ public class Subtraction extends AbstractOperation
                                     this.getAlgorithm( Broadcast.class )
                                         .getImplementationFor( device )
                                         .run(
-                                                ExecutionCall.of(
-                                                            toBeDerived.setIsVirtual(false),
-                                                            derivative,
-                                                            target.error()
-                                                        )
-                                                        .andArgs( Arg.DerivIdx.of(d) )
-                                                        .running( this )
-                                                        .on( device )
+                                            ExecutionCall.of(
+                                                    toBeDerived.setIsVirtual(false),
+                                                    derivative,
+                                                    target.error()
+                                                )
+                                                .andArgs( Arg.DerivIdx.of(d) )
+                                                .running( this )
+                                                .on( device )
                                         )
                             );
                     }
@@ -184,20 +185,7 @@ public class Subtraction extends AbstractOperation
                 .buildFunAlgorithm()
                 .setImplementationFor(
                     CPU.class,
-                    Broadcast.implementationForCPU()
-                            .with(Fun.F64F64ToF64.triple(
-                                    ( a, b ) -> a - b,
-                                    // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                                    ( a, b ) -> a + b, // Deriving at input 0
-                                    ( a, b ) -> a - b // deriving input 1
-                            ))
-                            .with(Fun.F32F32ToF32.triple(
-                                    ( a, b ) -> a - b,
-                                    // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                                    ( a, b ) -> a + b, // Deriving at input 0
-                                    ( a, b ) -> a - b // deriving input 1
-                            ))
-                            .get()
+                    new CPUBroadcastSubtraction()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,

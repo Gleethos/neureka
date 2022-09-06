@@ -3,9 +3,10 @@ package neureka.backend.main.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
@@ -15,9 +16,9 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastModulo;
+import neureka.backend.main.operations.operator.impl.CPUBroadcastModulo;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -122,18 +123,7 @@ public class Modulo extends AbstractOperation {
             Broadcast.class,
             broadcast.setImplementationFor(
                 CPU.class,
-                Broadcast.implementationForCPU()
-                        .with(Fun.F64F64ToF64.triple(
-                            ( a, b ) -> a % b,
-                            ( a, b ) -> 1 / b, // Deriving at input 0
-                            ( a, b ) -> -(a / Math.pow(b, 2)) // deriving input 1
-                        ))
-                        .with(Fun.F32F32ToF32.triple(
-                            ( a, b ) -> a % b,
-                            ( a, b ) -> 1 / b, // Deriving at input 0
-                            ( a, b ) -> (float) -(a / Math.pow(b, 2)) // deriving input 1
-                        ))
-                        .get()
+                new CPUBroadcastModulo()
             )
             .setImplementationFor(
                 OpenCLDevice.class,
@@ -144,20 +134,19 @@ public class Modulo extends AbstractOperation {
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        Scalarization scalarization = new Scalarization()
-                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setAutogradModeFor(
-                        call -> call
-                                .validate().allNotNullHaveSame(NDimensional::shape)
-                                .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
-                                .orElse(AutoDiffMode.BACKWARD_ONLY)
-                )
-                .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
-                .buildFunAlgorithm();
-
         setAlgorithm(
             Scalarization.class,
-            scalarization.setImplementationFor(
+            new Scalarization()
+            .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
+            .setAutogradModeFor(
+                call -> call
+                        .validate().allNotNullHaveSame(NDimensional::shape)
+                        .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                        .orElse(AutoDiffMode.BACKWARD_ONLY)
+            )
+            .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 Scalarization.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(

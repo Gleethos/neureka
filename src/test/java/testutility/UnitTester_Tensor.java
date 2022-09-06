@@ -11,6 +11,8 @@ import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CPUImplementation;
+import neureka.backend.main.operations.operator.impl.CPUBroadcast;
+import neureka.backend.main.operations.operator.impl.CPUBroadcastMultiplication;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -258,7 +260,7 @@ public class UnitTester_Tensor extends UnitTester
                                         CPUImplementation
                                                 .withArity(3)
                                                 .andImplementation(
-                                                        Broadcast.implementationForCPU()
+                                                        CPUBroadcast.implementationForCPU()
                                                                 .with(Fun.F64F64ToF64.triple(
                                                                         ( a, b ) -> a * b,
                                                                         ( a, b ) -> a * b,
@@ -310,7 +312,7 @@ public class UnitTester_Tensor extends UnitTester
                                             CPUImplementation
                                                     .withArity(3)
                                                     .andImplementation(
-                                                            Broadcast.implementationForCPU()
+                                                            CPUBroadcast.implementationForCPU()
                                                                     .with(Fun.F64F64ToF64.triple(
                                                                             ( a, b ) -> a * b,
                                                                             ( a, b ) -> a * b,
@@ -327,14 +329,14 @@ public class UnitTester_Tensor extends UnitTester
 
         left.getImplementationFor( CPU.class )
                 .run(
-                        ExecutionCall.of(
-                                    Tsr.of(frstShp, frstData),
-                                    (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
-                                    (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
-                            )
-                            .andArgs( Arg.DerivIdx.of(0) )
-                            .running(Neureka.get().backend().getOperation("*"))
-                            .on(CPU.get())
+                    ExecutionCall.of(
+                                Tsr.of(frstShp, frstData),
+                                (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
+                                (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
+                        )
+                        .andArgs( Arg.DerivIdx.of(0) )
+                        .running(Neureka.get().backend().getOperation("*"))
+                        .on(CPU.get())
                 );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
 

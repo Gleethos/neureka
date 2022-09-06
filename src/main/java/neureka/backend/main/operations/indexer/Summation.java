@@ -14,6 +14,8 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastAddition;
+import neureka.backend.main.operations.operator.impl.CPUBroadcastAddition;
+import neureka.backend.main.operations.operator.impl.CPUBroadcastSummation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -73,18 +75,7 @@ public final class Summation extends AbstractOperation
                 Broadcast.class,
                 operationAlgorithm.setImplementationFor(
                     CPU.class,
-                    Broadcast.implementationForCPU()
-                            .with(Fun.F64F64ToF64.triple(
-                                ( a, b ) -> a + b,
-                                ( a, b ) -> 1, // Deriving at input 0
-                                ( a, b ) -> 1 // deriving input 1
-                            ))
-                            .with(Fun.F32F32ToF32.triple(
-                                ( a, b ) -> a + b,
-                                ( a, b ) -> 1, // Deriving at input 0
-                                ( a, b ) -> 1 // deriving input 1
-                            ))
-                            .get()
+                    new CPUBroadcastSummation()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,

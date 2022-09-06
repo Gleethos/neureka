@@ -13,7 +13,7 @@ import neureka.devices.host.CPU;
  * {@link ImplementationFor}&lt;{@link CPU}&gt; lambda implementation
  * receiving an instance of the ExecutionCall class.
  */
-public class CPUImplementation extends AbstractImplementationFor<CPU>
+public final class CPUImplementation extends AbstractImplementationFor<CPU>
 {
     public static AndImplementation withArity( int arity ) { return lambda -> new CPUImplementation( lambda, arity ); }
 

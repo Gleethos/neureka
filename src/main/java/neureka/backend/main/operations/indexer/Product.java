@@ -13,6 +13,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastMultiplication;
+import neureka.backend.main.operations.operator.impl.CPUBroadcastMultiplication;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -67,19 +68,7 @@ public final class Product extends AbstractOperation
             )
             .buildFunAlgorithm()
             .setImplementationFor(
-                CPU.class,
-                Broadcast.implementationForCPU()
-                    .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> a * b,
-                        ( a, b ) -> b, // Deriving at input 0
-                        ( a, b ) -> a  // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> a * b,
-                        ( a, b ) -> b, // Deriving at input 0
-                        ( a, b ) -> a  // deriving input 1
-                    ))
-                    .get()
+                CPU.class, new CPUBroadcastMultiplication()
             )
             .setImplementationFor(
                 OpenCLDevice.class,
