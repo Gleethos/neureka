@@ -4,7 +4,7 @@
 If you are looking at the test suite 
 in order to find out how to use Neureka,
 you might be interested in 
-[the livining documentation browser](https://gleethos.github.io/neureka/showcase.html).
+[the living documentation browser](https://gleethos.github.io/neureka/showcase.html).
 There you can query the entire test suite using a simple search bar.
  
 ## 2. ##
@@ -25,11 +25,11 @@ Spock test methods are referred to as "**features**" which are bundled into a si
 
 <br>
 Test method names can actually be strings! <br>
-They describe the covered feature in the form of short a sentences. 
+They describe the covered feature in the form of short sentences. 
 A feature consists of multiple 
 sections / code blocks which adhere to BDD and will be enforced by Spock.
 These sections can receive documentation in the form of strings, which will
-then be used to generate nice and readable html reports.
+then be used to generate the contents of the living documentation browser.
 
 A Spock specification can have the following fixture methods:
 
