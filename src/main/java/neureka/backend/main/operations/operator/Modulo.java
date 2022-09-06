@@ -29,27 +29,25 @@ public class Modulo extends AbstractOperation {
     public Modulo()
     {
         super(
-                new OperationBuilder()
-                        .identifier(       "modulo"    )
-                        .operator(         "%"         )
-                        .arity(            -1          )
-                        .isOperator(       true        )
-                        .isIndexer(        false       )
-                        .isDifferentiable( true        )
-                        .isInline(         false       )
+            new OperationBuilder()
+                .identifier(       "modulo"    )
+                .operator(         "%"         )
+                .arity(            -1          )
+                .isOperator(       true        )
+                .isIndexer(        false       )
+                .isDifferentiable( true        )
+                .isInline(         false       )
         );
 
         //_____________________
         // DEFAULT OPERATION :
 
-        ElementWise elementWise =
-                new ElementWise(ElemWiseUtil::forDivisionsOrModuli)
-                       .setSupplyADAgentFor( getDefaultAlgorithm() )
-                       .buildFunAlgorithm();
-
         setAlgorithm(
             ElementWise.class,
-            elementWise.setImplementationFor(
+            new ElementWise(ElemWiseUtil::forDivisionsOrModuli)
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
                 ElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
@@ -77,28 +75,28 @@ public class Modulo extends AbstractOperation {
             .setImplementationFor(
                 OpenCLDevice.class,
                 ElementWise.implementationForGPU( this.getIdentifier() )
-                        .with( "output = ((int)input1) % ((int)input2);\n" )
-                        .and(
-                                "if ( d==0 ) {                                        \n" +
-                                        "    output = 1/input2;                               \n" +
-                                        "} else {                                             \n" +
-                                        "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
-                                        "}"
-                        )
+                    .with( "output = ((int)input1) % ((int)input2);\n" )
+                    .and(
+                            "if ( d==0 ) {                                        \n" +
+                                    "    output = 1/input2;                               \n" +
+                                    "} else {                                             \n" +
+                                    "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
+                                    "}"
+                    )
             )
         );
 
-
-
         //________________
-        // BROADCASTING :
+        // BROADCASTING :;
 
-        Broadcast broadcast = new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
+        setAlgorithm(
+            Broadcast.class,
+            new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
             .setAutogradModeFor(
-                    call -> call
-                                .validate().allNotNullHaveSame(NDimensional::shape)
-                                .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
-                                .orElse(AutoDiffMode.BACKWARD_ONLY)
+                call -> call.validate()
+                        .allNotNullHaveSame(NDimensional::shape)
+                        .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                        .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
             .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -117,18 +115,9 @@ public class Modulo extends AbstractOperation {
                                     .withAD( target -> mul.execute( target.error(), derivative ) );
                 }
             )
-            .buildFunAlgorithm();
-
-        setAlgorithm(
-            Broadcast.class,
-            broadcast.setImplementationFor(
-                CPU.class,
-                new CPUBroadcastModulo()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLBroadcastModulo( this.getIdentifier() )
-            )
+            .buildFunAlgorithm()
+            .setImplementationFor( CPU.class, new CPUBroadcastModulo() )
+            .setImplementationFor( OpenCLDevice.class, new CLBroadcastModulo( this.getIdentifier() ) )
         );
 
         //___________________________
@@ -139,8 +128,8 @@ public class Modulo extends AbstractOperation {
             new Scalarization()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setAutogradModeFor(
-                call -> call
-                        .validate().allNotNullHaveSame(NDimensional::shape)
+                call -> call.validate()
+                        .allNotNullHaveSame(NDimensional::shape)
                         .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                         .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
@@ -179,11 +168,11 @@ public class Modulo extends AbstractOperation {
                     .kernelSource( Scalarization.getKernelSource() )
                     .activationSource( "output = ((int)input1) % ((int)value);     \n" )
                     .differentiationSource(
-                        "if ( d == 0 ) {                               \n" +
-                        "    output = 1/value;                           \n" +
-                        "} else {                                        \n" +
-                        "    output = -value /(float)pow(input1, 2.0f);  \n" +
-                        "}"
+                        "   if ( d == 0 ) {                                 \n" +
+                        "       output = 1/value;                           \n" +
+                        "   } else {                                        \n" +
+                        "       output = -value /(float)pow(input1, 2.0f);  \n" +
+                        "   }"
                     )
                     .kernelPostfix( this.getIdentifier() )
                     .execution(
@@ -205,10 +194,8 @@ public class Modulo extends AbstractOperation {
                     .build()
             )
         );
-
     }
 
-    
     public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
             double result = src[ 0 ].call( inputs );
@@ -240,9 +227,5 @@ public class Modulo extends AbstractOperation {
         else
             return src[ 0 ].derive( inputs, d, j );
     }
-
-
-
-
 
 }
