@@ -21,9 +21,7 @@ class Tensor_Generics_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-                <p>
                     Here you will find out how to create a tensor of any kind of data.          
-                </p>
             """
     }
 
@@ -48,7 +46,7 @@ class Tensor_Generics_Spec extends Specification
 
     def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {
 
-        given :
+        given : 'We create a completely uninitialized tensor instance.'
             Tsr<Double> t = Tsr.newInstance()
 
         expect :
@@ -57,26 +55,24 @@ class Tensor_Generics_Spec extends Specification
             t.getItemType() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getItemTypeClass()
     }
 
-    def 'String tensor instance discovers expected class.'()
+    def 'We can create a tensor of strings.'()
     {
-        given :
-            Tsr t = Tsr.of([2, 4], ["Hi", "I'm", "a", "String", "list"])
+        given : 'We create a tensor of strings.'
+            Tsr<String> t = Tsr.of([2, 4], ["Hi", "I'm", "a", "String", "list"])
 
-        expect :
-            t.getItemType() == String.class
+        expect : 'The tensor has the correct item type.'
+            t.itemType == String.class
 
         and :
             t.getRepresentativeItemClass() == String.class
 
         and :
             t.toString() == "(2x4):[Hi, I'm, a, String, list, Hi, I'm, a]"
-
     }
 
     def '1D tensors can be created from primitive arrays.'(
             int size, Object data, Class<?> expected
     ){
-
         given :
             def t = Tsr.of(data)
 
