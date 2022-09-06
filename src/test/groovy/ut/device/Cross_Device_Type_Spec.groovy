@@ -68,9 +68,16 @@ class Cross_Device_Type_Spec extends Specification
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.type == OpenCLDevice }) // We need to assure that this system supports OpenCL!
-    def 'Querying for Device implementations works as expected.'(
+    def 'We can find Device implementations or null by passing search keys to the "get" method.'(
             String query, Class type
     ) {
+        reportInfo """
+            Note that the examples specified in the table below
+            may not be the same on every system because the devices
+            returned by the "get" method are dependent on the current 
+            system and the available hardware.
+        """
+
         when : 'We pass a query key word to the "get" method...'
             var device = Device.get(query)
 
@@ -79,7 +86,7 @@ class Cross_Device_Type_Spec extends Specification
         and : 'The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).'
             device.class == type
 
-        where :
+        where : 'The query key words and the expected device types returned.'
             query                          || type
             "cPu"                          || CPU
             "jVm"                          || CPU
@@ -95,14 +102,21 @@ class Cross_Device_Type_Spec extends Specification
             "first"                        || OpenCLDevice
     }
 
-    def 'Advanced device querying methods query as expected!'(Class<?> type, String key, Device<?> expected)
-    {
+    def 'We can query the backend for devices by specifying both the requested type and a key word.'(
+            Class<?> type, String key, Device<?> expected
+    ) {
+        reportInfo  """
+            Note that the examples specified in the table below
+            may not be the same on every system because the devices
+            returned by the "get" and "find" methods are dependent on the current 
+            system and the available hardware that Neureka encounters.
+        """
         expect : 'Querying for a device using a device type and key works as expected.'
             Device.get(type, key) === expected
-        and : 'We can use the "find" method if we want the result to be wrapped in a nice and safe Optional.'
+        and : 'We can use the "find" method if we want the result to be wrapped in a nice and safe Optional instance.'
             Device.find(type, key).isEmpty() && expected == null || Device.find(type, key).get() === expected
 
-        where :
+        where : 'The we can use the following device type, key and expected device instance.'
             type        | key          || expected
             Device      | 'cpu'        || CPU.get()
             Device      | 'jvm'        || CPU.get()
@@ -113,14 +127,17 @@ class Cross_Device_Type_Spec extends Specification
             DummyDevice | 'gpu'        || null
     }
 
-    def 'The simpler device querying methods query as expected!'(String key, Device<?> expected)
-    {
-        expect :
+    def 'In total there are 3 different types of methods for finding device instances.'(
+            String key, Device<?> expected
+    ) {
+        expect : 'The "get" method returns a device instance or null.'
             Device.get(key) === expected
+        and : 'The "any" method returns a device instance or the "CPU device", which is the library default device.'
             Device.any(key) === expected || Device.any(key) === CPU.get()
+        and : 'The "find" method returns a device instance wrapped in an Optional instance.'
             Device.find(key).isEmpty() && expected == null || Device.find(key).get() === expected
 
-        where :
+        where : 'The we can use the following search key and expected device instance.'
             key                 || expected
             'cpu'               || CPU.get()
             'central processing'|| CPU.get()
@@ -130,15 +147,17 @@ class Cross_Device_Type_Spec extends Specification
             'cupcake'           || null
     }
 
-    /**
-     * The data of a tensor located on an Device should
-     * be updated when passing a float or double array!
-     */
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
-    def 'Passing a numeric array to a tensor should modify its content!'(
+    def 'Passing a numeric array to a tensor should modify its contents!'(
             Device device, Object data1, Object data2, String expected
     ) {
-        given : 'A 2D tensor is being instantiated..'
+        reportInfo """
+            Here we demonstrate that a tensor located on a non-CPU `Device` will be
+            updated when passing a float or double array, even if it its data is stored
+            on the GPU or somewhere else!
+        """
+
+        given : 'A 2D tensor which we transfer to a device using the "to" method...'
             Tsr t = Tsr.of(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).to(device)
 
         when : 'A numeric array is passed to said tensor...'
@@ -163,7 +182,7 @@ class Cross_Device_Type_Spec extends Specification
             Device.get("openCL")  | new float[]{22, 24, 35, 80} | new double[]{-1, -1, -1}   || "(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"
     }
 
-    def 'Tensor data can be fetched from device if the tensor is stored on it...'(
+    def 'Devices expose an API for accessing (reading and writing) the data of a tensor.'(
             Device device, int[] shape, Object data, List<Float> expected
     ) {
         given : 'Because in some environments OpenCL might not be available, the test will be stopped!'
@@ -200,13 +219,14 @@ class Cross_Device_Type_Spec extends Specification
             Device.get("openCL")  | new int[]{3, 2} | new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}     || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]
     }
 
-    /**
-     *  Every argument within an ExecutionCall instance has a purpose. Null is not permissible.
-     */
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device instanceof OpenCLDevice || data.device == null })
     def 'Execution calls containing null arguments will cause an exception to be thrown in device instances.'(
         Device device
     ) {
+        reportInfo """
+            Every argument within an ExecutionCall instance has a purpose. Null is not permissible.
+        """
+
         given : 'A mocked ExecutionCall with mocked algorithm...'
             var call = Mock(ExecutionCall)
             var implementation = Mock(Algorithm)
@@ -229,7 +249,7 @@ class Cross_Device_Type_Spec extends Specification
             device << [
                     CPU.get(),
                     Device.get("openCL")
-            ]
+                ]
 
     }
 
@@ -290,7 +310,7 @@ class Cross_Device_Type_Spec extends Specification
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
-    def 'Devices store slices which can also be restored.'(
+    def 'Devices also store slices which can also be restored just like normal tensors.'(
             Device device
     ) {
         given : 'The given device is available and Neureka is being reset.'
@@ -328,11 +348,11 @@ class Cross_Device_Type_Spec extends Specification
         device << [
                 CPU.get(),
                 Device.get( "openCL" )
-        ]
+            ]
     }
 
     @Ignore
-    def 'Devices cannot store slices which parents are not already stored.'(
+    def 'Devices cannot store slices whose parents are not already stored.'(
             Device device, BiConsumer<Device, Tsr> storageMethod
     ) {
         given : 'The given device is available and Neureka is being reset.'
@@ -388,6 +408,14 @@ class Cross_Device_Type_Spec extends Specification
     def 'Virtual tensors stay virtual when outsourced.'(
             String deviceType
     ) {
+        reportInfo """
+            Note: A virtual tensor is a tensor which is not yet fully initialized
+            in the sense that the data array is not yet allocated according to the 
+            tensors size (number of elements they hold).
+            This is the case for tensor which are filled homogeneously with a single value,
+            like for example an all 0 tensor.    
+        """
+
         given : 'We create a homogeneously filled tensor, which is therefor "virtual".'
             var t = Tsr.ofFloats().withShape(4,3).all(-0.54f)
         and : 'We also get a device for testing...'
