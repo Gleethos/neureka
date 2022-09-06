@@ -20,8 +20,10 @@ import spock.lang.Title
 
 @Title("FileDevice, Storing Tensors in Files")
 @Narrative('''
-    The FileDevice class, one of many implementations of the Device interface, 
+
+    The `FileDevice` class, one of many implementations of the `Device` interface, 
     represents a file directory which should be able to store and load tensors as files (idx, jpg, png...).
+    
 ''')
 @Subject([FileDevice, Device])
 class FileDevice_Spec extends Specification
@@ -137,16 +139,16 @@ class FileDevice_Spec extends Specification
 
     def 'The file device can load known files in a directory.'()
     {
-        given:
+        given: 'A file device instance is being accessed for a simple test path.'
             def device = FileDevice.at( 'build/resources/test/csv' )
-        expect :
+        expect : 'The device contains the expected number of files and it tells as how many files could be loaded.'
             device.loadable.toSet() == ['biostats-without-head.csv', 'biostats.csv'].toSet() // If this fails: consider deleting the build folder!!
             device.loaded == []
 
-        when :
+        when : 'We load a file...'
             def t = device.load('biostats-without-head.csv')
 
-        then :
+        then : 'The device reports said file as loaded.'
             device.loadable == ['biostats.csv']
             device.loaded == ['biostats-without-head.csv']
             t.toString({ NDPrintSettings it ->
