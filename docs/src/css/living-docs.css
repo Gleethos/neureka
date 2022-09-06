@@ -53,6 +53,7 @@
     border-radius: 0.1em;
     padding: 0.25em 0.65em 0.25em 0.65em;
     border:none;
+    font-family: Arial, serif;
 }
 .ContentOption:hover {
     background-size: 4px 100%;

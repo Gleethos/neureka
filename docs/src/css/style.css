@@ -237,6 +237,11 @@ hr {
     box-sizing: border-box;
 }
 
+p                  { font-family: Arial, serif; }
+h1, h2, h3, h4, h5 { font-family: Arial, serif; }
+button             { font-family: Arial, serif; }
+input              { font-family: Arial, serif; }
+
 /* Parallax base styles: */
 /* ================== */
 
@@ -464,8 +469,6 @@ header p {
     height: 100%;
     background: rgba(200, 200, 255, 0.3);
     text-align: center;
-    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .MainContentWrapper code {
