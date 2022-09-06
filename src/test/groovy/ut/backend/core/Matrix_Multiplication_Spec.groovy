@@ -1,26 +1,33 @@
 package ut.backend.core
 
-
 import neureka.backend.main.operations.linear.CPUMatMul
+import spock.lang.Narrative
 import spock.lang.Specification
-import ut.backend.core.InternalMatMulTest
+import spock.lang.Title
 
+@Title("Internal CPU based Matrix Multiplication")
+@Narrative('''
+
+    This specification covers library internal matrix multiplication logic,
+    specifically the CPU implementation.
+    Do not depend on the API used in this specification as it is subject to change!
+
+''')
 class Matrix_Multiplication_Spec extends Specification
 {
-
     def 'The CPU matrix multiplication implementation works as expected.'(
             def type, def A, def B, int M, int K, int N, def expectedC
     ) {
-        given :
+        given : 'We crete an output array and convert it to the targeted array type.'
             var C = new double[M*N].asType(type)
 
-        when :
+        when : 'We perform the matrix multiplication.'
             CPUMatMul.execute(true, A.asType(type), B.asType(type), C, M, K, N)
 
-        then :
+        then : 'The result is as expected.'
             C == expectedC
 
-        where :
+        where : 'The following data arrays and dimensions can be used for the test.'
             type     | A            | B                  | M | K | N || expectedC
             double[] | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 1, 0, 0, 1 ]
             double[] | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
@@ -35,7 +42,7 @@ class Matrix_Multiplication_Spec extends Specification
 
     def 'The internal matrix multiplication test script runs!'()
     {
-        expect:
+        expect: 'The test script runs without errors.'
             new InternalMatMulTest().start()
     }
 
