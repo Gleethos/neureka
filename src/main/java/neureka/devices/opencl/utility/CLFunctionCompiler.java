@@ -191,8 +191,7 @@ public final class CLFunctionCompiler
                 "        arg0[_i_of_i(i, cfg0, "+rank+")] = " + compilableFun + ";                         \n" +
                 "    }                                                                                     \n\n";
 
-        _device.compileAdHocKernel( kernelSignature, kernelCode );
-        KernelCaller caller = _device.getAdHocKernel( kernelSignature );
+        KernelCaller caller = _device.compileAndGetAdHocKernel( kernelSignature, kernelCode );
         args.forEach( caller::pass );
         caller.call( args.get(0).size() );
         return call.input(0);

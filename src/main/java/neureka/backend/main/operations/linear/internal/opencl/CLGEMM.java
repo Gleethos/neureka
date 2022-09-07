@@ -89,8 +89,8 @@ public class CLGEMM implements ImplementationFor<OpenCLDevice>
 
         KernelCaller caller =
              call.getDevice().hasAdHocKernel(kernelName)
-                 ? call.getDevice().getAdHocKernel(kernelName)
-                 : call.getDevice().compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);
+                 ? call.getDevice().findAdHocKernel(kernelName).orElseThrow(()-> new RuntimeException("Kernel not found!"))
+                 : call.getDevice().compileAndGetAdHocKernel(kernelName, code.get());
 
         long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)
         long[] global = new long[]{(long) Math.floor(M/MW), (long) Math.floor(N/NW), 1 };

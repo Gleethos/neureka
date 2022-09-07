@@ -105,16 +105,17 @@ public final class CLContext implements BackendExtension
 
         List<OpenCLPlatform> loadedPlatforms = new ArrayList<>();
         for ( cl_platform_id id : platforms ) {
-            OpenCLPlatform newPlatform;
+            OpenCLPlatform newPlatform = null;
             try {
                 newPlatform = new OpenCLPlatform( id );
-                loadedPlatforms.add( newPlatform );
             } catch ( Exception e ) {
                 String message =
                         "Failed to instantiate '"+OpenCLPlatform.class.getSimpleName()+"' " +
                         "with id '0x"+Long.toHexString(id.getNativePointer())+"'!";
                 _LOG.error( message, e );
             }
+            if ( newPlatform != null )
+                loadedPlatforms.add( newPlatform );
         }
         if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -> p.getDevices().isEmpty() ) )
             _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );
@@ -152,9 +153,7 @@ public final class CLContext implements BackendExtension
     @Override
     public void dispose() {
         for ( OpenCLPlatform platform : _platforms ) {
-            for ( OpenCLDevice device : platform.getDevices() ) {
-                device.dispose();
-            }
+            for ( OpenCLDevice device : platform.getDevices() ) device.dispose();
             platform.dispose();
         }
         _platforms.clear();

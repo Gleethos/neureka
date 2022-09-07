@@ -74,15 +74,14 @@ import java.util.*;
 import static org.jocl.CL.*;
 
 /**
- * This class is a concrete implementation of the {@link Device} interface by extending the {@link AbstractDevice} class.
- * Instances of this class internally utilize the OpenCL API in order to use supported
- * accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
+ * This class models OpenCL supporting accelerator hardware like GPUs or FPGAs
+ * for storing tensors and executing operations on them.
  */
 public class OpenCLDevice extends AbstractDevice<Number>
 {
     private static final Logger _LOG = LoggerFactory.getLogger(OpenCLDevice.class);
 
-    public static OpenCLDevice newInstanceOf(OpenCLPlatform platform, cl_device_id did) {
+    static OpenCLDevice of(OpenCLPlatform platform, cl_device_id did) {
         if (!platform.has(did)) platform.put(did, new OpenCLDevice(platform, did));
         return platform.get(did);
     }
@@ -199,34 +198,70 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @param platform The platform containing this device.
      * @param deviceId The underlying OpenCL id of this device.
      */
-    private OpenCLDevice(OpenCLPlatform platform, cl_device_id deviceId) {
+    private OpenCLDevice( OpenCLPlatform platform, cl_device_id deviceId ) {
         super();
         _deviceId = deviceId;
         _platform = platform;
         _queue = clCreateCommandQueueWithProperties(// Create a command-queue for the selected device
-                platform.getContext(), deviceId,
-                null,
-                null
-        );
+                        platform.getContext(), deviceId,
+                        null,
+                        null
+                    );
         _cleaning(this, () -> clReleaseCommandQueue(_queue));
     }
 
-    public String toString() {
-        return "OpenCLDevice[deviceId=" + _deviceId + ",platform=" + _platform + "]";
+    public final String toString() {
+        return "OpenCLDevice[id=0x" + Long.toHexString(_deviceId.getNativePointer()) + ",platform=0x" + Long.toHexString(_platform.getId()) + "]";
     }
 
     public cl_device_id getDeviceId() { return _deviceId; }
 
     public OpenCLPlatform getPlatform() { return _platform; }
 
-    public boolean hasAdHocKernel( String name ) {
-        return _kernelCache.has(name);
-    }
+    /**
+     * @param name The name of the kernel whose presents should be checked.
+     * @return True if the kernel is present in the cache, false otherwise.
+     */
+    public boolean hasAdHocKernel( String name ) { return _kernelCache.has(name); }
 
+    /**
+     * @param name The name of the kernel which should be retrieved.
+     * @return The kernel with the given name if it is present in the cache, throws an exception otherwise.
+     */
     public KernelCaller getAdHocKernel( String name ) {
         cl_ad_hoc adHoc = _kernelCache.get(name);
         if (adHoc != null) return new KernelCaller(adHoc.kernel, _queue);
-        else return null;
+        else throw new IllegalArgumentException("No ad hoc kernel with name '" + name + "' found!");
+    }
+
+    /**
+     * @param name The name of the kernel which should be retrieved.
+     * @return An {@link Optional} containing the kernel with the given name if it is present in the cache, an empty optional otherwise.
+     */
+    public Optional<KernelCaller> findAdHocKernel( String name ) {
+        cl_ad_hoc adHoc = _kernelCache.get(name);
+        if (adHoc != null) return Optional.of(new KernelCaller(adHoc.kernel, _queue));
+        else return Optional.empty();
+    }
+
+    /**
+     * This method compiles and returns the {@link KernelCaller} for a so called "ad hoc" kernel.
+     * Ad hoc is a Latin phrase meaning literally 'to this'.
+     * In English, it generally signifies a solution designed for a specific problem or task,
+     * non-generalizable, and not intended to be adapted to other purposes.
+     * This leads to the purpose of ad hoc kernel compilation, namely to be able to compile
+     * unique kernels with a specific purpose created on the fly during runtime by operations.
+     * This might be useful for high performance operations on tensors with specific dimensions and
+     * or possibly other variables / properties which might be taken into account...
+     *
+     * @param name   The name of the kernel which ought to be compiled.
+     * @param source The source of the kernel which ought to be compiled.
+     * @return The {@link KernelCaller} for the compiled kernel.
+     */
+    public synchronized KernelCaller compileAndGetAdHocKernel( String name, String source ) {
+        return compileAdHocKernel( name, source )
+                .findAdHocKernel( name )
+                .orElseThrow(() -> new RuntimeException("Failed to compile kernel: " + name));
     }
 
     /**

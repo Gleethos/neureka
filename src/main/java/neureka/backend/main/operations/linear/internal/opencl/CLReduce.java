@@ -93,8 +93,8 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
 
         KernelCaller caller =
                 device.hasAdHocKernel(kernelName)
-                        ? device.getAdHocKernel(kernelName)
-                        : device.compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);
+                        ? device.findAdHocKernel(kernelName).orElseThrow(()-> new RuntimeException("Could not find kernel: "+kernelName))
+                        : device.compileAndGetAdHocKernel(kernelName, code.get());
 
         long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)
         long[] global = new long[]{ N };
@@ -140,9 +140,8 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
 
         KernelCaller caller =
                 device.hasAdHocKernel(kernelName)
-                        ? device.getAdHocKernel(kernelName)
-                        : device.compileAdHocKernel(kernelName, code.get())
-                                .getAdHocKernel(kernelName);
+                        ? device.findAdHocKernel(kernelName).orElseThrow(()-> new RuntimeException("Could not find kernel: "+kernelName))
+                        : device.compileAndGetAdHocKernel(kernelName, code.get());
 
         long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)
         long[] global = new long[]{ indices.size() };

@@ -164,7 +164,7 @@ class OpenCLDevice_Spec extends Specification
                 """
 
         when : 'Executing the kernel by passing the previously defined tensor...'
-            device.getAdHocKernel( 'dummy_kernel' )
+            device.findAdHocKernel( 'dummy_kernel' ).get()
                     .pass( someData )
                     .pass( someData )
                     .pass( -4f )

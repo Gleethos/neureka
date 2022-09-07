@@ -8,9 +8,12 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
+import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.CLFunctionCompiler
+import neureka.view.NDPrintSettings
+import spock.lang.IgnoreIf
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
@@ -27,6 +30,96 @@ import spock.lang.Title
 ''')
 class CLFunctionCompiler_Spec extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+            Specified below are strict tests for covering the ability of 
+            OpenCL devices to be able produce optimized functions given
+            a normal function instance created from a String...
+        """
+    }
+
+    def setup() {
+        Neureka.get().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 1
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
+        })
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
+    def 'The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).'()
+    {
+        given : 'We get the first available OpenCLDevice we can find in the CLContext!'
+            def device = Neureka.get().backend().get(CLContext.class).platforms[0].devices[0]
+        and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
+            Tsr<Double> t1 = Tsr.of(-2d).to(device)
+            Tsr<Double> t2 = Tsr.of(5d).to(device)
+            Tsr<Double> t3 = Tsr.of(2d).to(device)
+
+        and : 'A test function which will be the optimization target for this test.'
+            def funToBeOptimized = Function.of("i2 + (i0 / i1)") // 2 + (-2 / 5)
+
+        when : 'We instruct the device to produce an optimized Function based on the provided test function...'
+            Function optimized = device.optimizedFunctionOf(funToBeOptimized, "my_test_fun")
+
+        then : 'Initially we expect that the device does not contain the "ad hoc" kernel with the following signature...'
+            !device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
+
+        when : 'We test the optimized function by calling it with three arguments...'
+            Tsr result = optimized( t1, t2, t3 )
+
+        then : '...the result should look as follows:'
+            result.toString() == "(1):[1.6]"
+
+        and : 'We expect that the device has an underlying kernel with the following name:'
+            device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
+    }
+
+    /* // WIP
+    def 'The OpenCLDevice produces an optimized Function for slices.'() {
+
+        given : 'This system supports OpenCL'
+        if ( !Neureka.get().canAccessOpenCL() ) return
+        and : 'We get the first available OpenCLDevice we can find in the CLContext!'
+        def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
+        and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
+        Tsr<Double> t1 = Tsr.of([[1, 3, 2],[4, -2, 5]])[0..1, 1..2]
+        t1.set(device)
+        Tsr<Double> t2 = Tsr.of(5).set(device)
+        Tsr<Double> t3 = Tsr.of(2).set(device)
+
+        and : 'A test function which will be the optimization target for this test.'
+        def funToBeOptimized = Function.of("i2 + (i0 / i1)") // 2 + (-2 / 5)
+
+        when : 'We instruct the device to produce an optimized Function based on the provided test function...'
+        Function optimized = device.optimizedFunctionOf(funToBeOptimized, "my_test_fun")
+
+        then : 'Initially we expect that the device does not contain the "ad hoc" kernel with the following signature...'
+        !device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
+
+        when :
+        Tsr result = optimized( t1, t2, t3 )
+
+        then :
+        result.toString() == "(1):[1.6E0]"
+
+        and :
+        device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
+
+    }
+     */
 
     def 'The CLFunctionCompiler produces an operation which properly integrates to the backend.'() {
 
@@ -129,8 +222,8 @@ class CLFunctionCompiler_Spec extends Specification
     }
 
 
-    def 'The CLFunctionCompiler produces the expected "ad hoc" kernel.'() {
-
+    def 'The CLFunctionCompiler produces the expected "ad hoc" kernel.'()
+    {
         given : 'A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.'
             var mockDevice = Mock(OpenCLDevice)
         and : 'A mocked KernelCaller which allows us to check if the OpenCL backend is being called properly.'
@@ -142,7 +235,7 @@ class CLFunctionCompiler_Spec extends Specification
                                     mockDevice,
                                     funToBeOptimized,
                                     "test_fun"
-                            )
+                                )
 
         when : 'We instruct the compiler to produce an optimized operation based on the provided test function...'
             Operation resultOperation = compiler.optimize()
@@ -167,8 +260,7 @@ class CLFunctionCompiler_Spec extends Specification
         then : 'We expect that the implementation first checks with an optimized kernel already exists...'
             1 * mockDevice.hasAdHocKernel("test_fun_F64\$1_F64\$1_F64\$1_F64\$1") >> false
         and : 'The implementation will then also build and pass an "adHoc" kernel to the mocked device.'
-            1 * mockDevice.compileAdHocKernel(
-                    "test_fun_F64\$1_F64\$1_F64\$1_F64\$1",
+            1 * mockDevice.compileAndGetAdHocKernel("test_fun_F64\$1_F64\$1_F64\$1_F64\$1",
                     """
     int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
     {
@@ -208,15 +300,12 @@ class CLFunctionCompiler_Spec extends Specification
         arg0[_i_of_i(i, cfg0, 1)] = (v1 + (v2 / v3));                         
     }                                                                                     
 
-""")
-        and : 'After the kernel has been compiled we expect the implementation to be called through a caller.'
-            1 * mockDevice.getAdHocKernel("test_fun_F64\$1_F64\$1_F64\$1_F64\$1") >> mockCaller
+""") >> mockCaller
         and : 'We expect that the caller receives 4 inputs, 1 output tensor and the 3 function arguments.'
             4 * mockCaller.pass(_)
         and : 'Finally the caller will receive a dispatch call with a work size of 1 (because the tensors are scalars). '
             1 * mockCaller.call(1)
 
     }
-
 
 }

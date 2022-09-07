@@ -73,7 +73,7 @@ public class OpenCLPlatform
         // Collect all devices of this platform
         for (cl_device_id did : devicesArray) {
             try {
-                OpenCLDevice clDevice = OpenCLDevice.newInstanceOf(this, did);
+                OpenCLDevice clDevice = OpenCLDevice.of(this, did);
                 _id_device.put(did, clDevice);
                 successfullyLoaded.add(did);
             } catch ( Exception e ) {
@@ -235,7 +235,7 @@ public class OpenCLPlatform
         return _id_device.get( did );
     }
 
-    public void put( cl_device_id did, OpenCLDevice device ) {
+    void put( cl_device_id did, OpenCLDevice device ) {
        _id_device.put( did, device );
     }
 
@@ -247,9 +247,7 @@ public class OpenCLPlatform
         return _kernels.containsKey( kernelName );
     }
 
-    public cl_platform_id getPid() {
-        return _pid;
-    }
+    public final long getId() { return _pid.getNativePointer(); }
 
     public cl_context getContext() {
         return _context;
@@ -262,8 +260,8 @@ public class OpenCLPlatform
     @Override
     public String toString() {
         return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
-                    "pid=" + _pid + "," +
-                    "context="+_context + "," +
+                    "id=0x" + Long.toHexString(_pid.getNativePointer()) + "," +
+                    "context=0x"+Long.toHexString(_context.getNativePointer()) + "," +
                     "kernels=[.."+_kernels.size()+"..]" +
                 "]";
     }

@@ -37,11 +37,11 @@ final class Query
                 .flatMap( key -> key.equals("nvidia") ? Stream.of("nvidia", "nvidia corporation") : Stream.of(key) )
                 .toArray(String[]::new);
 
-        return queryInternal( deviceType, flattened );
+        return _queryInternal( deviceType, flattened );
     }
 
 
-    private static <T, D extends Device<T>> D queryInternal( Class<D> deviceType, String... searchKeys )
+    private static <T, D extends Device<T>> D _queryInternal( Class<D> deviceType, String... searchKeys )
     {
         if ( deviceType == CPU.class ) return (D) CPU.get();
         String key;
@@ -81,6 +81,5 @@ final class Query
         else
             return null; // We don't know what the user wants, but we do not have it :/
     }
-
 
 }

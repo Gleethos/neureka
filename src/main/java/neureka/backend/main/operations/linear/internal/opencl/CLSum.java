@@ -87,8 +87,8 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
                         "   }                                                                                      \n";
         return
             device.hasAdHocKernel(kernelName)
-                    ? device.getAdHocKernel(kernelName)
-                    : device.compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);
+                    ? device.findAdHocKernel(kernelName).orElseThrow(()-> new RuntimeException("Could not find kernel: "+kernelName))
+                    : device.compileAndGetAdHocKernel(kernelName, code.get());
     }
 
     private static KernelCaller _processLocal(
@@ -131,8 +131,8 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
 
         return
                 device.hasAdHocKernel(kernelName)
-                        ? device.getAdHocKernel(kernelName)
-                        : device.compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);
+                        ? device.findAdHocKernel(kernelName).orElseThrow(()-> new RuntimeException("Could not find kernel: "+kernelName))
+                        : device.compileAndGetAdHocKernel(kernelName, code.get());
     }
 
 }
