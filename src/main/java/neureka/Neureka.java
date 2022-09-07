@@ -115,19 +115,23 @@ public final class Neureka
             ServiceLoader<Operation> serviceLoader = ServiceLoader.load( Operation.class );
             Iterator<Operation> operationIterator = serviceLoader.iterator();
 
-            // Iterating and logging if load was successful or not:
-            while ( operationIterator.hasNext() ) {
-                try {
-                    Operation operation = operationIterator.next();
-                    assert operation.getIdentifier() != null;
-                    assert operation.getOperator() != null;
-                    if ( operation.getIdentifier() == null ) _LOG.error(_illegalStateFor( "function" ) );
-                    if ( operation.getOperator() == null ) _LOG.error(_illegalStateFor( "operator" ) );
-                    _backend.addOperation(operation);
-                    _LOG.debug( LogUtil.format("Operation: '{}' loaded!", operation.getIdentifier()) );
-                } catch ( Exception e ) {
-                    _LOG.error("Failed to load operations!", e);
+            try {
+                // Iterating and logging if load was successful or not:
+                while ( operationIterator.hasNext() ) {
+                    try {
+                        Operation operation = operationIterator.next();
+                        assert operation.getIdentifier() != null;
+                        assert operation.getOperator() != null;
+                        if ( operation.getIdentifier() == null ) _LOG.error(_illegalStateFor( "function" ) );
+                        if ( operation.getOperator() == null ) _LOG.error(_illegalStateFor( "operator" ) );
+                        _backend.addOperation(operation);
+                        _LOG.debug( LogUtil.format("Operation: '{}' loaded!", operation.getIdentifier()) );
+                    } catch ( Exception e ) {
+                        _LOG.error("Failed to load operations!", e);
+                    }
                 }
+            } catch ( Exception e ) {
+                _LOG.error("Failed to load operations!", e);
             }
 
             if ( _OPENCL_AVAILABLE )
