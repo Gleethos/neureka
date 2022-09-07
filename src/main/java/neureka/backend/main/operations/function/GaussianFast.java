@@ -1,10 +1,10 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 
 public class GaussianFast extends AbstractActivationOperation
 {
     public GaussianFast() {
-        super(ActivationFun.GAUSSIAN_FAST);
+        super(ScalarFun.GAUSSIAN_FAST);
     }
 }

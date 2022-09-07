@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 
 /**
  *  The Self Gated {@link Tanh} Unit is based on the {@link Tanh}
@@ -13,6 +13,6 @@ import neureka.backend.main.operations.function.internal.ActivationFun;
 public class GaTU  extends AbstractActivationOperation
 {
     public GaTU() {
-        super(ActivationFun.GATU);
+        super(ScalarFun.GATU);
     }
 }

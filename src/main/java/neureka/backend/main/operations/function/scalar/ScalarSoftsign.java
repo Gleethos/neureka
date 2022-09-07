@@ -1,14 +1,14 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
 /**
  *  The softsign function, defined as {@code x / ( 1 + Math.abs( x ) )},
  *  is a computationally cheap 0 centered activation function
- *  which rescales the inputs between -1 and 1, very much like the {@link CPUTanh} function.
+ *  which rescales the inputs between -1 and 1, very much like the {@link ScalarTanh} function.
  *  The softsign function converges polynomially and is computationally cheaper than the
  *  tanh function which converges exponentially.
- *  This makes this function a computationally cheap non-exponential quasi {@link CPUTanh}!
+ *  This makes this function a computationally cheap non-exponential quasi {@link ScalarTanh}!
  */
-public class CPUSoftsign implements ActivationFun
+public class ScalarSoftsign implements ScalarFun
 {
     @Override public String id() { return "softsign"; }
 

@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
@@ -13,7 +13,7 @@ public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
     private final ImplementationFor<CPU> _impl;
 
 
-    public CPUScalarBroadcastActivation(ActivationFun fun) {
+    public CPUScalarBroadcastActivation(ScalarFun fun) {
         _impl = Functions.implementation( 2, CPUScalarBroadcastActivation::_workloadFor )
                 .with(Fun.F64ToF64.pair(fun::activate, fun::derive))
                 .with(Fun.F32ToF32.pair(fun::activate, fun::derive))

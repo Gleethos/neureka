@@ -1,10 +1,10 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 
 public class TanhFast extends AbstractActivationOperation
 {
     public TanhFast() {
-        super(ActivationFun.TANH_FAST);
+        super(ScalarFun.TANH_FAST);
     }
 }

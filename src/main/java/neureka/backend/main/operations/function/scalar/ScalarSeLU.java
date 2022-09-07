@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
 /**
  * The Scaled Exponential Linear Unit, or SELU, is an activation
@@ -11,7 +11,7 @@ package neureka.backend.main.operations.function.internal;
  * }</i><br>
  * ...where {@code ALPHA == 1.6733} and {@code SCALE == 1.0507}.
  */
-public class CPUSeLU implements ActivationFun
+public class ScalarSeLU implements ScalarFun
 {
     private static final double ALPHA = 1.6732632423543772848170429916717;
     private static final double SCALE = 1.0507009873554804934193349852946;

@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
 /**
  *  The GELU activation function is based on the standard Gaussian cumulative distribution function
@@ -7,7 +7,7 @@ package neureka.backend.main.operations.function.internal;
  *  rather than gates inputs by their sign as in ReLUs.
  *  Consequently, the GELU can be thought of as a smoother ReLU.
  */
-public class CPUGeLU implements ActivationFun
+public class ScalarGeLU implements ScalarFun
 {
     private static final double MOD_F64 = 1.702;
     private static final float  MOD_F32 = 1.702f;
@@ -28,18 +28,18 @@ public class CPUGeLU implements ActivationFun
 
     @Override
     public double derive(double x) {
-        double sig = CPUSigmoid.sig(x * MOD_F64);
+        double sig = ScalarSigmoid.sig(x * MOD_F64);
         double ds = sig * ( 1d - sig );
         return sig + ds * x * MOD_F64;
     }
 
     @Override
     public float derive(float x) {
-        float sig = (float) CPUSigmoid.sig(x * MOD_F64);
+        float sig = (float) ScalarSigmoid.sig(x * MOD_F64);
         float ds = sig * ( 1f - sig );
         return sig + ds * x * MOD_F32;
     }
 
-    public static double gelu(double x) { return x * CPUSigmoid.sig(x * 1.702); }
+    public static double gelu(double x) { return x * ScalarSigmoid.sig(x * 1.702); }
 
 }

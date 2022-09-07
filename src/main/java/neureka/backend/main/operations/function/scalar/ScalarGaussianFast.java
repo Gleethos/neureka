@@ -1,6 +1,6 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
-public class CPUGaussianFast implements ActivationFun
+public class ScalarGaussianFast implements ScalarFun
 {
     @Override public String id() { return "fast_gaus"; }
 

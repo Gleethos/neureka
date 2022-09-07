@@ -1,31 +1,29 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.main.algorithms.Activation;
-import neureka.backend.main.algorithms.internal.Fun;
 import neureka.devices.host.CPU;
 
-public interface ActivationFun
+public interface ScalarFun
 {
-    CPUAbsolute     ABSOLUTE      = new CPUAbsolute();
-    CPUCosinus      COSINUS       = new CPUCosinus();
-    CPUGaSU         GASU          = new CPUGaSU();
-    CPUGaTU         GATU          = new CPUGaTU();
-    CPUGaussian     GAUSSIAN      = new CPUGaussian();
-    CPUGaussianFast GAUSSIAN_FAST = new CPUGaussianFast();
-    CPUGeLU         GELU          = new CPUGeLU();
-    CPUIdentity     IDENTITY      = new CPUIdentity();
-    CPULogarithm    LOGARITHM     = new CPULogarithm();
-    CPUQuadratic    QUADRATIC     = new CPUQuadratic();
-    CPUReLU         RELU          = new CPUReLU();
-    CPUSeLU         SELU          = new CPUSeLU();
-    CPUSigmoid      SIGMOID       = new CPUSigmoid();
-    CPUSiLU         SILU          = new CPUSiLU();
-    CPUSinus        SINUS         = new CPUSinus();
-    CPUSoftplus     SOFTPLUS      = new CPUSoftplus();
-    CPUSoftsign     SOFTSIGN      = new CPUSoftsign();
-    CPUTanh         TANH          = new CPUTanh();
-    CPUTanhFast     TANH_FAST     = new CPUTanhFast();
+    ScalarAbsolute ABSOLUTE      = new ScalarAbsolute();
+    ScalarCosinus COSINUS       = new ScalarCosinus();
+    ScalarGaSU GASU          = new ScalarGaSU();
+    ScalarGaTU GATU          = new ScalarGaTU();
+    ScalarGaussian GAUSSIAN      = new ScalarGaussian();
+    ScalarGaussianFast GAUSSIAN_FAST = new ScalarGaussianFast();
+    ScalarGeLU GELU          = new ScalarGeLU();
+    ScalarIdentity IDENTITY      = new ScalarIdentity();
+    ScalarLogarithm LOGARITHM     = new ScalarLogarithm();
+    ScalarQuadratic QUADRATIC     = new ScalarQuadratic();
+    ScalarReLU RELU          = new ScalarReLU();
+    ScalarSeLU SELU          = new ScalarSeLU();
+    ScalarSigmoid SIGMOID       = new ScalarSigmoid();
+    ScalarSiLU SILU          = new ScalarSiLU();
+    ScalarSinus SINUS         = new ScalarSinus();
+    ScalarSoftplus SOFTPLUS      = new ScalarSoftplus();
+    ScalarSoftsign SOFTSIGN      = new ScalarSoftsign();
+    ScalarTanh TANH          = new ScalarTanh();
+    ScalarTanhFast TANH_FAST     = new ScalarTanhFast();
 
     default ImplementationFor<CPU> elementwise() {
         return new CPUElementwiseActivation(this);

@@ -1,6 +1,6 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
-public final class CPUQuadratic implements ActivationFun
+public final class ScalarQuadratic implements ScalarFun
 {
     @Override public String id() { return "quad"; }
 

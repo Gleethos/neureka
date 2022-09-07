@@ -15,7 +15,7 @@ import neureka.dtype.NumericType;
 
 public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivation>
 {
-    public ScalarActivation(FunTuple<Fun.F64ToF64> funs) {
+    public ScalarActivation() {
         super("scalar activation");
         setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD );
         setIsSuitableFor( call ->
@@ -44,32 +44,6 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
                 return call.withInputAt( 0, output );
             }
         );
-        setImplementationFor(
-            OpenCLDevice.class,
-            call -> {
-                Number value =  funs.getFor( call ).invoke(call.input( Number.class, 1 ).item(0).doubleValue());
-                Tsr<Number> out = call.input( Number.class, 0 );
-                out.getUnsafe().setDataAt(0, value);
-                return call.input(0);
-            }
-        );
-    }
-
-    public static Functions.Builder<Fun> implementationForCPU() {
-        return Functions.implementation( 2, call -> 1, ScalarActivation::_workloadFor );
-    }
-
-    
-    private static CPU.RangeWorkload _workloadFor(
-            ExecutionCall<CPU> call,
-            Functions<Fun> functions
-    ) {
-        return (i, end) -> {
-                    double      in  = call.input( Number.class, 1 ).item(0).doubleValue();
-                    Tsr<Number> out = call.input( Number.class, 0 );
-                    Number result =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(in);
-                    out.getUnsafe().setDataAt(0, result);
-                };
     }
 
 }

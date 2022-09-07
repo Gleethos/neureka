@@ -8,8 +8,10 @@ import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.ScalarActivation;
 import neureka.backend.main.algorithms.ScalarBroadcast;
 import neureka.backend.main.algorithms.internal.Fun;
-import neureka.backend.main.operations.function.internal.ActivationFun;
-import neureka.backend.main.operations.function.internal.CPUScalarBroadcastActivation;
+import neureka.backend.main.operations.function.scalar.CLScalarActivation;
+import neureka.backend.main.operations.function.scalar.CPUScalarActivation;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
+import neureka.backend.main.operations.function.scalar.CPUScalarBroadcastActivation;
 import neureka.calculus.Function;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -17,9 +19,9 @@ import neureka.ndim.NDimensional;
 
 abstract class AbstractActivationOperation extends AbstractOperation
 {
-    private final ActivationFun _fun;
+    private final ScalarFun _fun;
 
-    AbstractActivationOperation(ActivationFun fun)
+    AbstractActivationOperation(ScalarFun fun)
     {
         super(
             new OperationBuilder()
@@ -60,7 +62,7 @@ abstract class AbstractActivationOperation extends AbstractOperation
         );
 
         setAlgorithm(
-            new ScalarActivation(Fun.F64ToF64.pair(fun::activate, fun::derive))
+            new ScalarActivation()
             .setAutogradModeFor(
                 call -> call
                         .validate().allNotNullHaveSame(NDimensional::shape)
@@ -69,19 +71,8 @@ abstract class AbstractActivationOperation extends AbstractOperation
             )
             .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                ScalarActivation.implementationForCPU()
-                        .with(Fun.F64ToF64.pair(fun::activate, fun::derive))
-                        .with(Fun.F32ToF32.pair(fun::activate, fun::derive))
-                        .with(Fun.I32ToI32.pair(fun::activate, fun::derive))
-                        .with(Fun.I64ToI64.pair(fun::activate, fun::derive))
-                        .with(Fun.I8ToI8.pair(fun::activate, fun::derive))
-                        .with(Fun.I16ToI16.pair(fun::activate, fun::derive))
-                        .with(Fun.BoolToBool.pair(fun::activate, fun::derive))
-                        .with(Fun.CharToChar.pair(fun::activate, fun::derive))
-                        .get()
-            )
+            .setImplementationFor( CPU.class, new CPUScalarActivation( fun ) )
+            .setImplementationFor( OpenCLDevice.class, new CLScalarActivation( fun ) )
         );
     }
 

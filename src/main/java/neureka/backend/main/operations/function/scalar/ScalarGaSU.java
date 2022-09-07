@@ -1,14 +1,14 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
 /**
- *  The Self Gated {@link CPUSoftsign} Unit is based on the {@link CPUSoftsign} function
- *  (a computationally cheap non-exponential quasi {@link CPUTanh})
- *  making it a polynomially based version of the {@link CPUGaTU} function which
- *  is itself based on the {@link CPUTanh} function.
- *  Similar as the {@link CPUSoftsign} and {@link CPUTanh} function {@link CPUGaSU}
+ *  The Self Gated {@link ScalarSoftsign} Unit is based on the {@link ScalarSoftsign} function
+ *  (a computationally cheap non-exponential quasi {@link ScalarTanh})
+ *  making it a polynomially based version of the {@link ScalarGaTU} function which
+ *  is itself based on the {@link ScalarTanh} function.
+ *  Similar as the {@link ScalarSoftsign} and {@link ScalarTanh} function {@link ScalarGaSU}
  *  is 0 centered and capped by -1 and +1.
  */
-public class CPUGaSU implements ActivationFun
+public class ScalarGaSU implements ScalarFun
 {
     @Override public String id() { return "gasu"; }
 
@@ -25,9 +25,9 @@ public class CPUGaSU implements ActivationFun
                "output = 3.0f * x2 / ( 2.0f * x2 * fabs( input ) + x6 + 1.0f );  \n";
     }
 
-    @Override public double activate(double x) { return CPUSoftsign.softsign(x*x*x); }
+    @Override public double activate(double x) { return ScalarSoftsign.softsign(x*x*x); }
 
-    @Override public float activate(float x) { return CPUSoftsign.softsign(x*x*x); }
+    @Override public float activate(float x) { return ScalarSoftsign.softsign(x*x*x); }
 
     @Override public double derive(double x) {
         double x2 = x*x;

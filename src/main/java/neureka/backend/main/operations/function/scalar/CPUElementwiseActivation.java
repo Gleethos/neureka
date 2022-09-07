@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
@@ -12,7 +12,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
 {
     private final ImplementationFor<CPU> _impl;
 
-    public CPUElementwiseActivation(ActivationFun fun) {
+    public CPUElementwiseActivation(ScalarFun fun) {
         _impl = Functions.implementation( 1, CPUElementwiseActivation::_newWorkloadFor )
                 .with(Fun.F64ToF64.pair(fun::activate, fun::derive))
                 .with(Fun.F32ToF32.pair(fun::activate, fun::derive))

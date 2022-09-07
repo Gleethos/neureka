@@ -1,6 +1,6 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
-public final class CPUTanh implements ActivationFun
+public final class ScalarTanh implements ScalarFun
 {
     @Override public String id() { return "tanh"; }
 

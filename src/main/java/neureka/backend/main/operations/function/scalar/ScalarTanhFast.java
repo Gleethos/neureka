@@ -1,6 +1,6 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
-public class CPUTanhFast implements ActivationFun
+public class ScalarTanhFast implements ScalarFun
 {
     @Override public String id() { return "fast_tanh"; }
 
@@ -16,9 +16,9 @@ public class CPUTanhFast implements ActivationFun
                 "output = 1 / ( temp1 * temp2 + temp2 );\n";
     }
 
-    @Override public double activate(double x) { return x * FastFun.invSqrt( 1d + x * x ); }
+    @Override public double activate(double x) { return x * FunUtil.invSqrt( 1d + x * x ); }
 
-    @Override public float activate(float x) { return x * FastFun.invSqrt( 1f + x * x ); }
+    @Override public float activate(float x) { return x * FunUtil.invSqrt( 1f + x * x ); }
 
     @Override
     public double derive(double x ) {

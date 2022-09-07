@@ -13,7 +13,7 @@ final class FunPair<T extends Fun> implements FunTuple<T> {
     }
 
     @Override
-    public T get( int derivativeIndex) { return ( derivativeIndex < 0 ? _a : _d ); }
+    public T get( int derivativeIndex ) { return ( derivativeIndex < 0 ? _a : _d ); }
 
     @Override
     public Class<T> getType() { return _type; }

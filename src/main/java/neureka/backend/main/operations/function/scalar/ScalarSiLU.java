@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
 /**
  *  The SiLu activation function, also known as the swish function, is defined as {@code x * sigmoid(x)}.
@@ -6,7 +6,7 @@ package neureka.backend.main.operations.function.internal;
  *  or outperforms ReLU on deep networks,
  *  it is unbounded above and bounded below.
  */
-public class CPUSiLU implements ActivationFun
+public class ScalarSiLU implements ScalarFun
 {
     @Override public String id() { return "silu"; }
 
@@ -23,16 +23,16 @@ public class CPUSiLU implements ActivationFun
 
     @Override
     public double derive(double x) {
-        double sig = CPUSigmoid.sig(x);
+        double sig = ScalarSigmoid.sig(x);
         return sig + ( x * sig * ( 1d - sig ) );
     }
 
     @Override
     public float derive(float x) {
-        float sig = (float) CPUSigmoid.sig(x);
+        float sig = (float) ScalarSigmoid.sig(x);
         return sig + ( x * sig * ( 1f - sig ) );
     }
 
-    public static double silu(double x) { return x * CPUSigmoid.sig(x); }
+    public static double silu(double x) { return x * ScalarSigmoid.sig(x); }
 
 }

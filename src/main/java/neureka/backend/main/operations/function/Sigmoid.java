@@ -1,10 +1,10 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 
 public final class Sigmoid extends AbstractActivationOperation
 {
     public Sigmoid() {
-        super(ActivationFun.SIGMOID);
+        super(ScalarFun.SIGMOID);
     }
 }

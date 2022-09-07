@@ -1,12 +1,12 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 import neureka.calculus.Function;
 
 public final class Logarithm extends AbstractActivationOperation
 {
     public Logarithm() {
-        super(ActivationFun.LOGARITHM);
+        super(ScalarFun.LOGARITHM);
     }
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {

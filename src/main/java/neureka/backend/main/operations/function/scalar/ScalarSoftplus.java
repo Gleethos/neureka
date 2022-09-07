@@ -1,10 +1,10 @@
-package neureka.backend.main.operations.function.internal;
+package neureka.backend.main.operations.function.scalar;
 
 /**
  *  SoftPlus is a smooth approximation to the ReLU function and can be used
  *  to constrain the output of a machine to always be positive.
  */
-public final class CPUSoftplus implements ActivationFun
+public final class ScalarSoftplus implements ScalarFun
 {
     @Override public String id() { return "softplus"; }
 

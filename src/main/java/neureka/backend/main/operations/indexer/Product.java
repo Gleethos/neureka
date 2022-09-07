@@ -9,11 +9,9 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.operations.function.internal.ActivationFun;
-import neureka.backend.main.operations.function.internal.CPUIdentity;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 import neureka.backend.main.operations.operator.impl.CLBroadcastMultiplication;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastMultiplication;
 import neureka.calculus.Function;
@@ -112,7 +110,7 @@ public final class Product extends AbstractOperation
         setAlgorithm(
                 Activation.class,
                 activation.setImplementationFor(
-                    CPU.class, ActivationFun.IDENTITY.elementwise()
+                    CPU.class, ScalarFun.IDENTITY.elementwise()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,

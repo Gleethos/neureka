@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 
 /**
  *  The GELU activation function is based on the standard Gaussian cumulative distribution function
@@ -12,6 +12,6 @@ import neureka.backend.main.operations.function.internal.ActivationFun;
 public class GeLU extends AbstractActivationOperation
 {
     public GeLU() {
-        super(ActivationFun.GELU);
+        super(ScalarFun.GELU);
     }
 }

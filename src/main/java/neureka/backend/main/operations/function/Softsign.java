@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 
 /**
  *  The softsign function, defined as {@code x / ( 1 + Math.abs( x ) )},
@@ -13,6 +13,6 @@ import neureka.backend.main.operations.function.internal.ActivationFun;
 public class Softsign extends AbstractActivationOperation
 {
     public Softsign() {
-        super(ActivationFun.SOFTSIGN);
+        super(ScalarFun.SOFTSIGN);
     }
 }

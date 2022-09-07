@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 
 /**
  *  The Self Gated {@link Softsign} Unit is based on the {@link Softsign} function
@@ -13,7 +13,7 @@ import neureka.backend.main.operations.function.internal.ActivationFun;
 public class GaSU extends AbstractActivationOperation
 {
     public GaSU() {
-        super(ActivationFun.GASU);
+        super(ScalarFun.GASU);
     }
 }
 

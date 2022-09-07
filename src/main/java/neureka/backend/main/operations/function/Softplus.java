@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.scalar.ScalarFun;
 
 /**
  *  SoftPlus is a smooth approximation to the ReLU function and can be used
@@ -9,6 +9,6 @@ import neureka.backend.main.operations.function.internal.ActivationFun;
 public final class Softplus extends AbstractActivationOperation
 {
     public Softplus() {
-        super(ActivationFun.SOFTPLUS);
+        super(ScalarFun.SOFTPLUS);
     }
 }
