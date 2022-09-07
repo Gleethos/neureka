@@ -8,10 +8,11 @@ import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.ScalarActivation;
 import neureka.backend.main.algorithms.ScalarBroadcast;
 import neureka.backend.main.algorithms.internal.Fun;
-import neureka.backend.main.operations.function.scalar.CLScalarActivation;
-import neureka.backend.main.operations.function.scalar.CPUScalarActivation;
-import neureka.backend.main.operations.function.scalar.ScalarFun;
-import neureka.backend.main.operations.function.scalar.CPUScalarBroadcastActivation;
+import neureka.backend.main.functions.ScalarFun;
+import neureka.backend.main.implementations.scalar.CLScalarActivation;
+import neureka.backend.main.implementations.scalar.CPUElementwiseActivation;
+import neureka.backend.main.implementations.scalar.CPUScalarActivation;
+import neureka.backend.main.implementations.scalar.CPUScalarBroadcastActivation;
 import neureka.calculus.Function;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -36,7 +37,7 @@ abstract class AbstractActivationOperation extends AbstractOperation
         _fun = fun;
         setAlgorithm(
             new Activation().setSupplyADAgentFor( getDefaultAlgorithm() ).buildFunAlgorithm()
-                .setImplementationFor( CPU.class, fun.elementwise() )
+                .setImplementationFor( CPU.class, new CPUElementwiseActivation( fun ) )
                 .setImplementationFor(
                     OpenCLDevice.class,
                     Activation.implementationForGPU( this.getIdentifier() )

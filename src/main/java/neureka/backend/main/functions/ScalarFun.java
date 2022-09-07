@@ -1,7 +1,4 @@
-package neureka.backend.main.operations.function.scalar;
-
-import neureka.backend.api.ImplementationFor;
-import neureka.devices.host.CPU;
+package neureka.backend.main.functions;
 
 public interface ScalarFun
 {
@@ -25,10 +22,6 @@ public interface ScalarFun
     ScalarTanh TANH          = new ScalarTanh();
     ScalarTanhFast TANH_FAST     = new ScalarTanhFast();
 
-    default ImplementationFor<CPU> elementwise() {
-        return new CPUElementwiseActivation(this);
-    }
-    
     String id();
 
     default double calculate(double input, boolean derive) {

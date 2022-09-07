@@ -12,7 +12,8 @@ import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.operations.function.scalar.ScalarFun;
+import neureka.backend.main.implementations.scalar.CPUElementwiseActivation;
+import neureka.backend.main.functions.ScalarFun;
 import neureka.backend.main.operations.operator.impl.CLBroadcastAddition;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastSummation;
 import neureka.calculus.Function;
@@ -157,7 +158,7 @@ public final class Summation extends AbstractOperation
         setAlgorithm(
             Activation.class,
             activation.setImplementationFor(
-                CPU.class, ScalarFun.IDENTITY.elementwise()
+                CPU.class, new CPUElementwiseActivation(ScalarFun.IDENTITY)
             )
             .setImplementationFor(
                 OpenCLDevice.class,

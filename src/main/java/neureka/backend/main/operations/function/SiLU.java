@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.scalar.ScalarFun;
+import neureka.backend.main.functions.ScalarFun;
 
 /**
  *  The SiLu activation function, also known as the swish function, is defined as {@code x * sigmoid(x)}.

@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.scalar;
+package neureka.backend.main.functions;
 
 public class ScalarGaussianFast implements ScalarFun
 {

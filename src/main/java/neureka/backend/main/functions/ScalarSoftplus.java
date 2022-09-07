@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.scalar;
+package neureka.backend.main.functions;
 
 /**
  *  SoftPlus is a smooth approximation to the ReLU function and can be used

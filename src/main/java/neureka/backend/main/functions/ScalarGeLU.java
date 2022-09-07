@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.scalar;
+package neureka.backend.main.functions;
 
 /**
  *  The GELU activation function is based on the standard Gaussian cumulative distribution function

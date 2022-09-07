@@ -1,10 +1,11 @@
-package neureka.backend.main.operations.function.scalar;
+package neureka.backend.main.implementations.scalar;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.algorithms.Functions;
 import neureka.backend.main.algorithms.internal.Fun;
+import neureka.backend.main.functions.ScalarFun;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 

@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.function;
 
-import neureka.backend.main.operations.function.scalar.ScalarFun;
+import neureka.backend.main.functions.ScalarFun;
 
 /**
  *  The Self Gated {@link Softsign} Unit is based on the {@link Softsign} function

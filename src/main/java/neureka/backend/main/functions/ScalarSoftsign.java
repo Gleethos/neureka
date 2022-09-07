@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.scalar;
+package neureka.backend.main.functions;
 
 /**
  *  The softsign function, defined as {@code x / ( 1 + Math.abs( x ) )},

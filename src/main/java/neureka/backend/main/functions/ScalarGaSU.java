@@ -1,4 +1,4 @@
-package neureka.backend.main.operations.function.scalar;
+package neureka.backend.main.functions;
 
 /**
  *  The Self Gated {@link ScalarSoftsign} Unit is based on the {@link ScalarSoftsign} function
