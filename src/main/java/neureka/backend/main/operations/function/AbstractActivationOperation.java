@@ -9,6 +9,7 @@ import neureka.backend.main.algorithms.ScalarActivation;
 import neureka.backend.main.algorithms.ScalarBroadcast;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.operations.function.internal.ActivationFun;
+import neureka.backend.main.operations.function.internal.CPUScalarBroadcastActivation;
 import neureka.calculus.Function;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -33,20 +34,7 @@ abstract class AbstractActivationOperation extends AbstractOperation
         _fun = fun;
         setAlgorithm(
             new Activation().setSupplyADAgentFor( getDefaultAlgorithm() ).buildFunAlgorithm()
-                .setImplementationFor(
-                    CPU.class,
-                    Activation.implementationForCPU()
-                        .with(Fun.F64ToF64.pair(fun::activate, fun::derive))
-                        .with(Fun.F32ToF32.pair(fun::activate, fun::derive))
-                        .with(Fun.I32ToI32.pair(fun::activate, fun::derive))
-                        .with(Fun.I64ToI64.pair(fun::activate, fun::derive))
-                        .with(Fun.I8ToI8.pair(fun::activate, fun::derive))
-                        .with(Fun.I16ToI16.pair(fun::activate, fun::derive))
-                        .with(Fun.BoolToBool.pair(fun::activate, fun::derive))
-                        .with(Fun.CharToChar.pair(fun::activate, fun::derive))
-                        .with(Fun.ObjToObj.pair(fun::activate, fun::derive))
-                        .get()
-                )
+                .setImplementationFor( CPU.class, fun.elementwise() )
                 .setImplementationFor(
                     OpenCLDevice.class,
                     Activation.implementationForGPU( this.getIdentifier() )
@@ -67,16 +55,7 @@ abstract class AbstractActivationOperation extends AbstractOperation
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
-                ScalarBroadcast.implementationForCPU()
-                        .with(Fun.F64ToF64.pair(fun::activate, fun::derive))
-                        .with(Fun.F32ToF32.pair(fun::activate, fun::derive))
-                        .with(Fun.I32ToI32.pair(fun::activate, fun::derive))
-                        .with(Fun.I64ToI64.pair(fun::activate, fun::derive))
-                        .with(Fun.I8ToI8.pair(fun::activate, fun::derive))
-                        .with(Fun.I16ToI16.pair(fun::activate, fun::derive))
-                        .with(Fun.BoolToBool.pair(fun::activate, fun::derive))
-                        .with(Fun.CharToChar.pair(fun::activate, fun::derive))
-                        .get()
+                new CPUScalarBroadcastActivation( fun )
             )
         );
 

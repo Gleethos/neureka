@@ -1,5 +1,10 @@
 package neureka.backend.main.operations.function.internal;
 
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.main.algorithms.Activation;
+import neureka.backend.main.algorithms.internal.Fun;
+import neureka.devices.host.CPU;
+
 public interface ActivationFun
 {
     CPUAbsolute     ABSOLUTE      = new CPUAbsolute();
@@ -22,6 +27,10 @@ public interface ActivationFun
     CPUTanh         TANH          = new CPUTanh();
     CPUTanhFast     TANH_FAST     = new CPUTanhFast();
 
+    default ImplementationFor<CPU> elementwise() {
+        return new CPUElementwiseActivation(this);
+    }
+    
     String id();
 
     default double calculate(double input, boolean derive) {
