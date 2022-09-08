@@ -13,10 +13,7 @@ import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.operations.operator.impl.CLBroadcastDivision;
-import neureka.backend.main.operations.operator.impl.CLScalarBroadcastDivision;
-import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
-import neureka.backend.main.operations.operator.impl.CPUBroadcastDivision;
+import neureka.backend.main.operations.operator.impl.*;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -52,28 +49,7 @@ public class Division extends AbstractOperation
             biElementWise
                 .setImplementationFor(
                     CPU.class,
-                    CPUBiElementWise.implementationForCPU()
-                        .with(Fun.F64F64ToF64.triple(
-                            ( a, b ) -> a / b,
-                            ( a, b ) -> 1 / b, // Deriving at input 0
-                            ( a, b ) -> -( a / Math.pow( b, 2 ) ) // deriving input 1
-                        ))
-                        .with(Fun.F32F32ToF32.triple(
-                            ( a, b ) -> a / b,
-                            ( a, b ) -> 1f / b, // Deriving at input 0
-                            ( a, b ) -> (float) -( a / Math.pow( b, 2 ) ) // deriving input 1
-                        ))
-                        .with(Fun.I32I32ToI32.triple(
-                            ( a, b ) -> a / b,
-                            ( a, b ) -> (int) Math.round(1d / b), // Deriving at input 0
-                            ( a, b ) -> (int) Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1
-                        ))
-                        .with(Fun.I64I64ToI64.triple(
-                            ( a, b ) -> a / b,
-                            ( a, b ) -> Math.round(1d / b), // Deriving at input 0
-                            ( a, b ) -> Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1
-                        ))
-                        .get()
+                    new CPUBiElementWiseDivision()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,

@@ -9,14 +9,14 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastModulo;
-import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
+import neureka.backend.main.operations.operator.impl.CPUBiElementWiseModulo;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastModulo;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -50,28 +50,7 @@ public class Modulo extends AbstractOperation
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
-                CPUBiElementWise.implementationForCPU()
-                    .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> a % b,
-                        ( a, b ) -> 1 / b, // Deriving at input 0
-                        ( a, b ) -> -(a / Math.pow(b, 2)) // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> a % b,
-                        ( a, b ) -> 1f / b, // Deriving at input 0
-                        ( a, b ) -> (float) -(a / Math.pow(b, 2)) // deriving input 1
-                    ))
-                    .with(Fun.I32I32ToI32.triple(
-                        ( a, b ) -> a % b,
-                        ( a, b ) -> 1 / b, // Deriving at input 0
-                        ( a, b ) -> (int) Math.round(-a / Math.pow(b, 2)) // deriving input 1
-                    ))
-                    .with(Fun.I64I64ToI64.triple(
-                        ( a, b ) -> a % b,
-                        ( a, b ) -> 1 / b, // Deriving at input 0
-                        ( a, b ) -> Math.round(-a / Math.pow(b, 2)) // deriving input 1
-                    ))
-                    .get()
+                new CPUBiElementWiseModulo()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

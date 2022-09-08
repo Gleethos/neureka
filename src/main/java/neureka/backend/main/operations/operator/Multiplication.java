@@ -16,7 +16,7 @@ import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastMultiplication;
-import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
+import neureka.backend.main.operations.operator.impl.CPUBiElementWiseMultiplication;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastMultiplication;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -51,26 +51,7 @@ public class Multiplication extends AbstractOperation
             new BiElementWise(ElemWiseUtil::forMultiplications)
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                CPUBiElementWise.implementationForCPU()
-                    .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> a * b,
-                        ( a, b ) -> b, // Deriving at input 0
-                        ( a, b ) -> a  // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> a * b,
-                        ( a, b ) -> b, // Deriving at input 0
-                        ( a, b ) -> a  // deriving input 1
-                    ))
-                    .with(Fun.I32I32ToI32.triple(
-                        ( a, b ) -> a * b,
-                        ( a, b ) -> b, // Deriving at input 0
-                        ( a, b ) -> a  // deriving input 1
-                    ))
-                    .get()
-            )
+            .setImplementationFor( CPU.class, new CPUBiElementWiseMultiplication() )
             .setImplementationFor(
                 OpenCLDevice.class,
                 BiElementWise.implementationForGPU( this.getIdentifier() )

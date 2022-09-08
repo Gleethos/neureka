@@ -2,40 +2,49 @@ package neureka.backend.main.operations.operator.impl;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.main.algorithms.Functions;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.FunTuple;
+import neureka.backend.main.functions.CPUBiFun;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 
-public class CPUBiElementWise
+public abstract class CPUBiElementWise implements ImplementationFor<CPU>
 {
+    protected abstract CPUBiFun _getFun();
+    protected abstract CPUBiFun _getDeriveAt0();
+    protected abstract CPUBiFun _getDeriveAt1();
 
-    public static Functions.Builder<Fun> implementationForCPU() {
-        return Functions.implementation( -1, CPUBiElementWise::_newWorkloadFor );
+    @Override
+    public Tsr<?> run(ExecutionCall<CPU> call) {
+        call.getDevice()
+                .getExecutor()
+                .threaded(
+                    call.input(0).size(),
+                    _workloadFor(call)
+                );
+
+        return call.input(0);
     }
 
-    private static CPU.RangeWorkload _newWorkloadFor(
-            ExecutionCall<CPU> call,
-            Functions<Fun> pairs
+    private CPU.RangeWorkload _workloadFor(
+            ExecutionCall<CPU> call
     ) {
-        FunTuple<Fun.F64F64ToF64> funF64 = pairs.get(Fun.F64F64ToF64.class);
-        FunTuple<Fun.F32F32ToF32> funF32 = pairs.get(Fun.F32F32ToF32.class);
-        FunTuple<Fun.I32I32ToI32> funI32 = pairs.get(Fun.I32I32ToI32.class);
         Class<?> typeClass = call.input( 1 ).getItemType();
 
         int d = call.getDerivativeIndex();
+        CPUBiFun f = ( d == 0 ? _getDeriveAt0() : ( d == 1 ? _getDeriveAt1() : _getFun() ) );
 
         CPU.RangeWorkload workload = null;
 
         if ( typeClass == Double.class )
-            workload = _newWorkloadF64(  call.input( 0 ), call.input( 1 ), call.input( 2 ), funF64.get(d) );
+            workload = _newWorkloadF64(  call.input( 0 ), call.input( 1 ), call.input( 2 ), f );
 
         if ( typeClass == Float.class )
-            workload = _newWorkloadF32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), funF32.get(d) );
+            workload = _newWorkloadF32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), f );
 
         if ( typeClass == Integer.class )
-            workload = _newWorkloadI32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), funI32.get(d) );
+            workload = _newWorkloadI32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), f );
 
         if ( workload == null )
             throw new IllegalArgumentException("");
@@ -45,7 +54,7 @@ public class CPUBiElementWise
 
     private static CPU.RangeWorkload _newWorkloadF64(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            Fun.F64F64ToF64 operation
+            CPUBiFun operation
     ) {
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );
@@ -89,7 +98,7 @@ public class CPUBiElementWise
 
     private static CPU.RangeWorkload _newWorkloadF32(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            Fun.F32F32ToF32 operation
+            CPUBiFun operation
     ) {
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );
@@ -134,7 +143,7 @@ public class CPUBiElementWise
 
     private static CPU.RangeWorkload _newWorkloadI32(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            Fun.I32I32ToI32 operation
+            CPUBiFun operation
     ) {
         t1_src.setIsVirtual( false );
         t2_src.setIsVirtual( false );

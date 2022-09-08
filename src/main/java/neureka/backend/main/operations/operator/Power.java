@@ -15,10 +15,7 @@ import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.internal.RecursiveExecutor;
-import neureka.backend.main.operations.operator.impl.CLBroadcastPower;
-import neureka.backend.main.operations.operator.impl.CLScalarBroadcastPower;
-import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
-import neureka.backend.main.operations.operator.impl.CPUBroadcastPower;
+import neureka.backend.main.operations.operator.impl.*;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -118,35 +115,13 @@ public class Power extends AbstractOperation
             return result;
         };
 
-        BiElementWise biElementWise = new BiElementWise( rja )
-                                .setSupplyADAgentFor( getDefaultAlgorithm() )
-                                .buildFunAlgorithm();
-
         setAlgorithm(BiElementWise.class,
-            biElementWise.setImplementationFor(
+            new BiElementWise( rja )
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
                 CPU.class,
-                CPUBiElementWise.implementationForCPU()
-                    .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> Math.pow( a, b ),
-                        ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
-                        ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> (float) Math.pow( a, b ),
-                        ( a, b ) -> (float) (b * Math.pow( a, b - 1 )), // Deriving at input 0
-                        ( a, b ) -> (float) (Math.pow( a, b ) * Math.log( a )) // deriving input 1
-                    ))
-                    .with(Fun.I32I32ToI32.triple(
-                        ( a, b ) -> (int) Math.round(Math.pow( a, b )),
-                        ( a, b ) -> (int) Math.round(b * Math.pow( a, b - 1 )), // Deriving at input 0
-                        ( a, b ) -> (int) Math.round(Math.pow( a, b ) * Math.log( a )) // deriving input 1
-                    ))
-                    .with(Fun.I64I64ToI64.triple(
-                        ( a, b ) -> Math.round(Math.pow( a, b )),
-                        ( a, b ) -> Math.round(b * Math.pow( a, b - 1 )), // Deriving at input 0
-                        ( a, b ) -> Math.round(Math.pow( a, b ) * Math.log( a )) // deriving input 1
-                    ))
-                    .get()
+                new CPUBiElementWisePower()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

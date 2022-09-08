@@ -15,6 +15,7 @@ import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastSubtraction;
 import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
+import neureka.backend.main.operations.operator.impl.CPUBiElementWiseSubtraction;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastSubtraction;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -43,29 +44,12 @@ public class Subtraction extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        BiElementWise biElementWise = new BiElementWise(ElemWiseUtil::forSubtractions)
-                                    .setSupplyADAgentFor( getDefaultAlgorithm() )
-                                    .buildFunAlgorithm();
         setAlgorithm(
-            biElementWise.setImplementationFor(
-                CPU.class,
-                CPUBiElementWise.implementationForCPU()
-                    .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> a - b,
-                        ( a, b ) ->  1, // Deriving at input 0
-                        ( a, b ) -> -1 // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> a - b,
-                        ( a, b ) ->  1, // Deriving at input 0
-                        ( a, b ) -> -1 // deriving input 1
-                    ))
-                    .with(Fun.I32I32ToI32.triple(
-                        ( a, b ) -> a - b,
-                        ( a, b ) ->  1, // Deriving at input 0
-                        ( a, b ) -> -1 // deriving input 1
-                    ))
-                    .get()
+            new BiElementWise(ElemWiseUtil::forSubtractions)
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
+                CPU.class, new CPUBiElementWiseSubtraction()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

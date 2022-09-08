@@ -13,10 +13,7 @@ import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.operations.operator.impl.CLBroadcastAddition;
-import neureka.backend.main.operations.operator.impl.CLScalarBroadcastAddition;
-import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
-import neureka.backend.main.operations.operator.impl.CPUBroadcastAddition;
+import neureka.backend.main.operations.operator.impl.*;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -52,38 +49,7 @@ public class Addition extends AbstractOperation {
             biElementWise
                 .setImplementationFor(
                     CPU.class,
-                    CPUBiElementWise.implementationForCPU()
-                        .with(Fun.F64F64ToF64.triple(
-                            ( a, b ) -> a + b,
-                            ( a, b ) -> 1d, // Deriving at input 0
-                            ( a, b ) -> 1d  // deriving input 1
-                        ))
-                        .with(Fun.F32F32ToF32.triple(
-                            ( a, b ) -> a + b,
-                            ( a, b ) -> 1f, // Deriving at input 0
-                            ( a, b ) -> 1f  // deriving input 1
-                        ))
-                        .with(Fun.I32I32ToI32.triple(
-                            ( a, b ) -> a + b,
-                            ( a, b ) -> 1, // Deriving at input 0
-                            ( a, b ) -> 1  // deriving input 1
-                        ))
-                        .with(Fun.I64I64ToI64.triple(
-                                ( a, b ) -> a + b,
-                                ( a, b ) -> 1, // Deriving at input 0
-                                ( a, b ) -> 1  // deriving input 1
-                        ))
-                        .with(Fun.BoolBoolToBool.triple(
-                                ( a, b ) -> a && b,
-                                ( a, b ) -> true, // Deriving at input 0
-                                ( a, b ) -> true // deriving input 1
-                        ))
-                        .with(Fun.CharCharToChar.triple(
-                                ( a, b ) -> (char) (((int)a)+((int)b)),
-                                ( a, b ) -> (char) 1, // Deriving at input 0
-                                ( a, b ) -> (char) 1 // deriving input 1
-                        ))
-                        .get()
+                    new CPUBiElementWiseAddition()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
