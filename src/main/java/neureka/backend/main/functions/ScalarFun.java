@@ -30,9 +30,9 @@ public interface ScalarFun
 
     default double calculate(double input, boolean derive) {
         if ( !derive )
-            return getActivation().activate( input );
+            return getActivation().invoke( input );
         else
-            return getDerivative().activate( input ) ;
+            return getDerivative().invoke( input ) ;
     }
 
     CPUFun getActivation();

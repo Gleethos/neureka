@@ -17,16 +17,16 @@ public final class ScalarTanh implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }
-            @Override public float activate(float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }
+            @Override public double invoke(double x ) { return 2 / ( 1 + Math.exp( -x * 2 ) ) - 1; }
+            @Override public float invoke(float x ) { return (float) (2 / ( 1 + Math.exp( -x * 2 ) ) - 1); }
         };
     }
 
     @Override
     public CPUFun getDerivative() {
         return new CPUFun() {
-            @Override public double activate(double x ) { return  1 - Math.pow( tanh( x ), 2 ); }
-            @Override public float activate(float x ) { return (float) (1 - Math.pow( tanh( x ), 2 )); }
+            @Override public double invoke(double x ) { return  1 - Math.pow( tanh( x ), 2 ); }
+            @Override public float invoke(float x ) { return (float) (1 - Math.pow( tanh( x ), 2 )); }
         };
     }
 

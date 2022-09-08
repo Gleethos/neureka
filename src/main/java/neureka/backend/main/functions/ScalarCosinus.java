@@ -14,7 +14,7 @@ public final class ScalarCosinus implements ScalarFun
     public CPUFun getActivation() {
         return new CPUFun() {
             @Override
-            public double activate(double x) { return Math.cos(x); }
+            public double invoke(double x) { return Math.cos(x); }
         };
     }
 
@@ -22,7 +22,7 @@ public final class ScalarCosinus implements ScalarFun
     public CPUFun getDerivative() {
         return new CPUFun() {
             @Override
-            public double activate(double x) { return -Math.sin(x); }
+            public double invoke(double x) { return -Math.sin(x); }
         };
     }
 

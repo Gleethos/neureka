@@ -25,8 +25,8 @@ public class ScalarGeLU implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x) { return gelu(x); }
-            @Override public float  activate(float x)  { return (float) gelu(x); }
+            @Override public double invoke(double x) { return gelu(x); }
+            @Override public float invoke(float x)  { return (float) gelu(x); }
         };
     }
 
@@ -34,13 +34,13 @@ public class ScalarGeLU implements ScalarFun
     public CPUFun getDerivative() {
         return new CPUFun() {
             @Override
-            public double activate(double x) {
+            public double invoke(double x) {
                 double sig = ScalarSigmoid.sig(x * MOD_F64);
                 double ds = sig * ( 1d - sig );
                 return sig + ds * x * MOD_F64;
             }
             @Override
-            public float activate(float x) {
+            public float invoke(float x) {
                 float sig = (float) ScalarSigmoid.sig(x * MOD_F64);
                 float ds = sig * ( 1f - sig );
                 return sig + ds * x * MOD_F32;

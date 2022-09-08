@@ -25,16 +25,16 @@ public class ScalarSoftsign implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x) { return softsign(x); }
-            @Override public float activate(float x) { return softsign(x); }
+            @Override public double invoke(double x) { return softsign(x); }
+            @Override public float invoke(float x) { return softsign(x); }
         };
     }
 
     @Override
     public CPUFun getDerivative() {
         return new CPUFun() {
-            @Override public double activate(double x) { return 1d / ( 2d * Math.abs( x ) + x * x + 1d ); }
-            @Override public float activate(float x) { return 1f / ( 2f * Math.abs( x ) + x * x + 1f ); }
+            @Override public double invoke(double x) { return 1d / ( 2d * Math.abs( x ) + x * x + 1d ); }
+            @Override public float invoke(float x) { return 1f / ( 2f * Math.abs( x ) + x * x + 1f ); }
         };
     }
 

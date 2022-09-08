@@ -28,14 +28,12 @@ public class Measure {
      *  Use this to test performance and do some tuning.
      */
     public static void main(String... args) {
-
-        //System.out.println(seconds(_f32())+"s");
-        //System.out.println(seconds(_f64())+"s");
-
-        System.out.println(averageSeconds(10, _random2())+"s");
-        System.out.println(averageSeconds(10, _random1())+"s");
+        System.out.println(averageSeconds(185, _fun64())+"s");
+        System.out.println(averageSeconds(185, _funi64())+"s");
+        //System.out.println(averageSeconds(35, __fun64())+"s");
+        //System.out.println(averageSeconds(35, _f64())+"s");
         System.out.println("DONE!");
-
+        System.exit(0);
     }
 
     public static double averageSeconds(int times, Runnable task)
@@ -62,6 +60,27 @@ public class Measure {
         Tsr<Double> c = Tsr.ofDoubles().withShape(40, 300, 200).andSeed("I am a happy seed! :D");
         Function f = Function.of("relu(i0+i1*3)*i2");
         return  ()-> f.call(a, b, c);
+    }
+
+    private static Runnable _fun64() {
+        Tsr<Double> a = Tsr.ofDoubles().withShape(42, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
+        Function f = Function.of("tanh(i0)");
+        return  ()-> f.call(a);
+    }
+    private static Runnable _funi64() {
+        Tsr<Double> a = Tsr.ofDoubles().withShape(42, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
+        Function f = Function.of("fast_tanh(i0)");
+        return  ()-> f.call(a);
+    }
+
+    private static Runnable __fun64() {
+        double[] a = new double[42*300*200];
+        double[] data = {-1d, 5d, 0.7d, 9d, -14.75d};
+        for ( int i = 0; i < a.length; i++ ) a[i] = data[i%data.length];
+        return  ()-> {
+            double[] out = new double[a.length];
+            for ( int i = 0; i < a.length; i++ ) out[i] = Math.tanh(a[i]);
+        };
     }
 
     private static Runnable _random1() {

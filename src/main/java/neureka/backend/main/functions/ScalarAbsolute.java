@@ -11,20 +11,20 @@ public final class ScalarAbsolute implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x) { return Math.abs( x ); }
-            @Override public float activate(float x) { return Math.abs( x ); }
-            @Override public int activate(int x) { return Math.abs( x ); }
+            @Override public double invoke(double x) { return Math.abs( x ); }
+            @Override public float invoke(float x) { return Math.abs( x ); }
+            @Override public int invoke(int x) { return Math.abs( x ); }
         };
     }
 
     @Override
     public CPUFun getDerivative() {
         return new CPUFun() {
-            @Override public double activate(double x) { return ( x < 0d ? -1d : 1d ); }
+            @Override public double invoke(double x) { return ( x < 0d ? -1d : 1d ); }
 
-            @Override public float activate(float x) { return ( x < 0f ? -1f : 1f ); }
+            @Override public float invoke(float x) { return ( x < 0f ? -1f : 1f ); }
 
-            @Override public int activate(int x) { return ( x < 0 ? -1 : 1 ); }
+            @Override public int invoke(int x) { return ( x < 0 ? -1 : 1 ); }
         };
     }
 

@@ -20,7 +20,7 @@ public class CPUScalarActivation implements ImplementationFor<CPU>
         CPUFun f = d < 0 ? _fun.getActivation() : _fun.getDerivative();
         double      in  = call.input( Number.class, 1 ).item(0).doubleValue();
         Tsr<Number> out = call.input( Number.class, 0 );
-        Number result =  f.activate(in);
+        Number result =  f.invoke(in);
         out.getUnsafe().setDataAt(0, result);
         return call.input(0);
     }

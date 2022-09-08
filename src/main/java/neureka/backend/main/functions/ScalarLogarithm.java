@@ -13,15 +13,15 @@ public final class ScalarLogarithm implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x) { return Math.log(x); }
+            @Override public double invoke(double x) { return Math.log(x); }
         };
     }
 
     @Override
     public CPUFun getDerivative() {
         return new CPUFun() {
-            @Override public double activate(double x) { return 1d / x; }
-            @Override public float activate(float x) { return 1f / x; }
+            @Override public double invoke(double x) { return 1d / x; }
+            @Override public float invoke(float x) { return 1f / x; }
         };
     }
 

@@ -36,8 +36,8 @@ public class ScalarSeLU implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x) { return selu(x); }
-            @Override public float activate(float x) { return (float) selu(x); }
+            @Override public double invoke(double x) { return selu(x); }
+            @Override public float invoke(float x) { return (float) selu(x); }
         };
     }
 
@@ -45,14 +45,14 @@ public class ScalarSeLU implements ScalarFun
     public CPUFun getDerivative() {
         return new CPUFun() {
             @Override
-            public double activate(double x) {
+            public double invoke(double x) {
                 if      ( x >  0 ) return SCALE;
                 else if ( x <= 0 ) return SCALE * ALPHA * Math.exp(x);
                 else               return Double.NaN;
             }
 
             @Override
-            public float activate(float x) {
+            public float invoke(float x) {
                 if      ( x >  0 ) return SCALE_F32;
                 else if ( x <= 0 ) return (float) ( SCALE * ALPHA * Math.exp(x) );
                 else               return Float.NaN;

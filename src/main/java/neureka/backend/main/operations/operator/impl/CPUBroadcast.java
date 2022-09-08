@@ -12,7 +12,6 @@ public class CPUBroadcast implements ImplementationFor<CPU>
 {
     private final ImplementationFor<CPU> _impl;
 
-
     protected CPUBroadcast( Functions.Builder<Fun> builder ) {
         _impl = builder.get();
     }

@@ -3,7 +3,6 @@ package neureka.backend.main.implementations.scalar;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.main.algorithms.Functions;
 import neureka.backend.main.functions.CPUFun;
 import neureka.backend.main.functions.ScalarFun;
 import neureka.calculus.args.Arg;
@@ -44,7 +43,7 @@ public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
         if ( typeClass == Double.class ) {
             double value = src.at(0).get().doubleValue();
             double[] t0_value = t0_drn.getUnsafe().getDataForWriting(double[].class);
-            double finalValue = f.activate(value);
+            double finalValue = f.invoke(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -65,7 +64,7 @@ public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
         if ( typeClass == Float.class ) {
             float value = src.at(0).get().floatValue();
             float[] t0_value = t0_drn.getUnsafe().getDataForWriting(float[].class);
-            float finalValue = f.activate(value);
+            float finalValue = f.invoke(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -86,7 +85,7 @@ public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
         if ( typeClass == Integer.class ) {
             int value = src.at(0).get().intValue();
             int[] t0_value = t0_drn.getUnsafe().getDataForWriting(int[].class);
-            int finalValue = f.activate(value);
+            int finalValue = f.invoke(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -107,7 +106,7 @@ public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
         if ( t0_drn.getUnsafe().getData().getRef().getClass() == Object[].class ) {
             Object value = src.at(0).get();
             Object[] t0_value = t0_drn.getUnsafe().getDataForWriting(Object[].class);
-            Object finalValue = f.activate(value);
+            Object finalValue = f.invoke(value);
             workload = (i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);

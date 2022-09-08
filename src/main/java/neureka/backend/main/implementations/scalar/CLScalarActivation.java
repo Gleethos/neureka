@@ -20,7 +20,7 @@ public class CLScalarActivation implements ImplementationFor<OpenCLDevice>
     public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
         int d = call.getValOf(Arg.DerivIdx.class);
         CPUFun f = d < 0 ? _fun.getActivation() : _fun.getDerivative();
-        Number value =  f.activate(call.input( Number.class, 1 ).item(0).doubleValue());
+        Number value =  f.invoke(call.input( Number.class, 1 ).item(0).doubleValue());
         Tsr<Number> out = call.input( Number.class, 0 );
         out.getUnsafe().setDataAt(0, value);
         return call.input(0);

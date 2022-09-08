@@ -20,8 +20,8 @@ public class ScalarSiLU implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x) { return silu(x); }
-            @Override public float activate(float x) { return (float) silu(x); }
+            @Override public double invoke(double x) { return silu(x); }
+            @Override public float invoke(float x) { return (float) silu(x); }
         };
     }
 
@@ -29,12 +29,12 @@ public class ScalarSiLU implements ScalarFun
     public CPUFun getDerivative() {
         return new CPUFun() {
             @Override
-            public double activate(double x) {
+            public double invoke(double x) {
                 double sig = ScalarSigmoid.sig(x);
                 return sig + ( x * sig * ( 1d - sig ) );
             }
             @Override
-            public float activate(float x) {
+            public float invoke(float x) {
                 float sig = (float) ScalarSigmoid.sig(x);
                 return sig + ( x * sig * ( 1f - sig ) );
             }

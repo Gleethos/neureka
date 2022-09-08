@@ -59,7 +59,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                     t1Idx.set(t0_drn.indicesOfIndex(i));
                     while (i < end) { // increment on drain accordingly:
                         //setInto _value in drn:
-                        t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                        t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                         //increment on drain:
                         t0Idx.increment();
                         t1Idx.increment();
@@ -72,7 +72,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                 double[] t1_value = t1_src.getUnsafe().getDataAs(double[].class);
                 if ( isSimple )
                     workload = (start, end) -> {
-                        for ( int i = start; i < end; i++ ) t0_value[i] = f.activate(t1_value[i]);
+                        for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
                     };
                 else
                     workload = (i, end) -> {
@@ -82,7 +82,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                         t1Idx.set(t0_drn.indicesOfIndex(i));
                         while (i < end) { // increment on drain accordingly:
                             //setInto _value in drn:
-                            t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                            t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                             //increment on drain:
                             t0Idx.increment();
                             t1Idx.increment();
@@ -97,7 +97,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
             float[] t1_value = t1_src.getUnsafe().getDataAs(float[].class);
             if ( isSimple )
                 workload = (start, end) -> {
-                    for ( int i = start; i < end; i++ ) t0_value[i] = f.activate(t1_value[i]);
+                    for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
                 };
             else
                 workload = (i, end) -> {
@@ -107,7 +107,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                     t1Idx.set( t0_drn.indicesOfIndex( i ) );
                     while ( i < end ) { // increment on drain accordingly:
                         //setInto _value in drn:
-                        t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                        t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                         //increment on drain:
                         t0Idx.increment();
                         t1Idx.increment();
@@ -121,7 +121,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
             int[] t1_value = t1_src.getUnsafe().getDataAs(int[].class);
             if ( isSimple )
                 workload = (start, end) -> {
-                    for ( int i = start; i < end; i++ ) t0_value[i] = f.activate(t1_value[i]);
+                    for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
                 };
             else
                 workload = (i, end) -> {
@@ -131,7 +131,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                     t1Idx.set( t0_drn.indicesOfIndex( i ) );
                     while ( i < end ) { // increment on drain accordingly:
                         //setInto _value in drn:
-                        t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                        t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                         //increment on drain:
                         t0Idx.increment();
                         t1Idx.increment();
@@ -145,7 +145,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
             long[] t1_value = t1_src.getUnsafe().getDataAs(long[].class);
             if ( isSimple )
                 workload = (start, end) -> {
-                    for ( int i = start; i < end; i++ ) t0_value[i] = f.activate(t1_value[i]);
+                    for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
                 };
             else
                 workload = (i, end) -> {
@@ -155,7 +155,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                     t1Idx.set( t0_drn.indicesOfIndex( i ) );
                     while ( i < end ) { // increment on drain accordingly:
                         //setInto _value in drn:
-                        t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                        t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                         //increment on drain:
                         t0Idx.increment();
                         t1Idx.increment();
@@ -169,7 +169,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
             byte[] t1_value = t1_src.getUnsafe().getDataAs(byte[].class);
             if ( isSimple )
                 workload = (start, end) -> {
-                    for ( int i = start; i < end; i++ ) t0_value[i] = f.activate(t1_value[i]);
+                    for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
                 };
             else
                 workload = (i, end) -> {
@@ -179,7 +179,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                     t1Idx.set( t0_drn.indicesOfIndex( i ) );
                     while ( i < end ) { // increment on drain accordingly:
                         //setInto _value in drn:
-                        t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                        t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                         //increment on drain:
                         t0Idx.increment();
                         t1Idx.increment();
@@ -193,7 +193,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
             short[] t1_value = t1_src.getUnsafe().getDataAs(short[].class);
             if ( isSimple )
                 workload = (start, end) -> {
-                    for ( int i = start; i < end; i++ ) t0_value[i] = f.activate(t1_value[i]);
+                    for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
                 };
             else
                 workload = (i, end) -> {
@@ -203,7 +203,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                     t1Idx.set( t0_drn.indicesOfIndex( i ) );
                     while ( i < end ) { // increment on drain accordingly:
                         //setInto _value in drn:
-                        t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                        t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                         //increment on drain:
                         t0Idx.increment();
                         t1Idx.increment();
@@ -217,7 +217,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
             boolean[] t1_value = t1_src.getUnsafe().getDataAs(boolean[].class);
             if ( isSimple )
                 workload = (start, end) -> {
-                    for ( int i = start; i < end; i++ ) t0_value[i] = f.activate(t1_value[i]);
+                    for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
                 };
             else
                 workload = (i, end) -> {
@@ -227,7 +227,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                     t1Idx.set( t0_drn.indicesOfIndex( i ) );
                     while ( i < end ) { // increment on drain accordingly:
                         //setInto _value in drn:
-                        t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                        t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                         //increment on drain:
                         t0Idx.increment();
                         t1Idx.increment();
@@ -241,7 +241,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
             char[] t1_value = t1_src.getUnsafe().getDataAs(char[].class);
             if ( isSimple )
                 workload = (start, end) -> {
-                    for ( int i = start; i < end; i++ ) t0_value[i] = f.activate(t1_value[i]);
+                    for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
                 };
             else
                 workload = (i, end) -> {
@@ -251,7 +251,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                     t1Idx.set( t0_drn.indicesOfIndex( i ) );
                     while ( i < end ) { // increment on drain accordingly:
                         //setInto _value in drn:
-                        t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                        t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                         //increment on drain:
                         t0Idx.increment();
                         t1Idx.increment();
@@ -264,7 +264,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                 Object[] t1_value = t1_src.getUnsafe().getDataAs(Object[].class);
                 if (isSimple)
                     workload = (start, end) -> {
-                        for (int i = start; i < end; i++) t0_value[i] = f.activate(t1_value[i]);
+                        for (int i = start; i < end; i++) t0_value[i] = f.invoke(t1_value[i]);
                     };
                 else
                     workload = (i, end) -> {
@@ -274,7 +274,7 @@ public class CPUElementwiseActivation implements ImplementationFor<CPU>
                         t1Idx.set(t0_drn.indicesOfIndex(i));
                         while (i < end) { // increment on drain accordingly:
                             //setInto _value in drn:
-                            t0_value[t0Idx.i()] = f.activate(t1_value[t1Idx.i()]);
+                            t0_value[t0Idx.i()] = f.invoke(t1_value[t1Idx.i()]);
                             //increment on drain:
                             t0Idx.increment();
                             t1Idx.increment();

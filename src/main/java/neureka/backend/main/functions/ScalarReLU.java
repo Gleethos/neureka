@@ -17,16 +17,16 @@ public final class ScalarReLU implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x) { return ( x >= 0 ? x : x * .01 ); }
-            @Override public float activate(float x) { return ( x >= 0 ? x : x * .01f ); }
+            @Override public double invoke(double x) { return ( x >= 0 ? x : x * .01 ); }
+            @Override public float invoke(float x) { return ( x >= 0 ? x : x * .01f ); }
         };
     }
 
     @Override
     public CPUFun getDerivative() {
         return new CPUFun() {
-            @Override public double activate(double x) { return ( x >= 0 ? 1 : .01); }
-            @Override public float activate(float x) { return ( x >= 0 ? 1f : .01f ); }
+            @Override public double invoke(double x) { return ( x >= 0 ? 1 : .01); }
+            @Override public float invoke(float x) { return ( x >= 0 ? 1f : .01f ); }
         };
     }
 

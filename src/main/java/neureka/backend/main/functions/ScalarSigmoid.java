@@ -11,8 +11,8 @@ public final class ScalarSigmoid implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x) { return sig(x); }
-            @Override public float activate(float x) { return (float) sig(x); }
+            @Override public double invoke(double x) { return sig(x); }
+            @Override public float invoke(float x) { return (float) sig(x); }
         };
     }
 
@@ -20,12 +20,12 @@ public final class ScalarSigmoid implements ScalarFun
     public CPUFun getDerivative() {
         return new CPUFun() {
             @Override
-            public double activate(double x) {
+            public double invoke(double x) {
                 double sig = sig(x);
                 return sig * ( 1 - sig );
             }
             @Override
-            public float activate(float x) {
+            public float invoke(float x) {
                 float sig = (float) sig(x);
                 return sig * ( 1 - sig );
             }

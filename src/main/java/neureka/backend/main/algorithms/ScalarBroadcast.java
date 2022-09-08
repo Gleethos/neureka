@@ -5,8 +5,6 @@ import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
-import neureka.backend.main.algorithms.internal.Fun;
-import neureka.backend.main.algorithms.internal.FunTuple;
 import neureka.backend.main.functions.CPUFun;
 import neureka.backend.main.functions.ScalarFun;
 import neureka.calculus.args.Arg;
@@ -52,7 +50,7 @@ public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
             call -> {
                 int d = call.getValOf(Arg.DerivIdx.class);
                 CPUFun f = d < 0 ? fun.getActivation() : fun.getDerivative();
-                double value =  f.activate( call.input( Number.class, 1 ).at(0).get().doubleValue() );
+                double value =  f.invoke( call.input( Number.class, 1 ).at(0).get().doubleValue() );
                 Tsr<Number> t = call.input( Number.class, 0 );
                 int gwz = t.size();
                 call.getDevice()

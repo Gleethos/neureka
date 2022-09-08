@@ -28,8 +28,8 @@ public class ScalarGaSU implements ScalarFun
     @Override
     public CPUFun getActivation() {
         return new CPUFun() {
-            @Override public double activate(double x) { return ScalarSoftsign.softsign(x*x*x); }
-            @Override public float activate(float x) { return ScalarSoftsign.softsign(x*x*x); }
+            @Override public double invoke(double x) { return ScalarSoftsign.softsign(x*x*x); }
+            @Override public float invoke(float x) { return ScalarSoftsign.softsign(x*x*x); }
 
         };
     }
@@ -37,12 +37,12 @@ public class ScalarGaSU implements ScalarFun
     @Override
     public CPUFun getDerivative() {
         return new CPUFun() {
-            @Override public double activate(double x) {
+            @Override public double invoke(double x) {
                 double x2 = x*x;
                 double x6 = x2*x2*x2;
                 return 3d * x2 / ( 2d * x2 * Math.abs( x ) + x6 + 1d );
             }
-            @Override public float activate(float x) {
+            @Override public float invoke(float x) {
                 float x2 = x*x;
                 float x6 = x2*x2*x2;
                 return 3f * x2 / ( 2f * x2 * Math.abs( x ) + x6 + 1f );
