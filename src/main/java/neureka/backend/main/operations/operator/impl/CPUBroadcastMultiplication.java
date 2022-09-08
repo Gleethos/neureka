@@ -1,6 +1,5 @@
 package neureka.backend.main.operations.operator.impl;
 
-import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.functions.CPUBiFun;
 
 public class CPUBroadcastMultiplication extends CPUBroadcast

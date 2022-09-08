@@ -2,17 +2,13 @@ package neureka.backend.main.algorithms;
 
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.ADAgentSupplier;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
-import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.backend.main.operations.other.Reshape;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
-import neureka.ndim.iterator.NDIterator;
 
 public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
 {

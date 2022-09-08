@@ -10,8 +10,6 @@ import neureka.ndim.iterator.NDIterator;
 public abstract class CPUConvolution implements ImplementationFor<CPU>
 {
     protected abstract CPUBiFun _getFun();
-    protected abstract CPUBiFun _getDeriveAt0();
-    protected abstract CPUBiFun _getDeriveAt1();
 
     @Override
     public Tsr<?> run( ExecutionCall<CPU> call ) {
@@ -19,13 +17,13 @@ public abstract class CPUConvolution implements ImplementationFor<CPU>
                 .getExecutor()
                 .threaded(
                         call.input(0).size(),
-                        _newWorkloadFor(call)
+                        _workloadFor(call)
                 );
 
         return call.input(0);
     }
 
-    private CPU.RangeWorkload _newWorkloadFor(
+    private CPU.RangeWorkload _workloadFor(
             ExecutionCall<CPU> call
     ) {
         Tsr<Number> t0_drn = call.input( Number.class, 0 );
@@ -35,8 +33,7 @@ public abstract class CPUConvolution implements ImplementationFor<CPU>
         Class<?> typeClass = t0_drn.getItemType();
 
         int d = call.getDerivativeIndex();
-        CPUBiFun f = ( d ==  0 ? _getDeriveAt0() : ( d == 1 ? _getDeriveAt1() : _getFun() ) );
-
+        CPUBiFun f = _getFun();
         CPU.RangeWorkload workload = null;
 
         if ( typeClass == Double.class ) {
@@ -57,8 +54,6 @@ public abstract class CPUConvolution implements ImplementationFor<CPU>
         else
             return workload;
     }
-
-
 
     private static void _convolve64(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,

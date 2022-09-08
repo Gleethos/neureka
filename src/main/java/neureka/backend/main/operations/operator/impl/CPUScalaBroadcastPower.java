@@ -4,25 +4,6 @@ import neureka.backend.main.functions.CPUBiFun;
 
 public class CPUScalaBroadcastPower extends CPUScalarBroadcast
 {
-    /*
-        This ishow it used to be:
-        .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> Math.pow( a, b ),
-                        ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
-                        ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> (float) Math.pow( a, b ),
-                        ( a, b ) -> (float) (b * Math.pow( a, b - 1 )), // Deriving at input 0
-                        ( a, b ) -> (float) (Math.pow( a, b ) * Math.log( a )) // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> (int) Math.round(Math.pow( a, b )),
-                        ( a, b ) -> (int) Math.round(b * Math.pow( a, b - 1 )), // Deriving at input 0
-                        ( a, b ) -> (int) Math.round(Math.pow( a, b ) * Math.log( a )) // deriving input 1
-                    ))
-     */
-
     @Override
     protected CPUBiFun _getFun() {
         return new CPUBiFun() {

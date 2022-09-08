@@ -3,18 +3,14 @@ package neureka.backend.main.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.ADAgentSupplier;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
-import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.algorithms.internal.WithForward;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
-import neureka.ndim.iterator.NDIterator;
 
 /**
  *  This is lambda based {@link neureka.backend.api.Algorithm} implementation

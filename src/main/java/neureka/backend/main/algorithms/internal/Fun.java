@@ -90,14 +90,6 @@ public interface Fun
     {
         Object invoke( Object x, Object y );
 
-        static FunTuple<ObjObjToObj> triple(
-                ObjObjToObj activation,
-                ObjObjToObj derivation,
-                ObjObjToObj derivation2
-        ) {
-            return new CPUBiElementWise.FunTriple<>( activation, derivation, derivation2 );
-        }
-
         static FunTuple<ObjObjToObj> of(ObjObjToObj activation ) {
             return new CPUBiElementWise.FunTriple<>( activation, null, null );
         }

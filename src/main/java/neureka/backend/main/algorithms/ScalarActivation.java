@@ -1,16 +1,10 @@
 package neureka.backend.main.algorithms;
 
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.fun.SuitabilityPredicate;
-import neureka.backend.main.algorithms.internal.Fun;
-import neureka.backend.main.algorithms.internal.FunTuple;
-import neureka.calculus.args.Arg;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.NumericType;
 
 public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivation>
