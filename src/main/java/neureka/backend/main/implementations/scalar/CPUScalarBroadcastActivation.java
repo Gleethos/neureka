@@ -12,17 +12,20 @@ import neureka.ndim.iterator.NDIterator;
 
 public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
 {
-    private final ImplementationFor<CPU> _impl;
     private final ScalarFun _fun;
 
-    public CPUScalarBroadcastActivation(ScalarFun fun) {
-        _impl = Functions.implementation( 2, (call, funs)->this._workloadFor(call) ).get();
-        _fun = fun;
-    }
+    public CPUScalarBroadcastActivation( ScalarFun fun ) { _fun = fun; }
 
     @Override
     public Tsr<?> run(ExecutionCall<CPU> call) {
-        return _impl.run(call);
+        call.getDevice()
+            .getExecutor()
+            .threaded(
+                call.input(0).size(),
+                _workloadFor(call)
+            );
+
+        return call.input(0);
     }
 
     private CPU.RangeWorkload _workloadFor(
