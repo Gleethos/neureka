@@ -3,23 +3,24 @@ package neureka.backend.main.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
+import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.backend.main.operations.operator.impl.CLBroadcastPower;
 import neureka.backend.main.operations.operator.impl.CLScalarBroadcastPower;
+import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastPower;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
-import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -124,7 +125,7 @@ public class Power extends AbstractOperation
         setAlgorithm(BiElementWise.class,
             biElementWise.setImplementationFor(
                 CPU.class,
-                BiElementWise.implementationForCPU()
+                CPUBiElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> Math.pow( a, b ),
                         ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0

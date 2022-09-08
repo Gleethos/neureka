@@ -7,8 +7,8 @@ import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
@@ -16,6 +16,7 @@ import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastMultiplication;
+import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastMultiplication;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -52,7 +53,7 @@ public class Multiplication extends AbstractOperation
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
-                BiElementWise.implementationForCPU()
+                CPUBiElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> a * b,
                         ( a, b ) -> b, // Deriving at input 0

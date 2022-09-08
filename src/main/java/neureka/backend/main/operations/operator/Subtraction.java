@@ -14,6 +14,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastSubtraction;
+import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastSubtraction;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -48,7 +49,7 @@ public class Subtraction extends AbstractOperation
         setAlgorithm(
             biElementWise.setImplementationFor(
                 CPU.class,
-                BiElementWise.implementationForCPU()
+                CPUBiElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> a - b,
                         ( a, b ) ->  1, // Deriving at input 0

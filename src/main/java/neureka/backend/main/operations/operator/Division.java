@@ -15,6 +15,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastDivision;
 import neureka.backend.main.operations.operator.impl.CLScalarBroadcastDivision;
+import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastDivision;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -51,7 +52,7 @@ public class Division extends AbstractOperation
             biElementWise
                 .setImplementationFor(
                     CPU.class,
-                    BiElementWise.implementationForCPU()
+                    CPUBiElementWise.implementationForCPU()
                         .with(Fun.F64F64ToF64.triple(
                             ( a, b ) -> a / b,
                             ( a, b ) -> 1 / b, // Deriving at input 0

@@ -16,6 +16,7 @@ import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastModulo;
+import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastModulo;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -24,8 +25,8 @@ import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
 
-public class Modulo extends AbstractOperation {
-
+public class Modulo extends AbstractOperation
+{
     public Modulo()
     {
         super(
@@ -49,7 +50,7 @@ public class Modulo extends AbstractOperation {
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
-                BiElementWise.implementationForCPU()
+                CPUBiElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> a % b,
                         ( a, b ) -> 1 / b, // Deriving at input 0

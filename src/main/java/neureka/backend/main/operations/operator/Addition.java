@@ -15,6 +15,7 @@ import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastAddition;
 import neureka.backend.main.operations.operator.impl.CLScalarBroadcastAddition;
+import neureka.backend.main.operations.operator.impl.CPUBiElementWise;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastAddition;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -51,7 +52,7 @@ public class Addition extends AbstractOperation {
             biElementWise
                 .setImplementationFor(
                     CPU.class,
-                    BiElementWise.implementationForCPU()
+                    CPUBiElementWise.implementationForCPU()
                         .with(Fun.F64F64ToF64.triple(
                             ( a, b ) -> a + b,
                             ( a, b ) -> 1d, // Deriving at input 0
