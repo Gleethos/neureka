@@ -11,19 +11,27 @@ public class ScalarGaussianFast implements ScalarFun
                "output = -2 * input / ( x2 * x2 + 2 * x2 + 1 );\n";
     }
 
-    @Override public double activate(double x) { return 1 / ( 1 + x * x ); }
+    @Override
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return 1 / ( 1 + x * x ); }
+            @Override public float activate(float x) { return 1 / ( 1 + x * x ); }
 
-    @Override public double derive(double x) {
-        double x2 = x * x;
-        return  -2 * x / ( x2 * x2 + 2 * x2 + 1 );
+        };
     }
 
-    @Override public float activate(float x) { return 1 / ( 1 + x * x ); }
-
-    @Override public float derive(float x) {
-        float x2 = x * x;
-        return  -2 * x / ( x2 * x2 + 2 * x2 + 1 );
+    @Override
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override public double activate(double x) {
+                double x2 = x * x;
+                return  -2 * x / ( x2 * x2 + 2 * x2 + 1 );
+            }
+            @Override public float activate(float x) {
+                float x2 = x * x;
+                return  -2 * x / ( x2 * x2 + 2 * x2 + 1 );
+            }
+        };
     }
-
 
 }

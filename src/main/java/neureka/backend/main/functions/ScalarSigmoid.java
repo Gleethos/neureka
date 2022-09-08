@@ -8,20 +8,28 @@ public final class ScalarSigmoid implements ScalarFun
 
     @Override public String derivationCode() { return "output = input * ( 1 - input );\n"; }
 
-    @Override public double activate(double x) { return sig(x); }
-
-    @Override public float activate(float x) { return (float) sig(x); }
-
     @Override
-    public double derive(double x) {
-        double sig = activate(x);
-        return sig * ( 1 - sig );
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return sig(x); }
+            @Override public float activate(float x) { return (float) sig(x); }
+        };
     }
 
     @Override
-    public float derive(float x) {
-        float sig = activate(x);
-        return sig * ( 1 - sig );
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override
+            public double activate(double x) {
+                double sig = sig(x);
+                return sig * ( 1 - sig );
+            }
+            @Override
+            public float activate(float x) {
+                float sig = (float) sig(x);
+                return sig * ( 1 - sig );
+            }
+        };
     }
 
     public static double sig(double x) { return 1d / ( 1d + Math.exp( -x ) ); }

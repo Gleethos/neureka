@@ -11,9 +11,19 @@ public final class ScalarCosinus implements ScalarFun
     public String derivationCode() { return "output = -sin( input );\n"; }
 
     @Override
-    public double activate(double x) { return Math.cos(x); }
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override
+            public double activate(double x) { return Math.cos(x); }
+        };
+    }
 
     @Override
-    public double derive(double x) { return -Math.sin(x); }
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override
+            public double activate(double x) { return -Math.sin(x); }
+        };
+    }
 
 }

@@ -4,7 +4,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.algorithms.Functions;
-import neureka.backend.main.algorithms.internal.Fun;
+import neureka.backend.main.functions.CPUFun;
 import neureka.backend.main.functions.ScalarFun;
 import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
@@ -12,28 +12,23 @@ import neureka.devices.host.CPU;
 public class CPUScalarActivation implements ImplementationFor<CPU>
 {
     private final ImplementationFor<CPU> _impl;
+    private final ScalarFun _fun;
 
     public CPUScalarActivation(ScalarFun fun) {
-        _impl = Functions.implementation( 2, call -> 1, CPUScalarActivation::_workloadFor )
-                .with(Fun.F64ToF64.pair(fun::activate, fun::derive))
-                .with(Fun.F32ToF32.pair(fun::activate, fun::derive))
-                .with(Fun.I32ToI32.pair(fun::activate, fun::derive))
-                .with(Fun.I64ToI64.pair(fun::activate, fun::derive))
-                .with(Fun.I8ToI8.pair(fun::activate, fun::derive))
-                .with(Fun.I16ToI16.pair(fun::activate, fun::derive))
-                .with(Fun.BoolToBool.pair(fun::activate, fun::derive))
-                .with(Fun.CharToChar.pair(fun::activate, fun::derive))
-                .get();
+        _impl = Functions.implementation( 2, call -> 1, (call, funs)->this._workloadFor(call) ).get();
+
+        _fun = fun;
     }
 
-    private static CPU.RangeWorkload _workloadFor(
-            ExecutionCall<CPU> call,
-            Functions<Fun> functions
+    private CPU.RangeWorkload _workloadFor(
+            ExecutionCall<CPU> call
     ) {
+        int d = call.getValOf(Arg.DerivIdx.class);
+        CPUFun f = d < 0 ? _fun.getActivation() : _fun.getDerivative();
         return (i, end) -> {
             double      in  = call.input( Number.class, 1 ).item(0).doubleValue();
             Tsr<Number> out = call.input( Number.class, 0 );
-            Number result =  functions.get(Fun.F64ToF64.class).get( call.get( Arg.DerivIdx.class ) ).invoke(in);
+            Number result =  f.activate(in);
             out.getUnsafe().setDataAt(0, result);
         };
     }

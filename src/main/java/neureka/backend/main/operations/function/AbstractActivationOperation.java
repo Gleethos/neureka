@@ -7,7 +7,6 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.ScalarActivation;
 import neureka.backend.main.algorithms.ScalarBroadcast;
-import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.functions.ScalarFun;
 import neureka.backend.main.implementations.scalar.CLScalarActivation;
 import neureka.backend.main.implementations.scalar.CPUElementwiseActivation;
@@ -47,7 +46,7 @@ abstract class AbstractActivationOperation extends AbstractOperation
         );
 
         setAlgorithm(
-            new ScalarBroadcast(Fun.F64ToF64.pair(fun::activate, fun::derive))
+            new ScalarBroadcast(fun)
             .setAutogradModeFor(
                     call -> call
                             .validate().allNotNullHaveSame(NDimensional::shape)

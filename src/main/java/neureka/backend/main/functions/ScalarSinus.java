@@ -8,8 +8,18 @@ public final class ScalarSinus implements ScalarFun
 
     @Override public String derivationCode() { return "output = cos( input );\n"; }
 
-    @Override public double activate(double x) { return Math.sin(x); }
+    @Override
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return Math.sin(x); }
+        };
+    }
 
-    @Override public double derive(double x) { return Math.cos(x); }
+    @Override
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return Math.cos(x); }
+        };
+    }
 
 }

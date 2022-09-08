@@ -22,22 +22,30 @@ public class ScalarGeLU implements ScalarFun
                "output = sig + ds * input * 1.702;\n";
     }
 
-    @Override public double activate(double x) { return gelu(x); }
-
-    @Override public float activate(float x) { return (float) gelu(x); }
-
     @Override
-    public double derive(double x) {
-        double sig = ScalarSigmoid.sig(x * MOD_F64);
-        double ds = sig * ( 1d - sig );
-        return sig + ds * x * MOD_F64;
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return gelu(x); }
+            @Override public float  activate(float x)  { return (float) gelu(x); }
+        };
     }
 
     @Override
-    public float derive(float x) {
-        float sig = (float) ScalarSigmoid.sig(x * MOD_F64);
-        float ds = sig * ( 1f - sig );
-        return sig + ds * x * MOD_F32;
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override
+            public double activate(double x) {
+                double sig = ScalarSigmoid.sig(x * MOD_F64);
+                double ds = sig * ( 1d - sig );
+                return sig + ds * x * MOD_F64;
+            }
+            @Override
+            public float activate(float x) {
+                float sig = (float) ScalarSigmoid.sig(x * MOD_F64);
+                float ds = sig * ( 1f - sig );
+                return sig + ds * x * MOD_F32;
+            }
+        };
     }
 
     public static double gelu(double x) { return x * ScalarSigmoid.sig(x * 1.702); }

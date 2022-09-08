@@ -12,8 +12,18 @@ public final class ScalarSoftplus implements ScalarFun
 
     @Override public String derivationCode() { return "output = 1.0f / ( 1.0f + exp( -input ) );\n"; }
 
-    @Override public double activate(double x) { return Math.log( 1d + Math.exp( x ) ); }
+    @Override
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return Math.log( 1d + Math.exp( x ) ); }
+        };
+    }
 
-    @Override public double derive(double x) { return 1d / ( 1d + Math.exp( -x ) ); }
+    @Override
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return 1d / ( 1d + Math.exp( -x ) ); }
+        };
+    }
 
 }

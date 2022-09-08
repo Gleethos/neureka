@@ -2,7 +2,7 @@ package neureka.backend.main.functions;
 
 /**
  * The Scaled Exponential Linear Unit, or SELU, is an activation
- * functions that induce self-normalizing properties.
+ * function that induces self-normalizing properties.
  * The SELU activation function is implemented as:
  * <i>{@code
  *      if      ( x >  0 ) return SCALE * x;
@@ -33,23 +33,33 @@ public class ScalarSeLU implements ScalarFun
                "else                   output = 1.0f;\n";
     }
 
-    @Override public double activate(double x) { return selu(x); }
-
-    @Override public float activate(float x) { return (float) selu(x); }
-
     @Override
-    public double derive(double x) {
-        if      ( x >  0 ) return SCALE;
-        else if ( x <= 0 ) return SCALE * ALPHA * Math.exp(x);
-        else               return Double.NaN;
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return selu(x); }
+            @Override public float activate(float x) { return (float) selu(x); }
+        };
     }
 
     @Override
-    public float derive(float x) {
-        if      ( x >  0 ) return SCALE_F32;
-        else if ( x <= 0 ) return (float) ( SCALE * ALPHA * Math.exp(x) );
-        else               return Float.NaN;
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override
+            public double activate(double x) {
+                if      ( x >  0 ) return SCALE;
+                else if ( x <= 0 ) return SCALE * ALPHA * Math.exp(x);
+                else               return Double.NaN;
+            }
+
+            @Override
+            public float activate(float x) {
+                if      ( x >  0 ) return SCALE_F32;
+                else if ( x <= 0 ) return (float) ( SCALE * ALPHA * Math.exp(x) );
+                else               return Float.NaN;
+            }
+        };
     }
+
 
     public static double selu(double x) {
         if      ( x >  0 ) return SCALE * x;

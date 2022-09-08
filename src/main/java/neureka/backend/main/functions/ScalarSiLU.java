@@ -17,21 +17,30 @@ public class ScalarSiLU implements ScalarFun
                "output = sig + ( input * sig * ( 1.0f - sig ) );\n";
     }
 
-    @Override public double activate(double x) { return silu(x); }
-
-    @Override public float activate(float x) { return (float) silu(x); }
-
     @Override
-    public double derive(double x) {
-        double sig = ScalarSigmoid.sig(x);
-        return sig + ( x * sig * ( 1d - sig ) );
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return silu(x); }
+            @Override public float activate(float x) { return (float) silu(x); }
+        };
     }
 
     @Override
-    public float derive(float x) {
-        float sig = (float) ScalarSigmoid.sig(x);
-        return sig + ( x * sig * ( 1f - sig ) );
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override
+            public double activate(double x) {
+                double sig = ScalarSigmoid.sig(x);
+                return sig + ( x * sig * ( 1d - sig ) );
+            }
+            @Override
+            public float activate(float x) {
+                float sig = (float) ScalarSigmoid.sig(x);
+                return sig + ( x * sig * ( 1f - sig ) );
+            }
+        };
     }
+
 
     public static double silu(double x) { return x * ScalarSigmoid.sig(x); }
 

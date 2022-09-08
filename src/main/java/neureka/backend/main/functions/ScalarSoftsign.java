@@ -22,13 +22,21 @@ public class ScalarSoftsign implements ScalarFun
         return "output = 1.0f / ( 2.0f * fabs( input ) + input * input + 1.0f );\n";
     }
 
-    @Override public double activate(double x) { return softsign(x); }
+    @Override
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return softsign(x); }
+            @Override public float activate(float x) { return softsign(x); }
+        };
+    }
 
-    @Override public float activate(float x) { return softsign(x); }
-
-    @Override public double derive(double x) { return 1d / ( 2d * Math.abs( x ) + x * x + 1d ); }
-
-    @Override public float derive(float x) { return 1f / ( 2f * Math.abs( x ) + x * x + 1f ); }
+    @Override
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return 1d / ( 2d * Math.abs( x ) + x * x + 1d ); }
+            @Override public float activate(float x) { return 1f / ( 2f * Math.abs( x ) + x * x + 1f ); }
+        };
+    }
 
     public static double softsign(double x) { return x / ( 1d + Math.abs( x ) ); }
 

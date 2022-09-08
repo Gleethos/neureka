@@ -25,20 +25,29 @@ public class ScalarGaSU implements ScalarFun
                "output = 3.0f * x2 / ( 2.0f * x2 * fabs( input ) + x6 + 1.0f );  \n";
     }
 
-    @Override public double activate(double x) { return ScalarSoftsign.softsign(x*x*x); }
+    @Override
+    public CPUFun getActivation() {
+        return new CPUFun() {
+            @Override public double activate(double x) { return ScalarSoftsign.softsign(x*x*x); }
+            @Override public float activate(float x) { return ScalarSoftsign.softsign(x*x*x); }
 
-    @Override public float activate(float x) { return ScalarSoftsign.softsign(x*x*x); }
-
-    @Override public double derive(double x) {
-        double x2 = x*x;
-        double x6 = x2*x2*x2;
-        return 3d * x2 / ( 2d * x2 * Math.abs( x ) + x6 + 1d );
+        };
     }
 
-    @Override public float derive(float x) {
-        float x2 = x*x;
-        float x6 = x2*x2*x2;
-        return 3f * x2 / ( 2f * x2 * Math.abs( x ) + x6 + 1f );
+    @Override
+    public CPUFun getDerivative() {
+        return new CPUFun() {
+            @Override public double activate(double x) {
+                double x2 = x*x;
+                double x6 = x2*x2*x2;
+                return 3d * x2 / ( 2d * x2 * Math.abs( x ) + x6 + 1d );
+            }
+            @Override public float activate(float x) {
+                float x2 = x*x;
+                float x6 = x2*x2*x2;
+                return 3f * x2 / ( 2f * x2 * Math.abs( x ) + x6 + 1f );
+            }
+        };
     }
 
 }

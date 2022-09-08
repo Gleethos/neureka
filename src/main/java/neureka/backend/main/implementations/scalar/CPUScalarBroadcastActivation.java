@@ -4,39 +4,29 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.algorithms.Functions;
-import neureka.backend.main.algorithms.internal.Fun;
+import neureka.backend.main.functions.CPUFun;
 import neureka.backend.main.functions.ScalarFun;
+import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 
 public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
 {
     private final ImplementationFor<CPU> _impl;
-
+    private final ScalarFun _fun;
 
     public CPUScalarBroadcastActivation(ScalarFun fun) {
-        _impl = Functions.implementation( 2, CPUScalarBroadcastActivation::_workloadFor )
-                .with(Fun.F64ToF64.pair(fun::activate, fun::derive))
-                .with(Fun.F32ToF32.pair(fun::activate, fun::derive))
-                .with(Fun.I32ToI32.pair(fun::activate, fun::derive))
-                .with(Fun.I64ToI64.pair(fun::activate, fun::derive))
-                .with(Fun.I8ToI8.pair(fun::activate, fun::derive))
-                .with(Fun.I16ToI16.pair(fun::activate, fun::derive))
-                .with(Fun.BoolToBool.pair(fun::activate, fun::derive))
-                .with(Fun.CharToChar.pair(fun::activate, fun::derive))
-                .get();
+        _impl = Functions.implementation( 2, (call, funs)->this._workloadFor(call) ).get();
+        _fun = fun;
     }
-
-
 
     @Override
     public Tsr<?> run(ExecutionCall<CPU> call) {
         return _impl.run(call);
     }
 
-    private static CPU.RangeWorkload _workloadFor(
-            ExecutionCall<CPU> call,
-            Functions<Fun> functions
+    private CPU.RangeWorkload _workloadFor(
+            ExecutionCall<CPU> call
     ) {
         Tsr<Number> t0_drn = call.input( Number.class, 0 );
         Tsr<Number> src    = call.input( Number.class, 1 );
@@ -45,11 +35,13 @@ public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
 
         CPU.RangeWorkload workload = null;
 
+        int d = call.getValOf(Arg.DerivIdx.class);
+        CPUFun f = d < 0 ? _fun.getActivation() : _fun.getDerivative();
+
         if ( typeClass == Double.class ) {
             double value = src.at(0).get().doubleValue();
-            Fun.F64ToF64 operation = functions.get(Fun.F64ToF64.class).getFor( call );
             double[] t0_value = t0_drn.getUnsafe().getDataForWriting(double[].class);
-            double finalValue = operation.invoke(value);
+            double finalValue = f.activate(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -69,9 +61,8 @@ public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
         }
         if ( typeClass == Float.class ) {
             float value = src.at(0).get().floatValue();
-            Fun.F32ToF32 operation = functions.get(Fun.F32ToF32.class).getFor( call );
             float[] t0_value = t0_drn.getUnsafe().getDataForWriting(float[].class);
-            float finalValue = operation.invoke(value);
+            float finalValue = f.activate(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -91,9 +82,8 @@ public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
         }
         if ( typeClass == Integer.class ) {
             int value = src.at(0).get().intValue();
-            Fun.I32ToI32 operation = functions.get(Fun.I32ToI32.class).getFor( call );
             int[] t0_value = t0_drn.getUnsafe().getDataForWriting(int[].class);
-            int finalValue = operation.invoke(value);
+            int finalValue = f.activate(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -113,9 +103,8 @@ public class CPUScalarBroadcastActivation implements ImplementationFor<CPU>
         }
         if ( t0_drn.getUnsafe().getData().getRef().getClass() == Object[].class ) {
             Object value = src.at(0).get();
-            Fun.ObjToObj operation = functions.get(Fun.ObjToObj.class).getFor( call );
             Object[] t0_value = t0_drn.getUnsafe().getDataForWriting(Object[].class);
-            Object finalValue = operation.invoke(value);
+            Object finalValue = f.activate(value);
             workload = (i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
