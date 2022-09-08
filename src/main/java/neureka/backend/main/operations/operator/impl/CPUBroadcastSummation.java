@@ -1,32 +1,44 @@
 package neureka.backend.main.operations.operator.impl;
 
-import neureka.backend.main.algorithms.internal.Fun;
+import neureka.backend.main.functions.CPUBiFun;
 
 public class CPUBroadcastSummation extends CPUBroadcast
 {
-    public CPUBroadcastSummation() {
-        super(
-            CPUBroadcast.implementationForCPU()
-            .with(Fun.F64F64ToF64.triple(
-                ( a, b ) -> a + b,
-                ( a, b ) -> 1, // Deriving at input 0
-                ( a, b ) -> 1  // deriving input 1
-            ))
-            .with(Fun.F32F32ToF32.triple(
-                ( a, b ) -> a + b,
-                ( a, b ) -> 1, // Deriving at input 0
-                ( a, b ) -> 1  // deriving input 1
-            ))
-            .with(Fun.BoolBoolToBool.triple(
-                ( a, b ) -> a && b,
-                ( a, b ) -> a && b,
-                ( a, b ) -> a && b
-            ))
-            .with(Fun.CharCharToChar.triple(
-                ( a, b ) -> (char) (((int)a)+((int)b)),
-                ( a, b ) -> (char) (((int)a)+((int)b)),
-                ( a, b ) -> (char) (((int)a)+((int)b))
-            ))
-        );
+    public CPUBroadcastSummation() {}
+
+    @Override
+    protected CPUBiFun _getFun() {
+        return new CPUBiFun() {
+            @Override public double invoke(double a, double b) { return a + b; }
+            @Override public float  invoke(float a, float b) { return a + b; }
+            @Override public int    invoke(int a, int b) { return a + b; }
+            @Override public long   invoke(long a, long b) { return a + b; }
+            @Override public char   invoke(char a, char b) { return (char) (((int)a)+((int)b)); }
+            @Override public boolean invoke(boolean a, boolean b) { return a && b; }
+        };
+    }
+
+    @Override
+    protected CPUBiFun _getDeriveAt0() {
+        return new CPUBiFun() {
+            @Override public double invoke(double a, double b) { return 1; }
+            @Override public float  invoke(float a, float b) { return 1; }
+            @Override public int    invoke(int a, int b) { return 1; }
+            @Override public long   invoke(long a, long b) { return 1; }
+            @Override public char   invoke(char a, char b) { return (char) (((int)a)+((int)b)); }
+            @Override public boolean invoke(boolean a, boolean b) { return a && b; }
+        };
+    }
+
+    @Override
+    protected CPUBiFun _getDeriveAt1() {
+        return new CPUBiFun() {
+            @Override public double invoke(double a, double b) { return 1; }
+            @Override public float  invoke(float a, float b) { return 1; }
+            @Override public int    invoke(int a, int b) { return 1; }
+            @Override public long   invoke(long a, long b) { return 1; }
+            @Override public char   invoke(char a, char b) { return (char) (((int)a)+((int)b)); }
+            @Override public boolean invoke(boolean a, boolean b) { return a && b; }
+        };
     }
 }

@@ -10,6 +10,7 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.algorithms.internal.Fun;
+import neureka.backend.main.functions.CPUBiFun;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.operator.impl.CPUBroadcast;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastMultiplication;
@@ -260,18 +261,7 @@ public class UnitTester_Tensor extends UnitTester
                                         CPUImplementation
                                                 .withArity(3)
                                                 .andImplementation(
-                                                        CPUBroadcast.implementationForCPU()
-                                                                .with(Fun.F64F64ToF64.triple(
-                                                                        ( a, b ) -> a * b,
-                                                                        ( a, b ) -> a * b,
-                                                                        ( a, b ) -> a * b
-                                                                ))
-                                                                .with(Fun.F32F32ToF32.triple(
-                                                                        ( a, b ) -> a * b,
-                                                                        ( a, b ) -> a * b,
-                                                                        ( a, b ) -> a * b
-                                                                ))
-                                                                .get()
+                                                        new TestBroadcast()
                                                 )
                                 );
 
@@ -312,18 +302,7 @@ public class UnitTester_Tensor extends UnitTester
                                             CPUImplementation
                                                     .withArity(3)
                                                     .andImplementation(
-                                                            CPUBroadcast.implementationForCPU()
-                                                                    .with(Fun.F64F64ToF64.triple(
-                                                                            ( a, b ) -> a * b,
-                                                                            ( a, b ) -> a * b,
-                                                                            ( a, b ) -> a * b
-                                                                    ))
-                                                                    .with(Fun.F32F32ToF32.triple(
-                                                                            ( a, b ) -> a * b,
-                                                                            ( a, b ) -> a * b,
-                                                                            ( a, b ) -> a * b
-                                                                    ))
-                                                                    .get()
+                                                            new TestBroadcast()
                                                     )
                                     );
 
@@ -399,6 +378,27 @@ public class UnitTester_Tensor extends UnitTester
         for ( int i = 0; i < shp1.length && i < shp2.length; i++ )
             shape[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
         return shape;
+    }
+
+    private static class TestBroadcast extends CPUBroadcast {
+
+        @Override
+        protected CPUBiFun _getFun() {
+            return new CPUBiFun() {
+                @Override public double invoke(double a, double b) { return a*b; }
+                @Override public float invoke(float a, float b) { return a*b; }
+            };
+        }
+
+        @Override
+        protected CPUBiFun _getDeriveAt0() {
+            return _getFun();
+        }
+
+        @Override
+        protected CPUBiFun _getDeriveAt1() {
+            return _getFun();
+        }
     }
 
 }

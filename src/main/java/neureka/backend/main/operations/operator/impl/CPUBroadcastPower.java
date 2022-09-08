@@ -1,24 +1,32 @@
 package neureka.backend.main.operations.operator.impl;
 
-import neureka.backend.main.algorithms.internal.Fun;
+import neureka.backend.main.functions.CPUBiFun;
 
 public class CPUBroadcastPower extends CPUBroadcast
 {
-    public CPUBroadcastPower() {
-        super(
-            CPUBroadcast.implementationForCPU()
-            .with(Fun.F64F64ToF64.triple(
-                ( a, b ) -> Math.pow(a, b),
-                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                ( a, b ) -> a * Math.pow( a, b - 1  ), // Deriving at input 0
-                ( a, b ) -> Math.pow( a, b ) * Math.log(a) // deriving input 1
-            ))
-            .with(Fun.F32F32ToF32.triple(
-                ( a, b ) -> (float) Math.pow(a, b),
-                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                ( a, b ) -> (float) (a * Math.pow( a, b - 1  )), // Deriving at input 0
-                ( a, b ) -> (float) (Math.pow( a, b ) * Math.log(a)) // deriving input 1
-            ))
-        );
+    public CPUBroadcastPower() {}
+
+    @Override
+    protected CPUBiFun _getFun() {
+        return new CPUBiFun() {
+            @Override public double invoke(double a, double b) { return Math.pow(a, b); }
+            @Override public float invoke(float a, float b) { return (float) Math.pow(a, b); }
+        };
+    }
+
+    @Override
+    protected CPUBiFun _getDeriveAt0() {
+        return new CPUBiFun() {
+            @Override public double invoke(double a, double b) { return a * Math.pow( a, b - 1  ); }
+            @Override public float invoke(float a, float b) { return (float) (a * Math.pow( a, b - 1  )); }
+        };
+    }
+
+    @Override
+    protected CPUBiFun _getDeriveAt1() {
+        return new CPUBiFun() {
+            @Override public double invoke(double a, double b) { return Math.pow( a, b ) * Math.log(a); }
+            @Override public float invoke(float a, float b) { return (float) (Math.pow( a, b ) * Math.log(a)); }
+        };
     }
 }

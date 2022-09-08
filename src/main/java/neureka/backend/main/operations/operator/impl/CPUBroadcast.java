@@ -3,33 +3,32 @@ package neureka.backend.main.operations.operator.impl;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.main.algorithms.Functions;
-import neureka.backend.main.algorithms.internal.Fun;
+import neureka.backend.main.functions.CPUBiFun;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 
-public class CPUBroadcast implements ImplementationFor<CPU>
+public abstract class CPUBroadcast implements ImplementationFor<CPU>
 {
-    private final ImplementationFor<CPU> _impl;
+    protected CPUBroadcast() {}
 
-    protected CPUBroadcast( Functions.Builder<Fun> builder ) {
-        _impl = builder.get();
-    }
-
+    protected abstract CPUBiFun _getFun();
+    protected abstract CPUBiFun _getDeriveAt0();
+    protected abstract CPUBiFun _getDeriveAt1();
 
     @Override
     public Tsr<?> run( ExecutionCall<CPU> call ) {
-        return _impl.run(call);
+        call.getDevice()
+                .getExecutor()
+                .threaded(
+                    call.input(0).size(),
+                    _newWorkloadFor(call)
+                );
+
+        return call.input(0);
     }
 
-
-    public static Functions.Builder<Fun> implementationForCPU() {
-        return Functions.implementation( 3, CPUBroadcast::_newWorkloadFor );
-    }
-
-    private static CPU.RangeWorkload _newWorkloadFor(
-            ExecutionCall<CPU> call,
-            Functions<Fun> pairs
+    private CPU.RangeWorkload _newWorkloadFor(
+            ExecutionCall<CPU> call
     ) {
         Tsr<Number> t0_drn = call.input( Number.class, 0 );
         Tsr<Number> t1_src = call.input( Number.class, 1 );
@@ -40,15 +39,15 @@ public class CPUBroadcast implements ImplementationFor<CPU>
         Class<?> typeClass = t0_drn.getItemType();
 
         int d = call.getDerivativeIndex();
+        CPUBiFun f = ( d ==  0 ? _getDeriveAt0() : ( d == 1 ? _getDeriveAt1() : _getFun() ) );
+
         CPU.RangeWorkload workload = null;
 
         if ( typeClass == Double.class ) {
-            Fun.F64F64ToF64 operation = pairs.get( Fun.F64F64ToF64.class ).get( d );
-            workload = (i, end) -> _broadcastF64( t0_drn, t1_src, t2_src, d, i, end, operation );
+            workload = (i, end) -> _broadcastF64( t0_drn, t1_src, t2_src, d, i, end, f );
         }
         else if ( typeClass == Float.class ) {
-            Fun.F32F32ToF32 operation = pairs.get( Fun.F32F32ToF32.class ).get( d );
-            workload = (i, end) -> _broadcastF32( t0_drn, t1_src, t2_src, d, i, end, operation );
+            workload = (i, end) -> _broadcastF32( t0_drn, t1_src, t2_src, d, i, end, f );
         }
 
         if ( workload == null )
@@ -63,7 +62,7 @@ public class CPUBroadcast implements ImplementationFor<CPU>
     private static void _broadcastF64(
             Tsr<Number> t0_drn, Tsr<Number> t1_src, Tsr<Number> t2_src,
             int d, int i, int end,
-            Fun.F64F64ToF64 operation
+            CPUBiFun operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int[] t1Shp = t1_src.getNDConf().shape();
@@ -164,7 +163,7 @@ public class CPUBroadcast implements ImplementationFor<CPU>
     private static void _broadcastF32(
             Tsr<Number> t0_drn, Tsr<Number> t1_src, Tsr<Number> t2_src,
             int d, int i, int end,
-            Fun.F32F32ToF32 operation
+            CPUBiFun operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int[] t1Shp = t1_src.getNDConf().shape();
