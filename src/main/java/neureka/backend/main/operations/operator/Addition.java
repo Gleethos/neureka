@@ -114,53 +114,7 @@ public class Addition extends AbstractOperation {
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        call -> {
-                            assert call.arity() == 3;
-                            if ( call.getDerivativeIndex() == 0 )
-                                return Tsr.of( call.input( 1 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
-                            else if ( call.getDerivativeIndex() == 1 )
-                                return Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
-                            else {
-                                Scalarization.implementationForCPU()
-                                    .with(Fun.F64F64ToF64.triple(
-                                        ( a, b ) -> a + b,
-                                        ( a, b ) ->  1, // Deriving at input 0
-                                        ( a, b ) ->  1 // deriving input 1
-                                    ))
-                                   .with(Fun.F32F32ToF32.triple(
-                                        ( a, b ) -> a + b,
-                                        ( a, b ) ->  1, // Deriving at input 0
-                                        ( a, b ) ->  1 // deriving input 1
-                                   ))
-                                   .with(Fun.I32I32ToI32.triple(
-                                        ( a, b ) -> a + b,
-                                        ( a, b ) ->  1, // Deriving at input 0
-                                        ( a, b ) ->  1 // deriving input 1
-                                   ))
-                                    .with(Fun.I64I64ToI64.triple(
-                                            ( a, b ) -> a + b,
-                                            ( a, b ) -> 1, // Deriving at input 0
-                                            ( a, b ) -> 1  // deriving input 1
-                                    ))
-                                   .with(Fun.BoolBoolToBool.triple(
-                                           ( a, b ) -> a && b,
-                                           ( a, b ) -> true, // Deriving at input 0
-                                           ( a, b ) -> true // deriving input 1
-                                   ))
-                                   .with(Fun.CharCharToChar.triple(
-                                           ( a, b ) -> (char) (((int)a)+((int)b)),
-                                           ( a, b ) -> (char) 1, // Deriving at input 0
-                                           ( a, b ) -> (char) 1 // deriving input 1
-                                   ))
-                                   .get()
-                                   .run( call );
-                                }
-                                return call.input( 0 );
-                            }
-                        )
+                new CPUScalarBroadcastAddition()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

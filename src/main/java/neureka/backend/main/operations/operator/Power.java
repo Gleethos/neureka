@@ -13,7 +13,6 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.backend.main.operations.operator.impl.*;
 import neureka.calculus.Function;
@@ -182,30 +181,8 @@ public class Power extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setDeviceExecution( (call, callback) -> rja.execute(call, callback) )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                Scalarization.implementationForCPU()
-                    .with(Fun.F64F64ToF64.triple(
-                        ( a, b ) -> Math.pow( a, b ),
-                        ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
-                        ( a, b ) -> Math.pow( a, b ) * Math.log( a ) // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> (float) Math.pow( a, b ),
-                        ( a, b ) -> (float) (b * Math.pow( a, b - 1 )), // Deriving at input 0
-                        ( a, b ) -> (float) (Math.pow( a, b ) * Math.log( a )) // deriving input 1
-                    ))
-                    .with(Fun.F32F32ToF32.triple(
-                        ( a, b ) -> (int) Math.round(Math.pow( a, b )),
-                        ( a, b ) -> (int) Math.round(b * Math.pow( a, b - 1 )), // Deriving at input 0
-                        ( a, b ) -> (int) Math.round(Math.pow( a, b ) * Math.log( a )) // deriving input 1
-                    ))
-                    .get()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLScalarBroadcastPower( this.getIdentifier() )
-            )
+            .setImplementationFor( CPU.class, new CPUScalaBroadcastPower() )
+            .setImplementationFor( OpenCLDevice.class, new CLScalarBroadcastPower( this.getIdentifier() ) )
         );
 
 

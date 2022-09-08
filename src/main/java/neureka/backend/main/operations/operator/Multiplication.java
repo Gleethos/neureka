@@ -18,6 +18,7 @@ import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.impl.CLBroadcastMultiplication;
 import neureka.backend.main.operations.operator.impl.CPUBiElementWiseMultiplication;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastMultiplication;
+import neureka.backend.main.operations.operator.impl.CPUScalarBroadcastMultiplication;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -99,47 +100,13 @@ public class Multiplication extends AbstractOperation
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        Scalarization scalarization = new Scalarization()
-                .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setDeviceExecution( (call, callback) -> ElemWiseUtil.forMultiplications(call, callback) )
-                .buildFunAlgorithm();
-
         setAlgorithm(
             Scalarization.class,
-            scalarization.setImplementationFor(
-                CPU.class,
-                CPUImplementation
-                    .withArity(3)
-                    .andImplementation(
-                        call -> {
-                            if ( call.getDerivativeIndex() == 0 )
-                                return call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );
-                            else if ( call.getDerivativeIndex() == 1 )
-                                return call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );
-                            else
-                                Scalarization.implementationForCPU()
-                                    .with(Fun.F64F64ToF64.triple(
-                                        ( a, b ) -> a * b,
-                                        ( a, b ) -> b, // Deriving at input 0
-                                        ( a, b ) -> a  // deriving input 1
-                                    ))
-                                    .with(Fun.F32F32ToF32.triple(
-                                        ( a, b ) -> a * b,
-                                        ( a, b ) -> b, // Deriving at input 0
-                                        ( a, b ) -> a  // deriving input 1
-                                    ))
-                                    .with(Fun.I32I32ToI32.triple(
-                                        ( a, b ) -> a * b,
-                                        ( a, b ) -> b, // Deriving at input 0
-                                        ( a, b ) -> a  // deriving input 1
-                                    ))
-                                    .get()
-                                    .run( call );
-
-                            return call.input( 0 );
-                        }
-                    )
-            )
+            new Scalarization()
+            .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
+            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forMultiplications(call, callback) )
+            .buildFunAlgorithm()
+            .setImplementationFor( CPU.class, new CPUScalarBroadcastMultiplication() )
             .setImplementationFor(
                 OpenCLDevice.class,
                 CLImplementation

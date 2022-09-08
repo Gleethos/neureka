@@ -5,16 +5,16 @@ import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
+import neureka.backend.main.operations.operator.impl.CPUScalarBroadcastIdentity;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
@@ -61,15 +61,7 @@ public class AssignLeft extends AbstractOperation
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
-                Scalarization.implementationForCPU()
-                    .with(Fun.F64F64ToF64.of(    ( a, b ) -> b ))
-                    .with(Fun.F32F32ToF32.of(    ( a, b ) -> b ))
-                    .with(Fun.I8I8ToI8.of(       ( a, b ) -> b ))
-                    .with(Fun.I32I32ToI32.of(    ( a, b ) -> b ))
-                    .with(Fun.BoolBoolToBool.of( ( a, b ) -> b ))
-                    .with(Fun.CharCharToChar.of( ( a, b ) -> b ))
-                    .with(Fun.ObjObjToObj.of(    ( a, b ) -> b ))
-                    .get()
+                new CPUScalarBroadcastIdentity()
             )
             .setImplementationFor(
                 OpenCLDevice.class,
