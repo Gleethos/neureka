@@ -6,12 +6,13 @@ import java.util.function.Supplier;
  * 	This will simply fetch a variable from a lambda once and then continuously
  * 	return this one value.
  * 	In a sense it is a lazy reference!
+ * 	This is an internal class, do not depend on this outside this package.
  *
  * @param <V> The value type parameter of the thing wrapped by this.
  */
 final class LazyRef<V>
 {
-    public static <V> LazyRef<V> of(Supplier<V> source) { return new LazyRef<>(source); }
+    public static <V> LazyRef<V> of( Supplier<V> source ) { return new LazyRef<>(source); }
 
     private Supplier<V> _source;
     private V _variable = null;

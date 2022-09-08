@@ -12,7 +12,7 @@ import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
-import neureka.backend.main.operations.operator.impl.CPUScalarBroadcastIdentity;
+import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastIdentity;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;

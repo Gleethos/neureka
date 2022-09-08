@@ -6,7 +6,7 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ConvUtil;
-import neureka.backend.main.operations.operator.impl.CPUXConv;
+import neureka.backend.main.implementations.convolution.CPUXConv;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;

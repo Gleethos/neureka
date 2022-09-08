@@ -3,25 +3,25 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 # activation functions :
-neureka.backend.main.operations.function.Absolute
-neureka.backend.main.operations.function.Cosinus
-neureka.backend.main.operations.function.Gaussian
-neureka.backend.main.operations.function.GaussianFast
-neureka.backend.main.operations.function.Identity
-neureka.backend.main.operations.function.Quadratic
-neureka.backend.main.operations.function.ReLU
-neureka.backend.main.operations.function.Sigmoid
-neureka.backend.main.operations.function.Sinus
-neureka.backend.main.operations.function.Softplus
-neureka.backend.main.operations.function.Tanh
-neureka.backend.main.operations.function.TanhFast
-neureka.backend.main.operations.function.GaTU
-neureka.backend.main.operations.function.GaSU
-neureka.backend.main.operations.function.Softsign
-neureka.backend.main.operations.function.Logarithm
-neureka.backend.main.operations.function.SiLU
-neureka.backend.main.operations.function.GeLU
-neureka.backend.main.operations.function.SeLU
+neureka.backend.main.operations.functions.Absolute
+neureka.backend.main.operations.functions.Cosinus
+neureka.backend.main.operations.functions.Gaussian
+neureka.backend.main.operations.functions.GaussianFast
+neureka.backend.main.operations.functions.Identity
+neureka.backend.main.operations.functions.Quadratic
+neureka.backend.main.operations.functions.ReLU
+neureka.backend.main.operations.functions.Sigmoid
+neureka.backend.main.operations.functions.Sinus
+neureka.backend.main.operations.functions.Softplus
+neureka.backend.main.operations.functions.Tanh
+neureka.backend.main.operations.functions.TanhFast
+neureka.backend.main.operations.functions.GaTU
+neureka.backend.main.operations.functions.GaSU
+neureka.backend.main.operations.functions.Softsign
+neureka.backend.main.operations.functions.Logarithm
+neureka.backend.main.operations.functions.SiLU
+neureka.backend.main.operations.functions.GeLU
+neureka.backend.main.operations.functions.SeLU
 
 # indexer :
 neureka.backend.main.operations.indexer.Summation
