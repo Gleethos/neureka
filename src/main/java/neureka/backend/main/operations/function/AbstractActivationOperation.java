@@ -55,10 +55,7 @@ abstract class AbstractActivationOperation extends AbstractOperation
             )
             .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                new CPUScalarBroadcastActivation( fun )
-            )
+            .setImplementationFor( CPU.class, new CPUScalarBroadcastActivation( fun ) )
         );
 
         setAlgorithm(
