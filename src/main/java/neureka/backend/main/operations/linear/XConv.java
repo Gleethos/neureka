@@ -12,6 +12,7 @@ import neureka.backend.main.algorithms.Convolution;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ConvUtil;
+import neureka.backend.main.operations.operator.impl.CPUXConv;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -97,18 +98,7 @@ public class XConv extends AbstractOperation
                 .buildFunAlgorithm()
                 .setImplementationFor(
                     CPU.class,
-                    Convolution.implementationForCPU()
-                            .with(Fun.F64F64ToF64.triple(
-                                    ( a, b ) -> a * b,
-                                    ( a, b ) -> b, // Deriving at input 0
-                                    ( a, b ) -> a  // deriving input 1
-                            ))
-                            .with(Fun.F32F32ToF32.triple(
-                                    ( a, b ) -> a * b,
-                                    ( a, b ) -> b, // Deriving at input 0
-                                    ( a, b ) -> a  // deriving input 1
-                            ))
-                            .get()
+                    new CPUXConv()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
