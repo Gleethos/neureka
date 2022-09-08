@@ -6,36 +6,37 @@ import java.util.function.Supplier;
  * 	This will simply fetch a variable from a lambda once and then continuously
  * 	return this one value.
  * 	In a sense it is a lazy reference!
+ * 	This is an internal class, do not depend on this outside this package.
  *
  * @param &lt;V&gt; The value type parameter of the thing wrapped by this.
  */
 final class LazyRef&lt;V&gt;
 {
-<span class="fc" id="L14">    public static &lt;V&gt; LazyRef&lt;V&gt; of(Supplier&lt;V&gt; source) { return new LazyRef&lt;&gt;(source); }</span>
+<span class="fc" id="L15">    public static &lt;V&gt; LazyRef&lt;V&gt; of( Supplier&lt;V&gt; source ) { return new LazyRef&lt;&gt;(source); }</span>
 
     private Supplier&lt;V&gt; _source;
-<span class="fc" id="L17">    private V _variable = null;</span>
+<span class="fc" id="L18">    private V _variable = null;</span>
 
-<span class="fc" id="L19">    private LazyRef(Supplier&lt;V&gt; source) { _source = source; }</span>
+<span class="fc" id="L20">    private LazyRef(Supplier&lt;V&gt; source) { _source = source; }</span>
 
     public V get() {
-<span class="fc bfc" id="L22" title="All 2 branches covered.">        if ( _source == null ) return _variable;</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if ( _source == null ) return _variable;</span>
         else {
-<span class="fc" id="L24">            _variable = _source.get();</span>
-<span class="fc" id="L25">            _source = null;</span>
+<span class="fc" id="L25">            _variable = _source.get();</span>
+<span class="fc" id="L26">            _source = null;</span>
         }
-<span class="fc" id="L27">        return _variable;</span>
+<span class="fc" id="L28">        return _variable;</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L32">        String prefix = getClass().getSimpleName();</span>
-<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if ( _variable == null ) return prefix + &quot;&lt;&gt;[?]&quot;;</span>
+<span class="fc" id="L33">        String prefix = getClass().getSimpleName();</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if ( _variable == null ) return prefix + &quot;&lt;&gt;[?]&quot;;</span>
         try {
-<span class="nc" id="L35">            V value = this.get();</span>
-<span class="nc" id="L36">            return prefix + &quot;&lt;&quot; + value.getClass().getSimpleName() + &quot;&gt;&quot; + &quot;[&quot; + value + &quot;]&quot;;</span>
-<span class="nc" id="L37">        } catch (Exception e) {</span>
-<span class="nc" id="L38">            return prefix + &quot;&lt;&gt;[?]&quot;;</span>
+<span class="nc" id="L36">            V value = this.get();</span>
+<span class="nc" id="L37">            return prefix + &quot;&lt;&quot; + value.getClass().getSimpleName() + &quot;&gt;&quot; + &quot;[&quot; + value + &quot;]&quot;;</span>
+<span class="nc" id="L38">        } catch (Exception e) {</span>
+<span class="nc" id="L39">            return prefix + &quot;&lt;&gt;[?]&quot;;</span>
         }
     }
 

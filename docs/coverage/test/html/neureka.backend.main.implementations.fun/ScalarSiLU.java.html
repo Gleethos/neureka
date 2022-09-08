@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScalarSiLU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.fun</a> &gt; <span class="el_source">ScalarSiLU.java</span></div><h1>ScalarSiLU.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.fun;
+
+import neureka.backend.main.implementations.fun.api.CPUFun;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
+
+/**
+ *  The SiLu activation function, also known as the swish function, is defined as {@code x * sigmoid(x)}.
+ *  It is a smooth, non-monotonic function that consistently matches
+ *  or outperforms ReLU on deep networks,
+ *  it is unbounded above and bounded below.
+ */
+<span class="fc" id="L12">public class ScalarSiLU implements ScalarFun</span>
+{
+<span class="fc" id="L14">    @Override public String id() { return &quot;silu&quot;; }</span>
+
+<span class="fc" id="L16">    @Override public String activationCode() { return &quot;output = input / ( 1 + (float) exp(-input) );\n&quot;; }</span>
+
+    @Override public String derivationCode() {
+<span class="fc" id="L19">        return &quot;float sig = 1.0f / ( 1.0f + exp( -input ) );&quot; +</span>
+               &quot;output = sig + ( input * sig * ( 1.0f - sig ) );\n&quot;;
+    }
+
+    @Override
+    public CPUFun getActivation() {
+<span class="fc" id="L25">        return new CPUFun() {</span>
+<span class="fc" id="L26">            @Override public double invoke(double x) { return silu(x); }</span>
+<span class="fc" id="L27">            @Override public float invoke(float x) { return (float) silu(x); }</span>
+        };
+    }
+
+    @Override
+    public CPUFun getDerivative() {
+<span class="fc" id="L33">        return new CPUFun() {</span>
+            @Override
+            public double invoke(double x) {
+<span class="fc" id="L36">                double sig = ScalarSigmoid.sig(x);</span>
+<span class="fc" id="L37">                return sig + ( x * sig * ( 1d - sig ) );</span>
+            }
+            @Override
+            public float invoke(float x) {
+<span class="fc" id="L41">                float sig = (float) ScalarSigmoid.sig(x);</span>
+<span class="fc" id="L42">                return sig + ( x * sig * ( 1f - sig ) );</span>
+            }
+        };
+    }
+
+
+<span class="fc" id="L48">    public static double silu(double x) { return x * ScalarSigmoid.sig(x); }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

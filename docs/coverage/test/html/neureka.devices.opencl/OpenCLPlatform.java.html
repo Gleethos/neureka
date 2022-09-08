@@ -73,7 +73,7 @@ public class OpenCLPlatform
         // Collect all devices of this platform
 <span class="fc bfc" id="L74" title="All 2 branches covered.">        for (cl_device_id did : devicesArray) {</span>
             try {
-<span class="fc" id="L76">                OpenCLDevice clDevice = OpenCLDevice.newInstanceOf(this, did);</span>
+<span class="fc" id="L76">                OpenCLDevice clDevice = OpenCLDevice.of(this, did);</span>
 <span class="fc" id="L77">                _id_device.put(did, clDevice);</span>
 <span class="fc" id="L78">                successfullyLoaded.add(did);</span>
 <span class="nc" id="L79">            } catch ( Exception e ) {</span>
@@ -116,7 +116,7 @@ public class OpenCLPlatform
                 &quot;activation_template.cl&quot;,
                 &quot;broadcast_template.cl&quot;,
                 &quot;convolution_template.cl&quot;,
-                &quot;operator_template.cl&quot;,
+                &quot;elementwise_template.cl&quot;,
                 &quot;scalarization_template.cl&quot;,
                 &quot;scalar_broadcast.cl&quot;,
                 &quot;utility.cl&quot;
@@ -150,8 +150,8 @@ public class OpenCLPlatform
 <span class="fc bfc" id="L150" title="All 2 branches covered.">                    for ( Operation type : Neureka.get().backend().getOperations() ) {</span>
 <span class="fc bfc" id="L151" title="All 4 branches covered.">                        if ( preName.contains(&quot;activation&quot;) &amp;&amp; type.supportsAlgorithm(Activation.class) )</span>
 <span class="fc" id="L152">                            impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );</span>
-<span class="fc bfc" id="L153" title="All 4 branches covered.">                        else if ( preName.contains(&quot;operator&quot;) &amp;&amp; type.supportsAlgorithm(Operator.class) )</span>
-<span class="fc" id="L154">                            impl = type.getAlgorithm(Operator.class).getImplementationFor( OpenCLDevice.class );</span>
+<span class="fc bfc" id="L153" title="All 4 branches covered.">                        else if ( preName.contains(&quot;elementwise&quot;) &amp;&amp; type.supportsAlgorithm(BiElementWise.class) )</span>
+<span class="fc" id="L154">                            impl = type.getAlgorithm(BiElementWise.class).getImplementationFor( OpenCLDevice.class );</span>
 <span class="fc bfc" id="L155" title="All 4 branches covered.">                        else if ( preName.contains(&quot;scalarization&quot;) &amp;&amp; type.supportsAlgorithm(Scalarization.class) )</span>
 <span class="fc" id="L156">                            impl = type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );</span>
 <span class="fc bfc" id="L157" title="All 4 branches covered.">                        else if ( preName.contains(&quot;broadcast&quot;) &amp;&amp; type.supportsAlgorithm(Broadcast.class) )</span>
@@ -235,7 +235,7 @@ public class OpenCLPlatform
 <span class="fc" id="L235">        return _id_device.get( did );</span>
     }
 
-    public void put( cl_device_id did, OpenCLDevice device ) {
+    void put( cl_device_id did, OpenCLDevice device ) {
 <span class="fc" id="L239">       _id_device.put( did, device );</span>
 <span class="fc" id="L240">    }</span>
 
@@ -247,24 +247,22 @@ public class OpenCLPlatform
 <span class="fc" id="L247">        return _kernels.containsKey( kernelName );</span>
     }
 
-    public cl_platform_id getPid() {
-<span class="nc" id="L251">        return _pid;</span>
-    }
+<span class="fc" id="L250">    public final long getId() { return _pid.getNativePointer(); }</span>
 
     public cl_context getContext() {
-<span class="fc" id="L255">        return _context;</span>
+<span class="fc" id="L253">        return _context;</span>
     }
 
     public void dispose() {
-<span class="fc" id="L259">        clReleaseContext( _context );</span>
-<span class="fc" id="L260">    }</span>
+<span class="fc" id="L257">        clReleaseContext( _context );</span>
+<span class="fc" id="L258">    }</span>
 
     @Override
     public String toString() {
-<span class="fc" id="L264">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
-                    &quot;pid=&quot; + _pid + &quot;,&quot; +
-                    &quot;context=&quot;+_context + &quot;,&quot; +
-<span class="fc" id="L267">                    &quot;kernels=[..&quot;+_kernels.size()+&quot;..]&quot; +</span>
+<span class="fc" id="L262">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
+<span class="fc" id="L263">                    &quot;id=0x&quot; + Long.toHexString(_pid.getNativePointer()) + &quot;,&quot; +</span>
+<span class="fc" id="L264">                    &quot;context=0x&quot;+Long.toHexString(_context.getNativePointer()) + &quot;,&quot; +</span>
+<span class="fc" id="L265">                    &quot;kernels=[..&quot;+_kernels.size()+&quot;..]&quot; +</span>
                 &quot;]&quot;;
     }
 

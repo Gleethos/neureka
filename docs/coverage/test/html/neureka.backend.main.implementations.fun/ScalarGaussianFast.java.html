@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScalarGaussianFast.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.fun</a> &gt; <span class="el_source">ScalarGaussianFast.java</span></div><h1>ScalarGaussianFast.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.fun;
+
+import neureka.backend.main.implementations.fun.api.CPUFun;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
+
+<span class="fc" id="L6">public class ScalarGaussianFast implements ScalarFun</span>
+{
+<span class="fc" id="L8">    @Override public String id() { return &quot;fast_gaus&quot;; }</span>
+
+<span class="fc" id="L10">    @Override public String activationCode() { return &quot;output = 1 / ( 1 + input * input );\n&quot;; }</span>
+
+    @Override public String derivationCode() {
+<span class="fc" id="L13">        return &quot;float x2 = input * input;\n&quot; +</span>
+               &quot;output = -2 * input / ( x2 * x2 + 2 * x2 + 1 );\n&quot;;
+    }
+
+    @Override
+    public CPUFun getActivation() {
+<span class="fc" id="L19">        return new CPUFun() {</span>
+<span class="fc" id="L20">            @Override public double invoke(double x) { return 1 / ( 1 + x * x ); }</span>
+<span class="fc" id="L21">            @Override public float invoke(float x) { return 1 / ( 1 + x * x ); }</span>
+
+        };
+    }
+
+    @Override
+    public CPUFun getDerivative() {
+<span class="fc" id="L28">        return new CPUFun() {</span>
+            @Override public double invoke(double x) {
+<span class="fc" id="L30">                double x2 = x * x;</span>
+<span class="fc" id="L31">                return  -2 * x / ( x2 * x2 + 2 * x2 + 1 );</span>
+            }
+            @Override public float invoke(float x) {
+<span class="nc" id="L34">                float x2 = x * x;</span>
+<span class="nc" id="L35">                return  -2 * x / ( x2 * x2 + 2 * x2 + 1 );</span>
+            }
+        };
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

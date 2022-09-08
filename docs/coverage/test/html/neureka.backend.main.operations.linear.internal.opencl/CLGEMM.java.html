@@ -89,8 +89,8 @@ import java.util.function.Supplier;
 
         KernelCaller caller =
 <span class="pc bpc" id="L91" title="1 of 2 branches missed.">             call.getDevice().hasAdHocKernel(kernelName)</span>
-<span class="nc" id="L92">                 ? call.getDevice().getAdHocKernel(kernelName)</span>
-<span class="fc" id="L93">                 : call.getDevice().compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);</span>
+<span class="nc" id="L92">                 ? call.getDevice().findAdHocKernel(kernelName).orElseThrow(()-&gt; new RuntimeException(&quot;Kernel not found!&quot;))</span>
+<span class="fc" id="L93">                 : call.getDevice().compileAndGetAdHocKernel(kernelName, code.get());</span>
 
 <span class="fc" id="L95">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
 <span class="fc" id="L96">        long[] global = new long[]{(long) Math.floor(M/MW), (long) Math.floor(N/NW), 1 };</span>

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.021 seconds"
+    "duration":"0.067 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
@@ -41,7 +41,7 @@
     {
       "id":"Range based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@68d5f315","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@2cddaa87","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@5f89583e","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@69ceee74","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@3fdd7bac","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@3ee4f6fc","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@446d55a4","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@1f7596bd"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@bab52e2","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@79078e8b","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@718a0345","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@52c171f6","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@225cd367","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@38d1cebc","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@19cdfd93","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@4c7b0d6e"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -168,7 +168,7 @@
     {
       "id":"Scalars can be created fluently.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -3,16 +3,16 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Operator;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.algorithms.internal.Fun;
-import neureka.backend.main.implementations.CLImplementation;
+import neureka.backend.main.implementations.broadcast.*;
+import neureka.backend.main.implementations.elementwise.CPUBiElementWiseDivision;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -40,43 +40,22 @@ public class Division extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-<span class="fc" id="L43">        Operator operator = new Operator(ElemWiseUtil::forDivisionsOrModuli)</span>
+<span class="fc" id="L43">        BiElementWise biElementWise = new BiElementWise(ElemWiseUtil::forDivisionsOrModuli)</span>
 <span class="fc" id="L44">                                   .setSupplyADAgentFor( getDefaultAlgorithm() )</span>
 <span class="fc" id="L45">                                    .buildFunAlgorithm();</span>
 
 <span class="fc" id="L47">        setAlgorithm(</span>
-            Operator.class,
-            operator
+            BiElementWise.class,
+            biElementWise
 <span class="fc" id="L50">                .setImplementationFor(</span>
                     CPU.class,
-<span class="fc" id="L52">                    Operator.implementationForCPU()</span>
-<span class="fc" id="L53">                        .with(Fun.F64F64ToF64.triple(</span>
-<span class="fc" id="L54">                            ( a, b ) -&gt; a / b,</span>
-<span class="fc" id="L55">                            ( a, b ) -&gt; 1 / b, // Deriving at input 0</span>
-<span class="fc" id="L56">                            ( a, b ) -&gt; -( a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                        ))
-<span class="fc" id="L58">                        .with(Fun.F32F32ToF32.triple(</span>
-<span class="fc" id="L59">                            ( a, b ) -&gt; a / b,</span>
-<span class="fc" id="L60">                            ( a, b ) -&gt; 1f / b, // Deriving at input 0</span>
-<span class="nc" id="L61">                            ( a, b ) -&gt; (float) -( a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                        ))
-<span class="fc" id="L63">                        .with(Fun.I32I32ToI32.triple(</span>
-<span class="fc" id="L64">                            ( a, b ) -&gt; a / b,</span>
-<span class="nc" id="L65">                            ( a, b ) -&gt; (int) Math.round(1d / b), // Deriving at input 0</span>
-<span class="nc" id="L66">                            ( a, b ) -&gt; (int) Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                        ))
-<span class="fc" id="L68">                        .with(Fun.I64I64ToI64.triple(</span>
-<span class="nc" id="L69">                            ( a, b ) -&gt; a / b,</span>
-<span class="nc" id="L70">                            ( a, b ) -&gt; Math.round(1d / b), // Deriving at input 0</span>
-<span class="nc" id="L71">                            ( a, b ) -&gt; Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                        ))
-<span class="fc" id="L73">                        .get()</span>
+                    new CPUBiElementWiseDivision()
                 )
-<span class="fc" id="L75">                .setImplementationFor(</span>
+<span class="fc" id="L54">                .setImplementationFor(</span>
                     OpenCLDevice.class,
-<span class="fc" id="L77">                    Operator.implementationForGPU( this.getIdentifier() )</span>
-<span class="fc" id="L78">                            .with( &quot;output = input1 / input2;\n&quot; )</span>
-<span class="fc" id="L79">                            .and(</span>
+<span class="fc" id="L56">                    BiElementWise.implementationForGPU( this.getIdentifier() )</span>
+<span class="fc" id="L57">                            .with( &quot;output = input1 / input2;\n&quot; )</span>
+<span class="fc" id="L58">                            .and(</span>
                                     &quot;    if ( d == 0 ) {                                   \n&quot; +
                                             &quot;        output = 1 / input2;                           \n&quot; +
                                             &quot;    } else {                                           \n&quot; +
@@ -86,217 +65,146 @@ public class Division extends AbstractOperation
                 )
         );
 
-
         //________________
         // BROADCASTING :
 
-<span class="fc" id="L93">        Broadcast broadcast = new Broadcast( ElemWiseUtil::forDivisionsOrModuli )</span>
-<span class="fc" id="L94">                                        .setAutogradModeFor(</span>
-                                                call -&gt; call
-<span class="fc" id="L96">                                                        .validate().allNotNullHaveSame(NDimensional::shape)</span>
-<span class="fc" id="L97">                                                        .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
-<span class="fc" id="L98">                                                        .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
-                                        )
-<span class="fc" id="L100">                                        .setSupplyADAgentFor(</span>
-                                            ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) -&gt;
-                                            {
-<span class="fc bfc" id="L103" title="All 2 branches covered.">                                                if ( call.autogradMode().allowsForward() )</span>
-<span class="fc" id="L104">                                                    throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
-<span class="fc" id="L105">                                                Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
-<span class="fc" id="L106">                                                Function mul = Neureka.get().backend().getFunction().mul();</span>
-<span class="pc bpc" id="L107" title="1 of 2 branches missed.">                                                if ( ctxDerivative != null ) {</span>
-<span class="nc" id="L108">                                                    return ADAgent.of( ctxDerivative )</span>
-<span class="nc" id="L109">                                                                    .withAD( target -&gt; mul.execute( target.error(), ctxDerivative ) );</span>
-                                                }
-<span class="fc" id="L111">                                                int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L112">                                                Tsr&lt;?&gt; derivative = f.executeDerive( call.inputs(), d );</span>
-<span class="fc" id="L113">                                                return ADAgent.of( derivative )</span>
-<span class="pc" id="L114">                                                                .withAD( target -&gt; mul.execute( target.error(), derivative ) );</span>
-                                            }
-                                        )
-<span class="fc" id="L117">                                        .buildFunAlgorithm();</span>
-
-<span class="fc" id="L119">        setAlgorithm(</span>
+<span class="fc" id="L71">        setAlgorithm(</span>
                 Broadcast.class,
-<span class="fc" id="L121">                broadcast.setImplementationFor(</span>
-                        CPU.class,
-<span class="fc" id="L123">                        Broadcast.implementationForCPU()</span>
-<span class="fc" id="L124">                                .with(Fun.F64F64ToF64.triple(</span>
-<span class="fc" id="L125">                                    ( a, b ) -&gt; a / b,</span>
-<span class="nc" id="L126">                                    ( a, b ) -&gt; 1 / b, // Deriving at input 0</span>
-<span class="nc" id="L127">                                    ( a, b ) -&gt; -( a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                                ))
-<span class="fc" id="L129">                                .with(Fun.F32F32ToF32.triple(</span>
-<span class="nc" id="L130">                                    ( a, b ) -&gt; a / b,</span>
-<span class="nc" id="L131">                                    ( a, b ) -&gt; 1 / b, // Deriving at input 0</span>
-<span class="nc" id="L132">                                    ( a, b ) -&gt; (float) -( a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                                ))
-<span class="fc" id="L134">                                .get()</span>
+                new Broadcast( ElemWiseUtil::forDivisionsOrModuli )
+<span class="fc" id="L74">                .setAutogradModeFor(</span>
+                    call -&gt; call
+<span class="fc" id="L76">                            .validate().allNotNullHaveSame(NDimensional::shape)</span>
+<span class="fc" id="L77">                            .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
+<span class="fc" id="L78">                            .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
                 )
-<span class="fc" id="L136">                .setImplementationFor(</span>
+<span class="fc" id="L80">                .setSupplyADAgentFor(</span>
+                    ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) -&gt;
+                    {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                        if ( call.autogradMode().allowsForward() )</span>
+<span class="fc" id="L84">                            throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
+<span class="fc" id="L85">                        Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="fc" id="L86">                        Function mul = Neureka.get().backend().getFunction().mul();</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">                        if ( ctxDerivative != null ) {</span>
+<span class="nc" id="L88">                            return ADAgent.of( ctxDerivative )</span>
+<span class="nc" id="L89">                                            .withAD( target -&gt; mul.execute( target.error(), ctxDerivative ) );</span>
+                        }
+<span class="fc" id="L91">                        int d = call.getDerivativeIndex();</span>
+<span class="fc" id="L92">                        Tsr&lt;?&gt; derivative = f.executeDerive( call.inputs(), d );</span>
+<span class="fc" id="L93">                        return ADAgent.of( derivative )</span>
+<span class="pc" id="L94">                                        .withAD( target -&gt; mul.execute( target.error(), derivative ) );</span>
+                    }
+                )
+<span class="fc" id="L97">                .buildFunAlgorithm()</span>
+<span class="fc" id="L98">                .setImplementationFor(</span>
+                    CPU.class,
+                    new CPUBroadcastDivision()
+                )
+<span class="fc" id="L102">                .setImplementationFor(</span>
                     OpenCLDevice.class,
-<span class="fc" id="L138">                    Broadcast.implementationForGPU( this.getIdentifier() )</span>
-<span class="fc" id="L139">                            .with( &quot;value = src1 / src2;\n&quot; )</span>
-<span class="fc" id="L140">                            .and(</span>
-                                &quot;    if (d==0) {                                                         \n&quot; +
-                                        &quot;        value += (1/handle) * drain;                                    \n&quot; +
-                                        &quot;    } else {                                                            \n&quot; +
-                                        &quot;        value += (-(handle /(float)pow(target, (float)2)) ) * drain;    \n&quot; +
-                                        &quot;    }                                                                   \n&quot;
-                            )
+<span class="fc" id="L104">                    new CLBroadcastDivision( this.getIdentifier() )</span>
                 )
         );
 
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-<span class="fc" id="L153">        Scalarization scalarization = new Scalarization()</span>
-<span class="fc" id="L154">                .setIsSuitableFor( call -&gt; SuitabilityPredicate.BAD )</span>
-<span class="pc" id="L155">                .setAutogradModeFor( call -&gt; AutoDiffMode.FORWARD_AND_BACKWARD )</span>
-<span class="pc" id="L156">                .setDeviceExecution( (call, callback) -&gt; ElemWiseUtil.forDivisionsOrModuli(call, callback) )</span>
-<span class="fc" id="L157">                .buildFunAlgorithm();</span>
-
-<span class="fc" id="L159">        setAlgorithm(</span>
+<span class="fc" id="L111">        setAlgorithm(</span>
             Scalarization.class,
-<span class="fc" id="L161">            scalarization.setImplementationFor(</span>
+            new Scalarization()
+<span class="fc" id="L114">            .setIsSuitableFor( call -&gt; SuitabilityPredicate.BAD )</span>
+<span class="pc" id="L115">            .setAutogradModeFor( call -&gt; AutoDiffMode.FORWARD_AND_BACKWARD )</span>
+<span class="pc" id="L116">            .setDeviceExecution( (call, callback) -&gt; ElemWiseUtil.forDivisionsOrModuli(call, callback) )</span>
+<span class="fc" id="L117">            .buildFunAlgorithm()</span>
+<span class="fc" id="L118">            .setImplementationFor(</span>
                 CPU.class,
-<span class="fc" id="L163">                Scalarization.implementationForCPU()</span>
-<span class="fc" id="L164">                    .with(Fun.F64F64ToF64.triple(</span>
-<span class="nc" id="L165">                        ( a, b ) -&gt; a / b,</span>
-<span class="nc" id="L166">                        ( a, b ) -&gt; 1 / b, // Deriving at input 0</span>
-<span class="nc" id="L167">                        ( a, b ) -&gt; -( a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                    ))
-<span class="fc" id="L169">                    .with(Fun.F32F32ToF32.triple(</span>
-<span class="nc" id="L170">                        ( a, b ) -&gt; a / b,</span>
-<span class="nc" id="L171">                        ( a, b ) -&gt; 1 / b, // Deriving at input 0</span>
-<span class="nc" id="L172">                        ( a, b ) -&gt; (float) -( a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                    ))
-<span class="fc" id="L174">                    .with(Fun.I32I32ToI32.triple(</span>
-<span class="nc" id="L175">                        ( a, b ) -&gt; a / b,</span>
-<span class="nc" id="L176">                        ( a, b ) -&gt; (int) Math.round(1d / b), // Deriving at input 0</span>
-<span class="nc" id="L177">                        ( a, b ) -&gt; (int) Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                    ))
-<span class="fc" id="L179">                    .with(Fun.I64I64ToI64.triple(</span>
-<span class="nc" id="L180">                        ( a, b ) -&gt; a / b,</span>
-<span class="nc" id="L181">                        ( a, b ) -&gt; Math.round(1d / b), // Deriving at input 0</span>
-<span class="nc" id="L182">                        ( a, b ) -&gt; Math.round( -a / Math.pow( b, 2 ) ) // deriving input 1</span>
-                    ))
-<span class="fc" id="L184">                    .get()</span>
+                new CPUScalarBroadcastDivision()
             )
-<span class="fc" id="L186">            .setImplementationFor(</span>
+<span class="fc" id="L122">            .setImplementationFor(</span>
                 OpenCLDevice.class,
-                CLImplementation
-<span class="fc" id="L189">                    .compiler()</span>
-<span class="fc" id="L190">                    .arity( 3 )</span>
-<span class="fc" id="L191">                    .kernelSource( Scalarization.getKernelSource() )</span>
-<span class="fc" id="L192">                    .activationSource( &quot;output = input1 / value;\n&quot; )</span>
-<span class="fc" id="L193">                    .differentiationSource(</span>
-                        &quot;if (d==0) {                                       \n&quot; +
-                        &quot;    output = 1/value;                             \n&quot; +
-                        &quot;} else {                                          \n&quot; +
-                        &quot;    output = -value /(float)pow(input1, 2.0f);    \n&quot; +
-                        &quot;}                                                 \n&quot;
-                    )
-<span class="fc" id="L200">                    .kernelPostfix( this.getIdentifier() )</span>
-<span class="fc" id="L201">                    .execution(</span>
-                        call -&gt; {
-<span class="nc bnc" id="L203" title="All 4 branches missed.">                            int offset = (call.input( Number.class, 2 ).isVirtual() || call.input( Number.class, 2 ).size() == 1)?1:0;</span>
-<span class="nc" id="L204">                            int gwz = call.input( Number.class, 0 ).size();</span>
-<span class="nc" id="L205">                            call.getDevice().getKernel(call)</span>
-<span class="nc" id="L206">                                    .passAllOf(call.input( Number.class, 0 ))</span>
-<span class="nc" id="L207">                                    .passAllOf(call.input( Number.class, 0 ))</span>
-<span class="nc" id="L208">                                    .pass( call.input( Number.class, 1 + offset ).at( 0 ).get().floatValue() )</span>
-<span class="nc" id="L209">                                    .pass( call.input( Number.class, 0 ).rank() )</span>
-<span class="nc" id="L210">                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
-<span class="nc" id="L211">                                    .call( gwz );</span>
-
-<span class="nc" id="L213">                            return call.input( 0 );</span>
-                        }
-                    )
-<span class="fc" id="L216">                    .build()</span>
+<span class="fc" id="L124">                new CLScalarBroadcastDivision( this.getIdentifier() )</span>
             )
         );
-<span class="fc" id="L219">    }</span>
+<span class="fc" id="L127">    }</span>
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="fc" id="L223">        return _asDerivative( children, derivationIndex, children.length - 1 );</span>
+<span class="fc" id="L131">        return _asDerivative( children, derivationIndex, children.length - 1 );</span>
     }
 
     private String _asDerivative( Function[] children, int d, int index ) {
-<span class="pc bpc" id="L227" title="1 of 2 branches missed.">        if ( d &gt;= 0 ) {</span>
-<span class="fc bfc" id="L228" title="All 2 branches covered.">            if ( index &lt;= 0 ) return children[ 0 ].getDerivative( d ).toString();</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if ( d &gt;= 0 ) {</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            if ( index &lt;= 0 ) return children[ 0 ].getDerivative( d ).toString();</span>
             else {
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">                String first = ( children[ index - 1 ].dependsOn( d ) )</span>
-<span class="fc" id="L231">                        ? &quot;(&quot; + _asDerivative( children, d, index - 1 )+ &quot; / &quot; + children[ index ]  + &quot; )&quot;</span>
-<span class="pc" id="L232">                        : &quot;&quot;;</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                String first = ( children[ index - 1 ].dependsOn( d ) )</span>
+<span class="fc" id="L139">                        ? &quot;(&quot; + _asDerivative( children, d, index - 1 )+ &quot; / &quot; + children[ index ]  + &quot; )&quot;</span>
+<span class="pc" id="L140">                        : &quot;&quot;;</span>
 
-<span class="fc bfc" id="L234" title="All 2 branches covered.">                if ( !children[ index ].dependsOn(d) ) return first;</span>
-<span class="fc" id="L235">                String s = children[ index - 1 ].toString();</span>
-<span class="pc bpc" id="L236" title="1 of 2 branches missed.">                if ( s.equals(&quot;0.0&quot;) ) return first;</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                if ( !children[ index ].dependsOn(d) ) return first;</span>
+<span class="fc" id="L143">                String s = children[ index - 1 ].toString();</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">                if ( s.equals(&quot;0.0&quot;) ) return first;</span>
 
-<span class="fc" id="L238">                return first +</span>
+<span class="fc" id="L146">                return first +</span>
                         &quot; - ((&quot; + // The second expression is the inner derivative (current index)! (inner times outer...)
-<span class="fc" id="L240">                            s + &quot; * &quot; + children[ index ].getDerivative(d) +</span>
+<span class="fc" id="L148">                            s + &quot; * &quot; + children[ index ].getDerivative(d) +</span>
                         &quot;) / ( &quot;
                             + children[ index ] + &quot;**2 &quot; +
                         &quot;) )&quot;;
             }
         } else {
-<span class="nc bnc" id="L246" title="All 2 branches missed.">            if ( index &lt;= 0 ) return children[ 0 ].toString();</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">            if ( index &lt;= 0 ) return children[ 0 ].toString();</span>
             else
-<span class="nc" id="L248">                return _asDerivative( children, -1, index - 1 ) + &quot; / &quot; + children[ index ].toString();</span>
+<span class="nc" id="L156">                return _asDerivative( children, -1, index - 1 ) + &quot; / &quot; + children[ index ].toString();</span>
         }
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="fc bfc" id="L254" title="All 2 branches covered.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
-<span class="fc bfc" id="L255" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
-<span class="fc" id="L256">            double result = src[ 0 ].call( inputs, j );</span>
-<span class="fc bfc" id="L257" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
-<span class="fc" id="L258">                final double current = src[ i ].call( inputs, j );</span>
-<span class="fc" id="L259">                result /= current;</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
+<span class="fc" id="L164">            double result = src[ 0 ].call( inputs, j );</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
+<span class="fc" id="L166">                final double current = src[ i ].call( inputs, j );</span>
+<span class="fc" id="L167">                result /= current;</span>
             }
-<span class="fc" id="L261">            return result;</span>
+<span class="fc" id="L169">            return result;</span>
         } else {
             double u, ud, v, vd;
-<span class="fc" id="L264">            u = src[ 0 ].call( inputs, j );</span>
-<span class="fc" id="L265">            ud = src[ 0 ].derive( inputs, d, j );</span>
-<span class="fc bfc" id="L266" title="All 2 branches covered.">            for ( int i = 0; i &lt; src.length - 1; i++ ) {</span>
-<span class="fc" id="L267">                v = src[ i + 1 ].call( inputs, j );</span>
-<span class="fc" id="L268">                vd = src[ i + 1 ].derive( inputs, d, j );</span>
-<span class="fc" id="L269">                ud = (ud * v - u * vd) / Math.pow(v, 2);</span>
-<span class="fc" id="L270">                u /= v;</span>
+<span class="fc" id="L172">            u = src[ 0 ].call( inputs, j );</span>
+<span class="fc" id="L173">            ud = src[ 0 ].derive( inputs, d, j );</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            for ( int i = 0; i &lt; src.length - 1; i++ ) {</span>
+<span class="fc" id="L175">                v = src[ i + 1 ].call( inputs, j );</span>
+<span class="fc" id="L176">                vd = src[ i + 1 ].derive( inputs, d, j );</span>
+<span class="fc" id="L177">                ud = (ud * v - u * vd) / Math.pow(v, 2);</span>
+<span class="fc" id="L178">                u /= v;</span>
             }
-<span class="fc" id="L272">            return ud;</span>
+<span class="fc" id="L180">            return ud;</span>
         }
     }
 
     
     public static double calculate( double[] inputs, int d, Function[] src ) {
-<span class="fc bfc" id="L278" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
-<span class="fc" id="L279">            double result = src[ 0 ].call( inputs );</span>
-<span class="fc bfc" id="L280" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
-<span class="fc" id="L281">                final double current = src[ i ].call( inputs );</span>
-<span class="fc" id="L282">                result /= current;</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
+<span class="fc" id="L187">            double result = src[ 0 ].call( inputs );</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
+<span class="fc" id="L189">                final double current = src[ i ].call( inputs );</span>
+<span class="fc" id="L190">                result /= current;</span>
             }
-<span class="fc" id="L284">            return result;</span>
+<span class="fc" id="L192">            return result;</span>
         } else {
             double derivative;
-<span class="fc" id="L287">            double tempVar = src[ 0 ].call( inputs );</span>
-<span class="fc" id="L288">            derivative = src[ 0 ].derive( inputs, d );</span>
+<span class="fc" id="L195">            double tempVar = src[ 0 ].call( inputs );</span>
+<span class="fc" id="L196">            derivative = src[ 0 ].derive( inputs, d );</span>
 
-<span class="fc bfc" id="L290" title="All 2 branches covered.">            for ( int i = 0; i &lt; src.length - 1; i++ ) {</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">            for ( int i = 0; i &lt; src.length - 1; i++ ) {</span>
                 double u, ud, v, vd;
-<span class="fc" id="L292">                v = src[ i + 1 ].call( inputs );</span>
-<span class="fc" id="L293">                vd = src[ i + 1 ].derive( inputs, d );</span>
-<span class="fc" id="L294">                u = tempVar;</span>
-<span class="fc" id="L295">                ud = derivative;</span>
-<span class="fc" id="L296">                derivative = ( ud * v - u * vd ) / Math.pow(v, 2);</span>
-<span class="fc" id="L297">                tempVar /= v;</span>
+<span class="fc" id="L200">                v = src[ i + 1 ].call( inputs );</span>
+<span class="fc" id="L201">                vd = src[ i + 1 ].derive( inputs, d );</span>
+<span class="fc" id="L202">                u = tempVar;</span>
+<span class="fc" id="L203">                ud = derivative;</span>
+<span class="fc" id="L204">                derivative = ( ud * v - u * vd ) / Math.pow(v, 2);</span>
+<span class="fc" id="L205">                tempVar /= v;</span>
             }
-<span class="fc" id="L299">            return derivative;</span>
+<span class="fc" id="L207">            return derivative;</span>
         }
     }
 

@@ -27,8 +27,8 @@ public abstract class CLImplementation extends AbstractImplementationFor&lt;Open
 <span class="fc" id="L27">        return new SourceBuilder();</span>
     }
 
-    public static Compiler compiler() {
-<span class="fc" id="L31">        return new Compiler();</span>
+    public static ParsedCLImplementation.Builder compiler() {
+<span class="fc" id="L31">        return new ParsedCLImplementation.Builder();</span>
     }
 
     public static AdHocCompiler adHoc( KernelSource kernelProvider ) {
@@ -59,41 +59,17 @@ public abstract class CLImplementation extends AbstractImplementationFor&lt;Open
 <span class="fc" id="L59">        public CLImplementation build() { return new SimpleCLImplementation(lambda, arity, kernelName, kernelSource); }</span>
     }
 
-    public static class Compiler {
-        private ImplementationFor&lt;OpenCLDevice&gt; lambda;
-        private int arity;
-        private String kernelSource;
-        private String activationSource;
-        private String differentiationSource;
-        private String type;
-
-        private Compiler() { }
-
-<span class="fc" id="L72">        public Compiler execution(ImplementationFor&lt;OpenCLDevice&gt; lambda) { this.lambda = lambda;return this; }</span>
-<span class="fc" id="L73">        public Compiler arity(int arity) { this.arity = arity; return this; }</span>
-<span class="fc" id="L74">        public Compiler kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }</span>
-<span class="fc" id="L75">        public Compiler activationSource(String activationSource) { this.activationSource = activationSource;return this; }</span>
-<span class="fc" id="L76">        public Compiler differentiationSource(String differentiationSource) { this.differentiationSource = differentiationSource;return this; }</span>
-<span class="fc" id="L77">        public Compiler kernelPostfix(String type) { this.type = type;return this; }</span>
-        public CLImplementation build() {
-<span class="pc bpc" id="L79" title="1 of 2 branches missed.">            if ( lambda == null ) throw new IllegalStateException(</span>
-<span class="nc" id="L80">                    CLImplementation.class.getSimpleName()+&quot; builder not satisfied.&quot;</span>
-            );
-<span class="fc" id="L82">            return new ParsedCLImplementation(lambda, arity, kernelSource, activationSource, differentiationSource, type);</span>
-        }
-    }
-
     public static class AdHocCompiler {
 
         private final KernelSource _source;
         private int _arity;
 
-<span class="nc" id="L91">        AdHocCompiler( KernelSource source ) { _source = source; }</span>
+<span class="nc" id="L67">        AdHocCompiler( KernelSource source ) { _source = source; }</span>
 
-<span class="nc" id="L93">        public AdHocCompiler arity( int arity ) { _arity = arity; return this; }</span>
+<span class="nc" id="L69">        public AdHocCompiler arity( int arity ) { _arity = arity; return this; }</span>
 
         public CLImplementation caller( ImplementationFor&lt;OpenCLDevice&gt; lambda) {
-<span class="nc" id="L96">            return new AdHocClImplementation( lambda, _arity, _source );</span>
+<span class="nc" id="L72">            return new AdHocClImplementation( lambda, _arity, _source );</span>
         }
 
     }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScalarFun.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.fun.api</a> &gt; <span class="el_source">ScalarFun.java</span></div><h1>ScalarFun.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.fun.api;
+
+import neureka.backend.main.implementations.fun.*;
+
+public interface ScalarFun
+{
+<span class="fc" id="L7">    ScalarAbsolute ABSOLUTE          = new ScalarAbsolute();</span>
+<span class="fc" id="L8">    ScalarCosinus COSINUS            = new ScalarCosinus();</span>
+<span class="fc" id="L9">    ScalarGaSU GASU                  = new ScalarGaSU();</span>
+<span class="fc" id="L10">    ScalarGaTU GATU                  = new ScalarGaTU();</span>
+<span class="fc" id="L11">    ScalarGaussian GAUSSIAN          = new ScalarGaussian();</span>
+<span class="fc" id="L12">    ScalarGaussianFast GAUSSIAN_FAST = new ScalarGaussianFast();</span>
+<span class="fc" id="L13">    ScalarGeLU GELU                  = new ScalarGeLU();</span>
+<span class="fc" id="L14">    ScalarIdentity IDENTITY          = new ScalarIdentity();</span>
+<span class="fc" id="L15">    ScalarLogarithm LOGARITHM        = new ScalarLogarithm();</span>
+<span class="fc" id="L16">    ScalarQuadratic QUADRATIC        = new ScalarQuadratic();</span>
+<span class="fc" id="L17">    ScalarReLU RELU                  = new ScalarReLU();</span>
+<span class="fc" id="L18">    ScalarSeLU SELU                  = new ScalarSeLU();</span>
+<span class="fc" id="L19">    ScalarSigmoid SIGMOID            = new ScalarSigmoid();</span>
+<span class="fc" id="L20">    ScalarSiLU SILU                  = new ScalarSiLU();</span>
+<span class="fc" id="L21">    ScalarSinus SINUS                = new ScalarSinus();</span>
+<span class="fc" id="L22">    ScalarSoftplus SOFTPLUS          = new ScalarSoftplus();</span>
+<span class="fc" id="L23">    ScalarSoftsign SOFTSIGN          = new ScalarSoftsign();</span>
+<span class="fc" id="L24">    ScalarTanh TANH                  = new ScalarTanh();</span>
+<span class="fc" id="L25">    ScalarTanhFast TANH_FAST         = new ScalarTanhFast();</span>
+
+    String id();
+
+    String activationCode();
+
+    String derivationCode();
+
+    default double calculate(double input, boolean derive) {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if ( !derive )</span>
+<span class="fc" id="L35">            return getActivation().invoke( input );</span>
+        else
+<span class="fc" id="L37">            return getDerivative().invoke( input ) ;</span>
+    }
+
+    CPUFun getActivation();
+
+    CPUFun getDerivative();
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

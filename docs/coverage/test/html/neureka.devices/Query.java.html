@@ -37,11 +37,11 @@ final class Query
 <span class="fc bfc" id="L37" title="All 2 branches covered.">                .flatMap( key -&gt; key.equals(&quot;nvidia&quot;) ? Stream.of(&quot;nvidia&quot;, &quot;nvidia corporation&quot;) : Stream.of(key) )</span>
 <span class="fc" id="L38">                .toArray(String[]::new);</span>
 
-<span class="fc" id="L40">        return queryInternal( deviceType, flattened );</span>
+<span class="fc" id="L40">        return _queryInternal( deviceType, flattened );</span>
     }
 
 
-    private static &lt;T, D extends Device&lt;T&gt;&gt; D queryInternal( Class&lt;D&gt; deviceType, String... searchKeys )
+    private static &lt;T, D extends Device&lt;T&gt;&gt; D _queryInternal( Class&lt;D&gt; deviceType, String... searchKeys )
     {
 <span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if ( deviceType == CPU.class ) return (D) CPU.get();</span>
         String key;
@@ -81,7 +81,6 @@ final class Query
         else
 <span class="fc" id="L82">            return null; // We don't know what the user wants, but we do not have it :/</span>
     }
-
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

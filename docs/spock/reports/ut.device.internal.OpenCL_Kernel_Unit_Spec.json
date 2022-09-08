@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.015 seconds"
+    "duration":"1.322 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The GEMM implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"1.281 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"when","text":"","code":["new CLGEMM().run( call )"]},
 
-        {"kind":"then","text":"","code":["(1.._) * call.input(Float, 0) >> c","(1.._) * call.input(Float, 1) >> a","(1.._) * call.input(Float, 2) >> b","(1.._) * call.getDevice() >> device","(1.._) * device.hasAdHocKernel(\"fast_CM_MM_3x4x2\") >> false","(1.._) * device.compileAdHocKernel(\"fast_CM_MM_3x4x2\", _) >> device","(1.._) * device.getAdHocKernel(\"fast_CM_MM_3x4x2\") >> kernel","(3.._) * kernel.pass(_) >> kernel"]}
+        {"kind":"then","text":"","code":["(1.._) * call.input(Float, 0) >> c","(1.._) * call.input(Float, 1) >> a","(1.._) * call.input(Float, 2) >> b","(1.._) * call.getDevice() >> device","(1.._) * device.hasAdHocKernel(\"fast_CM_MM_3x4x2\") >> false","(0.._) * device.compileAdHocKernel(\"fast_CM_MM_3x4x2\", _) >> device","(0.._) * device.compileAndGetAdHocKernel(\"fast_CM_MM_3x4x2\", _) >> kernel","(0.._) * device.getAdHocKernel(\"fast_CM_MM_3x4x2\") >> kernel","(3.._) * kernel.pass(_) >> kernel"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -33,7 +33,7 @@
     {
       "id":"The Reduce implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -42,9 +42,9 @@
 
         {"kind":"when","text":"","code":["new CLReduce(type).run( call )"]},
 
-        {"kind":"then","text":"","code":["_ * call.input(0) >> a","(1.._) * call.input(Float, 0) >> a","(1.._) * call.getDevice() >> device","(1.._) * device.maxWorkGroupSize() >> 64","(1.._) * device.hasAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\") >>> [false, true]","(1.._) * device.compileAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\", _) >> device","(1.._) * device.getAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\") >> kernel","(3.._) * kernel.pass(_) >> kernel"]},
+        {"kind":"then","text":"","code":["_ * call.input(0) >> a","(1.._) * call.input(Float, 0) >> a","(1.._) * call.getDevice() >> device","(1.._) * device.maxWorkGroupSize() >> 64","(1.._) * device.hasAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\") >>> [false, true]","(0.._) * device.findAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\") >> Optional.of(kernel)","(0.._) * device.compileAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\", _) >> device","(1.._) * device.compileAndGetAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\", _) >> kernel","(0.._) * device.getAdHocKernel(\"fast_${type.name().toLowerCase()}_reduce_RTS64\") >> kernel","(3.._) * kernel.pass(_) >> kernel"]},
 
-        {"kind":"and","text":"","code":["(1.._) * device.hasAdHocKernel(CLReduce.INDICES_MAPPER_ID) >>> [false, true]","(1.._) * device.compileAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> device","(1.._) * device.getAdHocKernel(CLReduce.INDICES_MAPPER_ID) >> kernel"]},
+        {"kind":"and","text":"","code":["(1.._) * device.hasAdHocKernel(CLReduce.INDICES_MAPPER_ID) >>> [false, true]","(0.._) * device.compileAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> device","(1.._) * device.compileAndGetAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> kernel","(0.._) * device.getAdHocKernel(CLReduce.INDICES_MAPPER_ID) >> kernel"]},
 
         {"kind":"where","text":"","code":{"type":["MIN","MAX"]}}
       ],
@@ -54,7 +54,7 @@
     {
       "id":"The Sum implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -63,7 +63,7 @@
 
         {"kind":"when","text":"","code":["new CLSum().run( call )"]},
 
-        {"kind":"then","text":"","code":["_ * call.input(0) >> a","(1.._) * call.input(Float, 0) >> a","(1.._) * call.getDevice() >> device","(1.._) * device.maxWorkGroupSize() >> 32","(1.._) * device.hasAdHocKernel(\"fast_local_mem_based_sum\") >>> [false, true]","(1.._) * device.compileAdHocKernel(\"fast_local_mem_based_sum\", _) >> device","(1.._) * device.getAdHocKernel(\"fast_local_mem_based_sum\") >> kernel","(3.._) * kernel.pass(_) >> kernel","(1.._) * kernel.passLocalFloats(_) >> kernel"]}
+        {"kind":"then","text":"","code":["_ * call.input(0) >> a","(1.._) * call.input(Float, 0) >> a","(1.._) * call.getDevice() >> device","(1.._) * device.maxWorkGroupSize() >> 32","(1.._) * device.hasAdHocKernel(\"fast_local_mem_based_sum\") >>> [false, true]","(0.._) * device.compileAdHocKernel(\"fast_local_mem_based_sum\", _) >> device","(1.._) * device.compileAndGetAdHocKernel(\"fast_local_mem_based_sum\", _) >> kernel","(0.._) * device.findAdHocKernel(\"fast_local_mem_based_sum\") >> Optional.of(kernel)","(0.._) * device.getAdHocKernel(\"fast_local_mem_based_sum\") >> kernel","(3.._) * kernel.pass(_) >> kernel","(1.._) * kernel.passLocalFloats(_) >> kernel"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

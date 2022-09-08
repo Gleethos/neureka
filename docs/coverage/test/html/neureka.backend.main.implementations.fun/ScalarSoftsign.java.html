@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScalarSoftsign.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.fun</a> &gt; <span class="el_source">ScalarSoftsign.java</span></div><h1>ScalarSoftsign.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.fun;
+
+import neureka.backend.main.implementations.fun.api.CPUFun;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
+
+/**
+ *  The softsign function, defined as {@code x / ( 1 + Math.abs( x ) )},
+ *  is a computationally cheap 0 centered activation function
+ *  which rescales the inputs between -1 and 1, very much like the {@link ScalarTanh} function.
+ *  The softsign function converges polynomially and is computationally cheaper than the
+ *  tanh function which converges exponentially.
+ *  This makes this function a computationally cheap non-exponential quasi {@link ScalarTanh}!
+ */
+<span class="fc" id="L14">public class ScalarSoftsign implements ScalarFun</span>
+{
+<span class="fc" id="L16">    @Override public String id() { return &quot;softsign&quot;; }</span>
+
+    @Override
+    public String activationCode() {
+<span class="fc" id="L20">        return &quot;output = input / ( 1.0f + fabs( input ) );\n&quot;;</span>
+    }
+
+    @Override
+    public String derivationCode() {
+<span class="fc" id="L25">        return &quot;output = 1.0f / ( 2.0f * fabs( input ) + input * input + 1.0f );\n&quot;;</span>
+    }
+
+    @Override
+    public CPUFun getActivation() {
+<span class="fc" id="L30">        return new CPUFun() {</span>
+<span class="fc" id="L31">            @Override public double invoke(double x) { return softsign(x); }</span>
+<span class="fc" id="L32">            @Override public float invoke(float x) { return softsign(x); }</span>
+        };
+    }
+
+    @Override
+    public CPUFun getDerivative() {
+<span class="fc" id="L38">        return new CPUFun() {</span>
+<span class="fc" id="L39">            @Override public double invoke(double x) { return 1d / ( 2d * Math.abs( x ) + x * x + 1d ); }</span>
+<span class="nc" id="L40">            @Override public float invoke(float x) { return 1f / ( 2f * Math.abs( x ) + x * x + 1f ); }</span>
+        };
+    }
+
+<span class="fc" id="L44">    public static double softsign(double x) { return x / ( 1d + Math.abs( x ) ); }</span>
+
+<span class="fc" id="L46">    public static float softsign(float x) { return x / ( 1f + Math.abs( x ) ); }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

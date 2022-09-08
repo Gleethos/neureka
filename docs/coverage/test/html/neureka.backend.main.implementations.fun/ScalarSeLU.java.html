@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScalarSeLU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.fun</a> &gt; <span class="el_source">ScalarSeLU.java</span></div><h1>ScalarSeLU.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.fun;
+
+import neureka.backend.main.implementations.fun.api.CPUFun;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
+
+/**
+ * The Scaled Exponential Linear Unit, or SELU, is an activation
+ * function that induces self-normalizing properties.
+ * The SELU activation function is implemented as:
+ * &lt;i&gt;{@code
+ *      if      ( x &gt;  0 ) return SCALE * x;
+ *      else if ( x &lt;= 0 ) return SCALE * ALPHA * (Math.exp(x) - 1);
+ *      else               return Float.NaN;
+ * }&lt;/i&gt;&lt;br&gt;
+ * ...where {@code ALPHA == 1.6733} and {@code SCALE == 1.0507}.
+ */
+<span class="fc" id="L17">public class ScalarSeLU implements ScalarFun</span>
+{
+    private static final double ALPHA = 1.6732632423543772848170429916717;
+    private static final double SCALE = 1.0507009873554804934193349852946;
+    private static final float  ALPHA_F32 = (float) ALPHA;
+    private static final float  SCALE_F32 = (float) SCALE;
+
+
+<span class="fc" id="L25">    @Override public String id() { return &quot;selu&quot;; }</span>
+
+    @Override public String activationCode() {
+<span class="fc" id="L28">        return &quot;if      ( input &gt; 0  ) output = &quot;+SCALE_F32+&quot;f * input;\n&quot; +</span>
+               &quot;else if ( input &lt;= 0 ) output = &quot;+SCALE_F32+&quot;f * &quot;+ALPHA_F32+&quot;f * (exp(input) - 1.0f);\n&quot; +
+               &quot;else                   output = 0.0f;\n&quot;;
+    }
+
+    @Override public String derivationCode() {
+<span class="fc" id="L34">        return &quot;if      ( input &gt;  0 ) output = &quot;+SCALE_F32+&quot;f;\n&quot; +</span>
+               &quot;else if ( input &lt;= 0 ) output = &quot;+SCALE_F32+&quot;f * &quot;+ALPHA_F32+&quot;f * exp(input);\n&quot; +
+               &quot;else                   output = 1.0f;\n&quot;;
+    }
+
+    @Override
+    public CPUFun getActivation() {
+<span class="fc" id="L41">        return new CPUFun() {</span>
+<span class="fc" id="L42">            @Override public double invoke(double x) { return selu(x); }</span>
+<span class="fc" id="L43">            @Override public float invoke(float x) { return (float) selu(x); }</span>
+        };
+    }
+
+    @Override
+    public CPUFun getDerivative() {
+<span class="fc" id="L49">        return new CPUFun() {</span>
+            @Override
+            public double invoke(double x) {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                if      ( x &gt;  0 ) return SCALE;</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                else if ( x &lt;= 0 ) return SCALE * ALPHA * Math.exp(x);</span>
+<span class="nc" id="L54">                else               return Double.NaN;</span>
+            }
+
+            @Override
+            public float invoke(float x) {
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">                if      ( x &gt;  0 ) return SCALE_F32;</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">                else if ( x &lt;= 0 ) return (float) ( SCALE * ALPHA * Math.exp(x) );</span>
+<span class="nc" id="L61">                else               return Float.NaN;</span>
+            }
+        };
+    }
+
+
+    public static double selu(double x) {
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        if      ( x &gt;  0 ) return SCALE * x;</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        else if ( x &lt;= 0 ) return SCALE * ALPHA * (Math.exp(x) - 1);</span>
+<span class="nc" id="L70">        else               return Float.NaN;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

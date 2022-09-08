@@ -93,8 +93,8 @@ import java.util.function.Supplier;
 
         KernelCaller caller =
 <span class="fc bfc" id="L95" title="All 2 branches covered.">                device.hasAdHocKernel(kernelName)</span>
-<span class="fc" id="L96">                        ? device.getAdHocKernel(kernelName)</span>
-<span class="fc" id="L97">                        : device.compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);</span>
+<span class="pc" id="L96">                        ? device.findAdHocKernel(kernelName).orElseThrow(()-&gt; new RuntimeException(&quot;Could not find kernel: &quot;+kernelName))</span>
+<span class="fc" id="L97">                        : device.compileAndGetAdHocKernel(kernelName, code.get());</span>
 
 <span class="fc" id="L99">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
 <span class="fc" id="L100">        long[] global = new long[]{ N };</span>
@@ -140,15 +140,14 @@ import java.util.function.Supplier;
 
         KernelCaller caller =
 <span class="pc bpc" id="L142" title="1 of 2 branches missed.">                device.hasAdHocKernel(kernelName)</span>
-<span class="nc" id="L143">                        ? device.getAdHocKernel(kernelName)</span>
-<span class="fc" id="L144">                        : device.compileAdHocKernel(kernelName, code.get())</span>
-<span class="fc" id="L145">                                .getAdHocKernel(kernelName);</span>
+<span class="nc" id="L143">                        ? device.findAdHocKernel(kernelName).orElseThrow(()-&gt; new RuntimeException(&quot;Could not find kernel: &quot;+kernelName))</span>
+<span class="fc" id="L144">                        : device.compileAndGetAdHocKernel(kernelName, code.get());</span>
 
-<span class="fc" id="L147">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
-<span class="fc" id="L148">        long[] global = new long[]{ indices.size() };</span>
+<span class="fc" id="L146">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
+<span class="fc" id="L147">        long[] global = new long[]{ indices.size() };</span>
 
-<span class="fc" id="L150">        caller.pass( indices ).pass( in ).pass( out ).call( global, local );</span>
-<span class="fc" id="L151">        return out;</span>
+<span class="fc" id="L149">        caller.pass( indices ).pass( in ).pass( out ).call( global, local );</span>
+<span class="fc" id="L150">        return out;</span>
     }
 
 }

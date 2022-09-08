@@ -191,26 +191,25 @@ public final class CLFunctionCompiler
                 &quot;        arg0[_i_of_i(i, cfg0, &quot;+rank+&quot;)] = &quot; + compilableFun + &quot;;                         \n&quot; +
                 &quot;    }                                                                                     \n\n&quot;;
 
-<span class="fc" id="L194">        _device.compileAdHocKernel( kernelSignature, kernelCode );</span>
-<span class="fc" id="L195">        KernelCaller caller = _device.getAdHocKernel( kernelSignature );</span>
-<span class="fc" id="L196">        args.forEach( caller::pass );</span>
-<span class="fc" id="L197">        caller.call( args.get(0).size() );</span>
-<span class="fc" id="L198">        return call.input(0);</span>
+<span class="fc" id="L194">        KernelCaller caller = _device.compileAndGetAdHocKernel( kernelSignature, kernelCode );</span>
+<span class="fc" id="L195">        args.forEach( caller::pass );</span>
+<span class="fc" id="L196">        caller.call( args.get(0).size() );</span>
+<span class="fc" id="L197">        return call.input(0);</span>
     }
 
     private static String _clTypeOf( Tsr&lt;?&gt; tensor ) {
-<span class="fc" id="L202">        DataType&lt;?&gt; dtype = tensor.getDataType();</span>
-<span class="fc" id="L203">        java.util.function.Function&lt;Class&lt;?&gt;, String&gt; formatter = type -&gt; type.getSimpleName()</span>
-<span class="fc" id="L204">                                                                                 .toLowerCase()</span>
-<span class="fc" id="L205">                                                                                 .replace(&quot;integer&quot;, &quot;int&quot;);</span>
-<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        if ( dtype.typeClassImplements(NumericType.class) ) {</span>
-<span class="fc" id="L207">            NumericType&lt;?,?,?,?&gt; instance = (NumericType&lt;?,?,?,?&gt;) dtype.getTypeClassInstance(NumericType.class);</span>
-<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            if ( instance.holderType() == instance.targetType() )</span>
-<span class="fc" id="L209">                return formatter.apply(instance.holderType()); // Float, Double, Long, Short...</span>
+<span class="fc" id="L201">        DataType&lt;?&gt; dtype = tensor.getDataType();</span>
+<span class="fc" id="L202">        java.util.function.Function&lt;Class&lt;?&gt;, String&gt; formatter = type -&gt; type.getSimpleName()</span>
+<span class="fc" id="L203">                                                                                 .toLowerCase()</span>
+<span class="fc" id="L204">                                                                                 .replace(&quot;integer&quot;, &quot;int&quot;);</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        if ( dtype.typeClassImplements(NumericType.class) ) {</span>
+<span class="fc" id="L206">            NumericType&lt;?,?,?,?&gt; instance = (NumericType&lt;?,?,?,?&gt;) dtype.getTypeClassInstance(NumericType.class);</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            if ( instance.holderType() == instance.targetType() )</span>
+<span class="fc" id="L208">                return formatter.apply(instance.holderType()); // Float, Double, Long, Short...</span>
             else // Unsigned types:
-<span class="nc" id="L211">                return &quot;u&quot; + formatter.apply(instance.holderType());</span>
+<span class="nc" id="L210">                return &quot;u&quot; + formatter.apply(instance.holderType());</span>
         }
-<span class="nc" id="L213">        return formatter.apply(dtype.getRepresentativeType());</span>
+<span class="nc" id="L212">        return formatter.apply(dtype.getRepresentativeType());</span>
     }
 
     /**
@@ -220,19 +219,19 @@ public final class CLFunctionCompiler
      * @return The &quot;_i_of_i&quot; method from the &quot;utility.cl&quot; file.
      */
     private static String _readAndGetIndexMapper() {
-<span class="fc" id="L223">        String resource = Neureka.get()</span>
-<span class="fc" id="L224">                                    .utility()</span>
-<span class="fc" id="L225">                                    .readResource(&quot;kernels/utility.cl&quot;);</span>
-<span class="fc" id="L226">        return</span>
+<span class="fc" id="L222">        String resource = Neureka.get()</span>
+<span class="fc" id="L223">                                    .utility()</span>
+<span class="fc" id="L224">                                    .readResource(&quot;kernels/utility.cl&quot;);</span>
+<span class="fc" id="L225">        return</span>
                 &quot;    int _i_of_idx_on_tln&quot; +
                         resource
-<span class="fc" id="L229">                                .split(&quot;int _i_of_idx_on_tln&quot;)[1]</span>
-<span class="fc" id="L230">                                .split(&quot;// _i_of_idx_on_tln end!&quot;)[0] +</span>
+<span class="fc" id="L228">                                .split(&quot;int _i_of_idx_on_tln&quot;)[1]</span>
+<span class="fc" id="L229">                                .split(&quot;// _i_of_idx_on_tln end!&quot;)[0] +</span>
                &quot;\n&quot; +
                &quot;    int _i_of_i&quot; +
                         resource
-<span class="fc" id="L234">                                .split(&quot;int _i_of_i&quot;)[1]</span>
-<span class="fc" id="L235">                                .split(&quot;// _i_of_i end!&quot;)[0];</span>
+<span class="fc" id="L233">                                .split(&quot;int _i_of_i&quot;)[1]</span>
+<span class="fc" id="L234">                                .split(&quot;// _i_of_i end!&quot;)[0];</span>
     }
 
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScalarGeLU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.fun</a> &gt; <span class="el_source">ScalarGeLU.java</span></div><h1>ScalarGeLU.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.fun;
+
+import neureka.backend.main.implementations.fun.api.CPUFun;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
+
+/**
+ *  The GELU activation function is based on the standard Gaussian cumulative distribution function
+ *  and is defined as {@code x Î¦( x )} and implemented as {@code x * sigmoid(x * 1.702)}.
+ *  The GELU non-linearity weighs inputs by their percentile,
+ *  rather than gates inputs by their sign as in ReLUs.
+ *  Consequently, the GELU can be thought of as a smoother ReLU.
+ */
+<span class="fc" id="L13">public class ScalarGeLU implements ScalarFun</span>
+{
+    private static final double MOD_F64 = 1.702;
+    private static final float  MOD_F32 = 1.702f;
+
+<span class="fc" id="L18">    @Override public String id() { return &quot;gelu&quot;; }</span>
+
+<span class="fc" id="L20">    @Override public String activationCode() { return &quot;output = input / ( 1 + (float) exp(-input * 1.702) );\n&quot;; }</span>
+
+    @Override public String derivationCode() {
+<span class="fc" id="L23">        return &quot;float sig = 1.0f / ( 1.0f + exp( -input * 1.702f ) );&quot; +</span>
+               &quot;float ds = sig * ( 1.0f - sig );&quot; +
+               &quot;output = sig + ds * input * 1.702;\n&quot;;
+    }
+
+    @Override
+    public CPUFun getActivation() {
+<span class="fc" id="L30">        return new CPUFun() {</span>
+<span class="fc" id="L31">            @Override public double invoke(double x) { return gelu(x); }</span>
+<span class="fc" id="L32">            @Override public float invoke(float x)  { return (float) gelu(x); }</span>
+        };
+    }
+
+    @Override
+    public CPUFun getDerivative() {
+<span class="fc" id="L38">        return new CPUFun() {</span>
+            @Override
+            public double invoke(double x) {
+<span class="fc" id="L41">                double sig = ScalarSigmoid.sig(x * MOD_F64);</span>
+<span class="fc" id="L42">                double ds = sig * ( 1d - sig );</span>
+<span class="fc" id="L43">                return sig + ds * x * MOD_F64;</span>
+            }
+            @Override
+            public float invoke(float x) {
+<span class="fc" id="L47">                float sig = (float) ScalarSigmoid.sig(x * MOD_F64);</span>
+<span class="fc" id="L48">                float ds = sig * ( 1f - sig );</span>
+<span class="fc" id="L49">                return sig + ds * x * MOD_F32;</span>
+            }
+        };
+    }
+
+<span class="fc" id="L54">    public static double gelu(double x) { return x * ScalarSigmoid.sig(x * 1.702); }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -87,8 +87,8 @@ import java.util.function.Supplier;
                         &quot;   }                                                                                      \n&quot;;
 <span class="nc" id="L88">        return</span>
 <span class="nc bnc" id="L89" title="All 2 branches missed.">            device.hasAdHocKernel(kernelName)</span>
-<span class="nc" id="L90">                    ? device.getAdHocKernel(kernelName)</span>
-<span class="nc" id="L91">                    : device.compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);</span>
+<span class="nc" id="L90">                    ? device.findAdHocKernel(kernelName).orElseThrow(()-&gt; new RuntimeException(&quot;Could not find kernel: &quot;+kernelName))</span>
+<span class="nc" id="L91">                    : device.compileAndGetAdHocKernel(kernelName, code.get());</span>
     }
 
     private static KernelCaller _processLocal(
@@ -131,8 +131,8 @@ import java.util.function.Supplier;
 
 <span class="fc" id="L132">        return</span>
 <span class="fc bfc" id="L133" title="All 2 branches covered.">                device.hasAdHocKernel(kernelName)</span>
-<span class="fc" id="L134">                        ? device.getAdHocKernel(kernelName)</span>
-<span class="fc" id="L135">                        : device.compileAdHocKernel(kernelName, code.get()).getAdHocKernel(kernelName);</span>
+<span class="pc" id="L134">                        ? device.findAdHocKernel(kernelName).orElseThrow(()-&gt; new RuntimeException(&quot;Could not find kernel: &quot;+kernelName))</span>
+<span class="fc" id="L135">                        : device.compileAndGetAdHocKernel(kernelName, code.get());</span>
     }
 
 }

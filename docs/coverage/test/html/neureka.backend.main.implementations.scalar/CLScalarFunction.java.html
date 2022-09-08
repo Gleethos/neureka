@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLScalarFunction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.scalar</a> &gt; <span class="el_source">CLScalarFunction.java</span></div><h1>CLScalarFunction.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.scalar;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.main.implementations.fun.api.CPUFun;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
+import neureka.calculus.args.Arg;
+import neureka.devices.opencl.OpenCLDevice;
+
+public class CLScalarFunction implements ImplementationFor&lt;OpenCLDevice&gt;
+{
+    private final ScalarFun _fun;
+
+<span class="fc" id="L15">    public CLScalarFunction(ScalarFun fun) {</span>
+<span class="fc" id="L16">        _fun = fun;</span>
+<span class="fc" id="L17">    }</span>
+
+    @Override
+    public Tsr&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
+<span class="fc" id="L21">        int d = call.getValOf(Arg.DerivIdx.class);</span>
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        CPUFun f = d &lt; 0 ? _fun.getActivation() : _fun.getDerivative();</span>
+<span class="fc" id="L23">        Number value =  f.invoke(call.input( Number.class, 1 ).item(0).doubleValue());</span>
+<span class="fc" id="L24">        Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
+<span class="fc" id="L25">        out.getUnsafe().setDataAt(0, value);</span>
+<span class="fc" id="L26">        return call.input(0);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
