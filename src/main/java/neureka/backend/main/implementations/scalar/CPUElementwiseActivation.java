@@ -3,7 +3,6 @@ package neureka.backend.main.implementations.scalar;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.main.algorithms.Functions;
 import neureka.backend.main.functions.CPUFun;
 import neureka.backend.main.functions.ScalarFun;
 import neureka.calculus.args.Arg;
@@ -12,22 +11,23 @@ import neureka.ndim.iterator.NDIterator;
 
 public class CPUElementwiseActivation implements ImplementationFor<CPU>
 {
-    private final ImplementationFor<CPU> _impl;
     private final ScalarFun _fun;
 
-    public CPUElementwiseActivation(ScalarFun fun) {
-        _impl = Functions.implementation( 1, (call, funs)->this._newWorkloadFor(call) )
-                .get();
-
-        _fun = fun;
-    }
+    public CPUElementwiseActivation( ScalarFun fun ) { _fun = fun; }
 
     @Override
     public Tsr<?> run(ExecutionCall<CPU> call) {
-        return _impl.run(call);
+        call.getDevice()
+            .getExecutor()
+            .threaded(
+                call.input(0).size(),
+                _workloadFor(call)
+            );
+
+        return call.input(0);
     }
 
-    private CPU.RangeWorkload _newWorkloadFor(
+    private CPU.RangeWorkload _workloadFor(
             ExecutionCall<CPU> call
     ) {
         Tsr<?> t0_drn = call.input( 0 );
