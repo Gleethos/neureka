@@ -17,9 +17,9 @@ import neureka.dtype.NumericType;
 import neureka.ndim.NDimensional;
 import neureka.ndim.iterator.NDIterator;
 
-public final class ElementWise extends AbstractFunDeviceAlgorithm<ElementWise>
+public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWise>
 {
-    public ElementWise(RecursiveExecutor finalExecutor ) {
+    public BiElementWise(RecursiveExecutor finalExecutor ) {
         super("elementwise");
         setIsSuitableFor(
             call -> call
@@ -84,7 +84,7 @@ public final class ElementWise extends AbstractFunDeviceAlgorithm<ElementWise>
     }
 
     public static Functions.Builder<Fun> implementationForCPU() {
-        return Functions.implementation( -1, ElementWise::_newWorkloadFor );
+        return Functions.implementation( -1, BiElementWise::_newWorkloadFor );
     }
 
     private static CPU.RangeWorkload _newWorkloadFor(

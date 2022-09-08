@@ -10,10 +10,9 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.ElementWise;
+import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
-import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.operator.impl.CLBroadcastPower;
 import neureka.backend.main.operations.operator.impl.CLScalarBroadcastPower;
 import neureka.backend.main.operations.operator.impl.CPUBroadcastPower;
@@ -118,14 +117,14 @@ public class Power extends AbstractOperation
             return result;
         };
 
-        ElementWise elementWise = new ElementWise( rja )
+        BiElementWise biElementWise = new BiElementWise( rja )
                                 .setSupplyADAgentFor( getDefaultAlgorithm() )
                                 .buildFunAlgorithm();
 
-        setAlgorithm(ElementWise.class,
-            elementWise.setImplementationFor(
+        setAlgorithm(BiElementWise.class,
+            biElementWise.setImplementationFor(
                 CPU.class,
-                ElementWise.implementationForCPU()
+                BiElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> Math.pow( a, b ),
                         ( a, b ) -> b * Math.pow( a, b - 1 ), // Deriving at input 0
@@ -150,7 +149,7 @@ public class Power extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                ElementWise.implementationForGPU( this.getIdentifier() )
+                BiElementWise.implementationForGPU( this.getIdentifier() )
                         .with( "output = pow(input1, input2);" )
                         .and(
                             "if ( d == 0 ) {                                    \n" +

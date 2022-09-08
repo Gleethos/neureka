@@ -8,7 +8,7 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.ElementWise;
+import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
@@ -42,13 +42,13 @@ public class Subtraction extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        ElementWise elementWise = new ElementWise(ElemWiseUtil::forSubtractions)
+        BiElementWise biElementWise = new BiElementWise(ElemWiseUtil::forSubtractions)
                                     .setSupplyADAgentFor( getDefaultAlgorithm() )
                                     .buildFunAlgorithm();
         setAlgorithm(
-            elementWise.setImplementationFor(
+            biElementWise.setImplementationFor(
                 CPU.class,
-                ElementWise.implementationForCPU()
+                BiElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> a - b,
                         ( a, b ) ->  1, // Deriving at input 0
@@ -68,7 +68,7 @@ public class Subtraction extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                ElementWise.implementationForGPU( this.getIdentifier() )
+                BiElementWise.implementationForGPU( this.getIdentifier() )
                         .with( "output = input1 - input2;  \n" )
                         .and(
                                 "if (d==0) {                  \n" +//drn and src2 switch:

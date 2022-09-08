@@ -10,7 +10,7 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.ElementWise;
+import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
@@ -43,13 +43,13 @@ public class Modulo extends AbstractOperation {
         // DEFAULT OPERATION :
 
         setAlgorithm(
-            ElementWise.class,
-            new ElementWise(ElemWiseUtil::forDivisionsOrModuli)
+            BiElementWise.class,
+            new BiElementWise(ElemWiseUtil::forDivisionsOrModuli)
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
-                ElementWise.implementationForCPU()
+                BiElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> a % b,
                         ( a, b ) -> 1 / b, // Deriving at input 0
@@ -74,7 +74,7 @@ public class Modulo extends AbstractOperation {
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                ElementWise.implementationForGPU( this.getIdentifier() )
+                BiElementWise.implementationForGPU( this.getIdentifier() )
                     .with( "output = ((int)input1) % ((int)input2);\n" )
                     .and(
                             "if ( d==0 ) {                                        \n" +

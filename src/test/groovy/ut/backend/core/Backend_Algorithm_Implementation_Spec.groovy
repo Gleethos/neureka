@@ -10,7 +10,7 @@ import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
 import neureka.backend.main.algorithms.Activation
-import neureka.backend.main.algorithms.ElementWise
+import neureka.backend.main.algorithms.BiElementWise
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
@@ -46,8 +46,8 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                         e ->
                                     e.isOperator() &&
                                     e.getOperator().length() == 1 &&
-                                    e.supports( ElementWise.class )
-                    ).map( e -> e.getAlgorithm( ElementWise.class ) )
+                                    e.supports( BiElementWise.class )
+                    ).map( e -> e.getAlgorithm( BiElementWise.class ) )
 
     }
 
@@ -122,9 +122,9 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                                     e ->
                                             e.isOperator() &&
                                                     e.getOperator().length() == 1 &&
-                                                    e.supports( ElementWise.class )
+                                                    e.supports( BiElementWise.class )
                             )
-                            .map( e -> e.getAlgorithm( ElementWise.class ) )
+                            .map( e -> e.getAlgorithm( BiElementWise.class ) )
 
     }
 
@@ -162,9 +162,9 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                                     e ->
                                             e.isOperator() &&
                                             e.getOperator().length() == 1 &&
-                                            e.supports( ElementWise.class )
+                                            e.supports( BiElementWise.class )
                             )
-                            .map( e -> e.getAlgorithm( ElementWise.class ) )
+                            .map( e -> e.getAlgorithm( BiElementWise.class ) )
 
     }
 

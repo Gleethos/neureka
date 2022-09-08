@@ -12,7 +12,7 @@ import neureka.backend.api.Algorithm
 import neureka.backend.main.algorithms.Activation
 import neureka.backend.main.algorithms.Broadcast
 import neureka.backend.main.algorithms.Convolution
-import neureka.backend.main.algorithms.ElementWise
+import neureka.backend.main.algorithms.BiElementWise
 import neureka.devices.Device
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
@@ -42,9 +42,9 @@ class Backend_Algorithm_AD_Spec extends Specification
                     .getOperations()
                     .stream()
                     .filter(
-                            e -> e.isOperator() && e.getOperator().length()==1 && e.supports( ElementWise.class )
+                            e -> e.isOperator() && e.getOperator().length()==1 && e.supports( BiElementWise.class )
                     ).map(
-                    e -> e.getAlgorithm( ElementWise.class )
+                    e -> e.getAlgorithm( BiElementWise.class )
                     )
     }
 

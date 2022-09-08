@@ -8,7 +8,7 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.ElementWise;
+import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CPUImplementation;
@@ -43,15 +43,15 @@ public class Addition extends AbstractOperation {
         //_____________________
         // DEFAULT OPERATION :
 
-        ElementWise elementWise = new ElementWise(ElemWiseUtil::forAdditions)
+        BiElementWise biElementWise = new BiElementWise(ElemWiseUtil::forAdditions)
                                     .setSupplyADAgentFor( getDefaultAlgorithm() )
                                     .buildFunAlgorithm();
 
         setAlgorithm(
-            elementWise
+            biElementWise
                 .setImplementationFor(
                     CPU.class,
-                    ElementWise.implementationForCPU()
+                    BiElementWise.implementationForCPU()
                         .with(Fun.F64F64ToF64.triple(
                             ( a, b ) -> a + b,
                             ( a, b ) -> 1d, // Deriving at input 0
@@ -86,7 +86,7 @@ public class Addition extends AbstractOperation {
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    ElementWise.implementationForGPU( this.getIdentifier() )
+                    BiElementWise.implementationForGPU( this.getIdentifier() )
                                     .with( "output = input1 + input2;\n" )
                                     .and( "output = 1;\n" )
             )

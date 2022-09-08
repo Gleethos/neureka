@@ -8,7 +8,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.ElementWise;
+import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.algorithms.internal.Fun;
 import neureka.backend.main.implementations.CLImplementation;
@@ -46,13 +46,13 @@ public class Multiplication extends AbstractOperation
         // DEFAULT OPERATION :
 
         setAlgorithm(
-            ElementWise.class,
-            new ElementWise(ElemWiseUtil::forMultiplications)
+            BiElementWise.class,
+            new BiElementWise(ElemWiseUtil::forMultiplications)
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
             .setImplementationFor(
                 CPU.class,
-                ElementWise.implementationForCPU()
+                BiElementWise.implementationForCPU()
                     .with(Fun.F64F64ToF64.triple(
                         ( a, b ) -> a * b,
                         ( a, b ) -> b, // Deriving at input 0
@@ -72,7 +72,7 @@ public class Multiplication extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                ElementWise.implementationForGPU( this.getIdentifier() )
+                BiElementWise.implementationForGPU( this.getIdentifier() )
                         .with( "output = input1 * input2;\n" )
                         .and( "if ( d == 0 ) {output = input2;}else{output = input1;}\n" )
             )
