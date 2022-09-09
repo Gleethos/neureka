@@ -11,6 +11,7 @@ import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.CLImplementation;
+import neureka.backend.main.implementations.broadcast.CLScalarBroadcast;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.implementations.broadcast.CLBroadcastSubtraction;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWiseSubtraction;
@@ -64,21 +65,13 @@ public class Subtraction extends AbstractOperation
             )
         );
 
-        //___________________________
-        // TENSOR SCALAR OPERATION :
-
-        Scalarization scalarization =
-            new Scalarization()
-                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-                .setDeviceExecution( (call, callback) -> ElemWiseUtil.forSubtractions(call, callback) )
-                .buildFunAlgorithm();
-
         setAlgorithm(
             Scalarization.class,
-            scalarization.setImplementationFor(
-                CPU.class,
-                new CPUScalarBroadcastSubtraction()
-            )
+            new Scalarization()
+            .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
+            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forSubtractions(call, callback) )
+            .buildFunAlgorithm()
+            .setImplementationFor( CPU.class, new CPUScalarBroadcastSubtraction() )
             .setImplementationFor(
                 OpenCLDevice.class,
                 CLImplementation.compiler()
@@ -112,9 +105,6 @@ public class Subtraction extends AbstractOperation
                         .build()
             )
         );
-
-        //________________
-        // BROADCASTING :
 
         setAlgorithm(
             Broadcast.class,
