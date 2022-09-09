@@ -13,7 +13,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
 {
     private final ScalarFun _fun;
 
-    public CPUElementwiseFunction(ScalarFun fun ) { _fun = fun; }
+    public CPUElementwiseFunction( ScalarFun fun ) { _fun = fun; }
 
     @Override
     public Tsr<?> run(ExecutionCall<CPU> call) {

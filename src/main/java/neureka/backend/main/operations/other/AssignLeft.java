@@ -1,7 +1,6 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -10,10 +9,10 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.implementations.CPUImplementation;
+import neureka.backend.main.implementations.broadcast.CLScalarBroadcast;
 import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastIdentity;
 import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
+import neureka.backend.main.implementations.elementwise.CPUElementwiseFunction;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -61,36 +60,10 @@ public class AssignLeft extends AbstractOperation
                 }
             )
             .buildFunAlgorithm()
+            .setImplementationFor( CPU.class, new CPUScalarBroadcastIdentity() )
             .setImplementationFor(
-                CPU.class,
-                new CPUScalarBroadcastIdentity()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                CLImplementation
-                    .compiler()
-                    .arity( 2 )
-                    .kernelSource( Scalarization.getKernelSource() )
-                    .activationSource( "output = value;\n" )
-                    .differentiationSource( "output = value;\n" )
-                    .kernelPostfix( this.getIdentifier() )
-                    .execution(
-                        call -> {
-                            Tsr<Number> t = call.input( Number.class, 0 );
-                            int gwz = t.size();
-                            call.getDevice()
-                                .getKernel(call)
-                                .passAllOf( t )
-                                .passAllOf( t )
-                                .pass( call.input( Number.class, 1 ).at(0).get().floatValue() )
-                                .pass( t.rank() )
-                                .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                .call( gwz );
-
-                            return call.input(0);
-                        }
-                    )
-                    .build()
+                    OpenCLDevice.class,
+                    new CLScalarBroadcast( this.getIdentifier(), "output = value;\n", "output = value;\n" )
             )
         );
 
@@ -115,24 +88,8 @@ public class AssignLeft extends AbstractOperation
                     }
             )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                CPUImplementation
-                    .withArity(2)
-                    .andImplementation(
-                        call -> {
-                            call.input( 0 ).setIsVirtual( false );
-                            return Neureka.get().backend().getOperation("idy")
-                                    .getAlgorithm( Activation.class )
-                                    .getImplementationFor( CPU.class )
-                                    .run(call);
-                        }
-                    )
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLElementwiseFunction( this.getIdentifier(), ScalarFun.IDENTITY )
-            )
+            .setImplementationFor( CPU.class, new CPUElementwiseFunction( ScalarFun.IDENTITY ) )
+            .setImplementationFor( OpenCLDevice.class, new CLElementwiseFunction( this.getIdentifier(), ScalarFun.IDENTITY ) )
         );
     }
 
