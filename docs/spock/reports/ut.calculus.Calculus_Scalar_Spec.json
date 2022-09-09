@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.132 seconds"
+    "duration":"0.106 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Function \"1/I[0]\" instance returns expected scalar results.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Function \"I[0]+1/I[0]\" instance returns expected scalar results.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -50,7 +50,7 @@
     {
       "id":"Function \"(I[0]+1/I[0])**-I[0]\" instance returns expected scalar result.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -67,7 +67,7 @@
     {
       "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -101,7 +101,7 @@
     {
       "id":"Test scalar results of various Function instances.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

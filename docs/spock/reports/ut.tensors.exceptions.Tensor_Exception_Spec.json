@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.276 seconds"
+    "duration":"0.286 seconds"
   },
   "headers":["\n                <h2> Tensors Exception Behavior </h2>\n                <br> \n                <p>\n                    This specification covers the behavior of tensors\n                    in exceptional situations.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Trying to inject an empty tensor into another causes fitting exception.",
       "result":"PASS",
-      "duration":"0.170 seconds",
+      "duration":"0.144 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Passing null to various methods of the tensor API will throw exceptions.",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,7 +46,7 @@
 
         {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@7302375f","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@44215d9f","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@67051e5f","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@78d64ffa","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@49041cb3","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@13195b9c","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@404c8508","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@32c6b06","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@39c8d23c","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@18801692","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@1264e74e","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@5efa2b92","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@531b54f3"]}}
+        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@78d64ffa","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@49041cb3","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@1c2595c5","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@13195b9c","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@404c8508","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@32c6b06","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@39c8d23c","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@53333276","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@1264e74e","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@5efa2b92","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@384324ed","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@531b54f3","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@1533d204"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -54,7 +54,7 @@
     {
       "id":"Passing an invalid object into Tsr constructor causes descriptive exception.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +69,7 @@
     {
       "id":"Passing an invalid key object into the \"getAt\" method causes a descriptive exception.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -86,7 +86,7 @@
     {
       "id":"Out of dimension bound causes descriptive exception!",
       "result":"PASS",
-      "duration":"0.030 seconds",
+      "duration":"0.043 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -103,7 +103,7 @@
     {
       "id":"Building a tensor with 0 shape arguments throws an exception.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"Casting a tensor as something unusual will cuas an exception to be thrown.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

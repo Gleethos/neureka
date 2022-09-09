@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.067 seconds"
+    "duration":"0.052 seconds"
   },
   "headers":["\n                <h2> AdaGrad Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the AdaGrad class.        \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"AdaGrad optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.052 seconds",
+      "duration":"0.040 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

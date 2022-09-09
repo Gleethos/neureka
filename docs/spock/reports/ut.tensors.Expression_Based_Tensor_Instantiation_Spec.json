@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.021 seconds"
+    "duration":"0.018 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A tensor can be created from a function as expression.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

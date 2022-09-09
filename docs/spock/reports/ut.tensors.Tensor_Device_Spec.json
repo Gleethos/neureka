@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.019 seconds"
+    "duration":"0.021 seconds"
   },
   "headers":["\n            Here you will find out how to store tensors on devices,\n            how to move tensors between devices and how to use\n            the device specific methods of the tensor class.\n        "],"tags":{},"see":[],
   "features":[ 

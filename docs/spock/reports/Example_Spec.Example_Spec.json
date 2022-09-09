@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.070 seconds"
+    "duration":"0.098 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"iAmNotSoReadable",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,7 +55,7 @@
     {
       "id":"Should be able to remove from list",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.016 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

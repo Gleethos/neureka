@@ -232,9 +232,12 @@ pitest {
 
 task cleanForDeployment(type: Delete) {
     delete "$rootDir/build"
-    delete new File("$rootDir/docs/jdocs").listFiles()
-    delete new File("$rootDir/docs/spock/reports").listFiles()
-    delete new File("$rootDir/docs/spock/aggregated").listFiles()
+    if ( new File("$rootDir/docs/jdocs").listFiles() != null )
+        delete new File("$rootDir/docs/jdocs").listFiles()
+    if ( new File("$rootDir/docs/spock/reports") != null )
+        delete new File("$rootDir/docs/spock/reports").listFiles()
+    if ( new File("$rootDir/docs/spock/aggregated") != null )
+        delete new File("$rootDir/docs/spock/aggregated").listFiles()
 }
 
 task deploy() {

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"14.553 seconds"
+    "duration":"14.623 seconds"
   },
   "headers":["\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An OpenCLDevice loads tensors in a provided lambda temporarily.",
       "result":"PASS",
-      "duration":"0.789 seconds",
+      "duration":"0.078 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -41,7 +41,7 @@
     {
       "id":"The \"getValue()\" method of an outsourced tensor will return the expected array type.",
       "result":"PASS",
-      "duration":"4.071 seconds",
+      "duration":"3.452 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -64,7 +64,7 @@
     {
       "id":"The \"getData()\" method of an outsourced tensor will return null when outsourced.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,7 +85,7 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"0.244 seconds",
+      "duration":"1.919 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"1.777 seconds",
+      "duration":"1.621 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +137,7 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"1.068 seconds",
+      "duration":"1.238 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -164,7 +164,7 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"2.001 seconds",
+      "duration":"2.393 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -191,7 +191,7 @@
     {
       "id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.",
       "result":"PASS",
-      "duration":"4.477 seconds",
+      "duration":"3.807 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
