@@ -15,7 +15,6 @@ import neureka.devices.opencl.StaticKernelSource;
 */
 public abstract class CLImplementation extends AbstractImplementationFor<OpenCLDevice> implements StaticKernelSource
 {
-
     protected CLImplementation(
             ImplementationFor<OpenCLDevice> execution,
             int arity

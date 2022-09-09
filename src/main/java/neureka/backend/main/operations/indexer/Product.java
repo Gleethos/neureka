@@ -117,7 +117,7 @@ public final class Product extends AbstractOperation
                     OpenCLDevice.class,
                     CLImplementation.compiler()
                             .arity( 3 )
-                            .kernelSource( activation.getKernelSource() )
+                            .kernelSource( Neureka.get().utility().readResource("kernels/activation_template.cl") )
                             .activationSource( "output = input;" )
                             .differentiationSource( "output = 1;" )
                             .kernelPostfix( this.getIdentifier() )

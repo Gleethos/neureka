@@ -165,7 +165,7 @@ public final class Summation extends AbstractOperation
                 CLImplementation
                     .compiler()
                     .arity( 3 )
-                    .kernelSource( activation.getKernelSource() )
+                    .kernelSource( Neureka.get().utility().readResource("kernels/activation_template.cl") )
                     .activationSource( "output = input;" )
                     .differentiationSource( "output = 1;" )
                     .kernelPostfix( this.getIdentifier() )

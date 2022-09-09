@@ -13,6 +13,8 @@ import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastIdentity;
+import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
@@ -129,9 +131,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                Activation.implementationForGPU( this.getIdentifier() )
-                        .with( "output = input;\n" )
-                        .and( "output = input;\n" )
+                new CLElementwiseFunction( this.getIdentifier(), ScalarFun.IDENTITY )
             )
         );
     }
