@@ -48,10 +48,6 @@ public class Addition extends AbstractOperation {
         setAlgorithm(
             biElementWise
                 .setImplementationFor(
-                    CPU.class,
-                    new CPUBiElementWiseAddition()
-                )
-                .setImplementationFor(
                     OpenCLDevice.class,
                     new CLBiElementwise( this.getIdentifier(), "output = input1 + input2;\n", "output = 1;\n" )
             )
@@ -93,10 +89,6 @@ public class Addition extends AbstractOperation {
                     }
                 )
                 .buildFunAlgorithm()
-                .setImplementationFor(
-                    CPU.class,
-                    new CPUBroadcastAddition()
-                )
                 .setImplementationFor(
                     OpenCLDevice.class,
                     new CLBroadcastAddition( this.getIdentifier() )

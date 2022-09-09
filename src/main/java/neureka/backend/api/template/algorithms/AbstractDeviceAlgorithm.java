@@ -47,7 +47,7 @@ implements DeviceAlgorithm<C>
             Class<D> deviceClass, E implementation
     ) {
         if ( _implementations.containsKey( deviceClass ) )
-            _LOG.info(
+            _LOG.error(
                     "Implementation for device '"+deviceClass.getSimpleName()+"' already defined!"
                 );
 

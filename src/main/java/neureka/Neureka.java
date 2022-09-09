@@ -134,6 +134,11 @@ public final class Neureka
                 _LOG.error("Failed to load operations!", e);
             }
 
+            BackendLoader.findAndLoad(
+                _backend,
+                "neureka.backend.main.implementations.elementwise"
+            );
+
             if ( _OPENCL_AVAILABLE )
                 _backend.set( new CLContext() );
             else

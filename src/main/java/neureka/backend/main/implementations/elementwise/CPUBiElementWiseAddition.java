@@ -1,7 +1,11 @@
 package neureka.backend.main.implementations.elementwise;
 
+import neureka.backend.api.annotations.Loadable;
+import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
+import neureka.backend.main.operations.operator.Addition;
 
+@Loadable(operation = Addition.class, algorithm = BiElementWise.class)
 public class CPUBiElementWiseAddition extends CPUBiElementWise
 {
     @Override
