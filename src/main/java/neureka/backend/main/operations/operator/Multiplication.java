@@ -11,12 +11,13 @@ import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.memory.MemUtil;
-import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.implementations.broadcast.CLBroadcastMultiplication;
-import neureka.backend.main.implementations.elementwise.CPUBiElementWiseMultiplication;
 import neureka.backend.main.implementations.broadcast.CPUBroadcastMultiplication;
 import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastMultiplication;
+import neureka.backend.main.implementations.elementwise.CLBiElementwise;
+import neureka.backend.main.implementations.elementwise.CPUBiElementWiseMultiplication;
+import neureka.backend.main.memory.MemUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -53,9 +54,7 @@ public class Multiplication extends AbstractOperation
             .setImplementationFor( CPU.class, new CPUBiElementWiseMultiplication() )
             .setImplementationFor(
                 OpenCLDevice.class,
-                BiElementWise.implementationForGPU( this.getIdentifier() )
-                        .with( "output = input1 * input2;\n" )
-                        .and( "if ( d == 0 ) {output = input2;}else{output = input1;}\n" )
+                new CLBiElementwise( this.getIdentifier(), "output = input1 * input2;\n", "if ( d == 0 ) {output = input2;}else{output = input1;}\n" )
             )
         );
 

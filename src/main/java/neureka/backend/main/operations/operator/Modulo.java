@@ -13,6 +13,7 @@ import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.CLImplementation;
+import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.implementations.broadcast.CLBroadcastModulo;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWiseModulo;
@@ -54,15 +55,15 @@ public class Modulo extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                BiElementWise.implementationForGPU( this.getIdentifier() )
-                    .with( "output = ((int)input1) % ((int)input2);\n" )
-                    .and(
-                            "if ( d==0 ) {                                        \n" +
-                                    "    output = 1/input2;                               \n" +
-                                    "} else {                                             \n" +
-                                    "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
-                                    "}"
-                    )
+                new CLBiElementwise(
+                     this.getIdentifier(),
+                     "output = ((int)input1) % ((int)input2);\n",
+                    "if ( d==0 ) {                       \n" +
+                    "    output = 1/input2;                               \n" +
+                    "} else {                                             \n" +
+                    "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
+                    "}"
+                )
             )
         );
 

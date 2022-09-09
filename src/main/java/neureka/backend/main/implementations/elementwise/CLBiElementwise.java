@@ -1,9 +1,7 @@
 package neureka.backend.main.implementations.elementwise;
 
 import neureka.Neureka;
-import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.ParsedCLImplementation;
-import neureka.devices.opencl.OpenCLDevice;
 
 public class CLBiElementwise  extends ParsedCLImplementation
 {

@@ -12,6 +12,7 @@ import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.broadcast.*;
+import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWiseDivision;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
@@ -53,15 +54,15 @@ public class Division extends AbstractOperation
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    BiElementWise.implementationForGPU( this.getIdentifier() )
-                            .with( "output = input1 / input2;\n" )
-                            .and(
-                                    "    if ( d == 0 ) {                                   \n" +
-                                            "        output = 1 / input2;                           \n" +
-                                            "    } else {                                           \n" +
-                                            "        output = -input2 / (float)pow(input1, 2.0f);   \n" +
-                                            "    }                                                  \n"
-                            )
+                    new CLBiElementwise(
+                        this.getIdentifier(),
+                        "output = input1 / input2;\n",
+                        "    if ( d == 0 ) {                                   \n" +
+                        "        output = 1 / input2;                           \n" +
+                        "    } else {                                           \n" +
+                        "        output = -input2 / (float)pow(input1, 2.0f);   \n" +
+                        "    }                                                  \n"
+                    )
                 )
         );
 

@@ -14,6 +14,7 @@ import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.broadcast.*;
+import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWisePower;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.calculus.Function;
@@ -125,15 +126,15 @@ public class Power extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                BiElementWise.implementationForGPU( this.getIdentifier() )
-                        .with( "output = pow(input1, input2);" )
-                        .and(
-                            "if ( d == 0 ) {                                    \n" +
-                                    "    output = input2 * pow(input1, input2-1.0f);  \n" +
-                                    "} else {                                         \n" +
-                                    "    output = pow(input1, input2) * log(input1);  \n" +
-                                    "}"
-                        )
+                new CLBiElementwise(
+                        this.getIdentifier(),
+                        "output = pow(input1, input2);",
+                        "if ( d == 0 ) {                 \n" +
+                        "    output = input2 * pow(input1, input2-1.0f);  \n" +
+                        "} else {                                         \n" +
+                        "    output = pow(input1, input2) * log(input1);  \n" +
+                        "}"
+                    )
             )
         );
 

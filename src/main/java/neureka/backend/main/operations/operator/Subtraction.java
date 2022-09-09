@@ -12,6 +12,7 @@ import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.broadcast.CLScalarBroadcast;
+import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.implementations.broadcast.CLBroadcastSubtraction;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWiseSubtraction;
@@ -53,9 +54,8 @@ public class Subtraction extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                BiElementWise.implementationForGPU( this.getIdentifier() )
-                        .with( "output = input1 - input2;  \n" )
-                        .and(
+                new CLBiElementwise( this.getIdentifier(),
+                        "output = input1 - input2;  \n",
                                 "if (d==0) {                  \n" +//drn and src2 switch:
                                         "    output = 1;              \n" +
                                         "} else {                     \n" +

@@ -48,34 +48,4 @@ public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWis
         );
     }
 
-    public static WithForward<String> implementationForGPU(String postfix ) {
-        return
-            forward ->
-                backward ->
-                    CLImplementation
-                        .compiler()
-                        .arity( -1 )
-                        .kernelSource( Neureka.get().utility().readResource("kernels/elementwise_template.cl") )
-                        .activationSource( forward )
-                        .differentiationSource( backward )
-                        .kernelPostfix( postfix )
-                        .execution(
-                            call -> {
-                                int offset = (call.input( Number.class, 0 ) != null) ? 0 : 1;
-                                int gwz = (call.input( Number.class, 0 ) != null) ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();
-                                call.getDevice()
-                                    .getKernel(call)
-                                    .passAllOf( call.input( Number.class, offset ) )
-                                    .passAllOf( call.input( Number.class, offset + 1 ) )
-                                    .passAllOf( call.input( Number.class, offset + 2 ) )
-                                    .pass( call.input( Number.class, 0 ).rank() )
-                                    .pass( call.getDerivativeIndex() )
-                                    .call( gwz );
-
-                                return call.input( 0 );
-                            }
-                        )
-                        .build();
-    }
-
 }
