@@ -11,6 +11,7 @@ import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.broadcast.*;
+import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWiseAddition;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
@@ -52,9 +53,7 @@ public class Addition extends AbstractOperation {
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,
-                    BiElementWise.implementationForGPU( this.getIdentifier() )
-                                    .with( "output = input1 + input2;\n" )
-                                    .and( "output = 1;\n" )
+                    new CLBiElementwise( this.getIdentifier(), "output = input1 + input2;\n", "output = 1;\n" )
             )
         );
 
