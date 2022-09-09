@@ -11,7 +11,6 @@ import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.implementations.broadcast.CLScalarBroadcast;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.implementations.broadcast.CLBroadcastSubtraction;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWiseSubtraction;
@@ -55,26 +54,67 @@ public class Subtraction extends AbstractOperation
                 OpenCLDevice.class,
                 BiElementWise.implementationForGPU( this.getIdentifier() )
                         .with( "output = input1 - input2;  \n" )
-                        .and( "if ( d == 0 ) output = 1; else output = -1; \n" )
+                        .and(
+                                "if (d==0) {                  \n" +//drn and src2 switch:
+                                        "    output = 1;              \n" +
+                                        "} else {                     \n" +
+                                        "    output = -1;               " +
+                                        "}"
+                        )
             )
         );
 
+        //___________________________
+        // TENSOR SCALAR OPERATION :
+
+        Scalarization scalarization =
+            new Scalarization()
+                .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
+                .setDeviceExecution( (call, callback) -> ElemWiseUtil.forSubtractions(call, callback) )
+                .buildFunAlgorithm();
+
         setAlgorithm(
             Scalarization.class,
-            new Scalarization()
-            .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forSubtractions(call, callback) )
-            .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUScalarBroadcastSubtraction() )
+            scalarization.setImplementationFor(
+                CPU.class,
+                new CPUScalarBroadcastSubtraction()
+            )
             .setImplementationFor(
                 OpenCLDevice.class,
-                new CLScalarBroadcast(
-                    this.getIdentifier(),
-                    "output = input1 - input2;  \n",
-                    "if ( d == 0 ) output = 1; else output = -1;\n"
-                )
+                CLImplementation.compiler()
+                        .arity( 3 )
+                        .kernelSource( Scalarization.getKernelSource() )
+                        .activationSource( "output = input1 - value;\n" )
+                        .differentiationSource(
+                            "if (d==0) {     \n" +//drn and src2 switch:
+                            "    output = 1;  \n" +
+                            "} else {         \n" +
+                            "    output = -1;   " +
+                            "}"
+                        )
+                        .kernelPostfix( this.getIdentifier() )
+                        .execution(
+                            call -> {
+                                int offset = (call.input( Number.class, 2 ).isVirtual() || call.input( Number.class, 2 ).size() == 1)?1:0;
+                                int gwz = call.input( Number.class, 0 ).size();
+                                call.getDevice()
+                                    .getKernel(call)
+                                    .passAllOf(call.input( Number.class, 0 ))
+                                    .passAllOf(call.input( Number.class, 0 ))
+                                    .pass((float)call.input( Number.class, 1+offset).at(0).get().doubleValue())
+                                    .pass( call.input( Number.class, 0 ).rank() )
+                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
+                                    .call( gwz );
+
+                                return call.input(0);
+                            }
+                        )
+                        .build()
             )
         );
+
+        //________________
+        // BROADCASTING :
 
         setAlgorithm(
             Broadcast.class,
@@ -111,8 +151,14 @@ public class Subtraction extends AbstractOperation
                     }
                 )
                 .buildFunAlgorithm()
-                .setImplementationFor( CPU.class, new CPUBroadcastSubtraction() )
-                .setImplementationFor( OpenCLDevice.class, new CLBroadcastSubtraction( this.getIdentifier() ) )
+                .setImplementationFor(
+                    CPU.class,
+                    new CPUBroadcastSubtraction()
+                )
+                .setImplementationFor(
+                    OpenCLDevice.class,
+                    new CLBroadcastSubtraction( this.getIdentifier() )
+                )
             );
     }
 
