@@ -1,11 +1,7 @@
 package neureka.backend.main.implementations.broadcast;
 
-import neureka.backend.api.annotations.Loadable;
-import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
-import neureka.backend.main.operations.operator.Addition;
 
-@Loadable(operation = Addition.class, algorithm = Broadcast.class)
 public class CPUBroadcastAddition extends CPUBroadcast
 {
     public CPUBroadcastAddition() {}

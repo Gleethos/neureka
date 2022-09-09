@@ -11,11 +11,9 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.broadcast.CLBroadcastDivision;
-import neureka.backend.main.implementations.broadcast.CLScalarBroadcastDivision;
-import neureka.backend.main.implementations.broadcast.CPUBroadcastDivision;
-import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastDivision;
+import neureka.backend.main.implementations.broadcast.*;
 import neureka.backend.main.implementations.elementwise.CLBiElementwise;
+import neureka.backend.main.implementations.elementwise.CPUBiElementWiseDivision;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -50,6 +48,10 @@ public class Division extends AbstractOperation
         setAlgorithm(
             BiElementWise.class,
             biElementWise
+                .setImplementationFor(
+                    CPU.class,
+                    new CPUBiElementWiseDivision()
+                )
                 .setImplementationFor(
                     OpenCLDevice.class,
                     new CLBiElementwise(
