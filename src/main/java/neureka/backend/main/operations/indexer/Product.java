@@ -44,9 +44,6 @@ public final class Product extends AbstractOperation
                     .isInline(         false       )
         );
 
-        //________________
-        // BROADCASTING :
-
         setAlgorithm(
             new Broadcast(ElemWiseUtil::forMultiplications)
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
@@ -68,79 +65,9 @@ public final class Product extends AbstractOperation
                 }
             )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class, new CPUBroadcastMultiplication()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLBroadcastMultiplication( this.getIdentifier() )
-            )
+            .setImplementationFor( CPU.class, new CPUBroadcastMultiplication())
+            .setImplementationFor( OpenCLDevice.class, new CLBroadcastMultiplication( this.getIdentifier() ) )
         );
-
-        //______________
-        // ACTIVATION :
-
-        Activation activation = new Activation()
-        .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-        .setDeviceExecution(
-            (call, callback) -> ElemWiseUtil.forMultiplications(call, callback),
-            (Function f, ExecutionCall<? extends Device<?>> adCall ) -> // Autograd
-            {
-                Function mul = Neureka.get().backend().getFunction().mul();
-                Tsr<?> derivative = f.executeDerive( adCall.inputs(), adCall.getDerivativeIndex() );
-                return ADAgent.of( derivative )
-                                .withAD( target -> mul.execute( target.error(), derivative ) );
-            }
-        )
-        .setCallPreparation(
-            call -> {
-                Device<Number> device = call.getDeviceFor(Number.class);
-                if ( call.input( 0 ) == null ) // Creating a new tensor:
-                {
-                    int[] shp = call.input( 1 ).getNDConf().shape();
-                    Tsr<Double> output = Tsr.of( shp, 0.0 ).getUnsafe().setIsIntermediate( true );
-                    output.setIsVirtual( false );
-                    device.store( output );
-                    call = call.withInputAt( 0, output );
-                }
-                return call;
-            }
-        )
-        .buildFunAlgorithm();
-
-        setAlgorithm(
-                Activation.class,
-                activation.setImplementationFor(
-                    CPU.class, new CPUElementwiseFunction(ScalarFun.IDENTITY)
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    CLImplementation.compiler()
-                            .arity( 3 )
-                            .kernelSource( Neureka.get().utility().readResource("kernels/activation_template.cl") )
-                            .activationSource( "output = input;" )
-                            .differentiationSource( "output = 1;" )
-                            .kernelPostfix( this.getIdentifier() )
-                            .execution(
-                                call -> {
-                                    int offset = (call.input( Number.class, 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.input( Number.class, 0 ) != null) ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();
-                                    call.getDevice().getKernel(call)
-                                            .passAllOf( call.input( Number.class, offset ) )
-                                            .passAllOf( call.input( Number.class, offset + 1 ) )
-                                            .pass( call.input( Number.class, 0 ).rank() )
-                                            .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                            .call( gwz );
-
-                                    return call.input( 0 );
-                                }
-                            )
-                            .build()
-                )
-        );
-
-
-
 
     }
 
