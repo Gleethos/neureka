@@ -4,14 +4,16 @@ import neureka.backend.api.BackendContext;
 import neureka.backend.api.BackendExtension;
 import neureka.backend.api.BackendRegistry;
 import neureka.backend.api.Extensions;
-import neureka.backend.main.algorithms.BiElementWise;
-import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
+import neureka.backend.main.algorithms.*;
 import neureka.backend.main.implementations.broadcast.CLBroadcastAddition;
 import neureka.backend.main.implementations.broadcast.CLBroadcastPower;
 import neureka.backend.main.implementations.broadcast.CLScalarBroadcastAddition;
 import neureka.backend.main.implementations.broadcast.CLScalarBroadcastPower;
 import neureka.backend.main.implementations.elementwise.CLBiElementwisePower;
+import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
+import neureka.backend.main.implementations.scalar.CLScalarFunction;
+import neureka.backend.main.operations.functions.*;
 import neureka.backend.main.operations.operator.Addition;
 import neureka.backend.main.operations.operator.Power;
 import neureka.calculus.assembly.ParseUtil;
@@ -183,6 +185,54 @@ public final class CLContext implements BackendExtension
                 .set( Scalarization.class, context -> new CLScalarBroadcastAddition(context.getIdentifier()) )
                 .set( Broadcast.class,     context -> new CLBroadcastAddition(context.getIdentifier())       );
 
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Absolute.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.ABSOLUTE) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.ABSOLUTE) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Cosinus.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.COSINUS) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.COSINUS) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( GaSU.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GASU) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GASU) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( GaTU.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GATU) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GATU) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Gaussian.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GAUSSIAN) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GAUSSIAN) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( GaussianFast.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GAUSSIAN_FAST) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GAUSSIAN_FAST) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( GeLU.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GELU) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GELU) );
+        //registry.forDevice( OpenCLDevice.class )
+        //        .andOperation( Identity.class )
+        //        .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.IDENTITY) )
+        //        .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.IDENTITY) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Logarithm.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.LOGARITHM) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.LOGARITHM) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Quadratic.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.QUADRATIC) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.QUADRATIC) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( ReLU.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.RELU) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.RELU) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( SeLU.class )
+                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.SELU) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SELU) );
 
     }
 
