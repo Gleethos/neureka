@@ -46,10 +46,11 @@ implements DeviceAlgorithm<C>
     public <D extends Device<?>, E extends ImplementationFor<D>> C setImplementationFor(
             Class<D> deviceClass, E implementation
     ) {
-        if ( _implementations.containsKey( deviceClass ) )
+        if ( _implementations.containsKey( deviceClass ) ) {
             _LOG.info(
-                    "Implementation for device '"+deviceClass.getSimpleName()+"' already defined!"
-                );
+                "Implementation for device '" + deviceClass.getSimpleName() + "' already defined!"
+            );
+        }
 
         _implementations.put(
             (Class<Device<?>>) deviceClass,

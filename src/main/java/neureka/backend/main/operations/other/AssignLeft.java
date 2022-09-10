@@ -131,7 +131,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                new CLElementwiseFunction( this.getIdentifier(), ScalarFun.IDENTITY )
+                new CLElementwiseFunction(ScalarFun.IDENTITY )
             )
         );
     }

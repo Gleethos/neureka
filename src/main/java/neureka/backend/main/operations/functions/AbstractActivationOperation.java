@@ -7,15 +7,12 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.ScalarActivation;
 import neureka.backend.main.algorithms.ScalarBroadcast;
-import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
-import neureka.backend.main.implementations.fun.api.ScalarFun;
-import neureka.backend.main.implementations.scalar.CLScalarFunction;
 import neureka.backend.main.implementations.elementwise.CPUElementwiseFunction;
-import neureka.backend.main.implementations.scalar.CPUScalarFunction;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.scalar.CPUScalarBroadcastFunction;
+import neureka.backend.main.implementations.scalar.CPUScalarFunction;
 import neureka.calculus.Function;
 import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
 
 abstract class AbstractActivationOperation extends AbstractOperation
@@ -38,10 +35,6 @@ abstract class AbstractActivationOperation extends AbstractOperation
         setAlgorithm(
             new Activation().setSupplyADAgentFor( getDefaultAlgorithm() ).buildFunAlgorithm()
                 .setImplementationFor( CPU.class, new CPUElementwiseFunction( fun ) )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLElementwiseFunction( this.getIdentifier(), fun )
-                )
         );
 
         setAlgorithm(
@@ -68,7 +61,6 @@ abstract class AbstractActivationOperation extends AbstractOperation
             .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
             .buildFunAlgorithm()
             .setImplementationFor( CPU.class, new CPUScalarFunction( fun ) )
-            .setImplementationFor( OpenCLDevice.class, new CLScalarFunction( fun ) )
         );
     }
 

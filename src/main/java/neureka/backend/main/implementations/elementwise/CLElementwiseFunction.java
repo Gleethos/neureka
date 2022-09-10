@@ -10,7 +10,7 @@ import neureka.devices.opencl.OpenCLDevice;
 
 public class CLElementwiseFunction extends ParsedCLImplementation
 {
-    public CLElementwiseFunction( String id, ScalarFun fun )
+    public CLElementwiseFunction( ScalarFun fun )
     {
         super(
             CLElementwiseFunction::_run,
@@ -18,7 +18,7 @@ public class CLElementwiseFunction extends ParsedCLImplementation
             Neureka.get().utility().readResource("kernels/activation_template.cl"),
             fun.activationCode(),
             fun.derivationCode(),
-            id
+            fun.id()
         );
     }
 

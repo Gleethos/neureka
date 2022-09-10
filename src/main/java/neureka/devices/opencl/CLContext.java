@@ -173,7 +173,8 @@ public final class CLContext implements BackendExtension
     }
 
     @Override
-    public void load( BackendRegistry registry ) {
+    public void load( BackendRegistry registry )
+    {
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Power.class )
                 .set( Scalarization.class, context -> new CLScalarBroadcastPower(context.getIdentifier()) )
@@ -187,80 +188,80 @@ public final class CLContext implements BackendExtension
 
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Absolute.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.ABSOLUTE) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.ABSOLUTE) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.ABSOLUTE) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Cosinus.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.COSINUS) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.COSINUS) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.COSINUS) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( GaSU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GASU) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GASU) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GASU) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( GaTU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GATU) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GATU) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GATU) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Gaussian.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GAUSSIAN) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GAUSSIAN) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GAUSSIAN) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( GaussianFast.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GAUSSIAN_FAST) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GAUSSIAN_FAST) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( GeLU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.GELU) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GELU) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GELU) );
-        //registry.forDevice( OpenCLDevice.class )
-        //        .andOperation( Identity.class )
-        //        .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.IDENTITY) )
-        //        .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.IDENTITY) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Identity.class )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.IDENTITY) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.IDENTITY) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Logarithm.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.LOGARITHM) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.LOGARITHM) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.LOGARITHM) );
-        //registry.forDevice( OpenCLDevice.class )
-        //        .andOperation( Quadratic.class )
-        //        .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.QUADRATIC) )
-        //        .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.QUADRATIC) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Quadratic.class )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.QUADRATIC) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.QUADRATIC) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( ReLU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.RELU) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.RELU) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.RELU) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( SeLU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.SELU) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SELU) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SELU) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Sigmoid.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.SIGMOID) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SIGMOID) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SIGMOID) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( SiLU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.SILU) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SILU) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SILU) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Sinus.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.SINUS) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SINUS) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SINUS) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Softplus.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.SOFTPLUS) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SOFTPLUS) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SOFTPLUS) );
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Softsign.class )
-                .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.SOFTSIGN) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SOFTSIGN) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SOFTSIGN) );
-        //registry.forDevice( OpenCLDevice.class )
-        //        .andOperation( Tanh.class )
-        //        .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.TANH) )
-        //        .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.TANH) );
-        //registry.forDevice( OpenCLDevice.class )
-        //        .andOperation( TanhFast.class )
-        //        .set( Activation.class, context -> new CLElementwiseFunction(context.getIdentifier(), ScalarFun.TANH_FAST) )
-        //        .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.TANH_FAST) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Tanh.class )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.TANH) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.TANH) );
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( TanhFast.class )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.TANH_FAST) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.TANH_FAST) );
 
     }
 

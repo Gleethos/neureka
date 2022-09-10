@@ -295,14 +295,22 @@ public final class BackendContext implements Cloneable
                 registeredList.add(new Registered<>(operationType, algorithmType, deviceType, function));
             }
         });
+        int count = 0;
         for ( Registered<?> registered : registeredList )
-            _register( registered );
+            count += _register( registered ) ? 1 : 0;
+
+        count = registeredList.size() - count;
+
+        if ( count != 0 )
+            throw new IllegalStateException(
+                "Failed to register "+count+" implementations for extension of type '"+extension.getClass().getSimpleName()+"'."
+            );
 
         extensions.set( extension );
         return this;
     }
 
-    private void _register( Registered<?> registered ) {
+    private boolean _register( Registered<?> registered ) {
         for ( Operation o : _operations ) {
             if ( o.getClass().equals( registered.operationType ) ) {
                 for ( Algorithm a : o.getAllAlgorithms() ) {
@@ -319,11 +327,13 @@ public final class BackendContext implements Cloneable
                                     }
                                 })
                             );
+                            return true;
                         }
                     }
                 }
             }
         }
+        return false;
     }
 
     /**
