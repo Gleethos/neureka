@@ -7,6 +7,7 @@ import neureka.calculus.FunctionCache;
 import neureka.calculus.Functions;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.assembly.ParseUtil;
+import neureka.devices.Device;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -258,6 +259,22 @@ public final class BackendContext implements Cloneable
         return extensions.getAll( BackendExtension.class );
     }
 
+
+    private class Registered<D extends Device<?>> {
+
+        final Class<? extends Operation> operationType;
+        final Class<? extends DeviceAlgorithm> algorithmType;
+        final Class<? extends D> deviceType;
+        final java.util.function.Function<BackendRegistry.Context, ImplementationFor<D>> function;
+
+        private Registered(Class<? extends Operation> operationType, Class<? extends DeviceAlgorithm> algorithmType, Class<? extends D> deviceType, java.util.function.Function<BackendRegistry.Context, ImplementationFor<D>> function) {
+            this.operationType = operationType;
+            this.algorithmType = algorithmType;
+            this.deviceType = deviceType;
+            this.function = function;
+        }
+    }
+
     /**
      *  Registers the provided {@link BackendExtension} instance
      *  which can then be accessed via {@link #get(Class)}.
@@ -265,9 +282,48 @@ public final class BackendContext implements Cloneable
      * @param extension The backend extension component which ought to be stored by this.
      * @return This very {@link BackendContext} instance to allow for method chaining.
      */
-    public BackendContext set( BackendExtension extension ) {
+    public BackendContext set( BackendExtension extension )
+    {
+        List<Registered<?>> registeredList = new ArrayList<>();
+        extension.load(new BackendRegistry() {
+            @Override
+            public <D extends Device<?>> void register(
+                    Class<? extends Operation> operationType,
+                    Class<? extends DeviceAlgorithm> algorithmType,
+                    Class<? extends D> deviceType, java.util.function.Function<Context, ImplementationFor<D>> function
+            ) {
+                registeredList.add(new Registered<>(operationType, algorithmType, deviceType, function));
+            }
+        });
+        for ( Registered<?> registered : registeredList )
+            _register( registered );
+
         extensions.set( extension );
         return this;
+    }
+
+    private void _register( Registered<?> registered ) {
+        for ( Operation o : _operations ) {
+            if ( o.getClass().equals( registered.operationType ) ) {
+                for ( Algorithm a : o.getAllAlgorithms() ) {
+                    // We make sure it is a device algorithm:
+                    if ( a instanceof DeviceAlgorithm ) {
+                        DeviceAlgorithm da = (DeviceAlgorithm) a;
+                        if ( da.getClass().equals( registered.algorithmType ) ) {
+                            da.setImplementationFor(
+                                registered.deviceType,
+                                registered.function.apply(new BackendRegistry.Context() {
+                                    @Override
+                                    public String getIdentifier() {
+                                        return da.getName();
+                                    }
+                                })
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

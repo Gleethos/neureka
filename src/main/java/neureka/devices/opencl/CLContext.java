@@ -2,7 +2,18 @@ package neureka.devices.opencl;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.BackendExtension;
+import neureka.backend.api.BackendRegistry;
 import neureka.backend.api.Extensions;
+import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.Broadcast;
+import neureka.backend.main.algorithms.Scalarization;
+import neureka.backend.main.implementations.broadcast.CLBroadcastAddition;
+import neureka.backend.main.implementations.broadcast.CLBroadcastPower;
+import neureka.backend.main.implementations.broadcast.CLScalarBroadcastAddition;
+import neureka.backend.main.implementations.broadcast.CLScalarBroadcastPower;
+import neureka.backend.main.implementations.elementwise.CLBiElementwisePower;
+import neureka.backend.main.operations.operator.Addition;
+import neureka.backend.main.operations.operator.Power;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
@@ -157,6 +168,22 @@ public final class CLContext implements BackendExtension
             platform.dispose();
         }
         _platforms.clear();
+    }
+
+    @Override
+    public void load( BackendRegistry registry ) {
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Power.class )
+                .set( Scalarization.class, context -> new CLScalarBroadcastPower(context.getIdentifier()) )
+                .set( Broadcast.class,     context -> new CLBroadcastPower(context.getIdentifier())       )
+                .set( BiElementWise.class, context -> new CLBiElementwisePower(context.getIdentifier())   );
+
+        registry.forDevice( OpenCLDevice.class )
+                .andOperation( Addition.class )
+                .set( Scalarization.class, context -> new CLScalarBroadcastAddition(context.getIdentifier()) )
+                .set( Broadcast.class,     context -> new CLBroadcastAddition(context.getIdentifier())       );
+
+
     }
 
 }

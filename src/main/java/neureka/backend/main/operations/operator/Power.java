@@ -124,18 +124,6 @@ public class Power extends AbstractOperation
                 CPU.class,
                 new CPUBiElementWisePower()
             )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLBiElementwise(
-                        this.getIdentifier(),
-                        "output = pow(input1, input2);",
-                        "if ( d == 0 ) {                 \n" +
-                        "    output = input2 * pow(input1, input2-1.0f);  \n" +
-                        "} else {                                         \n" +
-                        "    output = pow(input1, input2) * log(input1);  \n" +
-                        "}"
-                    )
-            )
         );
 
         //________________
@@ -167,14 +155,7 @@ public class Power extends AbstractOperation
                 CPU.class,
                 new CPUBroadcastPower()
             )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLBroadcastPower( this.getIdentifier() )
-            )
         );
-
-        //___________________________
-        // TENSOR SCALAR OPERATION :
 
         setAlgorithm(
             Scalarization.class,
@@ -184,7 +165,6 @@ public class Power extends AbstractOperation
             .setDeviceExecution( (call, callback) -> rja.execute(call, callback) )
             .buildFunAlgorithm()
             .setImplementationFor( CPU.class, new CPUScalaBroadcastPower() )
-            .setImplementationFor( OpenCLDevice.class, new CLScalarBroadcastPower( this.getIdentifier() ) )
         );
 
 
@@ -286,11 +266,5 @@ public class Power extends AbstractOperation
             return out;
         }
     }
-
-
-
-
-
-
 
 }

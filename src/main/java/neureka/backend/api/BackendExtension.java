@@ -29,6 +29,8 @@ public interface BackendExtension extends Component<Extensions>
      */
     void dispose();
 
+    void load(BackendRegistry registry);
+
     /**
      *  This class describes an available {@link Device} implementation found for a given {@link BackendExtension}.
      *  It exists because a typical {@link BackendExtension} will most likely also have a

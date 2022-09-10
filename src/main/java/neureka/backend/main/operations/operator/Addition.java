@@ -97,10 +97,6 @@ public class Addition extends AbstractOperation {
                     CPU.class,
                     new CPUBroadcastAddition()
                 )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLBroadcastAddition( this.getIdentifier() )
-                )
         );
 
         //___________________________
@@ -113,10 +109,6 @@ public class Addition extends AbstractOperation {
             .setImplementationFor(
                 CPU.class,
                 new CPUScalarBroadcastAddition()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLScalarBroadcastAddition( this.getIdentifier() )
             )
         );
     }
