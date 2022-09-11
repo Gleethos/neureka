@@ -6,10 +6,7 @@ import neureka.backend.api.Extensions;
 import neureka.backend.api.ini.BackendLoader;
 import neureka.backend.api.ini.ReceiveForDevice;
 import neureka.backend.main.algorithms.*;
-import neureka.backend.main.implementations.broadcast.CLBroadcastAddition;
-import neureka.backend.main.implementations.broadcast.CLBroadcastPower;
-import neureka.backend.main.implementations.broadcast.CLScalarBroadcastAddition;
-import neureka.backend.main.implementations.broadcast.CLScalarBroadcastPower;
+import neureka.backend.main.implementations.broadcast.*;
 import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.implementations.elementwise.CLBiElementwisePower;
 import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
@@ -18,6 +15,7 @@ import neureka.backend.main.implementations.scalar.CLScalarFunction;
 import neureka.backend.main.operations.functions.*;
 import neureka.backend.main.operations.operator.Addition;
 import neureka.backend.main.operations.operator.Power;
+import neureka.backend.main.operations.operator.Subtraction;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
@@ -182,14 +180,19 @@ public final class CLContext implements BackendExtension
     private void _load( ReceiveForDevice<OpenCLDevice> receive )
     {
         receive.forOperation( Power.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastPower(context.getAlgorithmName()) )
-                .set( Broadcast.class,     context -> new CLBroadcastPower(context.getAlgorithmName())       )
-                .set( BiElementWise.class, context -> new CLBiElementwisePower(context.getAlgorithmName())   );
+                .set( Scalarization.class, context -> new CLScalarBroadcastPower(context.getOperationIdentidier()) )
+                .set( Broadcast.class,     context -> new CLBroadcastPower(context.getOperationIdentidier())       )
+                .set( BiElementWise.class, context -> new CLBiElementwisePower(context.getOperationIdentidier())   );
 
         receive.forOperation( Addition.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastAddition(context.getAlgorithmName()) )
-                .set( Broadcast.class,     context -> new CLBroadcastAddition(context.getAlgorithmName())       )
+                .set( Scalarization.class, context -> new CLScalarBroadcastAddition(context.getOperationIdentidier()) )
+                .set( Broadcast.class,     context -> new CLBroadcastAddition(context.getOperationIdentidier())       )
                 .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 + input2;\n", "output = 1;\n" ) );
+
+        receive.forOperation( Subtraction.class )
+                .set( Scalarization.class, context -> new CLScalarBroadcastSubtraction( context.getOperationIdentidier() ) )
+                .set( Broadcast.class,     context -> new CLBroadcastSubtraction(context.getOperationIdentidier())       )
+                .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 - input2;\n", "output = 1;\n" ) );
 
         receive.forOperation( Absolute.class )
                 .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.ABSOLUTE) )

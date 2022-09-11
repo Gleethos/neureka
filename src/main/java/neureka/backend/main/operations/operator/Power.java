@@ -117,9 +117,6 @@ public class Power extends AbstractOperation
             .buildFunAlgorithm()
         );
 
-        //________________
-        // BROADCASTING :
-
         setAlgorithm(
             Broadcast.class,
             new Broadcast(rja)
@@ -152,7 +149,6 @@ public class Power extends AbstractOperation
             .setDeviceExecution( (call, callback) -> rja.execute(call, callback) )
             .buildFunAlgorithm()
         );
-
 
     }
 
@@ -221,7 +217,6 @@ public class Power extends AbstractOperation
             return out;
         }
     }
-
     
     public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {

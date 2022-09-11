@@ -10,14 +10,10 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.implementations.broadcast.CLBroadcastSubtraction;
-import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -27,34 +23,20 @@ public class Subtraction extends AbstractOperation
     public Subtraction()
     {
         super(
-                new OperationBuilder()
-                        .identifier(         "subtract"    )
-                        .operator(         "-"        )
-                        .arity(            -1         )
-                        .isOperator(       true       )
-                        .isIndexer(        false      )
-                        .isDifferentiable( true       )
-                        .isInline(         false      )
+            new OperationBuilder()
+            .identifier(    "subtract"    )
+            .operator(         "-"        )
+            .arity(            -1         )
+            .isOperator(       true       )
+            .isIndexer(        false      )
+            .isDifferentiable( true       )
+            .isInline(         false      )
         );
-
-        //_____________________
-        // DEFAULT OPERATION :
 
         setAlgorithm(
             new BiElementWise(ElemWiseUtil::forSubtractions)
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLBiElementwise( this.getIdentifier(),
-                        "output = input1 - input2;  \n",
-                                "if (d==0) {                  \n" +//drn and src2 switch:
-                                        "    output = 1;              \n" +
-                                        "} else {                     \n" +
-                                        "    output = -1;               " +
-                                        "}"
-                        )
-            )
         );
 
         setAlgorithm(
@@ -63,38 +45,6 @@ public class Subtraction extends AbstractOperation
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setDeviceExecution( (call, callback) -> ElemWiseUtil.forSubtractions(call, callback) )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                OpenCLDevice.class,
-                CLImplementation.compiler()
-                        .arity( 3 )
-                        .kernelSource( Scalarization.getKernelSource() )
-                        .activationSource( "output = input1 - value;\n" )
-                        .differentiationSource(
-                            "if (d==0) {     \n" +//drn and src2 switch:
-                            "    output = 1;  \n" +
-                            "} else {         \n" +
-                            "    output = -1;   " +
-                            "}"
-                        )
-                        .kernelPostfix( this.getIdentifier() )
-                        .execution(
-                            call -> {
-                                int offset = (call.input( Number.class, 2 ).isVirtual() || call.input( Number.class, 2 ).size() == 1)?1:0;
-                                int gwz = call.input( Number.class, 0 ).size();
-                                call.getDevice()
-                                    .getKernel(call)
-                                    .passAllOf(call.input( Number.class, 0 ))
-                                    .passAllOf(call.input( Number.class, 0 ))
-                                    .pass((float)call.input( Number.class, 1+offset).at(0).get().doubleValue())
-                                    .pass( call.input( Number.class, 0 ).rank() )
-                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                    .call( gwz );
-
-                                return call.input(0);
-                            }
-                        )
-                        .build()
-            )
         );
 
         setAlgorithm(
@@ -132,10 +82,6 @@ public class Subtraction extends AbstractOperation
                     }
                 )
                 .buildFunAlgorithm()
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLBroadcastSubtraction( this.getIdentifier() )
-                )
             );
     }
 
