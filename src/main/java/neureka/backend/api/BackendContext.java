@@ -166,18 +166,6 @@ public final class BackendContext implements Cloneable
         _lookup.put( operator, operation );
         _lookup.put( function, operation );
         _lookup.put( operator.toLowerCase(), operation );
-        if (
-                operator // TODO: Remove this! Its nonsensical and error prone!!
-                        .replace((""+((char)171)), "")
-                        .replace((""+((char)187)), "")
-                        .matches("[a-z]")
-        ) {
-            if ( operator.contains( ""+((char)171) ) )
-                _lookup.put(operator.replace((""+((char)171)), "<<"), operation);
-
-            if ( operator.contains( ""+((char)187) ) )
-                _lookup.put(operator.replace((""+((char)187)),">>"), operation);
-        }
         _size++;
         return this;
     }
