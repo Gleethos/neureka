@@ -36,7 +36,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
 
         then : 'The variables containing the executor instances are not null.'
             hostExecutor != null
-            clExecutor != null
+            clExecutor != null || !Neureka.get().canAccessOpenCLDevice()
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
             imp << Neureka.get().backend()
