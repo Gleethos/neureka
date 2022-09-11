@@ -2,8 +2,8 @@ package neureka.devices.opencl;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.BackendExtension;
-import neureka.backend.api.ini.BackendLoader;
 import neureka.backend.api.Extensions;
+import neureka.backend.api.ini.BackendLoader;
 import neureka.backend.api.ini.ReceiveForDevice;
 import neureka.backend.main.algorithms.*;
 import neureka.backend.main.implementations.broadcast.CLBroadcastAddition;
@@ -189,8 +189,7 @@ public final class CLContext implements BackendExtension
         receive.forOperation( Addition.class )
                 .set( Scalarization.class, context -> new CLScalarBroadcastAddition(context.getAlgorithmName()) )
                 .set( Broadcast.class,     context -> new CLBroadcastAddition(context.getAlgorithmName())       )
-                //.set( BiElementWise.class, context -> new CLBiElementwise( context.getAlgorithmName(), "output = input1 + input2;\n", "output = 1;\n" ) )
-        ;
+                .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 + input2;\n", "output = 1;\n" ) );
 
         receive.forOperation( Absolute.class )
                 .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.ABSOLUTE) )

@@ -325,6 +325,10 @@ public final class BackendContext implements Cloneable
                                     public String getAlgorithmName() {
                                         return da.getName();
                                     }
+                                    @Override
+                                    public String getOperationIdentidier() {
+                                        return o.getIdentifier();
+                                    }
                                 })
                             );
                             return true;

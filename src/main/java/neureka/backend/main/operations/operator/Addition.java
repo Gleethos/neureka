@@ -10,12 +10,10 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -39,10 +37,6 @@ public class Addition extends AbstractOperation {
             new BiElementWise(ElemWiseUtil::forAdditions)
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLBiElementwise( this.getIdentifier(), "output = input1 + input2;\n", "output = 1;\n" )
-            )
         );
 
         setAlgorithm(
