@@ -21,11 +21,11 @@ public final class BackendRegistry
     }
 
 
-    public <D extends Device<?>> RegisterForDevice<D> forDevice( Class<? extends D> deviceType )
+    public <D extends Device<?>> ReceiveForDevice<D> forDevice(Class<? extends D> deviceType )
     {
-        return new RegisterForDevice<D>() {
+        return new ReceiveForDevice<D>() {
             @Override
-            public <A extends DeviceAlgorithm> RegisterForDevice<D> set(
+            public <A extends DeviceAlgorithm> ReceiveForDevice<D> set(
                 Class<? extends Operation> operationType,
                 Class<? extends A> algorithmType,
                 Function<LoadingContext, ImplementationFor<D>> function
@@ -35,10 +35,10 @@ public final class BackendRegistry
             }
 
             @Override
-            public RegisterForOperation<D> andOperation(Class<? extends Operation> operationType) {
-                return new RegisterForOperation<D>() {
+            public ReceiveForOperation<D> forOperation(Class<? extends Operation> operationType) {
+                return new ReceiveForOperation<D>() {
                     @Override
-                    public RegisterForOperation<D> set(
+                    public ReceiveForOperation<D> set(
                         Class<? extends DeviceAlgorithm> algorithmType,
                         Function<LoadingContext, ImplementationFor<D>> function
                     ) {

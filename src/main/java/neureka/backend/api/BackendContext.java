@@ -322,7 +322,7 @@ public final class BackendContext implements Cloneable
                                 registered.deviceType,
                                 registered.function.apply(new LoadingContext() {
                                     @Override
-                                    public String getIdentifier() {
+                                    public String getAlgorithmName() {
                                         return da.getName();
                                     }
                                 })

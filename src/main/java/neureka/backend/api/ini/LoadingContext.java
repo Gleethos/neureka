@@ -1,5 +1,5 @@
 package neureka.backend.api.ini;
 
 public interface LoadingContext {
-    String getIdentifier();
+    String getAlgorithmName();
 }

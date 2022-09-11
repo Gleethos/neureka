@@ -6,8 +6,8 @@ import neureka.devices.Device;
 
 import java.util.function.Function;
 
-public interface RegisterForOperation<D extends Device<?>> {
-    RegisterForOperation<D> set(
+public interface ReceiveForOperation<D extends Device<?>> {
+    ReceiveForOperation<D> set(
             Class<? extends DeviceAlgorithm> algorithmType,
             Function<LoadingContext, ImplementationFor<D>> function
     );

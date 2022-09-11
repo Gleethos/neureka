@@ -2,10 +2,11 @@ package neureka.devices.host;
 
 import neureka.backend.api.BackendExtension;
 import neureka.backend.api.ini.BackendLoader;
-import neureka.backend.api.ini.BackendRegistry;
+import neureka.backend.api.ini.ReceiveForDevice;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
+import neureka.backend.main.implementations.broadcast.CPUBroadcastAddition;
 import neureka.backend.main.implementations.broadcast.CPUBroadcastPower;
 import neureka.backend.main.implementations.broadcast.CPUScalaBroadcastPower;
 import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastAddition;
@@ -29,23 +30,20 @@ public class CPUContext implements BackendExtension
 
     @Override
     public BackendLoader getLoader() {
-        return this::_load;
+        return registry -> _load( registry.forDevice(CPU.class) );
     }
 
-    private void _load( BackendRegistry registry )
+    private void _load( ReceiveForDevice<CPU> receive )
     {
-
-        registry.forDevice( CPU.class )
-                .andOperation( Power.class )
+        receive.forOperation( Power.class )
                 .set( Scalarization.class, context -> new CPUScalaBroadcastPower() )
-                .set( Broadcast.class, context -> new CPUBroadcastPower() )
+                .set( Broadcast.class,     context -> new CPUBroadcastPower() )
                 .set( BiElementWise.class, context -> new CPUBiElementWisePower() );
-//
-        //registry.forDevice( CPU.class )
-        //        .andOperation( Addition.class )
-        //        .set( Scalarization.class, context -> new CPUScalarBroadcastAddition() )
-        //        .set( Broadcast.class,     context -> new CPUBiElementWiseAddition() );
 
+        receive.forOperation( Addition.class )
+                .set( Scalarization.class, context -> new CPUScalarBroadcastAddition() )
+                .set( Broadcast.class,     context -> new CPUBroadcastAddition() )
+                .set( BiElementWise.class, context -> new CPUBiElementWiseAddition() );
     }
 
 }

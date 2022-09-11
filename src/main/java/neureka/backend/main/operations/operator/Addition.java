@@ -7,17 +7,14 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.broadcast.*;
 import neureka.backend.main.implementations.elementwise.CLBiElementwise;
-import neureka.backend.main.implementations.elementwise.CPUBiElementWiseAddition;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.Arrays;
@@ -28,86 +25,65 @@ public class Addition extends AbstractOperation {
     public Addition()
     {
         super (
-                new OperationBuilder()
-                        .identifier(       "add"      )
-                        .operator(         "+"        )
-                        .arity(            -1         )
-                        .isOperator(       true       )
-                        .isIndexer(        false      )
-                        .isDifferentiable( true       )
-                        .isInline(         false      )
+            new OperationBuilder()
+            .identifier(       "add"      )
+            .operator(         "+"        )
+            .arity(            -1         )
+            .isOperator(       true       )
+            .isIndexer(        false      )
+            .isDifferentiable( true       )
+            .isInline(         false      )
         );
-
-        //_____________________
-        // DEFAULT OPERATION :
 
         setAlgorithm(
             new BiElementWise(ElemWiseUtil::forAdditions)
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
             .setImplementationFor(
-                CPU.class,
-                new CPUBiElementWiseAddition()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLBiElementwise( this.getIdentifier(), "output = input1 + input2;\n", "output = 1;\n" )
+                    OpenCLDevice.class,
+                    new CLBiElementwise( this.getIdentifier(), "output = input1 + input2;\n", "output = 1;\n" )
             )
         );
-
-        //________________
-        // BROADCASTING :
 
         setAlgorithm(
-                new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
-                .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
-                    {
-                        if ( call.autogradMode().allowsForward() )
-                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        assert ctxDerivative == null;
-                        int d = call.getDerivativeIndex();
-                        Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
-                        Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
-                        Device device = call.getDeviceFor(Number.class);
-                        return ADAgent.of( derivative )
-                                .withAD(
-                                    target ->
-                                        this.getAlgorithm( Broadcast.class )
-                                             .getImplementationFor( device )
-                                             .run(
-                                                 ExecutionCall.of(
-                                                     toBeDerived.setIsVirtual(false),
-                                                     derivative,
-                                                     target.error()
-                                                 )
-                                                 .andArgs( Arg.DerivIdx.of(d) )
-                                                 .running( this )
-                                                 .on( device )
+            new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
+            .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
+            .setSupplyADAgentFor(
+                ( Function f, ExecutionCall<? extends Device<?>> call ) ->
+                {
+                    if ( call.autogradMode().allowsForward() )
+                        throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                    Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                    assert ctxDerivative == null;
+                    int d = call.getDerivativeIndex();
+                    Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
+                    Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
+                    Device device = call.getDeviceFor(Number.class);
+                    return ADAgent.of( derivative )
+                            .withAD(
+                                target ->
+                                    this.getAlgorithm( Broadcast.class )
+                                         .getImplementationFor( device )
+                                         .run(
+                                             ExecutionCall.of(
+                                                 toBeDerived.setIsVirtual(false),
+                                                 derivative,
+                                                 target.error()
                                              )
-                                );
-                    }
-                )
-                .buildFunAlgorithm()
-                .setImplementationFor(
-                    CPU.class,
-                    new CPUBroadcastAddition()
-                )
+                                             .andArgs( Arg.DerivIdx.of(d) )
+                                             .running( this )
+                                             .on( device )
+                                         )
+                            );
+                }
+            )
+            .buildFunAlgorithm()
         );
-
-        //___________________________
-        // TENSOR SCALAR OPERATION :
 
         setAlgorithm(
             new Scalarization()
             .setDeviceExecution( (call, callback) -> ElemWiseUtil.forAdditions(call, callback) )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                new CPUScalarBroadcastAddition()
-            )
         );
     }
 
