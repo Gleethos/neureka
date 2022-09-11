@@ -1,5 +1,6 @@
 package neureka.backend.api;
 
+import neureka.backend.api.ini.BackendLoader;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
 
@@ -29,7 +30,7 @@ public interface BackendExtension extends Component<Extensions>
      */
     void dispose();
 
-    void load(BackendRegistry registry);
+    BackendLoader getLoader();
 
     /**
      *  This class describes an available {@link Device} implementation found for a given {@link BackendExtension}.

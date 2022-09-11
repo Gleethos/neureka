@@ -2,11 +2,16 @@ package neureka.backend.api;
 
 
 import neureka.Neureka;
+import neureka.backend.api.ini.BackendLoader;
+import neureka.backend.api.ini.BackendRegistry;
+import neureka.backend.api.ini.ImplementationReceiver;
+import neureka.backend.api.ini.LoadingContext;
 import neureka.calculus.Function;
 import neureka.calculus.FunctionCache;
 import neureka.calculus.Functions;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.assembly.ParseUtil;
+import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 
@@ -265,9 +270,9 @@ public final class BackendContext implements Cloneable
         final Class<? extends Operation> operationType;
         final Class<? extends DeviceAlgorithm> algorithmType;
         final Class<? extends D> deviceType;
-        final java.util.function.Function<BackendRegistry.Context, ImplementationFor<D>> function;
+        final java.util.function.Function<LoadingContext, ImplementationFor<D>> function;
 
-        private Registered(Class<? extends Operation> operationType, Class<? extends DeviceAlgorithm> algorithmType, Class<? extends D> deviceType, java.util.function.Function<BackendRegistry.Context, ImplementationFor<D>> function) {
+        private Registered(Class<? extends Operation> operationType, Class<? extends DeviceAlgorithm> algorithmType, Class<? extends D> deviceType, java.util.function.Function<LoadingContext, ImplementationFor<D>> function) {
             this.operationType = operationType;
             this.algorithmType = algorithmType;
             this.deviceType = deviceType;
@@ -284,17 +289,24 @@ public final class BackendContext implements Cloneable
      */
     public BackendContext set( BackendExtension extension )
     {
+        LogUtil.nullArgCheck( extension, "extension", BackendExtension.class );
+        BackendLoader loader = extension.getLoader();
+        LogUtil.nullArgCheck( loader, "loader", BackendLoader.class );
+        // Now before adding the extension to the backend we first try to load all the implementations:
         List<Registered<?>> registeredList = new ArrayList<>();
-        extension.load(new BackendRegistry() {
-            @Override
-            public <D extends Device<?>> void register(
-                    Class<? extends Operation> operationType,
-                    Class<? extends DeviceAlgorithm> algorithmType,
-                    Class<? extends D> deviceType, java.util.function.Function<Context, ImplementationFor<D>> function
-            ) {
-                registeredList.add(new Registered<>(operationType, algorithmType, deviceType, function));
-            }
-        });
+        loader.load(BackendRegistry.of(
+                new ImplementationReceiver() {
+                    @Override
+                    public <D extends Device<?>> void accept(
+                            Class<? extends Operation> operationType,
+                            Class<? extends DeviceAlgorithm> algorithmType,
+                            Class<? extends D> deviceType,
+                            java.util.function.Function<LoadingContext, ImplementationFor<D>> function
+                    ) {
+                        registeredList.add(new Registered<>(operationType, algorithmType, deviceType, function));
+                    }
+                }
+        ));
         int count = 0;
         for ( Registered<?> registered : registeredList )
             count += _register( registered ) ? 1 : 0;
@@ -320,7 +332,7 @@ public final class BackendContext implements Cloneable
                         if ( da.getClass().equals( registered.algorithmType ) ) {
                             da.setImplementationFor(
                                 registered.deviceType,
-                                registered.function.apply(new BackendRegistry.Context() {
+                                registered.function.apply(new LoadingContext() {
                                     @Override
                                     public String getIdentifier() {
                                         return da.getName();

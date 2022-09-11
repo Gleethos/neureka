@@ -2,7 +2,8 @@ package neureka.devices.opencl;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.BackendExtension;
-import neureka.backend.api.BackendRegistry;
+import neureka.backend.api.ini.BackendLoader;
+import neureka.backend.api.ini.BackendRegistry;
 import neureka.backend.api.Extensions;
 import neureka.backend.main.algorithms.*;
 import neureka.backend.main.implementations.broadcast.CLBroadcastAddition;
@@ -173,7 +174,11 @@ public final class CLContext implements BackendExtension
     }
 
     @Override
-    public void load( BackendRegistry registry )
+    public BackendLoader getLoader() {
+        return this::_load;
+    }
+
+    private void _load( BackendRegistry registry )
     {
         registry.forDevice( OpenCLDevice.class )
                 .andOperation( Power.class )
@@ -262,7 +267,6 @@ public final class CLContext implements BackendExtension
                 .andOperation( TanhFast.class )
                 .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.TANH_FAST) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.TANH_FAST) );
-
     }
 
 }
