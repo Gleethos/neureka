@@ -12,16 +12,12 @@ import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.broadcast.CLBroadcastMultiplication;
-import neureka.backend.main.implementations.broadcast.CPUBroadcastMultiplication;
-import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastMultiplication;
 import neureka.backend.main.implementations.elementwise.CLBiElementwise;
-import neureka.backend.main.implementations.elementwise.CPUBiElementWiseMultiplication;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.Arrays;
@@ -51,7 +47,6 @@ public class Multiplication extends AbstractOperation
             new BiElementWise(ElemWiseUtil::forMultiplications)
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUBiElementWiseMultiplication() )
             .setImplementationFor(
                 OpenCLDevice.class,
                 new CLBiElementwise( this.getIdentifier(), "output = input1 * input2;\n", "if ( d == 0 ) {output = input2;}else{output = input1;}\n" )
@@ -85,10 +80,6 @@ public class Multiplication extends AbstractOperation
             )
             .buildFunAlgorithm()
             .setImplementationFor(
-                CPU.class,
-                new CPUBroadcastMultiplication()
-            )
-            .setImplementationFor(
                 OpenCLDevice.class,
                 new CLBroadcastMultiplication( this.getIdentifier() )
             )
@@ -103,7 +94,6 @@ public class Multiplication extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setDeviceExecution( (call, callback) -> ElemWiseUtil.forMultiplications(call, callback) )
             .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUScalarBroadcastMultiplication() )
             .setImplementationFor(
                 OpenCLDevice.class,
                 CLImplementation

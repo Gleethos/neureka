@@ -8,9 +8,11 @@ import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.broadcast.*;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWiseAddition;
+import neureka.backend.main.implementations.elementwise.CPUBiElementWiseMultiplication;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWisePower;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWiseSubtraction;
 import neureka.backend.main.operations.operator.Addition;
+import neureka.backend.main.operations.operator.Multiplication;
 import neureka.backend.main.operations.operator.Power;
 import neureka.backend.main.operations.operator.Subtraction;
 
@@ -48,6 +50,11 @@ public class CPUContext implements BackendExtension
                 .set( Scalarization.class, context -> new CPUScalarBroadcastSubtraction() )
                 .set( Broadcast.class,     context -> new CPUBroadcastSubtraction() )
                 .set( BiElementWise.class, context -> new CPUBiElementWiseSubtraction() );
+
+        receive.forOperation( Multiplication.class )
+                .set( Scalarization.class, context -> new CPUScalarBroadcastMultiplication() )
+                .set( Broadcast.class,     context -> new CPUBroadcastMultiplication() )
+                .set( BiElementWise.class, context -> new CPUBiElementWiseMultiplication() );
     }
 
 }
