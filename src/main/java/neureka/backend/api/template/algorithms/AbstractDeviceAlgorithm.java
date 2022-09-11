@@ -141,7 +141,7 @@ implements DeviceAlgorithm<C>
             DeviceAlgorithm<?> deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm<?>) algorithm) : null );
             ImplementationFor<Device<?>> implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );
             if ( implementation == null ) {
-                String message = _couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
+                String message = _couldNotFindSuitableImplementationFor( call.getOperation(), algorithm, device.getClass() );
                 _LOG.error( message );
                 throw new IllegalStateException( message );
             }
@@ -487,11 +487,13 @@ implements DeviceAlgorithm<C>
     }
 
     private static String _couldNotFindSuitableImplementationFor(
+            Operation operation,
             Algorithm algorithm,
             Class<?> type
     ) {
         return LogUtil.format(
-                "No suitable implementation found for algorithm '{}' and device type '{}'.",
+                "No suitable implementation found for operation '{}', algorithm '{}' and device type '{}'.",
+                operation.getIdentifier(),
                 algorithm.getName(),
                 type.getSimpleName()
         );

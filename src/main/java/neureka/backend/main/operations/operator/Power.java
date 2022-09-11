@@ -13,15 +13,10 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.broadcast.*;
-import neureka.backend.main.implementations.elementwise.CLBiElementwise;
-import neureka.backend.main.implementations.elementwise.CPUBiElementWisePower;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -31,14 +26,14 @@ public class Power extends AbstractOperation
     public Power()
     {
         super(
-                new OperationBuilder()
-                        .identifier(       "power"    )
-                        .operator(         "**"        )
-                        .arity(            -1         )
-                        .isOperator(       true       )
-                        .isIndexer(        false      )
-                        .isDifferentiable( true       )
-                        .isInline(         false      )
+            new OperationBuilder()
+            .identifier(       "power"    )
+            .operator(         "**"        )
+            .arity(            -1         )
+            .isOperator(       true       )
+            .isIndexer(        false      )
+            .isDifferentiable( true       )
+            .isInline(         false      )
         );
 
         //_____________________
@@ -120,10 +115,6 @@ public class Power extends AbstractOperation
             new BiElementWise( rja )
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                new CPUBiElementWisePower()
-            )
         );
 
         //________________
@@ -151,10 +142,6 @@ public class Power extends AbstractOperation
                 }
             )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                new CPUBroadcastPower()
-            )
         );
 
         setAlgorithm(
@@ -164,7 +151,6 @@ public class Power extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setDeviceExecution( (call, callback) -> rja.execute(call, callback) )
             .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUScalaBroadcastPower() )
         );
 
 

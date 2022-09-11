@@ -41,19 +41,17 @@ public class Addition extends AbstractOperation {
         //_____________________
         // DEFAULT OPERATION :
 
-        BiElementWise biElementWise = new BiElementWise(ElemWiseUtil::forAdditions)
-                                    .setSupplyADAgentFor( getDefaultAlgorithm() )
-                                    .buildFunAlgorithm();
-
         setAlgorithm(
-            biElementWise
-                .setImplementationFor(
-                    CPU.class,
-                    new CPUBiElementWiseAddition()
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLBiElementwise( this.getIdentifier(), "output = input1 + input2;\n", "output = 1;\n" )
+            new BiElementWise(ElemWiseUtil::forAdditions)
+            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
+            .setImplementationFor(
+                CPU.class,
+                new CPUBiElementWiseAddition()
+            )
+            .setImplementationFor(
+                OpenCLDevice.class,
+                new CLBiElementwise( this.getIdentifier(), "output = input1 + input2;\n", "output = 1;\n" )
             )
         );
 

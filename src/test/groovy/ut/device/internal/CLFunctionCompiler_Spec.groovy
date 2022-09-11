@@ -181,7 +181,7 @@ class CLFunctionCompiler_Spec extends Specification
                 Therefore in order for this to work we need to fake the membership of these tensors!
         """
             var exception = thrown(IllegalStateException)
-            exception.message == "No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'."
+            exception.message == "No suitable implementation found for operation 'test_fun', algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'."
 
         when : 'We set the mocked device as components of our three scalar tensors...'
             t1.to(mockDevice)
