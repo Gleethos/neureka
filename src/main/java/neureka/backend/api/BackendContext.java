@@ -317,18 +317,12 @@ public final class BackendContext implements Cloneable
                     // We make sure it is a device algorithm:
                     if ( a instanceof DeviceAlgorithm ) {
                         DeviceAlgorithm da = (DeviceAlgorithm) a;
-                        if ( da.getClass().equals( registered.algorithmType ) ) {
+                        if ( registered.algorithmType.isAssignableFrom(da.getClass()) ) {
                             da.setImplementationFor(
                                 registered.deviceType,
                                 registered.function.apply(new LoadingContext() {
-                                    @Override
-                                    public String getAlgorithmName() {
-                                        return da.getName();
-                                    }
-                                    @Override
-                                    public String getOperationIdentidier() {
-                                        return o.getIdentifier();
-                                    }
+                                    @Override public String getAlgorithmName() { return da.getName(); }
+                                    @Override public String getOperationIdentidier() { return o.getIdentifier(); }
                                 })
                             );
                             return true;
