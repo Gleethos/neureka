@@ -6,14 +6,13 @@ import neureka.backend.api.ini.ReceiveForDevice;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.broadcast.CPUBroadcastAddition;
-import neureka.backend.main.implementations.broadcast.CPUBroadcastPower;
-import neureka.backend.main.implementations.broadcast.CPUScalaBroadcastPower;
-import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastAddition;
+import neureka.backend.main.implementations.broadcast.*;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWiseAddition;
 import neureka.backend.main.implementations.elementwise.CPUBiElementWisePower;
+import neureka.backend.main.implementations.elementwise.CPUBiElementWiseSubtraction;
 import neureka.backend.main.operations.operator.Addition;
 import neureka.backend.main.operations.operator.Power;
+import neureka.backend.main.operations.operator.Subtraction;
 
 public class CPUContext implements BackendExtension
 {
@@ -44,6 +43,11 @@ public class CPUContext implements BackendExtension
                 .set( Scalarization.class, context -> new CPUScalarBroadcastAddition() )
                 .set( Broadcast.class,     context -> new CPUBroadcastAddition() )
                 .set( BiElementWise.class, context -> new CPUBiElementWiseAddition() );
+
+        receive.forOperation( Subtraction.class )
+                .set( Scalarization.class, context -> new CPUScalarBroadcastSubtraction() )
+                .set( Broadcast.class,     context -> new CPUBroadcastSubtraction() )
+                .set( BiElementWise.class, context -> new CPUBiElementWiseSubtraction() );
     }
 
 }

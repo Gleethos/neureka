@@ -11,17 +11,12 @@ import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.implementations.broadcast.CLScalarBroadcast;
+import neureka.backend.main.implementations.broadcast.CLBroadcastSubtraction;
 import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.implementations.broadcast.CLBroadcastSubtraction;
-import neureka.backend.main.implementations.elementwise.CPUBiElementWiseSubtraction;
-import neureka.backend.main.implementations.broadcast.CPUBroadcastSubtraction;
-import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastSubtraction;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.Arrays;
@@ -50,9 +45,6 @@ public class Subtraction extends AbstractOperation
             .setSupplyADAgentFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
             .setImplementationFor(
-                CPU.class, new CPUBiElementWiseSubtraction()
-            )
-            .setImplementationFor(
                 OpenCLDevice.class,
                 new CLBiElementwise( this.getIdentifier(),
                         "output = input1 - input2;  \n",
@@ -71,7 +63,6 @@ public class Subtraction extends AbstractOperation
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setDeviceExecution( (call, callback) -> ElemWiseUtil.forSubtractions(call, callback) )
             .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUScalarBroadcastSubtraction() )
             .setImplementationFor(
                 OpenCLDevice.class,
                 CLImplementation.compiler()
@@ -141,10 +132,6 @@ public class Subtraction extends AbstractOperation
                     }
                 )
                 .buildFunAlgorithm()
-                .setImplementationFor(
-                    CPU.class,
-                    new CPUBroadcastSubtraction()
-                )
                 .setImplementationFor(
                     OpenCLDevice.class,
                     new CLBroadcastSubtraction( this.getIdentifier() )
