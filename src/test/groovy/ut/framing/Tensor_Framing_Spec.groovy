@@ -34,8 +34,8 @@ class Tensor_Framing_Spec extends Specification
     def setupSpec() {
         reportHeader """
                     This specification covers the behavior
-                    of with respect to specifying aliases for
-                    tensor indices and then using them for slicing.     
+                    of tensors with respect to specifying aliases for
+                    indices and then using them for slicing.     
             """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
@@ -55,7 +55,7 @@ class Tensor_Framing_Spec extends Specification
         })
     }
 
-    def 'Added labels to tensors are accessible through the "index()" method.'()
+    def 'We can add labels to tensors through lists or maps passed to the "label()" method.'()
     {
         given : 'We create a 3D tensor and label its indices.'
             Tsr t = Tsr.of([2, 3, 2], 1..100)
@@ -143,7 +143,7 @@ class Tensor_Framing_Spec extends Specification
             asString.contains("2")
     }
 
-    void 'Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.'()
+    void 'A matrix (rank 2 tensor) can be labeled and their labels can be used to extract slices / subsets.'()
     {
         given: 'Tensor printing is set to "legacy" for this test.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
