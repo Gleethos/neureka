@@ -124,46 +124,4 @@ class Backend_Algorithm_Implementation_Spec extends Specification
 
     }
 
-
-
-    def 'CLExecutors of Operator implementations behave as expected.'(
-            DeviceAlgorithm imp
-    ){
-
-        given : 'Mock instances to simulate an ExecutionCall instance.'
-            var call = Mock( ExecutionCall )
-            var device = Mock( OpenCLDevice )
-            var tensor = Mock( Tsr )
-            var clExecutor = imp.getImplementationFor( OpenCLDevice.class )
-            var kernel = Mock( KernelCaller )
-
-        when : 'CL-executor instance is being called...'
-            clExecutor.run( call )
-
-        then : 'The mock objects are being called as expected.'
-            (0.._) * call.arity() >> 3
-            (1.._) * call.input( Number.class, 0) >> tensor
-            (1.._) * tensor.size() >> 0
-            (1.._) * call.getDevice() >> device
-             1 * device.getKernel(call) >> kernel
-            (1.._) * kernel.passAllOf(_) >> kernel
-            (1.._) * kernel.pass(_) >> kernel
-            (1.._) * kernel.call(_)
-
-        where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-            imp << Neureka.get().backend()
-                            .getOperations()
-                            .stream()
-                            .filter(
-                                    e ->
-                                            e.isOperator() &&
-                                            e.getOperator().length() == 1 &&
-                                            e.supports( BiElementWise.class )
-                            )
-                            .map( e -> e.getAlgorithm( BiElementWise.class ) )
-
-    }
-
-
-
 }
