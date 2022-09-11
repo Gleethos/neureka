@@ -56,25 +56,21 @@ class Backend_Algorithm_Implementation_Spec extends Specification
     def 'Activation implementations have expected Executor instances.'(
             Algorithm imp
     ){
-
         when : 'Host- and CL- executor instance are being fetched...'
             def hostExecutor = imp.getImplementationFor( CPU.class )
             def clExecutor = imp.getImplementationFor( OpenCLDevice.class )
 
         then : 'The variables containing the executor instances are not null.'
             hostExecutor != null
-            clExecutor != null
+            clExecutor != null || !Neureka.get().canAccessOpenCLDevice()
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
             imp << Neureka.get()
                     .backend()
                     .getOperations()
                     .stream()
-                    .filter(
-                            e ->
-                                            e.supports( Activation.class )
-                    ).map( e -> e.getAlgorithm( Activation.class ) )
-
+                    .filter( e -> e.supports( Activation.class ) )
+                    .map( e -> e.getAlgorithm( Activation.class ) )
     }
 
 
@@ -119,10 +115,10 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                             .getOperations()
                             .stream()
                             .filter(
-                                    e ->
+                                e ->
                                             e.isOperator() &&
-                                                    e.getOperator().length() == 1 &&
-                                                    e.supports( BiElementWise.class )
+                                            e.getOperator().length() == 1 &&
+                                            e.supports( BiElementWise.class )
                             )
                             .map( e -> e.getAlgorithm( BiElementWise.class ) )
 
