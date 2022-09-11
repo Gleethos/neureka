@@ -14,6 +14,7 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.scalar.CLScalarFunction;
 import neureka.backend.main.operations.functions.*;
 import neureka.backend.main.operations.operator.Addition;
+import neureka.backend.main.operations.operator.Multiplication;
 import neureka.backend.main.operations.operator.Power;
 import neureka.backend.main.operations.operator.Subtraction;
 import neureka.calculus.assembly.ParseUtil;
@@ -193,6 +194,11 @@ public final class CLContext implements BackendExtension
                 .set( Scalarization.class, context -> new CLScalarBroadcastSubtraction( context.getOperationIdentidier() ) )
                 .set( Broadcast.class,     context -> new CLBroadcastSubtraction(context.getOperationIdentidier())       )
                 .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 - input2;\n", "output = 1;\n" ) );
+
+        receive.forOperation( Multiplication.class )
+                .set( Scalarization.class, context -> new CLScalarBroadcastMultiplication( context.getOperationIdentidier() ) )
+                .set( Broadcast.class,     context -> new CLBroadcastMultiplication(context.getOperationIdentidier())       )
+                .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 * input2;\n", "output = input2;\n" ) );
 
         receive.forOperation( Absolute.class )
                 .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.ABSOLUTE) )
