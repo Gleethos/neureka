@@ -86,7 +86,7 @@ class OpenCLDevice_Spec extends Specification
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
-    def 'The "getValue()" method of an outsourced tensor will return the expected array type.'()
+    def 'We can get the items of an outsourced tensor as a primitive array.'()
     {
         given : 'A new tensor.'
             Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
@@ -108,7 +108,7 @@ class OpenCLDevice_Spec extends Specification
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
-    def 'The "getData()" method of an outsourced tensor will return null when outsourced.'()
+    def 'We can take a look at the underlying data array of an outsourced tensor through the unsafe API.'()
     {
         given : 'A new tensor belonging to the first found OpenCLDevice instance.'
             Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
