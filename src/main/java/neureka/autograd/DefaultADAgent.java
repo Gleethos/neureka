@@ -28,8 +28,9 @@ final class DefaultADAction implements ADAction
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
     private final ADAction _action;
+    private final Tsr<?> _partialDerivative;
 
-    DefaultADAction( ADAction action ) { _action = action; }
+    DefaultADAction( ADAction action, Tsr<?> derivative ) { _action = action; _partialDerivative = derivative; }
 
     @Override
     public Tsr<?> act( ADTarget<?> target ) {
@@ -42,6 +43,9 @@ final class DefaultADAction implements ADAction
 
     @Override
     public Optional<Tsr<?>> partialDerivative() {
+        if ( _partialDerivative != null )
+            return Optional.of( _partialDerivative );
+
         Tsr<?>[] captured = _action.findCaptured();
         if ( captured.length > 0 )
             return Optional.of(captured[captured.length - 1]);

@@ -25,7 +25,9 @@ import java.util.Optional;
 @FunctionalInterface
 public interface ADAction
 {
-    static ADAction of( ADAction action ) { return new DefaultADAction( action ); }
+    static ADAction of( ADAction action ) { return new DefaultADAction( action, null ); }
+
+    static ADAction of( Tsr<?> derivative, ADAction action ) { return new DefaultADAction( action, derivative ); }
 
     /**
      *  The auto-differentiation forward or backward pass of an ADAction
