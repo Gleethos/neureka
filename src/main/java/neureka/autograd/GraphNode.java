@@ -658,7 +658,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         error.getUnsafe().setIsIntermediate( false );
         new ArrayList<>(_targetsToAgents).forEach( ref -> {
             for ( ADAgent a : ref.agents() )
-                action.accept( ref.node(), a.act( new ADTarget<>(ref.index(), ref.node(), error) ) );
+                action.accept( ref.node(), (Tsr<V>) a.act( new ADTarget<>(ref.index(), ref.node(), error) ));
         });
     }
 

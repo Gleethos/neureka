@@ -21,36 +21,31 @@ import java.util.Optional;
  *
  *  So in essence this class is a container for a lambda as well as an optional derivative.
  */
-final class DefaultADAgent implements ADAgent {
-
-    public static WithADAction of() {
-        return action -> new DefaultADAgent( action );
-    }
-    
+final class DefaultADAgent implements ADAgent
+{
     /**
      *  This lambda ought to perform the forward or backward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
     private final ADAction _action;
 
-
-    private DefaultADAgent( ADAction action ) { _action = action; }
+    DefaultADAgent( ADAction action ) { _action = action; }
 
     @Override
-    public <T> Tsr<T> act( ADTarget<T> target ) {
+    public Tsr<?> act( ADTarget<?> target ) {
         if ( _action == null )
             throw new IllegalStateException(
                 "Cannot perform propagation because this "+ADAgent.class.getSimpleName()+" does have an auto-diff implementation."
             );
-        return (Tsr<T>) _action.act( target );
+        return _action.act( target );
     }
 
     @Override
     public Optional<Tsr<?>> partialDerivative() {
         Tsr<?>[] captured = _action.findCaptured();
-        if ( captured.length > 0 ) {
+        if ( captured.length > 0 )
             return Optional.of(captured[captured.length - 1]);
-        }
+
         return Optional.empty();
     }
 

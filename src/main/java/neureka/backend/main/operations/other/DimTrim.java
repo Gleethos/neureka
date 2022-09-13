@@ -69,7 +69,7 @@ public class DimTrim extends AbstractOperation
         );
     }
 
-    private static Tsr<?> _pad( Tsr<?> tensor, int[] ends, boolean newTsr ) {
+    private static <T> Tsr<T> _pad( Tsr<T> tensor, int[] ends, boolean newTsr ) {
 
         if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
             throw new IllegalArgumentException("Column major not yet supported for shape trimming!");

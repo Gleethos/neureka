@@ -4,6 +4,7 @@ import neureka.Tsr;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *  This interface is the declaration for
@@ -19,7 +20,11 @@ import java.util.List;
 public interface ADAction
 {
     /**
-     * @param target A container for the {@link GraphNode} at which the differentiation ought to be performed and error which ought to be used for the forward or backward differentiation.
+     *  The auto-differentiation forward or backward pass of an ADAgent
+     *  propagate partial differentiations forward along the computation graph.
+     *
+     * @param target A wrapper for the {@link GraphNode} at which the differentiation ought to
+     *               be performed and error which ought to be used for the forward or backward differentiation.
      * @return The result of a forward or backward mode auto differentiation.
      */
     Tsr<?> act( ADTarget<?> target );
@@ -45,5 +50,13 @@ public interface ADAction
             }
         }
         return captured.toArray( new Tsr[0] );
+    }
+
+    default Optional<Tsr<?>> partialDerivative() {
+        Tsr<?>[] captured = this.findCaptured();
+        if ( captured.length > 0 )
+            return Optional.of(captured[captured.length - 1]);
+
+        return Optional.empty();
     }
 }
