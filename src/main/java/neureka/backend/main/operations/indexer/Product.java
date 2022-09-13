@@ -7,12 +7,8 @@ import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.implementations.elementwise.CPUElementwiseFunction;
-import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.broadcast.CLBroadcastMultiplication;
 import neureka.backend.main.implementations.broadcast.CPUBroadcastMultiplication;
 import neureka.calculus.Function;
@@ -55,13 +51,11 @@ public final class Product extends AbstractOperation
                     Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
-                        return ADAgent.of( ctxDerivative )
-                                        .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
+                        return ADAgent.of( target -> mul.execute( target.error(), ctxDerivative ) );
                     }
                     int d = call.getValOf( Arg.DerivIdx.class );
                     Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                    return ADAgent.of( derivative )
-                                    .withAD( target -> mul.execute( target.error(), derivative ) );
+                    return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
                 }
             )
             .buildFunAlgorithm()

@@ -24,7 +24,7 @@ public final class Result
     }
 
     public Result withADAction( ADAction action ) {
-        return this.withAutoDiff( (caller, call) -> ADAgent.withAD(action) );
+        return this.withAutoDiff( (caller, call) -> ADAgent.of(action) );
     }
 
     public Result withAutoDiff( ADAgentSupplier agent ) {

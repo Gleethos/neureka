@@ -58,9 +58,7 @@ import java.util.Optional;
  */
 public interface ADAgent
 {
-    static WithADAction of( Tsr<?> derivative ) { return DefaultADAgent.ofDerivative( derivative ); }
-
-    static ADAgent withAD( ADAction action ) { return of( null ).withAD( action ); }
+    static ADAgent of( ADAction action ) { return DefaultADAgent.of().withAD( action ); }
 
     /**
      *  The auto-differentiation forward or backward pass of an ADAgent

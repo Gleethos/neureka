@@ -188,7 +188,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
      * @param supplyADAgentFor A supplier for an {@link ADAgent} containing implementation details for autograd.
      * @return This very instance to enable method chaining.
      */
-    public final AbstractFunDeviceAlgorithm<C> setSupplyADAgentFor(ADAgentSupplier supplyADAgentFor ) {
+    public final AbstractFunDeviceAlgorithm<C> setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
         _supplyADAgentFor = _checked(supplyADAgentFor, _supplyADAgentFor, ADAgentSupplier.class);
         return this;
     }

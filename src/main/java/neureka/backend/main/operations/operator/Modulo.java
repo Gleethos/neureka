@@ -87,13 +87,11 @@ public class Modulo extends AbstractOperation
                     Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
-                        return ADAgent.of( ctxDerivative )
-                                        .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
+                        return ADAgent.of( target -> mul.execute( target.error(), ctxDerivative ) );
                     }
                     int d = call.getDerivativeIndex();
                     Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                    return ADAgent.of( derivative )
-                                    .withAD( target -> mul.execute( target.error(), derivative ) );
+                    return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
                 }
             )
             .buildFunAlgorithm()

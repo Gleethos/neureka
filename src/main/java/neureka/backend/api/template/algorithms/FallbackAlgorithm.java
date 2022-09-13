@@ -125,13 +125,11 @@ implements ExecutionPreparation, ADAgentSupplier
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().backend().getFunction().mul();
         if ( derivative != null ) {
-            return ADAgent.of( derivative )
-                    .withAD( target -> mul.execute( target.error(), derivative ) );
+            return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
         }
         Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
         localDerivative.getUnsafe().setIsIntermediate( false );
-        return ADAgent.of( localDerivative )
-                .withAD( target -> mul.execute( target.error(), localDerivative ) );
+        return ADAgent.of( target -> mul.execute( target.error(), localDerivative ) );
         // TODO: Maybe delete local derivative??
     }
 

@@ -7,18 +7,12 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Convolution;
-import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.implementations.elementwise.CPUElementwiseFunction;
-import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.broadcast.CLBroadcastAddition;
 import neureka.backend.main.implementations.broadcast.CPUBroadcastSummation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -59,13 +53,11 @@ public final class Summation extends AbstractOperation
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
-                            return ADAgent.of( ctxDerivative )
-                                            .withAD( target -> mul.execute( target.error(), ctxDerivative ) );
+                            return ADAgent.of( target -> mul.execute( target.error(), ctxDerivative ) );
                         }
                         int d = call.getValOf( Arg.DerivIdx.class );
                         Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                        return ADAgent.of( derivative )
-                                        .withAD( target -> mul.execute( target.error(), derivative ) );
+                        return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
                     }
                 )
                 .buildFunAlgorithm();

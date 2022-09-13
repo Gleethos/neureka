@@ -72,8 +72,7 @@ public class XConv extends AbstractOperation
                         // Now we need to remember the shape of the input which is targeted for back prop.
                         int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
                         // This is because it will be the shape of the output to the de-convolution!
-                        return ADAgent.of( derivative )
-                                .withAD( target ->
+                        return ADAgent.of( target ->
                                         deConv.execute(
                                                 target.error(),
                                                 derivative,

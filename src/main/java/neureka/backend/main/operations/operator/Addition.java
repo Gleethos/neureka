@@ -53,8 +53,7 @@ public class Addition extends AbstractOperation {
                     Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
                     Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
                     Device device = call.getDeviceFor(Number.class);
-                    return ADAgent.of( derivative )
-                            .withAD(
+                    return ADAgent.of(
                                 target ->
                                     this.getAlgorithm( Broadcast.class )
                                          .getImplementationFor( device )

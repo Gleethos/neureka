@@ -66,8 +66,7 @@ public class MatMul extends AbstractOperation
                         int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
                         Tsr<?> derivative = adCall.input( d ).T().deepCopy().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                         derivative.to(adCall.getDevice());
-                        return ADAgent.of( derivative )
-                                .withAD( target ->
+                        return ADAgent.of( target ->
                                         d == 1
                                                 ? matMul.execute( target.error(), derivative )
                                                 : matMul.execute( derivative, target.error() )

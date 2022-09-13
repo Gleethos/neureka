@@ -23,8 +23,8 @@ import java.util.Optional;
  */
 final class DefaultADAgent implements ADAgent {
 
-    public static WithADAction ofDerivative( Tsr<?> derivative ) {
-        return action -> new DefaultADAgent( derivative, action );
+    public static WithADAction of() {
+        return action -> new DefaultADAgent( action );
     }
     
     /**
@@ -32,12 +32,9 @@ final class DefaultADAgent implements ADAgent {
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
     private final ADAction _action;
-    private final Tsr<?> _partialDerivative;
 
-    /**
-     * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.
-     */
-    private DefaultADAgent( Tsr<?> derivative, ADAction action ) { _partialDerivative = derivative; _action = action; }
+
+    private DefaultADAgent( ADAction action ) { _action = action; }
 
     @Override
     public <T> Tsr<T> act( ADTarget<T> target ) {
@@ -49,7 +46,13 @@ final class DefaultADAgent implements ADAgent {
     }
 
     @Override
-    public Optional<Tsr<?>> partialDerivative() { return Optional.ofNullable(_partialDerivative); }
+    public Optional<Tsr<?>> partialDerivative() {
+        Tsr<?>[] captured = _action.findCaptured();
+        if ( captured.length > 0 ) {
+            return Optional.of(captured[captured.length - 1]);
+        }
+        return Optional.empty();
+    }
 
     /**
      *  An {@link ADAgent} also contains a context of variables which have been
@@ -58,7 +61,7 @@ final class DefaultADAgent implements ADAgent {
      *  variables within a given backend implementation, more specifically an {@link neureka.backend.api.Operation}.
      *  These variables are used by an implementation of the {@link neureka.backend.api.Operation} to perform auto differentiation
      *  or to facilitate further configuration of an {@link neureka.backend.api.ExecutionCall}.
-     *  This method let's us view the current state of these variables for this agent in the form of
+     *  This method lets us view the current state of these variables for this agent in the form of
      *  a nice {@link String}...
      *
      * @return A String view of this {@link ADAgent}.

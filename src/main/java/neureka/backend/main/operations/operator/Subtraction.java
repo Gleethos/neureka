@@ -63,8 +63,7 @@ public class Subtraction extends AbstractOperation
                         Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike( call.input( d ), 0 );
                         Device device = call.getDevice();
                         return
-                            ADAgent.of( derivative )
-                            .withAD(
+                            ADAgent.of(
                                 target ->
                                     this.getAlgorithm( Broadcast.class )
                                         .getImplementationFor( device )

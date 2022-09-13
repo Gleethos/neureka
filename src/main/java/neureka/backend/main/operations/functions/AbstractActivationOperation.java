@@ -33,7 +33,9 @@ abstract class AbstractActivationOperation extends AbstractOperation
         );
         _fun = fun;
         setAlgorithm(
-            new Activation().setSupplyADAgentFor( getDefaultAlgorithm() ).buildFunAlgorithm()
+            new Activation()
+                .setSupplyADAgentFor( getDefaultAlgorithm() )
+                .buildFunAlgorithm()
                 .setImplementationFor( CPU.class, new CPUElementwiseFunction( fun ) )
         );
 
