@@ -11,7 +11,7 @@ import neureka.common.utility.LogUtil;
  *  An immutable wrapper for a tensor as a result of anb {@link Execution}
  *  as well as an {@link ADAgentSupplier} for providing auto-differentiation support.
  */
-public class Result
+public final class Result
 {
     private final Tsr<?> _tensor;
     private final ADAgentSupplier _agent;
@@ -25,10 +25,6 @@ public class Result
 
     public Result withADAction( ADAction action ) {
         return this.withAutoDiff( (caller, call) -> ADAgent.withAD(action) );
-    }
-
-    public Result withADAgent( ADAgent agent ) {
-        return this.withAutoDiff( (caller, call) -> agent );
     }
 
     public Result withAutoDiff( ADAgentSupplier agent ) {
