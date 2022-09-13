@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.operator;
 
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -35,7 +35,7 @@ public class Subtraction extends AbstractOperation
 
         setAlgorithm(
             new BiElementWise(ElemWiseUtil::forSubtractions)
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
@@ -51,7 +51,7 @@ public class Subtraction extends AbstractOperation
             Broadcast.class,
             new Broadcast(ElemWiseUtil::forSubtractions)
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                .setSupplyADAgentFor(
+                .setSupplyADActionFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->
                     {
                         if ( call.autogradMode().allowsForward() )
@@ -63,7 +63,7 @@ public class Subtraction extends AbstractOperation
                         Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike( call.input( d ), 0 );
                         Device device = call.getDevice();
                         return
-                            ADAgent.of(
+                            ADAction.of(
                                 target ->
                                     this.getAlgorithm( Broadcast.class )
                                         .getImplementationFor( device )

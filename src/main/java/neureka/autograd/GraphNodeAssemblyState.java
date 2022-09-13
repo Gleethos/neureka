@@ -32,9 +32,9 @@ final class GraphNodeAssemblyState<V> {
 
     /**
      * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
-     * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
+     * @param agent ADAction's are used during back-propagation in order to distribute an error throughout the graph.
      */
-    public void put( int index, GraphNode<V> target, ADAgent agent ) {
+    public void put( int index, GraphNode<V> target, ADAction agent ) {
         if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
 
         if ( _targetsToAgents.containsKey( target ) )
@@ -127,16 +127,16 @@ final class GraphNodeAssemblyState<V> {
 
     private static class Value {
         private final int _index;
-        private final List<ADAgent> _agents = new ArrayList<>();
+        private final List<ADAction> _agents = new ArrayList<>();
 
-        private Value(int index, ADAgent agent) {
+        private Value(int index, ADAction agent) {
             _index = index;
             _agents.add(agent);
         }
 
         public int index() { return _index; }
 
-        public List<ADAgent> agents() { return _agents; }
+        public List<ADAction> agents() { return _agents; }
     }
 
 }

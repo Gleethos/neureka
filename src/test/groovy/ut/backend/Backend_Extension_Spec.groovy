@@ -2,11 +2,11 @@ package ut.backend
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.autograd.ADAgent
+import neureka.autograd.ADAction
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.backend.api.*
-import neureka.backend.api.fun.ADAgentSupplier
+import neureka.backend.api.fun.ADActionSupplier
 import neureka.calculus.implementations.FunctionInput
 import neureka.calculus.implementations.FunctionNode
 import neureka.devices.Device
@@ -73,7 +73,7 @@ class Backend_Extension_Spec extends Specification
     def 'Lambda properties of mock implementation interact with FunctionNode as expected.'()
     {
         given : 'A mock agent.'
-            var agent = Mock(ADAgent)
+            var agent = Mock(ADAction)
 
         and : 'A new operation type with a new implementation.'
             var type = Mock(Operation)
@@ -92,7 +92,7 @@ class Backend_Extension_Spec extends Specification
         and : 'A mocked operation implementation.'
             var implementation = Mock(Algorithm)
         and : 'An autodiff supplier:'
-            var adSource = Mock(ADAgentSupplier)
+            var adSource = Mock(ADActionSupplier)
 
         when : 'A FunctionNode is being instantiated via the given mocks...'
             var function = new FunctionNode(type, children, true)
@@ -133,7 +133,7 @@ class Backend_Extension_Spec extends Specification
             (1.._) * node.usesAD() >> true
 
         and : 'The agent creator is being accessed because "doAD" is set to true and the input requires gradients.'
-            1 * adSource.supplyADAgentFor(_,_) >> agent
+            1 * adSource.supplyADActionFor(_,_) >> agent
             1 * agent.partialDerivative() >> Optional.ofNullable(null)
 
         and : 'The result is the same as the mock tensor returned by the custom call hook.'

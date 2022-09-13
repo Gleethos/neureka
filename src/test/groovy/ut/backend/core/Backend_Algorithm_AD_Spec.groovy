@@ -2,7 +2,7 @@ package ut.backend.core
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.autograd.ADAgent
+import neureka.autograd.ADAction
 import neureka.backend.api.Operation
 import neureka.backend.api.AutoDiffMode
 import neureka.calculus.args.Arg
@@ -140,15 +140,15 @@ class Backend_Algorithm_AD_Spec extends Specification
             call.autogradMode() >> AutoDiffMode.FORWARD_AND_BACKWARD // This should cause an error! Broadcast does not support forward prop!
 
 
-        when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.supplyADAgentFor(function, call)
+        when : 'A new ADAction is being instantiated by calling the given implementation with these arguments...'
+            ADAction agent = imp.supplyADActionFor(function, call)
 
         then : 'An exception is being thrown because implementations of type "Broadcast" can only perform reverse mode AD!'
             def exception = thrown( IllegalArgumentException )
             exception.message == "Broadcast implementation does not support forward-AD!"
 
         when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.supplyADAgentFor(function, call)
+            agent = imp.supplyADActionFor(function, call)
 
         then :
             (0.._) * call.inputs() >> new Tsr[]{derivative, derivative}

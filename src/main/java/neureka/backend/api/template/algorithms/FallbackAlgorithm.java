@@ -2,10 +2,10 @@ package neureka.backend.api.template.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.fun.ADAgentSupplier;
+import neureka.backend.api.fun.ADActionSupplier;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.api.Result;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public final class FallbackAlgorithm extends AbstractDeviceAlgorithm<FallbackAlgorithm>
-implements ExecutionPreparation, ADAgentSupplier
+implements ExecutionPreparation, ADActionSupplier
 {
 
     private static final Logger _LOG = LoggerFactory.getLogger(FallbackAlgorithm.class);
@@ -115,21 +115,21 @@ implements ExecutionPreparation, ADAgentSupplier
     }
 
     @Override
-    public ADAgent supplyADAgentFor( Function function, ExecutionCall<? extends Device<?>> call )
+    public ADAction supplyADActionFor( Function function, ExecutionCall<? extends Device<?>> call )
     {
-        return ADAgent( function, call );
+        return ADAction( function, call );
     }
 
-    public static ADAgent ADAgent(Function function, ExecutionCall<? extends Device<?>> call )
+    public static ADAction ADAction(Function function, ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().backend().getFunction().mul();
         if ( derivative != null ) {
-            return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
+            return ADAction.of( target -> mul.execute( target.error(), derivative ) );
         }
         Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
         localDerivative.getUnsafe().setIsIntermediate( false );
-        return ADAgent.of( target -> mul.execute( target.error(), localDerivative ) );
+        return ADAction.of( target -> mul.execute( target.error(), localDerivative ) );
         // TODO: Maybe delete local derivative??
     }
 

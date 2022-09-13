@@ -4,7 +4,7 @@ import neureka.Tsr;
 
 /**
  *  This is simply a wrapper for useful information needed by implementations of
- *  the {@link ADAction} and {@link ADAgent} interfaces to perform error propagation.
+ *  the {@link ADAction} and {@link ADAction} interfaces to perform error propagation.
  *  The class exposes the targeted index and graph node of the input towards
  *  a provided error should be propagated.
  *

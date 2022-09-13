@@ -2,7 +2,7 @@ package neureka.backend.api.template.algorithms;
 
 
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.*;
 import neureka.backend.main.internal.CallExecutor;
@@ -46,7 +46,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     private SuitabilityPredicate _isSuitableFor;
     private ADSupportPredicate _autogradModeFor;
     private Execution _execution;
-    private ADAgentSupplier _supplyADAgentFor;
+    private ADActionSupplier _supplyADActionFor;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
     /*
         This flag will ensure that we can warn the user that the state has been illegally modified.
@@ -70,17 +70,17 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
 
     /**
      *  This method returns a new instance
-     *  of the {@link ADAgent} class responsible for performing automatic differentiation
+     *  of the {@link ADAction} class responsible for performing automatic differentiation
      *  both for forward and backward mode differentiation. <br>
-     *  Therefore an {@link ADAgent} exposes 2 different procedures. <br>
+     *  Therefore an {@link ADAction} exposes 2 different procedures. <br>
      *  One is the forward mode differentiation, and the other one <br>
      *  is the backward mode differentiation which is more commonly known as back-propagation... <br>
      *  Besides that it may also contain context information used <br>
      *  to perform said procedures.
      */
-    public final ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call ) {
+    public final ADAction supplyADActionFor(Function function, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
-        return _supplyADAgentFor.supplyADAgentFor( function, call );
+        return _supplyADActionFor.supplyADActionFor( function, call );
     }
 
     /**
@@ -115,7 +115,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         if (
             _isSuitableFor == null ||
             _autogradModeFor == null ||
-            (_supplyADAgentFor == null && _execution == null) ||
+            (_supplyADActionFor == null && _execution == null) ||
             _execution == null ||
             _instantiateNewTensorsForExecutionIn == null
         ) {
@@ -182,14 +182,14 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     }
 
     /**
-     *  This method receives a {@link ADAgentSupplier} which will supply
-     *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
+     *  This method receives a {@link ADActionSupplier} which will supply
+     *  {@link ADAction} instances which can perform backward and forward auto differentiation.
      *
-     * @param supplyADAgentFor A supplier for an {@link ADAgent} containing implementation details for autograd.
+     * @param supplyADActionFor A supplier for an {@link ADAction} containing implementation details for autograd.
      * @return This very instance to enable method chaining.
      */
-    public final AbstractFunDeviceAlgorithm<C> setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
-        _supplyADAgentFor = _checked(supplyADAgentFor, _supplyADAgentFor, ADAgentSupplier.class);
+    public final AbstractFunDeviceAlgorithm<C> setSupplyADActionFor( ADActionSupplier supplyADActionFor ) {
+        _supplyADActionFor = _checked(supplyADActionFor, _supplyADActionFor, ADActionSupplier.class);
         return this;
     }
 
@@ -241,10 +241,10 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     }
 
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(
-            Execute exec, ADAgentSupplier adAgentSupplier
+            Execute exec, ADActionSupplier adActionSupplier
     ) {
         return
-            adAgentSupplier == null
+            adActionSupplier == null
                 ? setExecution( (outerCaller, outerCall) ->
                     Result.of(AbstractDeviceAlgorithm.executeFor(
                         outerCaller, outerCall,
@@ -256,14 +256,14 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
                         outerCaller, outerCall,
                         (innerCall, callback) -> exec.execute( innerCall, callback)
                     ))
-                    .withAutoDiff( adAgentSupplier )
+                    .withAutoDiff( adActionSupplier )
                 );
     }
 
 
 
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Execute executor ) {
-        return setDeviceExecution( executor, FallbackAlgorithm::ADAgent );
+        return setDeviceExecution( executor, FallbackAlgorithm::ADAction );
     }
     public interface Execute {
 
@@ -275,14 +275,14 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     public Result execute( Function caller, ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         if ( call == null ) {
-            if ( _supplyADAgentFor != null )
-                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);
+            if ( _supplyADActionFor != null )
+                return _execution.execute( caller, call ).withAutoDiff(_supplyADActionFor);
             else
                 return _execution.execute( caller, call );
         }
         MemValidator checker = MemValidator.forInputs( call.inputs(), ()-> {
-            if ( _supplyADAgentFor != null )
-                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);
+            if ( _supplyADActionFor != null )
+                return _execution.execute( caller, call ).withAutoDiff(_supplyADActionFor);
             else
                 return _execution.execute( caller, call );
         });

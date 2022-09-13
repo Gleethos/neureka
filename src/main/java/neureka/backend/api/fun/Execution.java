@@ -30,7 +30,7 @@ public interface Execution {
     /**
      * @param caller The caller {@link Function} from which the request for execution originated.
      * @param call The {@link ExecutionCall} which should be executed.
-     * @return A {@link Result} instance wrapping a {@link neureka.Tsr} and optionally also an {@link ADAgentSupplier}.
+     * @return A {@link Result} instance wrapping a {@link neureka.Tsr} and optionally also an {@link ADActionSupplier}.
      */
     Result execute( Function caller, ExecutionCall<? extends Device<?>> call );
 

@@ -2,7 +2,7 @@ package neureka.backend.main.operations.operator;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -113,7 +113,7 @@ public class Power extends AbstractOperation
 
         setAlgorithm(BiElementWise.class,
             new BiElementWise( rja )
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
@@ -121,7 +121,7 @@ public class Power extends AbstractOperation
             Broadcast.class,
             new Broadcast(rja)
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-            .setSupplyADAgentFor(
+            .setSupplyADActionFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->
                 {
                     if ( call.autogradMode().allowsForward() )
@@ -129,11 +129,11 @@ public class Power extends AbstractOperation
                     Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
-                        return ADAgent.of( target -> mul.execute( target.error(), ctxDerivative ) );
+                        return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                     }
                     int d = call.getDerivativeIndex();
                     Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                    return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
+                    return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                 }
             )
             .buildFunAlgorithm()

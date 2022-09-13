@@ -2,7 +2,7 @@ package neureka.backend.main.operations.linear;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
@@ -66,7 +66,7 @@ public class MatMul extends AbstractOperation
                         int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
                         Tsr<?> derivative = adCall.input( d ).T().deepCopy().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                         derivative.to(adCall.getDevice());
-                        return ADAgent.of( target ->
+                        return ADAction.of( target ->
                                         d == 1
                                                 ? matMul.execute( target.error(), derivative )
                                                 : matMul.execute( derivative, target.error() )

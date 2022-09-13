@@ -2,7 +2,7 @@ package testutility;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -237,11 +237,11 @@ public class UnitTester_Tensor extends UnitTester
                                         Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                                         Function mul = Neureka.get().backend().getFunction().mul();
                                         if ( ctxDerivative != null ) {
-                                            return ADAgent.of( target -> mul.execute( target.error(), ctxDerivative ) );
+                                            return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                                         }
                                         int d = adCall.getDerivativeIndex();
                                         Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
-                                        return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
+                                        return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                                     }
                                 )
                                 .setCallPreparation(
@@ -275,12 +275,12 @@ public class UnitTester_Tensor extends UnitTester
                                             Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                                             Function mul = Neureka.get().backend().getFunction().mul();
                                             if ( ctxDerivative != null ) {
-                                                return ADAgent.of( target -> mul.execute( target.error(), ctxDerivative ) );
+                                                return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                                             }
                                             Tsr<?>[] inputs = adCall.inputs();
                                             int d = adCall.getDerivativeIndex();
                                             Tsr<?> derivative = f.executeDerive( inputs, d );
-                                            return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
+                                            return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                                         }
                                     )
                                     .setCallPreparation(

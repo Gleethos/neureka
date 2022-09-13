@@ -33,7 +33,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
                     { Algorithm it -> it.autoDiffModeFrom(null) },
                     { Algorithm it -> it.execute(null, null) },
                     { Algorithm it -> it.prepare(null) },
-                    { Algorithm it -> it.supplyADAgentFor(null, null) }
+                    { Algorithm it -> it.supplyADActionFor(null, null) }
             ]
 
     }

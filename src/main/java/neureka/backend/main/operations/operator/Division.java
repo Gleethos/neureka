@@ -2,7 +2,7 @@ package neureka.backend.main.operations.operator;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -42,7 +42,7 @@ public class Division extends AbstractOperation
         // DEFAULT OPERATION :
 
         BiElementWise biElementWise = new BiElementWise(ElemWiseUtil::forDivisionsOrModuli)
-                                   .setSupplyADAgentFor( getDefaultAlgorithm() )
+                                   .setSupplyADActionFor( getDefaultAlgorithm() )
                                     .buildFunAlgorithm();
 
         setAlgorithm(
@@ -78,7 +78,7 @@ public class Division extends AbstractOperation
                             .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                             .orElse(AutoDiffMode.BACKWARD_ONLY)
                 )
-                .setSupplyADAgentFor(
+                .setSupplyADActionFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->
                     {
                         if ( call.autogradMode().allowsForward() )
@@ -86,11 +86,11 @@ public class Division extends AbstractOperation
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
-                            return ADAgent.of( target -> mul.execute( target.error(), ctxDerivative ) );
+                            return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                         }
                         int d = call.getDerivativeIndex();
                         Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                        return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
+                        return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                     }
                 )
                 .buildFunAlgorithm()

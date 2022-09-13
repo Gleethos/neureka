@@ -2,7 +2,7 @@ package neureka.devices.opencl.utility;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
@@ -77,7 +77,7 @@ public final class CLFunctionCompiler
                         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                         .setDeviceExecution(
                             (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback),
-                            (caller, call) -> ADAgent.of( target -> Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )
+                            (caller, call) -> ADAction.of( target -> Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )
                         )
                         .setCallPreparation(
                             call -> {

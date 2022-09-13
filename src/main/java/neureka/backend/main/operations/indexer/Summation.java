@@ -2,7 +2,7 @@ package neureka.backend.main.operations.indexer;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.template.operations.AbstractOperation;
@@ -45,7 +45,7 @@ public final class Summation extends AbstractOperation
 
         Broadcast operationAlgorithm = new Broadcast(ElemWiseUtil::forAdditions)
                 .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setSupplyADAgentFor(
+                .setSupplyADActionFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->
                     {
                         if ( call.autogradMode().allowsForward() )
@@ -53,11 +53,11 @@ public final class Summation extends AbstractOperation
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
-                            return ADAgent.of( target -> mul.execute( target.error(), ctxDerivative ) );
+                            return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                         }
                         int d = call.getValOf( Arg.DerivIdx.class );
                         Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                        return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
+                        return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                     }
                 )
                 .buildFunAlgorithm();

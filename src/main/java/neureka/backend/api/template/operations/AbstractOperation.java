@@ -92,7 +92,7 @@ public abstract class AbstractOperation implements Operation
      *  Therefore, it contains functionality that goes alongside this assumption,
      *  just to name a few :                                                                                            <br>
      *                                                                                                                  <br>
-     *  - An ADAgent supplier returning ADAgent instances capable of performing both forward- and reverse- mode AD.     <br>
+     *  - An ADAction supplier returning ADAction instances capable of performing both forward- and reverse- mode AD.     <br>
      *  - A simple result tensor instantiation implementation.                                                          <br>
      *  - A basic threaded execution based on the AST of a given Function object.                                       <br>
      */

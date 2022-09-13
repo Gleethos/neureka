@@ -8,9 +8,15 @@ import java.util.Optional;
 
 /**
  *  This interface is the declaration for
- *  lambda actions for both the {@link #act(ADTarget)} method of the {@link ADAgent} interface. <br><br>
+ *  lambda actions for both the {@link #act(ADTarget)} method of the {@link ADAction} interface. <br><br>
  *  Implementations of this perform auto-differentiation forwards or backwards along the computation graph.
- *
+ *  These differentiation actions are performed through the "{@link ADAction#act(ADTarget)}"
+ *  method which are being called
+ *  by instances of the {@link GraphNode} class during propagation.
+ *  An {@link ADAction} may also wrap and expose a partial derivative
+ *  which may or may not be present for certain operations.
+ *  Said derivative must be tracked and flagged as derivative by a {@link GraphNode}
+ *  to make sure that it will not be deleted after a forward pass.
  *
  * Note: Do not access the {@link GraphNode#getPayload()} of the {@link GraphNode}
  *       passed to implementation of this.
@@ -19,8 +25,10 @@ import java.util.Optional;
 @FunctionalInterface
 public interface ADAction
 {
+    static ADAction of( ADAction action ) { return new DefaultADAction( action ); }
+
     /**
-     *  The auto-differentiation forward or backward pass of an ADAgent
+     *  The auto-differentiation forward or backward pass of an ADAction
      *  propagate partial differentiations forward along the computation graph.
      *
      * @param target A wrapper for the {@link GraphNode} at which the differentiation ought to

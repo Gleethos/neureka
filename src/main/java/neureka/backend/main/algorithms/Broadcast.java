@@ -2,7 +2,7 @@ package neureka.backend.main.algorithms;
 
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.fun.ADAgentSupplier;
+import neureka.backend.api.fun.ADActionSupplier;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.main.internal.RecursiveExecutor;
@@ -51,7 +51,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                     .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
-        setDeviceExecution( (call, callback) -> finalExecutor.execute(call, callback), (ADAgentSupplier) null );
+        setDeviceExecution( (call, callback) -> finalExecutor.execute(call, callback), (ADActionSupplier) null );
         setCallPreparation(
             call ->
             {

@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.operator;
 
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
@@ -35,14 +35,14 @@ public class Addition extends AbstractOperation {
 
         setAlgorithm(
             new BiElementWise(ElemWiseUtil::forAdditions)
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
             new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-            .setSupplyADAgentFor(
+            .setSupplyADActionFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->
                 {
                     if ( call.autogradMode().allowsForward() )
@@ -53,7 +53,7 @@ public class Addition extends AbstractOperation {
                     Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
                     Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
                     Device device = call.getDeviceFor(Number.class);
-                    return ADAgent.of(
+                    return ADAction.of(
                                 target ->
                                     this.getAlgorithm( Broadcast.class )
                                          .getImplementationFor( device )

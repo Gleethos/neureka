@@ -2,7 +2,7 @@ package neureka.backend.main.operations.operator;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.operations.AbstractOperation;
@@ -38,7 +38,7 @@ public class Multiplication extends AbstractOperation
         setAlgorithm(
             BiElementWise.class,
             new BiElementWise(ElemWiseUtil::forMultiplications)
-            .setSupplyADAgentFor( getDefaultAlgorithm() )
+            .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
@@ -46,7 +46,7 @@ public class Multiplication extends AbstractOperation
             Broadcast.class,
             new Broadcast( ElemWiseUtil::forMultiplications )
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-            .setSupplyADAgentFor(
+            .setSupplyADActionFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->
                 {
                     if ( call.autogradMode().allowsForward() )
@@ -54,11 +54,11 @@ public class Multiplication extends AbstractOperation
                     Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
-                        return ADAgent.of( target -> mul.execute( target.error(), ctxDerivative ) );
+                        return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                     }
                     int d = call.getDerivativeIndex();
                     Tsr<?> derivative = MemUtil.keep( call.inputs(), () -> f.executeDerive( call.inputs(), d ) );
-                    return ADAgent.of( target -> mul.execute( target.error(), derivative ) );
+                    return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                 }
             )
             .buildFunAlgorithm()

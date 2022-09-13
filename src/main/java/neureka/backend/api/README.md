@@ -176,19 +176,19 @@ implementations...
 ### Related Concepts ###
 
 The `execute` method returns a `Result` instance which is expected to wrap
-a result tensor, **as well as an `ADAgentSupplier` needed for the autograd system**.
+a result tensor, **as well as an `ADActionSupplier` needed for the autograd system**.
 
 The method defined in such a supplier ought to return a new instance
-if the `ADAgent` class, which responsible for performing automatic differentiation
+if the `ADAction` class, which responsible for performing automatic differentiation
 both for forward and backward mode differentiation. <br>
-Therefore an `ADAgent` exposes 2 different procedures. <br>
+Therefore an `ADAction` exposes 2 different procedures. <br>
 One is the forward mode differentiation, and the other one <br>
 is the backward mode differentiation which is more commonly known as back-propagation... <br>
 Besides that it may also contain context information used <br>
 to perform said procedures.
 
 ```java
-    ADAgent supplyADAgentFor(
+    ADAction supplyADActionFor(
         neureka.calculus.Function f,
         ExecutionCall<? extends Device<?>> call,
         boolean forward
