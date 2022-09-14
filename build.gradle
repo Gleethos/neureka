@@ -232,6 +232,7 @@ pitest {
 //----------------------------------------------------------------------------------------------------------------------
 // 10. CUSTOM DEPLOYMENT TASKS :
 
+// 1:
 task cleanForDeployment(type: Delete) {
     delete "$rootDir/build"
     if ( new File("$rootDir/docs/jdocs").listFiles() != null )
@@ -241,7 +242,7 @@ task cleanForDeployment(type: Delete) {
     if ( new File("$rootDir/docs/spock/aggregated") != null )
         delete new File("$rootDir/docs/spock/aggregated").listFiles()
 }
-
+// 2:
 task deploy() {
 
     // Expected before : dependsOn 'cleanForDeployment'
@@ -253,11 +254,16 @@ task deploy() {
     dependsOn 'releaseJDocs'
 
 }
-
+// 3:
 task releaseJDocs(type: Copy) {
     from "$rootDir/build/docs/javadoc"
     into "$rootDir/docs/jdocs"
 }
+// 4:
+//     execute publishToSonatype
+//     go to https://oss.sonatype.org/#stagingRepositories
+//     close and release the repository
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // 11. JAR CREATION :
