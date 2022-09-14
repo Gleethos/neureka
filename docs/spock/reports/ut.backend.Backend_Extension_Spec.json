@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.195 seconds"
+    "duration":"0.162 seconds"
   },
   "headers":["\n                   This specification defines the behavior of\n                   Operation instances and their ability to be extended! <br> \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.",
       "result":"PASS",
-      "duration":"0.157 seconds",
+      "duration":"0.143 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -49,12 +49,12 @@
     {
       "id":"Lambda properties of mock implementation interact with FunctionNode as expected.",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A mock agent.","code":["var agent = Mock(ADAgent)"]},
+        {"kind":"given","text":"A mock agent.","code":["var agent = Mock(ADAction)"]},
 
         {"kind":"and","text":"A new operation type with a new implementation.","code":["var type = Mock(Operation)"]},
 
@@ -64,7 +64,7 @@
 
         {"kind":"and","text":"A mocked operation implementation.","code":["var implementation = Mock(Algorithm)"]},
 
-        {"kind":"and","text":"An autodiff supplier:","code":["var adSource = Mock(ADAgentSupplier)"]},
+        {"kind":"and","text":"An autodiff supplier:","code":["var adSource = Mock(ADActionSupplier)"]},
 
         {"kind":"when","text":"A FunctionNode is being instantiated via the given mocks...","code":["var function = new FunctionNode(type, children, true)"]},
 
@@ -78,7 +78,7 @@
 
         {"kind":"and","text":"The given ADAnalyzer instance is being called because auto-differentiation is enabled.","code":["(1.._) * input.rqsGradient() >> true","(1.._) * implementation.autoDiffModeFrom(_) >> AutoDiffMode.BACKWARD_ONLY","(0.._) * node.getPayload() >> input","(1.._) * node.usesAD() >> true"]},
 
-        {"kind":"and","text":"The agent creator is being accessed because \"doAD\" is set to true and the input requires gradients.","code":["1 * adSource.supplyADAgentFor(_,_) >> agent","1 * agent.partialDerivative() >> Optional.ofNullable(null)"]},
+        {"kind":"and","text":"The agent creator is being accessed because \"doAD\" is set to true and the input requires gradients.","code":["1 * adSource.supplyADActionFor(_,_) >> agent","1 * agent.partialDerivative() >> Optional.ofNullable(null)"]},
 
         {"kind":"and","text":"The result is the same as the mock tensor returned by the custom call hook.","code":["result == output"]}
       ],

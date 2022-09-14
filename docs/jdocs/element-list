@@ -2,6 +2,7 @@ neureka
 neureka.autograd
 neureka.backend.api
 neureka.backend.api.fun
+neureka.backend.api.ini
 neureka.backend.api.template.algorithms
 neureka.backend.api.template.implementations
 neureka.backend.api.template.operations

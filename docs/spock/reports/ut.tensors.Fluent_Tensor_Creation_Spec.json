@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.093 seconds"
+    "duration":"0.053 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Value based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -91,7 +91,7 @@
     {
       "id":"Seed based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@4c60efc0","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@4e4f1c11","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@225cd367","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@38d1cebc","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@47c9febd","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@44cf2f5c","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@6e060dde","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@1ffe51e1"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@31a9c7f7","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@1f3cfa0f","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@21dc0465","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@64e118e0","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@3f7c8124","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@645b1e3f","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@53b61df2","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@202bf90f"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

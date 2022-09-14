@@ -2,10 +2,10 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.fun.ADAgentSupplier;
+import neureka.backend.api.fun.ADActionSupplier;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.api.Result;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public final class FallbackAlgorithm extends AbstractDeviceAlgorithm&lt;FallbackAlgorithm&gt;
-implements ExecutionPreparation, ADAgentSupplier
+implements ExecutionPreparation, ADActionSupplier
 {
 
 <span class="fc" id="L33">    private static final Logger _LOG = LoggerFactory.getLogger(FallbackAlgorithm.class);</span>
@@ -115,136 +115,134 @@ implements ExecutionPreparation, ADAgentSupplier
     }
 
     @Override
-    public ADAgent supplyADAgentFor( Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
+    public ADAction supplyADActionFor( Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
     {
-<span class="fc" id="L120">        return ADAgent( function, call );</span>
+<span class="fc" id="L120">        return ADAction( function, call );</span>
     }
 
-    public static ADAgent ADAgent(Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
+    public static ADAction ADAction(Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
     {
 <span class="fc" id="L125">        Tsr&lt;?&gt; derivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
 <span class="fc" id="L126">        Function mul = Neureka.get().backend().getFunction().mul();</span>
 <span class="fc bfc" id="L127" title="All 2 branches covered.">        if ( derivative != null ) {</span>
-<span class="fc" id="L128">            return ADAgent.of( derivative )</span>
-<span class="fc" id="L129">                    .withAD( target -&gt; mul.execute( target.error(), derivative ) );</span>
+<span class="fc" id="L128">            return ADAction.of( target -&gt; mul.execute( target.error(), derivative ) );</span>
         }
-<span class="fc" id="L131">        Tsr&lt;?&gt; localDerivative = MemUtil.keep( call.inputs(), () -&gt; function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );</span>
-<span class="fc" id="L132">        localDerivative.getUnsafe().setIsIntermediate( false );</span>
-<span class="fc" id="L133">        return ADAgent.of( localDerivative )</span>
-<span class="fc" id="L134">                .withAD( target -&gt; mul.execute( target.error(), localDerivative ) );</span>
+<span class="fc" id="L130">        Tsr&lt;?&gt; localDerivative = MemUtil.keep( call.inputs(), () -&gt; function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );</span>
+<span class="fc" id="L131">        localDerivative.getUnsafe().setIsIntermediate( false );</span>
+<span class="fc" id="L132">        return ADAction.of( target -&gt; mul.execute( target.error(), localDerivative ) );</span>
         // TODO: Maybe delete local derivative??
     }
 
     public Tsr&lt;?&gt; dispatch( Function caller, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
-<span class="fc" id="L139">        return AbstractDeviceAlgorithm.executeFor( caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm );</span>
+<span class="fc" id="L137">        return AbstractDeviceAlgorithm.executeFor( caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm );</span>
     }
 
     @Override
     public ExecutionCall&lt;? extends Device&lt;?&gt;&gt; prepare( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
     {
-<span class="fc" id="L145">        Device&lt;Object&gt; device = call.getDeviceFor(Object.class);</span>
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
+<span class="fc" id="L143">        Device&lt;Object&gt; device = call.getDeviceFor(Object.class);</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
         {
-<span class="fc" id="L148">            int[] shp = call.input( 1 ).getNDConf().shape();</span>
-<span class="fc" id="L149">            Tsr&lt;Object&gt; output = (Tsr&lt;Object&gt;) Tsr.of( call.input( 1 ).getDataType(), shp )</span>
-<span class="fc" id="L150">                                                    .getUnsafe()</span>
-<span class="fc" id="L151">                                                    .setIsIntermediate(true);</span>
-<span class="fc" id="L152">            output.setIsVirtual( false );</span>
+<span class="fc" id="L146">            int[] shp = call.input( 1 ).getNDConf().shape();</span>
+<span class="fc" id="L147">            Tsr&lt;Object&gt; output = (Tsr&lt;Object&gt;) Tsr.of( call.input( 1 ).getDataType(), shp )</span>
+<span class="fc" id="L148">                                                    .getUnsafe()</span>
+<span class="fc" id="L149">                                                    .setIsIntermediate(true);</span>
+<span class="fc" id="L150">            output.setIsVirtual( false );</span>
             try {
-<span class="fc" id="L154">                device.store( output );</span>
-<span class="nc" id="L155">            } catch ( Exception e ) {</span>
-<span class="nc" id="L156">                e.printStackTrace();</span>
-<span class="fc" id="L157">            }</span>
-<span class="fc" id="L158">            call = call.withInputAt( 0, output );</span>
+<span class="fc" id="L152">                device.store( output );</span>
+<span class="nc" id="L153">            } catch ( Exception e ) {</span>
+<span class="nc" id="L154">                e.printStackTrace();</span>
+<span class="fc" id="L155">            }</span>
+<span class="fc" id="L156">            call = call.withInputAt( 0, output );</span>
         }
-<span class="fc" id="L160">        return call;</span>
+<span class="fc" id="L158">        return call;</span>
     }
 
     private void _tryExecute( ExecutionCall&lt;CPU&gt; call, Class&lt;?&gt; typeClass ) {
-<span class="fc" id="L164">        Method m = _findMethod( call.getOperation().getIdentifier(), typeClass );</span>
-<span class="fc bfc" id="L165" title="All 2 branches covered.">        if ( m == null ) {</span>
-<span class="pc bpc" id="L166" title="2 of 5 branches missed.">            switch (call.getOperation().getOperator()) {</span>
-<span class="fc" id="L167">                case &quot;+&quot;: m = _findMethod(&quot;plus&quot;, typeClass);break;</span>
-<span class="fc" id="L168">                case &quot;-&quot;: m = _findMethod(&quot;minus&quot;, typeClass);break;</span>
+<span class="fc" id="L162">        Method m = _findMethod( call.getOperation().getIdentifier(), typeClass );</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        if ( m == null ) {</span>
+<span class="pc bpc" id="L164" title="2 of 5 branches missed.">            switch (call.getOperation().getOperator()) {</span>
+<span class="fc" id="L165">                case &quot;+&quot;: m = _findMethod(&quot;plus&quot;, typeClass);break;</span>
+<span class="fc" id="L166">                case &quot;-&quot;: m = _findMethod(&quot;minus&quot;, typeClass);break;</span>
                 case &quot;*&quot;:
-<span class="nc" id="L170">                    m = _findMethod(&quot;times&quot;, typeClass);</span>
-<span class="nc bnc" id="L171" title="All 2 branches missed.">                    if ( m == null ) m = _findMethod(&quot;multiply&quot;, typeClass);</span>
-<span class="nc bnc" id="L172" title="All 2 branches missed.">                    if ( m == null ) m = _findMethod(&quot;mul&quot;, typeClass);</span>
+<span class="nc" id="L168">                    m = _findMethod(&quot;times&quot;, typeClass);</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                    if ( m == null ) m = _findMethod(&quot;multiply&quot;, typeClass);</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                    if ( m == null ) m = _findMethod(&quot;mul&quot;, typeClass);</span>
                     break;
-<span class="nc" id="L174">                case &quot;%&quot;: m = _findMethod(&quot;mod&quot;, typeClass);break;</span>
+<span class="nc" id="L172">                case &quot;%&quot;: m = _findMethod(&quot;mod&quot;, typeClass);break;</span>
             }
         }
-<span class="fc" id="L177">        Method finalMethod = m;</span>
-<span class="fc" id="L178">        call</span>
-<span class="fc" id="L179">            .getDevice()</span>
-<span class="fc" id="L180">            .getExecutor()</span>
-<span class="fc" id="L181">            .threaded(</span>
-<span class="fc" id="L182">                    call.input( Object.class, 0 ).size(),</span>
+<span class="fc" id="L175">        Method finalMethod = m;</span>
+<span class="fc" id="L176">        call</span>
+<span class="fc" id="L177">            .getDevice()</span>
+<span class="fc" id="L178">            .getExecutor()</span>
+<span class="fc" id="L179">            .threaded(</span>
+<span class="fc" id="L180">                    call.input( Object.class, 0 ).size(),</span>
                     ( start, end ) -&gt; {
-<span class="fc" id="L184">                        Object[] inputs = new Object[ call.arity() - 1 ];</span>
-<span class="fc bfc" id="L185" title="All 2 branches covered.">                        for ( int i = start; i &lt; end; i++ ) {</span>
-<span class="fc bfc" id="L186" title="All 2 branches covered.">                            for ( int ii = 0; ii &lt; inputs.length; ii++ ) {</span>
-<span class="fc" id="L187">                                inputs[ ii ] = call.input( Object.class, 1 + ii ).item(i);</span>
+<span class="fc" id="L182">                        Object[] inputs = new Object[ call.arity() - 1 ];</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">                        for ( int i = start; i &lt; end; i++ ) {</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">                            for ( int ii = 0; ii &lt; inputs.length; ii++ ) {</span>
+<span class="fc" id="L185">                                inputs[ ii ] = call.input( Object.class, 1 + ii ).item(i);</span>
                             }
-<span class="fc" id="L189">                            setAt( call.input( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));</span>
+<span class="fc" id="L187">                            setAt( call.input( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));</span>
                         }
-<span class="fc" id="L191">                    }</span>
+<span class="fc" id="L189">                    }</span>
             );
-<span class="fc" id="L193">    }</span>
+<span class="fc" id="L191">    }</span>
 
     private static void setAt( Tsr&lt;Object&gt; t, int i, Object o ) {
-<span class="fc" id="L196">        t.getUnsafe().setDataAt( t.getNDConf().indexOfIndex( i ), o );</span>
-<span class="fc" id="L197">    }</span>
+<span class="fc" id="L194">        t.getUnsafe().setDataAt( t.getNDConf().indexOfIndex( i ), o );</span>
+<span class="fc" id="L195">    }</span>
 
     private static Object _tryExecute( Method m, Object[] args, int offset ) {
-<span class="fc bfc" id="L200" title="All 2 branches covered.">        if ( offset == args.length - 1 ) return args[offset];</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        if ( offset == args.length - 1 ) return args[offset];</span>
         else {
             try {
-<span class="fc" id="L203">                args[offset + 1] = m.invoke(args[offset], args[offset + 1]);</span>
-<span class="nc" id="L204">            } catch ( Exception e ) {</span>
-<span class="nc" id="L205">                _LOG.debug(&quot;Failed to execute method '&quot;+m.getName()+&quot;'. &quot;+e.getMessage());</span>
-<span class="nc" id="L206">                return null;</span>
-<span class="fc" id="L207">            }</span>
-<span class="fc" id="L208">            return _tryExecute( m, args, offset + 1 );</span>
+<span class="fc" id="L201">                args[offset + 1] = m.invoke(args[offset], args[offset + 1]);</span>
+<span class="nc" id="L202">            } catch ( Exception e ) {</span>
+<span class="nc" id="L203">                _LOG.debug(&quot;Failed to execute method '&quot;+m.getName()+&quot;'. &quot;+e.getMessage());</span>
+<span class="nc" id="L204">                return null;</span>
+<span class="fc" id="L205">            }</span>
+<span class="fc" id="L206">            return _tryExecute( m, args, offset + 1 );</span>
         }
     }
 
     private static Method _findMethod( String name, Class&lt;?&gt; typeClass ) {
         try {
-<span class="pc" id="L214">            return typeClass.getMethod(name, typeClass);</span>
-<span class="nc" id="L215">        } catch ( SecurityException e ) {</span>
-<span class="nc" id="L216">            e.printStackTrace();</span>
-<span class="fc" id="L217">        } catch ( NoSuchMethodException e ) {</span>
-<span class="fc" id="L218">            String message =</span>
-<span class="fc" id="L219">                    &quot;Failed finding method named '&quot;+name+&quot;' on instance of type '&quot;+typeClass.getSimpleName()+&quot;'.\n&quot; +</span>
-<span class="fc" id="L220">                    &quot;Cause: &quot;+e.getMessage();</span>
-<span class="fc" id="L221">            _LOG.debug(message);</span>
+<span class="pc" id="L212">            return typeClass.getMethod(name, typeClass);</span>
+<span class="nc" id="L213">        } catch ( SecurityException e ) {</span>
+<span class="nc" id="L214">            e.printStackTrace();</span>
+<span class="fc" id="L215">        } catch ( NoSuchMethodException e ) {</span>
+<span class="fc" id="L216">            String message =</span>
+<span class="fc" id="L217">                    &quot;Failed finding method named '&quot;+name+&quot;' on instance of type '&quot;+typeClass.getSimpleName()+&quot;'.\n&quot; +</span>
+<span class="fc" id="L218">                    &quot;Cause: &quot;+e.getMessage();</span>
+<span class="fc" id="L219">            _LOG.debug(message);</span>
         } finally {
-<span class="fc" id="L223">            Method[] methods = typeClass.getDeclaredMethods();</span>
-<span class="fc" id="L224">            Method currentBest = null;</span>
-<span class="fc" id="L225">            double currentScore = 0;</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">            for ( Method m : methods ) {</span>
-<span class="fc" id="L227">                int numberOfParams = m.getParameterCount();</span>
-<span class="fc bfc" id="L228" title="All 2 branches covered.">                Class&lt;?&gt; type = (numberOfParams == 0) ? null : m.getParameterTypes()[0];</span>
-<span class="fc bfc" id="L229" title="All 4 branches covered.">                if ( numberOfParams == 1 &amp;&amp; type == typeClass ) {</span>
-<span class="fc" id="L230">                    double score = ParseUtil.similarity( m.getName(), name );</span>
-<span class="fc bfc" id="L231" title="All 2 branches covered.">                    if ( score &gt; currentScore ) {</span>
-<span class="fc" id="L232">                        currentBest = m;</span>
-<span class="fc" id="L233">                        currentScore = score;</span>
+<span class="fc" id="L221">            Method[] methods = typeClass.getDeclaredMethods();</span>
+<span class="fc" id="L222">            Method currentBest = null;</span>
+<span class="fc" id="L223">            double currentScore = 0;</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            for ( Method m : methods ) {</span>
+<span class="fc" id="L225">                int numberOfParams = m.getParameterCount();</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">                Class&lt;?&gt; type = (numberOfParams == 0) ? null : m.getParameterTypes()[0];</span>
+<span class="fc bfc" id="L227" title="All 4 branches covered.">                if ( numberOfParams == 1 &amp;&amp; type == typeClass ) {</span>
+<span class="fc" id="L228">                    double score = ParseUtil.similarity( m.getName(), name );</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">                    if ( score &gt; currentScore ) {</span>
+<span class="fc" id="L230">                        currentBest = m;</span>
+<span class="fc" id="L231">                        currentScore = score;</span>
                     }
                 }
             }
-<span class="fc bfc" id="L237" title="All 2 branches covered.">            if ( currentScore &gt; 0.5 ) return currentBest;</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">            if ( currentScore &gt; 0.5 ) return currentBest;</span>
         }
-<span class="fc" id="L239">        return null;</span>
+<span class="fc" id="L237">        return null;</span>
     }
 
     @Override
-<span class="fc" id="L243">    public AutoDiffMode autoDiffModeFrom(ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) { return AutoDiffMode.FORWARD_AND_BACKWARD; }</span>
+<span class="fc" id="L241">    public AutoDiffMode autoDiffModeFrom(ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) { return AutoDiffMode.FORWARD_AND_BACKWARD; }</span>
 
     @Override
     public Result execute(Function caller, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call) {
-<span class="fc" id="L247">        return Result.of(this.dispatch(caller, call)).withAutoDiff(this);</span>
+<span class="fc" id="L245">        return Result.of(this.dispatch(caller, call)).withAutoDiff(this);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

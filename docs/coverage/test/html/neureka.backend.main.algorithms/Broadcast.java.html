@@ -2,7 +2,7 @@
 
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.fun.ADAgentSupplier;
+import neureka.backend.api.fun.ADActionSupplier;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.main.internal.RecursiveExecutor;
@@ -51,7 +51,7 @@ import neureka.dtype.NumericType;
 <span class="nc" id="L51">                    .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
 <span class="nc" id="L52">                    .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
         );
-<span class="fc" id="L54">        setDeviceExecution( (call, callback) -&gt; finalExecutor.execute(call, callback), (ADAgentSupplier) null );</span>
+<span class="fc" id="L54">        setDeviceExecution( (call, callback) -&gt; finalExecutor.execute(call, callback), (ADActionSupplier) null );</span>
 <span class="fc" id="L55">        setCallPreparation(</span>
             call -&gt;
             {

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ADAction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">ADAction.java</span></div><h1>ADAction.java</h1><pre class="source lang-java linenums">package neureka.autograd;
+
+import neureka.Tsr;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ *  This interface is the declaration for
+ *  lambda actions for both the {@link #act(ADTarget)} method of the {@link ADAction} interface. &lt;br&gt;&lt;br&gt;
+ *  Implementations of this perform auto-differentiation forwards or backwards along the computation graph.
+ *  These differentiation actions are performed through the &quot;{@link ADAction#act(ADTarget)}&quot;
+ *  method which are being called
+ *  by instances of the {@link GraphNode} class during propagation.
+ *  An {@link ADAction} may also wrap and expose a partial derivative
+ *  which may or may not be present for certain operations.
+ *  Said derivative must be tracked and flagged as derivative by a {@link GraphNode}
+ *  to make sure that it will not be deleted after a forward pass.
+ *
+ * Note: Do not access the {@link GraphNode#getPayload()} of the {@link GraphNode}
+ *       passed to implementation of this.
+ *       The payload is weakly referenced, meaning that this method can return null!
+ */
+@FunctionalInterface
+public interface ADAction
+{
+<span class="fc" id="L28">    static ADAction of( ADAction action ) { return new DefaultADAction( action, null ); }</span>
+
+<span class="nc" id="L30">    static ADAction of( Tsr&lt;?&gt; derivative, ADAction action ) { return new DefaultADAction( action, derivative ); }</span>
+
+    /**
+     *  The auto-differentiation forward or backward pass of an ADAction
+     *  propagate partial differentiations forward along the computation graph.
+     *
+     * @param target A wrapper for the {@link GraphNode} at which the differentiation ought to
+     *               be performed and error which ought to be used for the forward or backward differentiation.
+     * @return The result of a forward or backward mode auto differentiation.
+     */
+    Tsr&lt;?&gt; act( ADTarget&lt;?&gt; target );
+
+    /**
+     *  Finds captured {@link Tsr} instances in this current action
+     *  using reflection (This is usually a partial derivative).
+     *
+     * @return The captured {@link Tsr} instances.
+     */
+    default Tsr&lt;?&gt;[] findCaptured() {
+<span class="fc" id="L49">        List&lt;Tsr&lt;?&gt;&gt; captured = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        for ( Class&lt;?&gt; c = this.getClass(); c != null; c = c.getSuperclass() ) {</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">            for ( java.lang.reflect.Field f : c.getDeclaredFields() ) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                if ( f.getType().equals(Tsr.class) ) {</span>
+<span class="fc" id="L53">                    f.setAccessible(true);</span>
+                    try {
+<span class="fc" id="L55">                        captured.add( (Tsr&lt;?&gt;) f.get(this) );</span>
+<span class="nc" id="L56">                    } catch (IllegalAccessException e) {</span>
+<span class="nc" id="L57">                        e.printStackTrace();</span>
+<span class="fc" id="L58">                    }</span>
+                }
+            }
+        }
+<span class="fc" id="L62">        return captured.toArray( new Tsr[0] );</span>
+    }
+
+    default Optional&lt;Tsr&lt;?&gt;&gt; partialDerivative() {
+<span class="nc" id="L66">        Tsr&lt;?&gt;[] captured = this.findCaptured();</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if ( captured.length &gt; 0 )</span>
+<span class="nc" id="L68">            return Optional.of(captured[captured.length - 1]);</span>
+
+<span class="nc" id="L70">        return Optional.empty();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -2,7 +2,7 @@
 
 
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.*;
 import neureka.backend.main.internal.CallExecutor;
@@ -46,7 +46,7 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
     private SuitabilityPredicate _isSuitableFor;
     private ADSupportPredicate _autogradModeFor;
     private Execution _execution;
-    private ADAgentSupplier _supplyADAgentFor;
+    private ADActionSupplier _supplyADActionFor;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
     /*
         This flag will ensure that we can warn the user that the state has been illegally modified.
@@ -70,17 +70,17 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
 
     /**
      *  This method returns a new instance
-     *  of the {@link ADAgent} class responsible for performing automatic differentiation
+     *  of the {@link ADAction} class responsible for performing automatic differentiation
      *  both for forward and backward mode differentiation. &lt;br&gt;
-     *  Therefore an {@link ADAgent} exposes 2 different procedures. &lt;br&gt;
+     *  Therefore an {@link ADAction} exposes 2 different procedures. &lt;br&gt;
      *  One is the forward mode differentiation, and the other one &lt;br&gt;
      *  is the backward mode differentiation which is more commonly known as back-propagation... &lt;br&gt;
      *  Besides that it may also contain context information used &lt;br&gt;
      *  to perform said procedures.
      */
-    public final ADAgent supplyADAgentFor(Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
+    public final ADAction supplyADActionFor(Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
 <span class="fc" id="L82">        _checkReadiness();</span>
-<span class="fc" id="L83">        return _supplyADAgentFor.supplyADAgentFor( function, call );</span>
+<span class="fc" id="L83">        return _supplyADActionFor.supplyADActionFor( function, call );</span>
     }
 
     /**
@@ -115,7 +115,7 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
 <span class="pc bpc" id="L115" title="4 of 12 branches missed.">        if (</span>
             _isSuitableFor == null ||
             _autogradModeFor == null ||
-            (_supplyADAgentFor == null &amp;&amp; _execution == null) ||
+            (_supplyADActionFor == null &amp;&amp; _execution == null) ||
             _execution == null ||
             _instantiateNewTensorsForExecutionIn == null
         ) {
@@ -182,14 +182,14 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
     }
 
     /**
-     *  This method receives a {@link ADAgentSupplier} which will supply
-     *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
+     *  This method receives a {@link ADActionSupplier} which will supply
+     *  {@link ADAction} instances which can perform backward and forward auto differentiation.
      *
-     * @param supplyADAgentFor A supplier for an {@link ADAgent} containing implementation details for autograd.
+     * @param supplyADActionFor A supplier for an {@link ADAction} containing implementation details for autograd.
      * @return This very instance to enable method chaining.
      */
-    public final AbstractFunDeviceAlgorithm&lt;C&gt; setSupplyADAgentFor(ADAgentSupplier supplyADAgentFor ) {
-<span class="fc" id="L192">        _supplyADAgentFor = _checked(supplyADAgentFor, _supplyADAgentFor, ADAgentSupplier.class);</span>
+    public final AbstractFunDeviceAlgorithm&lt;C&gt; setSupplyADActionFor( ADActionSupplier supplyADActionFor ) {
+<span class="fc" id="L192">        _supplyADActionFor = _checked(supplyADActionFor, _supplyADActionFor, ADActionSupplier.class);</span>
 <span class="fc" id="L193">        return this;</span>
     }
 
@@ -241,10 +241,10 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
     }
 
     public final AbstractFunDeviceAlgorithm&lt;C&gt; setDeviceExecution(
-            Execute exec, ADAgentSupplier adAgentSupplier
+            Execute exec, ADActionSupplier adActionSupplier
     ) {
 <span class="fc" id="L246">        return</span>
-<span class="fc bfc" id="L247" title="All 2 branches covered.">            adAgentSupplier == null</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            adActionSupplier == null</span>
 <span class="fc" id="L248">                ? setExecution( (outerCaller, outerCall) -&gt;</span>
 <span class="fc" id="L249">                    Result.of(AbstractDeviceAlgorithm.executeFor(</span>
                         outerCaller, outerCall,
@@ -256,14 +256,14 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
                         outerCaller, outerCall,
 <span class="fc" id="L257">                        (innerCall, callback) -&gt; exec.execute( innerCall, callback)</span>
                     ))
-<span class="fc" id="L259">                    .withAutoDiff( adAgentSupplier )</span>
+<span class="fc" id="L259">                    .withAutoDiff( adActionSupplier )</span>
                 );
     }
 
 
 
     public final AbstractFunDeviceAlgorithm&lt;C&gt; setDeviceExecution( Execute executor ) {
-<span class="fc" id="L266">        return setDeviceExecution( executor, FallbackAlgorithm::ADAgent );</span>
+<span class="fc" id="L266">        return setDeviceExecution( executor, FallbackAlgorithm::ADAction );</span>
     }
     public interface Execute {
 
@@ -275,14 +275,14 @@ extends AbstractDeviceAlgorithm&lt;C&gt; implements ExecutionPreparation
     public Result execute( Function caller, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
 <span class="fc" id="L276">        _checkReadiness();</span>
 <span class="fc bfc" id="L277" title="All 2 branches covered.">        if ( call == null ) {</span>
-<span class="pc bpc" id="L278" title="1 of 2 branches missed.">            if ( _supplyADAgentFor != null )</span>
-<span class="nc" id="L279">                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">            if ( _supplyADActionFor != null )</span>
+<span class="nc" id="L279">                return _execution.execute( caller, call ).withAutoDiff(_supplyADActionFor);</span>
             else
 <span class="fc" id="L281">                return _execution.execute( caller, call );</span>
         }
 <span class="fc" id="L283">        MemValidator checker = MemValidator.forInputs( call.inputs(), ()-&gt; {</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">            if ( _supplyADAgentFor != null )</span>
-<span class="fc" id="L285">                return _execution.execute( caller, call ).withAutoDiff(_supplyADAgentFor);</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">            if ( _supplyADActionFor != null )</span>
+<span class="fc" id="L285">                return _execution.execute( caller, call ).withAutoDiff(_supplyADActionFor);</span>
             else
 <span class="fc" id="L287">                return _execution.execute( caller, call );</span>
         });

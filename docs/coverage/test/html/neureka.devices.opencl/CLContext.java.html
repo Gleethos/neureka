@@ -3,6 +3,20 @@
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.BackendExtension;
 import neureka.backend.api.Extensions;
+import neureka.backend.api.ini.BackendLoader;
+import neureka.backend.api.ini.ReceiveForDevice;
+import neureka.backend.main.algorithms.*;
+import neureka.backend.main.implementations.broadcast.*;
+import neureka.backend.main.implementations.elementwise.CLBiElementwise;
+import neureka.backend.main.implementations.elementwise.CLBiElementwisePower;
+import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
+import neureka.backend.main.implementations.scalar.CLScalarFunction;
+import neureka.backend.main.operations.functions.*;
+import neureka.backend.main.operations.operator.Addition;
+import neureka.backend.main.operations.operator.Multiplication;
+import neureka.backend.main.operations.operator.Power;
+import neureka.backend.main.operations.operator.Subtraction;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
@@ -36,35 +50,35 @@ import static org.jocl.CL.clGetPlatformIDs;
  */
 public final class CLContext implements BackendExtension
 {
-<span class="fc" id="L39">    private static final Logger _LOG = LoggerFactory.getLogger(CLContext.class);</span>
+<span class="fc" id="L53">    private static final Logger _LOG = LoggerFactory.getLogger(CLContext.class);</span>
 
-<span class="fc" id="L41">    private final List&lt;OpenCLPlatform&gt; _platforms = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L42">    private final CLSettings _settings = new CLSettings();</span>
+<span class="fc" id="L55">    private final List&lt;OpenCLPlatform&gt; _platforms = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L56">    private final CLSettings _settings = new CLSettings();</span>
 
     /**
      *  Use this constructor if you want to create a new OpenCL world in which there
      *  are unique {@link OpenCLPlatform} and {@link OpenCLDevice} instances.
      */
-<span class="fc" id="L48">    public CLContext() {}</span>
+<span class="fc" id="L62">    public CLContext() {}</span>
 
     /**
      * @return The number of all {@link OpenCLDevice} instances across all {@link OpenCLPlatform}s.
      */
     public int getTotalNumberOfDevices() {
-<span class="fc" id="L54">        List&lt;OpenCLPlatform&gt; platforms = getPlatforms();</span>
-<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if ( getPlatforms().isEmpty() ) return 0;</span>
-<span class="fc" id="L56">        return platforms.stream().mapToInt( p -&gt; p.getDevices().size() ).sum();</span>
+<span class="fc" id="L68">        List&lt;OpenCLPlatform&gt; platforms = getPlatforms();</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if ( getPlatforms().isEmpty() ) return 0;</span>
+<span class="fc" id="L70">        return platforms.stream().mapToInt( p -&gt; p.getDevices().size() ).sum();</span>
     }
 
     /**
      * @return A list of context specific {@link OpenCLPlatform} instances possible containing {@link OpenCLDevice}s.
      */
-<span class="fc" id="L62">    public List&lt;OpenCLPlatform&gt; getPlatforms() { return Collections.unmodifiableList( _platforms ); }</span>
+<span class="fc" id="L76">    public List&lt;OpenCLPlatform&gt; getPlatforms() { return Collections.unmodifiableList( _platforms ); }</span>
 
     /**
      * @return A container for OpenCL specific settings.
      */
-<span class="fc" id="L67">    public CLSettings getSettings() { return _settings; }</span>
+<span class="fc" id="L81">    public CLSettings getSettings() { return _settings; }</span>
 
     /**
      *  Updating the CLContext will cause the list of existing {@link OpenCLPlatform} instances to be
@@ -75,17 +89,17 @@ public final class CLContext implements BackendExtension
      */
     @Override
     public boolean update( OwnerChangeRequest&lt;Extensions&gt; changeRequest ) {
-<span class="fc" id="L78">        _platforms.clear();</span>
-<span class="fc" id="L79">        _platforms.addAll( _findLoadAndCompileForAllPlatforms() );</span>
-<span class="fc" id="L80">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
-<span class="fc" id="L81">        return true;</span>
+<span class="fc" id="L92">        _platforms.clear();</span>
+<span class="fc" id="L93">        _platforms.addAll( _findLoadAndCompileForAllPlatforms() );</span>
+<span class="fc" id="L94">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
+<span class="fc" id="L95">        return true;</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L86">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
+<span class="fc" id="L100">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
                     &quot;platforms=[&quot;+
-<span class="fc" id="L88">                        _platforms.stream().map(Object::toString).collect(Collectors.joining(&quot;,&quot;))+</span>
+<span class="fc" id="L102">                        _platforms.stream().map(Object::toString).collect(Collectors.joining(&quot;,&quot;))+</span>
                     &quot;]&quot; +
                 &quot;]&quot;;
     }
@@ -96,53 +110,53 @@ public final class CLContext implements BackendExtension
     private static List&lt;OpenCLPlatform&gt; _findLoadAndCompileForAllPlatforms()
     {
         // Obtain the number of platforms
-<span class="fc" id="L99">        int[] numPlatforms = new int[ 1 ];</span>
-<span class="fc" id="L100">        clGetPlatformIDs( 0, null, numPlatforms );</span>
+<span class="fc" id="L113">        int[] numPlatforms = new int[ 1 ];</span>
+<span class="fc" id="L114">        clGetPlatformIDs( 0, null, numPlatforms );</span>
 
         // Obtain the platform IDs
-<span class="fc" id="L103">        cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];</span>
-<span class="fc" id="L104">        clGetPlatformIDs( platforms.length, platforms, null );</span>
+<span class="fc" id="L117">        cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];</span>
+<span class="fc" id="L118">        clGetPlatformIDs( platforms.length, platforms, null );</span>
 
-<span class="fc" id="L106">        List&lt;OpenCLPlatform&gt; loadedPlatforms = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L107" title="All 2 branches covered.">        for ( cl_platform_id id : platforms ) {</span>
-<span class="fc" id="L108">            OpenCLPlatform newPlatform = null;</span>
+<span class="fc" id="L120">        List&lt;OpenCLPlatform&gt; loadedPlatforms = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        for ( cl_platform_id id : platforms ) {</span>
+<span class="fc" id="L122">            OpenCLPlatform newPlatform = null;</span>
             try {
-<span class="fc" id="L110">                newPlatform = new OpenCLPlatform( id );</span>
-<span class="nc" id="L111">            } catch ( Exception e ) {</span>
-<span class="nc" id="L112">                String message =</span>
-<span class="nc" id="L113">                        &quot;Failed to instantiate '&quot;+OpenCLPlatform.class.getSimpleName()+&quot;' &quot; +</span>
-<span class="nc" id="L114">                        &quot;with id '0x&quot;+Long.toHexString(id.getNativePointer())+&quot;'!&quot;;</span>
-<span class="nc" id="L115">                _LOG.error( message, e );</span>
-<span class="fc" id="L116">            }</span>
-<span class="pc bpc" id="L117" title="1 of 2 branches missed.">            if ( newPlatform != null )</span>
-<span class="fc" id="L118">                loadedPlatforms.add( newPlatform );</span>
+<span class="fc" id="L124">                newPlatform = new OpenCLPlatform( id );</span>
+<span class="nc" id="L125">            } catch ( Exception e ) {</span>
+<span class="nc" id="L126">                String message =</span>
+<span class="nc" id="L127">                        &quot;Failed to instantiate '&quot;+OpenCLPlatform.class.getSimpleName()+&quot;' &quot; +</span>
+<span class="nc" id="L128">                        &quot;with id '0x&quot;+Long.toHexString(id.getNativePointer())+&quot;'!&quot;;</span>
+<span class="nc" id="L129">                _LOG.error( message, e );</span>
+<span class="fc" id="L130">            }</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if ( newPlatform != null )</span>
+<span class="fc" id="L132">                loadedPlatforms.add( newPlatform );</span>
         }
-<span class="pc bpc" id="L120" title="2 of 4 branches missed.">        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -&gt; p.getDevices().isEmpty() ) )</span>
-<span class="nc" id="L121">            _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );</span>
+<span class="pc bpc" id="L134" title="2 of 4 branches missed.">        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -&gt; p.getDevices().isEmpty() ) )</span>
+<span class="nc" id="L135">            _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );</span>
 
-<span class="fc" id="L123">        return loadedPlatforms;</span>
+<span class="fc" id="L137">        return loadedPlatforms;</span>
     }
 
     @Override
     public DeviceOption find( String searchKey ) {
-<span class="fc" id="L128">        Device&lt;Number&gt; result = null;</span>
-<span class="fc" id="L129">        double score = 0;</span>
-<span class="fc bfc" id="L130" title="All 2 branches covered.">        for ( OpenCLPlatform p : _platforms ) {</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
-<span class="fc" id="L132">                double similarity = Stream.of(&quot;opencl&quot;,d.type().name(),d.name(),d.vendor())</span>
-<span class="fc" id="L133">                                            .map( word -&gt; word.trim().toLowerCase() )</span>
-<span class="fc" id="L134">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
-<span class="fc" id="L135">                                            .max()</span>
-<span class="fc" id="L136">                                            .orElse(0);</span>
-<span class="pc bpc" id="L137" title="1 of 2 branches missed.">                if ( similarity &gt; score ) {</span>
-<span class="fc" id="L138">                    result = d;</span>
-<span class="fc" id="L139">                    score = similarity;</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">                    if ( score == 1 )</span>
-<span class="fc" id="L141">                        return new DeviceOption( result, score );</span>
+<span class="fc" id="L142">        Device&lt;Number&gt; result = null;</span>
+<span class="fc" id="L143">        double score = 0;</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for ( OpenCLPlatform p : _platforms ) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
+<span class="fc" id="L146">                double similarity = Stream.of(&quot;opencl&quot;,d.type().name(),d.name(),d.vendor())</span>
+<span class="fc" id="L147">                                            .map( word -&gt; word.trim().toLowerCase() )</span>
+<span class="fc" id="L148">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
+<span class="fc" id="L149">                                            .max()</span>
+<span class="fc" id="L150">                                            .orElse(0);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">                if ( similarity &gt; score ) {</span>
+<span class="fc" id="L152">                    result = d;</span>
+<span class="fc" id="L153">                    score = similarity;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">                    if ( score == 1 )</span>
+<span class="fc" id="L155">                        return new DeviceOption( result, score );</span>
                 }
-<span class="fc" id="L143">            }</span>
-<span class="fc" id="L144">        }</span>
-<span class="fc" id="L145">        return new DeviceOption( result, score );</span>
+<span class="fc" id="L157">            }</span>
+<span class="fc" id="L158">        }</span>
+<span class="fc" id="L159">        return new DeviceOption( result, score );</span>
     }
 
     /**
@@ -152,12 +166,98 @@ public final class CLContext implements BackendExtension
      */
     @Override
     public void dispose() {
-<span class="fc bfc" id="L155" title="All 2 branches covered.">        for ( OpenCLPlatform platform : _platforms ) {</span>
-<span class="fc bfc" id="L156" title="All 2 branches covered.">            for ( OpenCLDevice device : platform.getDevices() ) device.dispose();</span>
-<span class="fc" id="L157">            platform.dispose();</span>
-<span class="fc" id="L158">        }</span>
-<span class="fc" id="L159">        _platforms.clear();</span>
-<span class="fc" id="L160">    }</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        for ( OpenCLPlatform platform : _platforms ) {</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">            for ( OpenCLDevice device : platform.getDevices() ) device.dispose();</span>
+<span class="fc" id="L171">            platform.dispose();</span>
+<span class="fc" id="L172">        }</span>
+<span class="fc" id="L173">        _platforms.clear();</span>
+<span class="fc" id="L174">    }</span>
+
+    @Override
+    public BackendLoader getLoader() {
+<span class="fc" id="L178">        return receiver -&gt; _load( receiver.forDevice(OpenCLDevice.class) );</span>
+    }
+
+    private void _load( ReceiveForDevice&lt;OpenCLDevice&gt; receive )
+    {
+<span class="fc" id="L183">        receive.forOperation( Power.class )</span>
+<span class="fc" id="L184">                .set( Scalarization.class, context -&gt; new CLScalarBroadcastPower(context.getOperationIdentidier()) )</span>
+<span class="fc" id="L185">                .set( Broadcast.class,     context -&gt; new CLBroadcastPower(context.getOperationIdentidier())       )</span>
+<span class="fc" id="L186">                .set( BiElementWise.class, context -&gt; new CLBiElementwisePower(context.getOperationIdentidier())   );</span>
+
+<span class="fc" id="L188">        receive.forOperation( Addition.class )</span>
+<span class="fc" id="L189">                .set( Scalarization.class, context -&gt; new CLScalarBroadcastAddition(context.getOperationIdentidier()) )</span>
+<span class="fc" id="L190">                .set( Broadcast.class,     context -&gt; new CLBroadcastAddition(context.getOperationIdentidier())       )</span>
+<span class="fc" id="L191">                .set( BiElementWise.class, context -&gt; new CLBiElementwise( context.getOperationIdentidier(), &quot;output = input1 + input2;\n&quot;, &quot;output = 1;\n&quot; ) );</span>
+
+<span class="fc" id="L193">        receive.forOperation( Subtraction.class )</span>
+<span class="fc" id="L194">                .set( Scalarization.class, context -&gt; new CLScalarBroadcastSubtraction( context.getOperationIdentidier() ) )</span>
+<span class="fc" id="L195">                .set( Broadcast.class,     context -&gt; new CLBroadcastSubtraction(context.getOperationIdentidier())       )</span>
+<span class="fc" id="L196">                .set( BiElementWise.class, context -&gt; new CLBiElementwise( context.getOperationIdentidier(), &quot;output = input1 - input2;\n&quot;, &quot;output = 1;\n&quot; ) );</span>
+
+<span class="fc" id="L198">        receive.forOperation( Multiplication.class )</span>
+<span class="fc" id="L199">                .set( Scalarization.class, context -&gt; new CLScalarBroadcastMultiplication( context.getOperationIdentidier() ) )</span>
+<span class="fc" id="L200">                .set( Broadcast.class,     context -&gt; new CLBroadcastMultiplication(context.getOperationIdentidier())       )</span>
+<span class="fc" id="L201">                .set( BiElementWise.class, context -&gt; new CLBiElementwise( context.getOperationIdentidier(), &quot;output = input1 * input2;\n&quot;, &quot;output = input2;\n&quot; ) );</span>
+
+<span class="fc" id="L203">        receive.forOperation( Absolute.class )</span>
+<span class="fc" id="L204">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.ABSOLUTE) )</span>
+<span class="fc" id="L205">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.ABSOLUTE) );</span>
+<span class="fc" id="L206">        receive.forOperation( Cosinus.class )</span>
+<span class="fc" id="L207">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.COSINUS) )</span>
+<span class="fc" id="L208">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.COSINUS) );</span>
+<span class="fc" id="L209">        receive.forOperation( GaSU.class )</span>
+<span class="fc" id="L210">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.GASU) )</span>
+<span class="fc" id="L211">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.GASU) );</span>
+<span class="fc" id="L212">        receive.forOperation( GaTU.class )</span>
+<span class="fc" id="L213">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.GATU) )</span>
+<span class="fc" id="L214">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.GATU) );</span>
+<span class="fc" id="L215">        receive.forOperation( Gaussian.class )</span>
+<span class="fc" id="L216">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.GAUSSIAN) )</span>
+<span class="fc" id="L217">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.GAUSSIAN) );</span>
+<span class="fc" id="L218">        receive.forOperation( GaussianFast.class )</span>
+<span class="fc" id="L219">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )</span>
+<span class="fc" id="L220">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.GAUSSIAN_FAST) );</span>
+<span class="fc" id="L221">        receive.forOperation( GeLU.class )</span>
+<span class="fc" id="L222">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.GELU) )</span>
+<span class="fc" id="L223">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.GELU) );</span>
+<span class="fc" id="L224">        receive.forOperation( Identity.class )</span>
+<span class="fc" id="L225">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.IDENTITY) )</span>
+<span class="fc" id="L226">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.IDENTITY) );</span>
+<span class="fc" id="L227">        receive.forOperation( Logarithm.class )</span>
+<span class="fc" id="L228">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.LOGARITHM) )</span>
+<span class="fc" id="L229">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.LOGARITHM) );</span>
+<span class="fc" id="L230">        receive.forOperation( Quadratic.class )</span>
+<span class="fc" id="L231">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.QUADRATIC) )</span>
+<span class="fc" id="L232">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.QUADRATIC) );</span>
+<span class="fc" id="L233">        receive.forOperation( ReLU.class )</span>
+<span class="fc" id="L234">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.RELU) )</span>
+<span class="fc" id="L235">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.RELU) );</span>
+<span class="fc" id="L236">        receive.forOperation( SeLU.class )</span>
+<span class="fc" id="L237">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.SELU) )</span>
+<span class="fc" id="L238">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.SELU) );</span>
+<span class="fc" id="L239">        receive.forOperation( Sigmoid.class )</span>
+<span class="fc" id="L240">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.SIGMOID) )</span>
+<span class="fc" id="L241">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.SIGMOID) );</span>
+<span class="fc" id="L242">        receive.forOperation( SiLU.class )</span>
+<span class="fc" id="L243">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.SILU) )</span>
+<span class="fc" id="L244">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.SILU) );</span>
+<span class="fc" id="L245">        receive.forOperation( Sinus.class )</span>
+<span class="fc" id="L246">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.SINUS) )</span>
+<span class="fc" id="L247">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.SINUS) );</span>
+<span class="fc" id="L248">        receive.forOperation( Softplus.class )</span>
+<span class="fc" id="L249">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.SOFTPLUS) )</span>
+<span class="fc" id="L250">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.SOFTPLUS) );</span>
+<span class="fc" id="L251">        receive.forOperation( Softsign.class )</span>
+<span class="fc" id="L252">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.SOFTSIGN) )</span>
+<span class="fc" id="L253">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.SOFTSIGN) );</span>
+<span class="fc" id="L254">        receive.forOperation( Tanh.class )</span>
+<span class="fc" id="L255">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.TANH) )</span>
+<span class="fc" id="L256">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.TANH) );</span>
+<span class="fc" id="L257">        receive.forOperation( TanhFast.class )</span>
+<span class="fc" id="L258">                .set( Activation.class, context -&gt; new CLElementwiseFunction( ScalarFun.TANH_FAST) )</span>
+<span class="fc" id="L259">                .set( ScalarActivation.class, context -&gt; new CLScalarFunction(ScalarFun.TANH_FAST) );</span>
+<span class="fc" id="L260">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

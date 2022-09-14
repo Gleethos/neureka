@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.931 seconds"
+    "duration":"0.089 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The Reduce implementation for the CPU has realistic behaviour",
       "result":"PASS",
-      "duration":"0.751 seconds",
+      "duration":"0.042 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"The Sum implementation for the CPU has realistic behaviour",
       "result":"PASS",
-      "duration":"0.089 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLScalarBroadcastMultiplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.broadcast</a> &gt; <span class="el_source">CLScalarBroadcastMultiplication.java</span></div><h1>CLScalarBroadcastMultiplication.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.broadcast;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.calculus.args.Arg;
+import neureka.devices.opencl.OpenCLDevice;
+
+public class CLScalarBroadcastMultiplication extends CLScalarBroadcast
+{
+    public CLScalarBroadcastMultiplication(String id) {
+<span class="fc" id="L11">        super( id,  &quot;output = input1 * value;\n&quot;, &quot;if ( d == 0 ) {output = value;}else{output = input1;}\n&quot; );</span>
+<span class="fc" id="L12">    }</span>
+
+    @Override
+    public Tsr&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
+<span class="fc bfc" id="L16" title="All 2 branches covered.">        if ( call.getDerivativeIndex() == 0 )</span>
+<span class="fc" id="L17">            return call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        else if ( call.getDerivativeIndex() == 1 )</span>
+<span class="fc" id="L19">            return call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );</span>
+        else {
+<span class="pc bpc" id="L21" title="1 of 4 branches missed.">            int offset = (call.input(Number.class, 2).isVirtual() || call.input(Number.class, 2).size() == 1) ? 1 : 0;</span>
+<span class="fc" id="L22">            int gwz = call.input(Number.class, 0).size();</span>
+<span class="fc" id="L23">            call.getDevice()</span>
+<span class="fc" id="L24">                    .getKernel(call)</span>
+<span class="fc" id="L25">                    .passAllOf(call.input(Number.class, 0))</span>
+<span class="fc" id="L26">                    .passAllOf(call.input(Number.class, 0 + offset))</span>
+<span class="fc" id="L27">                    .pass( call.input( Number.class, 1 + offset ).at( 0 ).get().floatValue() )</span>
+<span class="fc" id="L28">                    .pass(call.input(Number.class, 0).rank())</span>
+<span class="fc" id="L29">                    .pass(call.getValOf(Arg.DerivIdx.class))</span>
+<span class="fc" id="L30">                    .call(gwz);</span>
+        }
+<span class="fc" id="L32">        return call.input( 0 );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

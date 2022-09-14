@@ -233,7 +233,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
     }
 
     /**
-     *  This method extracts {@link ADAgent}s from the provided {@link Function}
+     *  This method extracts {@link ADAction}s from the provided {@link Function}
      *  (and its underlying {@link neureka.backend.api.Operation}) to be stored associated with a
      *  particular target {@link GraphNode} node used as reference for back-prop traversal
      *  when doing back-prop/autograd later on...
@@ -258,7 +258,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
                                ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
 <span class="pc bpc" id="L259" title="1 of 4 branches missed.">                            !srcNode.isLeave() &amp;&amp; !srcNode._adMode.allowsForward()</span>
                         ) {
-<span class="fc" id="L261">                            ADAgent agent = output.getAgentSupplier().supplyADAgentFor(function, call.withArgs(Arg.DerivIdx.of(i)) );</span>
+<span class="fc" id="L261">                            ADAction agent = output.getAgentSupplier().supplyADActionFor(function, call.withArgs(Arg.DerivIdx.of(i)) );</span>
 <span class="fc" id="L262">                            a.put( i, srcNode, agent );</span>
 <span class="fc" id="L263">                            _informPartialDerivative(agent);</span>
 <span class="fc" id="L264">                        } else {</span>
@@ -271,7 +271,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
                                     // The agent multiplies the local derivative with its stored partial derivative...
 <span class="fc" id="L272">                                    Tsr&lt;?&gt; targetDerivative = localAgent.act( new ADTarget&lt;&gt;(targets.index(), this, localDerivative) );</span>
                                     // ...this is now the new partial derivative with respect to the target node!
-<span class="fc" id="L274">                                    ADAgent agent = output.getAgentSupplier().supplyADAgentFor(</span>
+<span class="fc" id="L274">                                    ADAction agent = output.getAgentSupplier().supplyADActionFor(</span>
                                             function,
 <span class="fc" id="L276">                                            call.withArgs(</span>
 <span class="fc" id="L277">                                                    Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),</span>
@@ -294,7 +294,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="fc bfc" id="L294" title="All 2 branches covered.">                for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
 <span class="fc" id="L295">                    GraphNode&lt;V&gt; srcNode = inputs[ i ].getGraphNode();</span>
 <span class="pc bpc" id="L296" title="1 of 4 branches missed.">                    if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {</span>
-<span class="fc" id="L297">                        ADAgent agent = output.getAgentSupplier().supplyADAgentFor(</span>
+<span class="fc" id="L297">                        ADAction agent = output.getAgentSupplier().supplyADActionFor(</span>
                                                         function,
 <span class="fc" id="L299">                                                        call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))</span>
                                                     );
@@ -506,7 +506,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
                     */
                 }
             }
-            // The following call ADAgents for reverse-mode AutoDiff!
+            // The following call ADActions for reverse-mode AutoDiff!
 <span class="fc" id="L510">            this.forEachBackward( error, ( t, e ) -&gt; t._backward( e, pendingNodes, true ) );</span>
             // Standard reverse mode-AutoDiff!
         }
@@ -572,7 +572,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="nc" id="L572">            return; // This node will continue its propagation via a JIT-Prop component later!</span>
         }
 <span class="pc bpc" id="L574" title="1 of 2 branches missed.">        if ( this.usesAD() ) {</span>
-            // The following call ADAgents for reverse-mode AutoDiff!
+            // The following call ADActions for reverse-mode AutoDiff!
 <span class="fc" id="L576">            this.forEachBackward( error, ( t, e ) -&gt; t._backwardJIT( e, source ) );</span>
             // JITProp reverse mode-AutoDiff!
         }
@@ -612,7 +612,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="fc" id="L612">        return count;</span>
     }
 
-    private void _informPartialDerivative( ADAgent agent ) {
+    private void _informPartialDerivative( ADAction agent ) {
 <span class="fc" id="L616">        agent.partialDerivative()</span>
 <span class="fc" id="L617">            .ifPresent( d -&gt;  {</span>
 <span class="fc bfc" id="L618" title="All 2 branches covered.">                if ( d.has( GraphNode.class ) ) d.get( GraphNode.class )._isUsedAsDerivative = true;</span>
@@ -642,7 +642,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
     /**
      * @param action The lambda performing an action on all targeted nodes and their agents.
      */
-    public void forEachDerivative( BiConsumer&lt;GraphNode&lt;V&gt;, ADAgent&gt; action ) {
+    public void forEachDerivative( BiConsumer&lt;GraphNode&lt;V&gt;, ADAction&gt; action ) {
 <span class="pc bpc" id="L646" title="1 of 2 branches missed.">        if ( _targetsToAgents == null ) return;</span>
 <span class="fc" id="L647">        new ArrayList&lt;&gt;(_targetsToAgents).forEach(</span>
 <span class="fc" id="L648">            ( ref ) -&gt; ref.agents().forEach( a -&gt; action.accept( ref.node(), a ) )</span>
@@ -650,15 +650,15 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="fc" id="L650">    }</span>
 
     /**
-     * @param error The error which ought to be passed to the {@link ADAgent}s.
+     * @param error The error which ought to be passed to the {@link ADAction}s.
      * @param action A lambda action providing derivative and target node as parameter.
      */
     public void forEachBackward( Tsr&lt;V&gt; error, BiConsumer&lt;GraphNode&lt;V&gt;, Tsr&lt;V&gt;&gt; action ) {
 <span class="fc bfc" id="L657" title="All 2 branches covered.">        if ( _targetsToAgents == null ) return;</span>
 <span class="fc" id="L658">        error.getUnsafe().setIsIntermediate( false );</span>
 <span class="fc" id="L659">        new ArrayList&lt;&gt;(_targetsToAgents).forEach( ref -&gt; {</span>
-<span class="fc bfc" id="L660" title="All 2 branches covered.">            for ( ADAgent a : ref.agents() )</span>
-<span class="fc" id="L661">                action.accept( ref.node(), a.act( new ADTarget&lt;&gt;(ref.index(), ref.node(), error) ) );</span>
+<span class="fc bfc" id="L660" title="All 2 branches covered.">            for ( ADAction a : ref.agents() )</span>
+<span class="fc" id="L661">                action.accept( ref.node(), (Tsr&lt;V&gt;) a.act( new ADTarget&lt;&gt;(ref.index(), ref.node(), error) ));</span>
 <span class="fc" id="L662">        });</span>
 <span class="fc" id="L663">    }</span>
 
@@ -671,9 +671,9 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="fc" id="L671">    }</span>
 
     /**
-     * @param action The action which ought to be applied to each target {@link GraphNode} / {@link ADAgent} pair.
+     * @param action The action which ought to be applied to each target {@link GraphNode} / {@link ADAction} pair.
      */
-    public void forEachTargetAgentPair( BiConsumer&lt;BackPropTargets&lt;V&gt;, ADAgent&gt; action ) {
+    public void forEachTargetAgentPair( BiConsumer&lt;BackPropTargets&lt;V&gt;, ADAction&gt; action ) {
 <span class="pc bpc" id="L677" title="1 of 2 branches missed.">        if ( _targetsToAgents == null ) return;</span>
 <span class="fc" id="L678">        new ArrayList&lt;&gt;(_targetsToAgents)</span>
 <span class="fc" id="L679">                .forEach(</span>

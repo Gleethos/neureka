@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.980 seconds"
+    "duration":"0.227 seconds"
   },
   "headers":["\n            Specified below are strict tests for covering the ability of \n            OpenCL devices to be able produce optimized functions given\n            a normal function instance created from a String...\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).",
       "result":"PASS",
-      "duration":"0.173 seconds",
+      "duration":"0.030 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.743 seconds",
+      "duration":"0.151 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -80,7 +80,7 @@
 
         {"kind":"when","text":"Calling this function using the previously created scalars...","code":["fun( t1, t2, t3 )"]},
 
-        {"kind":"then","text":"\n                This will lead to an exception because these tensors are not members of the mocked OpenCLDevice instance.\n                All of them are still residing in RAM without being member of any device...\n                Therefore in order for this to work we need to fake the membership of these tensors!\n        ","code":["var exception = thrown(IllegalStateException)","exception.message == \"No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'.\""]},
+        {"kind":"then","text":"\n                This will lead to an exception because these tensors are not members of the mocked OpenCLDevice instance.\n                All of them are still residing in RAM without being member of any device...\n                Therefore in order for this to work we need to fake the membership of these tensors!\n        ","code":["var exception = thrown(IllegalStateException)","exception.message == \"No suitable implementation found for operation 'test_fun', algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'.\""]},
 
         {"kind":"when","text":"We set the mocked device as components of our three scalar tensors...","code":["t1.to(mockDevice)","t2.to(mockDevice)","t3.to(mockDevice)"]},
 
@@ -102,7 +102,7 @@
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.059 seconds",
+      "duration":"0.040 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

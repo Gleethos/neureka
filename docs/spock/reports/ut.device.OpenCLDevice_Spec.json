@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"14.623 seconds"
+    "duration":"0.426 seconds"
   },
   "headers":["\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An OpenCLDevice loads tensors in a provided lambda temporarily.",
       "result":"PASS",
-      "duration":"0.078 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,9 +39,9 @@
     },
   
     {
-      "id":"The \"getValue()\" method of an outsourced tensor will return the expected array type.",
+      "id":"We can get the items of an outsourced tensor as a primitive array.",
       "result":"PASS",
-      "duration":"3.452 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,9 +62,9 @@
     },
   
     {
-      "id":"The \"getData()\" method of an outsourced tensor will return null when outsourced.",
+      "id":"We can take a look at the underlying data array of an outsourced tensor through the unsafe API.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,7 +85,7 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"1.919 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"1.621 seconds",
+      "duration":"0.052 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +137,7 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"1.238 seconds",
+      "duration":"0.063 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -164,7 +164,7 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"2.393 seconds",
+      "duration":"0.095 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -191,7 +191,7 @@
     {
       "id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.",
       "result":"PASS",
-      "duration":"3.807 seconds",
+      "duration":"0.152 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

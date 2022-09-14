@@ -68,7 +68,7 @@ final class Query
 <span class="fc" id="L68">                BackendExtension.DeviceOption found = extension.find( currentKey );</span>
 <span class="pc bpc" id="L69" title="1 of 2 branches missed.">                if ( found == null           ) continue;</span>
 <span class="pc bpc" id="L70" title="1 of 2 branches missed.">                if ( found.device() == null  ) continue;</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">                if ( found.confidence() &lt;= 0 ) continue;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                if ( found.confidence() &lt;= 0 ) continue;</span>
 <span class="fc bfc" id="L72" title="All 2 branches covered.">                if ( !deviceType.isAssignableFrom( found.device().getClass() ) ) continue;</span>
 <span class="fc bfc" id="L73" title="All 8 branches covered.">                if ( found.confidence() &gt; ACCEPTABILITY &amp;&amp; found.confidence() &gt; desireForCPU || (justTakeFirstOne &amp;&amp; probablyWantsGPU) )</span>
 <span class="fc" id="L74">                    return (D) found.device();</span>

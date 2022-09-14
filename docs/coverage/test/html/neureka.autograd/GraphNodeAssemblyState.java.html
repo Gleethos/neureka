@@ -32,9 +32,9 @@ import java.util.stream.Collectors;
 
     /**
      * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
-     * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
+     * @param agent ADAction's are used during back-propagation in order to distribute an error throughout the graph.
      */
-    public void put( int index, GraphNode&lt;V&gt; target, ADAgent agent ) {
+    public void put( int index, GraphNode&lt;V&gt; target, ADAction agent ) {
 <span class="fc bfc" id="L38" title="All 2 branches covered.">        if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap&lt;&gt;((a, b) -&gt; a.hashCode() - b.hashCode());</span>
 
 <span class="fc bfc" id="L40" title="All 2 branches covered.">        if ( _targetsToAgents.containsKey( target ) )</span>
@@ -127,16 +127,16 @@ import java.util.stream.Collectors;
 
     private static class Value {
         private final int _index;
-<span class="fc" id="L130">        private final List&lt;ADAgent&gt; _agents = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L130">        private final List&lt;ADAction&gt; _agents = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L132">        private Value(int index, ADAgent agent) {</span>
+<span class="fc" id="L132">        private Value(int index, ADAction agent) {</span>
 <span class="fc" id="L133">            _index = index;</span>
 <span class="fc" id="L134">            _agents.add(agent);</span>
 <span class="fc" id="L135">        }</span>
 
 <span class="fc" id="L137">        public int index() { return _index; }</span>
 
-<span class="fc" id="L139">        public List&lt;ADAgent&gt; agents() { return _agents; }</span>
+<span class="fc" id="L139">        public List&lt;ADAction&gt; agents() { return _agents; }</span>
     }
 
 }

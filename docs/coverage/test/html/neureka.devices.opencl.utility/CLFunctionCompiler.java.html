@@ -2,7 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
@@ -77,7 +77,7 @@ public final class CLFunctionCompiler
 <span class="fc" id="L77">                        .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
 <span class="fc" id="L78">                        .setDeviceExecution(</span>
 <span class="fc" id="L79">                            (call, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback),</span>
-<span class="nc" id="L80">                            (caller, call) -&gt; ADAgent.withAD( target -&gt; Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )</span>
+<span class="nc" id="L80">                            (caller, call) -&gt; ADAction.of( target -&gt; Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )</span>
                         )
 <span class="fc" id="L82">                        .setCallPreparation(</span>
                             call -&gt; {

@@ -69,7 +69,7 @@ import java.util.List;
         );
 <span class="fc" id="L70">    }</span>
 
-    private static Tsr&lt;?&gt; _pad( Tsr&lt;?&gt; tensor, int[] ends, boolean newTsr ) {
+    private static &lt;T&gt; Tsr&lt;T&gt; _pad( Tsr&lt;T&gt; tensor, int[] ends, boolean newTsr ) {
 
 <span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
 <span class="nc" id="L75">            throw new IllegalArgumentException(&quot;Column major not yet supported for shape trimming!&quot;);</span>

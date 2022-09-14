@@ -2,7 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
+import neureka.autograd.ADAction;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
@@ -66,32 +66,31 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L66">                        int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;</span>
 <span class="fc" id="L67">                        Tsr&lt;?&gt; derivative = adCall.input( d ).T().deepCopy().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...</span>
 <span class="fc" id="L68">                        derivative.to(adCall.getDevice());</span>
-<span class="fc" id="L69">                        return ADAgent.of( derivative )</span>
-<span class="fc" id="L70">                                .withAD( target -&gt;</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">                                        d == 1</span>
-<span class="fc" id="L72">                                                ? matMul.execute( target.error(), derivative )</span>
-<span class="fc" id="L73">                                                : matMul.execute( derivative, target.error() )</span>
+<span class="fc" id="L69">                        return ADAction.of( target -&gt;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                                        d == 1</span>
+<span class="fc" id="L71">                                                ? matMul.execute( target.error(), derivative )</span>
+<span class="fc" id="L72">                                                : matMul.execute( derivative, target.error() )</span>
                                 );
                     }
                 )
-<span class="fc" id="L77">                .setCallPreparation(MatMul::_prepare)</span>
-<span class="fc" id="L78">                .buildFunAlgorithm();</span>
+<span class="fc" id="L76">                .setCallPreparation(MatMul::_prepare)</span>
+<span class="fc" id="L77">                .buildFunAlgorithm();</span>
 
-<span class="fc" id="L80">        setAlgorithm(</span>
+<span class="fc" id="L79">        setAlgorithm(</span>
             simpleMatMulAlgorithm
-<span class="fc" id="L82">            .setImplementationFor(</span>
+<span class="fc" id="L81">            .setImplementationFor(</span>
                 CPU.class,
                 CPUImplementation
-<span class="fc" id="L85">                .withArity(3)</span>
-<span class="fc" id="L86">                .andImplementation( new CPUMatMul() )</span>
+<span class="fc" id="L84">                .withArity(3)</span>
+<span class="fc" id="L85">                .andImplementation( new CPUMatMul() )</span>
             )
-<span class="fc" id="L88">            .setImplementationFor(</span>
+<span class="fc" id="L87">            .setImplementationFor(</span>
                 OpenCLDevice.class,
                 CLImplementation
-<span class="fc" id="L91">                    .fromSource()</span>
-<span class="fc" id="L92">                    .arity( 3 )</span>
-<span class="fc" id="L93">                    .kernelName( &quot;simple_matMul&quot; )</span>
-<span class="fc" id="L94">                    .kernelSource(</span>
+<span class="fc" id="L90">                    .fromSource()</span>
+<span class="fc" id="L91">                    .arity( 3 )</span>
+<span class="fc" id="L92">                    .kernelName( &quot;simple_matMul&quot; )</span>
+<span class="fc" id="L93">                    .kernelSource(</span>
                         &quot;   __kernel void simple_matMul(                                         \n&quot; +
                         &quot;          const int M, const int N, const int K,                        \n&quot; +
                         &quot;          const __global float* A,                                      \n&quot; +
@@ -110,57 +109,57 @@ import org.slf4j.LoggerFactory;
                         &quot;       C[ n + m * N ] = acc;                                            \n&quot; +
                         &quot;   }                                                                    \n&quot;
                     )
-<span class="fc" id="L113">                    .lambda( call -&gt; {</span>
-<span class="fc" id="L114">                        if (</span>
-<span class="fc" id="L115">                            call.validate()</span>
-<span class="fc bfc" id="L116" title="All 2 branches covered.">                                .all( t -&gt; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
-<span class="fc bfc" id="L117" title="All 2 branches covered.">                                .isValid()</span>
+<span class="fc" id="L112">                    .lambda( call -&gt; {</span>
+<span class="fc" id="L113">                        if (</span>
+<span class="fc" id="L114">                            call.validate()</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">                                .all( t -&gt; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">                                .isValid()</span>
                         ) {
-<span class="fc" id="L119">                            return new CLGEMM().run( call );</span>
+<span class="fc" id="L118">                            return new CLGEMM().run( call );</span>
                         } else {
-<span class="fc" id="L121">                            int M = call.input(1).shape(0);</span>
-<span class="fc" id="L122">                            int N = call.input(2).shape(1);</span>
-<span class="fc" id="L123">                            int K = call.input(1).shape(1);</span>
-<span class="fc" id="L124">                            call.getDevice()</span>
-<span class="fc" id="L125">                                .getKernel(call)</span>
-<span class="fc" id="L126">                                .pass(M).pass(N).pass(K)</span>
-<span class="fc" id="L127">                                .pass(call.input(Number.class, 1))</span>
-<span class="fc" id="L128">                                .pass(call.input(Number.class, 2))</span>
-<span class="fc" id="L129">                                .pass(call.input(Number.class, 0))</span>
-<span class="fc" id="L130">                                .call(new long[]{M, N}, null);</span>
+<span class="fc" id="L120">                            int M = call.input(1).shape(0);</span>
+<span class="fc" id="L121">                            int N = call.input(2).shape(1);</span>
+<span class="fc" id="L122">                            int K = call.input(1).shape(1);</span>
+<span class="fc" id="L123">                            call.getDevice()</span>
+<span class="fc" id="L124">                                .getKernel(call)</span>
+<span class="fc" id="L125">                                .pass(M).pass(N).pass(K)</span>
+<span class="fc" id="L126">                                .pass(call.input(Number.class, 1))</span>
+<span class="fc" id="L127">                                .pass(call.input(Number.class, 2))</span>
+<span class="fc" id="L128">                                .pass(call.input(Number.class, 0))</span>
+<span class="fc" id="L129">                                .call(new long[]{M, N}, null);</span>
 
-<span class="fc" id="L132">                            return call.input(0);</span>
+<span class="fc" id="L131">                            return call.input(0);</span>
                         }
                     })
-<span class="fc" id="L135">                    .build()</span>
+<span class="fc" id="L134">                    .build()</span>
             )
         );
 
 
-<span class="fc" id="L140">    }</span>
+<span class="fc" id="L139">    }</span>
 
     private static ExecutionCall&lt;Device&lt;Object&gt;&gt; _prepare( ExecutionCall call )
     {
-<span class="pc bpc" id="L144" title="2 of 4 branches missed.">        assert call.arity() &lt;= 3;</span>
-<span class="fc" id="L145">        Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);</span>
-<span class="pc bpc" id="L147" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
+<span class="pc bpc" id="L143" title="2 of 4 branches missed.">        assert call.arity() &lt;= 3;</span>
+<span class="fc" id="L144">        Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
         {
-<span class="fc" id="L149">            Class&lt;Number&gt; type = (Class&lt;Number&gt;) call.input(  1 ).getDataType().getItemTypeClass();</span>
-<span class="fc" id="L150">            int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };</span>
-<span class="fc" id="L151">            NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();</span>
-<span class="fc" id="L152">            call.input( 2 ).getUnsafe().toLayout(targetLayout);</span>
-<span class="fc" id="L153">            Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );</span>
-<span class="fc" id="L154">            output.getUnsafe().toLayout(targetLayout);</span>
-<span class="fc" id="L155">            output.setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).</span>
+<span class="fc" id="L148">            Class&lt;Number&gt; type = (Class&lt;Number&gt;) call.input(  1 ).getDataType().getItemTypeClass();</span>
+<span class="fc" id="L149">            int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };</span>
+<span class="fc" id="L150">            NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();</span>
+<span class="fc" id="L151">            call.input( 2 ).getUnsafe().toLayout(targetLayout);</span>
+<span class="fc" id="L152">            Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L153">            output.getUnsafe().toLayout(targetLayout);</span>
+<span class="fc" id="L154">            output.setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).</span>
             try {
-<span class="fc" id="L157">                device.store( output );</span>
-<span class="nc" id="L158">            } catch ( Exception e ) {</span>
-<span class="nc" id="L159">                e.printStackTrace();</span>
-<span class="fc" id="L160">            }</span>
-<span class="fc" id="L161">            call = call.withInputAt( 0, output );</span>
+<span class="fc" id="L156">                device.store( output );</span>
+<span class="nc" id="L157">            } catch ( Exception e ) {</span>
+<span class="nc" id="L158">                e.printStackTrace();</span>
+<span class="fc" id="L159">            }</span>
+<span class="fc" id="L160">            call = call.withInputAt( 0, output );</span>
         }
-<span class="fc" id="L163">        return (ExecutionCall&lt;Device&lt;Object&gt;&gt;) _autoClone( call );</span>
+<span class="fc" id="L162">        return (ExecutionCall&lt;Device&lt;Object&gt;&gt;) _autoClone( call );</span>
     }
 
     /**
@@ -173,14 +172,14 @@ import org.slf4j.LoggerFactory;
      * @param call The execution call whose tensors ought to be cloned based on the complexity of their access patterns.
      */
     private static ExecutionCall&lt;?&gt; _autoClone( ExecutionCall&lt;?&gt; call ) {
-<span class="fc bfc" id="L176" title="All 2 branches covered.">        for (int i = 0; i &lt; call.arity(); i++ ) {</span>
-<span class="fc" id="L177">            if (</span>
-<span class="fc bfc" id="L178" title="All 4 branches covered.">                    (!_isSimpleRowMajorMatrix( call.input( i ) ) &amp;&amp; !_isSimpleColumnMajorMatrix( call.input( i ) ))</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        for (int i = 0; i &lt; call.arity(); i++ ) {</span>
+<span class="fc" id="L176">            if (</span>
+<span class="fc bfc" id="L177" title="All 4 branches covered.">                    (!_isSimpleRowMajorMatrix( call.input( i ) ) &amp;&amp; !_isSimpleColumnMajorMatrix( call.input( i ) ))</span>
                             ||
-<span class="pc bpc" id="L180" title="1 of 2 branches missed.">                    call.input( i ).isPartialSlice()</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">                    call.input( i ).isPartialSlice()</span>
             ) {
-<span class="fc" id="L182">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
-<span class="fc" id="L183">                call = call.withInputAt( i, call.input( i ).deepCopy().getUnsafe().setIsIntermediate( true ) );</span>
+<span class="fc" id="L181">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
+<span class="fc" id="L182">                call = call.withInputAt( i, call.input( i ).deepCopy().getUnsafe().setIsIntermediate( true ) );</span>
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform auto cloning every time the
@@ -188,18 +187,18 @@ import org.slf4j.LoggerFactory;
                  */
             }
         }
-<span class="fc" id="L191">        return call;</span>
+<span class="fc" id="L190">        return call;</span>
     }
 
     private static boolean _isSimpleColumnMajorMatrix( Tsr&lt;?&gt; t ) {
-<span class="pc bpc" id="L195" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;</span>
+<span class="pc bpc" id="L194" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;</span>
     }
 
     private static boolean _isSimpleRowMajorMatrix( Tsr&lt;?&gt; t ) {
-<span class="pc bpc" id="L199" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;</span>
+<span class="pc bpc" id="L198" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;</span>
     }
 
     @Override
-<span class="nc" id="L203">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
+<span class="nc" id="L202">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

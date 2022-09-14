@@ -1,0 +1,41 @@
+{
+  "className":"ut.backend.core.OpenCL_Backend_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.017 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The OpenCL backend context can load implementations.",
+      "result":"PASS",
+      "duration":"0.014 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A backend context is being created...","code":["var ctx = new CLContext()"]},
+
+        {"kind":"and","text":"A backend loader is created by the context...","code":["var loader = ctx.getLoader()"]},
+
+        {"kind":"expect","text":"","code":["loader != null"]},
+
+        {"kind":"and","text":"A mocked receiver for implementations is being created...","code":["var receiver = Mock(ImplementationReceiver)","var registry = BackendRegistry.of(receiver)"]},
+
+        {"kind":"when","text":"The context is being asked to load implementations...","code":["loader.load(registry)"]},
+
+        {"kind":"then","text":"","code":["(12..666) * receiver.accept(","{ Operation.isAssignableFrom(it) },","{ DeviceAlgorithm.isAssignableFrom(it) },","{ Device.isAssignableFrom(it) },","{ it != null }",")"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}
