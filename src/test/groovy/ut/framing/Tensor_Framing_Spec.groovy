@@ -410,7 +410,8 @@ class Tensor_Framing_Spec extends Specification
             System.gc()
 
         then : 'The weak reference is null because the tensor had no string reference to it! (No memory leak!)'
-            Sleep.until(950, { weak.get() == null })
+            assert x == null
+            Sleep.until(1950, { weak.get() == null })
     }
 
     def 'A tensor can be labeled partially.'()
