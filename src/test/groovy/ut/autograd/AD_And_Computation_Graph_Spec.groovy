@@ -82,9 +82,9 @@ class AD_And_Computation_Graph_Spec extends Specification
             Tsr<Double> d = b ** c
             Tsr<Double> e = d * c
             GraphNode n = e.get( GraphNode.class )
+            var strongRefs = n.parents.collect { it.payload }
 
-        when : System.gc()
-        then :
+        expect :
             n.parents[0].isCacheable()
             !n.parents[0].isLeave()
             n.parents[0].isGraphLeave()
@@ -100,13 +100,14 @@ class AD_And_Computation_Graph_Spec extends Specification
             }
 
         when:
+            strongRefs = null
             a = null
             b = null
             c = null
             d = null
             e = null
             System.gc()
-            Sleep.until(100, {
+            Sleep.until(200, {
                 n.parents.every {it.payload == null && !it.hasDerivatives()}
             })
             System.gc()

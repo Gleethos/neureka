@@ -408,11 +408,10 @@ class Tensor_Framing_Spec extends Specification
             WeakReference weak = new WeakReference(x)
             x = null
             System.gc()
-            Sleep.until(100, { weak.get() == null })
+            Sleep.until(500, { weak.get() == null })
 
         then : 'The weak reference is null because the tensor had no string reference to it! (No memory leak!)'
-            weak.get() != null
-
+            weak.get() == null
     }
 
     def 'A tensor can be labeled partially.'()
@@ -442,7 +441,6 @@ class Tensor_Framing_Spec extends Specification
                     "      [   -2.0 ,   -1.0 ,   0.0  ,   1.0   ]\n" +
                     "   ]\n" +
                     "]"
-
     }
 
 

@@ -27,21 +27,21 @@ import testutility.Sleep
 class Cleaner_Testing extends Specification
 {
 
-    def 'The DeviceCleaner triggers registersd cleaner actions when things are eligable for GC.'(){
+    def 'The DeviceCleaner triggers registered cleaner actions when things are eligible for GC.'(){
 
         given :
-            def cleaner = DeviceCleaner.getInstance()
-            def refCount = 10
-            def r1 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            def r2 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            def r3 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            def r4 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            def r5 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            def r6 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            def r7 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            def r8 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            def r9 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            def r10 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var cleaner = DeviceCleaner.getInstance()
+            var refCount = 10
+            var r1 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r2 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r3 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r4 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r5 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r6 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r7 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r8 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r9 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r10 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)
 
             cleaner.register( r1, {refCount--} )
             cleaner.register( r2, {refCount--} )
@@ -58,34 +58,37 @@ class Cleaner_Testing extends Specification
             r1 = null
             r3 = null
             System.gc()
-            Sleep.until(250, {
-                refCount == 8 && cleaner._registered == 8
-            })
-            System.gc()
-            Sleep.until(250, {
-                refCount == 8 && cleaner._registered == 8
-            })
 
         then :
-            refCount == 8
-            cleaner._registered == 8
+            Sleep.until(700, { refCount == 8 && cleaner._registered == 8 })
+            r1  == null
+            r2  != null
+            r3  == null
+            r4  != null
+            r5  != null
+            r6  != null
+            r7  != null
+            r8  != null
+            r9  != null
+            r10 != null
 
         when :
             r2 = null
             r4 = null
             System.gc()
-            Sleep.until(250, {
-                refCount == 6 && cleaner._registered == 6
-            })
-            System.gc()
-            Sleep.until(250, {
-                refCount == 6 && cleaner._registered == 6
-            })
 
         then :
-            refCount == 6
-            cleaner._registered == 6
-
+            Sleep.until(750, { refCount == 6 && cleaner._registered == 6 })
+            r1  == null
+            r2  == null
+            r3  == null
+            r4  == null
+            r5  != null
+            r6  != null
+            r7  != null
+            r8  != null
+            r9  != null
+            r10 != null
     }
 
 
