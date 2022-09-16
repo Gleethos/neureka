@@ -408,12 +408,11 @@ class Tensor_Framing_Spec extends Specification
             var weak = new WeakReference(s)
             s = null
             System.gc()
-            Thread.sleep(100)
 
         then : 'The weak reference returns null instead of the slice because the parent has only weak references to it!'
             s == null
             t != null
-            Sleep.until(1750, { weak.get() == null })
+            Sleep.until(10750, 100, { weak.get() == null })
             t.sliceCount() == 0
     }
 
