@@ -20,18 +20,23 @@ public abstract class CPUConvolution implements ImplementationFor<CPU>
         if ( simpleConvolution.isSuitable() && call.getValOf(Arg.DerivIdx.class) < 0 )
             simpleConvolution.run();
         else
-            call.getDevice()
-                .getExecutor()
-                .threaded(
-                    call.input(0).size(),
-                    _workloadFor(call)
-                );
+            _doNDConvolutionFor( call ); // General purpose ND convolution, -> any dimensionality.
 
         return call.input(0);
     }
 
+    private void _doNDConvolutionFor( ExecutionCall<CPU> call )
+    {
+        call.getDevice()
+            .getExecutor()
+            .threaded(
+                call.input(0).size(),
+                _workloadFor(call)
+            );
+    }
+
     private CPU.RangeWorkload _workloadFor(
-            ExecutionCall<CPU> call
+        ExecutionCall<CPU> call
     ) {
         Tsr<Number> t0_drn = call.input( Number.class, 0 );
         Tsr<Number> t1_src = call.input( Number.class, 1 );
