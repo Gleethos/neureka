@@ -407,12 +407,15 @@ class Tensor_Framing_Spec extends Specification
         when : '...we make the GC collect some garbage...'
             var weak = new WeakReference(s)
             s = null
-            System.gc()
+            System.gc() // This is not guaranteed to work, but it's the best we can do.
+            System.runFinalization() // Idk, maybe this helps.
+            Runtime.getRuntime().gc() // Some more attempts to trigger the garbage collection.
+            System.runFinalization()
 
         then : 'The weak reference returns null instead of the slice because the parent has only weak references to it!'
             s == null
             t != null
-            Sleep.until(10750, 100, { weak.get() == null })
+            Sleep.until(750, { weak.get() == null })
             t.sliceCount() == 0
     }
 
