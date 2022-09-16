@@ -1743,9 +1743,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  The {@link #matMul(Tsr)} method will produce the matrix product of
-     *  two 2 dimensional arrays, where the left operand is this {@link Tsr}
-     *  instance and the right operand is the tensor passed to the method.
+     *  This will produce the matrix product of
+     *  two tensors with rank 2 (matrices), where the left operand is this {@link Tsr}
+     *  instance and the right operand is the argument passed to the method.
      *
      * @param other The right operand of the matrix multiplication.
      * @return The matrix product of this instance as the left and the passed {@link Tsr} instance as right operand.
@@ -1759,6 +1759,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                 );
 
         return Neureka.get().backend().getAutogradFunction().matMul().call( this, other );
+    }
+
+    /**
+     * This method performs convolution between this tensor and the one passed as argument.
+     * The convolution is performed by the {@link Function} which is registered under the name "conv".
+     * @param other The tensor which is the right operand of the convolutional operation.
+     * @return A new tensor which is the result of the convolutional operation.
+     */
+    default Tsr<V> conv( Tsr<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform convolution operation when second operand is 'null'!");
+        return Neureka.get().backend().getAutogradFunction().conv().call( this, other );
     }
 
     /**

@@ -53,16 +53,16 @@ public class Functions {
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
-        _idy = Function.of( "I[ 0 ]<-I[ 1 ]",                  doingAD );
-        _conv = Function.of( "I[ 0 ]xI[ 1 ]",                  doingAD );
+        _idy = Function.of( "I[ 0 ] <- I[ 1 ]",                doingAD );
+        _conv = Function.of( "I[ 0 ] x I[ 1 ]",                doingAD );
         _plus = Function.of( "(I[ 0 ]+I[ 1 ])",                doingAD );
         _plusAssign = Function.of( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])",  doingAD );
         _minus = Function.of( "(I[ 0 ]-I[ 1 ])",               doingAD );
         _minusAssign = Function.of( "I[ 0 ]<-(I[ 0 ]-I[ 1 ])", doingAD );
         _div = Function.of( "(I[ 0 ]/I[ 1 ])",                 doingAD );
         _divAssign = Function.of( "I[ 0 ]<-(I[ 0 ]/I[ 1 ])",   doingAD );
-        _pow = Function.of( "(I[ 0 ]**I[ 1 ])",                 doingAD );
-        _powAssign = Function.of( "I[ 0 ]<-(I[ 0 ]**I[ 1 ])",   doingAD );
+        _pow = Function.of( "(I[ 0 ]**I[ 1 ])",                doingAD );
+        _powAssign = Function.of( "I[ 0 ]<-(I[ 0 ]**I[ 1 ])",  doingAD );
         _mul = Function.of( "I[ 0 ]*I[ 1 ]",                   doingAD );
         _mulAssign = Function.of( "I[ 0 ]<-(I[ 0 ]*I[ 1 ])",   doingAD );
         _add = Function.of( "I[ 0 ]+I[ 1 ]",                   doingAD );
@@ -102,8 +102,14 @@ public class Functions {
 
     public final Function idy() { return _idy; }
 
+    /**
+     * @return A {@link Function} which represents the standard convolution operation without 0 padding.
+     */
     public final Function getConv() { return _conv; }
 
+    /**
+     * @return A {@link Function} which represents the standard convolution operation without 0 padding.
+     */
     public final Function conv() { return _conv; }
 
     public final Function getPlus() { return _plus; }

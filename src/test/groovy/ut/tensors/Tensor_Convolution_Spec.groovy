@@ -8,8 +8,21 @@ import neureka.devices.host.CPU
 import neureka.ndim.config.NDConfiguration
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Tensor Convolution")
+@Narrative('''
+
+    This specification shows how convolution can be performed on tensors.
+
+    Convolution is a linear operation which is not only important for image processing but also
+    a central player in the field of machine learning (especially for computer vision).
+    It is used to extract features from images and other typically ~2 dimensional data.
+    Other than that it is extremely important in the field of signal processing.
+
+''')
 class Tensor_Convolution_Spec extends Specification
 {
     def setup() {
@@ -54,7 +67,7 @@ class Tensor_Convolution_Spec extends Specification
             k.to(device)
 
         when: 'We perform a convolution operation on the tensor with the kernel `k`.'
-            var y = Tsr.of("i0 x i1", x, k)
+            var y = x.conv(k)
         then: 'The resulting tensor should have shape [2, 2] and value [0.0, 2.0, 6.0, 8.0].'
             y.shape == [2, 2]
             y.items == [0.0, 2.0, 6.0, 8.0]
@@ -82,7 +95,7 @@ class Tensor_Convolution_Spec extends Specification
                                      4, 5
                                 ])
         when: 'We perform a convolution operation on the tensor with the kernel `k`.'
-            var y = Tsr.of("i0 x i1", x, k)
+            var y = x.conv(k)
         then: 'The resulting tensor should have shape [1, 1] and value [-15.0].'
             y.shape == [1, 1]
             y.items == [-15.0]
@@ -109,7 +122,7 @@ class Tensor_Convolution_Spec extends Specification
                                     -2, 1
                                 ])
         when: 'We perform a convolution operation on the tensor with the kernel `k`.'
-            var y = Tsr.of("i0 x i1", x, k)
+            var y = x.conv(k)
         then: 'The resulting tensor should have shape [2, 2] and value [1.0, 0.0, 18.0, 0.0].'
             y.shape == [2, 2]
             y.items == [1.0, 0.0, 18.0, 0.0]
@@ -140,7 +153,7 @@ class Tensor_Convolution_Spec extends Specification
                                      4, 5
                                 ])
         when: 'We perform a convolution operation on the tensor with the kernel `k`.'
-            var y = Tsr.of("i0 x i1", x, k)
+            var y = x.conv(k)
         then: 'The resulting tensor should have shape [2, 1, 1] and value [-15.0, 55.0].'
             y.shape == [2, 1, 1]
             y.items == [-15.0, 55.0]
