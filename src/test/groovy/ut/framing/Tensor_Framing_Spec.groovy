@@ -407,11 +407,9 @@ class Tensor_Framing_Spec extends Specification
         when : '...we make the GC collect some garbage...'
             WeakReference weak = new WeakReference(x)
             x = null
-            System.gc()
 
         then : 'The weak reference is null because the tensor had no string reference to it! (No memory leak!)'
-            assert x == null
-            Sleep.until(1950, { weak.get() == null })
+            Sleep.until(1750, { System.gc(); Thread.sleep(42); return weak.get() == null })
     }
 
     def 'A tensor can be labeled partially.'()
