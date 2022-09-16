@@ -33,6 +33,124 @@ class Tensor_Convolution_Spec extends Specification
         })
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    def 'We can perform a convolution operation on a 2D tensor.'(Class<?> type, String device)
+    {
+        given: 'A 2D tensor with shape [3, 3] and values [1, 2, 3, ..., 9].'
+            var x =
+                    Tsr.of(type, [3, 3], [
+                            1, 2, 3,
+                            4, 5, 6,
+                            7, 8, 9
+                    ])
+        and: 'A 2D kernel with shape [2, 2] and values [1, 2, 0, -1].'
+            var k =
+                    Tsr.of(type, [2, 2], [
+                            1, 2,
+                            0, -1
+                    ])
+        and : 'We move both tensors to a device on which we want to execute.'
+            x.to(device)
+            k.to(device)
+
+        when: 'We perform a convolution operation on the tensor with the kernel `k`.'
+            var y = Tsr.of("i0 x i1", x, k)
+        then: 'The resulting tensor should have shape [2, 2] and value [0.0, 2.0, 6.0, 8.0].'
+            y.shape == [2, 2]
+            y.items == [0.0, 2.0, 6.0, 8.0]
+
+        where:
+            type   | device
+            Float  | 'CPU'
+            Double | 'CPU'
+            Float  | 'GPU'
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    def 'Convolution with tensors of the same shape is equivalent to a dot product.'(Class<?> type, String device)
+    {
+        given: 'A 2D tensor with shape [2, 2] and values [1, 3, 6, -8].'
+            var x =
+                    Tsr.of(Float, [2, 2], [
+                                    1,  3,
+                                    6, -8,
+                                ])
+        and: 'A 2D kernel with shape [2, 2] and values [-2, 1, 4, 5].'
+            var k =
+                    Tsr.of(Float, [2, 2], [
+                                    -2, 1,
+                                     4, 5
+                                ])
+        when: 'We perform a convolution operation on the tensor with the kernel `k`.'
+            var y = Tsr.of("i0 x i1", x, k)
+        then: 'The resulting tensor should have shape [1, 1] and value [-15.0].'
+            y.shape == [1, 1]
+            y.items == [-15.0]
+
+        where:
+            type   | device
+            Float  | 'CPU'
+            Double | 'CPU'
+            Float  | 'GPU'
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    def 'Convolution can be performed using non-quadratic matrix tensors.'(Class<?> type, String device)
+    {
+        given: 'A 2D tensor with shape [2, 3] and values [1, 3, 6, -8, 2, 4].'
+            var x =
+                    Tsr.of(Float, [2, 3], [
+                                    1,  3,  6,
+                                   -8,  2,  4,
+                                ])
+        and: 'A 2D kernel with shape [1, 2] and values [-2, 1].'
+            var k =
+                    Tsr.of(Float, [1, 2], [
+                                    -2, 1
+                                ])
+        when: 'We perform a convolution operation on the tensor with the kernel `k`.'
+            var y = Tsr.of("i0 x i1", x, k)
+        then: 'The resulting tensor should have shape [2, 2] and value [1.0, 0.0, 18.0, 0.0].'
+            y.shape == [2, 2]
+            y.items == [1.0, 0.0, 18.0, 0.0]
+
+        where:
+            type   | device
+            Float  | 'CPU'
+            Double | 'CPU'
+            Float  | 'GPU'
+    }
+
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    def 'Convolution can be performed using tensors with an additional dimension as batch size.'(Class<?> type, String device)
+    {
+        given: 'A 3D tensor with shape [2, 2, 2] and values [1, 3, 6, -8, 2, 4, 5, 7].'
+            var x =
+                    Tsr.of(Float, [2, 2, 2], [
+                                    1,  3,
+                                    6, -8,
+                                    2,  4,
+                                    5,  7
+                                ])
+        and: 'A 2D kernel with shape [2, 2] and values [-2, 1, 4, 5].'
+            var k =
+                    Tsr.of(Float, [1, 2, 2], [
+                                    -2, 1,
+                                     4, 5
+                                ])
+        when: 'We perform a convolution operation on the tensor with the kernel `k`.'
+            var y = Tsr.of("i0 x i1", x, k)
+        then: 'The resulting tensor should have shape [2, 1, 1] and value [-15.0, 55.0].'
+            y.shape == [2, 1, 1]
+            y.items == [-15.0, 55.0]
+
+        where:
+            type   | device
+            Float  | 'CPU'
+            Double | 'CPU'
+            Float  | 'GPU'
+    }
 
     def 'The "x" (convolution) operator produces expected results (On the CPU).'(
             Class<?> type, String expected

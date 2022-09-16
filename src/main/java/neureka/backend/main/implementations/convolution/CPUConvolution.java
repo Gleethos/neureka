@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
+import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 
@@ -12,12 +13,18 @@ public abstract class CPUConvolution implements ImplementationFor<CPU>
     protected abstract CPUBiFun _getFun();
 
     @Override
-    public Tsr<?> run( ExecutionCall<CPU> call ) {
-        call.getDevice()
+    public Tsr<?> run( ExecutionCall<CPU> call )
+    {
+        SimpleCPUConvolution simpleConvolution = new SimpleCPUConvolution(call.input(1), call.input(2), call.input(0));
+
+        if ( simpleConvolution.isSuitable() && call.getValOf(Arg.DerivIdx.class) < 0 )
+            simpleConvolution.run();
+        else
+            call.getDevice()
                 .getExecutor()
                 .threaded(
-                        call.input(0).size(),
-                        _workloadFor(call)
+                    call.input(0).size(),
+                    _workloadFor(call)
                 );
 
         return call.input(0);
@@ -44,7 +51,7 @@ public abstract class CPUConvolution implements ImplementationFor<CPU>
         }
         else if ( typeClass == Float.class ) {
             if ( d < 0 )
-                workload = (i, end) -> _convolve32( t0_drn, t1_src, t2_src, i, end, f );
+                workload = (i, end) -> _convolve32(t0_drn, t1_src, t2_src, i, end, f);
             else
                 workload = (i, end) -> _deConvolve32( t0_drn, t1_src, t2_src, i, end, f );
         }
