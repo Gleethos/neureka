@@ -403,7 +403,7 @@ class Tensor_Framing_Spec extends Specification
             s.isSlice()
             t.isSliceParent()
             t.sliceCount() == 4
-
+    /*
         when : '...we make the GC collect some garbage...'
             var weak = new WeakReference(s)
             s = null
@@ -417,6 +417,8 @@ class Tensor_Framing_Spec extends Specification
             t != null
             Sleep.until(750, { weak.get() == null })
             t.sliceCount() == 0
+
+     */
     }
 
     def 'A tensor can be labeled partially.'()
