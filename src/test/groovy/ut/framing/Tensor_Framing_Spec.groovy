@@ -267,14 +267,14 @@ class Tensor_Framing_Spec extends Specification
                   ")"
 
         when : 'Creating a slice by passing a single label, a range of labels and a range with stride...'
-            Tsr x = t["2", "b".."y", [["tim","tanya"]:2]]
+            Tsr s = t["2", "b".."y", [["tim","tanya"]:2]]
 
         then : 'This new slice "x" then will yield true when using the "contains" operator on t.'
-            x in t
+            s in t
         and: 'Calling the "contains" method will also return true.'
-            t.contains(x)
+            t.contains(s)
         and: 'The String representation is as expected.'
-            x.toString({
+            s.toString({
                 it.rowLimit = 15
                 it.isScientific = false
                 it.isMultiline = true
@@ -295,19 +295,19 @@ class Tensor_Framing_Spec extends Specification
                   "   )\n" +
                   ")"
         and: 'The tensor "x" is of course a slice:'
-            x.isSlice()
+            s.isSlice()
         and: 'The original tensor "t" is a "parent":'
             t.isSliceParent()
         and : 'The slice is not virtual.'
-            !x.isVirtual() // This might change if possible (technically difficult)
+            !s.isVirtual() // This might change if possible (technically difficult)
 
 
         when : 'We slice the tensor t by passing a map of start and end labels as keys and strides as values.'
-            x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]]
+            s = t["2", [["b".."y"]:1, ["tim","tanya"]:2]]
         then :
-            x in t
-            t.contains(x)
-            x.toString({
+            s in t
+            t.contains(s)
+            s.toString({
                 it.rowLimit = 15
                 it.isScientific = false
                 it.isMultiline = true
@@ -327,17 +327,17 @@ class Tensor_Framing_Spec extends Specification
                   "      (  -2.0 ,   0.0  )\n" +
                   "   )\n" +
                   ")"
-            !x.isVirtual() // This might change if possible (technically difficult)
-            x.isSlice()
+            !s.isVirtual() // This might change if possible (technically difficult)
+            s.isSlice()
             t.isSliceParent()
             t.sliceCount()==2
 
         when : 'We slice the tensor t by passing a map of start and end labels as keys and strides as values.'
-            x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]]
+            s = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]]
         then :
-            x in t
-            t.contains(x)
-            x.toString({
+            s in t
+            t.contains(s)
+            s.toString({
                 it.rowLimit = 15
                 it.isScientific = false
                 it.isMultiline = true
@@ -357,8 +357,8 @@ class Tensor_Framing_Spec extends Specification
                   "      (  -2.0 ,   0.0  )\n" +
                   "   )\n" +
                   ")"
-            !x.isVirtual() // This might change if possible (technically difficult)
-            x.isSlice()
+            !s.isVirtual() // This might change if possible (technically difficult)
+            s.isSlice()
             t.isSliceParent()
             t.sliceCount()==3
 
@@ -370,12 +370,12 @@ class Tensor_Framing_Spec extends Specification
                     new String[]{ "tim", "tom", "tina", "tanya" }
                 }
             )
-            x = t[ ["1","2"], "b".."y", [["tim","tanya"]:2] ]
+            s = t[ ["1","2"], "b".."y", [["tim","tanya"]:2] ]
 
         then :
-            x in t
-            t.contains(x)
-            x.toString({
+            s in t
+            t.contains(s)
+            s.toString({
                         it.rowLimit = 15
                         it.isScientific = false
                         it.isMultiline = true
@@ -399,20 +399,20 @@ class Tensor_Framing_Spec extends Specification
                           "      (  -2.0 ,   0.0  )\n" +
                           "   )\n" +
                           ")"
-            !x.isVirtual() // This might change if possible (technically difficult)
-            x.isSlice()
+            !s.isVirtual() // This might change if possible (technically difficult)
+            s.isSlice()
             t.isSliceParent()
             t.sliceCount() == 4
 
         when : '...we make the GC collect some garbage...'
-            WeakReference weak = new WeakReference(x)
-            x = null
+            WeakReference weak = new WeakReference(s)
+            s = null
             System.gc()
             Thread.sleep(100)
 
-        then : 'The weak reference is not null because the parent has a reference to it!'
+        then : 'The weak reference returns null instead of the slice because the parent has only weak references to it!'
             Sleep.until(1750, { weak.get() == null })
-            x == null
+            s == null
             t != null
     }
 
