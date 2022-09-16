@@ -229,7 +229,7 @@ class Tensor_Framing_Spec extends Specification
         given: 'Tensor printing is set to "legacy" for this test.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and: 'A labeled tensor of rank 3 is being created.'
-            Tsr t = Tsr.of([2, 3, 4], -7d..7d)
+            var t = Tsr.of([2, 3, 4], -7d..7d)
             t.label( 'My Tensor', [
                 ["1", "2"],
                 ["a", "b", "y"],
@@ -267,7 +267,7 @@ class Tensor_Framing_Spec extends Specification
                   ")"
 
         when : 'Creating a slice by passing a single label, a range of labels and a range with stride...'
-            Tsr s = t["2", "b".."y", [["tim","tanya"]:2]]
+            var s = t["2", "b".."y", [["tim","tanya"]:2]]
 
         then : 'This new slice "x" then will yield true when using the "contains" operator on t.'
             s in t
@@ -405,15 +405,15 @@ class Tensor_Framing_Spec extends Specification
             t.sliceCount() == 4
 
         when : '...we make the GC collect some garbage...'
-            WeakReference weak = new WeakReference(s)
+            var weak = new WeakReference(s)
             s = null
             System.gc()
             Thread.sleep(100)
 
         then : 'The weak reference returns null instead of the slice because the parent has only weak references to it!'
-            Sleep.until(1750, { weak.get() == null })
             s == null
             t != null
+            Sleep.until(1750, { weak.get() == null })
     }
 
     def 'A tensor can be labeled partially.'()
