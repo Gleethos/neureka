@@ -414,6 +414,7 @@ class Tensor_Framing_Spec extends Specification
             s == null
             t != null
             Sleep.until(1750, { weak.get() == null })
+            t.sliceCount() == 0
     }
 
     def 'A tensor can be labeled partially.'()
