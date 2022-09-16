@@ -32,11 +32,10 @@ class SimpleCPUConvolution
 
     public boolean isSuitable() { return _impl != null; }
 
-    private static ImplF32 _tryCreatingImplFor(Tsr<?> image, Tsr<?> kernel, Tsr<?> result) {
+    private static Conv2DImpl _tryCreatingImplFor(Tsr<?> image, Tsr<?> kernel, Tsr<?> result) {
         validate(image);
         validate(kernel);
         validate(result);
-        float[] resultData = result.getUnsafe().getDataForWriting(float[].class);
         int batchSize = (image.rank() == 3 ? image.shape(0) : 1);
         int shapeOffset = (image.rank() == 3 ? 1 : 0);
         int width = image.shape(shapeOffset + 1);
@@ -64,7 +63,7 @@ class SimpleCPUConvolution
             return new ImplF32(
                     image.getUnsafe().getDataAs(float[].class),
                     kernel.getUnsafe().getDataAs(float[].class),
-                    resultData,
+                    result.getUnsafe().getDataForWriting(float[].class),
                     width,
                     height,
                     kernelWidth,
@@ -73,8 +72,21 @@ class SimpleCPUConvolution
                     resultHeight,
                     batchSize
                 );
-
-        return null;
+        else if ( c1 == Double.class )
+            return new ImplF64(
+                    image.getUnsafe().getDataAs(double[].class),
+                    kernel.getUnsafe().getDataAs(double[].class),
+                    result.getUnsafe().getDataForWriting(double[].class),
+                    width,
+                    height,
+                    kernelWidth,
+                    kernelHeight,
+                    resultWidth,
+                    resultHeight,
+                    batchSize
+                );
+        else
+            throw new IllegalArgumentException("Unsupported data type!");
     }
 
     interface Conv2DImpl {
@@ -130,6 +142,68 @@ class SimpleCPUConvolution
             for ( int y = 0; y < _resultHeight; y++ ) {
                 for ( int x = 0; x < _resultWidth; x++ ) {
                     float sum = 0;
+                    for ( int ky = 0; ky < _kernelHeight; ky++ )
+                        for ( int kx = 0; kx < _kernelWidth; kx++ )
+                            sum +=
+                                _image[imageOffset + (y + ky) * _width + (x + kx)]
+                                        *
+                                _kernel[ky * _kernelWidth + kx];
+
+                    _result[resultOffset + y * _resultWidth + x] = sum;
+                }
+            }
+        }
+    }
+
+    private static class ImplF64 implements Conv2DImpl {
+
+        private final double[] _image;
+        private final double[] _kernel;
+        private final double[] _result;
+        private final int _width, _height, _kernelWidth, _kernelHeight, _resultWidth, _resultHeight, _batchSize;
+
+        private ImplF64(
+                double[] image,
+                double[] kernel,
+                double[] result,
+                int width,
+                int height,
+                int kernelWidth,
+                int kernelHeight,
+                int resultWidth,
+                int resultHeight,
+                int batchSize
+        ) {
+            _image = image;
+            _kernel = kernel;
+            _width = width;
+            _height = height;
+            _kernelWidth = kernelWidth;
+            _kernelHeight = kernelHeight;
+            _resultWidth = resultWidth;
+            _resultHeight = resultHeight;
+            _batchSize = batchSize;
+            if ( _batchSize * _resultHeight * _resultWidth != result.length )
+                throw new IllegalArgumentException("The result array must have the same length as the batch size times the result height times the result width!");
+
+            _result = result;
+        }
+
+        @Override
+        public void run() {
+            int work = _resultHeight * _resultWidth;
+            if ( work < 1000 )
+                for ( int bi = 0; bi < _batchSize; bi++ ) run(bi);
+            else
+                CPU.get().getExecutor().threaded(_batchSize, this::run);
+        }
+
+        private void run(int batchIndex) {
+            int imageOffset = batchIndex * _width * _height;
+            int resultOffset = batchIndex * _resultWidth * _resultHeight;
+            for ( int y = 0; y < _resultHeight; y++ ) {
+                for ( int x = 0; x < _resultWidth; x++ ) {
+                    double sum = 0;
                     for ( int ky = 0; ky < _kernelHeight; ky++ )
                         for ( int kx = 0; kx < _kernelWidth; kx++ )
                             sum +=
