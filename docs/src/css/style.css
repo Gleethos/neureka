@@ -478,6 +478,11 @@ header p {
     border-radius: 0.2em;
 }
 
+
+.MainContentWrapper pre code {
+    box-shadow: inset 0 0 3px 1px black;
+}
+
 .MainContentWrapper h1 {
     text-align: center;
     font-family: Arial;
