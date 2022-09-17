@@ -107,11 +107,11 @@ class AD_And_Computation_Graph_Spec extends Specification
             d = null
             e = null
             System.gc()
-            Sleep.until(200, {
+            Sleep.until(220, {
                 n.parents.every {it.payload == null && !it.hasDerivatives()}
             })
             System.gc()
-            Sleep.until(200, {
+            Sleep.until(220, {
                 n.parents.every {it.payload == null && !it.hasDerivatives()}
             })
 
