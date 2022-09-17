@@ -36,7 +36,6 @@ abstract class AbstractActivationOperation extends AbstractOperation
             new Activation()
                 .setSupplyADActionFor( getDefaultAlgorithm() )
                 .buildFunAlgorithm()
-                .setImplementationFor( CPU.class, new CPUElementwiseFunction( fun ) )
         );
 
         setAlgorithm(
@@ -62,7 +61,6 @@ abstract class AbstractActivationOperation extends AbstractOperation
             )
             .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
             .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUScalarFunction( fun ) )
         );
     }
 
