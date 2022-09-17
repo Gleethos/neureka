@@ -8,9 +8,9 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Convolution;
+import neureka.backend.main.algorithms.NDConvolution;
 import neureka.backend.main.implementations.convolution.CLConvolution;
-import neureka.backend.main.implementations.convolution.CPUXConv;
+import neureka.backend.main.implementations.convolution.CPUConvolution;
 import neureka.backend.main.operations.ConvUtil;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionParser;
@@ -18,9 +18,9 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
-public class XConv extends AbstractOperation
+public class Convolution extends AbstractOperation
 {
-    public XConv()
+    public Convolution()
     {
         super(
                 new OperationBuilder()
@@ -34,10 +34,10 @@ public class XConv extends AbstractOperation
         );
 
         setAlgorithm(
-            Convolution.class,
-            new Convolution()
+            NDConvolution.class,
+            new NDConvolution()
                 .setAutogradModeFor( call -> {
-                    if ( call.getOperation().supports( Convolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;
+                    if ( call.getOperation().supports( NDConvolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;
                     Tsr<?> last = null;
                     for ( Tsr<?> t : call.inputs() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return AutoDiffMode.BACKWARD_ONLY;
@@ -95,7 +95,7 @@ public class XConv extends AbstractOperation
                 .buildFunAlgorithm()
                 .setImplementationFor(
                     CPU.class,
-                    new CPUXConv()
+                    new CPUConvolution()
                 )
                 .setImplementationFor(
                     OpenCLDevice.class,

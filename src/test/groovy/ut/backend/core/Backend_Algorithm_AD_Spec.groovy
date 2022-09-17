@@ -11,7 +11,7 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
 import neureka.backend.main.algorithms.Activation
 import neureka.backend.main.algorithms.Broadcast
-import neureka.backend.main.algorithms.Convolution
+import neureka.backend.main.algorithms.NDConvolution
 import neureka.backend.main.algorithms.BiElementWise
 import neureka.devices.Device
 import neureka.ndim.config.NDConfiguration
@@ -112,8 +112,8 @@ class Backend_Algorithm_AD_Spec extends Specification
                                         e ->
                                                 e.isOperator() &&
                                                         e.getOperator().length()==1 &&
-                                                            e.supports( Convolution.class )
-                                ).map( e -> e.getAlgorithm( Convolution.class ) )
+                                                            e.supports( NDConvolution.class )
+                                ).map( e -> e.getAlgorithm( NDConvolution.class ) )
     }
 
 

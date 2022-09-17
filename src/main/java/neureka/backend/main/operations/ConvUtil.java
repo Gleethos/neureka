@@ -5,7 +5,7 @@ import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
-import neureka.backend.main.algorithms.Convolution;
+import neureka.backend.main.algorithms.NDConvolution;
 import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
@@ -14,10 +14,10 @@ import neureka.devices.Device;
 
 public class ConvUtil
 {
-    public static Convolution createDeconvolutionFor( String op ) {
-        return new Convolution()
+    public static NDConvolution createDeconvolutionFor(String op ) {
+        return new NDConvolution()
                 .setAutogradModeFor( call -> {
-                    if ( call.getOperation().supports( Convolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;
+                    if ( call.getOperation().supports( NDConvolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;
                     Tsr<?> last = null;
                     for ( Tsr<?> t : call.inputs() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return AutoDiffMode.BACKWARD_ONLY;

@@ -3,10 +3,10 @@ package neureka.backend.main.operations.linear;
 import neureka.Neureka;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Convolution;
+import neureka.backend.main.algorithms.NDConvolution;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.operations.ConvUtil;
-import neureka.backend.main.implementations.convolution.CPUXConv;
+import neureka.backend.main.implementations.convolution.CPUConvolution;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
@@ -25,11 +25,11 @@ public class XConvRight extends AbstractOperation {
                     .isDifferentiable( false       )
                     .isInline(         false       )
         );
-        setAlgorithm( Convolution.class,
+        setAlgorithm( NDConvolution.class,
             ConvUtil.createDeconvolutionFor("x" + ((char) 187))
             .setImplementationFor(
                 CPU.class,
-                new CPUXConv()
+                new CPUConvolution()
             )
             .setImplementationFor(
                 OpenCLDevice.class,
