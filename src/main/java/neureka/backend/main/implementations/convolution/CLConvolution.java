@@ -7,7 +7,7 @@ import neureka.calculus.args.Arg;
 public class CLConvolution extends ParsedCLImplementation
 {
     public CLConvolution( String id ) {
-        super(call -> {
+        super( call -> {
                 int offset = ( call.input( Number.class, 0 ) != null ) ? 0 : 1;
                 int gwz = ( call.input( Number.class, 0 ) != null ) ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();
                 call.getDevice()

@@ -5,10 +5,12 @@ import neureka.backend.api.ini.BackendLoader;
 import neureka.backend.api.ini.ReceiveForDevice;
 import neureka.backend.main.algorithms.*;
 import neureka.backend.main.implementations.broadcast.*;
+import neureka.backend.main.implementations.convolution.CPUConvolution;
 import neureka.backend.main.implementations.elementwise.*;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.scalar.CPUScalarFunction;
 import neureka.backend.main.operations.functions.*;
+import neureka.backend.main.operations.linear.Convolution;
 import neureka.backend.main.operations.operator.Addition;
 import neureka.backend.main.operations.operator.Multiplication;
 import neureka.backend.main.operations.operator.Power;
@@ -53,7 +55,10 @@ public class CPUContext implements BackendExtension
                 .set( Scalarization.class, context -> new CPUScalarBroadcastMultiplication() )
                 .set( Broadcast.class,     context -> new CPUBroadcastMultiplication() )
                 .set( BiElementWise.class, context -> new CPUBiElementWiseMultiplication() );
-        
+
+        receive.forOperation( Convolution.class )
+                .set( NDConvolution.class, context -> new CPUConvolution() );
+
         receive.forOperation( Absolute.class )
                 .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.ABSOLUTE) )
                 .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.ABSOLUTE) );
