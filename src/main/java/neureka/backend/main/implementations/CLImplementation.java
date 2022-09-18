@@ -3,7 +3,6 @@ package neureka.backend.main.implementations;
 
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.template.implementations.AbstractImplementationFor;
-import neureka.devices.opencl.KernelSource;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.StaticKernelSource;
 
@@ -20,48 +19,5 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
             int arity
     ) {
         super( execution, arity );
-    }
-
-    public static SourceBuilder fromSource() {
-        return new SourceBuilder();
-    }
-
-    /**
-     *  This builder builds the most basic type of {@link CLImplementation} which
-     *  is in essence merely a wrapper for a lambda and the arity of this implementation.
-     */
-    public static class SourceBuilder
-    {
-        private ImplementationFor<OpenCLDevice> lambda;
-        private int arity;
-        private String kernelName;
-        private String kernelSource;
-
-        private SourceBuilder() { }
-
-        /**
-         * @param lambda The code which passes the call data to OpenCL and calls the kernel.
-         * @return This builder instance to allow for method chaining.
-         */
-        public SourceBuilder lambda(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
-        public SourceBuilder arity(int arity) { this.arity = arity; return this; }
-        public SourceBuilder kernelName(String kernelName) { this.kernelName = kernelName;return this; }
-        public SourceBuilder kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
-        public CLImplementation build() { return new SimpleCLImplementation(lambda, arity, kernelName, kernelSource); }
-    }
-
-    public static class AdHocCompiler {
-
-        private final KernelSource _source;
-        private int _arity;
-
-        AdHocCompiler( KernelSource source ) { _source = source; }
-
-        public AdHocCompiler arity( int arity ) { _arity = arity; return this; }
-
-        public CLImplementation caller( ImplementationFor<OpenCLDevice> lambda) {
-            return new AdHocClImplementation( lambda, _arity, _source );
-        }
-
     }
 }
