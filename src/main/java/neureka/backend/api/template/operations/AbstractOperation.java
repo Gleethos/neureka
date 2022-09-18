@@ -180,7 +180,7 @@ public abstract class AbstractOperation implements Operation
     {
         float bestScore = 0f;
         Algorithm bestImpl = null;
-        for( Algorithm impl : _algorithms.values() ) {
+        for ( Algorithm impl : _algorithms.values() ) {
             float currentScore = impl.isSuitableFor( call );
             if ( currentScore > bestScore ) {
                 if ( currentScore == 1.0 ) return impl;

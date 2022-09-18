@@ -8,14 +8,15 @@ import neureka.backend.api.ini.ReceiveForDevice;
 import neureka.backend.main.algorithms.*;
 import neureka.backend.main.implementations.broadcast.*;
 import neureka.backend.main.implementations.convolution.CLConvolution;
-import neureka.backend.main.implementations.convolution.CPUConvolution;
 import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.implementations.elementwise.CLBiElementwisePower;
 import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
+import neureka.backend.main.implementations.matmul.CLMatMul;
 import neureka.backend.main.implementations.scalar.CLScalarFunction;
 import neureka.backend.main.operations.functions.*;
 import neureka.backend.main.operations.linear.Convolution;
+import neureka.backend.main.operations.linear.MatMul;
 import neureka.backend.main.operations.operator.Addition;
 import neureka.backend.main.operations.operator.Multiplication;
 import neureka.backend.main.operations.operator.Power;
@@ -205,6 +206,9 @@ public final class CLContext implements BackendExtension
 
         receive.forOperation( Convolution.class )
                 .set( NDConvolution.class, context -> new CLConvolution( context.getOperationIdentidier() ) );
+
+        receive.forOperation( MatMul.class )
+                .set( MatMulAlgorithm.class, context -> new CLMatMul() );
 
         receive.forOperation( Absolute.class )
                 .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.ABSOLUTE) )
