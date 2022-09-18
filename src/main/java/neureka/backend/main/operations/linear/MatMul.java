@@ -3,18 +3,17 @@ package neureka.backend.main.operations.linear;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
+import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FunDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.api.template.algorithms.FunDeviceAlgorithm;
 import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.operations.linear.internal.opencl.CLGEMM;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -80,9 +79,7 @@ public class MatMul extends AbstractOperation
             simpleMatMulAlgorithm
             .setImplementationFor(
                 CPU.class,
-                CPUImplementation
-                .withArity(3)
-                .andImplementation( new CPUMatMul() )
+                new CPUMatMul()
             )
             .setImplementationFor(
                 OpenCLDevice.class,

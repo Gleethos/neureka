@@ -26,14 +26,6 @@ public abstract class CLImplementation extends AbstractImplementationFor<OpenCLD
         return new SourceBuilder();
     }
 
-    public static ParsedCLImplementation.Builder compiler() {
-        return new ParsedCLImplementation.Builder();
-    }
-
-    public static AdHocCompiler adHoc( KernelSource kernelProvider ) {
-        return new AdHocCompiler( kernelProvider );
-    }
-
     /**
      *  This builder builds the most basic type of {@link CLImplementation} which
      *  is in essence merely a wrapper for a lambda and the arity of this implementation.
