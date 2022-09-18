@@ -49,13 +49,13 @@ class Tensor_Instantiation_Spec extends Specification
             t.itemType == type
         and : 'Also the expected shape.'
             t.shape() == shape
-        and : 'The tensor has the expected data array.'
-            t.unsafe.data.ref == data
-            t.data == data
-        and : 'The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.'
+        and : 'The tensor contains the expected items.'
             t.items == data
+        and : 'The tensor is not virtual nor is it a slice... so the underlying data is also as expected.'
+            t.data == data
+            t.unsafe.data.ref == data // This exposes the internal data array
 
-        where :
+        where : 'The following data arrays will lead to the tensor having the expected type and shape.'
             data                        ||  type  | shape
             new double[]{1.1, 2.2, 3.3} || Double | [ 3 ]
             new float[]{-0.21, 543.3}   || Float  | [ 2 ]
@@ -101,7 +101,7 @@ class Tensor_Instantiation_Spec extends Specification
 
     def 'Tensors can be instantiated based on lists for both shapes and values.'()
     {
-        given :
+        given : 'We create a tensor using the "of" factory method by passing a shape list and a list of items.'
             Tsr<Integer> t = Tsr.of([2, 2], [2, 4, 4])
         expect :
             t.toString() == "(2x2):[2.0, 4.0, 4.0, 2.0]"
