@@ -10,10 +10,7 @@ import neureka.backend.main.implementations.elementwise.*;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.scalar.CPUScalarFunction;
 import neureka.backend.main.operations.functions.*;
-import neureka.backend.main.operations.linear.CPUMatMul;
-import neureka.backend.main.operations.linear.Convolution;
-import neureka.backend.main.operations.linear.MatMul;
-import neureka.backend.main.operations.linear.XConvLeft;
+import neureka.backend.main.operations.linear.*;
 import neureka.backend.main.operations.operator.Addition;
 import neureka.backend.main.operations.operator.Multiplication;
 import neureka.backend.main.operations.operator.Power;
@@ -61,8 +58,9 @@ public class CPUContext implements BackendExtension
 
         receive.forOperation( Convolution.class )
                .set( NDConvolution.class, context -> new CPUConvolution() );
-
         receive.forOperation( XConvLeft.class )
+                .set( NDConvolution.class, context -> new CPUConvolution() );
+        receive.forOperation( XConvRight.class )
                 .set( NDConvolution.class, context -> new CPUConvolution() );
 
         receive.forOperation( MatMul.class )

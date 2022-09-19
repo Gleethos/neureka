@@ -25,14 +25,6 @@ public class XConvRight extends AbstractOperation {
         );
         setAlgorithm( NDConvolution.class,
             ConvUtil.createDeconvolutionFor("x" + ((char) 187))
-            .setImplementationFor(
-                CPU.class,
-                new CPUConvolution()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLConvolution( this.getIdentifier() )
-            )
         );
     }
 
