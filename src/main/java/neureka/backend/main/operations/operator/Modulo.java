@@ -73,8 +73,6 @@ public class Modulo extends AbstractOperation
                 }
             )
             .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUBroadcastModulo() )
-            .setImplementationFor( OpenCLDevice.class, new CLBroadcastModulo( this.getIdentifier() ) )
         );
 
         setAlgorithm(
@@ -89,8 +87,6 @@ public class Modulo extends AbstractOperation
             )
             .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
             .buildFunAlgorithm()
-            .setImplementationFor(CPU.class, new CPUScalarBroadcastModulo())
-            .setImplementationFor(OpenCLDevice.class, new CLScalarBroadcastModulo( this.getIdentifier() ))
         );
     }
 
