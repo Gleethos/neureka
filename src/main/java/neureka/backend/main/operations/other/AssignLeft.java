@@ -83,24 +83,6 @@ public class AssignLeft extends AbstractOperation
                     }
             )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                CPUImplementation
-                    .withArity(2)
-                    .andImplementation(
-                        call -> {
-                            call.input( 0 ).setIsVirtual( false );
-                            return Neureka.get().backend().getOperation("idy")
-                                    .getAlgorithm( Activation.class )
-                                    .getImplementationFor( CPU.class )
-                                    .run(call);
-                        }
-                    )
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLElementwiseFunction( ScalarFun.IDENTITY )
-            )
         );
     }
 

@@ -60,7 +60,8 @@ public class CPUContext implements BackendExtension
                 .set( BiElementWise.class, context -> new CPUBiElementWiseDivision() );
 
         receive.forOperation( AssignLeft.class )
-                .set( Scalarization.class, context -> new CPUScalarBroadcastIdentity() );
+                .set( Scalarization.class, context -> new CPUScalarBroadcastIdentity() )
+                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.IDENTITY) );
 
         receive.forOperation( Convolution.class )
                .set( NDConvolution.class, context -> new CPUConvolution() );

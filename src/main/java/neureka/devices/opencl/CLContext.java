@@ -210,7 +210,8 @@ public final class CLContext implements BackendExtension
                 .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 / input2;\n", "output = ( d == 0 ? 1 / input2 : -input2 / (float)pow(input1, 2.0f);  )  \n" ) );
 
         receive.forOperation( AssignLeft.class )
-                .set( Scalarization.class, context -> new CLBroadcastIdentity( context.getOperationIdentidier() ) );
+                .set( Scalarization.class, context -> new CLBroadcastIdentity( context.getOperationIdentidier() ) )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.IDENTITY ) );
 
         receive.forOperation( Convolution.class )
                 .set( NDConvolution.class, context -> new CLConvolution( context.getOperationIdentidier() ) );
