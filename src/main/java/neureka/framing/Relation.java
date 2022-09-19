@@ -39,6 +39,7 @@ import neureka.common.composition.Component;
 import neureka.Tsr;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 /**
@@ -246,12 +247,12 @@ public class Relation<V> implements Component<Tsr<V>>
 
     public int childCount()
     {
-        return ( _children == null ) ? 0 : _children.length;
+        return ( _children == null ? 0 : (int) Arrays.stream(_children).filter(c -> c.get() != null).count() );
     }
 
-    public Relation<V> remove(Tsr<V> child )
+    public Relation<V> remove( Tsr<V> child )
     {
-        throw new IllegalStateException();
+        throw new IllegalStateException("Not yet supported!");
     }
 
     public String toString() {

@@ -1,7 +1,6 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -10,8 +9,8 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.CPUImplementation;
+import neureka.backend.main.implementations.broadcast.CLBroadcastIdentity;
 import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastIdentity;
 import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
@@ -67,30 +66,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                CLImplementation
-                    .compiler()
-                    .arity( 2 )
-                    .kernelSource( Scalarization.getKernelSource() )
-                    .activationSource( "output = value;\n" )
-                    .differentiationSource( "output = value;\n" )
-                    .kernelPostfix( this.getIdentifier() )
-                    .execution(
-                        call -> {
-                            Tsr<Number> t = call.input( Number.class, 0 );
-                            int gwz = t.size();
-                            call.getDevice()
-                                .getKernel(call)
-                                .passAllOf( t )
-                                .passAllOf( t )
-                                .pass( call.input( Number.class, 1 ).at(0).get().floatValue() )
-                                .pass( t.rank() )
-                                .pass( call.getValOf( Arg.DerivIdx.class ) )
-                                .call( gwz );
-
-                            return call.input(0);
-                        }
-                    )
-                    .build()
+                new CLBroadcastIdentity( this.getIdentifier() )
             )
         );
 

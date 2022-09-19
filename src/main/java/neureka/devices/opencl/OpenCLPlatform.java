@@ -156,8 +156,8 @@ public class OpenCLPlatform
                             impl = type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );
                         else if ( preName.contains("broadcast") && type.supportsAlgorithm(Broadcast.class) )
                             impl = type.getAlgorithm(Broadcast.class).getImplementationFor( OpenCLDevice.class );
-                        else if ( preName.contains("convolution") && type.supportsAlgorithm(Convolution.class) )
-                            impl = type.getAlgorithm(Convolution.class).getImplementationFor( OpenCLDevice.class );
+                        else if ( preName.contains("convolution") && type.supportsAlgorithm(NDConvolution.class) )
+                            impl = type.getAlgorithm(NDConvolution.class).getImplementationFor( OpenCLDevice.class );
                         else if (
                                 type.supportsAlgorithm(DeviceAlgorithm.class)
                                 &&

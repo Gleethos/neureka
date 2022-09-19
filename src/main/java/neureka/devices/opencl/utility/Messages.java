@@ -77,20 +77,20 @@ public final class Messages
     public enum Tips
     {
         UBUNTU(
-                "Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n",
-                "In order to allow OpenCL to find your GPUs, consider executing 'sudo ubuntu-drivers autoinstall'!\n"
+            "Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n",
+            "If the OpenCL runtime cannot find your GPUs, consider executing 'sudo ubuntu-drivers autoinstall'!\n"
         ),
         FEDORA(
-                "Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n",
-                "In order to allow OpenCL to find your GPUs, consider installing or updating your device drivers!\n"
+            "Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n",
+            "If OpenCL runtime cannot find your GPUs, consider installing or updating your device drivers!\n"
         ),
         WINDOWS(
-                "", // Should already work
-                "Try to install the latest drivers of your GPU (Or other SIMD devices).\n"
+            "", // Should already work
+            "Try to install the latest drivers of your GPU (Or other SIMD devices).\n"
         ),
         UNKNOWN(
-                "Try to install the latest OpenCL runtime for your system.\n",
-                "If you already have an OpenCL runtime installed consider installing the latest drivers for your GPU (Or other SIMD devices).\n"
+            "Try to install the latest OpenCL runtime for your system.\n",
+            "If you already have an OpenCL runtime installed consider installing the latest drivers for your GPU (Or other SIMD devices).\n"
         );
 
         public final String HOW_TO_INSTALL_OPENCL, HOW_TO_INSTALL_OPENCL_DRIVERS;

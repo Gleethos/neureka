@@ -88,13 +88,11 @@ public final class JITProp<V> implements Component<Tsr<V>>
     public boolean isDone() { return ( _finished == null && _pending == null ); }
 
 
-
-
     @Override
     public String toString() {
         int finished = ( _finished == null ? 0 : _finished.size() );
         int pending  = ( _pending  == null ? 0 : _pending.size()  );
-        return this.getClass().getSimpleName()+"@"+hashCode()+"[finished="+finished+",pending="+pending+",isDone="+isDone()+"]";
+        return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[finished="+finished+",pending="+pending+",isDone="+isDone()+"]";
     }
 
 }

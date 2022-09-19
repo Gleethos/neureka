@@ -1,7 +1,7 @@
 package neureka.backend.main.implementations;
 
-import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
 import neureka.devices.opencl.KernelCode;
 import neureka.devices.opencl.OpenCLDevice;
 
@@ -34,19 +34,6 @@ public class ParsedCLImplementation extends CLImplementation
                             .replace("//-=<CONFIGURATION>=-//", "");
 
     private KernelCode _kernel;
-
-    protected ParsedCLImplementation(
-        Builder builder
-    ) {
-        this(
-            builder.lambda,
-            builder.arity,
-            builder.kernelSource,
-            builder.activationSource,
-            builder.differentiationSource,
-            builder.type
-        );
-    }
 
     public ParsedCLImplementation(
         ImplementationFor<OpenCLDevice> lambda,
@@ -128,29 +115,5 @@ public class ParsedCLImplementation extends CLImplementation
     {
         void apply( String name, String first, String second );
     }
-
-    public static class Builder {
-        private ImplementationFor<OpenCLDevice> lambda;
-        private int arity;
-        private String kernelSource;
-        private String activationSource;
-        private String differentiationSource;
-        private String type;
-
-        Builder() { }
-
-        public Builder execution(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
-        public Builder arity(int arity) { this.arity = arity; return this; }
-        public Builder kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
-        public Builder activationSource(String activationSource) { this.activationSource = activationSource;return this; }
-        public Builder differentiationSource(String differentiationSource) { this.differentiationSource = differentiationSource;return this; }
-        public Builder kernelPostfix(String type) { this.type = type;return this; }
-        public CLImplementation build() {
-            if ( lambda == null )
-                throw new IllegalStateException( CLImplementation.class.getSimpleName()+" builder not satisfied." );
-            return new ParsedCLImplementation(lambda, arity, kernelSource, activationSource, differentiationSource, type);
-        }
-    }
-
 
 }

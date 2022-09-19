@@ -3,9 +3,9 @@ package neureka.backend.main.algorithms;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.dtype.NumericType;
 
-public final class Convolution extends AbstractFunDeviceAlgorithm<Convolution>
+public final class NDConvolution extends AbstractFunDeviceAlgorithm<NDConvolution>
 {
-    public Convolution() {
+    public NDConvolution() {
         super("convolution");
         setIsSuitableFor(
             call ->

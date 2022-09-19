@@ -8,7 +8,7 @@ import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Convolution;
+import neureka.backend.main.algorithms.NDConvolution;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.implementations.broadcast.CPUBroadcast;
@@ -153,7 +153,7 @@ public class UnitTester_Tensor extends UnitTester
         int[] drnMxd  = _shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd)];
         Neureka.get().backend().getOperation("x")
-                .getAlgorithm(Convolution.class)
+                .getAlgorithm(NDConvolution.class)
                 .getImplementationFor( CPU.class )
                 .run(
                         ExecutionCall.of(
@@ -177,7 +177,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = _shpOfCon(frstShp, scndShp);
         Neureka.get().backend().getOperation(((char) 171)+"x")
-                .getAlgorithm(Convolution.class)
+                .getAlgorithm(NDConvolution.class)
                 .getImplementationFor( CPU.class )
                 .run(
                         ExecutionCall.of(
