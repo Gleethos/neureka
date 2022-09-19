@@ -11,6 +11,7 @@ import neureka.backend.main.implementations.convolution.CLConvolution;
 import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.implementations.elementwise.CLBiElementwisePower;
 import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
+import neureka.backend.main.implementations.elementwise.CPUBiElementWiseModulo;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.matmul.CLMatMul;
 import neureka.backend.main.implementations.scalar.CLScalarFunction;
@@ -208,6 +209,9 @@ public final class CLContext implements BackendExtension
                 .set( Scalarization.class, context -> new CLScalarBroadcastDivision( context.getOperationIdentidier() ) )
                 .set( Broadcast.class,     context -> new CLBroadcastDivision( context.getOperationIdentidier() )       )
                 .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 / input2;\n", "output = ( d == 0 ? 1 / input2 : -input2 / (float)pow(input1, 2.0f);  )  \n" ) );
+
+        receive.forOperation( Modulo.class )
+                .set( BiElementWise.class, context -> new CLBiElementwise(context.getOperationIdentidier(), "output = ((int)input1) % ((int)input2);\n", "output = ( d == 0 ? 1/input2; : -input2 / (float) pow(input1, 2.0f) );\n") );
 
         receive.forOperation( AssignLeft.class )
                 .set( Scalarization.class, context -> new CLBroadcastIdentity( context.getOperationIdentidier() ) )

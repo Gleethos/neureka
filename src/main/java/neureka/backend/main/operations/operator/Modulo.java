@@ -41,34 +41,12 @@ public class Modulo extends AbstractOperation
                 .isInline(         false       )
         );
 
-        //_____________________
-        // DEFAULT OPERATION :
-
         setAlgorithm(
             BiElementWise.class,
             new BiElementWise(ElemWiseUtil::forDivisionsOrModuli)
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                new CPUBiElementWiseModulo()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLBiElementwise(
-                     this.getIdentifier(),
-                     "output = ((int)input1) % ((int)input2);\n",
-                    "if ( d==0 ) {                       \n" +
-                    "    output = 1/input2;                               \n" +
-                    "} else {                                             \n" +
-                    "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
-                    "}"
-                )
-            )
         );
-
-        //________________
-        // BROADCASTING :;
 
         setAlgorithm(
             Broadcast.class,
@@ -99,9 +77,6 @@ public class Modulo extends AbstractOperation
             .setImplementationFor( OpenCLDevice.class, new CLBroadcastModulo( this.getIdentifier() ) )
         );
 
-        //___________________________
-        // TENSOR SCALAR OPERATION :
-
         setAlgorithm(
             Scalarization.class,
             new Scalarization()
@@ -114,14 +89,8 @@ public class Modulo extends AbstractOperation
             )
             .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                new CPUScalarBroadcastModulo()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLScalarBroadcastModulo( this.getIdentifier() )
-            )
+            .setImplementationFor(CPU.class, new CPUScalarBroadcastModulo())
+            .setImplementationFor(OpenCLDevice.class, new CLScalarBroadcastModulo( this.getIdentifier() ))
         );
     }
 
