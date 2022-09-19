@@ -3,10 +3,12 @@ package neureka.backend.api.template.operations;
 
 
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.calculus.Function;
+import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,7 +182,11 @@ public abstract class AbstractOperation implements Operation
     {
         float bestScore = 0f;
         Algorithm bestImpl = null;
+        //Device<?> device = call.getDevice();
         for ( Algorithm impl : _algorithms.values() ) {
+            //if ( impl instanceof DeviceAlgorithm<?> && !((DeviceAlgorithm)impl).hasImplementationFor(device) )
+            //    continue;
+
             float currentScore = impl.isSuitableFor( call );
             if ( currentScore > bestScore ) {
                 if ( currentScore == 1.0 ) return impl;

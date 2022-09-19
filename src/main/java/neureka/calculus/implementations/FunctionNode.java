@@ -210,9 +210,9 @@ public final class FunctionNode implements Function
                 allLocked = node.getLock().isLocked() && allLocked;
             }
         }
-        if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!
+        if ( untracked == null || !allLocked )  // If graph tracking (nodes) has not yet been initialized!
             return _commit( inputs, function, activation );
-        }
+
         GraphLock lock =  untracked.get( GraphNode.class ).getLock();
         _attachGraph( inputs, function, lock );
         return activation.get();

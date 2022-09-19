@@ -65,4 +65,8 @@ public interface DeviceAlgorithm<C extends DeviceAlgorithm<C>> extends Algorithm
         return (ImplementationFor<D>) getImplementationFor(device.getClass());
     }
 
+    default <D extends Device<?>> boolean hasImplementationFor( D device ) {
+        return getImplementationFor(device.getClass()) != null;
+    }
+
 }

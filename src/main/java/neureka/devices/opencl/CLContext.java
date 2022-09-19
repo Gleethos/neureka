@@ -19,10 +19,7 @@ import neureka.backend.main.operations.linear.Convolution;
 import neureka.backend.main.operations.linear.MatMul;
 import neureka.backend.main.operations.linear.XConvLeft;
 import neureka.backend.main.operations.linear.XConvRight;
-import neureka.backend.main.operations.operator.Addition;
-import neureka.backend.main.operations.operator.Multiplication;
-import neureka.backend.main.operations.operator.Power;
-import neureka.backend.main.operations.operator.Subtraction;
+import neureka.backend.main.operations.operator.*;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
@@ -187,24 +184,29 @@ public final class CLContext implements BackendExtension
     private void _load( ReceiveForDevice<OpenCLDevice> receive )
     {
         receive.forOperation( Power.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastPower(context.getOperationIdentidier()) )
-                .set( Broadcast.class,     context -> new CLBroadcastPower(context.getOperationIdentidier())       )
-                .set( BiElementWise.class, context -> new CLBiElementwisePower(context.getOperationIdentidier())   );
+                .set( Scalarization.class, context -> new CLScalarBroadcastPower( context.getOperationIdentidier() ) )
+                .set( Broadcast.class,     context -> new CLBroadcastPower( context.getOperationIdentidier() )       )
+                .set( BiElementWise.class, context -> new CLBiElementwisePower( context.getOperationIdentidier() )   );
 
         receive.forOperation( Addition.class )
                 .set( Scalarization.class, context -> new CLScalarBroadcastAddition(context.getOperationIdentidier()) )
-                .set( Broadcast.class,     context -> new CLBroadcastAddition(context.getOperationIdentidier())       )
+                .set( Broadcast.class,     context -> new CLBroadcastAddition( context.getOperationIdentidier() )       )
                 .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 + input2;\n", "output = 1;\n" ) );
 
         receive.forOperation( Subtraction.class )
                 .set( Scalarization.class, context -> new CLScalarBroadcastSubtraction( context.getOperationIdentidier() ) )
-                .set( Broadcast.class,     context -> new CLBroadcastSubtraction(context.getOperationIdentidier())       )
+                .set( Broadcast.class,     context -> new CLBroadcastSubtraction( context.getOperationIdentidier() )       )
                 .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 - input2;\n", "output = 1;\n" ) );
 
         receive.forOperation( Multiplication.class )
                 .set( Scalarization.class, context -> new CLScalarBroadcastMultiplication( context.getOperationIdentidier() ) )
-                .set( Broadcast.class,     context -> new CLBroadcastMultiplication(context.getOperationIdentidier())       )
+                .set( Broadcast.class,     context -> new CLBroadcastMultiplication( context.getOperationIdentidier() )       )
                 .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 * input2;\n", "output = input2;\n" ) );
+
+        receive.forOperation( Division.class )
+                .set( Scalarization.class, context -> new CLScalarBroadcastDivision( context.getOperationIdentidier() ) )
+                .set( Broadcast.class,     context -> new CLBroadcastDivision( context.getOperationIdentidier() )       )
+                .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 / input2;\n", "output = ( d == 0 ? 1 / input2 : -input2 / (float)pow(input1, 2.0f);  )  \n" ) );
 
         receive.forOperation( Convolution.class )
                 .set( NDConvolution.class, context -> new CLConvolution( context.getOperationIdentidier() ) );
