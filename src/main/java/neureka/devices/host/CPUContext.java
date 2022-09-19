@@ -12,6 +12,7 @@ import neureka.backend.main.implementations.scalar.CPUScalarFunction;
 import neureka.backend.main.operations.functions.*;
 import neureka.backend.main.operations.linear.*;
 import neureka.backend.main.operations.operator.*;
+import neureka.backend.main.operations.other.AssignLeft;
 
 public class CPUContext implements BackendExtension
 {
@@ -57,6 +58,9 @@ public class CPUContext implements BackendExtension
                 .set( Scalarization.class, context -> new CPUScalarBroadcastDivision() )
                 .set( Broadcast.class,     context -> new CPUBroadcastDivision() )
                 .set( BiElementWise.class, context -> new CPUBiElementWiseDivision() );
+
+        receive.forOperation( AssignLeft.class )
+                .set( Scalarization.class, context -> new CPUScalarBroadcastIdentity() );
 
         receive.forOperation( Convolution.class )
                .set( NDConvolution.class, context -> new CPUConvolution() );

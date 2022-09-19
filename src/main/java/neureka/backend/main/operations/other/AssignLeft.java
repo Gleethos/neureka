@@ -60,14 +60,6 @@ public class AssignLeft extends AbstractOperation
                 }
             )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                new CPUScalarBroadcastIdentity()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLBroadcastIdentity( this.getIdentifier() )
-            )
         );
 
         setAlgorithm(
@@ -107,7 +99,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setImplementationFor(
                 OpenCLDevice.class,
-                new CLElementwiseFunction(ScalarFun.IDENTITY )
+                new CLElementwiseFunction( ScalarFun.IDENTITY )
             )
         );
     }
