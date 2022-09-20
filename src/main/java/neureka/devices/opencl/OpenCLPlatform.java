@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jocl.CL.*;
 
@@ -70,6 +71,7 @@ public class OpenCLPlatform
 
         List<cl_device_id> successfullyLoaded = new ArrayList<>();
 
+        List<String> failures = new ArrayList<>();
         // Collect all devices of this platform
         for (cl_device_id did : devicesArray) {
             try {
@@ -81,6 +83,7 @@ public class OpenCLPlatform
                         "Failed to create '"+OpenCLDevice.class.getSimpleName()+"' instance for " +
                         "OpenCL device id '0x" + Long.toHexString(did.getNativePointer()) + "' under platform id '0x"+Long.toHexString(pid.getNativePointer())+"'!";
                 _LOG.error(message, e);
+                failures.add(message + " Reason: " + e.getMessage());
             }
         }
         if ( !successfullyLoaded.isEmpty() )
@@ -88,6 +91,12 @@ public class OpenCLPlatform
         else
             _LOG.warn(
                 "'"+this.getClass().getSimpleName()+"' with id '"+Long.toHexString(pid.getNativePointer())+"' does not have a valid device attached to it!"
+            );
+
+        if ( successfullyLoaded.isEmpty() )
+            throw new RuntimeException(
+                "Failed to create '"+OpenCLDevice.class.getSimpleName()+"' instances for all devices of platform id '0x"+Long.toHexString(pid.getNativePointer())+"'! \n" +
+                "Reasons: \n    " + failures.stream().collect(Collectors.joining("\n    "))
             );
     }
 

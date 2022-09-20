@@ -5,9 +5,9 @@ import neureka.backend.api.ExecutionCall;
 import neureka.calculus.args.Arg;
 import neureka.devices.opencl.OpenCLDevice;
 
-public class CLBroadcastIdentity extends CLBroadcast
+public class CLScalarBroadcastIdentity extends CLScalarBroadcast
 {
-    public CLBroadcastIdentity(String id) {
+    public CLScalarBroadcastIdentity(String id) {
         super(
              id,
              "output = value;\n",

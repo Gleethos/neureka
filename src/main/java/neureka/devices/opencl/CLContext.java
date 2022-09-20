@@ -125,6 +125,7 @@ public final class CLContext implements BackendExtension
         clGetPlatformIDs( platforms.length, platforms, null );
 
         List<OpenCLPlatform> loadedPlatforms = new ArrayList<>();
+        List<String> failures = new ArrayList<>();
         for ( cl_platform_id id : platforms ) {
             OpenCLPlatform newPlatform = null;
             try {
@@ -134,12 +135,19 @@ public final class CLContext implements BackendExtension
                         "Failed to instantiate '"+OpenCLPlatform.class.getSimpleName()+"' " +
                         "with id '0x"+Long.toHexString(id.getNativePointer())+"'!";
                 _LOG.error( message, e );
+                failures.add( message + " Reason: " + e.getMessage() );
             }
             if ( newPlatform != null )
                 loadedPlatforms.add( newPlatform );
         }
         if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -> p.getDevices().isEmpty() ) )
             _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );
+
+        if ( loadedPlatforms.isEmpty() ) // There should be at least one platform with at least one device!
+            throw new RuntimeException(
+                "Failed to instantiate any '"+OpenCLPlatform.class.getSimpleName()+"' instance!\n" +
+                "Reasons: \n    " + failures.stream().collect(Collectors.joining("\n    "))
+            );
 
         return loadedPlatforms;
     }
@@ -210,15 +218,15 @@ public final class CLContext implements BackendExtension
         receive.forOperation( Division.class )
                 .set( Scalarization.class, context -> new CLScalarBroadcastDivision( context.getOperationIdentidier() ) )
                 .set( Broadcast.class,     context -> new CLBroadcastDivision( context.getOperationIdentidier() )       )
-                .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 / input2;\n", "output = ( d == 0 ? 1 / input2 : -input2 / (float)pow(input1, 2.0f);  )  \n" ) );
+                .set( BiElementWise.class, context -> new CLBiElementwise( context.getOperationIdentidier(), "output = input1 / input2;\n", "output = ( d == 0 ? 1 / input2 : -input2 / (float)pow(input1, 2.0f)  );  \n" ) );
 
         receive.forOperation( Modulo.class )
                 .set( Scalarization.class, context -> new CLScalarBroadcastModulo( context.getOperationIdentidier() ) )
                 .set( Broadcast.class,     context -> new CLBroadcastModulo( context.getOperationIdentidier() )       )
-                .set( BiElementWise.class, context -> new CLBiElementwise(context.getOperationIdentidier(), "output = ((int)input1) % ((int)input2);\n", "output = ( d == 0 ? 1/input2; : -input2 / (float) pow(input1, 2.0f) );\n") );
+                .set( BiElementWise.class, context -> new CLBiElementwise(context.getOperationIdentidier(), "output = ((int)input1) % ((int)input2);\n", "output = ( d == 0 ? 1/input2 : -input2 / (float) pow(input1, 2.0f) );\n") );
 
         receive.forOperation( AssignLeft.class )
-                .set( Scalarization.class, context -> new CLBroadcastIdentity( context.getOperationIdentidier() ) )
+                .set( Scalarization.class, context -> new CLScalarBroadcastIdentity( context.getOperationIdentidier() ) )
                 .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.IDENTITY ) );
 
         receive.forOperation( Convolution.class )
