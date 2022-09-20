@@ -20,8 +20,10 @@ import neureka.backend.main.operations.linear.Convolution;
 import neureka.backend.main.operations.linear.MatMul;
 import neureka.backend.main.operations.linear.XConvLeft;
 import neureka.backend.main.operations.linear.XConvRight;
+import neureka.backend.main.operations.linear.internal.opencl.CLSum;
 import neureka.backend.main.operations.operator.*;
 import neureka.backend.main.operations.other.AssignLeft;
+import neureka.backend.main.operations.other.Sum;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
@@ -228,6 +230,9 @@ public final class CLContext implements BackendExtension
 
         receive.forOperation( MatMul.class )
                 .set( MatMulAlgorithm.class, context -> new CLMatMul() );
+
+        receive.forOperation( Sum.class )
+                .set( SumAlgorithm.class, context -> new CLSum() );
 
         receive.forOperation( Absolute.class )
                 .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.ABSOLUTE) )
