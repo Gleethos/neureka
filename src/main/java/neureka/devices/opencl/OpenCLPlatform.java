@@ -93,7 +93,7 @@ public class OpenCLPlatform
                 "'"+this.getClass().getSimpleName()+"' with id '"+Long.toHexString(pid.getNativePointer())+"' does not have a valid device attached to it!"
             );
 
-        if ( successfullyLoaded.isEmpty() )
+        if ( successfullyLoaded.isEmpty() && devicesArray.length > 0 )
             throw new RuntimeException(
                 "Failed to create '"+OpenCLDevice.class.getSimpleName()+"' instances for all devices of platform id '0x"+Long.toHexString(pid.getNativePointer())+"'! \n" +
                 "Reasons: \n    " + failures.stream().collect(Collectors.joining("\n    "))

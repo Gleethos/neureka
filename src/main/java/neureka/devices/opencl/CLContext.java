@@ -143,7 +143,8 @@ public final class CLContext implements BackendExtension
         if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -> p.getDevices().isEmpty() ) )
             _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );
 
-        if ( loadedPlatforms.isEmpty() ) // There should be at least one platform with at least one device!
+        if ( loadedPlatforms.isEmpty() && platforms.length > 0 )
+            // There should be at least one platform with at least one device!
             throw new RuntimeException(
                 "Failed to instantiate any '"+OpenCLPlatform.class.getSimpleName()+"' instance!\n" +
                 "Reasons: \n    " + failures.stream().collect(Collectors.joining("\n    "))
