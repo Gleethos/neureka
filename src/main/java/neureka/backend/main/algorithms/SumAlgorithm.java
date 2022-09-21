@@ -7,7 +7,7 @@ import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 
-public class SumAlgorithm  extends AbstractFunDeviceAlgorithm<SumAlgorithm>
+public class SumAlgorithm extends AbstractFunDeviceAlgorithm<SumAlgorithm>
 {
     public SumAlgorithm() {
         super("sum_algorithm");
