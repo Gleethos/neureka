@@ -45,6 +45,8 @@ import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 
+import java.util.function.Supplier;
+
 /**
  *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.
  *  It represents broad and high level requests for execution which might be executed differently depending
@@ -194,14 +196,43 @@ public interface Operation
 
     <T extends Algorithm> boolean supports( Class<T> implementation );
 
-    default Result execute(Function caller, ExecutionCall<?> call ) {
-        Result result = call.getAlgorithm().execute( caller, call );
-        if ( result != null ) return result;
-        throw new IllegalStateException(
-                "Missing return value of " + Execution.class.getSimpleName() + " in algorithm '" +
-                        call.getAlgorithm().getClass().getSimpleName() + "' in operation '" +
-                        call.getOperation().getClass().getName()+"'"
-        );
+    default Result execute( Function caller, ExecutionCall<?> call )
+    {
+        Supplier<Result> execution = ()->{
+            Result result = call.getAlgorithm().execute( caller, call );
+            if ( result != null ) return result;
+            throw new IllegalStateException(
+                    "Missing return value of " + Execution.class.getSimpleName() + " in algorithm '" +
+                    call.getAlgorithm().getClass().getSimpleName() + "' in operation '" +
+                    call.getOperation().getClass().getName()+"'"
+                );
+        };
+
+        if ( caller.isFlat() ) call.checkArity();
+
+        int d = call.getDerivativeIndex();
+
+        if ( caller.isFlat() )
+        {
+            /*  The following code is reached in flat functions only:
+                Autograd-Graph will be generated below for the new GraphNode:
+                only flat functions can be executed directly                         */
+
+            if ( d < 0 && caller.isDoingAD() ) {
+                Result[] ref = {null}; // We need to keep a reference so that the garbage collector does not collect the result!
+                new GraphNode<>(
+                        caller,
+                        call,
+                        () -> { // This "ref" is a bit of a hack... TODO: fix
+                            ref[0] = execution.get();
+                            return ref[0];
+                        }
+                );
+                return ref[0];
+            }
+        }
+        return execution.get();
+
     }
 
     /**

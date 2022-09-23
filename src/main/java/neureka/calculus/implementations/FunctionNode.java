@@ -92,37 +92,9 @@ public final class FunctionNode implements Function
                                                                             .running(_operation)
                                                                             .on( _deviceFor(inputs) );
 
-                    if ( _isFlat ) call.checkArity();
-
-                    int d = arguments.valOfOr( Arg.DerivIdx.class, -1 );
-
-                    if ( _isFlat )
-                    {
-                        /*  The following code is reached in flat functions only:
-                            Autograd-Graph will be generated below for the new GraphNode:
-                            only flat functions can be executed directly                         */
-
-                        if ( d < 0 && _isDoingAD ) {
-                            Result[] ref = {null}; // We need to keep a reference so that the garbage collector does not collect the result!
-                            new GraphNode<>(
-                                    this,
-                                    call,
-                                    () -> { // This "ref" is a bit of a hack... TODO: fix
-                                        ref[0] = _execute(call);
-                                        return ref[0];
-                                    }
-                            );
-                            return ref[0].get();
-                        }
-                    }
-                    return _execute( call ).get();
+                    return call.getOperation().execute( this, call ).get();
                 }
         );
-    }
-
-    private Result _execute( ExecutionCall<? extends Device<?>> call )
-    {
-        return call.getOperation().execute( this, call );
     }
 
     /**

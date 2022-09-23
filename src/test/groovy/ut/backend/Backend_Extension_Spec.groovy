@@ -110,29 +110,29 @@ class Backend_Extension_Spec extends Specification
             (0.._) * output.getNDConf() >> Mock(NDConfiguration)
             (1.._) * input.getNDConf() >> ndc
             (1.._) * ndc.shape() >> new int[]{1,2}
-            (1.._) * op.isInline() >> false
-            (1.._) * op.getAlgorithmFor(_) >> implementation
+            (0.._) * op.isInline() >> false
+            (0.._) * op.getAlgorithmFor(_) >> implementation
             (0.._) * implementation.execute(_,_) >> Result.of(output).withAutoDiff(adSource)
             (1.._) * output.getUnsafe() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
             (1.._) * output.isIntermediate() >> true
             (1.._) * device.access( _ ) >> Mock(Device.Access)
             (1.._) * op.execute( _, _ ) >> Result.of(output).withADAction(action)
-            (1.._) * action.findCaptured() >> new Tsr[0]
+            (0.._) * action.findCaptured() >> new Tsr[0]
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
-            (1.._) * input.getGraphNode() >> node
+            (0.._) * input.getGraphNode() >> node
             (0.._) * input.get(GraphNode) >> node
             (1.._) * node.getLock() >> Mock(GraphLock)
-            (1.._) * input.getDevice() >> device // Device is being queried for execution...
+            (0.._) * input.getDevice() >> device // Device is being queried for execution...
             _ * op.getOperator() >> 'test_identifier'
-            (1.._) * output.getDevice() >> device
+            (0.._) * output.getDevice() >> device
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
-            (1.._) * implementation.autoDiffModeFrom(_) >> AutoDiffMode.BACKWARD_ONLY
+            (0.._) * implementation.autoDiffModeFrom(_) >> AutoDiffMode.BACKWARD_ONLY
             (0.._) * node.getPayload() >> input
-            (1.._) * node.usesAD() >> true
+            (0.._) * node.usesAD() >> true
 
         and : 'The agent creator is being accessed because "doAD" is set to true and the input requires gradients.'
             (0.._) * adSource.supplyADActionFor(_,_) >> action
