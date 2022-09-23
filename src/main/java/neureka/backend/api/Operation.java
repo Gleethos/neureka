@@ -219,20 +219,12 @@ public interface Operation
                 only flat functions can be executed directly                         */
 
             if ( d < 0 && caller.isDoingAD() ) {
-                Result[] ref = {null}; // We need to keep a reference so that the garbage collector does not collect the result!
-                new GraphNode<>(
-                        caller,
-                        call,
-                        () -> { // This "ref" is a bit of a hack... TODO: fix
-                            ref[0] = execution.get();
-                            return ref[0];
-                        }
-                );
-                return ref[0];
+                LazyRef<Result> ref = LazyRef.of(execution); // We need to keep a reference so that the garbage collector does not collect the result!
+                new GraphNode<>(caller, call, ref::get);// This "ref" is a little bit of a hack... TODO: fix
+                return ref.get();
             }
         }
         return execution.get();
-
     }
 
     /**
