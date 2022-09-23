@@ -95,7 +95,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
 
         then : 'The constructor throws the expected error message.'
             def exception = thrown(NullPointerException)
-            exception.message == "The supplied payload tensor must no be null!"
+            exception.message == "The result must no be null!"
     }
 
 

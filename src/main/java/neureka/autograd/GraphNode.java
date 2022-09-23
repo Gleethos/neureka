@@ -146,7 +146,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
 
         Result out = payloadSupplier.get();
-        if ( out == null ) throw new NullPointerException( "The supplied payload tensor must no be null!" );
+        if ( out == null ) throw new NullPointerException( "The result must no be null!" );
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
         NodePayload<V> data = new NodePayload<>(null, null);
         if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!

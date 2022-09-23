@@ -41,6 +41,7 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
+import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 
@@ -192,6 +193,16 @@ public interface Operation
     boolean isInline();
 
     <T extends Algorithm> boolean supports( Class<T> implementation );
+
+    default Result execute(Function caller, ExecutionCall<?> call ) {
+        Result result = call.getAlgorithm().execute( caller, call );
+        if ( result != null ) return result;
+        throw new IllegalStateException(
+                "Missing return value of " + Execution.class.getSimpleName() + " in algorithm '" +
+                        call.getAlgorithm().getClass().getSimpleName() + "' in operation '" +
+                        call.getOperation().getClass().getName()+"'"
+        );
+    }
 
     /**
      * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
