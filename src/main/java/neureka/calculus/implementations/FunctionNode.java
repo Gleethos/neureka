@@ -81,19 +81,26 @@ public final class FunctionNode implements Function
     public List<Function> getSubFunctions() { return Arrays.asList(_src); }
 
     @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
-        return _preprocess(
-                inputs,
-                this,
-                () -> {
-                    ExecutionCall<? extends Device<?>> call = ExecutionCall.of(inputs)
-                                                                            .andArgs( arguments.getAll(Arg.class) )
-                                                                            .running(_operation)
-                                                                            .on( _deviceFor(inputs) );
+    public Tsr<?> execute( Args arguments, Tsr<?>... inputs )
+    {
+        Supplier<Tsr<?>> exec = () -> {
+            ExecutionCall<? extends Device<?>> call = ExecutionCall.of(inputs)
+                                                                    .andArgs(arguments.getAll(Arg.class))
+                                                                    .running(_operation)
+                                                                    .on(_deviceFor(inputs));
+            return call.getOperation().execute( this, call ).get();
+        };
 
-                    return call.getOperation().execute( this, call ).get();
-                }
-        );
+        if ( !this.isDoingAD() )
+            return exec.get();
+
+        Reshape.makeFit( inputs, this.isDoingAD() ); // reshaping if needed
+
+        for ( Tsr<?> t : inputs )
+            if ( t.getGraphNode() == null )
+                new GraphNode<>( this, null, () -> Result.of(t) );
+
+        return exec.get();
     }
 
     /**
@@ -155,37 +162,5 @@ public final class FunctionNode implements Function
 
     @Override
     public boolean isDoingAD() { return _isDoingAD; }
-
-    private Tsr<?> _preprocess(
-            Tsr<?>[] inputs,
-            Function function,
-            Supplier<Tsr<?>> activation
-    ) {
-        if ( !function.isDoingAD() )
-            return activation.get();
-
-        Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
-        return _commit( inputs, function, activation );
-    }
-
-    private static Tsr<?> _commit(
-            Tsr<?>[] inputs,
-            Function function,
-            Supplier<Tsr<?>> activation
-    ) {
-        _attachGraph( inputs, function );
-        return activation.get();
-    }
-
-    private static void _attachGraph(
-            Tsr<?>[] inputs,
-            Function function
-    ) {
-        for ( Tsr<?> t : inputs )
-            if ( t.getGraphNode() == null )
-                new GraphNode<>( function, null, () -> Result.of(t) );
-
-    }
-
 
 }
