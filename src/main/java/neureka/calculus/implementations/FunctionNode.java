@@ -83,20 +83,15 @@ public final class FunctionNode implements Function
     @Override
     public Tsr<?> execute( Args arguments, Tsr<?>... inputs )
     {
-        Supplier<Tsr<?>> exec = () -> {
-            ExecutionCall<? extends Device<?>> call = ExecutionCall.of(inputs)
-                                                                    .andArgs(arguments.getAll(Arg.class))
-                                                                    .running(_operation)
-                                                                    .on(_deviceFor(inputs));
-            return call.getOperation()
-                       .execute( this, call ).get();
-        };
+        if ( this.isDoingAD() )
+            Reshape.makeFit( inputs, this.isDoingAD() ); // reshaping if needed
 
-        if ( !this.isDoingAD() ) return exec.get();
-
-        Reshape.makeFit( inputs, this.isDoingAD() ); // reshaping if needed
-
-        return exec.get();
+        ExecutionCall<? extends Device<?>> call = ExecutionCall.of(inputs)
+                                                                .andArgs(arguments.getAll(Arg.class))
+                                                                .running(_operation)
+                                                                .on(_deviceFor(inputs));
+        return call.getOperation()
+                .execute( this, call ).get();
     }
 
     /**
