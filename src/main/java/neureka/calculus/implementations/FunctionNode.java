@@ -1,7 +1,6 @@
 package neureka.calculus.implementations;
 
 import neureka.Tsr;
-import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -165,25 +164,8 @@ public final class FunctionNode implements Function
         if ( !function.isDoingAD() )
             return activation.get();
 
-        boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.
-        // ( => needs to be locked again! )
-        Tsr<?> untracked = null;
-        for ( Tsr<?> t : inputs ) {
-            GraphNode<?> node = t.get( GraphNode.class );
-            if ( node != null ) {
-                untracked = t;
-                allLocked = node.getLock().isLocked() && allLocked;
-            }
-        }
-
         Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
-
-        if ( untracked == null || !allLocked )  // If graph tracking (nodes) has not yet been initialized!
-            return _commit( inputs, function, activation );
-
-        GraphLock lock =  untracked.get( GraphNode.class ).getLock();
-        _attachGraph( inputs, function, lock );
-        return activation.get();
+        return _commit( inputs, function, activation );
     }
 
     private static Tsr<?> _commit(
@@ -191,22 +173,18 @@ public final class FunctionNode implements Function
             Function function,
             Supplier<Tsr<?>> activation
     ) {
-        GraphLock newLock = new GraphLock( function );
-        _attachGraph( inputs, function, newLock );
-        Tsr<?> result = activation.get();
-        newLock.release();
-        return result;
+        _attachGraph( inputs, function );
+        return activation.get();
     }
 
     private static void _attachGraph(
             Tsr<?>[] inputs,
-            Function function,
-            GraphLock newLock
+            Function function
     ) {
-        for ( Tsr<?> t : inputs ) {
-            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );
-            else new GraphNode<>( function, newLock, () -> Result.of(t) );
-        }
+        for ( Tsr<?> t : inputs )
+            if ( t.getGraphNode() == null )
+                new GraphNode<>( function, null, () -> Result.of(t) );
+
     }
 
 

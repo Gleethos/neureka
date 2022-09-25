@@ -63,14 +63,12 @@ class AD_And_Computation_Graph_Spec extends Specification
         and : 'We expect the partial derivative to be cleaned up! (size == 0)'
             na.size()==0
             na.getNodeID()==1
-            !na.getLock().isLocked()
 
             !nb.isLeave()
             nb.function != null
             nb.getMode() == -1
             nb.size()==0
             nb.getNodeID()!=1
-            !nb.getLock().isLocked()
     }
 
     def "Payloads and derivatives are null after garbage collection."()

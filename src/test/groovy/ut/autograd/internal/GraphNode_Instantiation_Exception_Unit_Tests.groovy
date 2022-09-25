@@ -2,13 +2,12 @@ package ut.autograd.internal
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.devices.Device
-import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
-import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.template.operations.AbstractOperation
 import neureka.backend.api.Operation
+import neureka.backend.api.template.operations.AbstractOperation
+import neureka.calculus.Function
+import neureka.devices.Device
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
 
@@ -47,58 +46,6 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
         })
     }
 
-    def 'GraphNode throws an exception when trying to instantiate it with the wrong context.'()
-    {
-        given : 'Mocked arguments used to call the GraphNode constructor...'
-            Function function = Mock(Function)
-            Supplier<Tsr> supplier = () -> Mock(Tsr)
-        and : 'Also a nonsensical context object which is of type "Integer".'
-            Object context = new Integer(3)
-
-        when : 'We try to instantiate a GraphNode using the above variables...'
-            new GraphNode<Object>(function, context, supplier)
-
-        then : 'The constructor throws the expected error message.'
-            def exception = thrown(IllegalArgumentException)
-            exception.message == "The passed context object for the GraphNode constructor is of type 'java.lang.Integer'.\n" +
-                    "A given context must either be a GraphLock instance or an ExecutionCall."
-
-        and : 'The node will check if autograd is enabled upon construction...'
-            0 * function.isDoingAD()
-    }
-
-    def 'GraphNode throws exception when trying to instantiate it with the Function argument being null.'()
-    {
-        given : 'Arguments used to call the GraphNode constructor where the Function variable is null.'
-            Function function = null
-            Supplier<Tsr> supplier = () -> Mock(Tsr)
-            Object context = Mock(GraphLock)
-
-        when : 'We try to instantiate a GraphNode...'
-            new GraphNode(function, context, supplier)
-
-        then : 'The constructor throws the expected error message.'
-            def exception = thrown(IllegalArgumentException)
-            exception.message == "Passed constructor argument of type Function must not be null!"
-    }
-
-
-    def 'GraphNode throws exception when payload is null.'()
-    {
-        given : 'Arguments used to call the GraphNode constructor where the payload supplier return null.'
-            Function function = Mock(Function)
-            Supplier<Tsr> supplier = () -> null
-            Object context = Mock(GraphLock)
-
-        when : 'We try to instantiate a GraphNode...'
-            new GraphNode(function, context, supplier)
-
-        then : 'The constructor throws the expected error message.'
-            def exception = thrown(NullPointerException)
-            exception.message == "The result must no be null!"
-    }
-
-
     def 'GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.'()
     {
         given : 'Mocked arguments used to call the GraphNode constructor.'
@@ -122,7 +69,6 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
 
         and : 'The mock objects are being called as expected.'
             1 * context.inputs() >> inputs
-            2 * inputsNodeMock.getLock() >> Mock( GraphLock )
             0 * function.isDoingAD() >> true
             0 * payload.getDevice() >> device
             0 * payload.to( _ )
@@ -135,47 +81,6 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             0 * inputs[2].getGraphNode() >> null
             0 * context.allowsForward() >> true
     }
-
-
-    def 'GraphNode instantiation throws exception because GraphNode instances of input tensors do not share the same GraphLock.'()
-    {
-        given : 'Mocked arguments used to call the GraphNode constructor.'
-            Tsr payload = Mock( Tsr )
-            Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
-            Supplier<Tsr> supplier = () -> payload
-            Function function = Mock( Function )
-            Operation type = Mock(Operation)
-            Object context = Mock( ExecutionCall )
-            Device device = Mock( Device )
-            def inputsNodeMock = Mock( GraphNode )
-            def otherInputsNodeMock = Mock( GraphNode )
-
-        when : 'We try to instantiate a GraphNode...'
-            new GraphNode( function, context, supplier )
-
-        then : 'The expected exception message is being thrown.'
-            def exception = thrown(IllegalStateException)
-            exception.message ==
-                    "GraphNode instances found in input tensors do not share the same GraphLock instance.\n" +
-                    "The given input tensors of a new node must be part of the same locked computation graph!"
-
-        and : 'The mock objects are being called as expected.'
-            1 * context.inputs() >> inputs
-            3 * inputsNodeMock.getLock() >> Mock( GraphLock )
-            1 * otherInputsNodeMock.getLock() >> Mock( GraphLock )
-            0 * function.isDoingAD() >> true
-            0 * payload.getDevice() >> device
-            0 * payload.to( _ )
-            0 * device.cleaning( payload, _ )
-            (1.._) * function.getOperation() >> type
-            (0.._) * type.isDifferentiable() >> true
-            (1.._) * type.isInline() >> true
-            1 * inputs[0].getGraphNode() >> inputsNodeMock
-            1 * inputs[1].getGraphNode() >> inputsNodeMock
-            1 * inputs[2].getGraphNode() >> otherInputsNodeMock
-            0 * context.allowsForward() >> true
-    }
-
 
     def 'GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.'()
     {
@@ -201,7 +106,6 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
 
         and : 'The mock objects have been called as expected.'
             1 * context.inputs() >> inputs
-            2 * inputsNodeMock.getLock() >> Mock( GraphLock )
             0 * function.isDoingAD() >> true
             1 * type.isInline() >> true
             0 * payload.getDevice() >> device

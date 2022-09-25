@@ -44,6 +44,7 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
+import neureka.devices.Device;
 
 import java.util.function.Supplier;
 
@@ -220,7 +221,7 @@ public interface Operation
 
             if ( d < 0 && caller.isDoingAD() ) {
                 LazyRef<Result> ref = LazyRef.of(execution); // We need to keep a reference so that the garbage collector does not collect the result!
-                new GraphNode<>(caller, call, ref::get);// This "ref" is a little bit of a hack... TODO: fix
+                new GraphNode<>(caller, (ExecutionCall<Device<?>>) call, ref::get);// This "ref" is a little bit of a hack... TODO: fix
                 return ref.get();
             }
         }
@@ -235,7 +236,7 @@ public interface Operation
      * <br><br>
      * This is also the reason why the last parameter of this method is a list of Function objects :
      * The list stores the child nodes of the Function node that is currently being processed.
-     * Therefore when implementing this method one should first call the child nodes in
+     * Therefore, when implementing this method one should first call the child nodes in
      * order to get the "real inputs" of this current node.
      * <br><br>
      * One might ask : Why does that not happen automatically?
