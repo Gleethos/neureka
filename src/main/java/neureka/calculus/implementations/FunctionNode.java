@@ -96,10 +96,6 @@ public final class FunctionNode implements Function
 
         Reshape.makeFit( inputs, this.isDoingAD() ); // reshaping if needed
 
-        for ( Tsr<?> t : inputs )
-            if ( t.getGraphNode() == null )
-                new GraphNode<>( this, null, () -> Result.of(t) );
-
         return exec.get();
     }
 

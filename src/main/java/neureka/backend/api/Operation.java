@@ -199,6 +199,11 @@ public interface Operation
 
     default Result execute( Function caller, ExecutionCall<?> call )
     {
+
+        for ( Tsr<?> t : call.inputs() )
+            if ( t.getGraphNode() == null )
+                new GraphNode<>( caller, null, () -> Result.of(t) );
+
         Supplier<Result> execution = ()->{
             Result result = call.getAlgorithm().execute( caller, call );
             if ( result != null ) return result;
