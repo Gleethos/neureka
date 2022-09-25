@@ -163,7 +163,7 @@ public final class FunctionNode implements Function
             Supplier<Tsr<?>> activation
     ) {
         if ( !function.isDoingAD() )
-            return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
+            return activation.get();
 
         boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.
         // ( => needs to be locked again! )
@@ -175,6 +175,9 @@ public final class FunctionNode implements Function
                 allLocked = node.getLock().isLocked() && allLocked;
             }
         }
+
+        Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
+
         if ( untracked == null || !allLocked )  // If graph tracking (nodes) has not yet been initialized!
             return _commit( inputs, function, activation );
 
@@ -188,14 +191,9 @@ public final class FunctionNode implements Function
             Function function,
             Supplier<Tsr<?>> activation
     ) {
-        Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
-
         GraphLock newLock = new GraphLock( function );
         _attachGraph( inputs, function, newLock );
-        Tsr<?> result;
-        if ( activation == null ) result = function.execute( inputs );
-        else result = activation.get();
-
+        Tsr<?> result = activation.get();
         newLock.release();
         return result;
     }
