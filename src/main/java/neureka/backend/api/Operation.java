@@ -180,7 +180,6 @@ public interface Operation
      */
     boolean isIndexer();
 
-
     @Deprecated
     boolean isDifferentiable();
 
@@ -199,38 +198,31 @@ public interface Operation
 
     default Result execute( Function caller, ExecutionCall<?> call )
     {
+        LazyRef<Result> ref = LazyRef.of(()->{
+                                    Result result = call.getAlgorithm().execute( caller, call );
+                                    if ( result != null ) return result;
+                                    throw new IllegalStateException(
+                                            "Missing return value of " + Execution.class.getSimpleName() + " in algorithm '" +
+                                            call.getAlgorithm().getClass().getSimpleName() + "' in operation '" +
+                                            call.getOperation().getClass().getName()+"'"
+                                        );
+                                });
 
         for ( Tsr<?> t : call.inputs() )
             if ( t.getGraphNode() == null )
                 new GraphNode<>( caller, null, () -> Result.of(t) );
 
-        Supplier<Result> execution = ()->{
-            Result result = call.getAlgorithm().execute( caller, call );
-            if ( result != null ) return result;
-            throw new IllegalStateException(
-                    "Missing return value of " + Execution.class.getSimpleName() + " in algorithm '" +
-                    call.getAlgorithm().getClass().getSimpleName() + "' in operation '" +
-                    call.getOperation().getClass().getName()+"'"
-                );
-        };
-
-        if ( caller.isFlat() ) call.checkArity();
-
-        int d = call.getDerivativeIndex();
-
         if ( caller.isFlat() )
         {
+            call.checkArity();
             /*  The following code is reached in flat functions only:
                 Autograd-Graph will be generated below for the new GraphNode:
                 only flat functions can be executed directly                         */
 
-            if ( d < 0 && caller.isDoingAD() ) {
-                LazyRef<Result> ref = LazyRef.of(execution); // We need to keep a reference so that the garbage collector does not collect the result!
-                new GraphNode<>(caller, (ExecutionCall<Device<?>>) call, ref::get);// This "ref" is a little bit of a hack... TODO: fix
-                return ref.get();
-            }
+            if ( call.getDerivativeIndex() < 0 && caller.isDoingAD() )
+                new GraphNode<>(caller, (ExecutionCall<Device<?>>) call, ref::get);
         }
-        return execution.get();
+        return ref.get();
     }
 
     /**
