@@ -99,15 +99,52 @@ class Tensor_Instantiation_Spec extends Specification
             3     || Byte
     }
 
-    def 'Tensors can be instantiated based on lists for both shapes and values.'()
+    def 'A matrix tensor can be instantiated using lists for it\'s shape and values.'()
     {
-        given : 'We create a tensor using the "of" factory method by passing a shape list and a list of items.'
+        reportInfo """
+            Note that the following example of tensor instantiation is 
+            best suited for when Neureka is used in a scripting environment
+            like Groovy or Jython which support square bracket list notation.
+            In Java code it is recommended to use the fluent API.
+        """
+
+        given : """
+            We create a tensor using the "of" factory method by passing a shape list and a list of items.
+            Note that that length of the values list does not need to match the product of the shape list.
+            The values list will be repeatedly iterated over until the tensor is filled.
+        """
             Tsr<Integer> t = Tsr.of([2, 2], [2, 4, 4])
-        expect :
+        expect : 'We passed integers to the factory method, so the resulting tensor is expected to be a tensor of that type.'
+            t.itemType == Integer
+        and : 'The tensor has the expected shape and items.'
+            t.shape == [ 2, 2 ]
+            t.items == [ 2, 4, 4, 2 ]
+        and : 'We can also observe its state when converting it to a string.'
             t.toString() == "(2x2):[2.0, 4.0, 4.0, 2.0]"
-        when :
-            t = Tsr.of([2], [3, 5, 7])
-        then :
+        and :
+            t.getItemsAs( double[].class ).length == 4
+    }
+
+    def 'A simple 2D vector can be instantiated using lists for it\'s shape and values.'()
+    {
+        reportInfo """
+            Note that the following example of tensor instantiation is 
+            best suited for when Neureka is used in a scripting environment
+            like Groovy or Jython which support square bracket list notation.
+            In Java code it is recommended to use the fluent API.
+        """
+        given : """
+            We create a tensor using the "of" factory method by passing a shape list and a list of items.
+            Note that that length of the values list does not need to match the product of the shape list.
+            The values list will be repeatedly iterated over until the tensor is filled.
+        """
+            Tsr<Integer> t = Tsr.of([2], [3, 5, 7])
+        expect : 'We passed integers to the factory method, so the resulting tensor is expected to be a tensor of that type.'
+            t.itemType == Integer
+        and : 'The tensor has the expected shape and items.'
+            t.shape == [ 2 ]
+            t.items == [ 3, 5 ]
+        and : 'We can also view the entire tensor when converting it to a string.'
             t.toString() == "(2):[3.0, 5.0]"
             t.getItemsAs( double[].class ).length == 2
     }
