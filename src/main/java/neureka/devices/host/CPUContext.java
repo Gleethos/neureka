@@ -10,13 +10,11 @@ import neureka.backend.main.implementations.elementwise.*;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.scalar.CPUScalarFunction;
 import neureka.backend.main.operations.functions.*;
-import neureka.backend.main.operations.linear.CPUMatMul;
-import neureka.backend.main.operations.linear.Convolution;
-import neureka.backend.main.operations.linear.MatMul;
-import neureka.backend.main.operations.operator.Addition;
-import neureka.backend.main.operations.operator.Multiplication;
-import neureka.backend.main.operations.operator.Power;
-import neureka.backend.main.operations.operator.Subtraction;
+import neureka.backend.main.operations.linear.*;
+import neureka.backend.main.operations.operator.*;
+import neureka.backend.main.operations.other.AssignLeft;
+import neureka.backend.main.operations.other.Sum;
+import neureka.backend.main.operations.other.internal.CPUSum;
 
 public class CPUContext implements BackendExtension
 {
@@ -58,11 +56,32 @@ public class CPUContext implements BackendExtension
                 .set( Broadcast.class,     context -> new CPUBroadcastMultiplication() )
                 .set( BiElementWise.class, context -> new CPUBiElementWiseMultiplication() );
 
+        receive.forOperation( Division.class )
+                .set( Scalarization.class, context -> new CPUScalarBroadcastDivision() )
+                .set( Broadcast.class,     context -> new CPUBroadcastDivision() )
+                .set( BiElementWise.class, context -> new CPUBiElementWiseDivision() );
+
+        receive.forOperation( Modulo.class )
+                .set( Scalarization.class, context -> new CPUScalarBroadcastModulo() )
+                .set( Broadcast.class,     context -> new CPUBroadcastModulo() )
+                .set( BiElementWise.class, context -> new CPUBiElementWiseModulo() );
+
+        receive.forOperation( AssignLeft.class )
+                .set( Scalarization.class, context -> new CPUScalarBroadcastIdentity() )
+                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.IDENTITY) );
+
         receive.forOperation( Convolution.class )
                .set( NDConvolution.class, context -> new CPUConvolution() );
+        receive.forOperation( XConvLeft.class )
+                .set( NDConvolution.class, context -> new CPUConvolution() );
+        receive.forOperation( XConvRight.class )
+                .set( NDConvolution.class, context -> new CPUConvolution() );
 
         receive.forOperation( MatMul.class )
-               .set( MatMulAlgorithm.class, context -> new CPUMatMul() );
+                .set( MatMulAlgorithm.class, context -> new CPUMatMul() );
+
+        receive.forOperation( Sum.class )
+                .set( SumAlgorithm.class, context -> new CPUSum() );
 
         receive.forOperation( Absolute.class )
                 .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.ABSOLUTE) )

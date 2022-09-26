@@ -41,29 +41,11 @@ public class Division extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        BiElementWise biElementWise = new BiElementWise(ElemWiseUtil::forDivisionsOrModuli)
-                                   .setSupplyADActionFor( getDefaultAlgorithm() )
-                                    .buildFunAlgorithm();
-
         setAlgorithm(
             BiElementWise.class,
-            biElementWise
-                .setImplementationFor(
-                    CPU.class,
-                    new CPUBiElementWiseDivision()
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLBiElementwise(
-                        this.getIdentifier(),
-                        "output = input1 / input2;\n",
-                        "    if ( d == 0 ) {                                   \n" +
-                        "        output = 1 / input2;                           \n" +
-                        "    } else {                                           \n" +
-                        "        output = -input2 / (float)pow(input1, 2.0f);   \n" +
-                        "    }                                                  \n"
-                    )
-                )
+            new BiElementWise(ElemWiseUtil::forDivisionsOrModuli)
+            .setSupplyADActionFor( getDefaultAlgorithm() )
+            .buildFunAlgorithm()
         );
 
         //________________
@@ -94,14 +76,6 @@ public class Division extends AbstractOperation
                     }
                 )
                 .buildFunAlgorithm()
-                .setImplementationFor(
-                    CPU.class,
-                    new CPUBroadcastDivision()
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLBroadcastDivision( this.getIdentifier() )
-                )
         );
 
         //___________________________
@@ -114,14 +88,6 @@ public class Division extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setDeviceExecution( (call, callback) -> ElemWiseUtil.forDivisionsOrModuli(call, callback) )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                new CPUScalarBroadcastDivision()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLScalarBroadcastDivision( this.getIdentifier() )
-            )
         );
     }
 

@@ -9,15 +9,8 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.CPUImplementation;
-import neureka.backend.main.implementations.broadcast.CLBroadcastIdentity;
-import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastIdentity;
-import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
-import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
 
 public class AssignLeft extends AbstractOperation
 {
@@ -60,14 +53,6 @@ public class AssignLeft extends AbstractOperation
                 }
             )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                new CPUScalarBroadcastIdentity()
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLBroadcastIdentity( this.getIdentifier() )
-            )
         );
 
         setAlgorithm(
@@ -91,24 +76,6 @@ public class AssignLeft extends AbstractOperation
                     }
             )
             .buildFunAlgorithm()
-            .setImplementationFor(
-                CPU.class,
-                CPUImplementation
-                    .withArity(2)
-                    .andImplementation(
-                        call -> {
-                            call.input( 0 ).setIsVirtual( false );
-                            return Neureka.get().backend().getOperation("idy")
-                                    .getAlgorithm( Activation.class )
-                                    .getImplementationFor( CPU.class )
-                                    .run(call);
-                        }
-                    )
-            )
-            .setImplementationFor(
-                OpenCLDevice.class,
-                new CLElementwiseFunction(ScalarFun.IDENTITY )
-            )
         );
     }
 

@@ -176,7 +176,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
      * @param isSuitableFor The suitability predicate which determines if the algorithm is suitable or not.
      * @return This very instance to enable method chaining.
      */
-    public final AbstractFunDeviceAlgorithm<C> setIsSuitableFor(SuitabilityPredicate isSuitableFor ) {
+    public final AbstractFunDeviceAlgorithm<C> setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
         _isSuitableFor = _checked(isSuitableFor, _isSuitableFor, SuitabilityPredicate.class);
         return this;
     }

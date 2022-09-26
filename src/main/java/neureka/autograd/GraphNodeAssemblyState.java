@@ -26,8 +26,6 @@ final class GraphNodeAssemblyState<V> {
 
     private GraphNode<V>[] _parents;
 
-    private GraphLock _lock;
-
     private TreeMap<GraphNode<V>, Value> _targetsToAgents;
 
     /**
@@ -120,10 +118,6 @@ final class GraphNodeAssemblyState<V> {
     public GraphNode<V>[] parents() { return _parents; }
 
     public void setParents(GraphNode<V>[] parents ) { _parents = parents; }
-
-    public GraphLock lock() { return _lock; }
-
-    public void setLock(GraphLock lock) { _lock = lock; }
 
     private static class Value {
         private final int _index;

@@ -1,12 +1,9 @@
 package neureka.backend.main.algorithms;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.fun.ADActionSupplier;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
-import neureka.backend.main.algorithms.internal.WithForward;
-import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;

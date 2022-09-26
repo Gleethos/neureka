@@ -41,8 +41,8 @@ package neureka.autograd;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -109,28 +109,19 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     private final NodePayload<V> _nodePayload;
 
-    private GraphLock _lock;
-
     private List<WeakReference<GraphNode<V>>> _children;
 
 
     /**
      * @param function        Is the function that lead to the creation of this node.
-     * @param context         Can be either an array of tensors or a new lock (for leave node or fresh function locking)
+     * @param call            The execution call, or null if the node is not a result of an execution call (a leave).
      * @param payloadSupplier Provides the payload of this node.
      */
-    public GraphNode( Function function, Object context, Supplier<Result> payloadSupplier ) {
+    public GraphNode( Function function, ExecutionCall<Device<?>> call, Supplier<Result> payloadSupplier ) {
         if ( function == null )
             throw new IllegalArgumentException("Passed constructor argument of type Function must not be null!");
 
-        if ( !(context instanceof ExecutionCall) && !(context instanceof GraphLock) )
-            throw new IllegalArgumentException(
-                    "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
-                            "A given context must either be a GraphLock instance or an ExecutionCall."
-            );
-
-        if ( context instanceof ExecutionCall ) {
-            ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
+        if ( call != null ) {
             Tsr<?>[] inputs = call.inputs();
             /* Applying JITProp and gradients */
             Neureka.Settings.AutoGrad adSetting = Neureka.get().settings().autograd();
@@ -146,7 +137,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
 
         Result out = payloadSupplier.get();
-        if ( out == null ) throw new NullPointerException( "The supplied payload tensor must no be null!" );
+        if ( out == null ) throw new NullPointerException( "The result must no be null!" );
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
         NodePayload<V> data = new NodePayload<>(null, null);
         if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
@@ -161,22 +152,19 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
                 if ( allChildrenUseForwardAD && node._targetsToAgents != null ) node._targetsToAgents.clear();
             });
-            if ( context instanceof GraphLock ) { // Note function is always null in this case:
-                a.setLock( (GraphLock) context );
+            if ( call == null ) { // Note function is always null in this case:
                 a.setMode( out.get().rqsGradient() ? 1 : 0 );
                 a.setFunction(null);
                 a.setParents(null);
-            } else { // -> context instanceof ExecutionCall
-                ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
+            } else {
                 Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
-                a.setLock( inputs[0].getGraphNode().getLock() );
                 a.modeOf( call );
                 a.setFunction( function );
                 a.setParents( new GraphNode[inputs.length] );
             }
             ((Tsr<V>)out.get()).set(this);
-            if ( context instanceof ExecutionCall<?> ) {
-                Tsr<V>[] inputs = (Tsr<V>[]) ((ExecutionCall<Device<?>>) context).inputs();
+            if ( call != null ) {
+                Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
                 for ( int i = 0; i < inputs.length; i++ ) {
                     a.parents()[i] = inputs[i].getGraphNode();
                     if ( a.parents()[i] == null )
@@ -187,19 +175,18 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
         }
         _nodePayload = data;
-        _lock = a.lock();
         _mode = a.mode();
         _function = a.function();
         _adMode = a.adMode();
         _parents = a.parents();
         _nodeID = _calculateNodeID( _function, _parents );
-        if ( context instanceof ExecutionCall<?> && function.isFlat() ) // Leave nodes don't need agents!
-            _registerAgents( a, out, function, (ExecutionCall<?>) context );
+        if ( call != null && function.isFlat() ) // Leave nodes don't need agents!
+            _registerAgents( a, out, function, call );
         _targetsToAgents = a.getTargets();
     }
 
-    private void _checkInputValidity( Tsr<?>[] inputs, Function function ) {
-        GraphLock foundLock = null;
+    private void _checkInputValidity( Tsr<?>[] inputs, Function function )
+    {
         for ( int i = 0; i < inputs.length; i++ ) {
             GraphNode<V> child = (GraphNode<V>) inputs[ i ].getGraphNode();
             if ( child == null )
@@ -207,12 +194,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
                        "Input tensors of a new GraphNode must be part of the computation graph!"
                     );
-            if ( foundLock == null ) foundLock = child.getLock();
-            if ( foundLock != child.getLock() )
-                throw new IllegalStateException(
-                        "GraphNode instances found in input tensors do not share the same GraphLock instance.\n" +
-                        "The given input tensors of a new node must be part of the same locked computation graph!"
-                );
             if ( function.getOperation().isInline() && child.usesAD() )
                 throw new IllegalStateException(
                         "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
@@ -366,11 +347,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public boolean isCacheable() { return ( this.getNodeID() != 1 ); }
 
     /**
-     * @param newLock The new lock of this GraphNode.
-     */
-    public synchronized void obtainLocking( GraphLock newLock ) { _lock = newLock; }
-
-    /**
      * This node (and the corresponding tensor) was not created by a function! (it's a leave tensor)
      *
      * @return boolean
@@ -380,7 +356,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public boolean isGraphLeave() {
         if ( this.isLeave() ) return true;
         for ( GraphNode<V> p : _parents )
-            if ( p.getLock() != this.getLock() ) return true;
+            if ( p != null ) return true;
 
         return false;
     }
@@ -766,12 +742,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public DataType<V> getPayloadDataType() { return _nodePayload.payloadDataType(); }
 
     /**
-     * "Lock object" for graph identity. (result caching)
-     * Unique object which locks the payload to the current computation graph.
-     */
-    public GraphLock getLock() { return _lock; }
-
-    /**
      *  The children are {@link GraphNode} instances which represent computations
      *  involving the payload of this very {@link GraphNode} instance.
      */
@@ -815,7 +785,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "]";
 
             case FANCY:
-                return "]> LOCK: " + getLock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, Print.COMPACT ) + "\n]\n]|END|>";
+                return "]> GRAPH:\n]\n" + _toString( "]    0", true, Print.COMPACT ) + "\n]\n]|END|>";
 
             case COMPACT:
                 String nid = this.getClass().getSimpleName();// + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );

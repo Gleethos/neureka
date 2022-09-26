@@ -1,10 +1,8 @@
 package ut.tensors
 
-
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
@@ -240,8 +238,8 @@ class Tensor_IO_Spec extends Specification
             'CPU'  | Float
             'CPU'  | Byte
             'CPU'  | Short
-            //'CPU'  | Integer
-            //'CPU'  | Long
+            'CPU'  | Integer
+            'CPU'  | Long
             //'GPU'  | Float
     }
 

@@ -1,11 +1,9 @@
 package neureka.calculus.implementations;
 
 import neureka.Tsr;
-import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.fun.Execution;
 import neureka.backend.api.Result;
 import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
@@ -83,53 +81,17 @@ public final class FunctionNode implements Function
     public List<Function> getSubFunctions() { return Arrays.asList(_src); }
 
     @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
-        return _preprocess(
-                inputs,
-                this,
-                () -> {
-                    ExecutionCall<? extends Device<?>> call = ExecutionCall.of(inputs)
-                                                                            .andArgs( arguments.getAll(Arg.class) )
-                                                                            .running(_operation)
-                                                                            .on( _deviceFor(inputs) );
-
-                    if ( _isFlat ) call.checkArity();
-
-                    int d = arguments.valOfOr( Arg.DerivIdx.class, -1 );
-
-                    if ( _isFlat )
-                    {
-                        /*  The following code is reached in flat functions only:
-                            Autograd-Graph will be generated below for the new GraphNode:
-                            only flat functions can be executed directly                         */
-
-                        if ( d < 0 && _isDoingAD ) {
-                            Result[] ref = {null}; // We need to keep a reference so that the garbage collector does not collect the result!
-                            new GraphNode<>(
-                                    this,
-                                    call,
-                                    () -> { // This "ref" is a bit of a hack... TODO: fix
-                                        ref[0] = _execute(call);
-                                        return ref[0];
-                                    }
-                            );
-                            return ref[0].get();
-                        }
-                    }
-                    return _execute( call ).get();
-                }
-        );
-    }
-
-    private Result _execute( ExecutionCall<? extends Device<?>> call )
+    public Tsr<?> execute( Args arguments, Tsr<?>... inputs )
     {
-        Result alternative = call.getAlgorithm().execute( this, call );
-        if ( alternative != null ) return alternative;
-        throw new IllegalStateException(
-                "Missing return value of " + Execution.class.getSimpleName() + " in algorithm '" +
-                call.getAlgorithm().getClass().getSimpleName() + "' in operation '" +
-                call.getOperation().getClass().getName()+"'"
-        );
+        if ( this.isDoingAD() )
+            Reshape.makeFit( inputs, this.isDoingAD() ); // reshaping if needed
+
+        ExecutionCall<? extends Device<?>> call = ExecutionCall.of(inputs)
+                                                                .andArgs(arguments.getAll(Arg.class))
+                                                                .running(_operation)
+                                                                .on(_deviceFor(inputs));
+        return call.getOperation()
+                .execute( this, call ).get();
     }
 
     /**
@@ -191,60 +153,5 @@ public final class FunctionNode implements Function
 
     @Override
     public boolean isDoingAD() { return _isDoingAD; }
-
-    private Tsr<?> _preprocess(
-            Tsr<?>[] inputs,
-            Function function,
-            Supplier<Tsr<?>> activation
-    ) {
-        if ( !function.isDoingAD() )
-            return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
-
-        boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.
-        // ( => needs to be locked again! )
-        Tsr<?> untracked = null;
-        for ( Tsr<?> t : inputs ) {
-            GraphNode<?> node = t.get( GraphNode.class );
-            if ( node != null ) {
-                untracked = t;
-                allLocked = node.getLock().isLocked() && allLocked;
-            }
-        }
-        if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!
-            return _commit( inputs, function, activation );
-        }
-        GraphLock lock =  untracked.get( GraphNode.class ).getLock();
-        _attachGraph( inputs, function, lock );
-        return activation.get();
-    }
-
-    private static Tsr<?> _commit(
-            Tsr<?>[] inputs,
-            Function function,
-            Supplier<Tsr<?>> activation
-    ) {
-        Reshape.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
-
-        GraphLock newLock = new GraphLock( function );
-        _attachGraph( inputs, function, newLock );
-        Tsr<?> result;
-        if ( activation == null ) result = function.execute( inputs );
-        else result = activation.get();
-
-        newLock.release();
-        return result;
-    }
-
-    private static void _attachGraph(
-            Tsr<?>[] inputs,
-            Function function,
-            GraphLock newLock
-    ) {
-        for ( Tsr<?> t : inputs ) {
-            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );
-            else new GraphNode<>( function, newLock, () -> Result.of(t) );
-        }
-    }
-
 
 }

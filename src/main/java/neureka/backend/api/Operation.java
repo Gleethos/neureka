@@ -31,7 +31,7 @@ SOFTWARE.
          | |
          |_|
 
-    The representation for operations on tensors.
+    The representation of operations on tensors.
 
 ------------------------------------------------------------------------------------------------------------------------
 */
@@ -41,8 +41,10 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
+import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
+import neureka.devices.Device;
 
 /**
  *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.
@@ -176,7 +178,6 @@ public interface Operation
      */
     boolean isIndexer();
 
-
     @Deprecated
     boolean isDifferentiable();
 
@@ -193,6 +194,35 @@ public interface Operation
 
     <T extends Algorithm> boolean supports( Class<T> implementation );
 
+    default Result execute( Function caller, ExecutionCall<?> call )
+    {
+        LazyRef<Result> ref = LazyRef.of(()->{
+                                    Result result = call.getAlgorithm().execute( caller, call );
+                                    if ( result != null ) return result;
+                                    throw new IllegalStateException(
+                                            "Missing return value of " + Execution.class.getSimpleName() + " in algorithm '" +
+                                            call.getAlgorithm().getClass().getSimpleName() + "' in operation '" +
+                                            call.getOperation().getClass().getName()+"'"
+                                        );
+                                });
+
+        for ( Tsr<?> t : call.inputs() )
+            if ( t.getGraphNode() == null )
+                new GraphNode<>( caller, null, () -> Result.of(t) );
+
+        if ( caller.isFlat() )
+        {
+            call.checkArity();
+            /*  The following code is reached in flat functions only:
+                Autograd-Graph will be generated below for the new GraphNode:
+                only flat functions can be executed directly                         */
+
+            if ( call.getDerivativeIndex() < 0 && caller.isDoingAD() )
+                new GraphNode<>(caller, (ExecutionCall<Device<?>>) call, ref::get);
+        }
+        return ref.get();
+    }
+
     /**
      * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
      * as the backend for handling the calculation of scalar inputs passed to a given abstract syntax tree of
@@ -201,7 +231,7 @@ public interface Operation
      * <br><br>
      * This is also the reason why the last parameter of this method is a list of Function objects :
      * The list stores the child nodes of the Function node that is currently being processed.
-     * Therefore when implementing this method one should first call the child nodes in
+     * Therefore, when implementing this method one should first call the child nodes in
      * order to get the "real inputs" of this current node.
      * <br><br>
      * One might ask : Why does that not happen automatically?

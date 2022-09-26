@@ -65,7 +65,7 @@ class Backend_Algorithm_AD_Spec extends Specification
             derivative.getUnsafe() >> mutate
 
         and : 'A mock ExecutionCall.'
-            var call = ExecutionCall.of().running(Mock(Operation)).algorithm(imp).on(Mock(Device))
+            var call = ExecutionCall.of().running(Mock(Operation)).on(Mock(Device))
 
         when :
             var suitability = imp.isSuitableFor(call)
@@ -92,7 +92,7 @@ class Backend_Algorithm_AD_Spec extends Specification
             Neureka.get().reset()
 
         and : 'A mock ExecutionCall.'
-            var call = ExecutionCall.of().running(Mock(Operation)).algorithm(imp).on(Mock(Device))
+            var call = ExecutionCall.of().running(Mock(Operation)).on(Mock(Device))
 
         when :
             var suitability = imp.isSuitableFor(call)
