@@ -31,7 +31,7 @@ SOFTWARE.
          | |
          |_|
 
-    The representation for operations on tensors.
+    The representation of operations on tensors.
 
 ------------------------------------------------------------------------------------------------------------------------
 */
@@ -45,8 +45,6 @@ import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.devices.Device;
-
-import java.util.function.Supplier;
 
 /**
  *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.

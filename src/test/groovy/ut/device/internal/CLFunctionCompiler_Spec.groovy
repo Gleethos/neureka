@@ -253,7 +253,6 @@ class CLFunctionCompiler_Spec extends Specification
                 .run(
                         ExecutionCall.of(Tsr.of(0d), Tsr.of(1d), Tsr.of(2d), Tsr.of(3d))
                                         .running(resultOperation)
-                                        .algorithm(algorithm)
                                         .on(mockDevice) as ExecutionCall<OpenCLDevice>
                 )
 

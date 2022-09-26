@@ -210,16 +210,13 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     @Override
     public String toString()
     {
-        String algorithmString = "?";
-        if ( _algorithm != null )
-            algorithmString = _algorithm.toString();
-
+        String algorithmString = ( _algorithm == null ? "?" : _algorithm.toString() );
         return this.getClass().getSimpleName()+"[" +
-                    "inputs="         + "[.." + _inputs.length + "..]," +
-                    "device="          + _device + "," +
-                    "operation="       + _operation + "," +
-                    "algorithm="       + algorithmString + "," +
-                    "arguments=["         + _arguments.getAll(Arg.class).stream().map( a -> a.toString() ).collect(Collectors.joining(",")) + "]" +
+                    "inputs="     + "[.." + _inputs.length + "..]," +
+                    "device="     + _device + "," +
+                    "operation="  + _operation + "," +
+                    "algorithm="  + algorithmString + "," +
+                    "arguments=[" + _arguments.getAll(Arg.class).stream().map(Arg::toString).collect(Collectors.joining(",")) + "]" +
                 "]";
     }
 
@@ -231,7 +228,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         private final Tsr<?>[] _tensors;
         private final List<Arg> _arguments = Stream.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1)).collect(Collectors.toList());
         private Operation _operation;
-        private Algorithm _algorithm;
 
         private Builder(Tsr<?>[] tensors) { _tensors = tensors; }
 
@@ -242,13 +238,9 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
         public Builder<D> running( Operation operation ) {
             LogUtil.nullArgCheck( operation, "operation", Operation.class, "Cannot build an '"+ExecutionCall.class.getSimpleName()+"' without operation." );
+            if ( _operation != null )
+                throw new IllegalArgumentException("Operation already specified as '" + _operation.getIdentifier() + "'.");
             _operation = operation;
-            return this;
-        }
-
-        public Builder<D> algorithm( Algorithm algorithm ) {
-            LogUtil.nullArgCheck( algorithm, "algorithm", Algorithm.class );
-            _algorithm = algorithm;
             return this;
         }
 
@@ -262,7 +254,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
             LogUtil.nullArgCheck( arguments, "arguments", Arg[].class );
             return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));
         }
-
     }
 
 }

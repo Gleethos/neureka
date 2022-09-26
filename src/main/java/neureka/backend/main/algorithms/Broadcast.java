@@ -57,7 +57,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
             {
                 int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );
                 if (
-                        call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()
+                    call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()
                 )
                 {
                     Tsr<?>[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };
