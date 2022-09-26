@@ -174,13 +174,12 @@ class Tensor_Instantiation_Spec extends Specification
             t1.toString() != t3.toString()
     }
 
-    def 'Passing String seed to tensor produces expected values.'()
+    def 'Passing a seed in the form of a String to a tensor produces pseudo random items.'()
     {
         when : Tsr r = Tsr.of([2, 2], "jnrejn")
         then : r.toString().contains("0.02847, -0.69068, 0.15386, 1.81382")
         when : r = Tsr.of([2, 2], "jnrejn2")
         then : !r.toString().contains("0.02600, -2.06129, -0.48373, 0.94884")
     }
-
 
 }
