@@ -22,7 +22,7 @@ import spock.lang.Title
 @Narrative('''
 
     The `FileDevice` class, one of many implementations of the `Device` interface, 
-    represents a file directory which should be able to store and load tensors as files (idx, jpg, png...).
+    represents a file directory which can store and load tensors as files (`idx`, `jpg`, `png`...).
     
 ''')
 @Subject([FileDevice, Device])
@@ -31,7 +31,7 @@ class FileDevice_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-                    This specification covers the behavior of the "FileDevice"
+                    This specification covers the behavior of the `FileDevice`
                     class, which enables the persistence of tensor data.      
             """
     }
@@ -67,7 +67,7 @@ class FileDevice_Spec extends Specification
         expect : 'Initially the device does not store our newly created tensor.'
             !device.contains(a)
 
-        when : 'Tensor "a" is being stored in the device...'
+        when : 'Tensor `a` is being stored in the device...'
             device.store( a, filename )
 
         then : 'The expected file is being created at the given path.'
