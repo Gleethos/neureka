@@ -103,7 +103,7 @@ public final class Messages
         public String bootstrapTip() {
             return !HOW_TO_INSTALL_OPENCL.isEmpty()
                     ? (HOW_TO_INSTALL_OPENCL +""+ HOW_TO_INSTALL_OPENCL_DRIVERS)
-                    : ("");
+                    : ("Make sure you have an OpenCL runtime as well as device drivers installed.\n");
         }
     }
 

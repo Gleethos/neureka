@@ -748,12 +748,13 @@ public final class Neureka
             } catch ( Throwable ex ) {// Class or one of its dependencies is not present...
                 cause = ex.getMessage();
             } finally {
+                String tipMessage = tip.get().replace("\n", "\n    "+"     ").trim();
                 if ( !found )
-                    System.out.println(
+                    _LOG.debug(
                         "Neureka:\n" +
                         "    info: Failed to load class '" + className + "'!" + groovyInfo + "\n" +
                         "    cause: " + cause + "\n" +
-                        "    tip: " + tip.get().replace("\n", "\n    "+"     ").trim() + "\n"
+                        "    tip: " + tipMessage + "\n"
                     );
             }
             return found;
