@@ -3,26 +3,37 @@ package ut.optimization
 import neureka.Neureka
 import neureka.Tsr
 import neureka.optimization.Optimizer
-import neureka.optimization.implementations.RMSprop
+import neureka.optimization.implementations.RMSProp
 import neureka.view.NDPrintSettings
+import spock.lang.Narrative
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
+@Narrative('''
+
+    **Root Mean Squared Propagation**, or RMSProp, is an extension of gradient 
+    descent and the AdaGrad version of gradient descent that uses a 
+    decaying average of partial gradients in the adaptation of the 
+    step size for each parameter.
+
+''')
 @Subject([Optimizer])
-class RMSprop_Spec extends Specification
+class RMSProp_Spec extends Specification
 {
     @Shared Tsr<?> w = Tsr.of(0d)
-    @Shared Optimizer<?> o = new RMSprop<>(w)
+    @Shared Optimizer<?> o = new RMSProp<>(w)
 
     def setupSpec()
     {
         reportHeader """
-                <h2> RMSprop Optimizer Behavior </h2>
-                <br> 
-                <p>
-                    This specification check the behavior of the RMSprop class.        
-                </p>
+                The code below assumes that for we
+                have the following 2 variables setup
+                throughout every data table iteration:
+                ```
+                    Tsr<?> w = Tsr.of(0d)
+                    Optimizer<?> o = new RMSProp<>(w)                
+                ```
             """
     }
 

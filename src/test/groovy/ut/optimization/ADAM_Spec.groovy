@@ -6,10 +6,20 @@ import neureka.calculus.Function
 import neureka.optimization.Optimizer
 import neureka.optimization.implementations.ADAM
 import neureka.view.NDPrintSettings
+import spock.lang.Narrative
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
+@Narrative('''
+
+    ADAM is a more powerful alternative to the classical stochastic gradient descent. 
+    It combines the best properties of the AdaGrad and the RMSProp algorithms, which makes 
+    it especially well suited for sparse gradients and noisy data.
+    Adam is the most post popular among the adaptive optimizers
+    because its adaptive learning rate working so well with sparse datasets.
+   
+''')
 @Subject([Optimizer])
 class ADAM_Spec extends Specification
 {
@@ -19,11 +29,13 @@ class ADAM_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-                <h2> ADAM Optimizer Behavior </h2>
-                <br> 
-                <p>
-                    This specification check the behavior of the ADAM class.        
-                </p>
+                The code below assumes that for we
+                have the following 2 variables setup
+                throughout every data table iteration:
+                ```
+                    Tsr<?> w = Tsr.of(0d)
+                    Optimizer<?> o = new ADAM<>(w)                
+                ```
             """
     }
 

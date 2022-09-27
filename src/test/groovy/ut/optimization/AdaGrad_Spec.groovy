@@ -18,11 +18,13 @@ class AdaGrad_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-                <h2> AdaGrad Optimizer Behavior </h2>
-                <br> 
-                <p>
-                    This specification check the behavior of the AdaGrad class.        
-                </p>
+                The code below assumes that for we
+                have the following 2 variables setup
+                throughout every data table iteration:
+                ```
+                    Tsr<?> w = Tsr.of(0d)
+                    Optimizer<?> o = new AdaGrad<>(w)                
+                ```
             """
     }
 

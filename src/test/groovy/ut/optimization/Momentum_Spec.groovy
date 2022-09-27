@@ -5,10 +5,19 @@ import neureka.Tsr
 import neureka.optimization.Optimizer
 import neureka.optimization.implementations.Momentum
 import neureka.view.NDPrintSettings
+import spock.lang.Narrative
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
+@Narrative('''
+
+    Momentum is an extension to the gradient descent optimization 
+    algorithm that allows the search to build inertia in a direction 
+    in the search space and overcome the oscillations of noisy 
+    gradients and coast across flat spots of the search space.
+
+''')
 @Subject([Optimizer])
 class Momentum_Spec extends Specification
 {
@@ -18,11 +27,13 @@ class Momentum_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-                <h2> Momentum Optimizer Behavior </h2>
-                <br> 
-                <p>
-                    This specification check the behavior of the Momentum class.        
-                </p>
+                The code below assumes that for we
+                have the following 2 variables setup
+                throughout every data table iteration:
+                ```
+                    Tsr<?> w = Tsr.of(0d)
+                    Optimizer<?> o = new Momentum<>(w)                
+                ```
             """
     }
 

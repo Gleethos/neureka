@@ -14,13 +14,13 @@ import neureka.optimization.Optimizer;
  *
  * @param <V> The super type of the value item type for the tensors whose gradients can be optimized by this.
  */
-public class RMSprop<V extends Number> implements Optimizer<V>
+public class RMSProp<V extends Number> implements Optimizer<V>
 {
     private final double lr; // learning rate
     private final double decay; // decay rate
     private final Tsr<Number> h; // sum of squared gradients:
 
-    public RMSprop( Tsr<Number> target ) {
+    public RMSProp(Tsr<Number> target ) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
         h = Tsr.of(target.getItemType(), target.shape(), 0);
         lr = 0.001; // Step size/learning rate is 0.001 by default!
