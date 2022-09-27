@@ -48,11 +48,9 @@ class Neureka_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-                <p>
                     This specification defines what types of settings are exposed by
                     Neureka as well as more general things like how string representations
-                    of various library types should look like...        
-                </p>
+                    of various library types should look like... 
             """
     }
 

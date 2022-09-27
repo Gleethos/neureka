@@ -27,8 +27,8 @@ import java.util.function.BiConsumer
     Neureka introduces a the concept of a `Device` which is an interface
     that represents a computational device used for executing tensor / nd-array operations on them.
     The `Device` interface is implemented by various classes which represent
-    different types of devices such as `CPU`, `GPU`, `TPU`, `FPGA`, `OpenCLDevice`, `FileDevice` etc.
-    These various types of devices can not be instantiated directly because they model 
+    different types of accelerator hardware such as `CPUs`, `GPUs`, `TPUs`, `FPGAs`, etc.
+    These various `Device` types can not be instantiated directly because they model 
     the concrete and finite hardware that is available on any given system Neureka is running on.
     This means that they are usually instantiated lazily upon access request or 
     upfront by the library backend (usually a backend extension built fo a specific device).
