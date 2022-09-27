@@ -1,5 +1,6 @@
 package neureka.fluent.building;
 
+import neureka.Nda;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.Function;
@@ -19,7 +20,7 @@ import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
- *  This class exposes a fluent builder API for creating {@link Tsr} instances.
+ *  This is the implementation of the fluent builder API for creating {@link Nda}/{@link Tsr} instances.
  *  A simple example would be:
  * <pre>{@code
  *
@@ -71,8 +72,10 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     private V _to;
     private Device<V> _device = (Device<V>) CPU.get();
 
-
-    public NdaBuilder(Class<V> typeClass ) {
+    /**
+     * @param typeClass The type of the values which ought to be represented by the {@link Tsr} built by this {@link NdaBuilder}.
+     */
+    public NdaBuilder( Class<V> typeClass ) {
         LogUtil.nullArgCheck( typeClass, "typeClass", Class.class, "Cannot build tensor without data type information!" );
         _dataType = DataType.of( typeClass );
     }

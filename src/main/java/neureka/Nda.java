@@ -29,6 +29,45 @@ import java.util.stream.*;
  */
 public interface Nda<V> extends NDimensional, Iterable<V>
 {
+    /**
+     *  This is the entry point to the fluent nd-array builder API for building
+     *  {@link Nda} instances in a readable and type safe fashion.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Nda} builder API which will lead to the creation
+     *  of an nd-array storing values defined by the provided type class.
+     *  A simple usage example would be:
+     *   <pre>{@code
+     *      Nda.of(Double.class)
+     *            .withShape( 2, 3, 4 )
+     *            .andFill( 5, 3, 5 )
+     *   }</pre>
+     *
+     *   It is also possible to define a range using the API to populate the tensor with values:
+     *   <pre>{@code
+     *      Nda.of(Double.class)
+     *            .withShape( 2, 3, 4 )
+     *            .andFillFrom( 2 ).to( 9 ).step( 2 )
+     *   }</pre>
+     *
+     *   If one needs a simple scalar then the following shortcut is possible:
+     *   <pre>{@code
+     *      Nda.of(Float.class).scalar( 3f )
+     *   }</pre>
+     *
+     *   This principle works for vectors as well:
+     *   <pre>{@code
+     *       Nda.of(Byte.class).vector( 2, 5, 6, 7, 8 )
+     *   }</pre>
+     *   For more fine-grained control over the initialization one can
+     *   pass an initialization lambda to the API:
+     *   <pre>{@code
+     *       Nda.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -> i * 5 - 30 )
+     *   }</pre>
+     *
+     *
+     * @param type The type class of the items stored by the tensor built by the exposed builder API.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
     static <V> WithShapeOrScalarOrVector<V> of( Class<V> type ) { return new NdaBuilder<>( type ); }
 
     /**

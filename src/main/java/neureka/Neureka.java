@@ -619,7 +619,7 @@ public final class Neureka
 
             public String toString() {
                 return "Neureka.Settings.View[" +
-                            "ndArrayPrintSettings=" + this.getNDPrintSettings() +
+                            "ndPrintSettings=" + this.getNDPrintSettings() +
                         "]";
             }
         }
@@ -738,9 +738,8 @@ public final class Neureka
          * @param className The class whose presents ought to be checked.
          * @return The truth value determining if the class is present or not.
          */
-        public static boolean isPresent( String className, Supplier<String> tip ) {
+        static boolean isPresent( String className, Supplier<String> tip ) {
             boolean found = false;
-            String groovyInfo = ( (className.toLowerCase().contains("groovy") ) ? " Library settings uninitialized!" : "" );
             String cause = " unknown ";
             try {
                 Class.forName( className );
@@ -752,7 +751,7 @@ public final class Neureka
                 if ( !found )
                     _LOG.debug(
                         "Neureka:\n" +
-                        "    info: Failed to load class '" + className + "'!" + groovyInfo + "\n" +
+                        "    info: Failed to load class '" + className + "'!" + "\n" +
                         "    cause: " + cause + "\n" +
                         "    tip: " + tipMessage + "\n"
                     );

@@ -325,6 +325,37 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
      *  fluent {@link Tsr} builder API which will lead to the creation
      *  of a tensor storing values defined by the provided type class.
+     *  A simple usage example would be:
+     *   <pre>{@code
+     *      Tsr.of(Double.class)
+     *            .withShape( 2, 3, 4 )
+     *            .andFill( 5, 3, 5 )
+     *   }</pre>
+     *
+     *   It is also possible to define a range using the API to populate the tensor with values:
+     *   <pre>{@code
+     *      Tsr.of(Double.class)
+     *            .withShape( 2, 3, 4 )
+     *            .andFillFrom( 2 ).to( 9 ).step( 2 )
+     *   }</pre>
+     *
+     *   If one needs a simple scalar then the following shortcut is possible:
+     *   <pre>{@code
+     *      Tsr.of(Float.class).scalar( 3f )
+     *   }</pre>
+     *
+     *   This principle works for vectors as well:
+     *   <pre>{@code
+     *       Tsr.of(Byte.class).vector( 2, 5, 6, 7, 8 )
+     *   }</pre>
+     *   For more fine-grained control over the initialization one can
+     *   pass an initialization lambda to the API:
+     *   <pre>{@code
+     *       Tsr.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -> i * 5 - 30 )
+     *   }</pre>
+     *   <br>
+     *   Consider using the following convenience methods:
+     *   {@link #ofFloats()}, {@link #ofDoubles()}, {@link #ofInts()}, {@link #ofBytes()}, {@link #ofShorts()}
      *
      * @param type The type class of the items stored by the tensor built by the exposed builder API.
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
@@ -336,7 +367,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  method like so: {@code of(Double.class)}.
      *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
      *  fluent {@link Tsr} builder API which in this case will lead to the creation
-     *  of a tensor storing doubles.
+     *  of a tensor storing doubles. <br>
+     *  A simple usage example would be:
+     *  <pre>{@code
+     *     Tsr.ofDoubles()
+     *           .withShape( 2, 3, 4 )
+     *           .andFill( 5d, 3d, 5d )
+     *  }</pre>
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
@@ -347,7 +384,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  method like so: {@code of(Float.class)}.
      *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
      *  fluent {@link Tsr} builder API which in this case will lead to the creation
-     *  of a tensor storing floats.
+     *  of a tensor storing floats.<br>
+     *  A simple usage example would be:
+     *  <pre>{@code
+     *     Tsr.ofFloats()
+     *           .withShape( 2, 3, 4 )
+     *           .andFill( 5f, 7f, 11f )
+     *  }</pre>
+     *
      *
      * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
      */
