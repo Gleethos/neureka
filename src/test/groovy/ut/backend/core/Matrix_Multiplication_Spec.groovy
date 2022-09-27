@@ -29,6 +29,9 @@ class Matrix_Multiplication_Spec extends Specification
 
         where : 'The following data arrays and dimensions can be used for the test.'
             type     | A            | B                  | M | K | N || expectedC
+            float[]  | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 1, 0, 0, 1 ]
+            float[]  | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+            float[]  | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
             double[] | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 1, 0, 0, 1 ]
             double[] | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
             double[] | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
