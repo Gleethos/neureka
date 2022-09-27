@@ -23,7 +23,8 @@ class AdaGrad_Spec extends Specification
                 throughout every data table iteration:
                 ```
                     Tsr<?> w = Tsr.of(0d)
-                    Optimizer<?> o = new AdaGrad<>(w)                
+                    Optimizer<?> o = new AdaGrad<>(w)             
+                    w.set(o)                       
                 ```
             """
     }

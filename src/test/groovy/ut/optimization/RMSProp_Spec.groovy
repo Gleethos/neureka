@@ -32,7 +32,8 @@ class RMSProp_Spec extends Specification
                 throughout every data table iteration:
                 ```
                     Tsr<?> w = Tsr.of(0d)
-                    Optimizer<?> o = new RMSProp<>(w)                
+                    Optimizer<?> o = new RMSProp<>(w)                 
+                    w.set(o)                   
                 ```
             """
     }

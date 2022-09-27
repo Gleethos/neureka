@@ -32,7 +32,8 @@ class Momentum_Spec extends Specification
                 throughout every data table iteration:
                 ```
                     Tsr<?> w = Tsr.of(0d)
-                    Optimizer<?> o = new Momentum<>(w)                
+                    Optimizer<?> o = new Momentum<>(w)            
+                    w.set(o)        
                 ```
             """
     }

@@ -34,7 +34,8 @@ class ADAM_Spec extends Specification
                 throughout every data table iteration:
                 ```
                     Tsr<?> w = Tsr.of(0d)
-                    Optimizer<?> o = new ADAM<>(w)                
+                    Optimizer<?> o = new ADAM<>(w)                   
+                    w.set(o)                 
                 ```
             """
     }
