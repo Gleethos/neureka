@@ -173,6 +173,11 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );
     }
 
+    public ExecutionCall<D> withOperation( Operation operation ) {
+        LogUtil.nullArgCheck( operation, "operation", Operation.class );
+        return new ExecutionCall<>( _device, operation, _inputs, _arguments.getAll(Arg.class) );
+    }
+
     /**
      *  Use this to produce a clone with a new set of meta arguments.
      *
