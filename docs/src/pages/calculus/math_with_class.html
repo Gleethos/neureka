@@ -4,24 +4,24 @@
         <h3>
             Custom Numeric Data Types:
         </h3>
-        <p>
-            Sometimes the default primitive data types like
-            double, float, int, short, byte, long... are not enough! <br>
-            One classic example for an important numeric format which is not embedded
-            into most languages is the complex number. <br>
-            If you want to go beyond primitive data types and
-            get any class to act as a numeric type within a tensor and tensor operations
-            then take a look at the
-            following example.
+        <p class="MarkdownMe">
+Sometimes the default primitive data types like
+`double`, `float`, `int`, `short`, `byte`, `long`... are not enough! <br>
+One classic example for an important numeric format which is not embedded
+into most languages is the complex number. <br>
+If you want to go beyond primitive data types and
+get any class to act as a numeric type within a tensor and tensor operations
+then take a look at the
+following example.
         </p>
     </div>
 </div>
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
-        <p>
-            First we have to define a class acting as numeric data type, meaning it implements
-            methods like "plus", "minus", "divide" and so on... <br>
-            Let's create a simple "ComplexNumber" class:
+        <p class="MarkdownMe">
+First we have to define a class acting as numeric data type, meaning it implements
+methods like `plus`, `minus`, `divide` and so on... <br>
+Let's create a simple `ComplexNumber` class:
         </p>
     </div>
 </div>
@@ -234,23 +234,20 @@ class ComplexNumber(
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-
-Tsr a = Tsr.of(
+var a = Tsr.of(
             DataType.of( ComplexNumber.class ),
             [ 3, 2 ],
             ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
         )
-Tsr b = Tsr.of(
+var b = Tsr.of(
             DataType.of( ComplexNumber.class ),
             [ 3, 2 ],
             ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
         )
-
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-
 Tsr&#60;ComplexNumber&#62; a = new Tsr&#60;&#62;(
                                         DataType.of( ComplexNumber.class ),
                                         new int[]{ 3, 2 },
@@ -261,12 +258,10 @@ Tsr&#60;ComplexNumber&#62; b = new Tsr&#60;&#62;(
                                         new int[]{ 3, 2 },
                                         ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
                                     );
-
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-
 val a : Tsr&#60;ComplexNumber&#62; = Tsr&#60;&#62;.of(
                                  DataType.of( ComplexNumber::class.java ),
                                  intArrayOf( 3, 2 ),
@@ -277,7 +272,6 @@ val b : Tsr&#60;ComplexNumber&#62; = Tsr&#60;&#62;.of(
                                  intArrayOf( 3, 2 ),
                                  { i Int, idx : IntArray -> new ComplexNumber( idx[1], idx[0] ) }
                              )
-
                 </code></pre>
             </div>
         </div>
