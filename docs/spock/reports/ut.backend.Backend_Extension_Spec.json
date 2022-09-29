@@ -4,24 +4,24 @@
   "narrative":"",
   "subjects":["neureka.backend.api.Operation","neureka.backend.api.BackendContext"],
   "statistics":{
-    "runs":"2",
+    "runs":"1",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.162 seconds"
+    "duration":"0.069 seconds"
   },
   "headers":["\n                   This specification defines the behavior of\n                   Operation instances and their ability to be extended! <br> \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.",
       "result":"PASS",
-      "duration":"0.143 seconds",
+      "duration":"0.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new mock operation type is being created.","code":["var type = Mock(Operation)"]},
+        {"kind":"given","text":"A new mock operation type is being created.","code":["var op = Mock(Operation)"]},
 
         {"kind":"and","text":"A list of mocked function source nodes.","code":["var children = [Mock(FunctionInput), Mock(FunctionInput)]"]},
 
@@ -29,56 +29,17 @@
 
         {"kind":"and","text":"A mocked operation implementation.","code":["var implementation = Mock(Algorithm)"]},
 
-        {"kind":"when","text":"A FunctionNode is being instantiated via the given mocks...","code":["var function = new FunctionNode(type, children, false)"]},
+        {"kind":"when","text":"A FunctionNode is being instantiated via the given mocks...","code":["var function = new FunctionNode(op, children, false)"]},
 
-        {"kind":"then","text":"The mock type has been called as expected and the function has the following properties.","code":["(1.._) * type.getArity() >> 2","function.isFlat()","!function.isDoingAD()"]},
+        {"kind":"then","text":"The mock type has been called as expected and the function has the following properties.","code":["(1.._) * op.getArity() >> 2","function.isFlat()","!function.isDoingAD()"]},
 
         {"kind":"when","text":"The function is being called with an empty tensor array...","code":["var result = function.call(new Tsr[0])"]},
 
-        {"kind":"then","text":"The custom call hook should be accessed as outlined below.","code":["(1.._) * type.getAlgorithmFor(_) >> implementation","(1.._) * implementation.execute(_,_) >> Result.of(output)","(1.._) * output.getUnsafe() >> mutate","(1.._) * mutate.setIsIntermediate(false) >> output","(1.._) * output.isIntermediate() >> true"]},
+        {"kind":"then","text":"The custom call hook should be accessed as outlined below.","code":["(0.._) * op.getAlgorithmFor(_) >> implementation","(0.._) * implementation.execute(_,_) >> Result.of(output)","(1.._) * output.getUnsafe() >> mutate","(1.._) * mutate.setIsIntermediate(false) >> output","(1.._) * output.isIntermediate() >> true","(1.._) * op.execute(_,_) >> Result.of(output)"]},
 
         {"kind":"and","text":"The mocked output tensor never returns the mock device because our custom call hook replaces execution.","code":["0 * output.getDevice() >> Mock(Device)"]},
 
         {"kind":"and","text":"The ADAnalyzer of the mock implementation will not be called because \"doAD\" is set to \"false\".","code":["0 * implementation.isSuitableFor(_)"]},
-
-        {"kind":"and","text":"The result is the same as the mock tensor returned by the custom call hook.","code":["result == output"]}
-      ],
-      "problems":{"dataValues":[], "errors":[]}
-    },
-  
-    {
-      "id":"Lambda properties of mock implementation interact with FunctionNode as expected.",
-      "result":"PASS",
-      "duration":"0.015 seconds",
-      "iterations":{
-      "tags":{},"see":[],"extraInfo":[]
-      },
-      "blocks":[
-        {"kind":"given","text":"A mock agent.","code":["var agent = Mock(ADAction)"]},
-
-        {"kind":"and","text":"A new operation type with a new implementation.","code":["var type = Mock(Operation)"]},
-
-        {"kind":"and","text":"A list of function source nodes.","code":["var children = [Mock(FunctionInput), Mock(FunctionInput)]"]},
-
-        {"kind":"and","text":"A mock tensor which is the expected output, an input and a graph node.","code":["Tsr output = Mock(Tsr)","Tsr input = Mock(Tsr)","Device device = Mock(Device)","GraphNode node = Mock(GraphNode)","var ndc = Mock(NDConfiguration)","var mutate = Mock(Tsr.Unsafe)"]},
-
-        {"kind":"and","text":"A mocked operation implementation.","code":["var implementation = Mock(Algorithm)"]},
-
-        {"kind":"and","text":"An autodiff supplier:","code":["var adSource = Mock(ADActionSupplier)"]},
-
-        {"kind":"when","text":"A FunctionNode is being instantiated via the given mocks...","code":["var function = new FunctionNode(type, children, true)"]},
-
-        {"kind":"then","text":"The mock type has been called as expected and the function has the following properties.","code":["(1.._) * type.getArity() >> 2","function.isFlat()","function.isDoingAD()"]},
-
-        {"kind":"when","text":"The function is being called with an empty tensor array...","code":["def result = function.call([input])"]},
-
-        {"kind":"then","text":"The custom call hook is being accessed as outlined below.","code":["(0.._) * output.getNDConf() >> Mock(NDConfiguration)","(1.._) * input.getNDConf() >> ndc","(1.._) * ndc.shape() >> new int[]{1,2}","(1.._) * type.isInline() >> false","(1.._) * type.getAlgorithmFor(_) >> implementation","(1.._) * implementation.execute(_,_) >> Result.of(output).withAutoDiff(adSource)","(1.._) * output.getUnsafe() >> mutate","(1.._) * mutate.setIsIntermediate(false) >> output","(1.._) * output.isIntermediate() >> true","(1.._) * device.access( _ ) >> Mock(Device.Access)"]},
-
-        {"kind":"and","text":"The GraphNode instance which will be created as tensor component interacts as follows.","code":["(1.._) * input.getGraphNode() >> node","(0.._) * input.get(GraphNode) >> node","(1.._) * node.getLock() >> Mock(GraphLock)","(1.._) * input.getDevice() >> device","_ * type.getOperator() >> 'test_identifier'","(1.._) * output.getDevice() >> device"]},
-
-        {"kind":"and","text":"The given ADAnalyzer instance is being called because auto-differentiation is enabled.","code":["(1.._) * input.rqsGradient() >> true","(1.._) * implementation.autoDiffModeFrom(_) >> AutoDiffMode.BACKWARD_ONLY","(0.._) * node.getPayload() >> input","(1.._) * node.usesAD() >> true"]},
-
-        {"kind":"and","text":"The agent creator is being accessed because \"doAD\" is set to true and the input requires gradients.","code":["1 * adSource.supplyADActionFor(_,_) >> agent","1 * agent.partialDerivative() >> Optional.ofNullable(null)"]},
 
         {"kind":"and","text":"The result is the same as the mock tensor returned by the custom call hook.","code":["result == output"]}
       ],

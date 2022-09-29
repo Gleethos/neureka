@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.042 seconds"
+    "duration":"0.019 seconds"
   },
-  "headers":["\n                <h2> AdaGrad Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the AdaGrad class.        \n                </p>\n            "],"tags":{},"see":[],
+  "headers":["\n                The code below assumes that for we\n                have the following 2 variables setup\n                throughout every data table iteration:\n                ```\n                    Tsr<?> w = Tsr.of(0d)\n                    Optimizer<?> o = new AdaGrad<>(w)             \n                    w.set(o)                       \n                ```\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"AdaGrad optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.032 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

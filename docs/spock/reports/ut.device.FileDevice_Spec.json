@@ -1,7 +1,7 @@
 {
   "className":"ut.device.FileDevice_Spec",
   "title":"FileDevice, Storing Tensors in Files",
-  "narrative":"The `FileDevice` class, one of many implementations of the `Device` interface, \n    represents a file directory which should be able to store and load tensors as files (idx, jpg, png...).",
+  "narrative":"The `FileDevice` class, one of many implementations of the `Device` interface, \n    represents a file directory which can store and load tensors as files (`idx`, `jpg`, `png`...).",
   "subjects":["neureka.devices.file.FileDevice","neureka.devices.Device"],
   "statistics":{
     "runs":"3",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.206 seconds"
+    "duration":"0.145 seconds"
   },
-  "headers":["\n                    This specification covers the behavior of the \"FileDevice\"\n                    class, which enables the persistence of tensor data.      \n            "],"tags":{},"see":[],
+  "headers":["\n                    This specification covers the behavior of the `FileDevice`\n                    class, which enables the persistence of tensor data.      \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A file device stores tensors in idx files by default.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,7 +27,7 @@
 
         {"kind":"expect","text":"Initially the device does not store our newly created tensor.","code":["!device.contains(a)"]},
 
-        {"kind":"when","text":"Tensor \"a\" is being stored in the device...","code":["device.store( a, filename )"]},
+        {"kind":"when","text":"Tensor `a` is being stored in the device...","code":["device.store( a, filename )"]},
 
         {"kind":"then","text":"The expected file is being created at the given path.","code":["new File( path + '/' + filename + '.idx' ).exists()"]},
 
@@ -45,7 +45,7 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.149 seconds",
+      "duration":"0.082 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -80,7 +80,7 @@
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.020 seconds",
+      "duration":"0.035 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -1,7 +1,7 @@
 {
-  "className":"ut.optimization.RMSprop_Spec",
+  "className":"ut.optimization.RMSProp_Spec",
   "title":"",
-  "narrative":"",
+  "narrative":"**Root Mean Squared Propagation**, or RMSProp, is an extension of gradient \n    descent and the AdaGrad version of gradient descent that uses a \n    decaying average of partial gradients in the adaptation of the \n    step size for each parameter.",
   "subjects":["neureka.optimization.Optimizer"],
   "statistics":{
     "runs":"1",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.044 seconds"
+    "duration":"0.018 seconds"
   },
-  "headers":["\n                <h2> RMSprop Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the RMSprop class.        \n                </p>\n            "],"tags":{},"see":[],
+  "headers":["\n                The code below assumes that for we\n                have the following 2 variables setup\n                throughout every data table iteration:\n                ```\n                    Tsr<?> w = Tsr.of(0d)\n                    Optimizer<?> o = new RMSProp<>(w)                 \n                    w.set(o)                   \n                ```\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"RMSprop optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -1,7 +1,7 @@
 {
   "className":"ut.optimization.ADAM_Spec",
   "title":"",
-  "narrative":"",
+  "narrative":"ADAM is a more powerful alternative to the classical stochastic gradient descent. \n    It combines the best properties of the AdaGrad and the RMSProp algorithms, which makes \n    it especially well suited for sparse gradients and noisy data.\n    Adam is the most post popular among the adaptive optimizers\n    because its adaptive learning rate working so well with sparse datasets.",
   "subjects":["neureka.optimization.Optimizer"],
   "statistics":{
     "runs":"3",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.132 seconds"
+    "duration":"0.050 seconds"
   },
-  "headers":["\n                <h2> ADAM Optimizer Behavior </h2>\n                <br> \n                <p>\n                    This specification check the behavior of the ADAM class.        \n                </p>\n            "],"tags":{},"see":[],
+  "headers":["\n                The code below assumes that for we\n                have the following 2 variables setup\n                throughout every data table iteration:\n                ```\n                    Tsr<?> w = Tsr.of(0d)\n                    Optimizer<?> o = new ADAM<>(w)                   \n                    w.set(o)                 \n                ```\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"ADAM optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.078 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"Equations used by ADAM return expected result.",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.009 seconds"
+    "duration":"0.006 seconds"
   },
   "headers":["\n                    Here you will find out how to create a tensor of any kind of data.          \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Anonymous tensor instance has the default datatype class as defined in Neureka settings.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
