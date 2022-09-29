@@ -5,6 +5,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.CPU
+import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.OpenCLDevice
 import neureka.view.NDPrintSettings
 import spock.lang.*
@@ -27,6 +28,8 @@ import java.util.function.Function
 class Cross_Device_Spec extends Specification
 {
     def setup() {
+        if ( Neureka.get().backend().has(CLContext) )
+            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = false
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
@@ -45,6 +48,10 @@ class Cross_Device_Spec extends Specification
         })
     }
 
+    def cleanup() {
+        if ( Neureka.get().backend().has(CLContext) )
+            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
+    }
 
     @IgnoreIf({ data.deviceType == "GPU" && !Neureka.get().canAccessOpenCLDevice() })
     def 'Convolution can model matrix multiplications across devices.'(String deviceType) {
@@ -55,19 +62,21 @@ class Cross_Device_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         and : 'Two tensors, one requiring gradients and the other one does not.'
-            var tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
-                    1,  2, //  3, 1,
-                    2, -3, // -2, -1,
-            }).setRqsGradient( true )
-            var tensor2 = Tsr.of(new int[]{1, 2, 2}, new double[]{
-                    -2, 3, //  0  7
-                    1, 2,  // -7  0
-            })
+            var tensor1 = Tsr.of(new int[]{2, 2, 1}, new float[]{
+                                                                    1,  2, //  3, 1,
+                                                                    2, -3, // -2, -1,
+                                                            })
+                                                            .setRqsGradient( true )
+
+            var tensor2 = Tsr.of(new int[]{1, 2, 2}, new float[]{
+                                                                    -2, 3, //  0  7
+                                                                    1, 2,  // -7  0
+                                                            })
             device.store(tensor1).store(tensor2)
 
         and :
             Tsr product = Tsr.of("i0xi1", tensor1, tensor2)
-            product.backward( Tsr.of(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}) )
+            product.backward( Tsr.of(new int[]{2, 1, 2}, new float[]{1, 1, 1, 1}) )
             String result = product.toString({
                 it.rowLimit = 15 // "rc"
                 it.isScientific = false
@@ -107,9 +116,15 @@ class Cross_Device_Spec extends Specification
             Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.get('first')
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
+            if ( Neureka.get().backend().has(CLContext) )
+                Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
 
         expect : 'The integration test runs successful.'
             CrossDeviceSystemTest.on(device)
+
+        cleanup:
+            if ( Neureka.get().backend().has(CLContext) )
+                Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
 
         where : 'The following settings are being used: '
             deviceType << ['CPU', 'GPU']
@@ -117,9 +132,12 @@ class Cross_Device_Spec extends Specification
 
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
-    def 'Test simple NN implementation with manual backprop'(Device device) {
+    def 'Test simple NN implementation with manual backprop'(Device device)
+    {
         given:
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
+            if ( Neureka.get().backend().has(CLContext) )
+                Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
 
         expect:
             device != null
@@ -128,6 +146,10 @@ class Cross_Device_Spec extends Specification
         and:
             if ( !(device instanceof OpenCLDevice) )
                 new SimpleNNSystemTest(SimpleNNSystemTest.Mode.MAT_MUL).on(device)
+
+        cleanup:
+            if ( Neureka.get().backend().has(CLContext) )
+                Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = false
 
         where :
             device << [CPU.get(), Device.get('first gpu')]
@@ -164,14 +186,20 @@ class Cross_Device_Spec extends Specification
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null }) // We need to assure that this system supports OpenCL!
     def 'Mapping tensors works for every device (even if they are not used).'(
-              def tensor, Device device, Class<?> target, Function<?,?> lambda, String expected
+              Tsr<?> tensor, Device<?> device, Class<?> target, Function<?,?> lambda, String expected
     ) {
-        given : """
+        given : 'We first make a note of the type we started with.'
+            var originalType = tensor.itemType()
+
+        when :  """
                     We start off by storing the provided tensor on the provided device.
                     This might be any kind of device like for example an $OpenCLDevice.
                     Which means the tensor might not be sitting in RAM!
                 """
             tensor.to(device)
+
+        then : 'After the tensor is stored on the device, we expect it to be still of the original type.'
+            tensor.itemType == originalType
 
         when : """
                     We call the mapping method which is supposed to create a new tensor of the provided type.
@@ -190,17 +218,17 @@ class Cross_Device_Spec extends Specification
             tensor.device == device
 
         where : 'We use the following data to test this mapping for a wide range of types and values!'
-            tensor                     | device               | target         | lambda  || expected
-            Tsr.of(3.5)                | CPU.get()            | String.class   | {"~$it"}|| '(1):[~3.5]'
+            tensor                     | device               | target         | lambda   || expected
+            Tsr.of(3.5)                | CPU.get()            | String.class   | {"~$it"} || '(1):[~3.5]'
             Tsr.of(3.5)                | Device.get('first')  | String.class   | {"~$it"} || '(1):[~3.5]'
-            Tsr.ofFloats().scalar(3.5f)| CPU.get()            | String.class   | {"~$it"}|| '(1):[~3.5]'
+            Tsr.ofFloats().scalar(3.5f)| CPU.get()            | String.class   | {"~$it"} || '(1):[~3.5]'
             Tsr.ofFloats().scalar(3.5f)| Device.get('first')  | String.class   | {"~$it"} || '(1):[~3.5]'
             Tsr.ofShorts().scalar(3.5f)| CPU.get()            | String.class   | {"~$it"} || '(1):[~3]'
-            //Tsr.ofShorts().scalar(3.5f)| Device.find('first') | String.class   | {"~$it"}|| '(1):[~3]' // TODO: Allow for shorts on the GPU
+            Tsr.ofShorts().scalar(3.5f)| Device.get('first')  | String.class   | {"~$it"} || '(1):[~3]'
             Tsr.ofBytes().scalar(2.7)  | CPU.get()            | String.class   | {"~$it"} || '(1):[~2]'
-            //Tsr.ofBytes().scalar(2.7)  | Device.find('first') | String.class   | {"~$it"}|| '(1):[~2]' // TODO: Allow for bytes on the GPU
+            Tsr.ofBytes().scalar(2.7)  | Device.get('first')  | String.class   | {"~$it"} || '(1):[~2]'
             Tsr.ofInts().scalar(6.1f)  | CPU.get()            | String.class   | {"~$it"} || '(1):[~6]'
-            //Tsr.ofInts().scalar(6.1f)  | Device.find('first') | String.class   | {"~$it"}|| '(1):[~6]' // TODO: Allow for ints on the GPU
+            Tsr.ofInts().scalar(6.1f)  | Device.get('first')  | String.class   | {"~$it"} || '(1):[~6]'
 
             Tsr.of( 3.0 )              | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]'
             Tsr.of(-1.0 )              | Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
@@ -228,12 +256,12 @@ class Cross_Device_Spec extends Specification
             Tsr.ofFloats().scalar(0.9f)| CPU.get()            | Byte.class     | {it*2}   || '(1):[1.0]'
             Tsr.ofFloats().scalar(3.8f)| CPU.get()            | Short.class    | {it/2}   || '(1):[1.0]'
 
-            //Tsr.ofInts().scalar( 3 )   | Device.find('first') | Double.class   | {it*it} || '(1):[9.0]' // TODO: Allow for ints on the GPU
-            //Tsr.ofInts().scalar(-1 )   | Device.find('first') | Float.class    | {it/2}  || '(1):[-0.5]'
-            //Tsr.ofInts().scalar( 5 )   | Device.find('first') | Integer.class  | {it*10} || '(1):[50.0]'
-            //Tsr.ofInts().scalar( 70)   | Device.find('first') | Long.class     | {it*5}  || '(1):[350.0]'
-            //Tsr.ofInts().scalar( 90)   | Device.find('first') | Byte.class     | {it*2}  || '(1):[180.0]'
-            //Tsr.ofInts().scalar( 37)   | Device.find('first') | Short.class    | {it/2}  || '(1):[18.0]'
+            //Tsr.ofInts().scalar( 3 )   | Device.get('first') | Double.class   | {it*it} || '(1):[9.0]' // TODO: Allow for ints on the GPU
+            //Tsr.ofInts().scalar(-1 )   | Device.get('first') | Float.class    | {it/2}  || '(1):[-0.5]'
+            //Tsr.ofInts().scalar( 5 )   | Device.get('first') | Integer.class  | {it*10} || '(1):[50.0]'
+            //Tsr.ofInts().scalar( 70)   | Device.get('first') | Long.class     | {it*5}  || '(1):[350.0]'
+            //Tsr.ofInts().scalar( 90)   | Device.get('first') | Byte.class     | {it*2}  || '(1):[180.0]'
+            //Tsr.ofInts().scalar( 37)   | Device.get('first') | Short.class    | {it/2}  || '(1):[18.0]'
             Tsr.ofInts().scalar( 3 )   | CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
             Tsr.ofInts().scalar(-1 )   | CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
             Tsr.ofInts().scalar( 5 )   | CPU.get()            | Integer.class  | {it*10}  || '(1):[50.0]'
