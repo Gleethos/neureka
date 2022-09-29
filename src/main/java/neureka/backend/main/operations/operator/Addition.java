@@ -1,9 +1,11 @@
 package neureka.backend.main.operations.operator;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
@@ -13,10 +15,13 @@ import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
+import neureka.ndim.NDimensional;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Addition extends AbstractOperation {
 
@@ -78,6 +83,37 @@ public class Addition extends AbstractOperation {
             .setDeviceExecution( (call, callback) -> ElemWiseUtil.forAdditions(call, callback) )
             .buildFunAlgorithm()
         );
+    }
+
+    @Override
+    public Result execute(Function caller, ExecutionCall<?> call )
+    {
+        if ( !caller.isFlat() ) {
+            int d = call.getDerivativeIndex();
+            if ( d < 0 ) {
+                ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
+                Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
+                return super.execute( flat, flatCall );
+            } else {
+                if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
+                    throw new IllegalArgumentException("The shapes of the operands of the addition operation must be equal! (when deriving nested functions)");
+
+                int[] toBeDerived = IntStream.range(0,caller.numberOfArgs())
+                                            .filter( i -> caller.getSubFunctions().get(i).dependsOn(d) )
+                                            .toArray();
+
+                Tsr[] results = new Tsr[ toBeDerived.length ];
+                for ( int i = 0; i < results.length; i++ ) {
+                    Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );
+                    Result result = noAD.getOperation().execute( noAD, call.withOperation(noAD.getOperation()) );
+                    results[ i ] = result.get();
+                }
+                if ( results.length == 1 ) return Result.of( results[0] );
+                Function addAll = new FunctionParser(Neureka.get().backend()).parse(Neureka.get().backend().getOperation("+"), results.length, false);
+                return addAll.getOperation().execute(addAll, call.withInputs(results).withArgs(Arg.DerivIdx.of(-1)));
+            }
+        }
+        return super.execute( caller, call );
     }
 
     @Override
