@@ -98,15 +98,15 @@ public class Addition extends AbstractOperation {
                 if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
                     throw new IllegalArgumentException("The shapes of the operands of the addition operation must be equal! (when deriving nested functions)");
 
-                int[] toBeDerived = IntStream.range(0,caller.numberOfArgs())
+                int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())
                                             .filter( i -> caller.getSubFunctions().get(i).dependsOn(d) )
                                             .toArray();
 
                 Tsr[] results = new Tsr[ toBeDerived.length ];
                 for ( int i = 0; i < results.length; i++ ) {
                     Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );
-                    Result result = noAD.getOperation().execute( noAD, call.withOperation(noAD.getOperation()) );
-                    results[ i ] = result.get();
+                    Tsr<?> deriv = noAD.execute( noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation()) );
+                    results[ i ] = deriv;
                 }
                 if ( results.length == 1 ) return Result.of( results[0] );
                 Function addAll = new FunctionParser(Neureka.get().backend()).parse(Neureka.get().backend().getOperation("+"), results.length, false);

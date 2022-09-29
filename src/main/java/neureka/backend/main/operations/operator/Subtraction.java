@@ -104,7 +104,7 @@ public class Subtraction extends AbstractOperation
                 if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
                     throw new IllegalArgumentException("The shapes of the operands of the subtraction operation must be equal! (when deriving nested functions)");
 
-                int[] toBeDerived = IntStream.range(0,caller.numberOfArgs())
+                int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())
                                                         .filter( i -> caller.getSubFunctions().get(i).dependsOn(d) )
                                                         .toArray();
 
@@ -112,14 +112,13 @@ public class Subtraction extends AbstractOperation
                 Function neg = Neureka.get().backend().getFunction().neg();
                 for ( int i = 0; i < results.length; i++ ) {
                     Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );
-                    Result result = noAD.getOperation().execute( noAD, call.withOperation(noAD.getOperation()) );
-                    Tsr<?> deriv = result.get();
+                    Tsr<?> deriv = noAD.execute( noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation()) );
                     if ( i > 0 ) deriv = neg.execute(deriv);
                     results[ i ] = deriv;
                 }
                 if ( results.length == 1 ) return Result.of( results[0] );
                 Function addAll = new FunctionParser(Neureka.get().backend()).parse(Neureka.get().backend().getOperation("+"), results.length, false);
-                return addAll.getOperation().execute(addAll, call.withInputs(results).withArgs(Arg.DerivIdx.of(-1)));
+                return addAll.getOperation().execute(addAll, call.withOperation(addAll.getOperation()).withInputs(results).withArgs(Arg.DerivIdx.of(-1)));
             }
         }
         return super.execute( caller, call );
