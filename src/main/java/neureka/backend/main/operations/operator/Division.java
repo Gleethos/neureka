@@ -4,8 +4,11 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Call;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
@@ -17,10 +20,13 @@ import neureka.backend.main.implementations.elementwise.CPUBiElementWiseDivision
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
+
+import java.util.stream.IntStream;
 
 
 public class Division extends AbstractOperation
@@ -89,6 +95,77 @@ public class Division extends AbstractOperation
             .setDeviceExecution( (call, callback) -> ElemWiseUtil.forDivisionsOrModuli(call, callback) )
             .buildFunAlgorithm()
         );
+    }
+
+    @Override
+    public Result execute( Function caller, ExecutionCall<?> call )
+    {
+        if ( caller.getSubFunctions().size() > 2 ) {
+            /*
+                  So currently we have something like this: a/b/c/d...
+                  However, this is how it is really executed:  ((((a/b)/c)/d)..)
+                  ...so let's create a function that is nested like the above:
+            */
+            Function nested = caller.getSubFunctions().get(0);
+            for ( int i = 1; i < caller.getSubFunctions().size(); i++ ) {
+                nested = Function.of( nested + " / " + caller.getSubFunctions().get(i), true );
+            }
+            caller = nested;
+        }
+
+        if ( !caller.isFlat() ) {
+            int d = call.getDerivativeIndex();
+            if ( d < 0 ) {
+                ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
+                Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
+                return super.execute( flat, flatCall );
+            } else {
+                if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
+                    throw new IllegalArgumentException("The shapes of the operands of the division operation must be equal! (when deriving nested functions)");
+
+                // So here we assume that there are only two sub-functions: a/b
+
+                Function noAd = Function.of( caller.toString(), false );
+                Function a = noAd.getSubFunctions().get(0);
+                Function b = noAd.getSubFunctions().get(1);
+                boolean deriveA = a.dependsOn(d);
+                boolean deriveB = b.dependsOn(d);
+
+                if ( !deriveA && !deriveB ) return super.execute( caller, call );
+
+                Tsr<?> bResult = b.call((Call) call.withArgs(Arg.DerivIdx.of(-1)));
+                Tsr<?> derivOfA = null;
+                if ( deriveA ) {
+                    Function div = Neureka.get().backend().getFunction().div();
+                    // This is simple, we just derive the first sub-function and multiply it with the inverse of the second sub-function:
+                    Tsr<?> aDeriv = a.call((Call)call);
+                    derivOfA = div.call((Tsr<Object>)aDeriv, (Tsr<Object>)bResult);
+                }
+                if ( !deriveB && deriveA )
+                    return Result.of(derivOfA.getUnsafe().setIsIntermediate(true));
+
+                Tsr<?> aResult = a.call((Call)call.withArgs(Arg.DerivIdx.of(-1)));
+                if ( deriveB ) {
+                    Function mul = Neureka.get().backend().getFunction().mul();
+                    Tsr<?> innerDerivB = b.call((Call)call);
+                    // So we have something like this: a/b, where we want to derive b.
+                    // This is how it is really executed:  (a/b) = (a * (1/b))
+                    // So we can derive b and then later on add the derivative of 'a' to it (if it must be derived).
+                    // The derivative of 1/b is -1/b^2
+                    // Let's derive b:
+                    Function derive = Function.of("-I[0] / (I[1] ** 2)", false);
+                    Tsr<?> derivOfB = derive.call( (Tsr<Object>)innerDerivB, (Tsr<Object>)bResult );
+                    derivOfB = mul.call((Tsr<Object>)aResult, (Tsr<Object>)derivOfB);
+                    if ( !deriveA )
+                        return Result.of(derivOfB.getUnsafe().setIsIntermediate(true));
+                    else {
+                        Function add = Neureka.get().backend().getFunction().add();
+                        return Result.of( add.call((Tsr<Object>)derivOfA, (Tsr<Object>)derivOfB).getUnsafe().setIsIntermediate(true) );
+                    }
+                }
+            }
+        }
+        return super.execute( caller, call );
     }
 
     @Override

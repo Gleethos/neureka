@@ -255,6 +255,9 @@ Kotlin_Compatibility_Unit_Testing {
             Pair( "(1):[5.0]", { Function.of("i0 * 4 + 3 + i0").with(Arg.DerivIdx.of(0))(Tsr.of(5.0)) } ),
             Pair( "(1):[6.0]", { Function.of("(i0 - 4) * 3 * i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
             Pair( "(1):[-1.0]", { Function.of("(i0 - 4) * (1 - i0) * i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
+            //Pair( "(1):[-1.5]", { Function.of("12 / 2 / i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
+            Pair( "(1):[0.22222]", { Function.of("(i0 - 4) / 2 / i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
+            Pair( "(1):[-0.30555]", { Function.of("(i0 - 4) / (1 - i0) / i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
             Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").invoke(Call.to(CPU.get()).with(Tsr.of(5.0)).andArgs( Arg.DerivIdx.of(0) )) } ),
             Pair( "(1):[6.0]", { Function.of("i0 * i0").execute(Args.of(Arg.DerivIdx.of(0)), Tsr.of(3.0)) } )
         )
