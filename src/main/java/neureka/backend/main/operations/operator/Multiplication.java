@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Call;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
@@ -108,23 +109,23 @@ public class Multiplication extends AbstractOperation
                 Tsr<?> finalDerivative = null;
                 for ( int i = 0; i < derivatives.length; i++ ) {
                     Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );
-                    Tsr<?> deriv = noAD.execute( noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation()) );
+                    Tsr<?> deriv = noAD.call( (Call) (noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation())) );
                     derivatives[ i ] = deriv;
                     Tsr<?> localDeriv = null;
                     for ( int j = 0; j < results.length; j++ ) {
                         // Now we calculate the local derivatives of the multiplication operation:
                         if ( j == toBeDerived[i] ) {
                             if ( localDeriv == null ) localDeriv = derivatives[ i ];
-                            else localDeriv = mul.execute( localDeriv, derivatives[ i ] );
+                            else localDeriv = mul.call( localDeriv, derivatives[ i ] );
                         } else {
-                            if ( localDeriv == null ) localDeriv = results[ j ];
-                            else localDeriv = mul.execute( localDeriv, results[ j ] );
+                            if ( localDeriv == null ) localDeriv = results[ j ].getUnsafe().setIsIntermediate(false);
+                            else localDeriv = mul.call( localDeriv, results[ j ].getUnsafe().setIsIntermediate(false) );
                         }
                     }
                     if ( finalDerivative == null ) finalDerivative = localDeriv;
-                    else finalDerivative = add.execute( finalDerivative, localDeriv );
+                    else finalDerivative = add.call( (Tsr<Object>) finalDerivative, (Tsr<Object>) localDeriv );
                 }
-                return Result.of( finalDerivative );
+                return Result.of( finalDerivative.getUnsafe().setIsIntermediate(true) );
             }
         }
         return super.execute( caller, call );

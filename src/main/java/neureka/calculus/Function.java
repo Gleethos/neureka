@@ -191,7 +191,11 @@ public interface Function
      * @param <D> The type parameter of the device targeted by the provided call.
      */
     default <T, D extends Device<T>> Tsr<T> call( Call.Builder<T, D> call ) {
-        return (Tsr<T>) execute( call.get() ).getUnsafe().setIsIntermediate(false);
+        return call( call.get() );
+    }
+
+    default <T, D extends Device<T>> Tsr<T> call( Call<D> call ) {
+        return (Tsr<T>) execute( call ).getUnsafe().setIsIntermediate(false);
     }
 
     /**
