@@ -97,8 +97,7 @@ abstract class AbstractActivationOperation extends AbstractOperation
                         );
             }
         }
-        Result r = super.execute( caller, call );
-        return r;
+        return super.execute( caller, call );
     }
 
     @Override

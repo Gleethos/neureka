@@ -5,6 +5,8 @@ import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
@@ -14,10 +16,13 @@ import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
+import neureka.ndim.NDimensional;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public class Multiplication extends AbstractOperation
@@ -71,6 +76,58 @@ public class Multiplication extends AbstractOperation
             .setDeviceExecution( (call, callback) -> ElemWiseUtil.forMultiplications(call, callback) )
             .buildFunAlgorithm()
         );
+    }
+
+    @Override
+    public Result execute(Function caller, ExecutionCall<?> call )
+    {
+        if ( !caller.isFlat() ) {
+            int d = call.getDerivativeIndex();
+            if ( d < 0 ) {
+                ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
+                Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
+                Result r = super.execute( flat, flatCall );
+                //for ( int i = 0; i < flatCall.inputs().length; i++ )
+                //    _deleteIfNotIn(call.inputs(), flatCall.input(i)); // TODO: Make it possible to delete more stuff
+                return r;
+            } else {
+                if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
+                    throw new IllegalArgumentException("The shapes of the operands of the multiplication operation must be equal! (when deriving nested functions)");
+
+                Function noAd = Function.of( caller.toString(), false );
+                ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( noAd, call.withArgs(Arg.DerivIdx.of(-1)) );
+
+                int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())
+                        .filter( i -> caller.getSubFunctions().get(i).dependsOn(d) )
+                        .toArray();
+
+                Tsr[] derivatives = new Tsr[ toBeDerived.length ];
+                Tsr[] results = flatCall.inputs();
+                Function mul = Neureka.get().backend().getFunction().mul();
+                Function add = Neureka.get().backend().getFunction().add();
+                Tsr<?> finalDerivative = null;
+                for ( int i = 0; i < derivatives.length; i++ ) {
+                    Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );
+                    Tsr<?> deriv = noAD.execute( noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation()) );
+                    derivatives[ i ] = deriv;
+                    Tsr<?> localDeriv = null;
+                    for ( int j = 0; j < results.length; j++ ) {
+                        // Now we calculate the local derivatives of the multiplication operation:
+                        if ( j == toBeDerived[i] ) {
+                            if ( localDeriv == null ) localDeriv = derivatives[ i ];
+                            else localDeriv = mul.execute( localDeriv, derivatives[ i ] );
+                        } else {
+                            if ( localDeriv == null ) localDeriv = results[ j ];
+                            else localDeriv = mul.execute( localDeriv, results[ j ] );
+                        }
+                    }
+                    if ( finalDerivative == null ) finalDerivative = localDeriv;
+                    else finalDerivative = add.execute( finalDerivative, localDeriv );
+                }
+                return Result.of( finalDerivative );
+            }
+        }
+        return super.execute( caller, call );
     }
 
     @Override

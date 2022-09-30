@@ -563,7 +563,7 @@ public class BroadSystemTest
                 new String[]{
                         "[1]:(-24.0); ",
                         "=>d|[ [1]:(12.0) ]|:" +
-                                "t{ deleted }",
+                                "t{ [1]:(-2.0); =>d|[ [1]:(-1.0) ]|:t{ [1]:(2.0) } }",
                         "=>d|[ [1]:(-2.0) ]|:" +
                                 "t{ [1]:(12.0); " +
                                 "=>d|[ [1]:(6.0) ]|:" +
@@ -571,6 +571,17 @@ public class BroadSystemTest
                                 "}"
                 }
         );
+/*
+            [1]:(-24.0);
+                =>d|[ [1]:(-2.0) ]|:t{
+                    [1]:(12.0);
+                    =>d|[ [1]:(6.0) ]|:t{ [1]:(2.0) }
+                },
+                =>d|[ [1]:(12.0) ]|:t{
+                    [1]:(-2.0);
+                    =>d|[ [1]:(-1.0) ]|:t{ [1]:(2.0) }
+                }
+ */
 
     }
 
@@ -604,16 +615,19 @@ public class BroadSystemTest
         tester.testContains(
                 asString,
                 new String[]{
-                        "[1]:(-24.0)",
+                        "(I[0] * I[1]) => [1]:(-24.0), type='BRANCH'",
                         "[1]:(12.0)",
                         "[1]:(2.0)",
-                        "[1]:(-3.0)",
+                        //"[1]:(-3.0)",
                         "(-1.0 * I[0])",
                         "(I[0] * -1.0)",
                         "(I[0] * I[1])",
                         "LEAVE RQS GRADIENT",
-                        "deleted",
-                        "(I[0] * -1.0) => deleted, type='BRANCH'"
+                        //"deleted",
+                        //"(I[0] * -1.0) => deleted, type='BRANCH'"
+                        "(I[0] * -1.0) =>",
+                        "type='LEAVE'",
+                        "[1]:(2.0), type='LEAVE RQS GRADIENT'"
                 },
                 "Testing 'toString' of GraphNode");
     }
