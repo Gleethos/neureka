@@ -14,19 +14,12 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.broadcast.*;
-import neureka.backend.main.implementations.elementwise.CLBiElementwise;
-import neureka.backend.main.implementations.elementwise.CPUBiElementWiseDivision;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
-
-import java.util.stream.IntStream;
 
 
 public class Division extends AbstractOperation
@@ -100,19 +93,6 @@ public class Division extends AbstractOperation
     @Override
     public Result execute( Function caller, ExecutionCall<?> call )
     {
-        if ( caller.getSubFunctions().size() > 2 ) {
-            /*
-                  So currently we have something like this: a/b/c/d...
-                  However, this is how it is really executed:  ((((a/b)/c)/d)..)
-                  ...so let's create a function that is nested like the above:
-            */
-            Function nested = caller.getSubFunctions().get(0);
-            for ( int i = 1; i < caller.getSubFunctions().size(); i++ ) {
-                nested = Function.of( nested + " / " + caller.getSubFunctions().get(i), true );
-            }
-            caller = nested;
-        }
-
         if ( !caller.isFlat() ) {
             int d = call.getDerivativeIndex();
             if ( d < 0 ) {
@@ -120,6 +100,19 @@ public class Division extends AbstractOperation
                 Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
                 return super.execute( flat, flatCall );
             } else {
+                if ( caller.getSubFunctions().size() > 2 ) {
+                    /*
+                          So currently we have something like this: a/b/c/d...
+                          However, this is how it is really executed:  ((((a/b)/c)/d)..)
+                          ...so let's create a function that is nested like the above:
+                    */
+                    Function nested = caller.getSubFunctions().get(0);
+                    for ( int i = 1; i < caller.getSubFunctions().size(); i++ ) {
+                        nested = Function.of( nested + " / " + caller.getSubFunctions().get(i), true );
+                    }
+                    caller = nested;
+                }
+
                 if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
                     throw new IllegalArgumentException("The shapes of the operands of the division operation must be equal! (when deriving nested functions)");
 
