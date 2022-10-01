@@ -199,7 +199,7 @@ public interface Operation
     {
         LazyRef<Result> ref = LazyRef.of(()->{
                                     int d = call.getDerivativeIndex();
-                                    if ( caller.getAllFunctions().stream().allMatch( f -> f instanceof FunctionConstant) ) {
+                                    if ( caller.getSubFunctions().stream().allMatch( f -> f instanceof FunctionConstant) ) {
                                         if ( d < 0 ) return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(caller.call(new double[0])).getUnsafe().setIsIntermediate(true));
                                         else         return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(0).getUnsafe().setIsIntermediate(true));
                                     }
