@@ -16,7 +16,10 @@ public final class Result
     private final Tsr<?> _tensor;
     private final ADActionSupplier _agent;
 
-    public static Result of(Tsr<?> tensor) { return new Result(tensor, null); }
+    public static Result of( Tsr<?> tensor ) {
+        LogUtil.nullArgCheck( tensor, "tensor", Tsr.class, "An operation may not return 'null'!" );
+        return new Result(tensor, null);
+    }
 
     private Result( Tsr<?> tensor, ADActionSupplier agent ) {
         _tensor = tensor;

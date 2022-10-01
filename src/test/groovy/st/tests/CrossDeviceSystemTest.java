@@ -37,9 +37,7 @@ public class CrossDeviceSystemTest
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
                 "I[0]*i1",
-                new String[]{
-                        "[2x2]:(1.0, 49.0, 4.0, 9.0)"
-                });
+                new String[]{"[2x2]:(1.0, 49.0, 4.0, 9.0)"});
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
                 "I[0]xi1",
@@ -93,9 +91,7 @@ public class CrossDeviceSystemTest
         listOfTensors.add(tensor2);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2}, "I0 x i1",
-                new String[]{
-                        "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
-                });
+                new String[]{"[2x1x2]:(15.0, 2.0, 10.0, 2.0)"});
         //=======================
         tensor1 = Tsr.of(
                 new int[]{200, 300, 1},
@@ -110,9 +106,7 @@ public class CrossDeviceSystemTest
         listOfTensors.add(tensor2);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2}, "I0xi1",
-                new String[]{
-                        "[200x1x200]:(1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0,"//...
-                });
+                new String[]{"[200x1x200]:(1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0,"});
         //---
         tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
                 1,  2, //  3, 1,

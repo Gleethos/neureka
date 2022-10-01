@@ -199,6 +199,9 @@ public interface Operation
     {
         LazyRef<Result> ref = LazyRef.of(()->{
                                     int d = call.getDerivativeIndex();
+                                    if ( d >= 0 && !caller.dependsOn(d) )
+                                        throw new IllegalArgumentException("Cannot derive w.r.t. to input index " + d + " in function '" + caller + "', because there is no input with index "+d+"!");
+
                                     if ( caller.getSubFunctions().stream().allMatch( f -> f instanceof FunctionConstant) ) {
                                         if ( d < 0 ) return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(caller.call(new double[0])).getUnsafe().setIsIntermediate(true));
                                         else         return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(0).getUnsafe().setIsIntermediate(true));

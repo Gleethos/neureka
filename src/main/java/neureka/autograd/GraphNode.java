@@ -181,7 +181,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         _parents = a.parents();
         _nodeID = _calculateNodeID( _function, _parents );
         if ( call != null && function.isFlat() ) // Leave nodes don't need agents!
-            _registerAgents( a, out, function, call );
+            _registerADActions( a, out, function, call );
         _targetsToAgents = a.getTargets();
     }
 
@@ -219,7 +219,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  particular target {@link GraphNode} node used as reference for back-prop traversal
      *  when doing back-prop/autograd later on...
      */
-    private void _registerAgents(
+    private void _registerADActions(
             GraphNodeAssemblyState<V> a, Result output, Function function, ExecutionCall<? extends Device<?>> call
     ) {
         Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
@@ -233,7 +233,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             {
                 for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode();
-                    if ( srcNode.usesAD() ) {
+                    if ( srcNode.usesAD() && function.dependsOn(i) ) {
                         if (
                             srcNode.size() == 0 && this.size() == 0
                                ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
@@ -246,20 +246,20 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             int finalI = i;
                             Tsr<V> localDerivative = function.derive( inputs, i );
-                            srcNode.forEachTargetAgentPair(
-                                ( targets, localAgent ) ->
+                            srcNode.forEachTargetActionPair(
+                                ( targets, localADAction ) ->
                                 {
                                     // The agent multiplies the local derivative with its stored partial derivative...
-                                    Tsr<?> targetDerivative = localAgent.act( new ADTarget<>(targets.index(), this, localDerivative) );
+                                    Tsr<?> targetDerivative = localADAction.act( new ADTarget<>(targets.index(), this, localDerivative) );
                                     // ...this is now the new partial derivative with respect to the target node!
                                     ADAction agent = output.getAgentSupplier().supplyADActionFor(
-                                            function,
-                                            call.withArgs(
-                                                    Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
-                                                    Arg.DerivIdx.of(finalI),
-                                                    Arg.Derivative.of(targetDerivative)
-                                            )
-                                    );
+                                                                                    function,
+                                                                                    call.withArgs(
+                                                                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
+                                                                                        Arg.DerivIdx.of(finalI),
+                                                                                        Arg.Derivative.of(targetDerivative)
+                                                                                    )
+                                                                                );
                                     a.put( finalI, targets.node(), agent );
                                     _informPartialDerivative(agent);
                                     // TODO: flag within src Tsr<ValType>s that grant that the tensor
@@ -649,7 +649,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * @param action The action which ought to be applied to each target {@link GraphNode} / {@link ADAction} pair.
      */
-    public void forEachTargetAgentPair( BiConsumer<BackPropTargets<V>, ADAction> action ) {
+    public void forEachTargetActionPair(BiConsumer<BackPropTargets<V>, ADAction> action ) {
         if ( _targetsToAgents == null ) return;
         new ArrayList<>(_targetsToAgents)
                 .forEach(

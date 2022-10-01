@@ -305,9 +305,9 @@ public final class NdaAsString
             GraphNode<?> node = _tensor.get( GraphNode.class );
             if ( node.getMode() != 0 ) {
                 _$( "; " );
-                node.forEachDerivative( ( t, agent ) -> {
-                    if (!agent.partialDerivative().isPresent()) _$( "->d(" )._$( agent.toString() )._$( "), " );
-                    else _$( "->d" )._$( agent.partialDerivative().get().toString( _config.clone().setPrefix("").setPostfix("") ) )._$( ", " );
+                node.forEachDerivative( ( t, action ) -> {
+                    if ( !action.partialDerivative().isPresent() ) _$( "->d(" )._$( action.toString() )._$( "), " );
+                    else _$( "->d" )._$( action.partialDerivative().get().toString( _config.clone().setPrefix("").setPostfix("") ) )._$( ", " );
                 });
             }
         }

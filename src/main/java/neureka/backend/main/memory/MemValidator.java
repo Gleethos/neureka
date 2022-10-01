@@ -51,6 +51,9 @@ public class MemValidator {
         */
         if ( result == null )
             throw new IllegalStateException( "Failed to execute function! Returned result was null." );
+        if ( result.get() == null )
+            throw new IllegalStateException( "Failed to execute function! Returned result was null." );
+
         /*
             After that we analyse the validity of the result
             with respect to memory safety!
