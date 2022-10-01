@@ -192,7 +192,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             if ( child == null )
                 throw new IllegalStateException(
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
-                       "Input tensors of a new GraphNode must be part of the computation graph!"
+                         "Input tensors of a new GraphNode must be part of the computation graph!"
                     );
             if ( function.getOperation().isInline() && child.usesAD() )
                 throw new IllegalStateException(
@@ -207,10 +207,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
         long nid = 1;
         if ( parents != null ) {
             for ( GraphNode<?> n : parents )
-                nid *= n.hashCode(); //payload might be 0! Why? -> garbage collected!
+                nid = _scramble( nid, n.hashCode() );
         }
-        if ( function != null ) nid += function.hashCode();
+        if ( function != null ) nid = _scramble( nid, function.hashCode() );
        return nid;
+    }
+
+    private static long _scramble( long l, long r ) {
+        return ( l * 0x105139C0C031L + 0x4c0e1e9f367dL ) ^ r;
     }
 
     /**
@@ -394,7 +398,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     @Override
     public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        //_setPayload( changeRequest.getNewOwner() );
+        if ( changeRequest.type() == IsBeing.REPLACED )
+            throw new IllegalArgumentException("A "+getClass().getSimpleName()+" cannot be replaced or switch tensors in any way!");
         changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         return true;
     }
@@ -434,10 +439,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "This is most likely because the recorded computation graph has multiple root!\n " +
                         "Otherwise please examine function " + n._function + " and its underlying operations: '" +
                         n._function.getAllFunctions()
-                                .stream()
-                                .filter( f -> f.getOperation() != null )
-                                .map( f -> f.getOperation().getIdentifier() )
-                                .collect(Collectors.joining("', '")) + "'!"
+                                    .stream()
+                                    .filter( f -> f.getOperation() != null )
+                                    .map( f -> f.getOperation().getIdentifier() )
+                                    .collect(Collectors.joining("', '")) + "'!"
                     );
                 }
                 n.backward( n._pendingError.getAccumulatedError() ); // Continue back-propagation recursively!
