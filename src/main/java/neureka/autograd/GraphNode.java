@@ -398,8 +398,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     @Override
     public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        if ( changeRequest.type() == IsBeing.REPLACED )
-            throw new IllegalArgumentException("A "+getClass().getSimpleName()+" cannot be replaced or switch tensors in any way!");
         changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         return true;
     }
