@@ -1,10 +1,10 @@
 package neureka.devices.host;
 
-import neureka.Data;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.common.utility.DataConverter;
+import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.host.concurrent.Parallelism;
@@ -398,7 +398,7 @@ public class CPU extends AbstractDevice<Object>
             throw new IllegalArgumentException("Array type '"+jvmData.getClass().getSimpleName()+"' not supported!");
     }
 
-    public neureka.Data allocate(Object data ) {
+    public neureka.Data allocate( Object data ) {
         int size;
         if ( data instanceof Object[] ) {
             size = ( (Object[]) data ).length;
@@ -430,8 +430,8 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final neureka.Data _actualize(Tsr<?> tensor ) {
-        neureka.Data data = tensor.getUnsafe().getData();
+    protected final neureka.Data<Object> _actualize(Tsr<?> tensor ) {
+        neureka.Data<Object> data = (neureka.Data<Object>) tensor.getUnsafe().getData();
         Object value = data.getRef();
         DataType<?> dataType = tensor.getDataType();
         int size = tensor.size();
@@ -479,6 +479,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     public <T> CPU free( Tsr<T> tensor ) {
+        LogUtil.nullArgCheck( tensor, "tensor", Tsr.class );
         _tensors.remove( tensor );
         return this;
     }
@@ -517,7 +518,7 @@ public class CPU extends AbstractDevice<Object>
     public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }
 
     @Override
-    public String toString() { return this.getClass().getSimpleName()+"[coreCount="+getCoreCount()+"]"; }
+    public String toString() { return this.getClass().getSimpleName()+"[cores="+getCoreCount()+"]"; }
 
     /**
      *  A simple functional interface for executing a range whose implementations will
@@ -525,11 +526,11 @@ public class CPU extends AbstractDevice<Object>
      *  a thread-pool, given that the provided workload is large enough.
      */
     @FunctionalInterface
-    public interface RangeWorkload {  void execute( int start, int end );  }
+    public interface RangeWorkload { void execute( int start, int end );  }
 
 
     @FunctionalInterface
-    public interface IndexedWorkload {  void execute( int i );  }
+    public interface IndexedWorkload { void execute( int i );  }
 
     /**
      *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
@@ -615,6 +616,7 @@ public class CPU extends AbstractDevice<Object>
          */
         public void threaded( int workloadSize, RangeWorkload workload )
         {
+            LogUtil.nullArgCheck( workload, "workload", RangeWorkload.class );
             int cores = get().getCoreCount();
             cores = ( cores == 0 ? 1 : cores );
             if ( workloadSize >= _MIN_THREADED_WORKLOAD_SIZE && ( ( workloadSize / cores ) >= _MIN_WORKLOAD_PER_THREAD) ) {
@@ -631,6 +633,7 @@ public class CPU extends AbstractDevice<Object>
          * @param workload The workload lambda to be executed.
          */
         public void threaded( int numberOfWorkloads, IndexedWorkload workload ) {
+            LogUtil.nullArgCheck( workload, "workload", IndexedWorkload.class );
             _DIVIDER.parallelism( _PARALLELISM )
                     .threshold( 1 )
                     .submit( numberOfWorkloads, (i)-> workload.execute(i) );
@@ -643,7 +646,10 @@ public class CPU extends AbstractDevice<Object>
          * @param workloadSize The workload size which will be passed to the provided {@link RangeWorkload} as second argument.
          * @param workload The {@link RangeWorkload} which will be executed sequentially.
          */
-        public void sequential( int workloadSize, RangeWorkload workload ) { workload.execute( 0, workloadSize ); }
+        public void sequential( int workloadSize, RangeWorkload workload ) {
+            LogUtil.nullArgCheck( workload, "workload", RangeWorkload.class );
+            workload.execute( 0, workloadSize );
+        }
 
 
         /**
@@ -658,6 +664,7 @@ public class CPU extends AbstractDevice<Object>
                 final int limit,
                 final RangeWorkload rangeWorkload
         ) {
+            LogUtil.nullArgCheck( rangeWorkload, "rangeWorkload", RangeWorkload.class );
             _DIVIDER.parallelism( _PARALLELISM )
                     .threshold( PARALLELIZATION_THRESHOLD )
                     .divide( first, limit, rangeWorkload);
