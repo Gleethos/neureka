@@ -173,24 +173,13 @@ public final class DataType<Type>
     }
 
     public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof DataType)) return false;
+        if ( o == this ) return true;
+        if ( !(o instanceof DataType) ) return false;
         final DataType<?> other = (DataType<?>) o;
-        if ( !Objects.equals(_log, other._log) ) return false;
-        final Object this$_typeClass = this.getRepresentativeType();
-        final Object other$_typeClass = other.getRepresentativeType();
-        return Objects.equals(this$_typeClass, other$_typeClass);
+        return Objects.equals(this._typeClass, other._typeClass);
     }
 
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $_log = _log;
-        result = result * PRIME + ($_log == null ? 43 : $_log.hashCode());
-        final Object $_typeClass = this.getRepresentativeType();
-        result = result * PRIME + ($_typeClass == null ? 43 : $_typeClass.hashCode());
-        return result;
-    }
+    public int hashCode() { return _typeClass.hashCode() * 31; }
 
     public String toString() {
         String representative = (getRepresentativeType() != null ? "("+getRepresentativeType().getSimpleName()+")" : "");
