@@ -300,7 +300,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  <br>
      */
-    protected final void _virtualize() { _data = _dataType.virtualize(_data); }
+    protected final void _virtualize() { _data = _dataType.virtualize( _data ); }
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. <br>

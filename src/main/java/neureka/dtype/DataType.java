@@ -112,8 +112,9 @@ public final class DataType<Type>
     /**
      * @return An instance of the type class if possible.
      */
-    public <T extends NumericType<?,?,?,?>> T getTypeClassInstance(Class<T> type)
+    public <T extends NumericType<?,?,?,?>> T getTypeClassInstance( Class<T> type )
     {
+        LogUtil.nullArgCheck( type, "type", Class.class );
         if ( !type.isAssignableFrom(_typeClass) )
             throw new IllegalArgumentException("This data type does not support built in numeric type utilities!");
         Constructor<?>[] constructors = _typeClass.getDeclaredConstructors();
@@ -139,6 +140,7 @@ public final class DataType<Type>
      * @return True if the provided type is a sub-type of the type represented by this instance.
      */
     public boolean typeClassImplements( Class<?> interfaceClass ) {
+        LogUtil.nullArgCheck( interfaceClass, "interfaceClass", Class.class );
         return interfaceClass.isAssignableFrom( _typeClass );
     }
 
@@ -149,7 +151,7 @@ public final class DataType<Type>
             return Object[].class;
     }
 
-    public Data virtualize(Data data)
+    public Data virtualize( Data data )
     {
         Object value = data == null ? null : data.getRef();
         assert value != null;
