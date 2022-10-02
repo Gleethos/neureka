@@ -2,6 +2,7 @@ package neureka.framing;
 
 import neureka.Tsr;
 import neureka.common.composition.Component;
+import neureka.common.utility.LogUtil;
 import neureka.framing.fluent.AxisFrame;
 
 import java.util.*;
@@ -41,7 +42,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     /**
      *  A frame can also carry a name.
      *  When loading a CSV file for example the label would be the first cell if
-     *  both index as well as header labels are included in the file.
+     *  both index and header labels are included in the file.
      */
     private final String _tensorName;
 
@@ -51,9 +52,9 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         for ( int i = 0; i < labels.size(); i++ ) _mapping.put( i, new LinkedHashMap<>() );
         for ( int i = 0; i < labels.size(); i++ ) {
             if ( labels.get( i ) != null ) {
-                for ( int ii = 0; ii < labels.get( i ).size(); ii++ ) {
-                    if ( labels.get( i ).get( ii ) != null )
-                        atAxis( i ).atIndexAlias( labels.get( i ).get( ii ) ).setIndex( ii );
+                for ( int j = 0; j < labels.get( i ).size(); j++ ) {
+                    if ( labels.get( i ).get( j ) != null )
+                        atAxis( i ).atIndexAlias( labels.get( i ).get( j ) ).setIndex( j );
                 }
             }
         }
@@ -87,10 +88,12 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     }
 
     public int[] get( List<Object> keys ) {
+        LogUtil.nullArgCheck( keys, "keys", List.class );
         return get( keys.toArray( new Object[0] ) );
     }
 
     public int[] get( Object... keys ) {//Todo: iterate over _mapping
+        LogUtil.nullArgCheck( keys, "keys", Object[].class );
         int[] indices = new int[ keys.length ];
         for( int i = 0; i < indices.length; i++ ) {
             Object am =  _mapping.get( i );
@@ -103,7 +106,8 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         return indices;
     }
 
-    public boolean hasLabelsForAxis(Object axisAlias) {
+    public boolean hasLabelsForAxis( Object axisAlias ) {
+        LogUtil.nullArgCheck( axisAlias, "axisAlias", Object.class );
         return !atAxis(axisAlias).getAllAliases().isEmpty();
     }
 
@@ -117,8 +121,9 @@ public final class NDFrame<V> implements Component<Tsr<V>>
      * @param axisAlias The axis alias object which targets an {@link AxisFrame} of {@link NDFrame}.
      * @return A view of the targeted axis in the for of an{@link AxisFrame} which provides getters and setters for aliases.
      */
-    public AxisFrame<Integer, V> atAxis(Object axisAlias )
+    public AxisFrame<Integer, V> atAxis( Object axisAlias )
     {
+        LogUtil.nullArgCheck( axisAlias, "axisAlias", Object.class );
         return AxisFrame.<Integer, Integer, V>builder()
                 .getter(
                         atKey -> () ->

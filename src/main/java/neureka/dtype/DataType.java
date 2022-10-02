@@ -112,8 +112,9 @@ public final class DataType<Type>
     /**
      * @return An instance of the type class if possible.
      */
-    public <T extends NumericType<?,?,?,?>> T getTypeClassInstance(Class<T> type)
+    public <T extends NumericType<?,?,?,?>> T getTypeClassInstance( Class<T> type )
     {
+        LogUtil.nullArgCheck( type, "type", Class.class );
         if ( !type.isAssignableFrom(_typeClass) )
             throw new IllegalArgumentException("This data type does not support built in numeric type utilities!");
         Constructor<?>[] constructors = _typeClass.getDeclaredConstructors();
@@ -139,6 +140,7 @@ public final class DataType<Type>
      * @return True if the provided type is a sub-type of the type represented by this instance.
      */
     public boolean typeClassImplements( Class<?> interfaceClass ) {
+        LogUtil.nullArgCheck( interfaceClass, "interfaceClass", Class.class );
         return interfaceClass.isAssignableFrom( _typeClass );
     }
 
@@ -149,7 +151,7 @@ public final class DataType<Type>
             return Object[].class;
     }
 
-    public Data virtualize(Data data)
+    public Data virtualize( Data data )
     {
         Object value = data == null ? null : data.getRef();
         assert value != null;
@@ -173,24 +175,13 @@ public final class DataType<Type>
     }
 
     public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof DataType)) return false;
+        if ( o == this ) return true;
+        if ( !(o instanceof DataType) ) return false;
         final DataType<?> other = (DataType<?>) o;
-        if ( !Objects.equals(_log, other._log) ) return false;
-        final Object this$_typeClass = this.getRepresentativeType();
-        final Object other$_typeClass = other.getRepresentativeType();
-        return Objects.equals(this$_typeClass, other$_typeClass);
+        return Objects.equals(this._typeClass, other._typeClass);
     }
 
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $_log = _log;
-        result = result * PRIME + ($_log == null ? 43 : $_log.hashCode());
-        final Object $_typeClass = this.getRepresentativeType();
-        result = result * PRIME + ($_typeClass == null ? 43 : $_typeClass.hashCode());
-        return result;
-    }
+    public int hashCode() { return _typeClass.hashCode() * 31; }
 
     public String toString() {
         String representative = (getRepresentativeType() != null ? "("+getRepresentativeType().getSimpleName()+")" : "");
