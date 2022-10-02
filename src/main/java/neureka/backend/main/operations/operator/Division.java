@@ -95,18 +95,7 @@ public class Division extends AbstractOperation
     @Override
     public Result execute( Function caller, ExecutionCall<?> call )
     {
-        if ( caller.getSubFunctions().size() > 2 ) {
-            /*
-                So currently we have something like this: a/b/c/d...
-                However, this is how it is really executed:  ((((a/b)/c)/d)..)
-                ...so let's create a function that is nested like the above:
-            */
-            Function nested = caller.getSubFunctions().get(0);
-            for ( int i = 1; i < caller.getSubFunctions().size(); i++ )
-                nested = Function.of( nested + " / " + caller.getSubFunctions().get(i), true );
-
-            caller = nested;
-        }
+        caller = reducePairwise(caller);
 
         int d = call.getDerivativeIndex();
         if ( !caller.isFlat() ) {
@@ -164,6 +153,22 @@ public class Division extends AbstractOperation
         }
 
         return super.execute( caller, call );
+    }
+
+    private Function reducePairwise(Function f) {
+        if ( f.getSubFunctions().size() > 2 ) {
+            /*
+                So currently we have something like this: a/b/c/d...
+                However, this is how it is really executed:  ((((a/b)/c)/d)..)
+                ...so let's create a function that is nested like the above:
+            */
+            Function nested = f.getSubFunctions().get(0);
+            for ( int i = 1; i < f.getSubFunctions().size(); i++ )
+                nested = Function.of( nested + " / " + f.getSubFunctions().get(i), true );
+
+            f = nested;
+        }
+        return f;
     }
 
     @Override

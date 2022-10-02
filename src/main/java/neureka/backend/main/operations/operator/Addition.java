@@ -92,6 +92,9 @@ public class Addition extends AbstractOperation {
         int d = call.getDerivativeIndex();
         if ( caller.isFlat() ) {
             if ( d >= 0 ) {
+                if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
+                    throw new IllegalArgumentException("The shapes of the operands of the addition operation must be equal! (when deriving nested functions)");
+
                 int j = call.getValOf(Arg.VarIdx.class);
                 Tsr<?> template = call.input(0) == null ? call.input(1) : call.input(0);
                 long dependencies = caller.getSubFunctions()
@@ -104,6 +107,7 @@ public class Addition extends AbstractOperation {
             }
         } else {
             if ( d < 0 ) {
+                caller = reducePairwise(caller);
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
                 Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
                 return super.execute( flat, flatCall );
@@ -111,8 +115,9 @@ public class Addition extends AbstractOperation {
                 if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
                     throw new IllegalArgumentException("The shapes of the operands of the addition operation must be equal! (when deriving nested functions)");
 
+                Function finalCaller = caller;
                 int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())
-                                            .filter( i -> caller.getSubFunctions().get(i).dependsOn(d) )
+                                            .filter( i -> finalCaller.getSubFunctions().get(i).dependsOn(d) )
                                             .toArray();
 
                 Tsr[] results = new Tsr[ toBeDerived.length ];
@@ -126,8 +131,26 @@ public class Addition extends AbstractOperation {
                 return addAll.getOperation().execute(addAll, call.withInputs(results).withArgs(Arg.DerivIdx.of(-1)));
             }
         }
+        caller = reducePairwise(caller);
         return super.execute( caller, call );
     }
+
+    private Function reducePairwise(Function f) {
+        if ( f.getSubFunctions().size() > 2 ) {
+            /*
+                So currently we have something like this: a+b+c+d...
+                However, this is how it is really executed:  ((((a+b)+c)+d)..)
+                ...so let's create a function that is nested like the above:
+            */
+            Function nested = f.getSubFunctions().get(0);
+            for ( int i = 1; i < f.getSubFunctions().size(); i++ )
+                nested = Function.of( nested + " + " + f.getSubFunctions().get(i), true );
+
+            f = nested;
+        }
+        return f;
+    }
+
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
