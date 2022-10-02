@@ -16,6 +16,7 @@ import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
+import neureka.calculus.implementations.FunctionInput;
 import neureka.devices.Device;
 import neureka.ndim.NDimensional;
 
@@ -86,10 +87,22 @@ public class Addition extends AbstractOperation {
     }
 
     @Override
-    public Result execute(Function caller, ExecutionCall<?> call )
+    public Result execute( Function caller, ExecutionCall<?> call )
     {
-        if ( !caller.isFlat() ) {
-            int d = call.getDerivativeIndex();
+        int d = call.getDerivativeIndex();
+        if ( caller.isFlat() ) {
+            if ( d >= 0 ) {
+                int j = call.getValOf(Arg.VarIdx.class);
+                Tsr<?> template = call.input(0) == null ? call.input(1) : call.input(0);
+                long dependencies = caller.getSubFunctions()
+                                            .stream()
+                                            .filter( f -> f.dependsOn(d) && j < 0 || (j == d && f.dependsOn(d)))
+                                            .count();
+
+                Tsr<?> derivative = Tsr.like((Tsr<Number>) template).all(dependencies);
+                return Result.of(derivative.getUnsafe().setIsIntermediate(true));
+            }
+        } else {
             if ( d < 0 ) {
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
                 Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
