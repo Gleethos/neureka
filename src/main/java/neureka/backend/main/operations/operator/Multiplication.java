@@ -85,6 +85,7 @@ public class Multiplication extends AbstractOperation
         if ( !caller.isFlat() ) {
             int d = call.getDerivativeIndex();
             if ( d < 0 ) {
+                caller = reducePairwise(caller);
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
                 Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
                 Result r = super.execute( flat, flatCall );
@@ -98,8 +99,9 @@ public class Multiplication extends AbstractOperation
                 Function noAd = Function.of( caller.toString(), false );
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( noAd, call.withArgs(Arg.DerivIdx.of(-1)) );
 
+                Function finalCaller = caller;
                 int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())
-                        .filter( i -> caller.getSubFunctions().get(i).dependsOn(d) )
+                        .filter( i -> finalCaller.getSubFunctions().get(i).dependsOn(d) )
                         .toArray();
 
                 Tsr[] derivatives = new Tsr[ toBeDerived.length ];
@@ -128,7 +130,24 @@ public class Multiplication extends AbstractOperation
                 return Result.of( finalDerivative.getUnsafe().setIsIntermediate(true) );
             }
         }
+        caller = reducePairwise(caller);
         return super.execute( caller, call );
+    }
+
+    private Function reducePairwise(Function f) {
+        if ( f.getSubFunctions().size() > 2 ) {
+            /*
+                So currently we have something like this: a*b*c*d...
+                However, this is how it is really executed:  ((((a*b)*c)*d)..)
+                ...so let's create a function that is nested like the above:
+            */
+            Function nested = f.getSubFunctions().get(0);
+            for ( int i = 1; i < f.getSubFunctions().size(); i++ )
+                nested = Function.of( nested + " * " + f.getSubFunctions().get(i), true );
+
+            f = nested;
+        }
+        return f;
     }
 
     @Override
