@@ -53,17 +53,6 @@ public interface ComponentOwner<C>
     <T extends Component<C>> C set( T newComponent );
 
     /**
-     * Use this to perform an action on a component of the specified component type class.
-     * If no component of the specified type class is present, the provided consumer lambda
-     * will not be invoked.
-     * @param componentClass The class of the component to be acted upon.
-     * @param action The action to be performed on the component.
-     * @return True if a component of the specified type class was found and the action was performed, false otherwise.
-     * @param <T> The type of the component to be acted upon.
-     */
-    <T extends Component<C>> boolean forComponent( Class<T> componentClass, Consumer<T> action );
-
-    /**
      * This method finds a component of the given type/class
      * and returns it as an {@link Optional} which may or may not be empty.
      * @param componentClass The type/class of the component which should be found.

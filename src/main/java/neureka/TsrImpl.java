@@ -422,18 +422,18 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     private Tsr<V> _delete()
     {
         if ( isDeleted() ) return this;
-        forComponent( GraphNode.class, n -> {
+        this.find( GraphNode.class ).ifPresent( n -> {
             if ( n.isUsedAsDerivative() ) {
                 String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
                 _LOG.error( message );
                 throw new IllegalStateException( message );
             }
         });
-        forComponent( Device.class, device -> device.free( this ) );
+        this.find( Device.class ).ifPresent( device -> device.free( this ) );
         _setData( null );
         _setNDConf( null );
         _flags = 0;
-        forComponent( TsrImpl.class, t -> t.getUnsafe().delete() );
+        this.find( TsrImpl.class ).ifPresent( t -> t.getUnsafe().delete() );
         _deleteComponents();
         _flags += IS_DELETED_MASK;
 
@@ -1156,21 +1156,18 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     @Override
     public Tsr<V> addToGradient( Tsr<V> error ) {
         _guardSet("gradient");
-        if (
-            !forComponent(
-                Tsr.class,
-                    gradient ->
-                    this.set(
-                        MemUtil.keep( gradient, error, () ->
-                            Neureka.get()
-                                    .backend()
-                                    .getFunction()
-                                    .plusAssign()
-                                    .call(gradient, error)
-                        )
-                    )
-            )
-        ) {
+        Optional<Tsr> grad = this.find( Tsr.class );
+        grad.ifPresent( gradient ->
+                            this.set(
+                                    MemUtil.keep( gradient, error, () ->
+                                            Neureka.get()
+                                                    .backend()
+                                                    .getFunction()
+                                                    .plusAssign()
+                                                    .call(gradient, error)
+                                    )
+                            ));
+        if ( !grad.isPresent() ) {
             this.set( error );
             this.find( Device.class ).ifPresent( device -> {
                 try {

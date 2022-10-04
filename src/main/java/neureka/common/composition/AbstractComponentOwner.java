@@ -45,7 +45,6 @@ import neureka.common.utility.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  *  Together with the {@link Component} interface, this class defines a simple
@@ -311,9 +310,6 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
     protected abstract <T extends Component<C>> T _setOrReject( T newComponent );
 
     /**
-     * This method abstract ought to be implemented further down
-     * the inheritance hierarchy where it's responsibility
-     * makes more sense, namely :
      * An implementation of this method checks if the passed component
      * should be removed from the component collection of this class
      * or its removal should be "rejected".
@@ -324,17 +320,6 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
      * @return The same component or null if its removal has been rejected.
      */
     protected abstract <T extends Component<C>> T _removeOrReject( T newComponent );
-
-    /** {@inheritDoc} */
-    @Override
-    public <T extends Component<C>> boolean forComponent( Class<T> componentClass, Consumer<T> action ) {
-        T component = this.get( componentClass );
-        if ( component != null ) {
-            action.accept( component );
-            return true;
-        }
-        else return false;
-    }
 
     /** {@inheritDoc} */
     @Override
