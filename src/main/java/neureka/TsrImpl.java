@@ -762,13 +762,17 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     public Tsr<V> label( String tensorName, String[][] labels )
     {
         LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
+        if ( labels.length > this.rank() )
+            throw new IllegalArgumentException(
+                    "Number of the provided axes labels is larger than the total number of axes (rank) of the nd-array."
+                );
+
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) {
-            frame = new NDFrame( this.rank(), tensorName );
-            set(frame);
+            frame = new NDFrame<>( this.rank(), tensorName );
+            this.set(frame);
         }
-        assert labels.length <= this.rank();
-        for( int i = 0; i < labels.length; i++ ) {
+        for ( int i = 0; i < labels.length; i++ ) {
             if ( labels[ i ] != null ) {
                 AxisFrame<Integer, V> atAxis = frame.atAxis( i );
                 for ( int ii = 0; ii < labels[ i ].length; ii++ ) {
@@ -785,7 +789,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     public Tsr<V> label(List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame( labels, null ) );
+        if ( frame == null ) set( new NDFrame<>( labels, null ) );
         return this;
     }
 
