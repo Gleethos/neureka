@@ -96,10 +96,10 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         LogUtil.nullArgCheck( keys, "keys", Object[].class );
         int[] indices = new int[ keys.length ];
         for( int i = 0; i < indices.length; i++ ) {
-            Object am =  _mapping.get( i );
-            if ( am instanceof Map ) {
+            Object am = _mapping.get( i );
+            if ( am instanceof Map )
                 indices[ i ] = ( (Map<Object, Integer>) am ).get( keys[ i ] );
-            } else if ( am instanceof Integer ) {
+            else if ( am instanceof Integer ) {
                 // TODO: Implement
             }
         }

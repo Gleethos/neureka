@@ -1,6 +1,7 @@
 package neureka.common.composition;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -62,4 +63,14 @@ public interface ComponentOwner<C>
      */
     <T extends Component<C>> boolean forComponent( Class<T> componentClass, Consumer<T> action );
 
+    /**
+     * This method finds a component of the given type/class
+     * and returns it as an {@link Optional} which may or may not be empty.
+     * @param componentClass The type/class of the component which should be found.
+     *                       This class must be a subtype of {@link Component}.
+     * @param <T> The type parameter of the component which should be found.
+     *           This type must be a subtype of {@link Component}.
+     * @return An {@link Optional} which may or may not be empty.
+     */
+    <T extends Component> Optional<T> find(Class<T> componentClass );
 }

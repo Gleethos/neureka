@@ -44,6 +44,7 @@ import neureka.common.utility.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -324,16 +325,7 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
      */
     protected abstract <T extends Component<C>> T _removeOrReject( T newComponent );
 
-    /**
-     * This method tries to find a stored component by identifying it
-     * via the given Class instance in order to pass it
-     * into the provided Consumer lambda.
-     * If however no component was found then this lambda is being left untouched.
-     *
-     * @param componentClass Component class of whose type the requested component is.
-     * @param action An action applied on the requested component if found.
-     * @return True if a component could be found, false otherwise.
-     */
+    /** {@inheritDoc} */
     @Override
     public <T extends Component<C>> boolean forComponent( Class<T> componentClass, Consumer<T> action ) {
         T component = this.get( componentClass );
@@ -344,5 +336,10 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
         else return false;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public <T extends Component> Optional<T> find( Class<T> componentClass ) {
+        return Optional.ofNullable( this.get( componentClass ) );
+    }
 
 }
