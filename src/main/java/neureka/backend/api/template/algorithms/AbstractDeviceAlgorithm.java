@@ -182,8 +182,8 @@ implements DeviceAlgorithm<C>
                 if ( tensors[ i ] == null )
                     tensors[ i ] =
                             j < 0
-                                    ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).getUnsafe().setIsIntermediate( true )
-                                    : Tsr.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).getUnsafe().setIsIntermediate( true );
+                                ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).getUnsafe().setIsIntermediate( true ).to(call.getDevice())
+                                : Tsr.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).getUnsafe().setIsIntermediate( true ).to(call.getDevice());
 
             return innerCall.withInputs(tensors);
         });

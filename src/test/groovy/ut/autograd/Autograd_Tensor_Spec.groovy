@@ -160,9 +160,10 @@ class Autograd_Tensor_Spec extends Specification
             w = Tsr.of(new int[]{1}, 0.5).unsafe.toType(type)
             y = Tsr.of("(2**i0**i1**i2**2", x, b, w)
         then :
-            y.toString().contains("[1]:(4.0);")
-            y.toString().contains(" ->d[1]:(1.38629)")
-        and : y.itemType == type
+            y.toString().contains("[1]:(9.24238);")
+            y.toString().contains(" ->d[1]:(4.32078)")
+        and :
+            y.itemType == type
             //TODO: add tests using more then 1 function and check if the graph is being built correctly!
         where :
             type << [Double, Float]

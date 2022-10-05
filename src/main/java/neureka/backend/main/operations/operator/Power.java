@@ -6,6 +6,7 @@ import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
@@ -148,6 +149,29 @@ public class Power extends AbstractOperation
             .buildFunAlgorithm()
         );
 
+    }
+
+    @Override
+    public Result execute(Function caller, ExecutionCall<?> call )
+    {
+        caller = reducePairwise(caller);
+        return super.execute( caller, call );
+    }
+
+    private Function reducePairwise(Function f) {
+        if ( f.getSubFunctions().size() > 2 ) {
+            /*
+                So currently we have something like this: a**b**c**d...
+                However, this is how it is really executed:  (a**(b**(c**(d**..))))
+                ...so let's create a function that is nested like the above:
+            */
+            Function nested = f.getSubFunctions().get(f.getSubFunctions().size()-1);
+            for ( int i = f.getSubFunctions().size()-2; i >= 0; i-- )
+                nested = Function.of( f.getSubFunctions().get(i) + "**" + nested, true );
+
+            f = nested;
+        }
+        return f;
     }
 
     @Override

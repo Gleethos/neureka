@@ -96,7 +96,7 @@ public class Modulo extends AbstractOperation
     }
 
     @Override
-    public Result execute(Function caller, ExecutionCall<?> call )
+    public Result execute( Function caller, ExecutionCall<?> call )
     {
         caller = reducePairwise(caller);
 

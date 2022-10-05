@@ -101,8 +101,8 @@ public class Multiplication extends AbstractOperation
 
                 Function finalCaller = caller;
                 int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())
-                        .filter( i -> finalCaller.getSubFunctions().get(i).dependsOn(d) )
-                        .toArray();
+                                                .filter( i -> finalCaller.getSubFunctions().get(i).dependsOn(d) )
+                                                .toArray();
 
                 Tsr[] derivatives = new Tsr[ toBeDerived.length ];
                 Tsr[] results = flatCall.inputs();
@@ -156,7 +156,7 @@ public class Multiplication extends AbstractOperation
                 .filter( child -> child.dependsOn(derivationIndex) )
                 .map( child -> {
                             String derivative = child.getDerivative(derivationIndex).toString();
-                            return ( (derivative.equals("1.0") ) ? "" : " * " ) +
+                            return ( derivative.equals("1.0") ? "" : " * " ) +
                                     Arrays.stream( children )
                                         .filter( inner -> inner != child )
                                         .map( Object::toString )
