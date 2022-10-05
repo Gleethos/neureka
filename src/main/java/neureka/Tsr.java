@@ -1415,120 +1415,25 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return this;
     }
 
-    /**
-     *  This method receives a nested {@link String} array which
-     *  ought to contain a label for the index of this tensor.
-     *  The index for a single element of this tensor would be an array
-     *  of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows:    <br>
-     *                                                              <br>
-     *      dim 0 : ["A", "B"]                                      <br>
-     *      dim 1 : ["1", "2", "3"]                                 <br>
-     *                                                              <br>
-     *
-     * @param labels A nested String array containing labels for indexes of the tensor dimensions.
-     * @return This tensor (method chaining).
-     */
-    Tsr<V> withLabels( String[]... labels );
-
-    /**
-     *  This method receives a label for this tensor and a
-     *  nested {@link String} array which ought to contain a
-     *  label for the index of this tensor.
-     *  The index for a single element of this tensor would be an array
-     *  of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows:    <br>
-     *                                                              <br>
-     *      dim 0 : ["A", "B"]                                      <br>
-     *      dim 1 : ["1", "2", "3"]                                 <br>
-     *                                                              <br>
-     *
-     * @param tensorName A label for this tensor itself.
-     * @param labels A nested String array containing labels for indexes of the tensor dimensions.
-     * @return This tensor (method chaining).
-     */
-    default Tsr<V> withLabels( String tensorName, String[]... labels ) {
+    /** {@inheritDoc} */
+    @Override default Tsr<V> withLabels( String[]... labels ) {
         return withLabels( null, labels );
     }
-    /**
-     *  This method receives a nested {@link String} list which
-     *  ought to contain a label for the index of this tensor.
-     *  The index for a single element of this tensor would be an array
-     *  of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows: <br>
-     *                                                           <br>
-     *      dim 0 : ["A", "B"]                                   <br>
-     *      dim 1 : ["1", "2", "3"]                              <br>
-     *                                                           <br>
-     * @param labels A nested String list containing labels for indexes of the tensor dimensions.
-     * @return This tensor (method chaining).
-     */
-    Tsr<V> withLabels( List<List<Object>> labels );
 
-    /**
-     *  This method receives a label for this tensor and a nested
-     *  {@link String} list which ought to contain a label for the index of
-     *  this tensor The index for a single element of this tensor would
-     *  be an array of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows: <br>
-     *                                                           <br>
-     *      dim 0 : ["A", "B"]                                   <br>
-     *      dim 1 : ["1", "2", "3"]                              <br>
-     *                                                           <br>
-     * @param tensorName A label for this tensor itself.
-     * @param labels A nested String list containing labels for indexes of the tensor dimensions.
-     * @return This tensor (method chaining).
-     */
-    Tsr<V> withLabels( String tensorName, List<List<Object>> labels );
+    /** {@inheritDoc} */
+    @Override Tsr<V> withLabels(String name, String[]... labels );
 
-    /**
-     *  This method provides the ability to
-     *  label not only the indices of the shape of this tensor, but also
-     *  the dimension of the shape.
-     *  The first and only argument of the method expects a map instance
-     *  where keys are the objects which ought to act as dimension labels
-     *  and the values are lists of labels for the indices of said dimensions.
-     *  For example the shape (2,3) could be labeled as follows:            <br>
-     *  [                                                                   <br>
-     *      "dim 0" : ["A", "B"],                                           <br>
-     *      "dim 1" : ["1", "2", "3"]                                       <br>
-     *  ]                                                                   <br>
-     *                                                                      <br>
-     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
-     * @return This tensor (method chaining).
-     */
-    Tsr<V> withLabels( Map<Object, List<Object>> labels );
+    /** {@inheritDoc} */
+    @Override Tsr<V> withLabels( List<List<Object>> labels );
 
-    /**
-     *  This method provides the ability to
-     *  label not only the indices of the shape of this tensor, but also
-     *  the dimension of the shape.
-     *  The first and only argument of the method expects a map instance
-     *  where keys are the objects which ought to act as dimension labels
-     *  and the values are lists of labels for the indices of said dimensions.
-     *  For example the shape (2,3) could be labeled as follows:            <br>
-     *  [                                                                   <br>
-     *     "dim 0" : ["A", "B"],                                            <br>
-     *     "dim 1" : ["1", "2", "3"]                                        <br>
-     *  ]                                                                   <br>
-     *                                                                      <br>
-     * @param tensorName A label for this tensor itself.
-     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
-     * @return This tensor (method chaining).
-     */
-    Tsr<V> withLabels(String tensorName, Map<Object, List<Object>> labels );
+    /** {@inheritDoc} */
+    @Override Tsr<V> withLabels(String name, List<List<Object>> labels );
+
+    /** {@inheritDoc} */
+    @Override Tsr<V> withLabels( Map<Object, List<Object>> labels );
+
+    /** {@inheritDoc} */
+    @Override Tsr<V> withLabels(String name, Map<Object, List<Object>> labels );
 
     /*==================================================================================================================
     |
@@ -1604,10 +1509,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> minus( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getItemType(), "Cannot subtract 'null' from a tensor!");
         return minus(
-                of( this.getDataType().getItemTypeClass() )
+                    of( this.getDataType().getItemTypeClass() )
                         .withShape(this.getNDConf().shape())
                         .all(other)
-        );
+                );
     }
 
     /**
@@ -1648,7 +1553,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> sum = this.sum();
         Tsr<V> result = functions.div().call( sum, of( this.getItemType(), new int[]{1}, this.size() ) );
-        if (sum != this) sum.getUnsafe().delete(); // This is a temporary tensor which is not needed anymore! (not even for back propagation)
+        if ( sum != this ) sum.getUnsafe().delete(); // This is a temporary tensor which is not needed anymore! (not even for back propagation)
         return result;
     }
 

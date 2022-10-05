@@ -91,6 +91,12 @@ class Tensor_Exception_Spec extends Specification
             IllegalArgumentException    | { Tsr x -> x.unsafe.label(null, (String[][])null) }
             IllegalArgumentException    | { Tsr x -> x.unsafe.label("hi", (Map)null) }
             IllegalArgumentException    | { Tsr x -> x.unsafe.label(null, (Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.withLabels("hi", (String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.withLabels(null, (String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.withLabels(null, (String[])null) }
+            IllegalArgumentException    | { Tsr x -> x.withLabels((String[])null) }
+            IllegalArgumentException    | { Tsr x -> x.withLabels("hi", (Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.withLabels(null, (Map)null) }
     }
 
     def 'Passing an invalid object into Tsr constructor causes descriptive exception.'()

@@ -42,7 +42,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *            .andFill( 5, 3, 5 )
      *   }</pre>
      *
-     *   It is also possible to define a range using the API to populate the tensor with values:
+     *   It is also possible to define a range using the API to populate the nd-array with values:
      *   <pre>{@code
      *      Nda.of(Double.class)
      *            .withShape( 2, 3, 4 )
@@ -65,14 +65,14 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *   }</pre>
      *
      *
-     * @param type The type class of the items stored by the tensor built by the exposed builder API.
+     * @param type The type class of the items stored by the nd-array built by the exposed builder API.
      * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
      */
     static <V> WithShapeOrScalarOrVector<V> of( Class<V> type ) { return new NdaBuilder<>( type ); }
 
     /**
-     * @param value The scalar value which ought to be represented as tensor.
-     * @return A scalar double tensor.
+     * @param value The scalar value which ought to be represented as nd-array.
+     * @return A scalar double nd-array.
      */
     static Nda<Double> of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }
 
@@ -204,6 +204,124 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return The type class of individual value items within this nd-array.
      */
     default Class<V> itemType() { return getItemType(); }
+
+
+    /**
+     *  This method receives a nested {@link String} array which
+     *  ought to contain a label for the index of this nd-array.
+     *  The index for a single element of this nd-array would be an array
+     *  of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows:    <br>
+     *                                                              <br>
+     *      dim 0 : ["A", "B"]                                      <br>
+     *      dim 1 : ["1", "2", "3"]                                 <br>
+     *                                                              <br>
+     *
+     * @param labels A nested String array containing labels for indexes of the nd-array dimensions.
+     * @return This nd-array (method chaining).
+     */
+    default Nda<V> withLabels( String[]... labels ) {
+        return withLabels( null, labels );
+    }
+
+    /**
+     *  This method receives a label for this nd-array and a
+     *  nested {@link String} array which ought to contain a
+     *  label for the index of this nd-array.
+     *  The index for a single element of this nd-array would be an array
+     *  of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows:    <br>
+     *                                                              <br>
+     *      dim 0 : ["A", "B"]                                      <br>
+     *      dim 1 : ["1", "2", "3"]                                 <br>
+     *                                                              <br>
+     *
+     * @param name A label for this nd-array itself.
+     * @param labels A nested String array containing labels for indexes of the nd-array dimensions.
+     * @return This nd-array (method chaining).
+     */
+    Nda<V> withLabels( String name, String[]... labels );
+
+    /**
+     *  This method receives a nested {@link String} list which
+     *  ought to contain a label for the index of this nd-array.
+     *  The index for a single element of this nd-array would be an array
+     *  of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows: <br>
+     *                                                           <br>
+     *      dim 0 : ["A", "B"]                                   <br>
+     *      dim 1 : ["1", "2", "3"]                              <br>
+     *                                                           <br>
+     * @param labels A nested String list containing labels for indexes of the nd-array dimensions.
+     * @return This nd-array (method chaining).
+     */
+    Nda<V> withLabels( List<List<Object>> labels );
+
+    /**
+     *  This method receives a label for this nd-array and a nested
+     *  {@link String} list which ought to contain a label for the index of
+     *  this nd-array The index for a single element of this nd-array would
+     *  be an array of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows: <br>
+     *                                                           <br>
+     *      dim 0 : ["A", "B"]                                   <br>
+     *      dim 1 : ["1", "2", "3"]                              <br>
+     *                                                           <br>
+     * @param name A label for this nd-array itself.
+     * @param labels A nested String list containing labels for indexes of the nd-array dimensions.
+     * @return This nd-array (method chaining).
+     */
+    Nda<V> withLabels( String name, List<List<Object>> labels );
+
+    /**
+     *  This method provides the ability to
+     *  label not only the indices of the shape of this nd-array, but also
+     *  the dimension of the shape.
+     *  The first and only argument of the method expects a map instance
+     *  where keys are the objects which ought to act as dimension labels
+     *  and the values are lists of labels for the indices of said dimensions.
+     *  For example the shape (2,3) could be labeled as follows:            <br>
+     *  [                                                                   <br>
+     *      "dim 0" : ["A", "B"],                                           <br>
+     *      "dim 1" : ["1", "2", "3"]                                       <br>
+     *  ]                                                                   <br>
+     *                                                                      <br>
+     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
+     * @return This nd-array (method chaining).
+     */
+    Nda<V> withLabels( Map<Object, List<Object>> labels );
+
+    /**
+     *  This method provides the ability to
+     *  label not only the indices of the shape of this nd-array, but also
+     *  the dimension of the shape.
+     *  The first and only argument of the method expects a map instance
+     *  where keys are the objects which ought to act as dimension labels
+     *  and the values are lists of labels for the indices of said dimensions.
+     *  For example the shape (2,3) could be labeled as follows:            <br>
+     *  [                                                                   <br>
+     *     "dim 0" : ["A", "B"],                                            <br>
+     *     "dim 1" : ["1", "2", "3"]                                        <br>
+     *  ]                                                                   <br>
+     *                                                                      <br>
+     * @param name A label for this nd-array itself.
+     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
+     * @return This nd-array (method chaining).
+     */
+    Nda<V> withLabels(String name, Map<Object, List<Object>> labels );
+
 
     /*==================================================================================================================
     |

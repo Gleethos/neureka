@@ -748,7 +748,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
             /** {@inheritDoc} */
             @Override public Tsr<V> label(String tensorName, String[]... labels) {
-                return TsrImpl.this.label( tensorName, labels );
+                return TsrImpl.this._label( tensorName, labels );
             }
             //-------
 
@@ -837,7 +837,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     @Override
     public Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
-    public Tsr<V> label( String tensorName, String[][] labels )
+    private Tsr<V> _label(String tensorName, String[][] labels )
     {
         LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
         if ( labels.length > this.rank() )
@@ -870,26 +870,32 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> withLabels( List<List<Object>> labels ) {
-        return this.shallowClone().withLabels( labels );
+    public Tsr<V> withLabels(String name, String[]... labels) {
+        return this.shallowClone().getUnsafe().label(name, labels );
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> withLabels( String tensorName, List<List<Object>> labels ) {
-        return this.shallowClone().withLabels( tensorName, labels );
+    public Tsr<V> withLabels( List<List<Object>> labels ) {
+        return this.shallowClone().getUnsafe().label( labels );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Tsr<V> withLabels(String name, List<List<Object>> labels ) {
+        return this.shallowClone().getUnsafe().label(name, labels );
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr<V> withLabels( Map<Object, List<Object>> labels ) {
-        return this.shallowClone().withLabels( labels );
+        return this.shallowClone().getUnsafe().label( labels );
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> withLabels(String tensorName, Map<Object, List<Object>> labels ) {
-        return this.shallowClone().withLabels( tensorName, labels );
+    public Tsr<V> withLabels(String name, Map<Object, List<Object>> labels ) {
+        return this.shallowClone().getUnsafe().label(name, labels );
     }
 
     /*==================================================================================================================
