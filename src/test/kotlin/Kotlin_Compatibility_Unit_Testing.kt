@@ -200,7 +200,7 @@ Kotlin_Compatibility_Unit_Testing {
         assert(e3.toString() == "(1x1x1):[42.0+24.0i]")
 
         // When :
-        slice.minusAssign( slice * ComplexNumber(-4.0, -2.0) )
+        slice.unsafe.minusAssign( slice * ComplexNumber(-4.0, -2.0) )
 
         // Then :
         assert(

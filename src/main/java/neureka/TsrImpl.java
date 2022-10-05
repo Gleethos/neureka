@@ -707,6 +707,45 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             }
 
             @Override public Tsr<V> detach() { TsrImpl.this.remove( GraphNode.class ); return TsrImpl.this; }
+            /** {@inheritDoc} */
+            @Override public Tsr<V> timesAssign( Tsr<V> other ) {
+                LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
+                return Neureka.get().backend().getFunction().mulAssign().call( TsrImpl.this, other );
+            }
+            /** {@inheritDoc} */
+            @Override public Tsr<V> timesAssign( V other ) {
+                LogUtil.nullArgCheck(other, "other", TsrImpl.this.getItemType(), "Cannot multiply-assign 'null' to a tensor!");
+                return this.timesAssign( Tsr.of( getItemType(), getNDConf().shape(), other ) );
+            }
+            /** {@inheritDoc} */
+            @Override public Tsr<V> divAssign( Tsr<V> other ) {
+                LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
+                return Neureka.get().backend().getFunction().divAssign().call( TsrImpl.this, other );
+            }
+            /** {@inheritDoc} */
+            @Override public Tsr<V> modAssign( Tsr<V> other ) {
+                LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
+                return Neureka.get().backend().getFunction().modAssign().call( TsrImpl.this, other );
+            }
+            /** {@inheritDoc} */
+            @Override public Tsr<V> plusAssign( Tsr<V> other ) {
+                LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
+                return Neureka.get().backend().getFunction().plusAssign().call( TsrImpl.this, other );
+            }
+            /** {@inheritDoc} */
+            @Override public Tsr<V> minusAssign( Tsr<V> other ) {
+                LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract-assign 'null' from a tensor!");
+                return Neureka.get().backend().getFunction().minusAssign().call( TsrImpl.this, other );
+            }
+            /** {@inheritDoc} */
+            @Override public Tsr<V> minusAssign( V other ) {
+                LogUtil.nullArgCheck(other, "other", TsrImpl.this.getItemType(), "Cannot subtract-assign 'null' from a tensor!");
+                return minusAssign(
+                            Tsr.of( TsrImpl.this.getDataType().getItemTypeClass() )
+                                .withShape(TsrImpl.this.getNDConf().shape())
+                                .all(other)
+                        );
+            }
         };
     }
 

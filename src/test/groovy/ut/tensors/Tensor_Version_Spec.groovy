@@ -97,16 +97,16 @@ class Tensor_Version_Spec extends Specification
             c.getVersion() == version_of_c
 
         where :
-            code                  | safe_inline || version_of_c | version_of_a | version_of_b | expected
-            ' a.plusAssign(b) '   |   true      ||      1       |      1       |      0       | "(1):[2.0]"
-            ' a.minusAssign(b) '  |   true      ||      1       |      1       |      0       | "(1):[10.0]"
-            ' a.timesAssign(b) '  |   true      ||      1       |      1       |      0       | "(1):[-24.0]"
-            ' a.divAssign(b) '    |   true      ||      1       |      1       |      0       | "(1):[-1.5]"
+            code                        | safe_inline || version_of_c | version_of_a | version_of_b | expected
+            ' a.unsafe.plusAssign(b) '  |   true      ||      1       |      1       |      0       | "(1):[2.0]"
+            ' a.unsafe.minusAssign(b) ' |   true      ||      1       |      1       |      0       | "(1):[10.0]"
+            ' a.unsafe.timesAssign(b) ' |   true      ||      1       |      1       |      0       | "(1):[-24.0]"
+            ' a.unsafe.divAssign(b) '   |   true      ||      1       |      1       |      0       | "(1):[-1.5]"
 
-            ' a.plusAssign(b) '   |   false     ||      0       |      0       |      0       | "(1):[2.0]"
-            ' a.minusAssign(b) '  |   false     ||      0       |      0       |      0       | "(1):[10.0]"
-            ' a.timesAssign(b) '  |   false     ||      0       |      0       |      0       | "(1):[-24.0]"
-            ' a.divAssign(b) '    |   false     ||      0       |      0       |      0       | "(1):[-1.5]"
+            ' a.unsafe.plusAssign(b) '  |   false     ||      0       |      0       |      0       | "(1):[2.0]"
+            ' a.unsafe.minusAssign(b) ' |   false     ||      0       |      0       |      0       | "(1):[10.0]"
+            ' a.unsafe.timesAssign(b) ' |   false     ||      0       |      0       |      0       | "(1):[-24.0]"
+            ' a.unsafe.divAssign(b) '   |   false     ||      0       |      0       |      0       | "(1):[-1.5]"
     }
 
 
@@ -188,11 +188,11 @@ class Tensor_Version_Spec extends Specification
             c == null
 
         where :
-            code               ||  message
-            'a.plusAssign(b) '|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
-            'a.minusAssign(b)'|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
-            'a.timesAssign(b)'|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
-            'a.divAssign(b) ' || "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
+            code                     ||  message
+            'a.unsafe.plusAssign(b) '|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
+            'a.unsafe.minusAssign(b)'|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
+            'a.unsafe.timesAssign(b)'|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
+            'a.unsafe.divAssign(b) ' || "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() })

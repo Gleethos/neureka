@@ -24,8 +24,8 @@ public class Momentum<V extends Number> implements Optimizer<V>
     public Tsr<V> optimize( Tsr<V> w ) {
         LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
         Tsr<Number> g = w.getGradient().getUnsafe().upcast(Number.class);
-        v.timesAssign(decay);
-        v.plusAssign(g.times(1 - decay));
+        v.getUnsafe().timesAssign(decay);
+        v.getUnsafe().plusAssign(g.times(1 - decay));
         return Tsr.of("-" + lr + " * I[0]", (Tsr<V>) v);
     }
 

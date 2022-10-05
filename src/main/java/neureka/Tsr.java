@@ -1573,18 +1573,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  Performs an addition of the passed tensor to this tensor.
-     *  The result of the addition will be stored in this tensor (inline operation).
-     *
-     * @param other The tensor which ought to be added to this tensor.
-     * @return This tensor.
-     */
-    default Tsr<V> plusAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
-        return Neureka.get().backend().getFunction().plusAssign().call( this, other );
-    }
-
-    /**
      *  This method will create a new {@link Tsr}
      *  with the provided double scalar added to all elements of this {@link Tsr}.
      *
@@ -1620,23 +1608,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> minus( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getItemType(), "Cannot subtract 'null' from a tensor!");
         return minus(
-                of( this.getDataType().getItemTypeClass() )
-                        .withShape(this.getNDConf().shape())
-                        .all(other)
-        );
-    }
-    default Tsr<V> minusAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract-assign 'null' from a tensor!");
-        return Neureka.get().backend().getFunction().minusAssign().call( this, other );
-    }
-
-    /**
-     * @param other The scalar value which should be subtracted from the values of this tensor.
-     * @return This tensor after the minus-assign inline operation was applied.
-     */
-    default Tsr<V> minusAssign( V other ) {
-        LogUtil.nullArgCheck(other, "other", this.getItemType(), "Cannot subtract-assign 'null' from a tensor!");
-        return minusAssign(
                 of( this.getDataType().getItemTypeClass() )
                         .withShape(this.getNDConf().shape())
                         .all(other)
@@ -1924,23 +1895,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         LogUtil.nullArgCheck(other, "other", getItemType(), "Cannot multiply 'null' with a tensor!");
         return multiply( other );
     }
-    /**
-     * @param other The tensor whose elements ought to be multiplied and assigned to elements in this tensor.
-     * @return This instance where each value element was multiplied by the corresponding element in the provided tensor.
-     */
-    default Tsr<V> timesAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
-        return Neureka.get().backend().getFunction().mulAssign().call( this, other );
-    }
 
-    /**
-     * @param other The value which ought to be multiplied and assigned to each element in this tensor.
-     * @return This instance where each value element was multiplied by the provided element.
-     */
-    default Tsr<V> timesAssign( V other ) {
-        LogUtil.nullArgCheck(other, "other", this.getItemType(), "Cannot multiply-assign 'null' to a tensor!");
-        return this.timesAssign( of( getItemType(), getNDConf().shape(), other ) );
-    }
     /**
      * @param value The value which should be broadcast to all elements of a clone of this tensor.
      * @return A new clone of this tensor where all elements are multiplied by the provided value.
@@ -1969,11 +1924,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
     default Tsr<V> div( V value ) { return div( of( getItemType(), getNDConf().shape(), value ) ); }
 
-    default Tsr<V> divAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
-        return Neureka.get().backend().getFunction().divAssign().call( this, other );
-    }
-
     /**
      *  Produces the modulus of
      *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
@@ -2001,11 +1951,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  This method is synonymous to the {@link #mod(int)} method.
      */
     default Tsr<V> rem( int other ) { return this.mod(other); }
-
-    default Tsr<V> modAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
-        return Neureka.get().backend().getFunction().modAssign().call( this, other );
-    }
 
     /**
      *  This will produce the power of
@@ -2374,7 +2319,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
          * @return A tensor whose type parameter is upcast.
          * @param <U> The super type parameter of the value type of the tensor.
          */
-        <U/*super T*/> Tsr<U> upcast(Class<U> superType );
+        <U/*super T*/> Tsr<U> upcast( Class<U> superType );
 
         /**
          *  This method enables modifying the data-type configuration of this {@link AbstractNda}.
@@ -2487,6 +2432,37 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
          */
         Tsr<T> detach();
 
+        /**
+         * @param other The tensor whose elements ought to be multiplied and assigned to elements in this tensor.
+         * @return This instance where each value element was multiplied by the corresponding element in the provided tensor.
+         */
+        Tsr<T> timesAssign( Tsr<T> other );
+        /**
+         * @param other The value which ought to be multiplied and assigned to each element in this tensor.
+         * @return This instance where each value element was multiplied by the provided element.
+         */
+        Tsr<T> timesAssign( T other );
+
+        Tsr<T> divAssign( Tsr<T> other );
+
+        Tsr<T> modAssign( Tsr<T> other );
+
+        /**
+         *  Performs an addition of the passed tensor to this tensor.
+         *  The result of the addition will be stored in this tensor (inline operation).
+         *
+         * @param other The tensor which ought to be added to this tensor.
+         * @return This tensor.
+         */
+        Tsr<T> plusAssign( Tsr<T> other );
+
+        Tsr<T> minusAssign( Tsr<T> other );
+
+        /**
+         * @param other The scalar value which should be subtracted from the values of this tensor.
+         * @return This tensor after the minus-assign inline operation was applied.
+         */
+        Tsr<T> minusAssign( T other );
     }
 
 }

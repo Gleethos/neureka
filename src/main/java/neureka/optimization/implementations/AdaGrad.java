@@ -32,7 +32,7 @@ public class AdaGrad<V extends Number> implements Optimizer<V>
     public Tsr<V> optimize( Tsr<V> w ) {
         LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
         Tsr<Number> g = w.getGradient().getUnsafe().upcast(Number.class);
-        h.plusAssign(g.power(2));
+        h.getUnsafe().plusAssign(g.power(2));
         return Tsr.of("-"+ lr +" * ", g, " / ( ( ", h, " ** 0.5 ) + "+E+" )");
     }
 

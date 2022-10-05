@@ -298,11 +298,11 @@ class Tensor_IO_Spec extends Specification
 
         when :
             indices[0] = 1
-            t[indices].timesAssign(-1d)
+            t[indices].unsafe.timesAssign(-1d)
 
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, -6.0)")
 
-        when : t[3].timesAssign(-2d)
+        when : t[3].unsafe.timesAssign(-2d)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 12.0)")
 
         when : t[indices] = 0d
@@ -311,13 +311,13 @@ class Tensor_IO_Spec extends Specification
         when : t[2] = 99d
         then : t.toString().contains("[2x2]:(2.0, -6.0, 99.0, 0.0)")
 
-        when : t[2].minusAssign(99d)
+        when : t[2].unsafe.minusAssign(99d)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 0.0, 0.0)")
 
         when : 'Modifying the first index of the indices array...'
             indices[0] = 0
         and : 'Using this new indices array for IO...'
-            t[indices].minusAssign(-9d)
+            t[indices].unsafe.minusAssign(-9d)
         then : 'The underlying data will have changed.'
             t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
 

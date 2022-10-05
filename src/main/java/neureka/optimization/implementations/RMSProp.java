@@ -31,8 +31,8 @@ public class RMSProp<V extends Number> implements Optimizer<V>
     public Tsr<V> optimize( Tsr<V> w ) {
         LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
         Tsr<Number> g = w.getGradient().getUnsafe().upcast(Number.class);
-        h.timesAssign(decay);
-        h.plusAssign(g.power(2).times(1 - decay));
+        h.getUnsafe().timesAssign(decay);
+        h.getUnsafe().plusAssign(g.power(2).times(1 - decay));
         return Tsr.of("-" + lr + " * ", g, " / ( ( ", h, " ** 0.5 ) + 1e-8 )");
     }
 }

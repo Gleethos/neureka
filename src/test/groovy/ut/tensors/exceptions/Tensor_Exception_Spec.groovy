@@ -81,10 +81,11 @@ class Tensor_Exception_Spec extends Specification
             IllegalArgumentException    | { Tsr x -> x.div((Tsr)null)  }
             IllegalArgumentException    | { Tsr x -> x.plus((Tsr)null)  }
             IllegalArgumentException    | { Tsr x -> x.mod((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.timesAssign((Tsr)null) }
-            IllegalArgumentException    | { Tsr x -> x.divAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.plusAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.modAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.timesAssign((Tsr)null) }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.divAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.plusAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.modAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.minusAssign((Tsr)null)  }
             IllegalArgumentException    | { Tsr x -> x.label((String[][])null) }
             IllegalArgumentException    | { Tsr x -> x.label("hi", (String[][])null) }
             IllegalArgumentException    | { Tsr x -> x.label(null, (String[][])null) }
