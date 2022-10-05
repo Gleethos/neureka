@@ -392,7 +392,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         value = DataConverter.get().convert( value, arrayType );
 
         this.free( tensor );
-        tensor.forComponent( Tsr.class, this::restore );
+        tensor.find( Tsr.class ).ifPresent( this::restore );
         tensor.setItems( value );
         return this;
     }
@@ -550,15 +550,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if (clt == null) return this;
         _tensors.remove(tensor);
         tensor.getUnsafe().setData(null);
-        tensor.forComponent(
-            Device.class,
+        tensor.find(Device.class).ifPresent(
             device -> {
                 tensor.remove( Device.class );
-                tensor.forComponent(
-                    Tsr.class,
+                tensor.find(Tsr.class).ifPresent(
                     gradient ->
-                        ( (Tsr<Number>) gradient ).forComponent(
-                            Device.class,
+                        ( (Tsr<Number>) gradient ).find(Device.class).ifPresent(
                             gradDevice -> {
                                 try {
                                     if ( _tensors.contains( gradient ) ) gradDevice.restore( gradient );

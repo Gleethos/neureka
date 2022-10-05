@@ -39,7 +39,9 @@ import neureka.common.composition.Component;
 import neureka.Tsr;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -205,19 +207,19 @@ public class Relation<V> implements Component<Tsr<V>>
         return null;
     }
 
-    public Relation<V> foreachChild(Consumer<Tsr<V>> action )
-    {
+    public List<Tsr<?>> getChildren() {
+        List<Tsr<?>> children = new ArrayList<>();
         if ( _children != null ) {
             for ( WeakReference<Tsr<V>> r : _children ) {
                 Tsr<V> c = r.get();
                 if ( c != null ) {
-                    action.accept( c );
+                    children.add(c);
                     Relation<V> relation = (Relation<V>) c.get( Relation.class );
-                    if ( relation != null ) relation.foreachChild( action );
+                    if ( relation != null ) children.addAll(relation.getChildren());
                 }
             }
         }
-        return this;
+        return children;
     }
 
     /**

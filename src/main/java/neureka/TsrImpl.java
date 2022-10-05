@@ -342,12 +342,11 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             // Therefore, we need to re-initialize the NDConfiguration object:
             constructFor(CPU.get(),NDConstructor.of(getNDConf().shape())).newUnpopulated( isVirtual, false, getDataType() );
             if ( isVirtual ) {
-                Relation<V> relation = get( Relation.class );
-                if ( relation!=null )
-                    relation.foreachChild( c -> {
-                                ((TsrImpl<V>)c)._setData( _getData() );
-                                c.setIsVirtual( true );
-                            });
+                find( Relation.class ).ifPresent( r ->
+                        r.getChildren().forEach(c -> {
+                            ((TsrImpl<V>)c)._setData( _getData() );
+                            ((TsrImpl<V>)c).setIsVirtual( true );
+                        }));
             } else {
                 Tsr<?> parentTensor = ( this.isSlice() ) ? get(Relation.class).getParent() : null;
                 if ( parentTensor != null ) parentTensor.get( Relation.class ).remove( this );
@@ -423,18 +422,18 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     private Tsr<V> _delete()
     {
         if ( isDeleted() ) return this;
-        forComponent( GraphNode.class, n -> {
+        this.find( GraphNode.class ).ifPresent( n -> {
             if ( n.isUsedAsDerivative() ) {
                 String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
                 _LOG.error( message );
                 throw new IllegalStateException( message );
             }
         });
-        forComponent( Device.class, device -> device.free( this ) );
+        this.find( Device.class ).ifPresent( device -> device.free( this ) );
         _setData( null );
         _setNDConf( null );
         _flags = 0;
-        forComponent( TsrImpl.class, t -> t.getUnsafe().delete() );
+        this.find( TsrImpl.class ).ifPresent( t -> t.getUnsafe().delete() );
         _deleteComponents();
         _flags += IS_DELETED_MASK;
 
@@ -762,13 +761,17 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     public Tsr<V> label( String tensorName, String[][] labels )
     {
         LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
+        if ( labels.length > this.rank() )
+            throw new IllegalArgumentException(
+                    "Number of the provided axes labels is larger than the total number of axes (rank) of the nd-array."
+                );
+
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) {
-            frame = new NDFrame( this.rank(), tensorName );
-            set(frame);
+            frame = new NDFrame<>( this.rank(), tensorName );
+            this.set(frame);
         }
-        assert labels.length <= this.rank();
-        for( int i = 0; i < labels.length; i++ ) {
+        for ( int i = 0; i < labels.length; i++ ) {
             if ( labels[ i ] != null ) {
                 AxisFrame<Integer, V> atAxis = frame.atAxis( i );
                 for ( int ii = 0; ii < labels[ i ].length; ii++ ) {
@@ -785,7 +788,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     public Tsr<V> label(List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame( labels, null ) );
+        if ( frame == null ) set( new NDFrame<>( labels, null ) );
         return this;
     }
 
@@ -826,12 +829,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     /** {@inheritDoc} */
     @Override
     public boolean isCase( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'is case' operation when second oprand is 'null'!");
-        boolean[] found = { false };
-        this.forComponent( Relation.class, r -> r.foreachChild( c -> {
-                if ( c.equals( other ) ) found[ 0 ] = true;
-            }));
-        return found[ 0 ];
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'is case' operation when second operand is 'null'!");
+        return this.find( Relation.class )
+                    .map( r -> ((Relation<?>)r).getChildren().stream().anyMatch( (Tsr<?> c) -> c.equals(other) ))
+                    .orElse(false);
     }
 
     /*==================================================================================================================
@@ -1155,23 +1156,20 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     @Override
     public Tsr<V> addToGradient( Tsr<V> error ) {
         _guardSet("gradient");
-        if (
-            !forComponent(
-                Tsr.class,
-                    gradient ->
-                    this.set(
-                        MemUtil.keep( gradient, error, () ->
-                            Neureka.get()
-                                    .backend()
-                                    .getFunction()
-                                    .plusAssign()
-                                    .call(gradient, error)
-                        )
-                    )
-            )
-        ) {
+        Optional<Tsr> grad = this.find( Tsr.class );
+        grad.ifPresent( gradient ->
+                            this.set(
+                                    MemUtil.keep( gradient, error, () ->
+                                            Neureka.get()
+                                                    .backend()
+                                                    .getFunction()
+                                                    .plusAssign()
+                                                    .call(gradient, error)
+                                    )
+                            ));
+        if ( !grad.isPresent() ) {
             this.set( error );
-            this.forComponent( Device.class, device -> {
+            this.find( Device.class ).ifPresent( device -> {
                 try {
                     device.store( error ) ;
                 } catch ( Exception exception ) {
@@ -1234,7 +1232,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
             _setDataType( DataType.of( typeClass ) );
             _setData( CPU.get().allocate(newData) );
         }
-        forComponent( TsrImpl.class, gradient -> gradient._toType( typeClass ) );
+        this.find( TsrImpl.class ).ifPresent( gradient -> gradient._toType( typeClass ) );
         return (Tsr<T>) this;
     }
 

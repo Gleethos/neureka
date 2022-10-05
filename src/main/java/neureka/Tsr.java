@@ -89,10 +89,7 @@ import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -1293,9 +1290,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
             error = error.deepCopy().to(this.getDevice());
 
         Tsr<V> finalError = error;
-        if ( !forComponent( GraphNode.class, node -> node.backward(finalError) ) && this.rqsGradient() ) {
+        Optional<GraphNode> node = find( GraphNode.class );
+        if ( node.isPresent() )
+            node.get().backward(finalError);
+
+        if ( !node.isPresent() && this.rqsGradient() )
             addToGradient( error );
-        }
+
         return this;
     }
 
@@ -1356,18 +1357,15 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
            has been put on hold by saving the pending graph nodes inside the component. <br>
            This is because the gradient most likely has not yet been fully calculated.
          */
-        forComponent( JITProp.class, JITProp::execute );
+        this.find( JITProp.class ).ifPresent( JITProp::execute );
         // Afterwards the JITProp component is not needed anymore! So we remove it.
         remove( JITProp.class );
         // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class as key).
-        forComponent(
-            Tsr.class,
-            g -> {
+        this.find( Tsr.class ).ifPresent( g -> {
                 // If an optimizer is present then we also optimize the gradient first!
-                if ( this.has( Optimizer.class ) )
-                    g = this.get(Optimizer.class).optimize( this );
+                g = this.find( Optimizer.class ).map( o -> o.optimize( this ) ).orElse( g );
                 // And then we remove the gradient because it is no longer needed.
-                remove( Tsr.class );
+                this.remove( Tsr.class );
                 // We are now ready to apply the gradient to the tensor. This is an inline operation!
                 // Therefore, we need to turn off the inline operation safety net:
                 boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();

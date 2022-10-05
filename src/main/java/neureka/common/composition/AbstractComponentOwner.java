@@ -44,7 +44,7 @@ import neureka.common.utility.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Optional;
 
 /**
  *  Together with the {@link Component} interface, this class defines a simple
@@ -310,9 +310,6 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
     protected abstract <T extends Component<C>> T _setOrReject( T newComponent );
 
     /**
-     * This method abstract ought to be implemented further down
-     * the inheritance hierarchy where it's responsibility
-     * makes more sense, namely :
      * An implementation of this method checks if the passed component
      * should be removed from the component collection of this class
      * or its removal should be "rejected".
@@ -324,25 +321,10 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
      */
     protected abstract <T extends Component<C>> T _removeOrReject( T newComponent );
 
-    /**
-     * This method tries to find a stored component by identifying it
-     * via the given Class instance in order to pass it
-     * into the provided Consumer lambda.
-     * If however no component was found then this lambda is being left untouched.
-     *
-     * @param componentClass Component class of whose type the requested component is.
-     * @param action An action applied on the requested component if found.
-     * @return True if a component could be found, false otherwise.
-     */
+    /** {@inheritDoc} */
     @Override
-    public <T extends Component<C>> boolean forComponent( Class<T> componentClass, Consumer<T> action ) {
-        T component = this.get( componentClass );
-        if ( component != null ) {
-            action.accept( component );
-            return true;
-        }
-        else return false;
+    public <T extends Component> Optional<T> find( Class<T> componentClass ) {
+        return Optional.ofNullable( this.get( componentClass ) );
     }
-
 
 }
