@@ -746,6 +746,48 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
                                 .all(other)
                         );
             }
+            /** {@inheritDoc} */
+            @Override public Tsr<V> label(String tensorName, String[]... labels) {
+                return TsrImpl.this.label( tensorName, labels );
+            }
+            //-------
+
+            /** {@inheritDoc} */
+            @Override
+            public Tsr<V> label( List<List<Object>> labels ) {
+                LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
+                NDFrame<V> frame = get( NDFrame.class );
+                if ( frame == null ) set( new NDFrame<>( labels, null ) );
+                return TsrImpl.this;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Tsr<V> label( String tensorName, List<List<Object>> labels ) {
+                LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
+                NDFrame<V> frame = get( NDFrame.class );
+                if ( frame == null ) set( new NDFrame<>( labels, tensorName ) );
+                return TsrImpl.this;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Tsr<V> label( Map<Object, List<Object>> labels )
+            {
+                LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
+                TsrImpl.this.set( new NDFrame<>( labels, TsrImpl.this, null ) );
+                return TsrImpl.this;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Tsr<V> label(String tensorName, Map<Object, List<Object>> labels )
+            {
+                LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
+                TsrImpl.this.set( new NDFrame<>( labels, TsrImpl.this, tensorName ) );
+                return TsrImpl.this;
+            }
+
         };
     }
 
@@ -795,8 +837,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
     @Override
     public Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
 
-    /** {@inheritDoc} */
-    @Override
     public Tsr<V> label( String tensorName, String[][] labels )
     {
         LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
@@ -824,38 +864,32 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label(List<List<Object>> labels ) {
-        LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
-        NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame<>( labels, null ) );
-        return this;
+    public Tsr<V> withLabels( String[]... labels ) {
+        return this.shallowClone().getUnsafe().label( labels );
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label( String tensorName, List<List<Object>> labels ) {
-        LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
-        NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame<>( labels, tensorName ) );
-        return this;
+    public Tsr<V> withLabels( List<List<Object>> labels ) {
+        return this.shallowClone().withLabels( labels );
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label( Map<Object, List<Object>> labels )
-    {
-        LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
-        this.set( new NDFrame<>( labels, this, null ) );
-        return this;
+    public Tsr<V> withLabels( String tensorName, List<List<Object>> labels ) {
+        return this.shallowClone().withLabels( tensorName, labels );
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label(String tensorName, Map<Object, List<Object>> labels )
-    {
-        LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
-        this.set( new NDFrame<>( labels, this, tensorName ) );
-        return this;
+    public Tsr<V> withLabels( Map<Object, List<Object>> labels ) {
+        return this.shallowClone().withLabels( labels );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Tsr<V> withLabels(String tensorName, Map<Object, List<Object>> labels ) {
+        return this.shallowClone().withLabels( tensorName, labels );
     }
 
     /*==================================================================================================================

@@ -219,7 +219,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
             }
         }
         else labels = _colLabels;
-        loaded.label( _tensorName, new String[][]{ index, labels } );
+        loaded.getUnsafe().label( _tensorName, new String[][]{ index, labels } );
         return loaded;
     }
 

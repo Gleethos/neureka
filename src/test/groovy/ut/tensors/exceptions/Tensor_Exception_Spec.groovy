@@ -86,11 +86,11 @@ class Tensor_Exception_Spec extends Specification
             IllegalArgumentException    | { Tsr x -> x.unsafe.plusAssign((Tsr)null)  }
             IllegalArgumentException    | { Tsr x -> x.unsafe.modAssign((Tsr)null)  }
             IllegalArgumentException    | { Tsr x -> x.unsafe.minusAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.label((String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.label("hi", (String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.label(null, (String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.label("hi", (Map)null) }
-            IllegalArgumentException    | { Tsr x -> x.label(null, (Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.label((String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.label("hi", (String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.label(null, (String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.label("hi", (Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.unsafe.label(null, (Map)null) }
     }
 
     def 'Passing an invalid object into Tsr constructor causes descriptive exception.'()

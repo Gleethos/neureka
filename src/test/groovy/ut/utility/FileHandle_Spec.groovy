@@ -222,7 +222,7 @@ class FileHandle_Spec extends Specification
             Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
                     '1', 'hi', ':)',
                     '2', 'hey', ';)'
-            ]).label([
+            ]).unsafe.label([
                     ['r1', 'r2'],
                     ['A', 'B', 'C']
             ])
@@ -262,7 +262,7 @@ class FileHandle_Spec extends Specification
             Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
                     '1', 'hi', ':)',
                     '2', 'hey', ';)'
-            ]).label([
+            ]).unsafe.label([
                     'ROW':null,
                     'COL':['A', 'B', 'C']
             ])
