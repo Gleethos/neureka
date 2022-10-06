@@ -49,7 +49,7 @@ class Calculus_Stress_Test extends Specification
             Tsr source = Tsr.of( [3, 3, 3, 3], -1d ).to( device )
 
         when :
-            source[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4d..2d )
+            source.mut[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4d..2d )
             Tsr t = source[1..2, 0..2, 1..1, 0d..2d]
 
         then :
