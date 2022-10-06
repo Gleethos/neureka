@@ -210,12 +210,12 @@ class Tensor_Version_Spec extends Specification
             t.version == 0
 
         when :
-            t[0] = 1f
-            t[new int[]{1, 0}] = 6f
-            t[0, 1] = 42f
-            t.set(0, 3f)
-            t.setItemAt(3, 4f)
-            t.set(new int[]{1, 1}, -1f)
+            t.mut[0] = 1f
+            t.mut[new int[]{1, 0}] = 6f
+            t.mut[0, 1] = 42f
+            t.mut.set(0, 3f)
+            t.mut.setItemAt(3, 4f)
+            t.mut.set(new int[]{1, 1}, -1f)
             t.mut.setDataAt(3, 5f)
         then :
             t.version == 7

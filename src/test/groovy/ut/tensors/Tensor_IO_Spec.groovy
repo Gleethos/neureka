@@ -305,10 +305,10 @@ class Tensor_IO_Spec extends Specification
         when : t[3].mut.timesAssign(-2d)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 12.0)")
 
-        when : t[indices] = 0d
+        when : t.mut[indices] = 0d
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 0.0)")
 
-        when : t[2] = 99d
+        when : t.mut[2] = 99d
         then : t.toString().contains("[2x2]:(2.0, -6.0, 99.0, 0.0)")
 
         when : t[2].mut.minusAssign(99d)

@@ -393,7 +393,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         this.free( tensor );
         tensor.find( Tsr.class ).ifPresent( this::restore );
-        tensor.setItems( value );
+        tensor.getMut().setItems( value );
         return this;
     }
 

@@ -190,9 +190,9 @@ Kotlin_Compatibility_Unit_Testing {
         )
 
         // When :
-        t[intArrayOf(1, 2, 0)] = ComplexNumber(42.0, 666.0)
-        t[intArrayOf(0, 1, 2)] = ComplexNumber(73.0, 666.0)
-        t[16] = ComplexNumber(42.0, 24.0)
+        t.mut[intArrayOf(1, 2, 0)] = ComplexNumber(42.0, 666.0)
+        t.mut[intArrayOf(0, 1, 2)] = ComplexNumber(73.0, 666.0)
+        t.mut[16] = ComplexNumber(42.0, 24.0)
 
         // Then :
         assert(e1.toString() == "(1x1x1):[42.0+666.0i]")

@@ -189,9 +189,8 @@ public class ElemWiseUtil
             else
                 call = call.withInputAt(0,
                         call.input( 1 ).deepCopy()
-                           .getMut()
-                           .setIsIntermediate( true )
-                           .setItems( d == 0 || thisIsForAddition ? 1f : -1f )
+                           .getMut().setIsIntermediate( true )
+                           .getMut().setItems( d == 0 || thisIsForAddition ? 1f : -1f )
                     );
         }
         if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
@@ -216,7 +215,7 @@ public class ElemWiseUtil
                         .getMut()
                         .setIsIntermediate( true );
         t.getMut().setIsVirtual( false );
-        t.setItems( value );
+        t.getMut().setItems( value );
         try {
             if ( isOutsourced ) device.store( t );
         } catch ( Exception exception ) {

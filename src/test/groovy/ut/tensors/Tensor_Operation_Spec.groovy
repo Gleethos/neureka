@@ -431,7 +431,7 @@ class Tensor_Operation_Spec extends Specification
         and : 'We create 2 tensors storing the same values, one sliced and the other a normal tensor.'
             var t1 = Tsr.of(type).withShape(2, 3).andSeed("Tempeh")
             var t2 = Tsr.of(type).withShape(4, 5).all(0)[1..2, 1..3]
-            t2[0..1, 0..2] = t1
+            t2.mut[0..1, 0..2] = t1
 
         expect : 'The types of both tensors should match what was provided during instantiation.'
             t1.dataType == DataType.of(type)

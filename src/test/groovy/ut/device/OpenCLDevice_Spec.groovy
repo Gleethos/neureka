@@ -200,8 +200,8 @@ class OpenCLDevice_Spec extends Specification
             Tsr A = Tsr.of( [M,K], 0f )
             Tsr B = Tsr.of( [K,N], 0f )
             Tsr C = Tsr.of( [M,N], 0f )
-            A[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)
-            B[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)
+            A.mut[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)
+            B.mut[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)
 
             var reference = A.matMul(B).items // CPU execution for reference!
 

@@ -18,7 +18,44 @@ import java.util.Map;
  * because the exposed state can easily lead to broken tensors and exceptions...<br>
  * <br>
  */
-public interface MutateTsr<T> extends MutateNda<T> {
+public interface MutateTsr<T> extends MutateNda<T>
+{
+
+    /** {@inheritDoc} */
+    @Override Tsr<T> putAt( Map<?,Integer> key, Nda<T> value );
+
+    @Override Tsr<T> putAt( int[] indices, T value );
+
+    /** {@inheritDoc} */
+    @Override default Tsr<T> set( int[] indices, T value ) { return putAt( indices, value ); }
+
+    /** {@inheritDoc} */
+    @Override Tsr<T> putAt( int index, T value );
+
+    /** {@inheritDoc} */
+    @Override default Tsr<T> set( int index, T value ) { return putAt( index, value ); }
+
+    /** {@inheritDoc} */
+    @Override Tsr<T> putAt( List<?> key, Nda<T> value );
+
+    /** {@inheritDoc} */
+    @Override Tsr<T> putAt( List<?> indices, T value );
+
+    /** {@inheritDoc} */
+    @Override Tsr<T> setItemAt( int i, T o );
+
+    /** {@inheritDoc} */
+    @Override Tsr<T> setItems( Object value );
+
+    /**
+     *  This method takes the provided {@link Tsr} instance and adds its
+     *  contents to the contents of the {@link Tsr} which is set as gradient of this very {@link Tsr}.
+     *
+     * @param error The error gradient which ought to be added to the gradient of this tensor.
+     * @return This very tensor instance to enable method chaining.
+     */
+    Tsr<T> addToGradient( Tsr<T> error );
+
     /**
      * This method sets the NDConfiguration of this NDArray.
      * Therefore, it should not be used lightly as it can cause major internal inconsistencies.

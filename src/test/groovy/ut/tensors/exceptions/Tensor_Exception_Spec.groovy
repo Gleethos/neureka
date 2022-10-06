@@ -53,7 +53,7 @@ class Tensor_Exception_Spec extends Specification
             Tsr<Integer> t = Tsr.of([6, 6], -1)
 
         when : 'We try to inject an empty tensor whose size does of course not match...'
-            t[[1..3], [1..3]] = Tsr.newInstance() as Tsr<Integer>
+            t.mut[[1..3], [1..3]] = Tsr.newInstance() as Tsr<Integer>
 
         then : 'The expected message is being thrown, which tells us that '
             def exception = thrown(IllegalArgumentException)
@@ -128,7 +128,7 @@ class Tensor_Exception_Spec extends Specification
     {
         when : 'Some more complex slicing is being performed...'
             Tsr t = Tsr.of( [3, 3, 3, 3], 0 )
-            t[1..2, 1..3, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )
+            t.mut[1..2, 1..3, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )
 
         then : 'The slice range 1..3 causes and exception!'
             def exception = thrown(IllegalArgumentException)

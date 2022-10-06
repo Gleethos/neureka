@@ -137,10 +137,10 @@ class SimpleNNSystemTest
 
     void feedforward(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1) {
         Tsr in0 = _$(input, weights1)
-        layer1[] = sigmoid(in0)
+        layer1.mut[] = sigmoid(in0)
         //println(layer1.toString("shp")+"=sig(  I"+input.toString("shp")+" X W"+weights1.toString("shp")+" )")
         Tsr in1 = _$(layer1, weights2)
-        output[] = sigmoid(in1)
+        output.mut[] = sigmoid(in1)
         //println(output.toString("shp")+"=sig( L1"+layer1.toString("shp")+" X W"+weights2.toString("shp")+" )\n")
     }
 
@@ -152,8 +152,8 @@ class SimpleNNSystemTest
         Tsr temp = back2(derivative, weights2)
         Tsr d_weights1 = back(input, temp * sigmoid_derivative(layer1))
         // update the weights with the derivative (slope) of the loss function
-        weights1[] = weights1 + d_weights1
-        weights2[] = weights2 + d_weights2
+        weights1.mut[] = weights1 + d_weights1
+        weights2.mut[] = weights2 + d_weights2
     }
 
 

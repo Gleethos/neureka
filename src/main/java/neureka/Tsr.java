@@ -1260,7 +1260,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
             node.get().backward(finalError);
 
         if ( !node.isPresent() && this.rqsGradient() )
-            addToGradient( error );
+            getMut().addToGradient( error );
 
         return this;
     }
@@ -1923,38 +1923,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override Tsr<V> getAt( List<?> key );
 
-    /** {@inheritDoc} */
-    @Override Tsr<V> putAt( Map<?,Integer> key, Nda<V> value );
-
-    @Override Tsr<V> putAt( int[] indices, V value );
-
-    /** {@inheritDoc} */
-    @Override default Tsr<V> set( int[] indices, V value ) { return putAt( indices, value ); }
-
-    /** {@inheritDoc} */
-    @Override default Tsr<V> putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }
-
-    /** {@inheritDoc} */
-    @Override default Tsr<V> set( int index, V value ) { return putAt( index, value ); }
-
-    /** {@inheritDoc} */
-    @Override Tsr<V> putAt( List<?> key, Nda<V> value );
-
-    /** {@inheritDoc} */
-    @Override default Tsr<V> putAt( List<?> indices, V value ) {
-        if ( indices.stream().allMatch( i -> i instanceof Number ) )
-            return setItemAt( indexOfIndices(indices.stream().mapToInt( i -> ((Number)i).intValue() ).toArray()), value );
-        else
-            return this.putAt( indices, of( this.getItemType(), shape(), value ) );
-    }
-
-    /** {@inheritDoc} */
-    @Override Tsr<V> setItemAt( int i, V o );
-
-    /** {@inheritDoc} */
-    @Override Tsr<V> setItems( Object value );
-
-    
     /*==================================================================================================================
     |
     |       §(10) : Mapping :
@@ -2054,15 +2022,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A {@link BufferedImage} populated with the contents of this tensor.
      */
     BufferedImage asImage( Tsr.ImageType type );
-
-    /**
-     *  This method takes the provided {@link Tsr} instance and adds its
-     *  contents to the contents of the {@link Tsr} which is set as gradient of this very {@link Tsr}.
-     *
-     * @param error The error gradient which ought to be added to the gradient of this tensor.
-     * @return This very tensor instance to enable method chaining.
-     */
-    Tsr<V> addToGradient( Tsr<V> error );
 
     /**
      * @param typeClass The class which is the target of the type conversion.

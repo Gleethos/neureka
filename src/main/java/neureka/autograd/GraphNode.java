@@ -315,7 +315,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
             else exception.printStackTrace();
         }
-        if ( payload.rqsGradient() ) payload.addToGradient( e );
+        if ( payload.rqsGradient() ) payload.getMut().addToGradient( e );
         if ( also != null ) also.accept( payload );
     }
 

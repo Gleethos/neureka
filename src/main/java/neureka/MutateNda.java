@@ -11,7 +11,121 @@ import java.util.Map;
  * because the exposed state can easily lead to broken nd-arrays and exceptions...<br>
  * <br>
  */
-public interface MutateNda<T> {
+public interface MutateNda<T>
+{
+    /**
+     *  This method enables assigning a provided nd-array to be a subset/slice of this nd-array!
+     *  It takes a key which is used to configure a slice
+     *  sharing the same underlying data as the original nd-array.
+     *  This slice is then used to assign the second argument {@code value} to it.
+     *  The usage of this method is especially powerful when used in Groovy. <br>
+     *  The following code illustrates this very well:
+     *  <pre>{@code
+     *      a[[[0..0]:1, [0..0]:1, [0..3]:2]] = b
+     *  }</pre>
+     *  Here a single argument with the format '[i..j]:k' is equivalent
+     *  to pythons 'i:j:k' syntax for indexing! (numpy)                            <br>
+     *  i... start indexAlias.                                                      <br>
+     *  j... end indexAlias. (inclusive!)                                           <br>
+     *  k... step size.                                                             <br>
+     *
+     * @param key This object is a map defining a stride and a targeted index or range of indices...
+     * @param value The nd-array which ought to be assigned into a slice of this nd-array.
+     * @return A slice nd-array or scalar value.
+     */
+    Nda<T> putAt( Map<?,Integer> key, Nda<T> value );
+
+    /**
+     *  Use this to put a single item at a particular
+     *  position within this nd-array.
+     *
+     * @param indices The indices of the nd-position where the provided item should be placed.
+     * @param value The item which should be placed at the position defined by the provided indices.
+     * @return This nd-array itself.
+     */
+    Nda<T> putAt( int[] indices, T value );
+
+
+    /**
+     *  Use this to place a single item at a particular position within this nd-array!
+     *
+     * @param indices An array of indices targeting a particular position in this nd-array...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda<T> set( int[] indices, T value );
+
+    /**
+     *  Individual entries for value items in this nd-array can be set
+     *  via this method.
+     *
+     * @param index The scalar index targeting a specific value position within this nd-array
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param value The item which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda<T> putAt( int index, T value );
+
+    /**
+     *  Individual entries for value items in this nd-array can be set
+     *  via this method.
+     *
+     * @param index The scalar index targeting a specific value position within this nd-array
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param value The item which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda<T> set( int index, T value );
+
+    /**
+     *  This method enables injecting slices of nd-array to be assigned into this nd-array!
+     *  It takes a key of various types which is used to configure a slice
+     *  nd-array sharing the same underlying data as the original nd-array.
+     *  This slice is then used to assign the second argument to it, namely
+     *  the "value" argument.
+     *
+     * @param key This object is a list defining a targeted index or range of indices...
+     * @param value the nd-array which ought to be assigned to a slice of this nd-array.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda<T> putAt( List<?> key, Nda<T> value );
+
+    /**
+     *  Use this to place a single item at a particular position within this nd-array!
+     *
+     * @param indices A list of indices targeting a particular position in this nd-array...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda<T> putAt( List<?> indices, T value );
+
+    /**
+     *  An NDArray implementation ought to have some way to selectively modify its underlying value.
+     *  This method simply overrides an element within this data array sitting at position "i".
+     * @param i The index of the value array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very nd-array in order to enable method chaining.
+     */
+    Nda<T> setItemAt( int i, T o );
+
+    /**
+     *  This method will receive an object an try to interpret
+     *  it or its contents to be set as value for this nd-array.
+     *  It will not necessarily replace the underlying data array object of this
+     *  nd-array itself, but also try to convert and copy the provided value
+     *  into the data array of this nd-array.
+     *
+     * @param value The value which may be a scalar or array and will be used to populate this nd-array.
+     * @return This very nd-array to enable method chaining.
+     */
+    Nda<T> setItems( Object value );
+
+
+
     /**
      * This method is an inline operation which changes the underlying data of this tensor.
      * It converts the data types of the elements of this tensor to the specified type!<br>

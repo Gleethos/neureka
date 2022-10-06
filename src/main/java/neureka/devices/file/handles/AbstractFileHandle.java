@@ -112,7 +112,7 @@ public abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
     public Storage<V> restore( Tsr<V> tensor ) {
         try {
             Object value = _loadData();
-            tensor.setItems( value );
+            tensor.getMut().setItems( value );
         } catch ( Exception e ) {
             _LOG.error( "Restoring tensor from filesystem failed!\n", e );
             e.printStackTrace();

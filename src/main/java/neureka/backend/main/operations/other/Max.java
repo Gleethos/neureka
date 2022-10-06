@@ -56,7 +56,7 @@ public class Max extends AbstractOperation
                             assert error.size() == 1;
                             Tsr<Object> newError = ElemWiseUtil.newTsrLike(typeClass, shape, true, device, 0);
                             newError.getMut().setIsVirtual(false);
-                            newError.setItemAt(i, error.item(0));
+                            newError.getMut().setItemAt(i, error.item(0));
                             return newError;
                         });
             })

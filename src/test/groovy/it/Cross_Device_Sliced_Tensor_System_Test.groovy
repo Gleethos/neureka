@@ -196,7 +196,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                                 1d, 1d, 1d, 1d
                             ])
                 device.store( k )
-                a[] = a * k
+                a.mut[] = a * k
             }
 
         then:
@@ -269,13 +269,13 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             Tsr p = Tsr.of([2,2], [2d, 55d, 4d, 7d]).to((device instanceof DummyDevice)?null:device)
             Tsr u = Tsr.of([2,2], [5d, 2d, 7d, 34d]).to((device instanceof DummyDevice)?null:device)
 
-            p[] = u
+            p.mut[] = u
 
         then:
             p.toString().contains("5.0, 2.0, 7.0, 34.0")
 
         when:
-            a[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1d, 2d, 3d, 4d])
+            a.mut[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1d, 2d, 3d, 4d])
         then:
             b.toString().contains("1.0, 2.0, 3.0, 4.0")
             a.toString().contains(
@@ -293,7 +293,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              */
 
         when:
-            a[1..2, 1..2] = Tsr.of([2, 2], [8, 8, 8, 8])
+            a.mut[1..2, 1..2] = Tsr.of([2, 2], [8, 8, 8, 8])
         then:
             b.toString().contains(
                     "1.0, 2.0, "+

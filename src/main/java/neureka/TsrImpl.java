@@ -369,7 +369,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     }
 
     /**
-     *  This method is the inner counterpart to the public "{@link Tsr#setIsVirtual}" method.
+     *  This method is the inner counterpart to the public "{@link MutateTsr#setIsVirtual}" method.
      *  It actually performs the bit flipping by applying the corresponding bit mask. <br>
      *  <br>
      * @param isVirtual The truth value which ought to be applied.
@@ -1137,6 +1137,17 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         _setDataAt( ndc.indexOfIndex( i ), o );
         return this;
     }
+
+    /** {@inheritDoc} */
+    @Override public Tsr<V> putAt( List<?> indices, V value ) {
+        if ( indices.stream().allMatch( i -> i instanceof Number ) )
+            return setItemAt( indexOfIndices(indices.stream().mapToInt( i -> ((Number)i).intValue() ).toArray()), value );
+        else
+            return this.putAt( indices, Tsr.of( this.getItemType(), shape(), value ) );
+    }
+
+    /** {@inheritDoc} */
+    @Override public Tsr<V> putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }
 
     private void _setDataAt( int i, V o ) {
         if ( this.isVirtual() && i > 0 )
