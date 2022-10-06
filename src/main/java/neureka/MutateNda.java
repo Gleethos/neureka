@@ -55,6 +55,11 @@ public interface MutateNda<T>
      */
     Nda<T> set( int[] indices, T value );
 
+    default Nda<T> set( int i0, int i1, T value ) { return putAt( new int[]{i0, i1}, value ); }
+
+
+    default Nda<T> set( int i0, int i1, int i2, T value ) { return putAt( new int[]{i0, i1, i2}, value ); }
+
     /**
      *  Individual entries for value items in this nd-array can be set
      *  via this method.

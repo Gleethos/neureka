@@ -1065,12 +1065,17 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> putAt(int[] indices, V item ) {
+    public Tsr<V> putAt( int[] indices, V item ) {
         if ( indices == null )
             throw new IllegalArgumentException( "Provided indices are null!" );
         if ( indices.length > this.rank() ) {
             int[] correct = new int[rank()];
             System.arraycopy( indices, 0, correct, 0, indices.length );
+            indices = correct;
+        } else if ( indices.length < rank() ) {
+            int[] correct = new int[rank()];
+            System.arraycopy( indices, 0, correct, 0, indices.length );
+            for ( int i = indices.length; i < rank(); i++ ) correct[i] = 0;
             indices = correct;
         }
         if ( this.isVirtual() ) this.setIsVirtual( false );

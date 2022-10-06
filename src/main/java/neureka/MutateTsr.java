@@ -30,6 +30,12 @@ public interface MutateTsr<T> extends MutateNda<T>
     @Override default Tsr<T> set( int[] indices, T value ) { return putAt( indices, value ); }
 
     /** {@inheritDoc} */
+    @Override default Tsr<T> set( int i0, int i1, T value ) { return putAt( new int[]{i0, i1}, value ); }
+
+    /** {@inheritDoc} */
+    @Override default Tsr<T> set( int i0, int i1, int i2, T value ) { return putAt( new int[]{i0, i1, i2}, value ); }
+
+    /** {@inheritDoc} */
     @Override Tsr<T> putAt( int index, T value );
 
     /** {@inheritDoc} */
