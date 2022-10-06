@@ -98,4 +98,36 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             (1.._) * kernel.passLocalFloats(_) >> kernel
     }
 
+
+    def 'The Sum implementation for the OpenCLDevice has realistic behaviour for when the number of elements is a prime.'()
+    {
+        given :
+            var a = Tsr.ofFloats().withShape(31).andWhere({i, _ -> (1+(7**i)%30)})
+            var call = Mock(ExecutionCall)
+            var device = Mock(OpenCLDevice)
+            var kernel = Mock(KernelCaller)
+
+        when :
+            new CLSum().run( call )
+
+        then :
+            _ * call.input(0) >> a
+            (1.._) * call.input(Float, 0) >> a
+            (1.._) * call.getDevice() >> device
+            (1.._) * device.maxWorkGroupSize() >> 16
+            (1.._) * device.hasAdHocKernel("fast_private_sum_reduction_RTS16") >>> [false, true]
+            (0.._) * device.compileAdHocKernel("fast_private_sum_reduction_RTS16", _) >> device
+            (1.._) * device.compileAndGetAdHocKernel("fast_private_sum_reduction_RTS16", _) >> kernel
+            (0.._) * device.findAdHocKernel("fast_private_sum_reduction_RTS16") >> Optional.of(kernel)
+            (0.._) * device.getAdHocKernel("fast_private_sum_reduction_RTS16") >> kernel
+            (1.._) * device.hasAdHocKernel("fast_local_mem_based_sum") >>> [false, true]
+            (0.._) * device.compileAdHocKernel("fast_local_mem_based_sum", _) >> device
+            (1.._) * device.compileAndGetAdHocKernel("fast_local_mem_based_sum", _) >> kernel
+            (0.._) * device.findAdHocKernel("fast_local_mem_based_sum") >> Optional.of(kernel)
+            (0.._) * device.getAdHocKernel("fast_local_mem_based_sum") >> kernel
+            (3.._) * kernel.pass(_) >> kernel
+            (1.._) * kernel.passLocalFloats(_) >> kernel
+    }
+
+
 }
