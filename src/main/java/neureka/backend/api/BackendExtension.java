@@ -3,11 +3,12 @@ package neureka.backend.api;
 import neureka.backend.api.ini.BackendLoader;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
+import neureka.devices.opencl.CLBackend;
 
 /**
  *  Implementations of this might introduce CUDA or ROCM to Neureka.
  *  By default, this interface is used to implement an OpenCL context
- *  via the {@link neureka.devices.opencl.CLContext} class used by the standard backend.
+ *  via the {@link CLBackend} class used by the standard backend.
  *  If you want to introduce new backends to Neureka, this is the place to start!
  */
 public interface BackendExtension extends Component<Extensions>

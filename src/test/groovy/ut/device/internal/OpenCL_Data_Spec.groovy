@@ -1,20 +1,20 @@
 package ut.device.internal
 
 import neureka.Neureka
-import neureka.devices.opencl.CLContext
+import neureka.devices.opencl.CLBackend
 import neureka.devices.opencl.JVMData
 import spock.lang.Specification
 
 class OpenCL_Data_Spec extends Specification
 {
     def setup() {
-        if ( Neureka.get().backend().has(CLContext) )
-            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = false
+        if ( Neureka.get().backend().has(CLBackend) )
+            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = false
     }
 
     def cleanup() {
-        if ( Neureka.get().backend().has(CLContext) )
-            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
+        if ( Neureka.get().backend().has(CLBackend) )
+            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
     }
 
 
@@ -22,8 +22,8 @@ class OpenCL_Data_Spec extends Specification
             Object data, int start, int size, Class<?> expectedType, List<?> expected
     ) {
         given : 'We make sure that any data will not automatically be converted to floats!'
-            if ( Neureka.get().backend.has(CLContext) )
-                Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = false
+            if ( Neureka.get().backend.has(CLBackend) )
+                Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = false
         and : 'We create 2 different data objects, a full and a partial/sliced array.'
             var full = JVMData.of(data)
             var slice = JVMData.of(data, size, start)
@@ -45,8 +45,8 @@ class OpenCL_Data_Spec extends Specification
             slice.pointer != null
 
         cleanup :
-            if ( Neureka.get().backend.has(CLContext) )
-                Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = true
+            if ( Neureka.get().backend.has(CLBackend) )
+                Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = true
 
         where :
             data                   | start | size || expectedType | expected

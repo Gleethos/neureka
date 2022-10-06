@@ -11,7 +11,6 @@ import neureka.backend.main.implementations.convolution.CLConvolution;
 import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.implementations.elementwise.CLBiElementwisePower;
 import neureka.backend.main.implementations.elementwise.CLElementwiseFunction;
-import neureka.backend.main.implementations.elementwise.CPUBiElementWiseModulo;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.matmul.CLMatMul;
 import neureka.backend.main.implementations.scalar.CLScalarFunction;
@@ -51,13 +50,13 @@ import static org.jocl.CL.clGetPlatformIDs;
  *  which is why it makes sense to have separate "worlds" with potential different operations...
  *  The component system of the {@link BackendContext} exist so that a given context
  *  can be extended for more functionality
- *  and also to attach relevant states like for example in this case the {@link CLContext}
+ *  and also to attach relevant states like for example in this case the {@link CLBackend}
  *  instance will directly or indirectly reference kernels, memory objects and other concepts
  *  exposed by OpenCL...
  */
-public final class CLContext implements BackendExtension
+public final class CLBackend implements BackendExtension
 {
-    private static final Logger _LOG = LoggerFactory.getLogger(CLContext.class);
+    private static final Logger _LOG = LoggerFactory.getLogger(CLBackend.class);
 
     private final List<OpenCLPlatform> _platforms = new ArrayList<>();
     private final CLSettings _settings = new CLSettings();
@@ -66,7 +65,7 @@ public final class CLContext implements BackendExtension
      *  Use this constructor if you want to create a new OpenCL world in which there
      *  are unique {@link OpenCLPlatform} and {@link OpenCLDevice} instances.
      */
-    public CLContext() {}
+    public CLBackend() {}
 
     /**
      * @return The number of all {@link OpenCLDevice} instances across all {@link OpenCLPlatform}s.

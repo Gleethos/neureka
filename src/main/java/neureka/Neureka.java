@@ -42,7 +42,7 @@ import neureka.common.utility.LogUtil;
 import neureka.common.utility.SettingsLoader;
 import neureka.devices.host.CPU;
 import neureka.devices.host.CPUBackend;
-import neureka.devices.opencl.CLContext;
+import neureka.devices.opencl.CLBackend;
 import neureka.devices.opencl.utility.Messages;
 import neureka.dtype.custom.F64;
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
@@ -138,7 +138,7 @@ public final class Neureka
             _backend.set( new CPUBackend() ); // CPU (JVM) is always available!
 
             if ( _OPENCL_AVAILABLE )
-                _backend.set( new CLContext() );
+                _backend.set( new CLBackend() );
             else
                 _LOG.warn( Messages.clContextCreationFailed() );
         }
@@ -216,8 +216,8 @@ public final class Neureka
      */
     public boolean canAccessOpenCL() {
         return _OPENCL_AVAILABLE &&
-                get().backend().has(CLContext.class) &&
-                get().backend().get(CLContext.class).getTotalNumberOfDevices() > 0;
+                get().backend().has(CLBackend.class) &&
+                get().backend().get(CLBackend.class).getTotalNumberOfDevices() > 0;
     }
 
     /**
@@ -225,8 +225,8 @@ public final class Neureka
      */
     public boolean canAccessOpenCLDevice() {
         return canAccessOpenCL() &&
-                get().backend().has(CLContext.class) &&
-                get().backend().get(CLContext.class).getTotalNumberOfDevices() > 0;
+                get().backend().has(CLBackend.class) &&
+                get().backend().get(CLBackend.class).getTotalNumberOfDevices() > 0;
     }
 
     /**

@@ -32,7 +32,7 @@ import static org.jocl.CL.*;
  *  Then you have 2 Platforms (Intel and POCL),
  *  each with the same Intel CPU as device.
  *
- *  For every platform exposed by the OpenCL runtime (modelled by a {@link CLContext} instance),
+ *  For every platform exposed by the OpenCL runtime (modelled by a {@link CLBackend} instance),
  *  there will be a {@link OpenCLPlatform} instance.
  */
 public class OpenCLPlatform

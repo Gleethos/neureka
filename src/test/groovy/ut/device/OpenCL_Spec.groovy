@@ -6,7 +6,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.common.composition.Component
 import neureka.devices.Device
-import neureka.devices.opencl.CLContext
+import neureka.devices.opencl.CLBackend
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.DeviceQuery
 import neureka.framing.Relation
@@ -26,7 +26,7 @@ import spock.lang.Title
     represents a OpenCL contexts, platforms and multiple devices on said platforms...
 
 ''')
-@Subject([CLContext, OpenCLDevice, DeviceQuery, Device])
+@Subject([CLBackend, OpenCLDevice, DeviceQuery, Device])
 class OpenCL_Spec extends Specification
 {
 
@@ -133,10 +133,10 @@ class OpenCL_Spec extends Specification
     def 'A given OpenCL context can be disposed!'() {
 
         given :
-            CLContext context
+            CLBackend context
             List<OpenCLDevice> devices = []
             Runnable dispose = {
-                context = Neureka.get().backend().get(CLContext)
+                context = Neureka.get().backend().get(CLBackend)
                 assert context.platforms.size() > 0
                 context.platforms.each {
                     assert it.devices.size() > 0

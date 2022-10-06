@@ -3,7 +3,7 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.common.utility.SettingsLoader
-import neureka.devices.opencl.CLContext
+import neureka.devices.opencl.CLBackend
 import neureka.dtype.DataType
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
@@ -42,13 +42,13 @@ class Functional_Tensor_Spec extends Specification
             it.hasSlimNumbers    = false
         })
 
-        if ( Neureka.get().backend().has(CLContext) )
-            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = false
+        if ( Neureka.get().backend().has(CLBackend) )
+            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = false
     }
 
     def cleanup() {
-        if ( Neureka.get().backend().has(CLContext) )
-            Neureka.get().backend().get(CLContext).getSettings().autoConvertToFloat = true
+        if ( Neureka.get().backend().has(CLBackend) )
+            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
     }
 
     def 'We can initialize a tensor using a filler lambda mapping indices to items.'()

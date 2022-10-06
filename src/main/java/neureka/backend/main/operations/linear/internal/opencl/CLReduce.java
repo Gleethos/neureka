@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
-import neureka.devices.opencl.CLContext;
+import neureka.devices.opencl.CLBackend;
 import neureka.devices.opencl.CLSettings;
 import neureka.devices.opencl.KernelCaller;
 import neureka.devices.opencl.OpenCLDevice;
@@ -32,7 +32,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
 
     @Override
     public Tsr<Integer> run(ExecutionCall<OpenCLDevice> call) {
-        CLContext context = Neureka.get().backend().get(CLContext.class);
+        CLBackend context = Neureka.get().backend().get(CLBackend.class);
         CLSettings settings = context == null ? null : context.getSettings();
         boolean autoConvert = context == null || settings.isAutoConvertToFloat();
         if ( settings != null ) settings.setAutoConvertToFloat(false);

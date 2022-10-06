@@ -2,7 +2,7 @@ package neureka.devices.opencl.utility;
 
 import neureka.backend.api.BackendContext;
 import neureka.common.utility.LogUtil;
-import neureka.devices.opencl.CLContext;
+import neureka.devices.opencl.CLBackend;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public final class Messages
     public static String clContextCreationFailed() {
         return LogUtil.format(
                 "OpenCL not available!\n" +
-                        "Skipped creating and adding a new '"+ CLContext.class.getSimpleName()+"' " +
+                        "Skipped creating and adding a new '"+ CLBackend.class.getSimpleName()+"' " +
                         "to the current '"+ BackendContext.class.getSimpleName()+"'...\n" +
                         findTip().bootstrapTip()
         );
@@ -26,7 +26,7 @@ public final class Messages
     public static String clContextCouldNotFindAnyDevices() {
         return LogUtil.format(
                 "OpenCL could not detect any devices in the current '{}'.\n{}",
-                CLContext.class.getSimpleName(),
+                CLBackend.class.getSimpleName(),
                 findTip().HOW_TO_INSTALL_OPENCL_DRIVERS
             );
     }

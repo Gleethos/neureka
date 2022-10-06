@@ -485,7 +485,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         // When tensors get stored on this device,
         // they are implicitly converted to a float tensor:
-        if ( Neureka.get().backend().get(CLContext.class).getSettings().isAutoConvertToFloat() )
+        if ( Neureka.get().backend().get(CLBackend.class).getSettings().isAutoConvertToFloat() )
             tensor.getMut().toType(F32.class);
     }
 

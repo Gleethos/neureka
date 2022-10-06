@@ -1,7 +1,7 @@
 package neureka.devices.opencl;
 
 /**
- *  OpenCL related settings for the {@link CLContext} backend extension.
+ *  OpenCL related settings for the {@link CLBackend} backend extension.
  */
 public class CLSettings {
 

@@ -9,7 +9,7 @@ import neureka.common.utility.SettingsLoader
 import neureka.devices.CustomDeviceCleaner
 import neureka.devices.file.FileDevice
 import neureka.devices.host.CPU
-import neureka.devices.opencl.CLContext
+import neureka.devices.opencl.CLBackend
 import neureka.dtype.DataType
 import neureka.framing.Relation
 import neureka.ndim.config.NDConfiguration
@@ -202,9 +202,9 @@ class Neureka_Spec extends Specification
 
         where : 'The following objects are being used..'
             neurekaCLObject << [
-                    Neureka.get().backend.get(CLContext),
-                    Neureka.get().backend.get(CLContext).platforms[0],
-                    Neureka.get().backend.get(CLContext).platforms[0].devices[0]
+                    Neureka.get().backend.get(CLBackend),
+                    Neureka.get().backend.get(CLBackend).platforms[0],
+                    Neureka.get().backend.get(CLBackend).platforms[0].devices[0]
             ]
     }
     

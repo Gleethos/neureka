@@ -8,7 +8,7 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
-import neureka.devices.opencl.CLContext
+import neureka.devices.opencl.CLBackend
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.CLFunctionCompiler
@@ -62,7 +62,7 @@ class CLFunctionCompiler_Spec extends Specification
     def 'The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).'()
     {
         given : 'We get the first available OpenCLDevice we can find in the CLContext!'
-            def device = Neureka.get().backend().get(CLContext.class).platforms[0].devices[0]
+            def device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]
         and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
             Tsr<Double> t1 = Tsr.of(-2d).to(device)
             Tsr<Double> t2 = Tsr.of(5d).to(device)

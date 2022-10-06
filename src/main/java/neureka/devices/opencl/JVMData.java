@@ -81,8 +81,8 @@ class JVMData
         }
 
         BackendContext backend = Neureka.get().backend();
-        boolean clContextFound = backend.has(CLContext.class);
-        boolean convertToFloat = clContextFound && backend.get(CLContext.class).getSettings().isAutoConvertToFloat();
+        boolean clContextFound = backend.has(CLBackend.class);
+        boolean convertToFloat = clContextFound && backend.get(CLBackend.class).getSettings().isAutoConvertToFloat();
         if ( convertToFloat ) // NOTE: Currently we only support floats!
             data = DataConverter.get().convert(data, float[].class);
 

@@ -5,14 +5,14 @@ import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.Operation
 import neureka.backend.api.ini.ImplementationReceiver
 import neureka.devices.Device
-import neureka.devices.opencl.CLContext
+import neureka.devices.opencl.CLBackend
 import spock.lang.Specification
 
 class OpenCL_Backend_Spec extends Specification
 {
     def 'The OpenCL backend context can load implementations.'() {
         given: 'A backend context is being created...'
-            var ctx = new CLContext()
+            var ctx = new CLBackend()
         and: 'A backend loader is created by the context...'
             var loader = ctx.getLoader()
         expect :
