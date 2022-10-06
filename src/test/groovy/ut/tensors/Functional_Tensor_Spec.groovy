@@ -61,7 +61,7 @@ class Functional_Tensor_Spec extends Specification
                                 )
 
         then : 'It is initialized with the expected values:'
-            t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
+            t.toString() == "(2x3):[-2, -1, 0, 1, 2, 3]"
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
@@ -138,10 +138,10 @@ class Functional_Tensor_Spec extends Specification
         when : 'We map the tensor to a new tensor of the same type.'
             var b = t.map( it -> it + 1 )
         then : 'The new tensor should have the same value as the original tensor.'
-            b.toString() == "(1):[2.0]"
+            b.toString() == "(1):[2]"
             b.itemType == Integer.class
         and : 'The original tensor should not have changed because no inline operation occurred.'
-            t.toString() == "(1):[1.0]"
+            t.toString() == "(1):[1]"
 
         where :
             device << ['CPU', 'GPU']

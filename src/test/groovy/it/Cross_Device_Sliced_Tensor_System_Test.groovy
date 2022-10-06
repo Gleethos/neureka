@@ -324,7 +324,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             device.store(b).store(c) // -2 + 6 + 8 + 8 = 22
             x = Tsr.of(b, "x", c) // This test is important because it tests convolution on slices!
         then:
-            x.toString().contains("[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)")
+            x.item() == 20
+        and :
+            x.toString().replace(".0", "").contains("->d[2x2]:(-2, 3, 1, 2)")
 
         where:
             device << [CPU.get(),Device.get('gpu')]

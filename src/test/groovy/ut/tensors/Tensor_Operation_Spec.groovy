@@ -78,7 +78,8 @@ class Tensor_Operation_Spec extends Specification
             var c = a.matMul(b)
 
         then : 'The result tensor contains the expected shape and values.'
-            c.toString() == "(${M}x${N}):$expectedC"
+            c.shape == [M, N]
+            c.items == expectedC as List
         and :
             c.itemType == type
 

@@ -53,7 +53,7 @@ class Copy_Spec extends Specification
     ) {
         expect : 'The tensor we will use for copying is not flagged as a shallow copy.'
             !t.isShallowCopy()
-
+            t.toString()
         when : 'We create a shallow copy of the tensor.'
             var shallow = t.shallowCopy()
         then : 'The copy is not the same instance as the original tensor.'

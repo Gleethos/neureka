@@ -147,7 +147,7 @@ public final class NdaAsString
      * @param toBeAppended The String which ought to be appended to this builder.
      * @return This very instance in order to enable method-chaining.
      */
-    private NdaAsString _$(String toBeAppended ) {
+    private NdaAsString _$( String toBeAppended ) {
         _asStr.append( toBeAppended ); return this;
     }
 
@@ -201,6 +201,28 @@ public final class NdaAsString
         return finalProcessing;
     }
 
+    private Function<String, String> _createStringItemFilter() {
+        if ( _haveSlimNumbers )
+            return vStr -> {
+                        if ( vStr.endsWith("E0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
+                        if ( vStr.endsWith(".0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
+                        return vStr.startsWith("0.") ? vStr.substring( 1 ) : vStr;
+                    };
+        if ( Number.class.isAssignableFrom(_tensor.itemType()) ) {
+            if (
+                _tensor.itemType() == Integer.class ||
+                _tensor.itemType() == Byte.class    ||
+                _tensor.itemType() == Long.class    ||
+                _tensor.itemType() == Short.class
+            )
+                return  vStr -> {
+                    if ( vStr.endsWith("E0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
+                    return vStr.endsWith(".0") ? vStr.substring( 0, vStr.length() - 2 ) : vStr;
+                };
+        }
+        return vStr -> vStr.endsWith("E0") ? vStr.substring( 0, vStr.length() - 2 ) : vStr;
+    }
+
     /**
      *  @param data The data array which may be an array of primitives or reference objects.
      *  @param isCompact A flag determining if the array items should be formatted compactly or not.
@@ -211,14 +233,7 @@ public final class NdaAsString
         if ( data == null )
             throw new IllegalArgumentException("Tensor has no value data!");
 
-        Function<String, String> slim = vStr -> {
-            if ( _haveSlimNumbers ) {
-                if ( vStr.endsWith("E0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
-                if ( vStr.endsWith(".0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
-                if ( vStr.startsWith("0.") ) vStr = vStr.substring( 1 );
-            }
-            return vStr;
-        };
+        Function<String, String> slim = _createStringItemFilter();
 
         if ( data instanceof double[] )
             return i -> ( isCompact )
@@ -230,20 +245,20 @@ public final class NdaAsString
                     : slim.apply( String.valueOf( ( (float[]) data )[ i ] ) );
         else if ( data instanceof short[] )
             return i -> ( isCompact )
-                    ? formatFP( ( (short[]) data )[ i ] )
-                    : String.valueOf( ( (short[]) data )[ i ] );
+                    ? slim.apply( formatFP( ( (short[]) data )[ i ] ))
+                    : slim.apply( String.valueOf( ( (short[]) data )[ i ] ));
         else if ( data instanceof int[] )
             return i -> ( isCompact )
-                    ? formatFP( ( (int[]) data )[ i ] )
-                    : String.valueOf( ( (int[]) data )[ i ] );
+                    ? slim.apply( formatFP( ( (int[]) data )[ i ] ))
+                    : slim.apply( String.valueOf( ( (int[]) data )[ i ] ));
         else if ( data instanceof byte[] )
             return i -> ( isCompact )
-                    ? formatFP( ( (byte[]) data )[ i ] )
-                    : String.valueOf( ( (byte[]) data )[ i ] );
+                    ? slim.apply( formatFP( ( (byte[]) data )[ i ] ))
+                    : slim.apply( String.valueOf( ( (byte[]) data )[ i ] ));
         else if ( data instanceof long[] )
             return i -> ( isCompact )
-                    ? formatFP( ( (long[]) data )[ i ] )
-                    : String.valueOf( ( (long[]) data )[ i ] );
+                    ? slim.apply( formatFP( ( (long[]) data )[ i ] ))
+                    : slim.apply( String.valueOf( ( (long[]) data )[ i ] ));
         else if ( data instanceof boolean[] )
             return i -> String.valueOf( ( (boolean[]) data )[ i ] );
         else if ( data instanceof char[] )

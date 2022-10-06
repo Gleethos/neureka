@@ -120,7 +120,7 @@ class Tensor_Instantiation_Spec extends Specification
             t.shape == [ 2, 2 ]
             t.items == [ 2, 4, 4, 2 ]
         and : 'We can also observe its state when converting it to a string.'
-            t.toString() == "(2x2):[2.0, 4.0, 4.0, 2.0]"
+            t.toString() == "(2x2):[2, 4, 4, 2]"
         and :
             t.getItemsAs( double[].class ).length == 4
     }
@@ -145,7 +145,7 @@ class Tensor_Instantiation_Spec extends Specification
             t.shape == [ 2 ]
             t.items == [ 3, 5 ]
         and : 'We can also view the entire tensor when converting it to a string.'
-            t.toString() == "(2):[3.0, 5.0]"
+            t.toString() == "(2):[3, 5]"
             t.getItemsAs( double[].class ).length == 2
     }
 
