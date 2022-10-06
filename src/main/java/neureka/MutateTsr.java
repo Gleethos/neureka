@@ -230,6 +230,10 @@ public interface MutateTsr<T> extends MutateNda<T>
      */
     Tsr<T> minusAssign(T other);
 
+    @Override Tsr<T> assign( T other );
+
+    @Override Tsr<T> assign( Nda<T> other );
+
     /**
      * {inheritDoc}
      */

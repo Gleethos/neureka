@@ -802,6 +802,23 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                         .all(other)
         );
     }
+
+    @Override
+    public Tsr<V> assign( V other ) {
+        LogUtil.nullArgCheck(other, "other", TsrImpl.this.getItemType(), "Cannot subtract-assign 'null' from a tensor!");
+        return assign(
+                Tsr.of( TsrImpl.this.getDataType().getItemTypeClass() )
+                        .withShape(TsrImpl.this.getNDConf().shape())
+                        .all(other)
+        );
+    }
+
+    @Override
+    public Tsr<V> assign( Nda<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot assign 'null' to a tensor!");
+        return Neureka.get().backend().getFunction().idy().call( TsrImpl.this, (Tsr<V>) other );
+    }
+
     /** {@inheritDoc} */
     @Override public Tsr<V> label(String tensorName, String[]... labels) {
         return TsrImpl.this._label( tensorName, labels );
@@ -887,7 +904,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> to( Device<?> device ){ super._set( device ); return this; }
+    public Tsr<V> to( Device<?> device ){
+        if ( this.getDevice() != device ) super._set( device );
+        return this;
+    }
 
     private Tsr<V> _label(String tensorName, String[][] labels )
     {

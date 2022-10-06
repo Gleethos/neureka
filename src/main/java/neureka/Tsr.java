@@ -119,7 +119,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  which is void of any contents and meaning.
      *  The use case for this would be to use the produced {@link Tsr}
      *  instance as a target for an inline operations which fills the instance with an actual value. <br>
-     *  An example of this approach would be to call the {@link #putAt(List, Nda)} method with an empty list as key.
+     *  An example of this approach would be to call the {@link MutateTsr#putAt(List, Nda)} method with an empty list as key.
      *  This will be interpreted as an inline copy of the contents of the
      *  second parameter into this {@link Tsr} instance.
      *
@@ -2000,6 +2000,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                         } else if ( this.getItemType() == Byte.class ) {
                             byte[] sourceData = (byte[]) getMut().getData().getRef();
                             access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
+                        } else if ( typeClass == itemType() ) {
+                            Object[] sourceData = (Object[]) getMut().getData().getRef();
+                            access = (i -> mapper.apply( (V) sourceData[i] ));
                         } else
                             throw new IllegalArgumentException(failMessage);
 

@@ -158,6 +158,10 @@ public interface MutateNda<T>
 
     <A> A getDataAs(Class<A> arrayTypeClass);
 
+    Nda<T> assign( T other );
+
+    Nda<T> assign( Nda<T> other );
+
     /**
      * This method receives a nested {@link String} array which
      * ought to contain a label for the index of this tensor.

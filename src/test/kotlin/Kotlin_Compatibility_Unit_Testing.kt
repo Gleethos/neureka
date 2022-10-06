@@ -228,7 +228,7 @@ Kotlin_Compatibility_Unit_Testing {
         )
 
         // When :
-        Neureka.get().backend().function.idy(slice, slice - ComplexNumber(-1.0,2.0))
+        slice.mut.assign(slice - ComplexNumber(-1.0,2.0))
 
         // Then :
         assert(
@@ -243,6 +243,103 @@ Kotlin_Compatibility_Unit_Testing {
                       [ 1.0+0.0i, 1.0+0.1i, 1.0+0.2i, 1.0+0.3i ],
                       [ 42.0+24.0i, 1.0+1.1i, 1.0+1.2i, 1.0+1.3i ],
                       [ 42.0+666.0i, 1.7999999999999998+10.5i, 1.5999999999999996+11.0i, 1.4000000000000004+11.5i ]
+                   ]
+                ]
+            """
+            .trimIndent()
+        )
+
+    }
+
+    @Test
+    fun we_can_use_the_subscription_operator_to_slice_nd_arrays()
+    {
+        // Given :
+        val n : Nda<String> = Nda.of(String::class.java)
+                                            .withShape(2, 3, 4)
+                                            .andWhere { _, i ->
+                                                "${i[0].toDouble()}+${(i[1].toDouble() + i[2].toDouble() / 10)}i"
+                                            }
+
+        // When :
+        val e1 = n[1, 2, 0]
+        val e2 = n[0, 1, 2]
+        val e3 = n[16]
+
+        // Then :
+        assert(e1.toString() == "(1x1x1):[1.0+2.0i]")
+        assert(e2.toString() == "(1x1x1):[0.0+1.2i]")
+        assert(e3.toString() == "(1x1x1):[1.0+1.0i]")
+
+        // When :
+        val slice = n[0..1, 2..2, 1..3]
+
+        // Then :
+        assert(
+            n.toString({ it.isMultiline = true }).trim() == """
+            (2x3x4):[
+               [
+                  [ 0.0+0.0i, 0.0+0.1i, 0.0+0.2i, 0.0+0.3i ],
+                  [ 0.0+1.0i, 0.0+1.1i, 0.0+1.2i, 0.0+1.3i ],
+                  [ 0.0+2.0i, 0.0+2.1i, 0.0+2.2i, 0.0+2.3i ]
+               ],
+               [
+                  [ 1.0+0.0i, 1.0+0.1i, 1.0+0.2i, 1.0+0.3i ],
+                  [ 1.0+1.0i, 1.0+1.1i, 1.0+1.2i, 1.0+1.3i ],
+                  [ 1.0+2.0i, 1.0+2.1i, 1.0+2.2i, 1.0+2.3i ]
+               ]
+            ]
+            """
+            .trimIndent()
+        )
+        // And :
+        assert(
+            slice.toString({ it.isMultiline = true }) ==
+            """
+                (2x1x3):[
+                   [
+                      [ 0.0+2.1i, 0.0+2.2i, 0.0+2.3i ]
+                   ],
+                   [
+                      [ 1.0+2.1i, 1.0+2.2i, 1.0+2.3i ]
+                   ]
+                ]
+            """
+            .trimIndent()
+        )
+
+        // When :
+        n.mut[intArrayOf(1, 2, 0)] = "0.0+0.0i"
+        n.mut[0, 1, 2] = "73.0+666.0i"
+        n.mut[16] = "42.0+24.0i"
+
+        // Then :
+        assert(e1.toString() == "(1x1x1):[0.0+0.0i]")
+        assert(e2.toString() == "(1x1x1):[73.0+666.0i]")
+        assert(e3.toString() == "(1x1x1):[42.0+24.0i]")
+
+        // When : ... the missing index will be 0 padded (so this is [1, 2, 0])
+        n.mut[1, 2] = "42.0+666.0i"
+
+        // Then :
+        assert(e1.toString() == "(1x1x1):[42.0+666.0i]")
+
+        // When :
+        slice.mut.assign(slice.map { it.toUpperCase() })
+
+        // Then :
+        assert(
+            n.toString({ it.isMultiline = true }).trim() == """
+                (2x3x4):[
+                   [
+                      [ 0.0+0.0i, 0.0+0.1i, 0.0+0.2i, 0.0+0.3i ],
+                      [ 0.0+1.0i, 0.0+1.1i, 73.0+666.0i, 0.0+1.3i ],
+                      [ 0.0+2.0i, 0.0+2.1I, 0.0+2.2I, 0.0+2.3I ]
+                   ],
+                   [
+                      [ 1.0+0.0i, 1.0+0.1i, 1.0+0.2i, 1.0+0.3i ],
+                      [ 42.0+24.0i, 1.0+1.1i, 1.0+1.2i, 1.0+1.3i ],
+                      [ 42.0+666.0i, 1.0+2.1I, 1.0+2.2I, 1.0+2.3I ]
                    ]
                 ]
             """
@@ -276,7 +373,6 @@ Kotlin_Compatibility_Unit_Testing {
             val t = exec()
 
             // Then :
-            println("$t == $expected")
             assert(t.toString() == expected)
         }
     }

@@ -753,7 +753,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     }
 
     /**
-     *  This allows you to provide a lambda to configure how this nd-array should be
+     *  This allows you to provide a lambda which configures how this nd-array should be
      *  converted to {@link String} instances.
      *  The provided {@link Consumer} will receive a {@link NDPrintSettings} instance
      *  which allows you to change various settings with the help of method chaining.
