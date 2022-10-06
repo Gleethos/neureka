@@ -16,7 +16,7 @@ import neureka.backend.main.operations.other.AssignLeft;
 import neureka.backend.main.operations.other.Sum;
 import neureka.backend.main.operations.other.internal.CPUSum;
 
-public class CPUContext implements BackendExtension
+public class CPUBackend implements BackendExtension
 {
     @Override
     public DeviceOption find(String searchKey) {

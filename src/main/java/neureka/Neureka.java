@@ -41,7 +41,7 @@ import neureka.backend.api.Operation;
 import neureka.common.utility.LogUtil;
 import neureka.common.utility.SettingsLoader;
 import neureka.devices.host.CPU;
-import neureka.devices.host.CPUContext;
+import neureka.devices.host.CPUBackend;
 import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.utility.Messages;
 import neureka.dtype.custom.F64;
@@ -135,7 +135,7 @@ public final class Neureka
                 _LOG.error("Failed to load operations!", e);
             }
 
-            _backend.set( new CPUContext() ); // CPU (JVM) is always available!
+            _backend.set( new CPUBackend() ); // CPU (JVM) is always available!
 
             if ( _OPENCL_AVAILABLE )
                 _backend.set( new CLContext() );

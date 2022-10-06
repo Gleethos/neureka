@@ -11,6 +11,7 @@ import neureka.ndim.config.types.sliced.*;
 import neureka.ndim.config.types.views.SimpleReshapeView;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  *  The following is an abstract implementation of the {@link NDConfiguration} which offers a basis for
@@ -216,14 +217,24 @@ public abstract class AbstractNDC implements NDConfiguration
     }
 
     @Override
-    public boolean equals( NDConfiguration ndc ) {
-        return this.getClass() == ndc.getClass() &&
-               Arrays.equals(shape(),       ndc.shape()      ) &&
-               Arrays.equals(translation(), ndc.translation()) &&
-               Arrays.equals(indicesMap(),  ndc.indicesMap() ) &&
-               Arrays.equals(spread(),      ndc.spread()     ) &&
-               Arrays.equals(offset(),      ndc.offset()     ) &&
-               this.getLayout() == ndc.getLayout();
+    public final boolean equals( Object other ) {
+        if ( other == null ) return false;
+        if ( !( other instanceof NDConfiguration ) ) return false;
+        if ( other == this ) return true;
+        NDConfiguration ndc = (NDConfiguration) other;
+        return this.equals( ndc );
+    }
+
+    @Override
+    public final boolean equals( NDConfiguration ndc ) {
+        if ( ndc == this ) return true;
+        return this.getClass() == ndc.getClass() && // TODO: Think about this -> do we require them to be of the same class?
+               Arrays.equals(this.shape(),       ndc.shape()      ) &&
+               Arrays.equals(this.translation(), ndc.translation()) &&
+               Arrays.equals(this.indicesMap(),  ndc.indicesMap() ) &&
+               Arrays.equals(this.spread(),      ndc.spread()     ) &&
+               Arrays.equals(this.offset(),      ndc.offset()     ) &&
+               Objects.equals(this.getLayout(),  ndc.getLayout());
     }
 
 
