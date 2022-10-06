@@ -86,8 +86,8 @@ public class ADAM<V extends Number> implements Optimizer<V>
         Tsr<V> mh = Tsr.of(m, "/"+b1hat);
         Tsr<V> vh = Tsr.of(v, "/"+b2hat);
         Tsr<V> newg = Tsr.of("-"+ lr +" * ",mh," / (",vh,"**0.5 + "+E+")");
-        mh.getUnsafe().delete();
-        vh.getUnsafe().delete();
+        mh.getMut().delete();
+        vh.getMut().delete();
         return newg;
     }
 

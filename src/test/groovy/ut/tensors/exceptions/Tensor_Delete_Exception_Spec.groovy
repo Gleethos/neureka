@@ -10,7 +10,7 @@ class Tensor_Delete_Exception_Spec extends Specification
     def 'A deleted tensor will tell you that it has been deleted.'() {
 
         given : 'We create a scalar tensor and then immediately delete it.'
-            Tsr t = Tsr.of(-2d).getUnsafe().delete()
+            Tsr t = Tsr.of(-2d).getMut().delete()
 
         expect: 'This tensor will tell you that it is deleted through the "toString" method.'
             t.toString() == "deleted"
@@ -19,7 +19,7 @@ class Tensor_Delete_Exception_Spec extends Specification
     def 'A deleted tensor will throw an exception when accessing its configuration.' () {
 
         given : 'We create a tensor and immediately delete it.'
-            Tsr t = Tsr.of(new int[]{1, 2}, -2..4).getUnsafe().delete()
+            Tsr t = Tsr.of(new int[]{1, 2}, -2..4).getMut().delete()
 
         expect : 'This tensor should then know that it is deleted.'
             t.isDeleted()
@@ -36,13 +36,13 @@ class Tensor_Delete_Exception_Spec extends Specification
     def 'A deleted tensor will throw an exception when trying to set its configuration.' () {
 
         given : 'We create a tensor and immediately delete it.'
-            Tsr t = Tsr.of(new int[]{1, 2}, -2..4).getUnsafe().delete()
+            Tsr t = Tsr.of(new int[]{1, 2}, -2..4).getMut().delete()
 
         expect : 'This tensor should then know that it is deleted.'
             t.isDeleted()
 
         when : 'Trying to access the NDConfiguration instance...'
-            t.unsafe.setNDConf(null)
+            t.mut.setNDConf(null)
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)
@@ -54,13 +54,13 @@ class Tensor_Delete_Exception_Spec extends Specification
     def 'A deleted tensor will throw an exception when accessing its data.' () {
 
         given : 'We create a tensor and immediately delete it.'
-            Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getUnsafe().delete()
+            Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getMut().delete()
 
         expect : 'This tensor should then know that it is deleted.'
             t.isDeleted()
 
         when : 'Trying to access the data object...'
-            t.unsafe.data.ref
+            t.mut.data.ref
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)
@@ -72,13 +72,13 @@ class Tensor_Delete_Exception_Spec extends Specification
     def 'A deleted tensor will throw an exception when trying to modify its data.' () {
 
         given : 'We create a tensor and immediately delete it.'
-            Tsr t = Tsr.of(new int[]{2}, -3..2).getUnsafe().delete()
+            Tsr t = Tsr.of(new int[]{2}, -3..2).getMut().delete()
 
         expect : 'This tensor should then know that it is deleted.'
             t.isDeleted()
 
         when : 'Trying to modify the data object...'
-            t.unsafe.setDataAt(0, 7)
+            t.mut.setDataAt(0, 7)
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)
@@ -90,7 +90,7 @@ class Tensor_Delete_Exception_Spec extends Specification
     def 'A deleted tensor will throw an exception when accessing its data type.' () {
 
         given : 'We create a tensor and immediately delete it.'
-            Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getUnsafe().delete()
+            Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getMut().delete()
 
         expect : 'This tensor should then know that it is deleted.'
             t.isDeleted()
@@ -107,13 +107,13 @@ class Tensor_Delete_Exception_Spec extends Specification
     def 'A deleted tensor will throw an exception when modifying its data type.' () {
 
         given : 'We create a tensor and immediately delete it.'
-            Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getUnsafe().delete()
+            Tsr t = Tsr.of(new int[]{2, 1}, -3..2).getMut().delete()
 
         expect : 'This tensor should then know that it is deleted.'
             t.isDeleted()
 
         when : 'Trying to access the DataType instance...'
-            t.unsafe.setDataType(DataType.of(Float.class))
+            t.mut.setDataType(DataType.of(Float.class))
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)

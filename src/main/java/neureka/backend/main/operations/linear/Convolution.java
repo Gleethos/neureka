@@ -9,14 +9,10 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.NDConvolution;
-import neureka.backend.main.implementations.convolution.CLConvolution;
-import neureka.backend.main.implementations.convolution.CPUConvolution;
 import neureka.backend.main.operations.ConvUtil;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
 
 public class Convolution extends AbstractOperation
 {
@@ -49,7 +45,7 @@ public class Convolution extends AbstractOperation
                 (call, executor) ->
                 {
                     Tsr<?>[] tensors = call.inputs();
-                    for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
+                    for ( Tsr<?> t : tensors ) if ( t != null ) t.getMut().setIsVirtual( false );
 
                     ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
                     return AbstractDeviceAlgorithm.executeOnCommonDevice(
@@ -75,7 +71,7 @@ public class Convolution extends AbstractOperation
                                             deConv.execute(
                                                 target.error(),
                                                 derivative,
-                                                Tsr.of(shape, 0).getUnsafe().setIsIntermediate( false )
+                                                Tsr.of(shape, 0).getMut().setIsIntermediate( false )
                                             )
                                     );
                 }
@@ -85,9 +81,9 @@ public class Convolution extends AbstractOperation
                      Device<Number> device = call.getDeviceFor(Number.class);
                      int[] shp = ConvUtil.shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
                      Tsr<Number> output = (Tsr<Number>) Tsr.of( call.input(1).getItemType(), shp, 0 )
-                                             .getUnsafe()
+                                             .getMut()
                                              .setIsIntermediate( true );
-                     output.setIsVirtual( false );
+                     output.getMut().setIsVirtual( false );
                      //device.store( output );//Todo: find out why this causes problems
                      return call.withInputAt( 0, output );
                  }

@@ -37,8 +37,8 @@ public class Scalarization extends AbstractFunDeviceAlgorithm<Scalarization>
 
                 int[] outShape = call.input( 1 ).getNDConf().shape();
                 Class<Object> type = (Class<Object>) call.input( 1 ).getItemType();
-                Tsr output = Tsr.of( type, outShape, 0.0 ).getUnsafe().setIsIntermediate( true );
-                output.setIsVirtual( false );
+                Tsr output = Tsr.of( type, outShape, 0.0 ).getMut().setIsIntermediate( true );
+                output.getMut().setIsVirtual( false );
                 try {
                     device.store( output );
                 } catch( Exception e ) {

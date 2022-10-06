@@ -29,7 +29,7 @@ public class ScalarSumAlgorithm extends AbstractFunAlgorithm
             Number item = (Number) in.item();
             double sum = item.doubleValue() * in.size();
             Tsr<?> result = Tsr.of( in.itemType(), new int[]{1}, sum ).to( in.getDevice() );
-            return Result.of( result.getUnsafe().setIsIntermediate(true) )
+            return Result.of( result.getMut().setIsIntermediate(true) )
                     .withADAction( target -> {
                         Tsr<Object> error = (Tsr<Object>) target.error();
                         assert error.size() == 1;

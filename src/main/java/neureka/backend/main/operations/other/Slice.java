@@ -50,18 +50,18 @@ public class Slice extends AbstractOperation
                     Device<Object> device = input.getDevice();
 
                     return
-                        Result.of(subset.getUnsafe().setIsIntermediate(true))
+                        Result.of(subset.getMut().setIsIntermediate(true))
                             .withADAction( t -> {
                                 Tsr<Object> newError = ElemWiseUtil.newTsrLike((Class<Object>) typeClass, shape, isOutsourced, device, 0);
                                 boolean isIntermediate = newError.isIntermediate();
-                                newError.getUnsafe().setIsIntermediate(false); // To avoid deletion!
+                                newError.getMut().setIsIntermediate(false); // To avoid deletion!
                                 Tsr<Object> slice = Function.of("slice(I[0])", false)
                                                     .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
                                                     .call(newError);
 
-                                newError.getUnsafe().setIsIntermediate(isIntermediate);
-                                slice.getUnsafe().setIsIntermediate(false);
-                                Neureka.get().backend().getFunction().idy().execute( slice, t.error().setIsVirtual(false) );
+                                newError.getMut().setIsIntermediate(isIntermediate);
+                                slice.getMut().setIsIntermediate(false);
+                                Neureka.get().backend().getFunction().idy().execute( slice, t.error().getMut().setIsVirtual(false) );
                                 return newError;
                             });
                 }
@@ -76,7 +76,7 @@ public class Slice extends AbstractOperation
         int[] newSpread,
         Tsr<Object> input
     ) {
-        input.setIsVirtual( false );
+        input.getMut().setIsVirtual( false );
         int[] newTranslation = input.getNDConf().translation();
         int[] newIndicesMap = input.getNDConf().getLayout().newTranslationFor( newShape );
 
@@ -142,7 +142,7 @@ public class Slice extends AbstractOperation
                         Tsr.of(
                             input.getDataType(),
                             NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),
-                            input.getUnsafe().getData()
+                            input.getMut().getData()
                         );
 
         subset.set( new Relation().addParent( input ) );
@@ -155,7 +155,7 @@ public class Slice extends AbstractOperation
             Device<Object> device = input.getDevice();
             device.store( subset );
         }
-        if ( input.isVirtual() ) subset.setIsVirtual( true );
+        if ( input.isVirtual() ) subset.getMut().setIsVirtual( true );
 
         return subset;
     }

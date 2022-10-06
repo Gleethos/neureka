@@ -16,7 +16,6 @@ import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
-import neureka.calculus.implementations.FunctionInput;
 import neureka.devices.Device;
 import neureka.ndim.NDimensional;
 
@@ -65,7 +64,7 @@ public class Addition extends AbstractOperation {
                                          .getImplementationFor( device )
                                          .run(
                                              ExecutionCall.of(
-                                                 toBeDerived.setIsVirtual(false),
+                                                 toBeDerived.getMut().setIsVirtual(false),
                                                  derivative,
                                                  target.error()
                                              )
@@ -103,7 +102,7 @@ public class Addition extends AbstractOperation {
                                             .count();
 
                 Tsr<?> derivative = Tsr.like((Tsr<Number>) template).all(dependencies);
-                return Result.of(derivative.getUnsafe().setIsIntermediate(true));
+                return Result.of(derivative.getMut().setIsIntermediate(true));
             }
         } else {
             if ( d < 0 ) {

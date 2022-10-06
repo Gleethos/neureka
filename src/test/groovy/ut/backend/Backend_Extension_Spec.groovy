@@ -1,5 +1,6 @@
 package ut.backend
 
+import neureka.MutateTsr
 import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.api.Algorithm
@@ -35,7 +36,7 @@ class Backend_Extension_Spec extends Specification
 
         and : 'A mock tensor which is the expected output'
             Tsr output = Mock(Tsr)
-            var mutate = Mock(Tsr.Unsafe)
+            var mutate = Mock(MutateTsr)
 
         and : 'A mocked operation implementation.'
             var implementation = Mock(Algorithm)
@@ -54,7 +55,7 @@ class Backend_Extension_Spec extends Specification
         then : 'The custom call hook should be accessed as outlined below.'
             (0.._) * op.getAlgorithmFor(_) >> implementation
             (0.._) * implementation.execute(_,_) >> Result.of(output)
-            (1.._) * output.getUnsafe() >> mutate
+            (1.._) * output.getMut() >> mutate
             (1.._) * mutate.setIsIntermediate(false) >> output
             (1.._) * output.isIntermediate() >> true
             (1.._) * op.execute(_,_) >> Result.of(output)

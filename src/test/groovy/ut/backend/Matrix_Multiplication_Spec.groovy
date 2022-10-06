@@ -46,8 +46,8 @@ class Matrix_Multiplication_Spec extends Specification
         and : 'We create the data layout type based on the provided string...'
             var dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR
         and : 'After that we convert both matrices to the layout!'
-            a.unsafe.toLayout( dataLayout )
-            b.unsafe.toLayout( dataLayout )
+            a.mut.toLayout( dataLayout )
+            b.mut.toLayout( dataLayout )
         expect : 'This should of cause make report that they indeed have this new layout.'
             a.NDConf.layout == dataLayout
             b.NDConf.layout == dataLayout

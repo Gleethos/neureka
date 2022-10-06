@@ -195,7 +195,7 @@ public interface Function
     }
 
     default <T, D extends Device<T>> Tsr<T> call( Call<D> call ) {
-        return (Tsr<T>) execute( call ).getUnsafe().setIsIntermediate(false);
+        return (Tsr<T>) execute( call ).getMut().setIsIntermediate(false);
     }
 
     /**
@@ -286,7 +286,7 @@ public interface Function
      * @param <T> The type parameter of the tensors passed to and returned by this function.
      */
     default <T> Tsr<T> call( Args arguments, Tsr<T>... tensors ) {
-        return with( arguments ).call( tensors ).getUnsafe().setIsIntermediate(false);
+        return with( arguments ).call( tensors ).getMut().setIsIntermediate(false);
     }
 
     /**
@@ -382,7 +382,7 @@ public interface Function
      * @param <T> The type parameter of the tensors passed to and returned by this function.
      */
     default <T> Tsr<T> call( Tsr<T>[] inputs, int j )   {
-        return (Tsr<T>) execute( inputs, j ).getUnsafe().setIsIntermediate(false);
+        return (Tsr<T>) execute( inputs, j ).getMut().setIsIntermediate(false);
     }
 
     /**
@@ -402,7 +402,7 @@ public interface Function
      * @param <T> The type parameter of the tensors passed to and returned by this function.
      */
     default <T> Tsr<T> call( Tsr<T>... inputs )   {
-        return (Tsr<T>) execute( inputs ).getUnsafe().setIsIntermediate(false);
+        return (Tsr<T>) execute( inputs ).getMut().setIsIntermediate(false);
     }
 
     /**
@@ -424,7 +424,7 @@ public interface Function
      */
     default <T> Tsr<T> derive( Tsr<T>[] inputs, int index, int j ) {
         Tsr<T> result = (Tsr<T>) executeDerive( inputs, index, j );
-        return result.getUnsafe().setIsIntermediate(false);
+        return result.getMut().setIsIntermediate(false);
     }
 
     /**
@@ -435,7 +435,7 @@ public interface Function
      */
     default <T> Tsr<T> derive( Tsr<T>[] inputs, int index ) {
         Tsr<T> result = (Tsr<T>) executeDerive( inputs, index );
-        return result.getUnsafe().setIsIntermediate(false);
+        return result.getMut().setIsIntermediate(false);
     }
     
     /**
@@ -480,7 +480,7 @@ public interface Function
          * @param <T> The type parameter of the tensors passed to and returned by this function.
          */
         default <T> Tsr<T> call( Tsr<T>... inputs ) {
-            return (Tsr<T>) this.execute( inputs ).getUnsafe().setIsIntermediate(false);
+            return (Tsr<T>) this.execute( inputs ).getMut().setIsIntermediate(false);
         }
 
         /**

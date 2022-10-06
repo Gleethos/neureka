@@ -48,18 +48,18 @@ class Tensor_Conversion_Spec extends Specification
         given :
             Tsr x = Tsr.of(3d)
 
-        when : x.unsafe.toType( Float.class )
+        when : x.mut.toType( Float.class )
         then :
             x.rawItems instanceof float[]
-            x.unsafe.data.ref instanceof float[]
-            x.data instanceof float[]
+            x.mut.data.ref instanceof float[]
+            x.rawData instanceof float[]
             x.getItemsAs( float[].class )[ 0 ] == 3.0f
 
-        when : x.unsafe.toType( Double.class )
+        when : x.mut.toType( Double.class )
         then :
             x.rawItems instanceof double[]
-            x.unsafe.data.ref instanceof double[]
-            x.data instanceof double[]
+            x.mut.data.ref instanceof double[]
+            x.rawData instanceof double[]
             x.getItemsAs( float[].class )[ 0 ]==3.0f
     }
 
@@ -81,7 +81,7 @@ class Tensor_Conversion_Spec extends Specification
             var a = Tsr.of(sourceType).withShape(data.size()).andFill(data)
 
         when : 'We change the data type of the tensor using the unsafe "toType" method.'
-            var b = a.unsafe.toType(targetType)
+            var b = a.mut.toType(targetType)
 
         then : 'The returned tensor has the expected data type.'
             b.itemType == targetType

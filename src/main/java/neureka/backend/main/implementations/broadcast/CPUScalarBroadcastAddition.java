@@ -11,9 +11,9 @@ public class CPUScalarBroadcastAddition extends CPUScalarBroadcast
     public Tsr<?> run(ExecutionCall<CPU> call) {
         assert call.arity() == 3;
         if ( call.getDerivativeIndex() == 0 )
-            return Tsr.of( call.input( 1 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
+            return Tsr.of( call.input( 1 ).shape(), 1d ).getMut().setIsIntermediate( true );
         else if ( call.getDerivativeIndex() == 1 )
-            return Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
+            return Tsr.of( call.input( 2 ).shape(), 1d ).getMut().setIsIntermediate( true );
         else
             return super.run(call);
     }

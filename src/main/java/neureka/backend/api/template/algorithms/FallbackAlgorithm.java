@@ -70,7 +70,7 @@ implements ExecutionPreparation, ADActionSupplier
                                                 for ( int ii = 0; ii < inputs.length; ii++ ) {
                                                     inputs[ ii ] = call.input( Number.class, 1 + ii ).at( i ).get().doubleValue();
                                                 }
-                                                call.input( Number.class, 0 ).getUnsafe().getDataAs( double[].class )[ i ] = f.call( inputs );
+                                                call.input( Number.class, 0 ).getMut().getDataAs( double[].class )[ i ] = f.call( inputs );
                                             }
                                         }
                                     );
@@ -128,7 +128,7 @@ implements ExecutionPreparation, ADActionSupplier
             return ADAction.of( target -> mul.execute( target.error(), derivative ) );
         }
         Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
-        localDerivative.getUnsafe().setIsIntermediate( false );
+        localDerivative.getMut().setIsIntermediate( false );
         return ADAction.of( target -> mul.execute( target.error(), localDerivative ) );
         // TODO: Maybe delete local derivative??
     }
@@ -145,9 +145,9 @@ implements ExecutionPreparation, ADActionSupplier
         {
             int[] shp = call.input( 1 ).getNDConf().shape();
             Tsr<Object> output = (Tsr<Object>) Tsr.of( call.input( 1 ).getDataType(), shp )
-                                                    .getUnsafe()
+                                                    .getMut()
                                                     .setIsIntermediate(true);
-            output.setIsVirtual( false );
+            output.getMut().setIsVirtual( false );
             try {
                 device.store( output );
             } catch ( Exception e ) {
@@ -191,7 +191,7 @@ implements ExecutionPreparation, ADActionSupplier
     }
 
     private static void setAt( Tsr<Object> t, int i, Object o ) {
-        t.getUnsafe().setDataAt( t.getNDConf().indexOfIndex( i ), o );
+        t.getMut().setDataAt( t.getNDConf().indexOfIndex( i ), o );
     }
 
     private static Object _tryExecute( Method m, Object[] args, int offset ) {

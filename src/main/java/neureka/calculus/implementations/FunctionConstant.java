@@ -73,7 +73,7 @@ public final class FunctionConstant implements Function
 						inputs[ 0 ].shape(),
 						0.0
 					)
-					.getUnsafe()
+					.getMut()
 					.setIsIntermediate( true );
 		}
 		return Tsr.of(
@@ -81,7 +81,7 @@ public final class FunctionConstant implements Function
 					inputs[ 0 ].shape(),
 					_value
 				)
-				.getUnsafe()
+				.getMut()
 				.setIsIntermediate( true );
 	}
 

@@ -1,5 +1,6 @@
 package ut.backend.core
 
+import neureka.MutateTsr
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.ADAction
@@ -59,10 +60,10 @@ class Backend_Algorithm_AD_Spec extends Specification
         and : 'A mock Function.'
             def function = Mock(Function)
             def derivative = Mock(Tsr)
-            def mutate = Mock(Tsr.Unsafe)
+            def mutate = Mock(MutateTsr)
             function.derive(*_) >> derivative
             function.executeDerive(*_) >> derivative
-            derivative.getUnsafe() >> mutate
+            derivative.getMut() >> mutate
 
         and : 'A mock ExecutionCall.'
             var call = ExecutionCall.of().running(Mock(Operation)).on(Mock(Device))

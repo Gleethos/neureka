@@ -81,7 +81,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-        tensor.getUnsafe().setDataType( DataType.of( String.class ) );
+        tensor.getMut().setDataType( DataType.of( String.class ) );
     }
 
     public CSVHandle(
@@ -219,7 +219,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
             }
         }
         else labels = _colLabels;
-        loaded.getUnsafe().label( _tensorName, new String[][]{ index, labels } );
+        loaded.getMut().label( _tensorName, new String[][]{ index, labels } );
         return loaded;
     }
 

@@ -6,7 +6,6 @@ import neureka.devices.Storage;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.UI8;
-import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -43,7 +42,7 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
 
             _height = t.shape(0);
             _width  = t.shape(1);
-            t.setIsVirtual(false);
+            t.getMut().setIsVirtual(false);
             store(t);
         }
     }
@@ -84,7 +83,7 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
                         value
                     );
 
-        return t.getUnsafe().upcast(Number.class);
+        return t.getMut().upcast(Number.class);
     }
 
     @Override protected Object _loadData() throws IOException
@@ -159,7 +158,7 @@ public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, N
             _LOG.error(message, e);
             throw new IllegalStateException(message);
         }
-        tensor.getUnsafe().setDataType( DataType.of( _type.targetedValueType() ) );
+        tensor.getMut().setDataType( DataType.of( _type.targetedValueType() ) );
         return this;
     }
 

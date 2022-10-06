@@ -1,11 +1,11 @@
 package ut.backend.core
 
 import neureka.Data
+import neureka.MutateTsr
 import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.api.DeviceAlgorithm
 import neureka.devices.host.CPU
-import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
@@ -81,7 +81,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             var call = Mock( ExecutionCall )
             var device = Mock( CPU )
             var tensor = Mock( Tsr )
-            var unsafe = Mock(Tsr.Unsafe)
+            var mutate = Mock(MutateTsr)
             var ndConf = Mock(NDConfiguration)
             var hostExecutor = imp.getImplementationFor( CPU.class )
             var nativeExecutor = Mock( CPU.JVMExecutor )
@@ -91,7 +91,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             hostExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
-            (0.._) * tensor.getUnsafe() >> unsafe
+            (0.._) * tensor.getMut() >> mutate
             (1.._) * call.getDevice() >> device
             1 * device.getExecutor() >> nativeExecutor
             1 * nativeExecutor.threaded( _, _ )
@@ -103,10 +103,10 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (1.._) * tensor.size() >> 0
             (0.._) * tensor.itemType >> Double
             (0.._) * tensor.getDataAs(double[]) >> new double[0]
-            (0.._) * unsafe.data >> dataObj
+            (0.._) * mutate.data >> dataObj
             (0.._) * dataObj.ref >> new double[0]
-            (0.._) * unsafe.getDataAs(double[]) >> new double[0]
-            (0.._) * unsafe.getDataForWriting(double[]) >> new double[0]
+            (0.._) * mutate.getDataAs(double[]) >> new double[0]
+            (0.._) * mutate.getDataForWriting(double[]) >> new double[0]
             (1.._) * tensor.getNDConf() >> ndConf
             (1.._) * ndConf.isSimple() >> false
 

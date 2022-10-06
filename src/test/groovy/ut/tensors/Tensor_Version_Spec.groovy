@@ -97,16 +97,16 @@ class Tensor_Version_Spec extends Specification
             c.getVersion() == version_of_c
 
         where :
-            code                        | safe_inline || version_of_c | version_of_a | version_of_b | expected
-            ' a.unsafe.plusAssign(b) '  |   true      ||      1       |      1       |      0       | "(1):[2.0]"
-            ' a.unsafe.minusAssign(b) ' |   true      ||      1       |      1       |      0       | "(1):[10.0]"
-            ' a.unsafe.timesAssign(b) ' |   true      ||      1       |      1       |      0       | "(1):[-24.0]"
-            ' a.unsafe.divAssign(b) '   |   true      ||      1       |      1       |      0       | "(1):[-1.5]"
+            code                     | safe_inline || version_of_c | version_of_a | version_of_b | expected
+            ' a.mut.plusAssign(b) '  |   true      ||      1       |      1       |      0       | "(1):[2.0]"
+            ' a.mut.minusAssign(b) ' |   true      ||      1       |      1       |      0       | "(1):[10.0]"
+            ' a.mut.timesAssign(b) ' |   true      ||      1       |      1       |      0       | "(1):[-24.0]"
+            ' a.mut.divAssign(b) '   |   true      ||      1       |      1       |      0       | "(1):[-1.5]"
 
-            ' a.unsafe.plusAssign(b) '  |   false     ||      0       |      0       |      0       | "(1):[2.0]"
-            ' a.unsafe.minusAssign(b) ' |   false     ||      0       |      0       |      0       | "(1):[10.0]"
-            ' a.unsafe.timesAssign(b) ' |   false     ||      0       |      0       |      0       | "(1):[-24.0]"
-            ' a.unsafe.divAssign(b) '   |   false     ||      0       |      0       |      0       | "(1):[-1.5]"
+            ' a.mut.plusAssign(b) '  |   false     ||      0       |      0       |      0       | "(1):[2.0]"
+            ' a.mut.minusAssign(b) ' |   false     ||      0       |      0       |      0       | "(1):[10.0]"
+            ' a.mut.timesAssign(b) ' |   false     ||      0       |      0       |      0       | "(1):[-24.0]"
+            ' a.mut.divAssign(b) '   |   false     ||      0       |      0       |      0       | "(1):[-1.5]"
     }
 
 
@@ -188,11 +188,11 @@ class Tensor_Version_Spec extends Specification
             c == null
 
         where :
-            code                     ||  message
-            'a.unsafe.plusAssign(b) '|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
-            'a.unsafe.minusAssign(b)'|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
-            'a.unsafe.timesAssign(b)'|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
-            'a.unsafe.divAssign(b) ' || "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
+            code                  ||  message
+            'a.mut.plusAssign(b) '|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
+            'a.mut.minusAssign(b)'|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
+            'a.mut.timesAssign(b)'|| "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
+            'a.mut.divAssign(b) ' || "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() })
@@ -216,7 +216,7 @@ class Tensor_Version_Spec extends Specification
             t.set(0, 3f)
             t.setItemAt(3, 4f)
             t.set(new int[]{1, 1}, -1f)
-            t.unsafe.setDataAt(3, 5f)
+            t.mut.setDataAt(3, 5f)
         then :
             t.version == 7
     }

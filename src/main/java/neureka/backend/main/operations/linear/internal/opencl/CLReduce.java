@@ -56,7 +56,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
             N = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)
 
         Tsr<Integer> out = Tsr.of(Integer.class, new int[]{N}, 0).to(device);
-        out.setIsVirtual(false);
+        out.getMut().setIsVirtual(false);
 
         if ( in.size() == 1 ) {
             assert out.size() == 1;
@@ -105,12 +105,12 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
         if ( N > 1 ) {
             Tsr<Float> reduced = _fetch(in, out, device);
             i = out.at(_runRecursively(reduced, device)).get();
-            reduced.getUnsafe().delete();
+            reduced.getMut().delete();
         }
         else
             i = out.at(0).get();
 
-        out.getUnsafe().delete();
+        out.getMut().delete();
         return i;
     }
 
@@ -124,7 +124,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
             Tsr<Float> in, Tsr<Integer> indices, OpenCLDevice device
     ) {
         Tsr<Float> out = Tsr.of(Float.class, new int[]{indices.size()}, 0).to(device);
-        out.setIsVirtual(false);
+        out.getMut().setIsVirtual(false);
 
         String kernelName = INDICES_MAPPER_ID;
 

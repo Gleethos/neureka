@@ -38,7 +38,7 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
                        throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
                    Function matMul = Neureka.get().backend().getFunction().matMul();
                    int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                   Tsr<?> derivative = adCall.input( d ).T().deepCopy().getUnsafe().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                   Tsr<?> derivative = adCall.input( d ).T().deepCopy().getMut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                    derivative.to(adCall.getDevice());
                    return ADAction.of(target ->
                            d == 1
@@ -61,10 +61,10 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
             Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getItemTypeClass();
             int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };
             NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();
-            call.input( 2 ).getUnsafe().toLayout(targetLayout);
-            Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).getUnsafe().setIsIntermediate( true );
-            output.getUnsafe().toLayout(targetLayout);
-            output.setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
+            call.input( 2 ).getMut().toLayout(targetLayout);
+            Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).getMut().setIsIntermediate( true );
+            output.getMut().toLayout(targetLayout);
+            output.getMut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
             try {
                 device.store( output );
             } catch ( Exception e ) {
@@ -92,7 +92,7 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
                             call.input( i ).isPartialSlice()
             ) {
                 _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
-                call = call.withInputAt( i, call.input( i ).deepCopy().getUnsafe().setIsIntermediate( true ) );
+                call = call.withInputAt( i, call.input( i ).deepCopy().getMut().setIsIntermediate( true ) );
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform auto cloning every time the

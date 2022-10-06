@@ -182,8 +182,8 @@ implements DeviceAlgorithm<C>
                 if ( tensors[ i ] == null )
                     tensors[ i ] =
                             j < 0
-                                ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).getUnsafe().setIsIntermediate( true ).to(call.getDevice())
-                                : Tsr.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).getUnsafe().setIsIntermediate( true ).to(call.getDevice());
+                                ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).getMut().setIsIntermediate( true ).to(call.getDevice())
+                                : Tsr.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).getMut().setIsIntermediate( true ).to(call.getDevice());
 
             return innerCall.withInputs(tensors);
         });
@@ -407,14 +407,14 @@ implements DeviceAlgorithm<C>
             for ( int i = 1; i < array.length; i++ )
                 if ( array[i] == tensor ) return;
 
-            if ( !tensor.isDeleted() ) tensor.getUnsafe().delete();
+            if ( !tensor.isDeleted() ) tensor.getMut().delete();
         }
     }
 
     private static void _delete( Tsr<?> tensor ) {
         Neureka.Settings.Debug debug = Neureka.get().settings().debug();
         if (  !tensor.isDeleted() && debug.isDeletingIntermediateTensors() )
-            tensor.getUnsafe().delete();
+            tensor.getMut().delete();
     }
 
     /**

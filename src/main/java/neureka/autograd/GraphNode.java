@@ -634,7 +634,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public void forEachBackward( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
         if ( _targetsToAgents == null ) return;
-        error.getUnsafe().setIsIntermediate( false );
+        error.getMut().setIsIntermediate( false );
         new ArrayList<>(_targetsToAgents).forEach( ref -> {
             for ( ADAction a : ref.agents() )
                 action.accept( ref.node(), (Tsr<V>) a.act( new ADTarget<>(ref.index(), ref.node(), error) ));

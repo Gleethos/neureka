@@ -82,8 +82,8 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                         outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );
 
                     Class<Object> type = (Class<Object>) call.input(  1 ).getItemType();
-                    Tsr<?> output = Tsr.of(type).withShape(outShape).all( 0.0 ).getUnsafe().setIsIntermediate( true );
-                    output.setIsVirtual( false );
+                    Tsr<?> output = Tsr.of(type).withShape(outShape).all( 0.0 ).getMut().setIsIntermediate( true );
+                    output.getMut().setIsVirtual( false );
                     try {
                         device.store( output );
                     } catch( Exception e ) {

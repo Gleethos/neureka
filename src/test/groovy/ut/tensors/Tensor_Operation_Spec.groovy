@@ -51,8 +51,8 @@ class Tensor_Operation_Spec extends Specification
     def 'The "dot" operation reshapes and produces valid "x" operation result.'( Class<?> type )
     {
         given : 'Two multi-dimensional tensors.'
-            var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).unsafe.toType(type)
-            var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).unsafe.toType(type)
+            var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).mut.toType(type)
+            var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).mut.toType(type)
 
         when : 'The "dot" method is being called on "a" receiving "b"...'
             var c = a.convDot(b)
@@ -71,8 +71,8 @@ class Tensor_Operation_Spec extends Specification
             Class<?> type, Double[] A, Double[] B, int M, int K, int N, double[] expectedC
     ) {
         given : 'Two 2-dimensional tensors.'
-            var a = Tsr.of(Double.class).withShape(M, K).andFill(A).unsafe.toType(type)
-            var b = Tsr.of(Double.class).withShape(K, N).andFill(B).unsafe.toType(type)
+            var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)
+            var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)
 
         when : 'The "matMul" method is being called on "a" receiving "b"...'
             var c = a.matMul(b)
@@ -114,7 +114,7 @@ class Tensor_Operation_Spec extends Specification
         then :
             r === t
         and :
-            ( r.unsafe.data.ref as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]
+            ( r.mut.data.ref as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]
 
         when :
             r = f.with(Arg.Seed.of(42)).call(t)
@@ -122,7 +122,7 @@ class Tensor_Operation_Spec extends Specification
         then :
             r === t
         and :
-            ( r.unsafe.data.ref as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]
+            ( r.mut.data.ref as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]
 
         where :
             type << [Double, Float]
@@ -139,7 +139,7 @@ class Tensor_Operation_Spec extends Specification
 
         when :
             f.with(Arg.Seed.of(-73L)).call(t)
-            var stats = new Statistics( t.unsafe.data.ref as double[] )
+            var stats = new Statistics( t.mut.data.ref as double[] )
         then :
             -0.05d < stats.mean && stats.mean < 0.05d
         and :
@@ -153,8 +153,8 @@ class Tensor_Operation_Spec extends Specification
             Class<?> type, String code, String expected
     ) {
         given : 'We create two tensors and convert them to a desired type.'
-            var a = Tsr.of([1,2], [3d, 2d]).unsafe.toType(type)
-            var b = Tsr.of([2,1], [-1f, 4f]).unsafe.toType(type)
+            var a = Tsr.of([1,2], [3d, 2d]).mut.toType(type)
+            var b = Tsr.of([2,1], [-1f, 4f]).mut.toType(type)
         and : 'We prepare bindings for the Groovy shell.'
             Binding binding = new Binding()
             binding.setVariable('a', a)
@@ -189,8 +189,8 @@ class Tensor_Operation_Spec extends Specification
     ) {
         given :
             Neureka.get().settings().view().ndArrays({it.hasSlimNumbers=true})
-            Tsr a = Tsr.of(5d).unsafe.toType(type)
-            Tsr b = Tsr.of(3f).unsafe.toType(type)
+            Tsr a = Tsr.of(5d).mut.toType(type)
+            Tsr b = Tsr.of(3f).mut.toType(type)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -292,8 +292,8 @@ class Tensor_Operation_Spec extends Specification
             Tsr<Double> a = Tsr.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.get(device))
             Tsr<Double> b = Tsr.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.get(device))
         and :
-            a.unsafe.toType(type)
-            b.unsafe.toType(type)
+            a.mut.toType(type)
+            b.mut.toType(type)
         and :
             String wShape = ( whichGrad ? bShape : aShape ).join("x")
             Tsr    w      = ( whichGrad ? b      : a      )
@@ -309,7 +309,7 @@ class Tensor_Operation_Spec extends Specification
             w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:(null)"
 
         when :
-            c.backward(Tsr.of([2, 2], [5, -2, 7, 3]).unsafe.toType(type))
+            c.backward(Tsr.of([2, 2], [5, -2, 7, 3]).mut.toType(type))
         then :
             w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:($wGradient)"
 
@@ -447,7 +447,7 @@ class Tensor_Operation_Spec extends Specification
             result2.itemType == type
 
         and : 'The data of the first (non slice) tensor should be as expected.'
-            result1.unsafe.data.ref == expected instanceof Map ? expected['r1'] : expected
+            result1.mut.data.ref == expected instanceof Map ? expected['r1'] : expected
         and : 'As well the value of the slice tensor (Its data would be a sparse array).'
             result2.items == expected instanceof Map ? expected['r2'] : expected
 

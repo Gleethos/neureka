@@ -61,7 +61,7 @@ class Tensor_Layout_Spec extends Specification
             t2.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
 
         when : 'We try the same operation with a column major tensor...'
-            t2 = t.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR).T
+            t2 = t.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR).T
 
         then : 'Once again, the resulting tensor should look like this:'
             t2.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
@@ -82,14 +82,14 @@ class Tensor_Layout_Spec extends Specification
             a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
 
         when :
-            a.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-            b.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            a.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            b.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
         then :
             a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
 
         when :
-            a.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
-            b.unsafe.toLayout(NDConfiguration.Layout.ROW_MAJOR)
+            a.mut.toLayout(NDConfiguration.Layout.ROW_MAJOR)
+            b.mut.toLayout(NDConfiguration.Layout.ROW_MAJOR)
         then :
             a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString
 

@@ -57,10 +57,10 @@ public class Reshape extends AbstractOperation
     private static Tsr<?> _reshaped( Tsr<?> tensor, int[] newForm, boolean newTsr )
     {
         Tsr<?> parent = tensor;
-        tensor = newTsr ? tensor.shallowCopy().getUnsafe().setIsIntermediate( true ) : tensor;
+        tensor = newTsr ? tensor.shallowCopy().getMut().setIsIntermediate( true ) : tensor;
         NDConfiguration newNDC = tensor.getNDConf().newReshaped( newForm );
         _shapeCheck( newNDC.shape(), tensor );
-        tensor.getUnsafe().setNDConf( newNDC );
+        tensor.getMut().setNDConf( newNDC );
         if ( newTsr ) {
             Relation r = parent.get( Relation.class );
             r.addReshapeRelationFor( tensor, newForm );

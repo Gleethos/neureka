@@ -185,7 +185,7 @@ class Tensor_Convolution_Spec extends Specification
                                         -2,  2,  4
                                     }
                                 )
-                                .unsafe.toType(type)
+                                .mut.toType(type)
 
             var y = Tsr.of(new int[]{1, 3, 2},
                     new double[]{
@@ -194,7 +194,7 @@ class Tensor_Convolution_Spec extends Specification
                         3, -1
                     }
                 )
-                .unsafe.toType(type)
+                .mut.toType(type)
 
         when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
             var z = Tsr.of("I0xi1", x, y)
@@ -434,8 +434,8 @@ class Tensor_Convolution_Spec extends Specification
              */
 
         expect :
-            t0.unsafe.data.ref == [1, 2, 3, 4, 5, 6] as double[]
-            x0.unsafe.data.ref == [1, 2, 3, 4, 5, 6] as double[]
+            t0.mut.data.ref == [1, 2, 3, 4, 5, 6] as double[]
+            x0.mut.data.ref == [1, 2, 3, 4, 5, 6] as double[]
             t0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
             x0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
 
@@ -444,13 +444,13 @@ class Tensor_Convolution_Spec extends Specification
             out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"
 
         when :
-            t0.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-            x0.unsafe.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            t0.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            x0.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
         then :
             t0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR
             x0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR
-            t0.unsafe.data.ref == [1, 3, 5, 2, 4, 6] as double[]
-            x0.unsafe.data.ref == [1, 4, 2, 5, 3, 6] as double[]
+            t0.mut.data.ref == [1, 3, 5, 2, 4, 6] as double[]
+            x0.mut.data.ref == [1, 4, 2, 5, 3, 6] as double[]
         and :
             t0.toString() == "(3x2x1):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"
             x0.toString() == "(1x2x3):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"

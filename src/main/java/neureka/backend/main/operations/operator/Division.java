@@ -101,7 +101,7 @@ public class Division extends AbstractOperation
         if ( !caller.isFlat() ) {
             if ( d < 0 ) {
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
-                Arrays.stream(flatCall.inputs()).forEach( t -> t.getUnsafe().setIsIntermediate(false) );
+                Arrays.stream(flatCall.inputs()).forEach( t -> t.getMut().setIsIntermediate(false) );
                 Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
                 return super.execute( flat, flatCall );
             }
@@ -129,7 +129,7 @@ public class Division extends AbstractOperation
                 derivOfA = div.call((Tsr<Object>)aDeriv, (Tsr<Object>)bResult);
             }
             if ( !deriveB && deriveA )
-                return Result.of(derivOfA.getUnsafe().setIsIntermediate(true));
+                return Result.of(derivOfA.getMut().setIsIntermediate(true));
 
             Tsr<?> aResult = a.call((Call)call.withArgs(Arg.DerivIdx.of(-1)));
             if ( deriveB ) {
@@ -144,10 +144,10 @@ public class Division extends AbstractOperation
                 Tsr<?> derivOfB = derive.call( (Tsr<Object>)innerDerivB, (Tsr<Object>)bResult );
                 derivOfB = mul.call((Tsr<Object>)aResult, (Tsr<Object>)derivOfB);
                 if ( !deriveA )
-                    return Result.of(derivOfB.getUnsafe().setIsIntermediate(true));
+                    return Result.of(derivOfB.getMut().setIsIntermediate(true));
                 else {
                     Function add = Neureka.get().backend().getFunction().add();
-                    return Result.of( add.call((Tsr<Object>)derivOfA, (Tsr<Object>)derivOfB).getUnsafe().setIsIntermediate(true) );
+                    return Result.of( add.call((Tsr<Object>)derivOfA, (Tsr<Object>)derivOfB).getMut().setIsIntermediate(true) );
                 }
             }
         }

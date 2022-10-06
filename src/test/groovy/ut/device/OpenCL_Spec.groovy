@@ -1,6 +1,7 @@
 package ut.device
 
 import neureka.Data
+import neureka.MutateTsr
 import neureka.Neureka
 import neureka.Tsr
 import neureka.common.composition.Component
@@ -97,8 +98,8 @@ class OpenCL_Spec extends Specification
 
         and : 'Another mocked tensor that represents a slice of the prior one.'
             Tsr<?> s = Mock(Tsr) // Could be : t[1..3, 1..2]
-            Tsr.Unsafe<?> u = Mock(Tsr.Unsafe)
-            s.getUnsafe() >> u
+        MutateTsr<?> u = Mock(MutateTsr)
+            s.getMut() >> u
             u.getData() >> Mock(Data)
 
         and : 'A mocked relation between both tensors returned by the slice as component.'

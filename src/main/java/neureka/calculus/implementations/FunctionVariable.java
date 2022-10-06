@@ -70,9 +70,9 @@ public final class FunctionVariable implements Function, GradientProvider
         int j = ( arguments.has(Arg.VarIdx.class)   ? arguments.valOf(Arg.VarIdx.class)   : -1 );
         if ( d >= 0 ) {
             if ( j < 0 )
-                return Tsr.of( inputs[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true );
+                return Tsr.of( inputs[ 0 ].shape(), 1.0 ).getMut().setIsIntermediate( true );
 
-            return j != d ? Tsr.of( inputs[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true ) : executeDerive(inputs, d );
+            return j != d ? Tsr.of( inputs[ 0 ].shape(), 0.0 ).getMut().setIsIntermediate( true ) : executeDerive(inputs, d );
         }
         if ( j < 0 ) {
             StringBuilder exp = new StringBuilder("I[ 0 ]");

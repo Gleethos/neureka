@@ -23,7 +23,7 @@ public class SumAlgorithm extends AbstractFunDeviceAlgorithm<SumAlgorithm>
             Tsr<?> result = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
             int[] originalShape = call.input(0).getNDConf().shape();
             return Result.of(
-                            result.getUnsafe().setIsIntermediate(true)
+                            result.getMut().setIsIntermediate(true)
                     )
                     .withADAction( target -> {
                         Tsr<Object> error = (Tsr<Object>) target.error();

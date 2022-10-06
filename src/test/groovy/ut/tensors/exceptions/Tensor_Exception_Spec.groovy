@@ -3,7 +3,6 @@ package ut.tensors.exceptions
 import groovy.transform.CompileDynamic
 import neureka.Neureka
 import neureka.Tsr
-import neureka.TsrImpl
 import spock.lang.Narrative
 import spock.lang.Shared
 import spock.lang.Specification
@@ -81,16 +80,16 @@ class Tensor_Exception_Spec extends Specification
             IllegalArgumentException    | { Tsr x -> x.div((Tsr)null)  }
             IllegalArgumentException    | { Tsr x -> x.plus((Tsr)null)  }
             IllegalArgumentException    | { Tsr x -> x.mod((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.timesAssign((Tsr)null) }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.divAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.plusAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.modAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.minusAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.label((String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.label("hi", (String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.label(null, (String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.label("hi", (Map)null) }
-            IllegalArgumentException    | { Tsr x -> x.unsafe.label(null, (Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.timesAssign((Tsr)null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.divAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.mut.plusAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.mut.modAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.mut.minusAssign((Tsr)null)  }
+            IllegalArgumentException    | { Tsr x -> x.mut.label((String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.label("hi", (String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.label(null, (String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.label("hi", (Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.label(null, (Map)null) }
             IllegalArgumentException    | { Tsr x -> x.withLabels("hi", (String[][])null) }
             IllegalArgumentException    | { Tsr x -> x.withLabels(null, (String[][])null) }
             IllegalArgumentException    | { Tsr x -> x.withLabels(null, (String[])null) }

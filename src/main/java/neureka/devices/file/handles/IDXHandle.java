@@ -70,7 +70,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
         super( filename, new IDXType() );
         _shape = t.getNDConf().shape();
         _dataType = t.getDataType();
-        t.setIsVirtual( false );
+        t.getMut().setIsVirtual( false );
         store( t );
     }
 
@@ -178,7 +178,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
         DataType<?> type = Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes()
                             ? DataType.of( _dataType.getTypeClassInstance(NumericType.class).getNumericTypeTarget() )
                             : _dataType;
-        return Tsr.of( type, _shape, value ).getUnsafe().upcast(Number.class);
+        return Tsr.of( type, _shape, value ).getMut().upcast(Number.class);
     }
 
     @Override

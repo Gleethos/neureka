@@ -31,8 +31,8 @@ public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWis
                     int[] outShape = call.input( 1 ).getNDConf().shape();
 
                     Class<Object> type = (Class<Object>) call.input(  1 ).getItemType();
-                    Tsr<Object> output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).getUnsafe().setIsIntermediate( true );
-                    output.setIsVirtual( false );
+                    Tsr<Object> output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).getMut().setIsIntermediate( true );
+                    output.getMut().setIsVirtual( false );
                     try {
                         device.store( output );
                     } catch( Exception e ) {

@@ -21,7 +21,7 @@ public class CPUScalarFunction implements ImplementationFor<CPU>
         double      in  = call.input( Number.class, 1 ).item(0).doubleValue();
         Tsr<Number> out = call.input( Number.class, 0 );
         Number result =  f.invoke(in);
-        out.getUnsafe().setDataAt(0, result);
+        out.getMut().setDataAt(0, result);
         return call.input(0);
     }
 

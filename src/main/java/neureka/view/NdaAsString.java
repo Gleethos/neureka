@@ -329,7 +329,7 @@ public final class NdaAsString
     private void _stringifyAllValues()
     {
         int max = _rowLimit;
-        Object data = ( _tensor.isOutsourced() ? _tensor.getData() : _tensor.getUnsafe().getData().getRef() );
+        Object data = ( _tensor.isOutsourced() ? _tensor.getRawData() : _tensor.getMut().getData().getRef() );
         ValStringifier getter = _createValStringifierAndFormatter( data );
         int size = _tensor.size();
         int trim = ( size - max );
@@ -420,7 +420,7 @@ public final class NdaAsString
             }
             _$( Util.indent( dim ) );
             _$( _legacy ? "( " : "[ " );
-            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
+            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getRawData() );
             NDValStringifier fun = _tensor.isVirtual()
                                         ? iarr -> getter.stringify( 0 )
                                         : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );

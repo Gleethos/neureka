@@ -160,7 +160,7 @@ class Autograd_Flags_Explained extends Specification
             xAsStr.matches( afterAll )
 
         when : 'It is time to free some memory because our history of computation has grown a bit...'
-            result.unsafe.detach()
+            result.mut.detach()
 
         then : 'Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !'
             !result.has( GraphNode.class )

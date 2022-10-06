@@ -98,8 +98,8 @@ class Tensor_IO_Spec extends Specification
 
         then : '...the tensor will change as expected.'
             !(x.getItems() instanceof float[])
-            !(x.unsafe.data.ref instanceof float[])
-            !(x.data instanceof float[])
+            !(x.mut.data.ref instanceof float[])
+            !(x.rawData instanceof float[])
             x.getItemsAs( float[].class )[ 0 ]==5.0f
             x.getItemsAs( double[].class )[0]==5.0d
 
@@ -110,8 +110,8 @@ class Tensor_IO_Spec extends Specification
 
         then : '...once again the tensor changes as expected.'
             x.rawItems instanceof double[]
-            x.unsafe.data.ref instanceof double[]
-            x.data instanceof double[]
+            x.mut.data.ref instanceof double[]
+            x.rawData instanceof double[]
             x.getItemsAs( float[].class )[ 0 ]==4.0f
             x.getItemsAs( double[].class )[0]==4.0d
 
@@ -128,7 +128,7 @@ class Tensor_IO_Spec extends Specification
             !x.rqsGradient()
             x.size()==1
 
-        when : x.unsafe.toType( Float.class )
+        when : x.mut.toType( Float.class )
         then : x.rawItems instanceof float[]
 
         when :
@@ -138,8 +138,8 @@ class Tensor_IO_Spec extends Specification
 
         then :
             !(x.rawItems instanceof double[])
-            !(x.unsafe.data.ref instanceof double[])
-            !(x.data instanceof double[])
+            !(x.mut.data.ref instanceof double[])
+            !(x.rawData instanceof double[])
             x.getItemsAs( float[].class )[ 0 ]==7.0f
             x.getItemsAs( double[].class )[0]==7.0d
     }
@@ -186,18 +186,18 @@ class Tensor_IO_Spec extends Specification
         then : 'The slice has the expected state!'
             s.isSlice()
             s.items == [66]
-            s.data  == [42, 66, 73]
+            s.rawData  == [42, 66, 73]
 
         when : 'We call the "setData" method with a scalar value passed to it...'
-            s.unsafe.setDataAt(1, -9)
+            s.mut.setDataAt(1, -9)
 
         then : 'The change will be reflected in the slice...'
             s.items == [-9]
         and : 'Also in the slice parent!'
             t.items == [42, -9, 73]
         and : 'Both tensors should have the same data array!'
-            s.data  == [42, -9, 73]
-            t.data  == [42, -9, 73]
+            s.rawData  == [42, -9, 73]
+            t.rawData  == [42, -9, 73]
 
         where :
             device | type
@@ -222,7 +222,7 @@ class Tensor_IO_Spec extends Specification
         expect : 'The tensor is virtual because it is filled homogeneously with the same value.'
             t.isVirtual()
             t.items == [1, 1, 1]
-            t.data == [1] // The data array is a single element array.
+            t.rawData == [1] // The data array is a single element array.
 
         when : 'We access the third item of the tensor and set the value 42.'
             t.at(2).set(42)
@@ -230,7 +230,7 @@ class Tensor_IO_Spec extends Specification
         then : 'The tensor is no longer virtual because it now stores 2 different values.'
             !t.isVirtual()
             t.items == [1, 1, 42]
-            t.data == [1, 1, 42]
+            t.rawData == [1, 1, 42]
 
         where : 'We ensure that this works on different devices and with different data types.'
             device | type
@@ -298,11 +298,11 @@ class Tensor_IO_Spec extends Specification
 
         when :
             indices[0] = 1
-            t[indices].unsafe.timesAssign(-1d)
+            t[indices].mut.timesAssign(-1d)
 
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, -6.0)")
 
-        when : t[3].unsafe.timesAssign(-2d)
+        when : t[3].mut.timesAssign(-2d)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 12.0)")
 
         when : t[indices] = 0d
@@ -311,13 +311,13 @@ class Tensor_IO_Spec extends Specification
         when : t[2] = 99d
         then : t.toString().contains("[2x2]:(2.0, -6.0, 99.0, 0.0)")
 
-        when : t[2].unsafe.minusAssign(99d)
+        when : t[2].mut.minusAssign(99d)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 0.0, 0.0)")
 
         when : 'Modifying the first index of the indices array...'
             indices[0] = 0
         and : 'Using this new indices array for IO...'
-            t[indices].unsafe.minusAssign(-9d)
+            t[indices].mut.minusAssign(-9d)
         then : 'The underlying data will have changed.'
             t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
 
@@ -331,12 +331,12 @@ class Tensor_IO_Spec extends Specification
         given :
             var t = Tsr.of(type).withShape(shape).andFill(data)
         when :
-            t.unsafe.setDataAt( 1, element )
+            t.mut.setDataAt( 1, element )
         then :
             t.getDataAt( 1 ) == element
         and :
-            t.unsafe.data.ref == expected
-            t.data == expected
+            t.mut.data.ref == expected
+            t.rawData == expected
 
         when :
             t = Tsr.of(type).withShape(shape).andFill(data)
@@ -345,8 +345,8 @@ class Tensor_IO_Spec extends Specification
         then :
             t.item( 1 ) == element
         and :
-            t.unsafe.data.ref == expected
-            t.data == expected
+            t.mut.data.ref == expected
+            t.rawData == expected
 
         where :
             type     | shape | data                             | element        || expected

@@ -58,8 +58,8 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             }
 
         expect :
-            W1.unsafe.data.ref == RESULT_W1
-            W2.unsafe.data.ref == RESULT_W2
+            W1.mut.data.ref == RESULT_W1
+            W2.mut.data.ref == RESULT_W2
     }
 
     def 'One can write a simple neural network in less than 11 lines of code!'()
@@ -76,8 +76,8 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             }
 
         expect :
-            W1.unsafe.data.ref == RESULT_W1
-            W2.unsafe.data.ref == RESULT_W2
+            W1.mut.data.ref == RESULT_W1
+            W2.mut.data.ref == RESULT_W2
     }
 
 
@@ -95,8 +95,8 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             }
 
         expect :
-            W1.unsafe.data.ref == RESULT_W1_F32 as float[]
-            W2.unsafe.data.ref == RESULT_W2_F32 as float[]
+            W1.mut.data.ref == RESULT_W1_F32 as float[]
+            W2.mut.data.ref == RESULT_W2_F32 as float[]
     }
 
 
@@ -114,8 +114,8 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             }
 
         expect :
-            W1.unsafe.data.ref == RESULT_W1
-            W2.unsafe.data.ref == RESULT_W2
+            W1.mut.data.ref == RESULT_W1
+            W2.mut.data.ref == RESULT_W2
     }
 
 
@@ -126,8 +126,8 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             var W2 = Tsr.ofRandom(Double, 4, 1)
 
         expect :
-            W1.unsafe.data.ref == [-0.910969595136708, -1.9627469837128895, -0.048245881734580415, -0.3554745831321771, -0.6595188311162824, 1.839723209668042, -0.7864999508162774, -1.918339420402628, 1.4035229760225527, 2.245738695936844, -0.7473176166694635, 1.9016692137691462]
-            W2.unsafe.data.ref == [-0.1611330910958405, -0.9350019667613545, -0.3780200880067806, 1.4951759768158595]
+            W1.mut.data.ref == [-0.910969595136708, -1.9627469837128895, -0.048245881734580415, -0.3554745831321771, -0.6595188311162824, 1.839723209668042, -0.7864999508162774, -1.918339420402628, 1.4035229760225527, 2.245738695936844, -0.7473176166694635, 1.9016692137691462]
+            W2.mut.data.ref == [-0.1611330910958405, -0.9350019667613545, -0.3780200880067806, 1.4951759768158595]
     }
 
 }

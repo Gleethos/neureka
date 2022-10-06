@@ -86,7 +86,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     private Data<V> _data;
 
     /**
-     *  This integer represents the version of the data (accessible through {@link #getData()})
+     *  This integer represents the version of the data (accessible through {@link #getRawData()})
      *  stored within this tensor.
      *  It gets incremented every time an inline operation occurs!
      *  {@link GraphNode} instances tied to this tensor (as component) store
@@ -94,7 +94,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  If this version changes, despite there being a GraphNode which might
      *  perform auto-differentiation at some point, then an exception will be thrown for debugging.
      *  <br>
-     *  The corresponding getter returns the version of the data (accessible through {@link #getData()})
+     *  The corresponding getter returns the version of the data (accessible through {@link #getRawData()})
      *  stored within this tensor.
      */
     protected int _version = 0;
@@ -283,8 +283,8 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             new TsrConstructor(
                 targetDevice, ndConstructor,
                 new TsrConstructor.API() {
-                    @Override public void   setType( DataType<?> type       ) { nda.getUnsafe().setDataType( type ); }
-                    @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }
+                    @Override public void   setType( DataType<?> type       ) { nda.getMut().setDataType( type ); }
+                    @Override public void   setConf( NDConfiguration conf   ) { nda.getMut().setNDConf( conf ); }
                     @Override public void   setData( Data o                 ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }
                     @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                 }

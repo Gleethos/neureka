@@ -107,7 +107,7 @@ class FileHandle_Spec extends Specification
             loaded.dataType.getRepresentativeType() == I16.class
             loaded.dataType == DataType.of( I16.class )
         and : 'It contains the correct array type.'
-            loaded.unsafe.data.ref instanceof short[]
+            loaded.mut.data.ref instanceof short[]
 
         and : 'The "IDXHead" instance has the expected state :'
             idx.valueSize == 28 * 28
@@ -222,7 +222,7 @@ class FileHandle_Spec extends Specification
             Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
                     '1', 'hi', ':)',
                     '2', 'hey', ';)'
-            ]).unsafe.label([
+            ]).mut.label([
                     ['r1', 'r2'],
                     ['A', 'B', 'C']
             ])
@@ -262,7 +262,7 @@ class FileHandle_Spec extends Specification
             Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
                     '1', 'hi', ':)',
                     '2', 'hey', ';)'
-            ]).unsafe.label([
+            ]).mut.label([
                     'ROW':null,
                     'COL':['A', 'B', 'C']
             ])

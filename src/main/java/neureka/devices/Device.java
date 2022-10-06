@@ -36,6 +36,7 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.MutateTsr;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.BackendContext;
@@ -361,7 +362,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          */
         void cleanup( Runnable action );
         /**
-         *  This method automatically called within the {@link Tsr.Unsafe#setNDConf(NDConfiguration)} method
+         *  This method automatically called within the {@link MutateTsr#setNDConf(NDConfiguration)} method
          *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
          *  given {@link Device} implementation... <br><br>
          */

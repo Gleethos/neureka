@@ -66,7 +66,7 @@ public class Randomization extends AbstractOperation
                     if ( call.input( 0 ) == null )
                         call = call.withInputAt( 0, call.input( 1 ) );
 
-                    call.input( 0 ).getUnsafe().incrementVersion(call);
+                    call.input( 0 ).getMut().incrementVersion(call);
 
                     int hash = Arrays.hashCode( call.input( 0 ).getNDConf().shape() );
                     Arg.Seed seed = call.get(Arg.Seed.class);
@@ -150,7 +150,7 @@ public class Randomization extends AbstractOperation
 
     private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call ) {
         Tsr<?> tensor = call.input( 0 );
-        tensor.setIsVirtual(false);
+        tensor.getMut().setIsVirtual(false);
         Class<?> type = tensor.getItemType();
         boolean isSimple = tensor.getNDConf().isSimple();
         NDIteratorProvider iter = i -> {
@@ -164,7 +164,7 @@ public class Randomization extends AbstractOperation
                 new DataProvider() {
                     @Override
                     public <T> T get(Class<T> type) {
-                        return tensor.getUnsafe().getDataForWriting(type);
+                        return tensor.getMut().getDataForWriting(type);
                     }
                 }
         );

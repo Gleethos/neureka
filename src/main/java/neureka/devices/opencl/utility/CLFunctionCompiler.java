@@ -84,7 +84,7 @@ public final class CLFunctionCompiler
                                 if ( call.input( 0 ) == null ) // Creating a new tensor:
                                 {
                                     Tsr<Double> output = Tsr.of(call.input(1).getNDConf().shape(), 0.0);
-                                    output.setIsVirtual( false );
+                                    output.getMut().setIsVirtual( false );
                                     call.getDeviceFor(Double.class).store(output);
                                     call = call.withInputAt( 0, output );
                                 }
@@ -100,7 +100,7 @@ public final class CLFunctionCompiler
     private Tsr<?> _adHocKernelFor( ExecutionCall<?> call ) {
 
         List<Tsr<Number>> args = Arrays.stream( _argPointer )
-                                    .mapToObj( p -> call.input( p + 1 ).getUnsafe().upcast(Number.class) )
+                                    .mapToObj( p -> call.input( p + 1 ).getMut().upcast(Number.class) )
                                     .collect(Collectors.toList());
 
         args.add(0, call.input(Number.class, 0));

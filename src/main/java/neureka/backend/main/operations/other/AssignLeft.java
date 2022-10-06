@@ -43,8 +43,8 @@ public class AssignLeft extends AbstractOperation
             .setCallPreparation(
                 call -> {
                     int offset = ( call.input( 0 ) == null ? 1 : 0 );
-                    call.input( offset ).getUnsafe().incrementVersion(call);
-                    call.input( offset ).setIsVirtual( false );
+                    call.input( offset ).getMut().incrementVersion(call);
+                    call.input( offset ).getMut().setIsVirtual( false );
                     return
                         ExecutionCall.of( call.input( offset ), call.input( 1+offset ) )
                                 .andArgs(Arg.DerivIdx.of(-1))
@@ -69,7 +69,7 @@ public class AssignLeft extends AbstractOperation
             .setCallPreparation(
                     call -> {
                         int offset = ( call.input( 0 ) == null ? 1 : 0 );
-                        call.input( offset ).getUnsafe().incrementVersion(call);
+                        call.input( offset ).getMut().incrementVersion(call);
                         return ExecutionCall.of( call.input(offset), call.input(1+offset) )
                                 .running(Neureka.get().backend().getOperation("idy"))
                                 .on( call.getDevice() );

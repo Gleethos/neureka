@@ -99,8 +99,8 @@ class Cross_Device_Spec extends Specification
             )
 
         cleanup:
-            product.getUnsafe().delete()
-            tensor1.getUnsafe().delete()
+            product.getMut().delete()
+            tensor1.getMut().delete()
             //tensor2.delete() // TODO: FIX EXCEPTION!
 
         where : 'The following settings are being used: '

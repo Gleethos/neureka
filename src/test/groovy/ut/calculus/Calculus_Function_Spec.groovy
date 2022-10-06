@@ -10,7 +10,6 @@ import spock.lang.Subject
 import spock.lang.Title
 
 import java.util.function.Function
-import java.util.function.Supplier
 
 @Title("Testing Default Methods on Functions")
 @Narrative('''
@@ -35,7 +34,7 @@ class Calculus_Function_Spec extends Specification
             var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
                                             var outputs = [Tsr.of(1d)]
                                             tensors.length.times { outputs.add(tensors[it]) }
-                                            return outputs[0].unsafe.setIsIntermediate(true)
+                                            return outputs[0].mut.setIsIntermediate(true)
                                         })
         and :
             var a = Tsr.of(3d)
@@ -69,7 +68,7 @@ class Calculus_Function_Spec extends Specification
             var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> tensors[0] )
         and :
             var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                    return tensors[0].unsafe.setIsIntermediate( true ) // This should fail!
+                                    return tensors[0].mut.setIsIntermediate( true ) // This should fail!
                                 })
         and :
             var a = Tsr.of(3.0)
@@ -101,7 +100,7 @@ class Calculus_Function_Spec extends Specification
     {
         given :
             var fun = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                        return Tsr.of(42f).unsafe.setIsIntermediate(true)
+                                        return Tsr.of(42f).mut.setIsIntermediate(true)
                                     })
 
         and :

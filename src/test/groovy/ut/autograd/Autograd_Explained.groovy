@@ -150,7 +150,7 @@ class Autograd_Explained extends Specification
             gradient.toString() == "(2x2):[4.5, 4.5, 4.5, 4.5]"
 
         when : 'It is time to free some memory because our history of computation has grown a bit...'
-            result.unsafe.detach()
+            result.mut.detach()
 
         then : 'Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !'
             !result.has( GraphNode.class )

@@ -78,9 +78,9 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        double[] t0_value = t0_drn.getUnsafe().getDataForWriting( double[].class );
-        double[] t1_value = t1_src.getUnsafe().getDataAs( double[].class );
-        double[] t2_value = t2_src.getUnsafe().getDataAs( double[].class );
+        double[] t0_value = t0_drn.getMut().getDataForWriting( double[].class );
+        double[] t1_value = t1_src.getMut().getDataAs( double[].class );
+        double[] t2_value = t2_src.getMut().getDataAs( double[].class );
 
         while ( i < end )
         {//increment on drain accordingly:
@@ -151,9 +151,9 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        double[] t0_value = t0_drn.getUnsafe().getDataForWriting( double[].class );
-        double[] t1_value = t1_src.getUnsafe().getDataAs( double[].class );
-        double[] t2_value = t2_src.getUnsafe().getDataAs( double[].class );
+        double[] t0_value = t0_drn.getMut().getDataForWriting( double[].class );
+        double[] t1_value = t1_src.getMut().getDataAs( double[].class );
+        double[] t2_value = t2_src.getMut().getDataAs( double[].class );
 
         assert t0_value != null;
         assert t1_value != null;
@@ -248,9 +248,9 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        float[] t0_value = t0_drn.getUnsafe().getDataForWriting( float[].class );
-        float[] t1_value = t1_src.getUnsafe().getDataAs( float[].class );
-        float[] t2_value = t2_src.getUnsafe().getDataAs( float[].class );
+        float[] t0_value = t0_drn.getMut().getDataForWriting( float[].class );
+        float[] t1_value = t1_src.getMut().getDataAs( float[].class );
+        float[] t2_value = t2_src.getMut().getDataAs( float[].class );
 
         while ( i < end )
         { // increment on drain accordingly:
@@ -320,9 +320,9 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
-        float[] t0_value = t0_drn.getUnsafe().getDataForWriting( float[].class );
-        float[] t1_value = t1_src.getUnsafe().getDataAs( float[].class );
-        float[] t2_value = t2_src.getUnsafe().getDataAs( float[].class );
+        float[] t0_value = t0_drn.getMut().getDataForWriting( float[].class );
+        float[] t1_value = t1_src.getMut().getDataAs( float[].class );
+        float[] t2_value = t2_src.getMut().getDataAs( float[].class );
 
         // Incrementing if 'i>0' so that all indexes match:
         for ( int ii = 0; ii < i; ii++ ) {

@@ -59,7 +59,7 @@ public class Power extends AbstractOperation
                 } else {
 
                     Tsr<?>[] reduction = Utility.subset(call.inputs(), 1,  2, call.arity()-2);
-                    reduction[ 0 ] = call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true );
+                    reduction[ 0 ] = call.input( 1 ).deepCopy().getMut().setIsIntermediate( true );
 
                     if ( d==0 ) {
                         Tsr<?> exp = traverse.execute(
@@ -76,7 +76,7 @@ public class Power extends AbstractOperation
                                                                     .running(type)
                                                                     .on( device )
                                                 ));
-                        exp.getUnsafe().delete();
+                        exp.getMut().delete();
                     } else {
                         Tsr<?> inner = traverse.execute(
                                                 ExecutionCall.of( reduction )
@@ -85,7 +85,7 @@ public class Power extends AbstractOperation
                                                                 .on(device)
                                         );
 
-                        reduction = new Tsr[]{ call.input( 1 ).deepCopy().getUnsafe().setIsIntermediate( true ), inner, call.input( d ) };
+                        reduction = new Tsr[]{ call.input( 1 ).deepCopy().getMut().setIsIntermediate( true ), inner, call.input( d ) };
                         Tsr<?> exp = traverse.execute(
                                                 ExecutionCall.of( reduction )
                                                                 .andArgs( Arg.DerivIdx.of(-1) )
@@ -103,8 +103,8 @@ public class Power extends AbstractOperation
 
                         call = call.withInputAt( 0, result );
 
-                        inner.getUnsafe().delete();
-                        exp.getUnsafe().delete();
+                        inner.getMut().delete();
+                        exp.getMut().delete();
                     }
                 }
             }

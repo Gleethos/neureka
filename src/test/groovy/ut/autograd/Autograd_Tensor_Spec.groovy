@@ -126,13 +126,13 @@ class Autograd_Tensor_Spec extends Specification
                                 -1, 4, -2,
                                 -2, 3, 4,
                         }
-                ).unsafe.toType(type)
+                ).mut.toType(type)
             y = Tsr.of(
                     new int[]{2, 2},
                     new double[]{
                             -1, 3,
                             2, 3,
-                    }).setRqsGradient(true).unsafe.toType(type)
+                    }).setRqsGradient(true).mut.toType(type)
 
         then : y.toString().contains(":g:(null)")
         when : z = Tsr.of("I0xi1", y, x)
@@ -147,17 +147,17 @@ class Autograd_Tensor_Spec extends Specification
         then : y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)")
         //====
         when :
-            x = Tsr.of(new int[]{1}, 3).unsafe.toType(type)
-            Tsr b = Tsr.of(new int[]{1}, -5).unsafe.toType(type)
-            Tsr w = Tsr.of(new int[]{1}, -2).unsafe.toType(type)
+            x = Tsr.of(new int[]{1}, 3).mut.toType(type)
+            Tsr b = Tsr.of(new int[]{1}, -5).mut.toType(type)
+            Tsr w = Tsr.of(new int[]{1}, -2).mut.toType(type)
             z = Tsr.of("I0*i1*i2", x, b, w)
         then : z.toString().contains("[1]:(30.0)")
         and : z.itemType == type
 
         when :
-            x = Tsr.of(new int[]{1}, 4).setRqsGradient(true).unsafe.toType(type)
-            b = Tsr.of(new int[]{1}, 0.5).unsafe.toType(type)
-            w = Tsr.of(new int[]{1}, 0.5).unsafe.toType(type)
+            x = Tsr.of(new int[]{1}, 4).setRqsGradient(true).mut.toType(type)
+            b = Tsr.of(new int[]{1}, 0.5).mut.toType(type)
+            w = Tsr.of(new int[]{1}, 0.5).mut.toType(type)
             y = Tsr.of("(2**i0**i1**i2**2", x, b, w)
         then :
             y.toString().contains("[1]:(9.24238);")
@@ -182,7 +182,7 @@ class Autograd_Tensor_Spec extends Specification
             Tsr c = a.convDot(b)
 
         and : 'One tries to delete tensor "b"...'
-            b.getUnsafe().delete()
+            b.getMut().delete()
 
         then : 'An exception is being thrown.'
             def exception = thrown(IllegalStateException)

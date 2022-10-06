@@ -2,9 +2,6 @@ package neureka.backend.main.implementations.broadcast;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.calculus.args.Arg;
 import neureka.devices.opencl.OpenCLDevice;
 
@@ -18,9 +15,9 @@ public class CLScalarBroadcastAddition extends CLScalarBroadcast
     public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
         assert call.arity() == 3;
         if ( call.getDerivativeIndex() == 0 )
-            return Tsr.of( call.input(1).shape(), 1d ).getUnsafe().setIsIntermediate( true );
+            return Tsr.of( call.input(1).shape(), 1d ).getMut().setIsIntermediate( true );
         else if ( call.getDerivativeIndex() == 1 )
-            return Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );
+            return Tsr.of( call.input( 2 ).shape(), 1d ).getMut().setIsIntermediate( true );
         else {
             int gwz = call.input(Number.class, 0).size();
             float value = call.input(Number.class, 2).item(0).floatValue();

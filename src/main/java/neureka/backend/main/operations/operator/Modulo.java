@@ -14,19 +14,11 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.broadcast.CLScalarBroadcastModulo;
-import neureka.backend.main.implementations.elementwise.CLBiElementwise;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.implementations.broadcast.CLBroadcastModulo;
-import neureka.backend.main.implementations.elementwise.CPUBiElementWiseModulo;
-import neureka.backend.main.implementations.broadcast.CPUBroadcastModulo;
-import neureka.backend.main.implementations.broadcast.CPUScalarBroadcastModulo;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.NDimensional;
 
 import java.util.Arrays;
@@ -104,7 +96,7 @@ public class Modulo extends AbstractOperation
         if ( !caller.isFlat() ) {
             if ( d < 0 ) {
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
-                Arrays.stream(flatCall.inputs()).forEach(t -> t.getUnsafe().setIsIntermediate(false) );
+                Arrays.stream(flatCall.inputs()).forEach(t -> t.getMut().setIsIntermediate(false) );
                 Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
                 return super.execute( flat, flatCall );
             }
@@ -132,7 +124,7 @@ public class Modulo extends AbstractOperation
                 derivOfA = div.call((Tsr<Object>)aDeriv, (Tsr<Object>)bResult);
             }
             if ( !deriveB && deriveA )
-                return Result.of(derivOfA.getUnsafe().setIsIntermediate(true));
+                return Result.of(derivOfA.getMut().setIsIntermediate(true));
 
             Tsr<?> aResult = a.call((Call)call.withArgs(Arg.DerivIdx.of(-1)));
             if ( deriveB ) {
@@ -147,10 +139,10 @@ public class Modulo extends AbstractOperation
                 Tsr<?> derivOfB = derive.call( (Tsr<Object>)innerDerivB, (Tsr<Object>)bResult );
                 derivOfB = mul.call((Tsr<Object>)aResult, (Tsr<Object>)derivOfB);
                 if ( !deriveA )
-                    return Result.of(derivOfB.getUnsafe().setIsIntermediate(true));
+                    return Result.of(derivOfB.getMut().setIsIntermediate(true));
                 else {
                     Function add = Neureka.get().backend().getFunction().add();
-                    return Result.of( add.call((Tsr<Object>)derivOfA, (Tsr<Object>)derivOfB).getUnsafe().setIsIntermediate(true) );
+                    return Result.of( add.call((Tsr<Object>)derivOfA, (Tsr<Object>)derivOfB).getMut().setIsIntermediate(true) );
                 }
             }
         }

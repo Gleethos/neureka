@@ -203,8 +203,8 @@ public interface Operation
                                         throw new IllegalArgumentException("Cannot derive w.r.t. to input index " + d + " in function '" + caller + "', because there is no input with index "+d+"!");
 
                                     if ( caller.getSubFunctions().stream().allMatch( f -> f instanceof FunctionConstant) ) {
-                                        if ( d < 0 ) return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(caller.call(new double[0])).getUnsafe().setIsIntermediate(true));
-                                        else         return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(0).getUnsafe().setIsIntermediate(true));
+                                        if ( d < 0 ) return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(caller.call(new double[0])).getMut().setIsIntermediate(true));
+                                        else         return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(0).getMut().setIsIntermediate(true));
                                     }
                                     Result result = call.getAlgorithm().execute( caller, call );
                                     if ( result != null ) return result;
@@ -286,13 +286,13 @@ public interface Operation
 
         public static Tsr<?>[] offsetted( Tsr<?>[] tensors, int offset ) {
             Tsr<?>[] newTensors = new Tsr[ tensors.length - offset ];
-            newTensors[ 0 ] = tensors[ 1 ].deepCopy().getUnsafe().setIsIntermediate( true );
+            newTensors[ 0 ] = tensors[ 1 ].deepCopy().getMut().setIsIntermediate( true );
             if ( !tensors[ 1 ].has( GraphNode.class ) && tensors[ 1 ] != tensors[ 0 ] ) {//Deleting intermediate results!
-                tensors[ 1 ].getUnsafe().delete();
+                tensors[ 1 ].getMut().delete();
                 tensors[ 1 ] = null;
             }
             if (!tensors[ 2 ].has( GraphNode.class ) && tensors[ 2 ] != tensors[ 0 ]) {//Deleting intermediate results!
-                tensors[ 2 ].getUnsafe().delete();
+                tensors[ 2 ].getMut().delete();
                 tensors[ 2 ] = null;
             }
             System.arraycopy( tensors, 1 + offset, newTensors, 1, tensors.length - 1 - offset );

@@ -105,7 +105,7 @@ public class DimTrim extends AbstractOperation
             newOffset.add( 0 );
         }
         tensor
-            .getUnsafe()
+            .getMut()
             .setNDConf(
                  NDConfiguration.of(
                      newShape.stream().mapToInt( i -> i ).toArray(),
@@ -123,7 +123,7 @@ public class DimTrim extends AbstractOperation
         if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
             throw new IllegalArgumentException("Column major not yet supported for shape trimming!");
 
-        tensor = ( newTsr ? tensor.getAt( new ArrayList<>() ).getUnsafe().setIsIntermediate( true ) : tensor );
+        tensor = ( newTsr ? tensor.getAt( new ArrayList<>() ).getMut().setIsIntermediate( true ) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
         List<Integer> newIndicesMap = new ArrayList<>();
@@ -142,7 +142,7 @@ public class DimTrim extends AbstractOperation
             newOffset.add( tensor.getNDConf().offset( i ) );
         }
         tensor
-            .getUnsafe()
+            .getMut()
             .setNDConf(
                 NDConfiguration.of(
                     newShape.stream().mapToInt( i -> i ).toArray(),

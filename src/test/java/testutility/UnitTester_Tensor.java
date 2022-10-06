@@ -83,7 +83,7 @@ public class UnitTester_Tensor extends UnitTester
         }
         boolean productInInputs = false;
         for ( Tsr t : source ) productInInputs = (t == product || productInInputs);
-        if ( !productInInputs ) product.getUnsafe().delete();
+        if ( !productInInputs ) product.getMut().delete();
         return (printSessionEnd()>0)?1:0;
     }
 
@@ -112,7 +112,7 @@ public class UnitTester_Tensor extends UnitTester
                     stringified(expectedGradient[ i ])
             );
         }
-        product.getUnsafe().delete();
+        product.getMut().delete();
         return (printSessionEnd()>0)?1:0;
     }
 

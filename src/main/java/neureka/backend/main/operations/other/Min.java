@@ -49,13 +49,13 @@ public class Min extends AbstractOperation
                 int[] shape = in.getNDConf().shape();
                 Device<Object> device = (Device<Object>) call.getDevice();
                 return Result.of(
-                            Tsr.of(in.itemType(), new int[]{1}, in.item(i)).to(call.getDevice()).getUnsafe().setIsIntermediate(true)
+                            Tsr.of(in.itemType(), new int[]{1}, in.item(i)).to(call.getDevice()).getMut().setIsIntermediate(true)
                         )
                         .withADAction( target -> {
                             Tsr<Object> error = (Tsr<Object>) target.error();
                             assert error.size() == 1;
                             Tsr<Object> newError = ElemWiseUtil.newTsrLike(typeClass, shape, true, device, 0);
-                            newError.setIsVirtual(false);
+                            newError.getMut().setIsVirtual(false);
                             newError.setItemAt(i, error.item(0));
                             return newError;
                         });

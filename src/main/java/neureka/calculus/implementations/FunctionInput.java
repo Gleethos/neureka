@@ -115,8 +115,8 @@ public class FunctionInput implements Function, GradientProvider
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );
         if ( d >= 0 )
             return ( d == index() )
-                ? Tsr.of( inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true )
-                : Tsr.of( inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true );
+                ? Tsr.of( inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 1.0 ).getMut().setIsIntermediate( true )
+                : Tsr.of( inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 0.0 ).getMut().setIsIntermediate( true );
 
         if ( index() >= inputs.length )
             throw new IllegalArgumentException(

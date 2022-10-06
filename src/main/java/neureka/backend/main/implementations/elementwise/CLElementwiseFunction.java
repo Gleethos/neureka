@@ -27,7 +27,7 @@ public class CLElementwiseFunction extends ParsedCLImplementation
         int offset = call.input( Number.class, 0 ) != null ? 0 : 1;
         int gwz = call.input( Number.class, 0 ) != null ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();
         // Drain tensor needs to be 'actual'! :
-        if ( !call.input( Number.class, offset + 1).isVirtual() ) call.input( Number.class, offset).setIsVirtual( false );
+        if ( !call.input( Number.class, offset + 1).isVirtual() ) call.input( Number.class, offset).getMut().setIsVirtual( false );
         call.getDevice()
                 .getKernel(call)
                 .passAllOf( call.input( Number.class, offset ) )

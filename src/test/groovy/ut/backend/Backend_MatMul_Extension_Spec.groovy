@@ -82,7 +82,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                         {
                                                             int[] shp = new int[]{call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1)}
                                                             Tsr output = Tsr.of(shp, 0.0);
-                                                            output.setIsVirtual(false);
+                                                            output.mut.setIsVirtual(false);
                                                             device.store( output );
                                                             call = call.withInputAt( 0, output );
                                                         }

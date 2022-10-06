@@ -111,7 +111,7 @@ public class CPUReduce implements ImplementationFor<CPU>
 
         if ( type == Float.class ) {
             ComparatorF32 comparator = _type.getFloatComparator();
-            float[] inData = in.getUnsafe().getDataForWriting(float[].class);
+            float[] inData = in.getMut().getDataForWriting(float[].class);
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
@@ -134,7 +134,7 @@ public class CPUReduce implements ImplementationFor<CPU>
         }
         if ( type == Double.class ) {
             ComparatorF64 comparator = _type.getDoubleComparator();
-            double[] inData = in.getUnsafe().getDataForWriting(double[].class);
+            double[] inData = in.getMut().getDataForWriting(double[].class);
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
@@ -157,7 +157,7 @@ public class CPUReduce implements ImplementationFor<CPU>
         }
         if ( type == Integer.class ) {
             ComparatorI32 comparator = _type.getIntComparator();
-            int[] inData = in.getUnsafe().getDataForWriting(int[].class);
+            int[] inData = in.getMut().getDataForWriting(int[].class);
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
@@ -180,7 +180,7 @@ public class CPUReduce implements ImplementationFor<CPU>
         }
         if ( type == Long.class ) {
             ComparatorI64 comparator = _type.getLongComparator();
-            long[] inData = in.getUnsafe().getDataForWriting(long[].class);
+            long[] inData = in.getMut().getDataForWriting(long[].class);
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
@@ -203,7 +203,7 @@ public class CPUReduce implements ImplementationFor<CPU>
         }
         if ( type == Short.class ) {
             ComparatorI16 comparator = _type.getShortComparator();
-            short[] inData = in.getUnsafe().getDataForWriting(short[].class);
+            short[] inData = in.getMut().getDataForWriting(short[].class);
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );
@@ -226,7 +226,7 @@ public class CPUReduce implements ImplementationFor<CPU>
         }
         if ( type == Byte.class ) {
             ComparatorI8 comparator = _type.getByteComparator();
-            byte[] inData = in.getUnsafe().getDataForWriting(byte[].class);
+            byte[] inData = in.getMut().getDataForWriting(byte[].class);
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
                 int limit = Math.min( offset + RTS, SIZE );

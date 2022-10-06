@@ -95,7 +95,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
                         throw new IllegalStateException("Data parent is not outsourced!");
                 }
             }
-            Device<V> found = newOwner.getUnsafe().getData().owner();
+            Device<V> found = newOwner.getMut().getData().owner();
             if ( found != null && found != this ) {
                 found.restore( newOwner );
             }
@@ -140,7 +140,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      */
     @Override
     public <T extends V> boolean has(Tsr<T> tensor) {
-        return tensor.getUnsafe().getData() != null && tensor.getUnsafe().getData().owner() == this;
+        return tensor.getMut().getData() != null && tensor.getMut().getData().owner() == this;
     }
 
 

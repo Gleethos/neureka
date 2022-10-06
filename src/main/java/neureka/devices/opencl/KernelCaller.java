@@ -40,7 +40,7 @@ public class KernelCaller
      */
     public KernelCaller passAllOf( Tsr<Number> tensor ) {
         _inputs.add( tensor );
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData().getRef( OpenCLDevice.cl_tsr.class ).value.data ) );
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().getRef( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
         return passConfOf( tensor );
     }
@@ -55,7 +55,7 @@ public class KernelCaller
      *  @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller passConfOf( Tsr<Number> tensor ) {
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData().getRef( OpenCLDevice.cl_tsr.class ).config.data ) );
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().getRef( OpenCLDevice.cl_tsr.class ).config.data ) );
         _argId++;
         return this;
     }
@@ -67,8 +67,8 @@ public class KernelCaller
      * @return This very KernelCaller instance (factory pattern).
      */
     public <T extends Number> KernelCaller pass( Tsr<T> tensor ) {
-        _inputs.add( tensor.getUnsafe().upcast(Number.class) );
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getUnsafe().getData().getRef( OpenCLDevice.cl_tsr.class ).value.data ) );
+        _inputs.add( tensor.getMut().upcast(Number.class) );
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().getRef( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
         return this;
     }
@@ -185,9 +185,9 @@ public class KernelCaller
     
     private void _releaseEvents( Tsr<Number>[] tensors ) {
         for ( Tsr<Number> t : tensors ) {
-            if ( t.getUnsafe().getData().getRef( OpenCLDevice.cl_tsr.class ).value.event != null ) {
-                clReleaseEvent(t.getUnsafe().getData().getRef( OpenCLDevice.cl_tsr.class ).value.event);
-                t.getUnsafe().getData().getRef( OpenCLDevice.cl_tsr.class ).value.event = null;
+            if ( t.getMut().getData().getRef( OpenCLDevice.cl_tsr.class ).value.event != null ) {
+                clReleaseEvent(t.getMut().getData().getRef( OpenCLDevice.cl_tsr.class ).value.event);
+                t.getMut().getData().getRef( OpenCLDevice.cl_tsr.class ).value.event = null;
             }
         }
     }
@@ -196,7 +196,7 @@ public class KernelCaller
     private cl_event[] _getWaitList( Tsr<Number>[] tensors ) {
         List<cl_event> list = new ArrayList<>();
         for ( Tsr<Number> t : tensors ) {
-            cl_event event = t.getUnsafe().getData().getRef( OpenCLDevice.cl_tsr.class ).value.event;
+            cl_event event = t.getMut().getData().getRef( OpenCLDevice.cl_tsr.class ).value.event;
             if ( event != null && !list.contains(event) ) {
                 list.add( event );
             }

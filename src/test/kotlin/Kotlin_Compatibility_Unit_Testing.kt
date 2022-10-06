@@ -200,7 +200,7 @@ Kotlin_Compatibility_Unit_Testing {
         assert(e3.toString() == "(1x1x1):[42.0+24.0i]")
 
         // When :
-        slice.unsafe.minusAssign( slice * ComplexNumber(-4.0, -2.0) )
+        slice.mut.minusAssign( slice * ComplexNumber(-4.0, -2.0) )
 
         // Then :
         assert(
@@ -427,7 +427,7 @@ Kotlin_Compatibility_Unit_Testing {
                         .withShape(2, 3)
                         .andWhere { _, indices -> indices.sum()/2  }
 
-        assert((0..5).all { (nda.data as IntArray)[it] == arrayOf(0,0,1,0,1,1)[it] })
+        assert((0..5).all { (nda.rawData as IntArray)[it] == arrayOf(0,0,1,0,1,1)[it] })
         assert((0..5).all { (nda.rawItems as IntArray)[it] == arrayOf(0,0,1,0,1,1)[it] })
     }
 
