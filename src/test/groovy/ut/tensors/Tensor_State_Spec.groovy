@@ -214,12 +214,14 @@ class Tensor_State_Spec extends Specification
     {
         given : 'A new vector tensor is being instantiated.'
             Tsr<Byte> t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )
-        expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
-            !t.isOutsourced()
+        expect : 'The vector is initialized with zeros.'
+            t.items == [0, 0] as List<Byte>
+        and : 'We can access and verify this through the following ways as well:'
             t.getItemsAs( double[].class ) == [0, 0] as double[]
             t.getItemsAs( float[].class ) == [0, 0] as float[]
             t.mut.data.ref == [0] as byte[]
-            t.items == [0, 0] as byte[]
+        and : 'It is not stored on another device, meaning that it is not "outsourced".'
+            !t.isOutsourced()
             t.isVirtual()
     }
 
@@ -240,9 +242,9 @@ class Tensor_State_Spec extends Specification
 
         and : 'They both do not share the same value array.'
             v.items != s.items
-        and : 'They so however share the same underlying data.'
+        and : 'They do however share the same underlying data.'
             v.mut.data.ref == s.mut.data.ref
-        and :
+        and : 'The tensor simply stores the number 4.'
             s.items == [4f]
 
         where : 'We test the following devices:'
