@@ -68,7 +68,7 @@ public class CPUBackend implements BackendExtension
 
         receive.forOperation( AssignLeft.class )
                 .set( Scalarization.class, context -> new CPUScalarBroadcastIdentity() )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.IDENTITY) );
+                .set( Activation.class, context -> new CPUElementwiseAssignFun() );
 
         receive.forOperation( Convolution.class )
                .set( NDConvolution.class, context -> new CPUConvolution() );
@@ -105,7 +105,7 @@ public class CPUBackend implements BackendExtension
                 .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.GELU) )
                 .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.GELU) );
         receive.forOperation( Identity.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.IDENTITY) )
+                .set( Activation.class, context -> new CPUElementwiseAssignFun() )
                 .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.IDENTITY) );
         receive.forOperation( Logarithm.class )
                 .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.LOGARITHM) )
