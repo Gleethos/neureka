@@ -1,4 +1,4 @@
-package neureka.devices.host;
+package neureka.backend.cpu;
 
 import neureka.backend.api.BackendExtension;
 import neureka.backend.api.ini.BackendLoader;
@@ -15,6 +15,7 @@ import neureka.backend.main.operations.operator.*;
 import neureka.backend.main.operations.other.AssignLeft;
 import neureka.backend.main.operations.other.Sum;
 import neureka.backend.main.operations.other.internal.CPUSum;
+import neureka.devices.host.CPU;
 
 public class CPUBackend implements BackendExtension
 {

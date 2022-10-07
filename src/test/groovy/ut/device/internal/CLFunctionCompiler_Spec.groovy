@@ -8,7 +8,7 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
-import neureka.devices.opencl.CLBackend
+import neureka.backend.ocl.CLBackend
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.CLFunctionCompiler

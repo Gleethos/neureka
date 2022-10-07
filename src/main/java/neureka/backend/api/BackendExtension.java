@@ -3,7 +3,7 @@ package neureka.backend.api;
 import neureka.backend.api.ini.BackendLoader;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
-import neureka.devices.opencl.CLBackend;
+import neureka.backend.ocl.CLBackend;
 
 /**
  *  Implementations of this might introduce CUDA or ROCM to Neureka.

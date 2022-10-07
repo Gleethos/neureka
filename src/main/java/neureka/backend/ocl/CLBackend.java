@@ -1,4 +1,4 @@
-package neureka.devices.opencl;
+package neureka.backend.ocl;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.BackendExtension;
@@ -26,6 +26,8 @@ import neureka.backend.main.operations.other.Sum;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
+import neureka.devices.opencl.OpenCLDevice;
+import neureka.devices.opencl.OpenCLPlatform;
 import neureka.devices.opencl.utility.Messages;
 import org.jocl.cl_platform_id;
 import org.slf4j.Logger;

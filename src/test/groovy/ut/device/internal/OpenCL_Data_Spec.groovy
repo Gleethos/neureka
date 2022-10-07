@@ -1,7 +1,7 @@
 package ut.device.internal
 
 import neureka.Neureka
-import neureka.devices.opencl.CLBackend
+import neureka.backend.ocl.CLBackend
 import neureka.devices.opencl.JVMData
 import spock.lang.Specification
 

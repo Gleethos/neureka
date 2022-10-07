@@ -51,6 +51,7 @@ package neureka.devices.opencl;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.*;
+import neureka.backend.ocl.CLBackend;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.common.composition.Component;

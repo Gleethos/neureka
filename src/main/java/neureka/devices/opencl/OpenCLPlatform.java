@@ -5,6 +5,7 @@ import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.Operation;
+import neureka.backend.ocl.CLBackend;
 import neureka.backend.main.algorithms.*;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.SimpleCLImplementation;
@@ -46,7 +47,7 @@ public class OpenCLPlatform
     private final Map<String, cl_kernel> _kernels = new HashMap<>();
 
 
-    OpenCLPlatform(cl_platform_id pid)
+    public OpenCLPlatform(cl_platform_id pid)
     {
         _id_device = new TreeMap<>(Comparator.comparingInt(NativePointerObject::hashCode));
         _pid = pid;

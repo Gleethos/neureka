@@ -4,8 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
-import neureka.devices.opencl.CLBackend;
-import neureka.devices.opencl.CLSettings;
+import neureka.backend.ocl.CLBackend;
+import neureka.backend.ocl.CLSettings;
 import neureka.devices.opencl.KernelCaller;
 import neureka.devices.opencl.OpenCLDevice;
 

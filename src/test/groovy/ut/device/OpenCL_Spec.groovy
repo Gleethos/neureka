@@ -6,7 +6,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.common.composition.Component
 import neureka.devices.Device
-import neureka.devices.opencl.CLBackend
+import neureka.backend.ocl.CLBackend
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.DeviceQuery
 import neureka.framing.Relation

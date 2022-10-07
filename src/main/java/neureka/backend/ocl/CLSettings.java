@@ -1,4 +1,4 @@
-package neureka.devices.opencl;
+package neureka.backend.ocl;
 
 /**
  *  OpenCL related settings for the {@link CLBackend} backend extension.

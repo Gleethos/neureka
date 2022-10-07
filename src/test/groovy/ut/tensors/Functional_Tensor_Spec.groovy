@@ -3,7 +3,7 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.common.utility.SettingsLoader
-import neureka.devices.opencl.CLBackend
+import neureka.backend.ocl.CLBackend
 import neureka.dtype.DataType
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf

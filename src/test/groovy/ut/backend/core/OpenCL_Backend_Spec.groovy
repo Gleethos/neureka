@@ -5,7 +5,7 @@ import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.Operation
 import neureka.backend.api.ini.ImplementationReceiver
 import neureka.devices.Device
-import neureka.devices.opencl.CLBackend
+import neureka.backend.ocl.CLBackend
 import spock.lang.Specification
 
 class OpenCL_Backend_Spec extends Specification

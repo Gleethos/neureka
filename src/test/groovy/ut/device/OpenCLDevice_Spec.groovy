@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.CPU
-import neureka.devices.opencl.CLBackend
+import neureka.backend.ocl.CLBackend
 import testutility.opencl.DispatchUtility
 import neureka.dtype.DataType
 import neureka.ndim.config.NDConfiguration

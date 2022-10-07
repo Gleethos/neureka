@@ -2,6 +2,7 @@ package neureka.devices.opencl;
 
 import neureka.Neureka;
 import neureka.backend.api.BackendContext;
+import neureka.backend.ocl.CLBackend;
 import neureka.common.utility.DataConverter;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;

@@ -9,7 +9,7 @@ import neureka.common.utility.SettingsLoader
 import neureka.devices.CustomDeviceCleaner
 import neureka.devices.file.FileDevice
 import neureka.devices.host.CPU
-import neureka.devices.opencl.CLBackend
+import neureka.backend.ocl.CLBackend
 import neureka.dtype.DataType
 import neureka.framing.Relation
 import neureka.ndim.config.NDConfiguration

@@ -2,7 +2,7 @@ package neureka.devices.opencl.utility;
 
 import neureka.backend.api.BackendContext;
 import neureka.common.utility.LogUtil;
-import neureka.devices.opencl.CLBackend;
+import neureka.backend.ocl.CLBackend;
 
 import java.io.BufferedReader;
 import java.io.IOException;

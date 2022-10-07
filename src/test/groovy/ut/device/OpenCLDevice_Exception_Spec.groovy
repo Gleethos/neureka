@@ -3,7 +3,7 @@ package ut.device
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.opencl.CLBackend
+import neureka.backend.ocl.CLBackend
 import neureka.dtype.DataType
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
