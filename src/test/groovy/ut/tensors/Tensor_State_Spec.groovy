@@ -16,7 +16,7 @@ import spock.lang.Title
     This specification defines the expected states of freshly instantiated
     and initialized tensors.
     After a tensor was created successfully we expect it 
-    to have certain properties like a shape, rank, type nnd data array
+    to have certain properties like a shape, rank, type and data array
     among other things.
     
 ''')
@@ -24,7 +24,8 @@ class Tensor_State_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """    
-            
+            Note: This specification is a little older, meaning initially it was not written with 
+            the intend to be read as living documentation, but rather as a unit test...
         """
     }
 
