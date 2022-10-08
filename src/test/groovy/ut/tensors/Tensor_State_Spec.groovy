@@ -248,7 +248,7 @@ class Tensor_State_Spec extends Specification
             s.items == [4f]
 
         where : 'We test the following devices:'
-            device << ['CPU']
+            device << ['CPU', 'GPU']
     }
 
 

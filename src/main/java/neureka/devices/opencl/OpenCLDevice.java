@@ -139,6 +139,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_config config;
         public cl_value  value;
 
+        @Override
+        public boolean equals(Object obj) {
+            if ( !(obj instanceof cl_tsr) ) return false;
+            return ((cl_tsr) obj).value == this.value;
+        }
     }
 
     /**
