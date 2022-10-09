@@ -1,6 +1,5 @@
 package neureka.backend.main.algorithms;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -47,10 +46,6 @@ public class Scalarization extends AbstractFunDeviceAlgorithm<Scalarization>
                 return call.withInputAt( 0, output );
             }
         );
-    }
-
-    public static String getKernelSource() {
-        return Neureka.get().utility().readResource("kernels/scalarization_template.cl");
     }
 
 }

@@ -1078,6 +1078,11 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     public Tsr<V> putAt( List<?> key, Nda<V> value ) {
         _putAtCheckFor( (Tsr<?>) value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
+        Data<V> thisData = this.getMut().getData();
+        Object thisDataRef = ( thisData != null ? thisData.getRef() : null );
+        if ( thisDataRef != null && !thisDataRef.equals(slice.getMut().getData().getRef()) )
+            throw new IllegalStateException("Failed to isolate slice for inline assignment!");
+
         return _putAt( slice, (Tsr<V>) value );
     }
 
