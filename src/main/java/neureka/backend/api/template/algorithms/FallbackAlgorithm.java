@@ -67,10 +67,10 @@ implements ExecutionPreparation, ADActionSupplier
                                         call.input( Number.class, 0 ).size(),
                                         ( start, end ) -> {
                                             for ( int i = start; i < end; i++ ) {
-                                                for ( int ii = 0; ii < inputs.length; ii++ ) {
+                                                for ( int ii = 0; ii < inputs.length; ii++ )
                                                     inputs[ ii ] = call.input( Number.class, 1 + ii ).at( i ).get().doubleValue();
-                                                }
-                                                call.input( Number.class, 0 ).getMut().getDataAs( double[].class )[ i ] = f.call( inputs );
+
+                                                call.input( Number.class, 0 ).getMut().set( i, f.call( inputs ) );
                                             }
                                         }
                                     );
@@ -144,7 +144,12 @@ implements ExecutionPreparation, ADActionSupplier
         if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
             int[] shp = call.input( 1 ).getNDConf().shape();
-            Tsr<Object> output = (Tsr<Object>) Tsr.of( call.input( 1 ).getDataType(), shp )
+            Tsr<Object> output;
+
+            if ( call.getOperation().isInline() )
+                output = call.input( Object.class, 1 );
+            else
+                output = (Tsr<Object>) Tsr.of( call.input( 1 ).getDataType(), shp )
                                                     .getMut()
                                                     .setIsIntermediate(true);
             output.getMut().setIsVirtual( false );

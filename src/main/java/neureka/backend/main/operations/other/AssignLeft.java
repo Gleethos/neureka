@@ -92,6 +92,7 @@ public class AssignLeft extends AbstractOperation
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-            return src[ 0 ].call( inputs, j );
+        int right = src.length - 1;
+        return d >= 0 ? src[ right ].derive( inputs, d, j ) : src[ right ].call( inputs, j );
     }
 }
