@@ -83,7 +83,7 @@ public class BroadSystemTest
                 "I[2]<-(Ig[0]<-I[1])",
                 new String[][]{
                         {"(-4.0)"},// == I[2]
-                        {"(3.0)", "gdeleted"},//tensor1
+                        {"(3.0)", "g:(-4.0)"},//tensor1
                         {"(-4.0)"},//tensor2
                         {"(-4.0)"},//tensor3
                 });

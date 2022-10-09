@@ -1,8 +1,10 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
+import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
@@ -11,6 +13,7 @@ import neureka.backend.main.algorithms.Activation;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.assembly.FunctionParser;
 
 public class AssignLeft extends AbstractOperation
 {
@@ -31,7 +34,11 @@ public class AssignLeft extends AbstractOperation
             new Scalarization()
             .setIsSuitableFor(
                call -> {
+                   if ( call.arity() > 3 )
+                       throw new IllegalArgumentException("AssignLeft operation only supports up to 3 arguments!");
                    int offset = ( call.arity() == 1 ? 0 : 1 );
+                   //if ( call.arity() == 3 && call.input(0) == null )
+                   //    offset = 2;
                    if ( call.input( offset ).isVirtual() || call.input( offset ).size() == 1 )
                        return SuitabilityPredicate.GOOD;
                    else
@@ -77,6 +84,36 @@ public class AssignLeft extends AbstractOperation
             )
             .buildFunAlgorithm()
         );
+    }
+
+
+    @Override
+    public Result execute( Function caller, ExecutionCall<?> call )
+    {
+        if ( call.getDerivativeIndex() >= 0 )
+            throw new IllegalArgumentException("Assignment does not support autograd!");
+
+        caller = reducePairwise(caller);
+        ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
+        for (Tsr<?> t : call.inputs()) t.getMut().setIsIntermediate(false);
+        Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), false );
+        return super.execute( flat, flatCall );
+    }
+
+    private Function reducePairwise(Function f) {
+        if ( f.getSubFunctions().size() > 2 ) {
+            /*
+                So currently we have something like this: a <- b <- c <- d...
+                However, this is how it is really executed:  (a**(b**(c**(d**..))))
+                ...so let's create a function that is nested like the above:
+            */
+            Function nested = f.getSubFunctions().get(f.getSubFunctions().size()-1);
+            for ( int i = f.getSubFunctions().size()-2; i >= 0; i-- )
+                nested = Function.of( f.getSubFunctions().get(i) + " <- " + nested, true );
+
+            f = nested;
+        }
+        return f;
     }
 
 
