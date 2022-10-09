@@ -55,7 +55,6 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
                     // increment on drain:
                     t0Idx.increment();
                     srcIdx.increment();
-                    //NDConfiguration.Utility.increment(t0Idx, t0Shp);
                     i++;
                 }
             };
@@ -76,7 +75,6 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
                     // increment on drain:
                     t0Idx.increment();
                     srcIdx.increment();
-                    //NDConfiguration.Utility.increment(t0Idx, t0Shp);
                     i++;
                 }
             };
@@ -97,7 +95,66 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
                     // increment on drain:
                     t0Idx.increment();
                     srcIdx.increment();
-                    //NDConfiguration.Utility.increment(t0Idx, t0Shp);
+                    i++;
+                }
+            };
+        }
+        if ( typeClass == Long.class ) {
+            long value = call.input(Number.class, 1 + offset).at(0).get().longValue();
+            long[] t0_value = t0_drn.getMut().getDataForWriting(long[].class);
+            long[] t1_value = src.getMut().getDataAs(long[].class);
+            workload = ( i, end ) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator srcIdx = NDIterator.of(src);
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                srcIdx.set(src.indicesOfIndex(i));
+                while (i < end) // increment on drain accordingly:
+                {
+                    // setInto _value in drn:
+                    t0_value[t0Idx.i()] = f.invoke(t1_value[srcIdx.i()], value);
+                    // increment on drain:
+                    t0Idx.increment();
+                    srcIdx.increment();
+                    i++;
+                }
+            };
+        }
+        if ( typeClass == Short.class ) {
+            short value = call.input(Number.class, 1 + offset).at(0).get().shortValue();
+            short[] t0_value = t0_drn.getMut().getDataForWriting(short[].class);
+            short[] t1_value = src.getMut().getDataAs(short[].class);
+            workload = ( i, end ) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator srcIdx = NDIterator.of(src);
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                srcIdx.set(src.indicesOfIndex(i));
+                while (i < end) // increment on drain accordingly:
+                {
+                    // setInto _value in drn:
+                    t0_value[t0Idx.i()] = f.invoke(t1_value[srcIdx.i()], value);
+                    // increment on drain:
+                    t0Idx.increment();
+                    srcIdx.increment();
+                    i++;
+                }
+            };
+        }
+        if ( typeClass == Byte.class ) {
+            byte value = call.input(Number.class, 1 + offset).at(0).get().byteValue();
+            byte[] t0_value = t0_drn.getMut().getDataForWriting(byte[].class);
+            byte[] t1_value = src.getMut().getDataAs(byte[].class);
+            workload = ( i, end ) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator srcIdx = NDIterator.of(src);
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                srcIdx.set(src.indicesOfIndex(i));
+                while (i < end) // increment on drain accordingly:
+                {
+                    // setInto _value in drn:
+                    t0_value[t0Idx.i()] = f.invoke(t1_value[srcIdx.i()], value);
+                    // increment on drain:
+                    t0Idx.increment();
+                    srcIdx.increment();
                     i++;
                 }
             };
@@ -118,14 +175,13 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
                     // increment on drain:
                     t0Idx.increment();
                     srcIdx.increment();
-                    //NDConfiguration.Utility.increment(t0Idx, t0Shp);
                     i++;
                 }
             };
         }
 
         if ( workload == null )
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Unsupported type: " + typeClass);
         else
             return workload;
     }

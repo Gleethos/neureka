@@ -36,11 +36,16 @@ public class AssignLeft extends AbstractOperation
                call -> {
                    if ( call.arity() > 3 )
                        throw new IllegalArgumentException("AssignLeft operation only supports up to 3 arguments!");
-                   int offset = ( call.arity() == 1 ? 0 : 1 );
-                   //if ( call.arity() == 3 && call.input(0) == null )
-                   //    offset = 2;
+                   if ( call.arity() < 2 )
+                       throw new IllegalArgumentException("AssignLeft operation needs at least 2 arguments!");
+
+                   int offset = call.arity() - 1;
                    if ( call.input( offset ).isVirtual() || call.input( offset ).size() == 1 )
-                       return SuitabilityPredicate.GOOD;
+                       return  call.validate()
+                                       .allNotNull( t -> t.getDataType().typeClassImplements(Object.class) )
+                                       //.allNotNull( Tsr::isVirtual )
+                                       .tensors( tensors -> tensors.length == 2 || tensors.length == 3 )
+                                       .suitabilityIfValid(SuitabilityPredicate.PERFECT);
                    else
                        return SuitabilityPredicate.UNSUITABLE;
                }
@@ -56,7 +61,7 @@ public class AssignLeft extends AbstractOperation
                     int offset = ( call.input( 0 ) == null ? 1 : 0 );
                     call.input( offset ).getMut().setIsVirtual( false );
                     return
-                        ExecutionCall.of( call.input( offset ), call.input( 1+offset ) )
+                        ExecutionCall.of( call.input( offset ), call.input( offset + 1 ) )
                                 .andArgs(Arg.DerivIdx.of(-1))
                                 .running(this)
                                 .on( call.getDevice() );
@@ -70,7 +75,7 @@ public class AssignLeft extends AbstractOperation
             .setIsSuitableFor(
                 call -> call.validate()
                         .allNotNull( t -> t.getDataType().typeClassImplements(Object.class) )
-                        .allNotNull( t -> !t.isVirtual() )
+                        //.allNotNull( t -> !t.isVirtual() )
                         .tensors( tensors -> tensors.length == 2 || tensors.length == 3 )
                         .suitabilityIfValid(SuitabilityPredicate.EXCELLENT)
             )

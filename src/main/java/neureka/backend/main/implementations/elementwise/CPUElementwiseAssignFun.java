@@ -18,6 +18,10 @@ public class CPUElementwiseAssignFun extends CPUElementwiseFunction
                                 .allShare(Tsr::isVirtual)
                                 .allShare(NDimensional::getNDConf)
                                 .isValid();
+
+        assert call.arity() == 2;
+        call.input(0).getMut().setIsVirtual(false);
+
         if ( isSimple ) {
             Class<?> type = call.input(0).itemType();
             if ( type == Double.class ) {
