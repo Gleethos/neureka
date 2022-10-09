@@ -46,11 +46,14 @@ public class AssignLeft extends AbstractOperation
                }
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
-            .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
+            .setExecution( (caller, call) -> {
+                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
+                t.getMut().incrementVersion(call);
+                return Result.of(t);
+            })
             .setCallPreparation(
                 call -> {
                     int offset = ( call.input( 0 ) == null ? 1 : 0 );
-                    call.input( offset ).getMut().incrementVersion(call);
                     call.input( offset ).getMut().setIsVirtual( false );
                     return
                         ExecutionCall.of( call.input( offset ), call.input( 1+offset ) )
@@ -72,11 +75,14 @@ public class AssignLeft extends AbstractOperation
                         .suitabilityIfValid(SuitabilityPredicate.EXCELLENT)
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
-            .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
+            .setExecution( (caller, call) -> {
+                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
+                t.getMut().incrementVersion(call);
+                return Result.of(t);
+            })
             .setCallPreparation(
                     call -> {
                         int offset = ( call.input( 0 ) == null ? 1 : 0 );
-                        call.input( offset ).getMut().incrementVersion(call);
                         return ExecutionCall.of( call.input(offset), call.input(1+offset) )
                                 .running(Neureka.get().backend().getOperation("idy"))
                                 .on( call.getDevice() );
