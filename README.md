@@ -244,6 +244,11 @@ for additional types of operations or data type support.
 ---
 
 <!---
+
+## CPU Only Test Coverage ##
+
+[![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka)
+
 ## Stargazers over time
 
 [![Stargazers over time](https://starchart.cc/Gleethos/neureka.svg)](https://starchart.cc/Gleethos/neureka)
