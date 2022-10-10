@@ -240,7 +240,7 @@ class Tensor_IO_Spec extends Specification
             'CPU'  | Short
             'CPU'  | Integer
             'CPU'  | Long
-            //'GPU'  | Float
+            'GPU'  | Float
     }
 
     def 'A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.'()
