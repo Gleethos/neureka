@@ -53,14 +53,14 @@ class Tensor_IO_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         and : 'A new tensor instance with the shape (4x3).'
-            Tsr t1 = Tsr.of([4, 3], 1d..12d)
+            var t1 = Tsr.of([4, 3], 1d..12d)
 
         when : 'Recording the index behavior before and after a reshape operation...'
             var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
             var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})
             var t1_indices = t1.indicesOfIndex(5)
 
-            Tsr t2 = Function.of(" [ 1, 0 ]:( I[0] ) ")(t1)
+            var t2 = Function.of(" [ 1, 0 ]:( I[0] ) ")(t1)
             var t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})
             var t2_idx = t2.indicesOfIndex(7)
 
@@ -89,12 +89,12 @@ class Tensor_IO_Spec extends Specification
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'A new tensor instance.'
-            Tsr x = Tsr.of(3d)
+            var x = Tsr.of(3d)
 
         when : 'Setting the value of the tensor...'
-            float[] value32 = new float[1]
-            value32[0] = 5
-            x.setItems(value32)
+            float[] floats = new float[1]
+            floats[0] = 5
+            x.mut.setItems(floats)
 
         then : '...the tensor will change as expected.'
             !(x.getItems() instanceof float[])
@@ -104,9 +104,9 @@ class Tensor_IO_Spec extends Specification
             x.getItemsAs( double[].class )[0]==5.0d
 
         when : 'Doing the same with double array...'
-            double[] value64 = new double[1]
-            value64[0] = 4.0
-            x.setItems(value64)
+            double[] doubles = new double[1]
+            doubles[0] = 4.0
+            x.mut.setItems(doubles)
 
         then : '...once again the tensor changes as expected.'
             x.rawItems instanceof double[]
@@ -132,9 +132,9 @@ class Tensor_IO_Spec extends Specification
         then : x.rawItems instanceof float[]
 
         when :
-            value64 = new double[1]
-            value64[0] = 7.0
-            x.setItems(value64)
+            doubles = new double[1]
+            doubles[0] = 7.0
+            x.mut.setItems(doubles)
 
         then :
             !(x.rawItems instanceof double[])
@@ -154,7 +154,7 @@ class Tensor_IO_Spec extends Specification
             t.to(device)
 
         when : 'We call the "setValue" method with a scalar value passed to it...'
-            t.setItems(5)
+            t.mut.setItems(5)
         then : 'The value of the tensor will be an array of 3.'
             t.items == [5, 5, 5]
         and : 'We now expect the tensor to be virtual, because it stores only a single type of value.'
@@ -285,13 +285,13 @@ class Tensor_IO_Spec extends Specification
         when : t += v
         then : t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")
 
-        when : t.setItemAt( 2, 6.0 as double )
+        when : t.mut.setItemAt( 2, 6.0 as double )
         then : t.toString().contains("[2x2]:(2.0, 3.0, 6.0, 6.0)")
 
         when :
             int[] indices = new int[2]
             indices[1] = 1
-            t.setItemAt(t.indexOfIndices(indices), -6.0 as double)
+            t.mut.setItemAt(t.indexOfIndices(indices), -6.0 as double)
         then :
             t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 6.0)")
             t.item(indices) ==-6.0d
@@ -341,7 +341,7 @@ class Tensor_IO_Spec extends Specification
         when :
             t = Tsr.of(type).withShape(shape).andFill(data)
         and :
-            t.setItemAt( 1, element )
+            t.mut.setItemAt( 1, element )
         then :
             t.item( 1 ) == element
         and :

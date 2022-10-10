@@ -60,7 +60,7 @@ class Expression_Based_Tensor_Instantiation_Spec extends Specification
             Tsr<Double> b = Tsr.of(2d)
             Tsr<Double> c = Tsr.of(-1d)
 
-        when : Tsr t = Tsr.of("1+", a, "*", b)
+        when : var t = Tsr.of("1+", a, "*", b)
         then : t.toString().contains("7.0")
         when : t = Tsr.of("1", "+", a, "*", b)
         then : t.toString().contains("7.0")

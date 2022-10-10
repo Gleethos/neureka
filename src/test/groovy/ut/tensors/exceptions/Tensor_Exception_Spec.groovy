@@ -113,7 +113,7 @@ class Tensor_Exception_Spec extends Specification
     def 'Passing an invalid key object into the "getAt" method causes a descriptive exception.'()
     {
         given : 'A new test tensor is being instantiated.'
-            Tsr t = Tsr.of( [2, 3], -1..6 )
+            var t = Tsr.of( [2, 3], -1..6 )
 
         when : 'A nonsensical object is being passed to the tensor.'
             t[ [null] ]
@@ -127,7 +127,7 @@ class Tensor_Exception_Spec extends Specification
     def 'Out of dimension bound causes descriptive exception!'()
     {
         when : 'Some more complex slicing is being performed...'
-            Tsr t = Tsr.of( [3, 3, 3, 3], 0 )
+            var t = Tsr.of( [3, 3, 3, 3], 0 )
             t.mut[1..2, 1..3, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )
 
         then : 'The slice range 1..3 causes and exception!'

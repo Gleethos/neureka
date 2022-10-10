@@ -161,8 +161,8 @@ class Cross_Device_Type_Spec extends Specification
             Tsr t = Tsr.of(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).to(device)
 
         when : 'A numeric array is passed to said tensor...'
-            t.setItems(data1)
-            t.setItems(data2)
+            t.mut.setItems(data1)
+            t.mut.setItems(data2)
 
         then : 'The tensor (as String) contains the expected String.'
             t.toString().contains(expected)

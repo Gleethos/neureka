@@ -31,8 +31,8 @@
          size = 1 * difficulty
          //-------------
          execute {
-            Tsr A = Tsr.of([size, size, 1], "apple").to(device)
-            Tsr B = Tsr.of([1, size, size], "banana").to(device)
+            var A = Tsr.of([size, size, 1], "apple").to(device)
+            var B = Tsr.of([1, size, size], "banana").to(device)
             measure "convolutional_matrix_multiplication", {
                for (int i=0; i < N; i++) tester("I[0] x I[1]" % [A, B])
             }
@@ -43,8 +43,8 @@
          size = 1 * difficulty
          //-------------
          execute {
-            Tsr A = Tsr.of([size, size], "apple").to(device)
-            Tsr B = Tsr.of([size, size], "banana").to(device)
+            var A = Tsr.of([size, size], "apple").to(device)
+            var B = Tsr.of([size, size], "banana").to(device)
             measure "matrix_multiplication", {
                for (int i=0; i < N; i++) tester("I[0] @ I[1]" % [A, B])
             }
@@ -55,8 +55,8 @@
          size = 1 * difficulty**2
          //-------------
          execute {
-            Tsr C = Tsr.of([size], "blueberry").to(device)
-            Tsr D = Tsr.of([size], "grapefruit").to(device)
+            var C = Tsr.of([size], "blueberry").to(device)
+            var D = Tsr.of([size], "grapefruit").to(device)
             measure "vector_multiplication", {
                for ( int i = 0; i < N; i++ ) tester("I[0]xI[1]" % [C, D])
             }
@@ -87,11 +87,11 @@
             dim[0] = ((dim[0] == 0) ? 2 : dim[0])
             dim[1] = ((dim[1] == 0) ? 2 : dim[1])
             dim[2] = ((dim[2] == 0) ? 1 : dim[2])
-            Tsr t1 = Tsr.ofDoubles().withShape(dim).all(0).to(device)
-            Tsr t2 = Tsr.ofDoubles().withShape(dim).all(0).to(device)
+            var t1 = Tsr.ofDoubles().withShape(dim).all(0).to(device)
+            var t2 = Tsr.ofDoubles().withShape(dim).all(0).to(device)
             measure "tensor_math", {
                for ( int i = 0; i < N; i++ ) {
-                  Tsr v = t1 * 10
+                  var v = t1 * 10
                   v = v * t2 / t1
                   v = v ** 0.5
                   tester(v)

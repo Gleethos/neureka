@@ -75,7 +75,7 @@ class Tensor_Device_Spec extends Specification
     {
         given : 'A mock device and a simple tensor instance.'
             def device = Mock(Device)
-            Tsr t = Tsr.of(2d)
+            var t = Tsr.of(2d)
             device.has(t) >>> [false, true, true]
 
         when : 'The mock device is being added to the tensor...'
@@ -96,7 +96,7 @@ class Tensor_Device_Spec extends Specification
         given : 'A simple tensor having a device as component'
             def device = Mock(Device)
             device.has(_) >>> [false, true, true] // Some realistic return values to simulate tensor reception!
-            Tsr t = Tsr.of(1d)
+            var t = Tsr.of(1d)
 
         when :
             t.to(device)
@@ -123,11 +123,11 @@ class Tensor_Device_Spec extends Specification
     {
         given : 'A 2D tensor having a device as component'
             def device = Mock(Device)
-            Tsr t = Tsr.of([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])
+            var t = Tsr.of([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])
             device.has(t) >>> [false, true]
 
         when : 'A slice is being created from the given tensor...'
-            Tsr s = t[1..2, 0..2]
+            var s = t[1..2, 0..2]
 
         and : 'The "parent tensor" is being migrated to the device...'
             t.to(device)

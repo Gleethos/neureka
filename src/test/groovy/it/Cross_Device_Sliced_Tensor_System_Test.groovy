@@ -55,7 +55,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         and: 'A tensor which ought to be sliced:'
-            Tsr a = Tsr.of([4, 6], [
+            var a = Tsr.of([4, 6], [
                             1d, 2d, 3d, 4d, 5d, 6d,
                             7d, 8d, 9d, 1d, 2d, 3d,
                             4d, 5d, 6d, 7d, 8d, 9d,
@@ -72,12 +72,12 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             device.store(a)
 
         when:
-            Tsr b = a.slice() // [-1..-3, -6..-3]
+            var b = a.slice() // [-1..-3, -6..-3]
                         .axis(0).from(-1).to(-3)
                         .axis(1).from(-6).to(-3)
                         .get()
 
-            Tsr s = a.slice() // [1, -2]
+            var s = a.slice() // [1, -2]
                         .axis(0).at(1)
                         .axis(1).at(-2)
                         .get()
@@ -92,7 +92,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             b.spread() != null
 
         when :
-            Tsr y = ( s * 4 ) ** 1.5
+            var y = ( s * 4 ) ** 1.5
 
         then :
              y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'
@@ -112,15 +112,15 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         when :
-            Tsr x = Tsr.of([1],  3d).setRqsGradient(true)
-            Tsr b = Tsr.of([1], -4d)
-            Tsr w = Tsr.of([1],  2d)
+            var x = Tsr.of([1],  3d).setRqsGradient(true)
+            var b = Tsr.of([1], -4d)
+            var w = Tsr.of([1],  2d)
             device.store(x).store(b).store(w)
             /*
                         ((3-4)*2)**2 = 4
                   dx:    8*3 - 32   = -8
              */
-            Tsr y = Tsr.of("((i0+i1)*i2)**2", [x, b, w])
+            var y = Tsr.of("((i0+i1)*i2)**2", [x, b, w])
         then:
             y.indicesMap() != null
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
@@ -137,7 +137,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             x.toString().contains("-32.0")
             y = b + w * x
 
-            Tsr a = Tsr.of([4, 6], [
+            var a = Tsr.of([4, 6], [
                                 1d, 2d, 3d, 4d, 5d, 6d,
                                 7d, 8d, 9d, 1d, 2d, 3d,
                                 4d, 5d, 6d, 7d, 8d, 9d,
@@ -187,7 +187,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                 a.getDataAs( double[].class )[1] = a.getDataAs( double[].class )[1] * 6
                 a.getDataAs( double[].class )[7] = a.getDataAs( double[].class )[7] * 2
             } else {
-                Tsr k = Tsr.of([4, 6], [
+                var k = Tsr.of([4, 6], [
                                 1d, 6d, 1d, 1d,
                                 1d, 1d, 1d, 2d,
                                 1d, 1d, 1d, 1d,
@@ -203,7 +203,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             b.toString().contains("7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")
 
         when:
-            Tsr c = Tsr.of([3, 4], [
+            var c = Tsr.of([3, 4], [
                             -3d, 2d, 3d,
                              5d, 6d, 2d,
                             -1d, 1d, 2d,
@@ -224,7 +224,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
              */
 
-            Tsr d = b + c
+            var d = b + c
 
         then:
             (d.NDConf.asInlineArray() as List) == ( [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )
@@ -266,8 +266,8 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              */
 
         when:
-            Tsr p = Tsr.of([2,2], [2d, 55d, 4d, 7d]).to((device instanceof DummyDevice)?null:device)
-            Tsr u = Tsr.of([2,2], [5d, 2d, 7d, 34d]).to((device instanceof DummyDevice)?null:device)
+            var p = Tsr.of([2,2], [2d, 55d, 4d, 7d]).to((device instanceof DummyDevice)?null:device)
+            var u = Tsr.of([2,2], [5d, 2d, 7d, 34d]).to((device instanceof DummyDevice)?null:device)
 
             p.mut[] = u
 

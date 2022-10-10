@@ -48,13 +48,13 @@ class JITProp_Autograd_Tensor_Spec extends Specification
         given : 'The view settings are being set to legacy.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'The simple scalar tensors are being instantiated, where one requires gradients.'
-            Tsr a = Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-4d)
-            Tsr c = Tsr.of(3d).setRqsGradient(true)
+            var a = Tsr.of(2d).setRqsGradient(true)
+            var b = Tsr.of(-4d)
+            var c = Tsr.of(3d).setRqsGradient(true)
 
         when : 'The following calculations are being executed :'
-            Tsr s =  (a*b) + 2
-            Tsr x = s * (s+c)
+            var s =  (a*b) + 2
+            var x = s * (s+c)
 
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
             x.backward(Tsr.of(1d))
@@ -81,12 +81,12 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
-            Tsr a = Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-4d)
-            Tsr c = Tsr.of(3d).setRqsGradient(true)
+            var a = Tsr.of(2d).setRqsGradient(true)
+            var b = Tsr.of(-4d)
+            var c = Tsr.of(3d).setRqsGradient(true)
 
-            Tsr s =  (a*b) + 2
-            Tsr x = s * (s+c)
+            var s =  (a*b) + 2
+            var x = s * (s+c)
 
         when : x.backward(Tsr.of(1d))
         then :
@@ -108,12 +108,12 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
-            Tsr a = Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-4d)
-            Tsr c = Tsr.of(3d).setRqsGradient(true)
+            var a = Tsr.of(2d).setRqsGradient(true)
+            var b = Tsr.of(-4d)
+            var c = Tsr.of(3d).setRqsGradient(true)
 
-            Tsr s =  (a*b) + 2 // -6 = (2*-4) +2
-            Tsr x = s * (s+c) //  -6 * (-6+3) // 18
+            var s =  (a*b) + 2 // -6 = (2*-4) +2
+            var x = s * (s+c) //  -6 * (-6+3) // 18
 
         when : x.backward(Tsr.of(1d))
 
@@ -123,7 +123,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
 
         when :
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
-            Tsr y = a+3 //JIT-prop will be activated here...
+            var y = a+3 //JIT-prop will be activated here...
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
 
         then :
@@ -143,13 +143,13 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
-            Tsr a = Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-3d)
-            Tsr c = Tsr.of(3d).setRqsGradient(true)
+            var a = Tsr.of(2d).setRqsGradient(true)
+            var b = Tsr.of(-3d)
+            var c = Tsr.of(3d).setRqsGradient(true)
 
         when :
-            Tsr s = (a+b) * c // (2 - 3) * 3 = -3
-            Tsr x = (s/a)+s // (-3)/2 -3 = -4.5
+            var s = (a+b) * c // (2 - 3) * 3 = -3
+            var x = (s/a)+s // (-3)/2 -3 = -4.5
 
         then :
             !a.has(JITProp.class)
@@ -176,7 +176,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
         when :
             def f = new FunctionParser( Neureka.get().backend() ).parse("I[0]*I[1]", false)
             Tsr[] inputs = new Tsr[]{c, a}
-            Tsr result = f(inputs) // Should have no affect!
+            var result = f(inputs) // Should have no affect!
 
         then :
             s.getGraphNode().isReliesOnJustInTimeProp()
@@ -221,13 +221,13 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(true)
 
-            Tsr a = Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-3d)
-            Tsr c = Tsr.of(3d).setRqsGradient(true)
+            var a = Tsr.of(2d).setRqsGradient(true)
+            var b = Tsr.of(-3d)
+            var c = Tsr.of(3d).setRqsGradient(true)
 
         when :
-            Tsr s = (a+b) * c // (2 - 3) * 3 = -3
-            Tsr x = (s/a) + s // (-3)/2 - 3 = -4.5
+            var s = (a+b) * c // (2 - 3) * 3 = -3
+            var x = (s/a) + s // (-3)/2 - 3 = -4.5
 
             System.gc() // Why? -> To test if even a clean graph will work properly!
             Thread.sleep(50)
@@ -260,7 +260,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
         when :
             def f = new FunctionParser( Neureka.get().backend() ).parse("I[0]*I[1]", false)
             Tsr[] inputs = new Tsr[]{c, a}
-            Tsr result = f(inputs) // No changes to inputs! No derivatives!
+            var result = f(inputs) // No changes to inputs! No derivatives!
 
         then :
             ! result.toString().contains("d[1]:")
@@ -313,13 +313,13 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
-            Tsr a = Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-3d)
-            Tsr c = Tsr.of(3d).setRqsGradient(true)
+            var a = Tsr.of(2d).setRqsGradient(true)
+            var b = Tsr.of(-3d)
+            var c = Tsr.of(3d).setRqsGradient(true)
 
         when :
-            Tsr s = (a+b) * c // (2 - 3) * 3 = -3
-            Tsr x = (s/a)+s // (-3)**2 -3 = 6
+            var s = (a+b) * c // (2 - 3) * 3 = -3
+            var x = (s/a)+s // (-3)**2 -3 = 6
         then :
             !a.has(JITProp.class)
             !b.has(JITProp.class)
@@ -352,13 +352,13 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
-            Tsr a = Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-3d)
-            Tsr c = Tsr.of(3d).setRqsGradient(true)
+            var a = Tsr.of(2d).setRqsGradient(true)
+            var b = Tsr.of(-3d)
+            var c = Tsr.of(3d).setRqsGradient(true)
 
         when :
-            Tsr s = (a+b) * c // (2 - 3) * 3 = -3
-            Tsr x = (s**a)+s // (-3)**2 -3 = 6
+            var s = (a+b) * c // (2 - 3) * 3 = -3
+            var x = (s**a)+s // (-3)**2 -3 = 6
 
         then :
             !a.has(JITProp.class)
@@ -384,13 +384,13 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
-            Tsr a = Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-4d)
-            Tsr c = Tsr.of(3d).setRqsGradient(true)
+            var a = Tsr.of(2d).setRqsGradient(true)
+            var b = Tsr.of(-4d)
+            var c = Tsr.of(3d).setRqsGradient(true)
 
         when :
-            Tsr s = (a+b) * c
-            Tsr x = (s**2)+s
+            var s = (a+b) * c
+            var x = (s**2)+s
 
         then :
             s.toString().contains("->d[1]:(-2.0)")

@@ -115,7 +115,7 @@ class Tensor_State_Spec extends Specification
     def 'Numeric tensors as String can be formatted on an entry based level.'()
     {
         given : 'A new tensor of rank 2 storing floats:'
-            Tsr t = Tsr.of(DataType.of(Float.class), [2, 3], (i, indices) -> (i%4)/3 as float )
+            var t = Tsr.of(DataType.of(Float.class), [2, 3], (i, indices) -> (i%4)/3 as float )
 
         expect : 'When we convert the tensor to a String with scientific formatting.'
             t.toString(

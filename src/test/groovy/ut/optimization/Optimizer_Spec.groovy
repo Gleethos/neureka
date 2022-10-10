@@ -76,9 +76,9 @@ class Optimizer_Spec extends Specification
             f.toString() == "softplus(I[0])"
 
         when :
-            Tsr s = w1.dot(X)
-            Tsr a = f(s)
-            Tsr b = f(w2.dot(a))
+            var s = w1.dot(X)
+            var a = f(s)
+            var b = f(w2.dot(a))
             var y = w3.dot(b)
 
         then:
