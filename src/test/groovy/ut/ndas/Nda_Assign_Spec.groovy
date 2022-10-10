@@ -3,6 +3,7 @@ package ut.ndas
 import neureka.Nda
 import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Title
 
 @Title("Nda Inline Assignment")
@@ -12,8 +13,20 @@ import spock.lang.Title
     as well as the assignment of individual Nda items.
 
 ''')
+@Subject([Nda])
 class Nda_Assign_Spec extends Specification
 {
+    def 'We can use the "mut" API to assign the contents of one nd-array into another one.'()
+    {
+        given : 'We have two nd-arrays:'
+            var a = Nda.of('x', 'y', 'z')
+            var b = Nda.of('1', '2', '3')
+        when : 'We assign the contents of "b" into "a" using the "mut" API:'
+            a.mut.assign( b )
+        then : 'The contents of "a" should be the same as the contents of "b":'
+            a.items == b.items
+    }
+
     def 'Assignment can be easily achieved through subscription operators.'()
     {
         given : 'An nda of ints with shape (2, 3).'
@@ -37,18 +50,18 @@ class Nda_Assign_Spec extends Specification
             var s1 = n1[0..2]
             var s2 = n2[0..2]
         then : 'The slices will have the expected state.'
-            s1.items == [1, 2, 3] as List<Byte>
-            s2.items == [6, 7, 8] as List<Byte>
+            s1.items == [1, 2, 3]
+            s2.items == [6, 7, 8]
 
         when : 'We now assign the first slice into the second one.'
             s2.mut.assign(s1)
 
         then : 'Both slices will have the same numbers "1, 2, 3" in them.'
-            s1.items == [1, 2, 3] as List<Byte>
-            s2.items == [1, 2, 3] as List<Byte>
+            s1.items == [1, 2, 3]
+            s2.items == [1, 2, 3]
         and : 'The 2 original vectors will also both have the same numbers "1, 2, 3" in them.'
-            n1.items == [1, 2, 3, 4, 5] as List<Byte>
-            n2.items == [1, 2, 3, 9, 10] as List<Byte>
+            n1.items == [1, 2, 3, 4, 5]
+            n2.items == [1, 2, 3, 9, 10]
     }
 
 }

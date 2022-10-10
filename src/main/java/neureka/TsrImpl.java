@@ -1103,9 +1103,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             for ( int i = indices.length; i < rank(); i++ ) correct[i] = 0;
             indices = correct;
         }
-        if ( this.isVirtual() ) this.setIsVirtual( false );
+        if ( this.isVirtual() && this.size() > 1 ) this.setIsVirtual( false );
         int i = getNDConf().indexOfIndices(indices);
-        getMut().setDataAt( i, item );
+        this.getMut().setDataAt( i, item );
         return this;
     }
 
