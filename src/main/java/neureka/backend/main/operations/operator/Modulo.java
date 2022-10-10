@@ -88,14 +88,14 @@ public class Modulo extends AbstractOperation
     }
 
     @Override
-    public Result execute( Function caller, ExecutionCall<?> call )
+    public Result execute( final Function caller, final ExecutionCall<?> call )
     {
-        caller = reducePairwise(caller);
+        Function reducedCaller = reducePairwise(caller);
 
         int d = call.getDerivativeIndex();
-        if ( !caller.isFlat() ) {
+        if ( !reducedCaller.isFlat() ) {
             if ( d < 0 ) {
-                ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
+                ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
                 Arrays.stream(flatCall.inputs()).forEach(t -> t.getMut().setIsIntermediate(false) );
                 Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
                 return super.execute( flat, flatCall );
@@ -107,13 +107,13 @@ public class Modulo extends AbstractOperation
 
             // So here we assume that there are only two sub-functions: a/b
 
-            Function noAd = Function.of( caller.toString(), false );
+            Function noAd = Function.of( reducedCaller.toString(), false );
             Function a = noAd.getSubFunctions().get(0);
             Function b = noAd.getSubFunctions().get(1);
             boolean deriveA = a.dependsOn(d);
             boolean deriveB = b.dependsOn(d);
 
-            if ( !deriveA && !deriveB ) return super.execute( caller, call );
+            if ( !deriveA && !deriveB ) return super.execute( reducedCaller, call );
 
             Tsr<?> bResult = b.call((Call) call.withArgs(Arg.DerivIdx.of(-1)));
             Tsr<?> derivOfA = null;
@@ -147,23 +147,24 @@ public class Modulo extends AbstractOperation
             }
         }
 
-        return super.execute( caller, call );
+        return super.execute( reducedCaller, call );
     }
 
-    private Function reducePairwise(Function f) {
-        if ( f.getSubFunctions().size() > 2 ) {
+    private Function reducePairwise( final Function fun ) {
+        Function reduced = fun;
+        if ( reduced.getSubFunctions().size() > 2 ) {
             /*
                 So currently we have something like this: a%b%c%d...
                 However, this is how it is really executed:  ((((a%b)%c)%d)..)
                 ...so let's create a function that is nested like the above:
             */
-            Function nested = f.getSubFunctions().get(0);
-            for ( int i = 1; i < f.getSubFunctions().size(); i++ )
-                nested = Function.of( nested + " % " + f.getSubFunctions().get(i), true );
+            Function nested = reduced.getSubFunctions().get(0);
+            for ( int i = 1; i < reduced.getSubFunctions().size(); i++ )
+                nested = Function.of( nested + " % " + reduced.getSubFunctions().get(i), true );
 
-            f = nested;
+            reduced = nested;
         }
-        return f;
+        return reduced;
     }
 
     public static double calculate( double[] inputs, int d, Function[] src ) {

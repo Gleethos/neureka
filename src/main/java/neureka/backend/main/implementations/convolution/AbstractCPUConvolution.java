@@ -68,19 +68,22 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
     }
 
     private static void _convolve64(
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            int i, int end,
-            CPUBiFun operation
+            final Tsr<?> t0_drn, final Tsr<?> t1_src, final Tsr<?> t2_src,
+            final int start,
+            final int end,
+            final CPUBiFun operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
-        t0Idx.set( t0_drn.indicesOfIndex( i ) );
+        t0Idx.set( t0_drn.indicesOfIndex( start ) );
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
         double[] t0_value = t0_drn.getMut().getDataForWriting( double[].class );
         double[] t1_value = t1_src.getMut().getDataAs( double[].class );
         double[] t2_value = t2_src.getMut().getDataAs( double[].class );
+
+        int i = start;
 
         while ( i < end )
         {//increment on drain accordingly:
@@ -141,13 +144,13 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
 
 
     private static void _deConvolve64(
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            int i, int end,
-            CPUBiFun operation
+            final Tsr<?> t0_drn, final Tsr<?> t1_src, final Tsr<?> t2_src,
+            final int start, final int end,
+            final CPUBiFun operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
-        t0Idx.set( t0_drn.indicesOfIndex( i ) );
+        t0Idx.set( t0_drn.indicesOfIndex( start ) );
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
@@ -160,7 +163,7 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
         assert t2_value != null;
 
         // Incrementing if 'i>0' so that all indexes match:
-        for ( int ii = 0; ii < i; ii++ ) {
+        for ( int ii = 0; ii < start; ii++ ) {
             int ri = 0;
             while ( ri < rank ) {
                 if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {
@@ -177,6 +180,8 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
                 ri++;
             }
         }
+
+        int i = start;
 
         // Looping through given range :
         while ( i < end ) {//increment on drain accordingly:
@@ -238,19 +243,21 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
 
 
     private static void _convolve32(
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            int i, int end,
-            CPUBiFun operation
+        final Tsr<?> t0_drn, final Tsr<?> t1_src, final Tsr<?> t2_src,
+        final int start, final int end,
+        final CPUBiFun operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
-        t0Idx.set( t0_drn.indicesOfIndex( i ) );
+        t0Idx.set( t0_drn.indicesOfIndex( start ) );
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
         float[] t0_value = t0_drn.getMut().getDataForWriting( float[].class );
         float[] t1_value = t1_src.getMut().getDataAs( float[].class );
         float[] t2_value = t2_src.getMut().getDataAs( float[].class );
+
+        int i = start;
 
         while ( i < end )
         { // increment on drain accordingly:
@@ -310,13 +317,13 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
 
 
     private static void _deConvolve32(
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
-            int i, int end,
-            CPUBiFun operation
+            final Tsr<?> t0_drn, final Tsr<?> t1_src, final Tsr<?> t2_src,
+            final int start, final int end,
+            final CPUBiFun operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
-        t0Idx.set( t0_drn.indicesOfIndex( i ) );
+        t0Idx.set( t0_drn.indicesOfIndex( start ) );
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
@@ -325,7 +332,7 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
         float[] t2_value = t2_src.getMut().getDataAs( float[].class );
 
         // Incrementing if 'i>0' so that all indexes match:
-        for ( int ii = 0; ii < i; ii++ ) {
+        for ( int ii = 0; ii < start; ii++ ) {
             int ri = 0;
             while ( ri < rank ) {
                 if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {
@@ -341,6 +348,8 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
                 ri++;
             }
         }
+
+        int i = start;
 
         // Looping through given range :
         while ( i < end ) { // increment on drain accordingly:

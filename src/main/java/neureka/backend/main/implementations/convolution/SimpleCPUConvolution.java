@@ -12,16 +12,16 @@ class SimpleCPUConvolution
 {
     Conv2DImpl _impl;
 
-    SimpleCPUConvolution(Tsr<?> in1, Tsr<?> in2, Tsr<?> out) {
+    SimpleCPUConvolution( Tsr<?> in1, Tsr<?> in2, Tsr<?> out ) {
         Conv2DImpl impl = null;
         try {
-            impl = _tryCreatingImplFor(in1, in2, out);
+            impl = _tryCreatingImplFor( in1, in2, out );
         }
-        catch (Exception ignored) {}
+        catch ( Exception ignored ) {}
         try {
-            impl = _tryCreatingImplFor(in2, in1, out);
+            impl = _tryCreatingImplFor( in2, in1, out );
         }
-        catch (Exception ignored) {}
+        catch ( Exception ignored ) {}
         _impl = impl;
     }
 
@@ -32,7 +32,11 @@ class SimpleCPUConvolution
 
     public boolean isSuitable() { return _impl != null; }
 
-    private static Conv2DImpl _tryCreatingImplFor(Tsr<?> image, Tsr<?> kernel, Tsr<?> result) {
+    private static Conv2DImpl _tryCreatingImplFor(
+            final Tsr<?> image,
+            final Tsr<?> kernel,
+            final Tsr<?> result
+    ) {
         validate(image);
         validate(kernel);
         validate(result);

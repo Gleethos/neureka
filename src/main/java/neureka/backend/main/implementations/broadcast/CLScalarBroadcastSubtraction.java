@@ -2,9 +2,6 @@ package neureka.backend.main.implementations.broadcast;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.implementations.CLImplementation;
-import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.calculus.args.Arg;
 import neureka.devices.opencl.OpenCLDevice;
 

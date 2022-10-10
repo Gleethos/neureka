@@ -80,13 +80,13 @@ public class Multiplication extends AbstractOperation
     }
 
     @Override
-    public Result execute(Function caller, ExecutionCall<?> call )
+    public Result execute( final Function caller, final ExecutionCall<?> call )
     {
         if ( !caller.isFlat() ) {
             int d = call.getDerivativeIndex();
             if ( d < 0 ) {
-                caller = reducePairwise(caller);
-                ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );
+                Function reducedCaller = reducePairwise(caller);
+                ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
                 Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
                 Result r = super.execute( flat, flatCall );
                 //for ( int i = 0; i < flatCall.inputs().length; i++ )
@@ -130,24 +130,24 @@ public class Multiplication extends AbstractOperation
                 return Result.of( finalDerivative.getMut().setIsIntermediate(true) );
             }
         }
-        caller = reducePairwise(caller);
-        return super.execute( caller, call );
+        return super.execute( reducePairwise(caller), call );
     }
 
-    private Function reducePairwise(Function f) {
-        if ( f.getSubFunctions().size() > 2 ) {
+    private Function reducePairwise( final Function fun ) {
+        Function reduced = fun;
+        if ( reduced.getSubFunctions().size() > 2 ) {
             /*
                 So currently we have something like this: a*b*c*d...
                 However, this is how it is really executed:  ((((a*b)*c)*d)..)
                 ...so let's create a function that is nested like the above:
             */
-            Function nested = f.getSubFunctions().get(0);
-            for ( int i = 1; i < f.getSubFunctions().size(); i++ )
-                nested = Function.of( nested + " * " + f.getSubFunctions().get(i), true );
+            Function nested = reduced.getSubFunctions().get(0);
+            for ( int i = 1; i < reduced.getSubFunctions().size(); i++ )
+                nested = Function.of( nested + " * " + reduced.getSubFunctions().get(i), true );
 
-            f = nested;
+            reduced = nested;
         }
-        return f;
+        return reduced;
     }
 
     @Override
