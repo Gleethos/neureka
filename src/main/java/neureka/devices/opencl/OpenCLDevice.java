@@ -82,7 +82,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 {
     private static final Logger _LOG = LoggerFactory.getLogger(OpenCLDevice.class);
 
-    static OpenCLDevice of(OpenCLPlatform platform, cl_device_id did) {
+    static OpenCLDevice of( OpenCLPlatform platform, cl_device_id did ) {
         if (!platform.has(did)) platform.put(did, new OpenCLDevice(platform, did));
         return platform.get(did);
     }
@@ -117,7 +117,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
          * Meaning this inner memory object "cl_mem" will
          * be freed via a call hook stored inside a Cleaner instance...
          */
-        public static class cl_value
+        static class cl_value
         {
             public int      size = 0;
             public cl_mem   data;
@@ -131,7 +131,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
          * Meaning this inner memory object "cl_mem" will
          * be freed via a call hook stored inside a Cleaner instance...
          */
-        public static class cl_config {
+        static final class cl_config {
             public cl_mem data;
         }
 
@@ -147,15 +147,16 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     /**
-     * This class manages reference to a so called "ad hoc" program & kernel.
+     * This class manages a reference to a so called "ad hoc" program & kernel.
      * Ad hoc is a Latin phrase meaning literally 'to this'.
      * In English, it generally signifies a solution designed for a specific problem or task,
      * non-generalizable, and not intended to be adapted to other purposes.
-     * This leads to the purpose of instances of this class, namely to hold the context to a unique kernel with
+     * This leads to the purpose of this class, namely to hold the context to a unique kernel with
      * a uniquely associated purpose which has been created by an operation possibly for specific
      * tensor dimensions or possibly other properties...
      */
-    static class cl_ad_hoc {
+    static final class cl_ad_hoc
+    {
         public final String source;
         public final cl_kernel kernel;
         public final cl_program program;
@@ -220,9 +221,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return "OpenCLDevice[id=0x" + Long.toHexString(_deviceId.getNativePointer()) + ",platform=0x" + Long.toHexString(_platform.getId()) + "]";
     }
 
-    public cl_device_id getDeviceId() { return _deviceId; }
+    public final cl_device_id getId() { return _deviceId; }
 
-    public OpenCLPlatform getPlatform() { return _platform; }
+    public final OpenCLPlatform getPlatform() { return _platform; }
 
     /**
      * @param name The name of the kernel whose presents should be checked.
@@ -309,13 +310,18 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         // Build the program
         int err = clBuildProgram(
-                cpProgram,
-                1,
-                new cl_device_id[]{_deviceId},
-                "-cl-mad-enable",
-                null,
-                null
-        );
+                        cpProgram,
+                        1,
+                        new cl_device_id[]{_deviceId},
+                        "-cl-mad-enable",
+                        null,
+                        null
+                );
+
+        if ( err != CL_SUCCESS ) {
+            _log.error("Error when trying to compile 'ad hoc kernel' named '"+name+"'! Error code: "+err);
+        }
+
         //TODO: check compilation errors!
         cl_kernel kernel;
         try {
