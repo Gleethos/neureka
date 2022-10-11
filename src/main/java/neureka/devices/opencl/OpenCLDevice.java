@@ -51,8 +51,8 @@ package neureka.devices.opencl;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.*;
-import neureka.backend.ocl.CLBackend;
 import neureka.backend.main.implementations.CLImplementation;
+import neureka.backend.ocl.CLBackend;
 import neureka.calculus.Function;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
@@ -109,6 +109,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     static class cl_tsr<V, T extends V> {
 
+        cl_tsr(cl_tsr.cl_value value, cl_dtype  dtype, cl_config config) {
+            this.value = value;
+            this.dtype = dtype;
+            this.config = config;
+        }
+
         /**
          * This class is responsible for representing the
          * data of a tensor stored on the device.
@@ -119,9 +125,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
          */
         static class cl_value
         {
-            public int      size = 0;
-            public cl_mem   data;
-            public cl_event event;
+            cl_value( int size ) { this.size = size; }
+
+            public final int size;
+            public cl_mem    data;
+            public cl_event  event;
         }
 
         /**
@@ -135,9 +143,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
             public cl_mem data;
         }
 
-        public cl_dtype  dtype = cl_dtype.F32;
         public cl_config config;
-        public cl_value  value;
+        public final cl_dtype  dtype;
+        public final cl_value  value;
 
         @Override
         public boolean equals(Object obj) {
@@ -162,7 +170,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public final cl_program program;
 
         public cl_ad_hoc(
-                String source, cl_kernel kernel, cl_program program
+            String source, cl_kernel kernel, cl_program program
         ) {
             this.source = source;
             this.kernel = kernel;
@@ -318,9 +326,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
                         null
                 );
 
-        if ( err != CL_SUCCESS ) {
+        if ( err != CL_SUCCESS )
             _log.error("Error when trying to compile 'ad hoc kernel' named '"+name+"'! Error code: "+err);
-        }
 
         //TODO: check compilation errors!
         cl_kernel kernel;
@@ -330,7 +337,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         } catch (Exception e) {
             if (e.getMessage().equals("CL_INVALID_KERNEL_NAME") && !source.contains("__kernel void " + name)) {
                 String message = "Method 'clCreateKernel' failed! The name of the '__kernel' method declared inside \n" +
-                        "the source String does not match the provided name needed for kernel creation.";
+                                 "the source String does not match the provided name needed for kernel creation.";
                 _log.error(message, e);
                 throw new IllegalArgumentException(message);
             }
@@ -450,29 +457,22 @@ public class OpenCLDevice extends AbstractDevice<Number>
             }
         }
 
-        cl_tsr<Number, Number> newClt = new cl_tsr<>();
+        JVMData jvmData = null;
+
+        if ( parent == null )
+            jvmData = JVMData.of( tensor.getMut().getData().getRef() );
+
+        cl_tsr.cl_config config = _writeNDConfig(tensor.getNDConf());
+
+        cl_tsr.cl_value newVal = ( parent != null ? parent.value : new cl_tsr.cl_value((int) jvmData.getLength()) );
+        cl_tsr<Number, Number> newClt = ( parent != null ? new cl_tsr<>(newVal, parent.dtype, config) : new cl_tsr<>(newVal, jvmData.getType(), config) );
 
         //VALUE TRANSFER:
         if ( parent == null ) {
-            newClt.value = new cl_tsr.cl_value();
-            _store(tensor, newClt);
+            _store(jvmData, newClt);
             if ( tensor.rqsGradient() && tensor.has(Tsr.class) )
                 this.store(tensor.getGradient());
-
-            {
-                final cl_mem clValMem = newClt.value.data;
-                cl_event clValEvent = newClt.value.event;
-                _cleaning(newClt.value, () -> {
-                    if (clValEvent != null) clWaitForEvents(1, new cl_event[]{clValEvent});
-                    clReleaseMemObject(clValMem);//Removing value.. from device!
-                });
-            }
-        } else { // Tensor is a subset tensor of parent:
-            newClt.dtype = parent.dtype;
-            newClt.value = parent.value;
         }
-
-        newClt.config = _writeNDConfig(tensor.getNDConf());
 
         cl_mem[] memos;
         if ( parent == null )
@@ -533,12 +533,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     private void _store(
-            Tsr<Number> tensor,
+            JVMData jvmData,
             cl_tsr<?, ?> newClTsr
     ) {
-        JVMData jvmData = JVMData.of( tensor.getMut().getData().getRef() );
-        newClTsr.value.size = (int) jvmData.getLength();
-        newClTsr.dtype = jvmData.getType();
         //VALUE TRANSFER:
         cl_mem mem = clCreateBuffer(
                 _platform.getContext(),
@@ -553,13 +550,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 CL_TRUE, 0,
                 (long) jvmData.getItemSize() * jvmData.getLength(),
                 jvmData.getPointer(), 0, null, null
-        );
+            );
+
+        final cl_mem clValMem = newClTsr.value.data;
+        cl_event clValEvent = newClTsr.value.event;
+        _cleaning( newClTsr.value, () -> {
+            if ( clValEvent != null ) clWaitForEvents(1, new cl_event[]{clValEvent});
+            clReleaseMemObject(clValMem); // Removing data from the device!
+        });
     }
 
     @Override
     public final <T extends Number> Device<Number> free( Tsr<T> tensor ) {
         cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
-        if (clt == null) return this;
+        if ( clt == null ) return this;
         _tensors.remove(tensor);
         tensor.getMut().setData(null);
         tensor.find(Device.class).ifPresent(
