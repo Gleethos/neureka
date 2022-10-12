@@ -67,6 +67,7 @@ class Tensor_Function_Spec extends Specification
             var abs  = x.abs()
             var neg  = x.neg()
             var cbrt = x.cbrt()
+            var l10  = x.log10()
 
         then: 'We get the expected results for each variable.'
             sig.toString()  == "(1):[0.98201]"
@@ -80,6 +81,7 @@ class Tensor_Function_Spec extends Specification
             abs.toString()  == "(1):[4.0]"
             neg.toString()  == "(1):[-4.0]"
             cbrt.toString() == "(1):[1.5874]"
+            l10.toString()  == "(1):[0.60205]"
     }
 
     def 'The optimization function for the SGD algorithm produces the expected result'()

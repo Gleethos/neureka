@@ -1882,7 +1882,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     default Tsr<V> sqrt() { return Neureka.get().backend().getAutogradFunction().sqrt().call( this ); }
 
-
+    default Tsr<V> log10() { return Neureka.get().backend().getAutogradFunction().log10().call( this ); }
     default Tsr<V> cbrt() { return Neureka.get().backend().getAutogradFunction().cbrt().call( this ); }
 
     default Tsr<V> abs() { return Neureka.get().backend().getAutogradFunction().abs().call( this ); }
