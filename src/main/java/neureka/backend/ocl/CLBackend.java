@@ -299,6 +299,19 @@ public final class CLBackend implements BackendExtension
         receive.forOperation( TanhFast.class )
                 .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.TANH_FAST) )
                 .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.TANH_FAST) );
+
+        receive.forOperation( Exp.class )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.EXP) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.EXP) );
+        receive.forOperation( Cbrt.class )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.CBRT) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.CBRT) );
+        receive.forOperation( Log10.class )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.LOG10) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.LOG10) );
+        receive.forOperation( Sqrt.class )
+                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SQRT) )
+                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SQRT) );
     }
 
 }

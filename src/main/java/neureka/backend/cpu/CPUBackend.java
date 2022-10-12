@@ -141,6 +141,18 @@ public class CPUBackend implements BackendExtension
         receive.forOperation( TanhFast.class )
                 .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.TANH_FAST) )
                 .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.TANH_FAST) );
+        receive.forOperation( Exp.class )
+                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.EXP) )
+                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.EXP) );
+        receive.forOperation( Cbrt.class )
+                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.CBRT) )
+                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.CBRT) );
+        receive.forOperation( Log10.class )
+                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.LOG10) )
+                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.LOG10) );
+        receive.forOperation( Sqrt.class )
+                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.SQRT) )
+                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.SQRT) );
     }
 
 }

@@ -62,6 +62,11 @@ class Tensor_Function_Spec extends Specification
             var sin  = x.sin()
             var cos  = x.cos()
             var sfp  = x.softplus()
+            var exp  = x.exp()
+            var sqrt = x.sqrt()
+            var abs  = x.abs()
+            var neg  = x.neg()
+            var cbrt = x.cbrt()
 
         then: 'We get the expected results for each variable.'
             sig.toString()  == "(1):[0.98201]"
@@ -70,6 +75,11 @@ class Tensor_Function_Spec extends Specification
             sin.toString()  == "(1):[-0.75680]"
             cos.toString()  == "(1):[-0.65364]"
             sfp.toString()  == "(1):[4.01815]"
+            exp.toString()  == "(1):[54.5982]"
+            sqrt.toString() == "(1):[2.0]"
+            abs.toString()  == "(1):[4.0]"
+            neg.toString()  == "(1):[-4.0]"
+            cbrt.toString() == "(1):[1.5874]"
     }
 
     def 'The optimization function for the SGD algorithm produces the expected result'()

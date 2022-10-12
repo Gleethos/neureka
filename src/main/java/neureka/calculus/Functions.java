@@ -50,6 +50,11 @@ public class Functions {
     private final Function _max;
     private final Function _sum;
 
+    private final Function _exp;
+    private final Function _log10;
+    private final Function _sqrt;
+    private final Function _cbrt;
+
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -92,6 +97,10 @@ public class Functions {
         _min  = Function.of("min(I[0])",                       doingAD );
         _max  = Function.of("max(I[0])",                       doingAD );
         _sum  = Function.of("sumItems(I[0])",                  doingAD );
+        _exp  = Function.of("exp(I[0])",                       doingAD );
+        _log10  = Function.of("log10(I[0])",                   doingAD );
+        _sqrt  = Function.of("sqrt(I[0])",                     doingAD );
+        _cbrt  = Function.of("cbrt(I[0])",                     doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -403,6 +412,23 @@ public class Functions {
     public final Function getSum() { return _sum; }
 
     public final Function sum() { return _sum; }
+
+    public final Function getExp() { return _exp; }
+
+    public final Function exp() { return _exp; }
+
+    public final Function getLog10() { return _log10; }
+
+    public final Function log10() { return _log10; }
+
+    public final Function getSqrt() { return _sqrt; }
+
+    public final Function sqrt() { return _sqrt; }
+
+    public final Function getCbrt() { return _cbrt; }
+
+    public final Function cbrt() { return _cbrt; }
+
 
     @Override
     public final String toString() {

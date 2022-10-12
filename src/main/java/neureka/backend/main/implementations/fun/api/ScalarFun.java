@@ -23,6 +23,10 @@ public interface ScalarFun
     ScalarSoftsign SOFTSIGN          = new ScalarSoftsign();
     ScalarTanh TANH                  = new ScalarTanh();
     ScalarTanhFast TANH_FAST         = new ScalarTanhFast();
+    ScalarExp EXP                    = new ScalarExp();
+    ScalarLog10 LOG10                = new ScalarLog10();
+    ScalarSqrt SQRT                  = new ScalarSqrt();
+    ScalarCbrt CBRT                  = new ScalarCbrt();
 
     String id();
 

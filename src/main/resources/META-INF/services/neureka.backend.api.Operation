@@ -22,6 +22,10 @@ neureka.backend.main.operations.functions.Logarithm
 neureka.backend.main.operations.functions.SiLU
 neureka.backend.main.operations.functions.GeLU
 neureka.backend.main.operations.functions.SeLU
+neureka.backend.main.operations.functions.Exp
+neureka.backend.main.operations.functions.Log10
+neureka.backend.main.operations.functions.Sqrt
+neureka.backend.main.operations.functions.Cbrt
 
 # indexer :
 neureka.backend.main.operations.indexer.Summation
