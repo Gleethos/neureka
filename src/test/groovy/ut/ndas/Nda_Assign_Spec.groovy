@@ -31,7 +31,7 @@ class Nda_Assign_Spec extends Specification
     {
         given : 'An nda of ints with shape (2, 3).'
             var n = Nda.of(Integer).withShape(2, 3).andFill(1, 2, 3, 4, 5, 6)
-        and :
+        and : 'An nda of ints with shape (1, 2).'
             var a = Nda.of(Integer).withShape(1, 2).andFill(42, 42)
 
         when : 'We assign the nda a to the nda n.'
@@ -42,7 +42,14 @@ class Nda_Assign_Spec extends Specification
 
     def 'We can assign one slice into another one.'()
     {
-        given :
+        reportInfo """
+            Using the 'assign' operation on slices should be handled with care,
+            since the operation has side effects on the underlying data array
+            which is shared by both the slice and its parent.
+            Use the 'copy' operation on slices if you want to avoid this.
+        """
+
+        given : 'Two nd-arrays of ints with shape (5).'
             var n1 = Nda.of(Byte).vector(1, 2, 3, 4, 5)
             var n2 = Nda.of(Byte).vector(6, 7, 8, 9, 10)
 
