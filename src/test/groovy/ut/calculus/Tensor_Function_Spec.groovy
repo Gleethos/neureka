@@ -50,6 +50,28 @@ class Tensor_Function_Spec extends Specification
         })
     }
 
+    def 'The tensor API has built-in methods for applying functions.'()
+    {
+        given : 'A simple scalar tensor containing the number "4".'
+            var x = Tsr.of(4d)
+
+        when: 'We use the following methods...'
+            var sig  = x.sig()
+            var tanh = x.tanh()
+            var ln   = x.ln()
+            var sin  = x.sin()
+            var cos  = x.cos()
+            var sfp  = x.softplus()
+
+        then: 'We get the expected results for each variable.'
+            sig.toString()  == "(1):[0.98201]"
+            tanh.toString() == "(1):[0.99932]"
+            ln.toString()   == "(1):[1.38629]"
+            sin.toString()  == "(1):[-0.75680]"
+            cos.toString()  == "(1):[-0.65364]"
+            sfp.toString()  == "(1):[4.01815]"
+    }
+
     def 'The optimization function for the SGD algorithm produces the expected result'()
     {
         given : 'We use a common learning rate.'
@@ -180,8 +202,8 @@ class Tensor_Function_Spec extends Specification
             purposes, however there is one species of methods with a very important role
             in ensuring memory efficiency.
             These types of methods are the `execute` methods which 
-            distinguish themselves in that the tensors these methods
-            return are flagged as "intermediate".
+            distinguish themselves in that the tensors returned by 
+            these methods are flagged as "intermediate".
             If a tensor is an intermediate one, it becomes eligable 
             for deletion when consumed by another function.
             Note that internally every function is usually a composite

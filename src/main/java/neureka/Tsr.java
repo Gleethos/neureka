@@ -1864,7 +1864,20 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> xor( double value ) { return xor( of( this.itemType(), this.shape(), value ) ); }
 
-    
+    default Tsr<V> sig() { return Neureka.get().backend().getAutogradFunction().sigmoid().call( this ); }
+
+    default Tsr<V> tanh() { return Neureka.get().backend().getAutogradFunction().tanh().call( this ); }
+
+    default Tsr<V> relu() { return Neureka.get().backend().getAutogradFunction().relu().call( this ); }
+
+    default Tsr<V> sin() { return Neureka.get().backend().getAutogradFunction().sin().call( this ); }
+
+    default Tsr<V> cos() { return Neureka.get().backend().getAutogradFunction().cos().call( this ); }
+
+    default Tsr<V> ln() { return Neureka.get().backend().getAutogradFunction().ln().call( this ); }
+
+    default Tsr<V> softplus() { return Neureka.get().backend().getAutogradFunction().softplus().call( this ); }
+
     /*==================================================================================================================
     |
     |       §(9) : SLICING, INDEXING & INJECTING :
