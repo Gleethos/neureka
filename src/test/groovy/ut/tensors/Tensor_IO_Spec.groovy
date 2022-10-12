@@ -249,8 +249,7 @@ class Tensor_IO_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         when : 'Creating a simple shape array...'
-            int[] shape = new int[1]
-            shape[0] = 4
+            var shape = new int[]{4}
         and : '...and passing it to the "newRandom" factory method to produce tensor x...'
             Tsr x = Tsr.ofRandom(Double, shape)
 
@@ -274,13 +273,13 @@ class Tensor_IO_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'Two tensors which will be used for testing IO.'
             var t = Tsr.of([2, 2], [
-                    1.0d, 4.0d,
-                    2.0d, 7.0d,
-            ])
+                            1.0d, 4.0d,
+                            2.0d, 7.0d,
+                        ])
             var v = Tsr.of([2, 2], [
-                    1.0d, -1.0d,
-                    1.0d, -1.0d
-            ])
+                            1.0d, -1.0d,
+                            1.0d, -1.0d
+                        ])
 
         when : t += v
         then : t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")

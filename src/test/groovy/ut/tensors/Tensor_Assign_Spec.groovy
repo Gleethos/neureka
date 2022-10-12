@@ -42,6 +42,12 @@ class Tensor_Assign_Spec extends Specification
 
     def 'We can assign one slice into another one.'()
     {
+        reportInfo """
+            Note that using the 'assign' operation on slices should be handled with care,
+            since the operation has side effects on the underlying data array
+            which is shared by both the slice and its parent.
+            Use the 'copy' operation on slices if you want to avoid this.
+        """
         given :
             var n1 = Tsr.ofShorts().vector(1, 2, 3, 4)
             var n2 = Tsr.ofShorts().vector(6, 7, 8, 9, 10, 11)
