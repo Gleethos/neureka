@@ -100,7 +100,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
             if ( am instanceof Map )
                 indices[ i ] = ( (Map<Object, Integer>) am ).get( keys[ i ] );
             else if ( am instanceof Integer ) {
-                // TODO: Implement
+                indices[ i ] = (Integer) am;
             }
         }
         return indices;
@@ -112,11 +112,11 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     }
 
     /**
-     *  A {@link NDFrame} exposes aliases for axis as well as aliases for individual positions within an axis.
+     *  A {@link NDFrame} exposes aliases for axes as well as aliases for individual positions within an axis.
      *  This method returns a view on a axis which is targeted by an axis alias as key.
      *  This view is an instance of the {@link AxisFrame} class which provides useful methods
      *  for getting or setting alias objects for individual positions for the given axis.
-     *  This is useful when when for example replacing certain aliases or simply taking a look at them.
+     *  This is useful when for example replacing certain aliases or simply taking a look at them.
      *
      * @param axisAlias The axis alias object which targets an {@link AxisFrame} of {@link NDFrame}.
      * @return A view of the targeted axis in the for of an{@link AxisFrame} which provides getters and setters for aliases.
@@ -154,7 +154,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
                 .allAliasGetter(
                         () -> {
                             Object am =  _mapping.get( axisAlias );
-                            if ( am == null ) return null;
+                            if ( am == null ) return new ArrayList<>();
                             List<Object> keys = new ArrayList<>();
                             if ( am instanceof Map ) ( (Map<Object, Integer>) am ).forEach( ( k, v ) -> keys.add( k ) );
                             else for ( int i = 0; i < ( (Integer) am ); i++ ) keys.add( i );

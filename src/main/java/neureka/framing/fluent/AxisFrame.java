@@ -101,7 +101,13 @@ public final class AxisFrame<G, V> {
         }
 
         public AxisFrame<GetType, ValueType> build() {
-            return new AxisFrame<>(keyBasedGetter, keyBasedSetter, replacer, allAliasGetter, allAliasGetterForIndex); 
+            return new AxisFrame<>(
+                    keyBasedGetter,
+                    keyBasedSetter,
+                    replacer,
+                    allAliasGetter,
+                    allAliasGetterForIndex
+                );
         }
  
     }
