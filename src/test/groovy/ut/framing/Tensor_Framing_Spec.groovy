@@ -123,7 +123,6 @@ class Tensor_Framing_Spec extends Specification
             asString.contains("|     Axis One     |     Axis Two     |    Axis Three    |")
 
         when :
-            //t.index().replace("Axis Two", 1, "Hello")
             t.frame().atAxis("Axis Two").replace(1).with("Hello")
             asString = t.frame().toString()
 
@@ -178,7 +177,7 @@ class Tensor_Framing_Spec extends Specification
                   ")"
 
         when: 'We use a label for slicing a row from the tensor (which is also a matrix in this case).'
-            Tsr x = t["2", 1..2]
+            var x = t["2", 1..2]
         then: 'This new slice "x" then will yield true when using the "contains" operator on t.'
             x in t
         and: 'Calling the "contains" method will also return true.'
@@ -233,7 +232,9 @@ class Tensor_Framing_Spec extends Specification
                 ["tim", "tom", "tina", "tanya"]
             ])
 
-        expect: 'When the tensor is converted to a String then the labels will be included:'
+        expect: 'The tensor is now called "My Tensor".'
+            t.label == "My Tensor"
+        and : 'When the tensor is converted to a String then the labels will be included:'
             t.toString({
                 it.rowLimit = 15
                 it.isScientific = false
@@ -400,22 +401,7 @@ class Tensor_Framing_Spec extends Specification
             s.isSlice()
             t.isSliceParent()
             t.sliceCount() == 4
-    /*
-        when : '...we make the GC collect some garbage...'
-            var weak = new WeakReference(s)
-            s = null
-            System.gc() // This is not guaranteed to work, but it's the best we can do.
-            System.runFinalization() // Idk, maybe this helps.
-            Runtime.getRuntime().gc() // Some more attempts to trigger the garbage collection.
-            System.runFinalization()
-
-        then : 'The weak reference returns null instead of the slice because the parent has only weak references to it!'
-            s == null
-            t != null
-            Sleep.until(750, { weak.get() == null })
-            t.sliceCount() == 0
-
-     */
+        
     }
 
     def 'A tensor can be labeled partially.'()

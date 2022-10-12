@@ -428,8 +428,8 @@ public final class NdaAsString
                         _legacy ? "][" : ")("
                     );
                     _$( _legacy ? " ]" : " )" );
-                    if ( alias.getTensorName() != null )
-                        _$( (_legacy) ? ":[ " : ":( " )._$( alias.getTensorName() )._$( (_legacy) ? " ]" : " )" );
+                    if ( alias.getLabel() != null )
+                        _$( (_legacy) ? ":[ " : ":( " )._$( alias.getLabel() )._$( (_legacy) ? " ]" : " )" );
                     _$( _breakAndIndent() );
                 }
             }

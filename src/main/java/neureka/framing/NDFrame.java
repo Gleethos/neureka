@@ -20,7 +20,7 @@ import java.util.function.Function;
  *          Labels for the indices of a specific axis.
  *      </li>
  *  </ul>
- *  Let's for example imagine a tensor of rank 2 with the shape (3, 4), then the axis could for example be labeled
+ *  Lets for example imagine a tensor of rank 2 with the shape (3, 4), then the axis could for example be labeled
  *  with a tuple of two {@link String} instances like: ("a","b"). <br>
  *  Labeling the indices of the axis for this example requires 2 arrays whose length matches the axis sizes. <br>
  *  The following mapping would be able to label both the axis as well as their indices: <br>
@@ -291,7 +291,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         return _mapping;
     }
 
-    public String getTensorName() {
+    public String getLabel() {
         return _tensorName;
     }
 }

@@ -6,6 +6,7 @@ import neureka.fluent.building.NdaBuilder;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.states.AxisOrGet;
+import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.ndim.NDimensional;
 import neureka.view.NDPrintSettings;
@@ -140,6 +141,26 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     @SafeVarargs
     static <T> Nda<T> of( T... values ) { return Tsr.of(values); }
+
+    /**
+     *  A nd-array can have a label. This label is used for example when printing the nd-array.
+     *  When loading a CSV file for example the label of the nd-array
+     *  will be taken from the cell where the header row and the first column intersect.
+     *  @return The label/name of the nd-array.
+     */
+    default String getLabel() {
+        String name = ((TsrImpl<?>)this).get(NDFrame.class).getLabel();
+        return name == null ? "" : name;
+    }
+
+    /**
+     *  A nd-array can have a label. This label is used for example when printing the nd-array.
+     *  When loading a CSV file for example the label of the nd-array
+     *  will be taken from the cell where the header row and the first column intersect.
+     *  This is a shorter version of {@link #getLabel()}.
+     *  @return The label/name of the nd-array.
+     */
+    default String label() { return this.getLabel(); }
 
     /**
      *  If this nd-array is a slice of a parent nd-array then this method will yield true.

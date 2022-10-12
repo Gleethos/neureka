@@ -28,7 +28,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
         _LOG = LoggerFactory.getLogger( CSVHandle.class );
     }
 
-    private String _tensorName;
+    private String _label;
     private final String _delimiter;
     private final boolean _firstRowIsLabels;
     private String[] _colLabels;
@@ -48,13 +48,13 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
         NDFrame<?> alias = tensor.get( NDFrame.class );
         List<Object> index  = ( alias != null ? alias.atAxis( 0 ).getAllAliases() : null );
         List<Object> labels = ( alias != null ? alias.atAxis( 1 ).getAllAliases() : null );
-        _tensorName = (alias != null) ? alias.getTensorName() : null;
+        _label = (alias != null) ? alias.getLabel() : null;
         _firstRowIsLabels = labels != null;
         _firstColIsIndex = index != null;
         StringBuilder asCsv = new StringBuilder();
 
         if ( _firstRowIsLabels ) {
-            if ( _firstColIsIndex ) labels.add( 0, (_tensorName == null) ? "" : _tensorName );
+            if ( _firstColIsIndex ) labels.add( 0, (_label == null) ? "" : _label);
             asCsv.append(
                     labels.stream().map( Object::toString ).collect( Collectors.joining(_delimiter ) )
                     + "\n"
@@ -133,7 +133,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
         if ( _firstRowIsLabels ) {
             _colLabels = table.remove( 0 );
             if ( _firstColIsIndex ) {
-                if ( !_colLabels[0].trim().equals("") ) _tensorName = _colLabels[0].trim();
+                if ( !_colLabels[0].trim().equals("") ) _label = _colLabels[0].trim();
                 else _parseTensorNameFromFileName();
                 String[] newLabels = new String[ _colLabels.length - 1 ];
                 System.arraycopy( _colLabels, 1, newLabels, 0, newLabels.length );
@@ -179,7 +179,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
     private void _parseTensorNameFromFileName() {
         String[] parts = _fileName.replace("\\", "/").split("/");
         if ( parts.length > 0 ) parts = parts[ parts.length - 1 ].split("\\.");
-        _tensorName = (parts.length > 0)? parts[0] : _tensorName;
+        _label = (parts.length > 0)? parts[0] : _label;
     }
 
     @Override
@@ -219,13 +219,13 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
             }
         }
         else labels = _colLabels;
-        loaded.getMut().label( _tensorName, new String[][]{ index, labels } );
+        loaded.getMut().label(_label, new String[][]{ index, labels } );
         return loaded;
     }
 
     public String getTensorName() {
         _lazyLoad();
-        return _tensorName;
+        return _label;
     }
 
     @Override
