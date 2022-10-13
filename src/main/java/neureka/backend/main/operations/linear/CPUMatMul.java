@@ -80,26 +80,26 @@ public class CPUMatMul implements ImplementationFor<CPU> {
 
         Class<?> type = call.input( 0 ).getDataType().getItemTypeClass();
         if ( type == Double.class ) {
-            double[] A = call.input(Double.class, 1).getMut().getDataAs(double[].class);
-            double[] B = call.input(Double.class, 2).getMut().getDataAs(double[].class);
-            double[] C = call.input(Double.class, 0).getMut().getDataForWriting(double[].class);
+            double[] A = call.input(Double.class, 1).mut().getDataAs(double[].class);
+            double[] B = call.input(Double.class, 2).mut().getDataAs(double[].class);
+            double[] C = call.input(Double.class, 0).mut().getDataForWriting(double[].class);
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         } else if ( type == Float.class ) {
-            float[] A = call.input(Float.class, 1).getMut().getDataAs(float[].class);
-            float[] B = call.input(Float.class, 2).getMut().getDataAs(float[].class);
-            float[] C = call.input(Float.class, 0).getMut().getDataForWriting(float[].class);
+            float[] A = call.input(Float.class, 1).mut().getDataAs(float[].class);
+            float[] B = call.input(Float.class, 2).mut().getDataAs(float[].class);
+            float[] C = call.input(Float.class, 0).mut().getDataForWriting(float[].class);
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         }
         else if ( type == Long.class ) {
-            long[] A = call.input(Long.class, 1).getMut().getDataAs(long[].class);
-            long[] B = call.input(Long.class, 2).getMut().getDataAs(long[].class);
-            long[] C = call.input(Long.class, 0).getMut().getDataForWriting(long[].class);
+            long[] A = call.input(Long.class, 1).mut().getDataAs(long[].class);
+            long[] B = call.input(Long.class, 2).mut().getDataAs(long[].class);
+            long[] C = call.input(Long.class, 0).mut().getDataForWriting(long[].class);
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         }
         else if ( type == Integer.class ) {
-            int[] A = call.input(Integer.class, 1).getMut().getDataAs(int[].class);
-            int[] B = call.input(Integer.class, 2).getMut().getDataAs(int[].class);
-            int[] C = call.input(Integer.class, 0).getMut().getDataForWriting(int[].class);
+            int[] A = call.input(Integer.class, 1).mut().getDataAs(int[].class);
+            int[] B = call.input(Integer.class, 2).mut().getDataAs(int[].class);
+            int[] C = call.input(Integer.class, 0).mut().getDataForWriting(int[].class);
             execute( rowMajor, A, B, C, aRows, aCols, bCols );
         }
         else

@@ -42,7 +42,7 @@ public class CPUScalarBroadcastFunction implements ImplementationFor<CPU>
 
         if ( typeClass == Double.class ) {
             double value = src.at(0).get().doubleValue();
-            double[] t0_value = t0_drn.getMut().getDataForWriting(double[].class);
+            double[] t0_value = t0_drn.mut().getDataForWriting(double[].class);
             double finalValue = f.invoke(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
@@ -63,7 +63,7 @@ public class CPUScalarBroadcastFunction implements ImplementationFor<CPU>
         }
         if ( typeClass == Float.class ) {
             float value = src.at(0).get().floatValue();
-            float[] t0_value = t0_drn.getMut().getDataForWriting(float[].class);
+            float[] t0_value = t0_drn.mut().getDataForWriting(float[].class);
             float finalValue = f.invoke(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
@@ -84,7 +84,7 @@ public class CPUScalarBroadcastFunction implements ImplementationFor<CPU>
         }
         if ( typeClass == Integer.class ) {
             int value = src.at(0).get().intValue();
-            int[] t0_value = t0_drn.getMut().getDataForWriting(int[].class);
+            int[] t0_value = t0_drn.mut().getDataForWriting(int[].class);
             int finalValue = f.invoke(value);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
@@ -103,9 +103,9 @@ public class CPUScalarBroadcastFunction implements ImplementationFor<CPU>
                 }
             };
         }
-        if ( t0_drn.getMut().getData().getRef().getClass() == Object[].class ) {
+        if ( t0_drn.mut().getData().getRef().getClass() == Object[].class ) {
             Object value = src.at(0).get();
-            Object[] t0_value = t0_drn.getMut().getDataForWriting(Object[].class);
+            Object[] t0_value = t0_drn.mut().getDataForWriting(Object[].class);
             Object finalValue = f.invoke(value);
             workload = (i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);

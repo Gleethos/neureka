@@ -14,9 +14,9 @@ public class CLScalarBroadcastMultiplication extends CLScalarBroadcast
     @Override
     public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
         if ( call.getDerivativeIndex() == 0 )
-            return call.input( 2 ).shallowCopy().getMut().setIsIntermediate( true );
+            return call.input( 2 ).shallowCopy().mut().setIsIntermediate( true );
         else if ( call.getDerivativeIndex() == 1 )
-            return call.input( 1 ).shallowCopy().getMut().setIsIntermediate( true );
+            return call.input( 1 ).shallowCopy().mut().setIsIntermediate( true );
         else {
             int offset = (call.input(Number.class, 2).isVirtual() || call.input(Number.class, 2).size() == 1) ? 1 : 0;
             int gwz = call.input(Number.class, 0).size();

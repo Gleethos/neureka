@@ -587,8 +587,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     ) {
         assert !old.isVirtual();
         return NDConfiguration.of(
-            old.shape(), newTranslation, indicesMap, old.spread(), old.offset()
-        );
+                    old.shape(), newTranslation, indicesMap, old.spread(), old.offset()
+                );
     }
 
     private static void _checkLayoutConversion(
@@ -835,44 +835,37 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         return Neureka.get().backend().getFunction().idy().call( TsrImpl.this, (Tsr<V>) other );
     }
 
-    /** {@inheritDoc} */
-    @Override public Tsr<V> label(String tensorName, String[]... labels) {
-        return TsrImpl.this._label( tensorName, labels );
+    @Override
+    public Tsr<V> labelAxes( String[]... labels ) {
+        return TsrImpl.this._label( labels );
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label( List<List<Object>> labels ) {
+    public Tsr<V> labelAxes( List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame<>( labels, null ) );
+        else set( frame.withAxesLabels( labels ) );
         return TsrImpl.this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label( String tensorName, List<List<Object>> labels ) {
-        LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
+    public Tsr<V> label( String label ) {
+        LogUtil.nullArgCheck( label, "label", List.class, "Tensors cannot be labeled 'null'!" );
         NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame<>( labels, tensorName ) );
+        if ( frame == null ) set( new NDFrame<>( Collections.emptyList(), label ) );
+        else set( frame.withLabel(label) );
         return TsrImpl.this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label( Map<Object, List<Object>> labels )
+    public Tsr<V> labelAxes( Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
         TsrImpl.this.set( new NDFrame<>( labels, TsrImpl.this, null ) );
-        return TsrImpl.this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Tsr<V> label(String tensorName, Map<Object, List<Object>> labels )
-    {
-        LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
-        TsrImpl.this.set( new NDFrame<>( labels, TsrImpl.this, tensorName ) );
         return TsrImpl.this;
     }
 
@@ -925,7 +918,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         return this;
     }
 
-    private Tsr<V> _label(String tensorName, String[][] labels )
+    @Override
+    public Tsr<V> withLabel( String label ) {
+        return this.shallowCopy().mut().label( label );
+    }
+
+    private Tsr<V> _label( String[][] labels )
     {
         LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
         if ( labels.length > this.rank() )
@@ -935,7 +933,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) {
-            frame = new NDFrame<>( this.rank(), tensorName );
+            frame = new NDFrame<>( this.rank(), null);
             this.set(frame);
         }
         for ( int i = 0; i < labels.length; i++ ) {
@@ -953,37 +951,19 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     /** {@inheritDoc} */
     @Override
     public Tsr<V> withLabels( String[]... labels ) {
-        return this.shallowClone().getMut().label( labels );
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Tsr<V> withLabels(String name, String[]... labels) {
-        return this.shallowClone().getMut().label(name, labels );
+        return this.shallowClone().getMut().labelAxes( labels );
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr<V> withLabels( List<List<Object>> labels ) {
-        return this.shallowClone().getMut().label( labels );
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Tsr<V> withLabels(String name, List<List<Object>> labels ) {
-        return this.shallowClone().getMut().label(name, labels );
+        return this.shallowClone().getMut().labelAxes( labels );
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr<V> withLabels( Map<Object, List<Object>> labels ) {
-        return this.shallowClone().getMut().label( labels );
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Tsr<V> withLabels(String name, Map<Object, List<Object>> labels ) {
-        return this.shallowClone().getMut().label(name, labels );
+        return this.shallowClone().getMut().labelAxes( labels );
     }
 
     /*==================================================================================================================

@@ -65,9 +65,9 @@ class SimpleCPUConvolution
 
         if ( c1 == Float.class )
             return new ImplF32(
-                    image.getMut().getDataAs(float[].class),
-                    kernel.getMut().getDataAs(float[].class),
-                    result.getMut().getDataForWriting(float[].class),
+                    image.mut().getDataAs(float[].class),
+                    kernel.mut().getDataAs(float[].class),
+                    result.mut().getDataForWriting(float[].class),
                     width,
                     height,
                     kernelWidth,
@@ -78,9 +78,9 @@ class SimpleCPUConvolution
                 );
         else if ( c1 == Double.class )
             return new ImplF64(
-                    image.getMut().getDataAs(double[].class),
-                    kernel.getMut().getDataAs(double[].class),
-                    result.getMut().getDataForWriting(double[].class),
+                    image.mut().getDataAs(double[].class),
+                    kernel.mut().getDataAs(double[].class),
+                    result.mut().getDataForWriting(double[].class),
                     width,
                     height,
                     kernelWidth,

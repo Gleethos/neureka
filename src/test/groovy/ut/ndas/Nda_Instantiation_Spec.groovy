@@ -15,7 +15,7 @@ import java.util.function.Predicate
     
 ''')
 @Subject([Nda])
-class NDA_Instantiation_Spec extends Specification
+class Nda_Instantiation_Spec extends Specification
 {
     def 'A vector can be created from an array of values through the "of" method.'()
     {

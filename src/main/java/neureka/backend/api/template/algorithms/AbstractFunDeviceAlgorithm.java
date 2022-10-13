@@ -100,7 +100,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
                             out -> Arrays.stream(inputs)
                                     .noneMatch(in -> in == out)
                     )
-                    .forEach(t -> t.getMut().setIsIntermediate(true));
+                    .forEach(t -> t.mut().setIsIntermediate(true));
 
             return prepared;
         }

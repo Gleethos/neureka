@@ -70,7 +70,7 @@ implements ExecutionPreparation, ADActionSupplier
                                                 for ( int ii = 0; ii < inputs.length; ii++ )
                                                     inputs[ ii ] = call.input( Number.class, 1 + ii ).at( i ).get().doubleValue();
 
-                                                call.input( Number.class, 0 ).getMut().set( i, f.call( inputs ) );
+                                                call.input( Number.class, 0 ).mut().set( i, f.call( inputs ) );
                                             }
                                         }
                                     );
@@ -128,7 +128,7 @@ implements ExecutionPreparation, ADActionSupplier
             return ADAction.of( target -> mul.execute( target.error(), derivative ) );
         }
         Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
-        localDerivative.getMut().setIsIntermediate( false );
+        localDerivative.mut().setIsIntermediate( false );
         return ADAction.of( target -> mul.execute( target.error(), localDerivative ) );
         // TODO: Maybe delete local derivative??
     }
@@ -150,9 +150,9 @@ implements ExecutionPreparation, ADActionSupplier
                 output = call.input( Object.class, 1 );
             else
                 output = (Tsr<Object>) Tsr.of( call.input( 1 ).getDataType(), shp )
-                                                    .getMut()
+                                                    .mut()
                                                     .setIsIntermediate(true);
-            output.getMut().setIsVirtual( false );
+            output.mut().setIsVirtual( false );
             try {
                 device.store( output );
             } catch ( Exception e ) {
@@ -196,7 +196,7 @@ implements ExecutionPreparation, ADActionSupplier
     }
 
     private static void setAt( Tsr<Object> t, int i, Object o ) {
-        t.getMut().setDataAt( t.getNDConf().indexOfIndex( i ), o );
+        t.mut().setDataAt( t.getNDConf().indexOfIndex( i ), o );
     }
 
     private static Object _tryExecute( Method m, Object[] args, int offset ) {

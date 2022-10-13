@@ -22,7 +22,7 @@ public class CLScalarFunction implements ImplementationFor<OpenCLDevice>
         CPUFun f = d < 0 ? _fun.getActivation() : _fun.getDerivative();
         Number value =  f.invoke(call.input( Number.class, 1 ).item(0).doubleValue());
         Tsr<Number> out = call.input( Number.class, 0 );
-        out.getMut().setDataAt(0, value);
+        out.mut().setDataAt(0, value);
         return call.input(0);
     }
 }

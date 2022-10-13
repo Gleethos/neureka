@@ -149,7 +149,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  @return The label/name of the nd-array.
      */
     default String getLabel() {
-        String name = ((TsrImpl<?>)this).get(NDFrame.class).getLabel();
+        String name = ((TsrImpl<?>)this).find(NDFrame.class).map(NDFrame::getLabel).orElse("");
         return name == null ? "" : name;
     }
 
@@ -226,6 +226,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     default Class<V> itemType() { return getItemType(); }
 
+    Nda<V> withLabel( String label );
 
     /**
      *  This method receives a nested {@link String} array which
@@ -244,30 +245,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param labels A nested String array containing labels for indexes of the nd-array dimensions.
      * @return This nd-array (method chaining).
      */
-    default Nda<V> withLabels( String[]... labels ) {
-        return withLabels( null, labels );
-    }
-
-    /**
-     *  This method receives a label for this nd-array and a
-     *  nested {@link String} array which ought to contain a
-     *  label for the index of this nd-array.
-     *  The index for a single element of this nd-array would be an array
-     *  of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows:    <br>
-     *                                                              <br>
-     *      dim 0 : ["A", "B"]                                      <br>
-     *      dim 1 : ["1", "2", "3"]                                 <br>
-     *                                                              <br>
-     *
-     * @param name A label for this nd-array itself.
-     * @param labels A nested String array containing labels for indexes of the nd-array dimensions.
-     * @return This nd-array (method chaining).
-     */
-    Nda<V> withLabels( String name, String[]... labels );
+    Nda<V> withLabels( String[]... labels );
 
     /**
      *  This method receives a nested {@link String} list which
@@ -288,25 +266,6 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     Nda<V> withLabels( List<List<Object>> labels );
 
     /**
-     *  This method receives a label for this nd-array and a nested
-     *  {@link String} list which ought to contain a label for the index of
-     *  this nd-array The index for a single element of this nd-array would
-     *  be an array of numbers as long as the rank where every number is
-     *  in the range of the corresponding shape dimension...
-     *  Labeling an index means that for every dimension there
-     *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows: <br>
-     *                                                           <br>
-     *      dim 0 : ["A", "B"]                                   <br>
-     *      dim 1 : ["1", "2", "3"]                              <br>
-     *                                                           <br>
-     * @param name A label for this nd-array itself.
-     * @param labels A nested String list containing labels for indexes of the nd-array dimensions.
-     * @return This nd-array (method chaining).
-     */
-    Nda<V> withLabels( String name, List<List<Object>> labels );
-
-    /**
      *  This method provides the ability to
      *  label not only the indices of the shape of this nd-array, but also
      *  the dimension of the shape.
@@ -323,25 +282,6 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return This nd-array (method chaining).
      */
     Nda<V> withLabels( Map<Object, List<Object>> labels );
-
-    /**
-     *  This method provides the ability to
-     *  label not only the indices of the shape of this nd-array, but also
-     *  the dimension of the shape.
-     *  The first and only argument of the method expects a map instance
-     *  where keys are the objects which ought to act as dimension labels
-     *  and the values are lists of labels for the indices of said dimensions.
-     *  For example the shape (2,3) could be labeled as follows:            <br>
-     *  [                                                                   <br>
-     *     "dim 0" : ["A", "B"],                                            <br>
-     *     "dim 1" : ["1", "2", "3"]                                        <br>
-     *  ]                                                                   <br>
-     *                                                                      <br>
-     * @param name A label for this nd-array itself.
-     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
-     * @return This nd-array (method chaining).
-     */
-    Nda<V> withLabels(String name, Map<Object, List<Object>> labels );
 
 
     /*==================================================================================================================
@@ -714,7 +654,6 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     Nda<V> shallowCopy();
 
-
     /**
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
@@ -729,6 +668,23 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return The unsafe API exposes methods for mutating the state of the tensor.
      */
     MutateNda<V> getMut();
+
+    /**
+     *  This method exposes an API for mutating the state of this tensor.
+     *  The usage of methods exposed by this API is generally discouraged
+     *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
+     *  <br><b>
+     *
+     *  Only use this if you know what you are doing and
+     *  performance is critical! <br>
+     *  </b>
+     *  (Like custom backend extensions for example)
+     *
+     * @return The unsafe API exposes methods for mutating the state of the tensor.
+     */
+    default MutateNda<V> mut() { return getMut(); }
+
+    Nda<V> withShape( int... shape );
 
     /**
      *  This method exposes the {@link Item} API which allows you to get or set

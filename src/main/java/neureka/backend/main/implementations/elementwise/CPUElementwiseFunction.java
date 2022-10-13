@@ -48,11 +48,11 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
 
         if ( typeClass == Double.class )
         {
-            double[] t0_value = t0_drn.getMut().getDataForWriting( double[].class );
+            double[] t0_value = t0_drn.mut().getDataForWriting( double[].class );
 
             if ( rightTypeClass == Integer.class )
             {
-                int[] t1_value = (int[]) t1_src.getMut().getData().getRef();
+                int[] t1_value = (int[]) t1_src.mut().getData().getRef();
                 workload = (i, end) -> {
                     NDIterator t0Idx = NDIterator.of(t0_drn);
                     NDIterator t1Idx = NDIterator.of(t1_src);
@@ -70,7 +70,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
             }
             else
             {
-                double[] t1_value = t1_src.getMut().getDataAs(double[].class);
+                double[] t1_value = t1_src.mut().getDataAs(double[].class);
                 if ( isSimple )
                     workload = (start, end) -> {
                         for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
@@ -94,8 +94,8 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Float.class )
         {
-            float[] t0_value = t0_drn.getMut().getDataForWriting( float[].class );
-            float[] t1_value = t1_src.getMut().getDataAs(float[].class);
+            float[] t0_value = t0_drn.mut().getDataForWriting( float[].class );
+            float[] t1_value = t1_src.mut().getDataAs(float[].class);
             if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
@@ -118,8 +118,8 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Integer.class )
         {
-            int[] t0_value = (int[]) t0_drn.getMut().getData().getRef();
-            int[] t1_value = t1_src.getMut().getDataAs(int[].class);
+            int[] t0_value = (int[]) t0_drn.mut().getData().getRef();
+            int[] t1_value = t1_src.mut().getDataAs(int[].class);
             if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
@@ -142,8 +142,8 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Long.class )
         {
-            long[] t0_value = (long[]) t0_drn.getMut().getData().getRef();
-            long[] t1_value = t1_src.getMut().getDataAs(long[].class);
+            long[] t0_value = (long[]) t0_drn.mut().getData().getRef();
+            long[] t1_value = t1_src.mut().getDataAs(long[].class);
             if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
@@ -166,8 +166,8 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Byte.class )
         {
-            byte[] t0_value = (byte[]) t0_drn.getMut().getData().getRef();
-            byte[] t1_value = t1_src.getMut().getDataAs(byte[].class);
+            byte[] t0_value = (byte[]) t0_drn.mut().getData().getRef();
+            byte[] t1_value = t1_src.mut().getDataAs(byte[].class);
             if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
@@ -190,8 +190,8 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Short.class )
         {
-            short[] t0_value = (short[]) t0_drn.getMut().getData().getRef();
-            short[] t1_value = t1_src.getMut().getDataAs(short[].class);
+            short[] t0_value = (short[]) t0_drn.mut().getData().getRef();
+            short[] t1_value = t1_src.mut().getDataAs(short[].class);
             if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
@@ -214,8 +214,8 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Boolean.class )
         {
-            boolean[] t0_value = (boolean[]) t0_drn.getMut().getData().getRef();
-            boolean[] t1_value = t1_src.getMut().getDataAs(boolean[].class);
+            boolean[] t0_value = (boolean[]) t0_drn.mut().getData().getRef();
+            boolean[] t1_value = t1_src.mut().getDataAs(boolean[].class);
             if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
@@ -238,8 +238,8 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Character.class )
         {
-            char[] t0_value = (char[]) t0_drn.getMut().getData().getRef();
-            char[] t1_value = t1_src.getMut().getDataAs(char[].class);
+            char[] t0_value = (char[]) t0_drn.mut().getData().getRef();
+            char[] t1_value = t1_src.mut().getDataAs(char[].class);
             if ( isSimple )
                 workload = (start, end) -> {
                     for ( int i = start; i < end; i++ ) t0_value[i] = f.invoke(t1_value[i]);
@@ -261,8 +261,8 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
                 };
         } else {
             try {
-                Object[] t0_value = (Object[]) t0_drn.getMut().getData().getRef();
-                Object[] t1_value = t1_src.getMut().getDataAs(Object[].class);
+                Object[] t0_value = (Object[]) t0_drn.mut().getData().getRef();
+                Object[] t1_value = t1_src.mut().getDataAs(Object[].class);
                 if (isSimple)
                     workload = (start, end) -> {
                         for (int i = start; i < end; i++) t0_value[i] = f.invoke(t1_value[i]);

@@ -31,7 +31,7 @@ public class ConvUtil
                         int offset = ( call.input(0) == null ? 1 : 0 );
                         Tsr<?>[] tensors = new Tsr[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};
                         Reshape.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)
-                        for ( Tsr<?> t : tensors ) t.getMut().setIsVirtual( false );
+                        for ( Tsr<?> t : tensors ) t.mut().setIsVirtual( false );
                         return AbstractDeviceAlgorithm.prepareAndExecuteRecursively(
                                                 ExecutionCall.of( tensors )
                                                         .andArgs( Arg.DerivIdx.of(0) )

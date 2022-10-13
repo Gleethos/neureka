@@ -29,7 +29,7 @@ public class ScalarActivation extends AbstractFunDeviceAlgorithm<ScalarActivatio
                 assert call.input( 0 ) == null;  // Creating a new tensor:
                 int[] outShape = call.input( 1 ).getNDConf().shape();
                 Class<Object> type = (Class<Object>) call.input( 1 ).getItemType();
-                Tsr output = Tsr.of( type, outShape, 0.0 ).getMut().setIsIntermediate( true );
+                Tsr output = Tsr.of( type, outShape, 0.0 ).mut().setIsIntermediate( true );
                 try {
                     device.store( output );
                 } catch( Exception e ) {

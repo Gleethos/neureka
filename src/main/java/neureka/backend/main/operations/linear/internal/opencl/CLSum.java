@@ -43,20 +43,20 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
             else
                 newN = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)
 
-            out = Tsr.of(Float.class, new int[]{newN}, 0).to(device).getMut().setIsVirtual(false);
+            out = Tsr.of(Float.class, new int[]{newN}, 0).to(device).mut().setIsVirtual(false);
             KernelCaller caller = _processPrivate(RTS, device);
             caller.pass(SIZE).pass(in).pass(out).call(global, local);
         }
         else
         {
-            out = Tsr.of(Float.class, new int[]{N}, 0).to(device).getMut().setIsVirtual(false);
+            out = Tsr.of(Float.class, new int[]{N}, 0).to(device).mut().setIsVirtual(false);
             KernelCaller caller = _processLocal(device);
             caller.pass(in).pass(out).passLocalFloats((int) localSize).call(global, local);
         }
 
         if ( N > 1 ) {
             Tsr<Float> reduced = _partialSum(out, device);
-            out.getMut().delete();
+            out.mut().delete();
             return reduced;
         }
         return out;

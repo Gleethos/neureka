@@ -23,7 +23,7 @@ import java.util.function.Function;
  *  Lets for example imagine a tensor of rank 2 with the shape (3, 4), then the axis could for example be labeled
  *  with a tuple of two {@link String} instances like: ("a","b"). <br>
  *  Labeling the indices of the axis for this example requires 2 arrays whose length matches the axis sizes. <br>
- *  The following mapping would be able to label both the axis as well as their indices: <br>
+ *  The following mapping would be able to label both the axis and their indices: <br>
  *                                                                             <br>
  *  "a" : ["first", "second", "third"],                                        <br>
  *  "b" : ["one", "two", "three", "four"]                                      <br>
@@ -85,6 +85,20 @@ public final class NDFrame<V> implements Component<Tsr<V>>
             }
             index[ 0 ]++;
         });
+    }
+
+    private NDFrame( List<Object> hiddenKeys, Map<Object, Object> mapping, String tensorName ) {
+        _hiddenKeys.addAll( hiddenKeys );
+        _mapping = new LinkedHashMap<>(mapping);
+        _tensorName = tensorName;
+    }
+
+    public NDFrame<V> withLabel( String newLabel ) {
+        return new NDFrame<>( _hiddenKeys, _mapping, newLabel );
+    }
+
+    public NDFrame<V> withAxesLabels( List<List<Object>> labels ) {
+        return new NDFrame<>( labels, _tensorName );
     }
 
     public int[] get( List<Object> keys ) {

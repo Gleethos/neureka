@@ -41,8 +41,8 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
 
         if ( typeClass == Double.class ) {
             double value = call.input(Number.class, 1 + offset).at(0).get().doubleValue();
-            double[] t0_value = t0_drn.getMut().getDataForWriting(double[].class);
-            double[] t1_value = src.getMut().getDataAs(double[].class);
+            double[] t0_value = t0_drn.mut().getDataForWriting(double[].class);
+            double[] t1_value = src.mut().getDataAs(double[].class);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -61,8 +61,8 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
         }
         if ( typeClass == Float.class ) {
             float value = call.input(Number.class, 1 + offset).at(0).get().floatValue();
-            float[] t0_value = t0_drn.getMut().getDataForWriting(float[].class);
-            float[] t1_value = src.getMut().getDataAs(float[].class);
+            float[] t0_value = t0_drn.mut().getDataForWriting(float[].class);
+            float[] t1_value = src.mut().getDataAs(float[].class);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -81,8 +81,8 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
         }
         if ( typeClass == Integer.class ) {
             int value = call.input(Number.class, 1 + offset).at(0).get().intValue();
-            int[] t0_value = t0_drn.getMut().getDataForWriting(int[].class);
-            int[] t1_value = src.getMut().getDataAs(int[].class);
+            int[] t0_value = t0_drn.mut().getDataForWriting(int[].class);
+            int[] t1_value = src.mut().getDataAs(int[].class);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -101,8 +101,8 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
         }
         if ( typeClass == Long.class ) {
             long value = call.input(Number.class, 1 + offset).at(0).get().longValue();
-            long[] t0_value = t0_drn.getMut().getDataForWriting(long[].class);
-            long[] t1_value = src.getMut().getDataAs(long[].class);
+            long[] t0_value = t0_drn.mut().getDataForWriting(long[].class);
+            long[] t1_value = src.mut().getDataAs(long[].class);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -121,8 +121,8 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
         }
         if ( typeClass == Short.class ) {
             short value = call.input(Number.class, 1 + offset).at(0).get().shortValue();
-            short[] t0_value = t0_drn.getMut().getDataForWriting(short[].class);
-            short[] t1_value = src.getMut().getDataAs(short[].class);
+            short[] t0_value = t0_drn.mut().getDataForWriting(short[].class);
+            short[] t1_value = src.mut().getDataAs(short[].class);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -141,8 +141,8 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
         }
         if ( typeClass == Byte.class ) {
             byte value = call.input(Number.class, 1 + offset).at(0).get().byteValue();
-            byte[] t0_value = t0_drn.getMut().getDataForWriting(byte[].class);
-            byte[] t1_value = src.getMut().getDataAs(byte[].class);
+            byte[] t0_value = t0_drn.mut().getDataForWriting(byte[].class);
+            byte[] t1_value = src.mut().getDataAs(byte[].class);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);
@@ -159,10 +159,10 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
                 }
             };
         }
-        if ( t0_drn.getMut().getData().getRef().getClass() == Object[].class ) {
+        if ( t0_drn.mut().getData().getRef().getClass() == Object[].class ) {
             Object value = call.input( 1 + offset ).at(0).get();
-            Object[] t0_value = t0_drn.getMut().getDataForWriting(Object[].class);
-            Object[] t1_value = src.getMut().getDataAs(Object[].class);
+            Object[] t0_value = t0_drn.mut().getDataForWriting(Object[].class);
+            Object[] t1_value = src.mut().getDataAs(Object[].class);
             workload = ( i, end ) -> {
                 NDIterator t0Idx = NDIterator.of(t0_drn);
                 NDIterator srcIdx = NDIterator.of(src);

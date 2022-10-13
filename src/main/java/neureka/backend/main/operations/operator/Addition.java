@@ -64,7 +64,7 @@ public class Addition extends AbstractOperation {
                                          .getImplementationFor( device )
                                          .run(
                                              ExecutionCall.of(
-                                                 toBeDerived.getMut().setIsVirtual(false),
+                                                 toBeDerived.mut().setIsVirtual(false),
                                                  derivative,
                                                  target.error()
                                              )
@@ -102,7 +102,7 @@ public class Addition extends AbstractOperation {
                                             .count();
 
                 Tsr<?> derivative = Tsr.like((Tsr<Number>) template).all(dependencies);
-                return Result.of(derivative.getMut().setIsIntermediate(true));
+                return Result.of(derivative.mut().setIsIntermediate(true));
             }
         } else {
             if ( d < 0 ) {

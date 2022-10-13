@@ -34,7 +34,7 @@ public abstract class CPUBroadcast implements ImplementationFor<CPU>
         Tsr<Number> t1_src = call.input( Number.class, 1 );
         Tsr<Number> t2_src = call.input( Number.class, 2 );
 
-        t0_drn.getMut().setIsVirtual(false);
+        t0_drn.mut().setIsVirtual(false);
 
         Class<?> typeClass = t0_drn.getItemType();
 
@@ -74,9 +74,9 @@ public abstract class CPUBroadcast implements ImplementationFor<CPU>
         t0Idx.set( t0_drn.indicesOfIndex( i ) );
         t1Idx.set( t0_drn.indicesOfIndex( i ) );
         NDIterator t2Idx = NDIterator.of( t2_src, NDIterator.NonVirtual.TRUE );
-        double[] t0_value = t0_drn.getMut().getDataForWriting( double[].class );
-        double[] t1_value = t1_src.getMut().getDataAs( double[].class );
-        double[] t2_value = t2_src.getMut().getDataAs( double[].class );
+        double[] t0_value = t0_drn.mut().getDataForWriting( double[].class );
+        double[] t1_value = t1_src.mut().getDataAs( double[].class );
+        double[] t2_value = t2_src.mut().getDataAs( double[].class );
 
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:
@@ -175,9 +175,9 @@ public abstract class CPUBroadcast implements ImplementationFor<CPU>
         t0Idx.set( t0_drn.indicesOfIndex( i ) );
         t1Idx.set( t0_drn.indicesOfIndex( i ) );
         NDIterator t2Idx = NDIterator.of( t2_src, NDIterator.NonVirtual.TRUE );
-        float[] t0_value = t0_drn.getMut().getDataForWriting( float[].class );
-        float[] t1_value = t1_src.getMut().getDataAs( float[].class );
-        float[] t2_value = t2_src.getMut().getDataAs( float[].class );
+        float[] t0_value = t0_drn.mut().getDataForWriting( float[].class );
+        float[] t1_value = t1_src.mut().getDataAs( float[].class );
+        float[] t2_value = t2_src.mut().getDataAs( float[].class );
 
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:

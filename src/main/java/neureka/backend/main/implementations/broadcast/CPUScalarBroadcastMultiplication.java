@@ -11,9 +11,9 @@ public class CPUScalarBroadcastMultiplication extends CPUScalarBroadcast
     public Tsr<?> run(ExecutionCall<CPU> call) {
         assert call.arity() == 3;
         if ( call.getDerivativeIndex() == 0 )
-            return call.input( 2 ).shallowCopy().getMut().setIsIntermediate( true );
+            return call.input( 2 ).shallowCopy().mut().setIsIntermediate( true );
         else if ( call.getDerivativeIndex() == 1 )
-            return call.input( 1 ).shallowCopy().getMut().setIsIntermediate( true );
+            return call.input( 1 ).shallowCopy().mut().setIsIntermediate( true );
         else
             return super.run(call);
     }

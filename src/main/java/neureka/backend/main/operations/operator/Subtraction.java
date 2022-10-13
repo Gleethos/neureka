@@ -75,7 +75,7 @@ public class Subtraction extends AbstractOperation
                                         .getImplementationFor( device )
                                         .run(
                                             ExecutionCall.of(
-                                                    toBeDerived.getMut().setIsVirtual(false),
+                                                    toBeDerived.mut().setIsVirtual(false),
                                                     derivative,
                                                     target.error()
                                                 )

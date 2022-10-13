@@ -1207,8 +1207,15 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     */
 
     /** {@inheritDoc} */
-    @Override
-    MutateTsr<V> getMut();
+    @Override MutateTsr<V> getMut();
+
+    /** {@inheritDoc} */
+    @Override default MutateTsr<V> mut() { return getMut(); }
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> withShape( int... shape ) {
+        return Tsr.of( this.itemType(), shape, getItems() ).to( this.getDevice() );
+    }
 
     /*==================================================================================================================
     |
@@ -1381,24 +1388,16 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /** {@inheritDoc} */
-    @Override default Tsr<V> withLabels( String[]... labels ) {
-        return withLabels( null, labels );
-    }
+    @Override Tsr<V> withLabel( String label );
 
     /** {@inheritDoc} */
-    @Override Tsr<V> withLabels(String name, String[]... labels );
+    @Override Tsr<V> withLabels( String[]... labels );
 
     /** {@inheritDoc} */
     @Override Tsr<V> withLabels( List<List<Object>> labels );
 
     /** {@inheritDoc} */
-    @Override Tsr<V> withLabels(String name, List<List<Object>> labels );
-
-    /** {@inheritDoc} */
     @Override Tsr<V> withLabels( Map<Object, List<Object>> labels );
-
-    /** {@inheritDoc} */
-    @Override Tsr<V> withLabels(String name, Map<Object, List<Object>> labels );
 
     /*==================================================================================================================
     |

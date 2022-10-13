@@ -56,7 +56,7 @@ class Tensor_Framing_Spec extends Specification
     {
         given : 'We create a 3D tensor and label its indices.'
             Tsr t = Tsr.of([2, 3, 2], 1..100)
-            t.mut.label([
+            t.mut.labelAxes([
                     ["1", "2"],
                     ["a", "b", "c"],
                     [1, 2]
@@ -74,7 +74,7 @@ class Tensor_Framing_Spec extends Specification
             !asString.contains("Axis Three")
 
         when : 'We provide a map, where the keys are axis labels...'
-            t.mut.label([
+            t.mut.labelAxes([
                     "Axis One" : ["1", "2"],
                     "Axis Two" : ["a", "b", "c"],
                     "Axis Three" : [1, 2]
@@ -94,7 +94,7 @@ class Tensor_Framing_Spec extends Specification
             asString.contains("|     Axis One     |     Axis Two     |    Axis Three    |")
 
         when :
-            t.mut.label([
+            t.mut.labelAxes([
                     "Axis One" : ["x", "y"],
                     "Axis Two" : null,
                     "Axis Three" : ["tim", "tina"]
@@ -149,7 +149,7 @@ class Tensor_Framing_Spec extends Specification
                     9d, 8d, 6d, 5d,
                     4d, 5d, 6d, 7d
             ])
-            t.mut.label([
+            t.mut.labelAxes([
                     ["1", "2", "3"],
                     ["a", "b", "y", "z"]
             ])
@@ -226,7 +226,8 @@ class Tensor_Framing_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and: 'A labeled tensor of rank 3 is being created.'
             var t = Tsr.of([2, 3, 4], -7d..7d)
-            t.mut.label( 'My Tensor', [
+            t.mut.label( 'My Tensor' )
+            t.mut.labelAxes( [
                 ["1", "2"],
                 ["a", "b", "y"],
                 ["tim", "tom", "tina", "tanya"]
@@ -361,7 +362,7 @@ class Tensor_Framing_Spec extends Specification
             t.sliceCount()==3
 
         when :
-            t.mut.label(
+            t.mut.labelAxes(
                 new String[][]{
                     new String[]{ "1", "2" },
                     new String[]{ "a", "b", "y" },
@@ -408,7 +409,8 @@ class Tensor_Framing_Spec extends Specification
     {
         given: 'A labeled tensor of rank 3 is being created.'
             Tsr t = Tsr.of([2, 3, 4], -7d..7d)
-            t.mut.label( 'My Tensor', [
+            t.mut.label( 'My Tensor' )
+            t.mut.labelAxes( [
                 ["1", "2"],
                 null, // We don't want to label the rows
                 ["tim", "tom"] // We only label 2 of 4

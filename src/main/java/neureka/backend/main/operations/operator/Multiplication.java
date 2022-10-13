@@ -120,14 +120,14 @@ public class Multiplication extends AbstractOperation
                             if ( localDeriv == null ) localDeriv = derivatives[ i ];
                             else localDeriv = mul.call( localDeriv, derivatives[ i ] );
                         } else {
-                            if ( localDeriv == null ) localDeriv = results[ j ].getMut().setIsIntermediate(false);
-                            else localDeriv = mul.call( localDeriv, results[ j ].getMut().setIsIntermediate(false) );
+                            if ( localDeriv == null ) localDeriv = results[ j ].mut().setIsIntermediate(false);
+                            else localDeriv = mul.call( localDeriv, results[ j ].mut().setIsIntermediate(false) );
                         }
                     }
                     if ( finalDerivative == null ) finalDerivative = localDeriv;
                     else finalDerivative = add.call( (Tsr<Object>) finalDerivative, (Tsr<Object>) localDeriv );
                 }
-                return Result.of( finalDerivative.getMut().setIsIntermediate(true) );
+                return Result.of( finalDerivative.mut().setIsIntermediate(true) );
             }
         }
         return super.execute( reducePairwise(caller), call );

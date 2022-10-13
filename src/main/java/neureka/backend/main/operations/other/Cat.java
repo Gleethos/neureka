@@ -73,7 +73,7 @@ public class Cat extends AbstractOperation
                         Tsr<?> slice = c.slice().axis( dim ).from( start ).to( end ).detached();
                         Neureka.get().backend().getFunction().idy().execute( slice, call.input( i ) );
                     }
-                    c.getMut().setIsIntermediate(true);
+                    c.mut().setIsIntermediate(true);
                     return
                         Result.of(c)
                             .withADAction( target -> {

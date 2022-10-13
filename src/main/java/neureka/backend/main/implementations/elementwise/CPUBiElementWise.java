@@ -54,11 +54,11 @@ public abstract class CPUBiElementWise implements ImplementationFor<CPU>
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             CPUBiFun operation
     ) {
-        t1_src.getMut().setIsVirtual( false );
-        t2_src.getMut().setIsVirtual( false );
-        double[] t0_val = t0_drn.getMut().getDataForWriting( double[].class );
-        double[] t1_val = t1_src.getMut().getDataAs( double[].class );
-        double[] t2_val = t2_src.getMut().getDataAs( double[].class );
+        t1_src.mut().setIsVirtual( false );
+        t2_src.mut().setIsVirtual( false );
+        double[] t0_val = t0_drn.mut().getDataForWriting( double[].class );
+        double[] t1_val = t1_src.mut().getDataAs( double[].class );
+        double[] t2_val = t2_src.mut().getDataAs( double[].class );
 
         assert t0_val != null;
         assert t1_val != null;
@@ -98,12 +98,12 @@ public abstract class CPUBiElementWise implements ImplementationFor<CPU>
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             CPUBiFun operation
     ) {
-        t1_src.getMut().setIsVirtual( false );
-        t2_src.getMut().setIsVirtual( false );
+        t1_src.mut().setIsVirtual( false );
+        t2_src.mut().setIsVirtual( false );
 
-        float[] t0_val = t0_drn.getMut().getDataForWriting( float[].class );
-        float[] t1_val = t1_src.getMut().getDataAs( float[].class );
-        float[] t2_val = t2_src.getMut().getDataAs( float[].class );
+        float[] t0_val = t0_drn.mut().getDataForWriting( float[].class );
+        float[] t1_val = t1_src.mut().getDataAs( float[].class );
+        float[] t2_val = t2_src.mut().getDataAs( float[].class );
 
         assert t0_val != null;
         assert t1_val != null;
@@ -143,11 +143,11 @@ public abstract class CPUBiElementWise implements ImplementationFor<CPU>
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             CPUBiFun operation
     ) {
-        t1_src.getMut().setIsVirtual( false );
-        t2_src.getMut().setIsVirtual( false );
-        int[] t0_val = (int[]) t0_drn.getMut().getData().getRef();
-        int[] t1_val = t1_src.getMut().getDataAs( int[].class );
-        int[] t2_val = t2_src.getMut().getDataAs( int[].class );
+        t1_src.mut().setIsVirtual( false );
+        t2_src.mut().setIsVirtual( false );
+        int[] t0_val = (int[]) t0_drn.mut().getData().getRef();
+        int[] t1_val = t1_src.mut().getDataAs( int[].class );
+        int[] t2_val = t2_src.mut().getDataAs( int[].class );
 
         assert t0_val != null;
         assert t1_val != null;

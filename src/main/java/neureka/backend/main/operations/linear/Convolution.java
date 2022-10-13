@@ -45,7 +45,7 @@ public class Convolution extends AbstractOperation
                 (call, executor) ->
                 {
                     Tsr<?>[] tensors = call.inputs();
-                    for ( Tsr<?> t : tensors ) if ( t != null ) t.getMut().setIsVirtual( false );
+                    for ( Tsr<?> t : tensors ) if ( t != null ) t.mut().setIsVirtual( false );
 
                     ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
                     return AbstractDeviceAlgorithm.executeOnCommonDevice(
@@ -71,7 +71,7 @@ public class Convolution extends AbstractOperation
                                             deConv.execute(
                                                 target.error(),
                                                 derivative,
-                                                Tsr.of(shape, 0).getMut().setIsIntermediate( false )
+                                                Tsr.of(shape, 0).mut().setIsIntermediate( false )
                                             )
                                     );
                 }
@@ -81,9 +81,9 @@ public class Convolution extends AbstractOperation
                      Device<Number> device = call.getDeviceFor(Number.class);
                      int[] shp = ConvUtil.shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
                      Tsr<Number> output = (Tsr<Number>) Tsr.of( call.input(1).getItemType(), shp, 0 )
-                                             .getMut()
+                                             .mut()
                                              .setIsIntermediate( true );
-                     output.getMut().setIsVirtual( false );
+                     output.mut().setIsVirtual( false );
                      //device.store( output );//Todo: find out why this causes problems
                      return call.withInputAt( 0, output );
                  }

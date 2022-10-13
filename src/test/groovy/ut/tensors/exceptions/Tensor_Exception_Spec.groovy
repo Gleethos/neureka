@@ -85,17 +85,15 @@ class Tensor_Exception_Spec extends Specification
             IllegalArgumentException    | { Tsr x -> x.mut.plusAssign((Tsr)null)  }
             IllegalArgumentException    | { Tsr x -> x.mut.modAssign((Tsr)null)  }
             IllegalArgumentException    | { Tsr x -> x.mut.minusAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.mut.label((String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.mut.label("hi", (String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.mut.label(null, (String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.mut.label("hi", (Map)null) }
-            IllegalArgumentException    | { Tsr x -> x.mut.label(null, (Map)null) }
-            IllegalArgumentException    | { Tsr x -> x.withLabels("hi", (String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.withLabels(null, (String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.labelAxes((String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.labelAxes((String[][])null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.labelAxes((Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.mut.label(null) }
+            IllegalArgumentException    | { Tsr x -> x.withLabels((String[][])null) }
             IllegalArgumentException    | { Tsr x -> x.withLabels(null, (String[])null) }
             IllegalArgumentException    | { Tsr x -> x.withLabels((String[])null) }
-            IllegalArgumentException    | { Tsr x -> x.withLabels("hi", (Map)null) }
-            IllegalArgumentException    | { Tsr x -> x.withLabels(null, (Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.withLabels((Map)null) }
+            IllegalArgumentException    | { Tsr x -> x.withLabel(null) }
     }
 
     def 'Passing an invalid object into Tsr constructor causes descriptive exception.'()

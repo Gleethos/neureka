@@ -53,13 +53,13 @@ public class AssignLeft extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution( (caller, call) -> {
                 Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
-                t.getMut().incrementVersion(call);
+                t.mut().incrementVersion(call);
                 return Result.of(t);
             })
             .setCallPreparation(
                 call -> {
                     int offset = ( call.input( 0 ) == null ? 1 : 0 );
-                    call.input( offset ).getMut().setIsVirtual( false );
+                    call.input( offset ).mut().setIsVirtual( false );
                     return
                         ExecutionCall.of( call.input( offset ), call.input( offset + 1 ) )
                                 .andArgs(Arg.DerivIdx.of(-1))
@@ -82,7 +82,7 @@ public class AssignLeft extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution( (caller, call) -> {
                 Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
-                t.getMut().incrementVersion(call);
+                t.mut().incrementVersion(call);
                 return Result.of(t);
             })
             .setCallPreparation(
@@ -106,7 +106,7 @@ public class AssignLeft extends AbstractOperation
 
         Function reducedCaller = reducePairwise(caller);
         ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
-        for (Tsr<?> t : call.inputs()) t.getMut().setIsIntermediate(false);
+        for (Tsr<?> t : call.inputs()) t.mut().setIsIntermediate(false);
         Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), false );
         return super.execute( flat, flatCall );
     }

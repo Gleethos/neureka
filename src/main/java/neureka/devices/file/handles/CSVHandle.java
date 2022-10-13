@@ -219,7 +219,8 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
             }
         }
         else labels = _colLabels;
-        loaded.getMut().label(_label, new String[][]{ index, labels } );
+        loaded.getMut().labelAxes( index, labels );
+        loaded.getMut().label( _label );
         return loaded;
     }
 

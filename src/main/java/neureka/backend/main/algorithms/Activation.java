@@ -38,8 +38,8 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                 {
                     int[] shape = call.input(  1 ).getNDConf().shape();
                     Class<Object> type = (Class<Object>) call.input(  1 ).getItemType();
-                    Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 ).getMut().setIsIntermediate( true );
-                    output.getMut().setIsVirtual( false );
+                    Tsr<Object> output = Tsr.of(type).withShape(shape).all( 0.0 ).mut().setIsIntermediate( true );
+                    output.mut().setIsVirtual( false );
                     device.store( output );
                     call = call.withInputAt( 0, output );
                 }

@@ -234,13 +234,8 @@ public interface MutateTsr<T> extends MutateNda<T>
 
     @Override Tsr<T> assign( Nda<T> other );
 
-    /**
-     * {inheritDoc}
-     */
-    @Override
-    default Tsr<T> label(String[]... labels) {
-        return label(null, labels);
-    }
+    /** {@inheritDoc} */
+    @Override Tsr<T> label( String label );
 
     /**
      * This method receives a label for this tensor and a
@@ -257,11 +252,10 @@ public interface MutateTsr<T> extends MutateNda<T>
      * dim 1 : ["1", "2", "3"]                                 <br>
      * <br>
      *
-     * @param tensorName A label for this tensor itself.
      * @param labels     A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    Tsr<T> label(String tensorName, String[]... labels);
+    Tsr<T> labelAxes( String[]... labels );
 
     /**
      * This method receives a nested {@link String} list which
@@ -280,27 +274,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param labels A nested String list containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    Tsr<T> label(List<List<Object>> labels);
-
-    /**
-     * This method receives a label for this tensor and a nested
-     * {@link String} list which ought to contain a label for the index of
-     * this tensor The index for a single element of this tensor would
-     * be an array of numbers as long as the rank where every number is
-     * in the range of the corresponding shape dimension...
-     * Labeling an index means that for every dimension there
-     * must be a label for elements in this range array! <br>
-     * For example the shape (2,3) could be labeled as follows: <br>
-     * <br>
-     * dim 0 : ["A", "B"]                                   <br>
-     * dim 1 : ["1", "2", "3"]                              <br>
-     * <br>
-     *
-     * @param tensorName A label for this tensor itself.
-     * @param labels     A nested String list containing labels for indexes of the tensor dimensions.
-     * @return This tensor (method chaining).
-     */
-    Tsr<T> label(String tensorName, List<List<Object>> labels);
+    Tsr<T> labelAxes( List<List<Object>> labels );
 
     /**
      * This method provides the ability to
@@ -319,27 +293,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
      * @return This tensor (method chaining).
      */
-    Tsr<T> label(Map<Object, List<Object>> labels);
-
-    /**
-     * This method provides the ability to
-     * label not only the indices of the shape of this tensor, but also
-     * the dimension of the shape.
-     * The first and only argument of the method expects a map instance
-     * where keys are the objects which ought to act as dimension labels
-     * and the values are lists of labels for the indices of said dimensions.
-     * For example the shape (2,3) could be labeled as follows:            <br>
-     * [                                                                   <br>
-     * "dim 0" : ["A", "B"],                                            <br>
-     * "dim 1" : ["1", "2", "3"]                                        <br>
-     * ]                                                                   <br>
-     * <br>
-     *
-     * @param tensorName A label for this tensor itself.
-     * @param labels     A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
-     * @return This tensor (method chaining).
-     */
-    Tsr<T> label(String tensorName, Map<Object, List<Object>> labels);
+    Tsr<T> labelAxes( Map<Object, List<Object>> labels );
 
     /**
      *  Virtualizing is the opposite to actualizing a tensor.

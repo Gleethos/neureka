@@ -46,7 +46,7 @@ public class ElemWiseUtil
             } else {
                 Tsr<?>[] reduction = Operation.Utility.without(call.inputs(), 1+d);
                 if ( reduction.length > 2 ) {
-                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).deepCopy().getMut().setIsIntermediate( true ) : reduction[ 0 ];
+                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).deepCopy().mut().setIsIntermediate( true ) : reduction[ 0 ];
                     result = recursiveExecutor.execute(
                             ExecutionCall.of( reduction )
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
@@ -92,7 +92,7 @@ public class ElemWiseUtil
                 Tsr<?> a;
                 if ( d > 1 ) {
                     Tsr<?>[] reduction = Operation.Utility.subset(call.inputs(), 1, 1, d+1);
-                    reduction[ 0 ] = call.input( 1 ).deepCopy().getMut().setIsIntermediate( true );
+                    reduction[ 0 ] = call.input( 1 ).deepCopy().mut().setIsIntermediate( true );
                     result = recursiveExecutor.execute(
                                         ExecutionCall.of( reduction )
                                                         .andArgs(Arg.DerivIdx.of(-1))
@@ -130,8 +130,8 @@ public class ElemWiseUtil
                                                         .running(Neureka.get().backend().getOperation("/"))
                                                         .on(device)
                                 );
-                if ( d == 0 ) a.getMut().delete();
-                b.getMut().delete();
+                if ( d == 0 ) a.mut().delete();
+                b.mut().delete();
             }
         }
         if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
@@ -189,8 +189,8 @@ public class ElemWiseUtil
             else
                 call = call.withInputAt(0,
                         call.input( 1 ).deepCopy()
-                           .getMut().setIsIntermediate( true )
-                           .getMut().setItems( d == 0 || thisIsForAddition ? 1f : -1f )
+                           .mut().setIsIntermediate( true )
+                           .mut().setItems( d == 0 || thisIsForAddition ? 1f : -1f )
                     );
         }
         if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
@@ -212,10 +212,10 @@ public class ElemWiseUtil
         Class<V> type, int[] shape, boolean isOutsourced, Device<Object> device, double value
     ) {
         Tsr<V> t = Tsr.of( type, shape, value )
-                        .getMut()
+                        .mut()
                         .setIsIntermediate( true );
-        t.getMut().setIsVirtual( false );
-        t.getMut().setItems( value );
+        t.mut().setIsVirtual( false );
+        t.mut().setItems( value );
         try {
             if ( isOutsourced ) device.store( t );
         } catch ( Exception exception ) {
