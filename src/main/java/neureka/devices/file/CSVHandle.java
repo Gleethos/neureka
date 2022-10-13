@@ -1,9 +1,8 @@
-package neureka.devices.file.handles;
+package neureka.devices.file;
 
 
 import neureka.Tsr;
 import neureka.devices.Storage;
-import neureka.devices.file.FileHandle;
 import neureka.dtype.DataType;
 import neureka.framing.NDFrame;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
     private Integer _numberOfBytes = null;
     private WeakReference<String[]> _rawData = null;
 
-    public CSVHandle(Tsr<?> tensor, String filename )
+    CSVHandle( Tsr<?> tensor, String filename )
     {
         super( filename, new CSVType() );
         assert tensor.rank() == 2;
@@ -55,10 +54,8 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
 
         if ( _firstRowIsLabels ) {
             if ( _firstColIsIndex ) labels.add( 0, (_label == null) ? "" : _label);
-            asCsv.append(
-                    labels.stream().map( Object::toString ).collect( Collectors.joining(_delimiter ) )
-                    + "\n"
-            );
+            asCsv.append(labels.stream().map(Object::toString).collect(Collectors.joining(_delimiter)))
+                 .append("\n");
         }
         int[] shape = tensor.getNDConf().shape();
         assert shape.length == 2;
@@ -66,7 +63,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
         int[] indices = new int[ 2 ];
         for ( int i = 0; i < shape[ 0 ]; i++ ) {
             indices[ 0 ] = i;
-            if ( _firstColIsIndex ) asCsv.append( index.get( i ).toString() + "," );
+            if ( _firstColIsIndex ) asCsv.append( index.get(i).toString() ).append( "," );
             for ( int ii = 0; ii < shape[ 1 ]; ii++ ) {
                 indices[ 1 ] = ii;
                 asCsv.append( tensor.item( indices ) );
@@ -76,7 +73,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
         }
         try {
             PrintWriter out = new PrintWriter( filename );
-            out.print( asCsv.toString() );
+            out.print( asCsv );
             out.close();
         } catch ( Exception e ) {
             e.printStackTrace();
@@ -85,8 +82,8 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
     }
 
     public CSVHandle(
-            String fileName,
-            Map<String, Object> settings
+        String fileName,
+        Map<String, Object> settings
     ) {
         super( fileName, new CSVType() );
         if ( settings != null ) {
@@ -112,12 +109,12 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
             e.printStackTrace();
             System.err.print( "Failed reading CSV file!" );
             _LOG.error( "Failed reading CSV file!" );
-            return null;
+            return new String[0];
         }
         List<String[]> table = new ArrayList<>();
         List<String> rowLabels = ( _firstColIsIndex ) ? new ArrayList<>() : null;
         try (
-                BufferedReader br = new BufferedReader( new InputStreamReader( fis, StandardCharsets.UTF_8 ) )
+            BufferedReader br = new BufferedReader( new InputStreamReader( fis, StandardCharsets.UTF_8 ) )
         ) {
             String line;
             while( ( line = br.readLine() ) != null ) {
@@ -184,13 +181,10 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
 
     @Override
     public <T extends String> Storage<String> store( Tsr<T> tensor ) {
-        return null;
+        throw new UnsupportedOperationException( "CSVHandle does not support storing tensors!" );
     }
 
-    @Override
-    protected Object _loadData() throws IOException {
-        return _lazyLoad();
-    }
+    @Override protected Object _loadData() { return _lazyLoad(); }
 
     @Override
     public Tsr<String> load() throws IOException {
@@ -224,16 +218,12 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
         return loaded;
     }
 
-    public String getTensorName() {
-        _lazyLoad();
-        return _label;
-    }
-
     @Override
     public int getValueSize() {
         String[] rawData;
         if ( _rawData == null ) rawData = _lazyLoad();
         else rawData = _rawData.get();
+        if ( rawData == null ) return 0;
         return rawData.length;
     }
 

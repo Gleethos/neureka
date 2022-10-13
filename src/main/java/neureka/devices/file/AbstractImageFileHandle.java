@@ -1,4 +1,4 @@
-package neureka.devices.file.handles;
+package neureka.devices.file;
 
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
@@ -14,7 +14,7 @@ import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 
-public abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, Number>
+abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, Number>
 {
     private final ImageFileType _type;
     private int _width;

@@ -1,4 +1,4 @@
-package neureka.devices.file.handles.util;
+package neureka.devices.file;
 
 import neureka.dtype.NumericType;
 
@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class NumberReader
+final class NumberReader
 {
     private final FileInputStream _fileInputStream;
     private int _bytesRead = 0;
     private final Map<Integer, byte[]> _byteMap;
 
-    public NumberReader( FileInputStream fileInputStream ) {
+    NumberReader( FileInputStream fileInputStream ) {
         _byteMap = new HashMap<>();
         _byteMap.put( 1, new byte[ 1 ] );
         _byteMap.put( 2, new byte[ 2 ] );

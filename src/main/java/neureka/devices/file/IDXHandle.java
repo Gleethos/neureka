@@ -1,11 +1,9 @@
-package neureka.devices.file.handles;
+package neureka.devices.file;
 
 
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.devices.file.FileHandle;
-import neureka.devices.file.handles.util.NumberReader;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
@@ -55,7 +53,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
                                                                 )
                                                             );
 
-    public IDXHandle(String fileName )
+    public IDXHandle(String fileName)
     {
         super( fileName, new IDXType() );
         try {

@@ -1,7 +1,6 @@
-package neureka.devices.file.handles;
+package neureka.devices.file;
 
 import neureka.Tsr;
-import neureka.devices.file.FileHandle;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -10,15 +9,15 @@ import org.slf4j.LoggerFactory;
  *  Like other {@link FileHandle} implementations of this class represents a file
  *  of a given type, in this case it represents a JPEG file.
  */
-public final class JPEGHandle extends AbstractImageFileHandle<JPEGHandle>
+final class JPEGHandle extends AbstractImageFileHandle<JPEGHandle>
 {
     static {
         _LOG = LoggerFactory.getLogger( JPEGHandle.class );
     }
 
-    public JPEGHandle( String fileName) { this( null, fileName ); }
+    JPEGHandle( String fileName) { this( null, fileName ); }
 
-    public JPEGHandle( Tsr<Number> tensor, String filename ) {
+    JPEGHandle( Tsr<Number> tensor, String filename ) {
         super(
                 tensor,
                 filename,

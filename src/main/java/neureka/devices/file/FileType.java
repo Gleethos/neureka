@@ -1,4 +1,4 @@
-package neureka.devices.file.handles;
+package neureka.devices.file;
 
 interface FileType
 {

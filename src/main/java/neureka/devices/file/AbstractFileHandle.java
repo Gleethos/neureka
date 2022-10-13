@@ -1,8 +1,7 @@
-package neureka.devices.file.handles;
+package neureka.devices.file;
 
 import neureka.Tsr;
 import neureka.devices.Storage;
-import neureka.devices.file.FileHandle;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -14,7 +13,7 @@ import java.io.IOException;
  * @param <C> The concrete type extending this class.
  * @param <V> The value type of the data in the file represented by this class.
  */
-public abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
+abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
 {
     protected static Logger _LOG;
 

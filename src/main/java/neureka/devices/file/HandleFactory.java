@@ -1,11 +1,6 @@
-package neureka.devices.file.handles.util;
+package neureka.devices.file;
 
 import neureka.Tsr;
-import neureka.devices.file.FileHandle;
-import neureka.devices.file.handles.CSVHandle;
-import neureka.devices.file.handles.IDXHandle;
-import neureka.devices.file.handles.JPEGHandle;
-import neureka.devices.file.handles.PNGHandle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +10,7 @@ import java.util.Map;
  *  which instantiate {@link FileHandle} classes.
  *  <b>This is an internal class. Do not depend on it!</b>
  */
-public final class HandleFactory
+final class HandleFactory
 {
     public interface Loader
     {

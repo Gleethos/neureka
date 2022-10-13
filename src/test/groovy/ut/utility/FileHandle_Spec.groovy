@@ -3,8 +3,8 @@ package ut.utility
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.file.FileHandle
-import neureka.devices.file.handles.CSVHandle
-import neureka.devices.file.handles.IDXHandle
+import neureka.devices.file.CSVHandle
+import neureka.devices.file.IDXHandle
 import neureka.dtype.DataType
 import neureka.dtype.NumericType
 import neureka.dtype.custom.F64
@@ -77,14 +77,13 @@ class FileHandle_Spec extends Specification
 
 
     def 'Test reading IDX file format.'(
-            String filename, String expected
+        String filename, String expected
     ) {
-
         given : 'A variable for storing a hash :'
             def hash = ""
 
         when : 'The given idx file is being loaded by the "IDXHead" class into a new tensor...'
-        IDXHandle idx = new IDXHandle( "build/resources/test/idx/" + filename )
+            IDXHandle idx = new IDXHandle( "build/resources/test/idx/" + filename )
             Tsr loaded = idx.load()
         and : '... this new tensor is then hashed ...'
             loaded.forEach( e -> hash = ( hash + e ).digest("md5") )
@@ -117,7 +116,6 @@ class FileHandle_Spec extends Specification
             idx.totalSize == 28 * 28 * 1 + 16
             idx.dataType != loaded.dataType
             idx.dataType == DataType.of( UI8.class ) // The underlying data is unsigned byte! (Not supported by JVM)
-
 
         where : 'The following files and the expected hashes of their data were used :'
             filename             || expected
@@ -220,12 +218,13 @@ class FileHandle_Spec extends Specification
     {
         given:
             Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
-                    '1', 'hi', ':)',
-                    '2', 'hey', ';)'
-            ]).mut.labelAxes([
-                    ['r1', 'r2'],
-                    ['A', 'B', 'C']
-            ])
+                            '1', 'hi', ':)',
+                            '2', 'hey', ';)'
+                        ])
+                        .mut.labelAxes([
+                            ['r1', 'r2'],
+                            ['A', 'B', 'C']
+                        ])
 
         expect:
             t.toString() == "(2x3):[\n" +
@@ -252,7 +251,6 @@ class FileHandle_Spec extends Specification
 
         then:
             !new File("build/resources/test/csv/test.csv").exists()
-
     }
 
 
@@ -260,13 +258,13 @@ class FileHandle_Spec extends Specification
     {
         given:
             Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
-                            '1', 'hi', ':)',
-                            '2', 'hey', ';)'
-                    ])
-                    .mut.labelAxes([
-                            'ROW':null,
-                            'COL':['A', 'B', 'C']
-                    ])
+                                '1', 'hi', ':)',
+                                '2', 'hey', ';)'
+                            ])
+                            .mut.labelAxes([
+                                'ROW':null,
+                                'COL':['A', 'B', 'C']
+                            ])
 
         expect:
             t.toString() == "(2x3):[\n" +
@@ -293,9 +291,7 @@ class FileHandle_Spec extends Specification
 
         then:
             !new File("build/resources/test/csv/test.csv").exists()
-
     }
-
 
 
 }

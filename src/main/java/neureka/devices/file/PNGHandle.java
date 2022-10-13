@@ -1,17 +1,17 @@
-package neureka.devices.file.handles;
+package neureka.devices.file;
 
 import neureka.Tsr;
 import org.slf4j.LoggerFactory;
 
-public class PNGHandle extends AbstractImageFileHandle<PNGHandle>
+class PNGHandle extends AbstractImageFileHandle<PNGHandle>
 {
     static {
         _LOG = LoggerFactory.getLogger( PNGHandle.class );
     }
 
-    public PNGHandle( String fileName ) { this(null, fileName); }
+    PNGHandle( String fileName ) { this(null, fileName); }
 
-    public PNGHandle( Tsr<Number> tensor, String filename ) {
+    PNGHandle( Tsr<Number> tensor, String filename ) {
         super(
                 tensor,
                 filename,

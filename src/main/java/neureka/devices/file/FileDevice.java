@@ -9,7 +9,6 @@ import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.common.utility.Cache;
-import neureka.devices.file.handles.util.HandleFactory;
 import neureka.dtype.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

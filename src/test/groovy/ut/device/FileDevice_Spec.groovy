@@ -5,10 +5,10 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.file.FileDevice
 import neureka.devices.file.FileHandle
-import neureka.devices.file.handles.CSVHandle
-import neureka.devices.file.handles.IDXHandle
-import neureka.devices.file.handles.JPEGHandle
-import neureka.devices.file.handles.PNGHandle
+import neureka.devices.file.CSVHandle
+import neureka.devices.file.IDXHandle
+import neureka.devices.file.JPEGHandle
+import neureka.devices.file.PNGHandle
 import neureka.dtype.DataType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16

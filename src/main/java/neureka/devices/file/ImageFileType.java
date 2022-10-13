@@ -1,7 +1,6 @@
-package neureka.devices.file.handles;
+package neureka.devices.file;
 
 import neureka.Tsr;
-import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 
 import java.util.Objects;

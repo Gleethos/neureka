@@ -3,7 +3,6 @@ package neureka.devices.file;
 
 import neureka.Tsr;
 import neureka.devices.Storage;
-import neureka.devices.file.handles.util.HandleFactory;
 import neureka.dtype.DataType;
 
 import java.io.IOException;
