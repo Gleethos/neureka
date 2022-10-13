@@ -660,6 +660,22 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         return this;
     }
 
+    /** {@inheritDoc} */
+    @Override public MutateNda.Item<V> at(int... indices ) {
+        return new MutateNda.Item<V>() {
+            @Override public V    get()          { return item( indices ); }
+            @Override public void set( V value ) { getMut().putAt( indices, value ); }
+            @Override public boolean equals( Object o ) {
+                if ( o == null ) return false;
+                if ( o == this ) return true;
+                if ( o.getClass() != this.getClass() ) return false;
+                Nda.Item<V> other = (Nda.Item<V>) o;
+                return this.get().equals( other.get() );
+            }
+            @Override public int hashCode() { V item = get(); return ( item == null ? 0 : item.hashCode() ); }
+            @Override public String toString() { return String.valueOf( get() ); }
+        };
+    }
     /**
      *  {@inheritDoc}
      */

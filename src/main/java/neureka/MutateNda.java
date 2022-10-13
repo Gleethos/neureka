@@ -281,4 +281,20 @@ public interface MutateNda<T>
      * @return This tensor (method chaining).
      */
     Nda<T> label(String tensorName, Map<Object, List<Object>> labels);
+
+    Item<T> at( int... indices );
+
+    /**
+     *  Instances of this are being returned by the {@link #at(int...)} method,
+     *  and they allow you to get or set individual nd-array items
+     * @param <V> The type of the items of this nd-array.
+     */
+    interface Item<V> extends Nda.Item<V>
+    {
+        /**
+         *  Set the value at the targeted position.
+         * @param value The value to be set at the targeted position.
+         */
+        void set( V value );
+    }
 }

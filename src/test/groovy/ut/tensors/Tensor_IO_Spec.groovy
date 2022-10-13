@@ -225,7 +225,7 @@ class Tensor_IO_Spec extends Specification
             t.rawData == [1] // The data array is a single element array.
 
         when : 'We access the third item of the tensor and set the value 42.'
-            t.at(2).set(42)
+            t.mut.at(2).set(42)
 
         then : 'The tensor is no longer virtual because it now stores 2 different values.'
             !t.isVirtual()

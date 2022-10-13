@@ -731,42 +731,25 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     MutateNda<V> getMut();
 
     /**
-     *  This method exposes the {@link Access} API which allows you to get or set
+     *  This method exposes the {@link Item} API which allows you to get or set
      *  individual items within this nd-array targeted by an array of provided indices.
      * @param indices An array of indices targeting a particular position in this nd-array...
      * @return An object which allows you to get or set individual items within this nd-array.
      */
-    default Access<V> at( int... indices ) {
-        return new Access<V>() {
-            @Override public V    get()          { return item( indices ); }
-            @Override public void set( V value ) { getMut().putAt( indices, value ); }
-            @Override public boolean equals( Object o ) {
-                if ( o == null ) return false;
-                if ( o == this ) return true;
-                if ( o.getClass() != this.getClass() ) return false;
-                Access<V> other = (Access<V>) o;
-                return this.get().equals( other.get() );
-            }
-        };
-    }
+    Item<V> at(int... indices );
 
     /**
      *  Instances of this are being returned by the {@link #at(int...)} method,
-     *  and they allow you to get or set individual nd-array items
+     *  and they allow you to get individual nd-array items
      * @param <V> The type of the items of this nd-array.
      */
-    interface Access<V>
+    interface Item<V>
     {
         /**
          *  Get the value at the targeted position.
          * @return The value at the targeted position.
          */
         V get();
-        /**
-         *  Set the value at the targeted position.
-         * @param value The value to be set at the targeted position.
-         */
-        void set( V value );
     }
 
     default String toString( NDPrintSettings config ) {
