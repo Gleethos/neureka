@@ -44,10 +44,10 @@ public final class NDFrame<V> implements Component<Tsr<V>>
      *  When loading a CSV file for example the label would be the first cell if
      *  both index and header labels are included in the file.
      */
-    private final String _tensorName;
+    private final String _mainLabel;
 
-    public NDFrame( List<List<Object>> labels, String tensorName ) {
-        _tensorName = tensorName;
+    public NDFrame( List<List<Object>> labels, String mainLabel ) {
+        _mainLabel = mainLabel;
         _mapping = new LinkedHashMap<>(labels.size());
         for ( int i = 0; i < labels.size(); i++ ) _mapping.put( i, new LinkedHashMap<>() );
         for ( int i = 0; i < labels.size(); i++ ) {
@@ -61,13 +61,13 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     }
 
     public NDFrame( int size, String tensorName ) {
-        _tensorName = tensorName;
+        _mainLabel = tensorName;
         _mapping = new LinkedHashMap<>( size );
         for ( int i = 0; i < size; i++ ) _mapping.put( i, new LinkedHashMap<>() );
     }
 
     public NDFrame(Map<Object, List<Object>> labels, Tsr<V> host, String tensorName ) {
-        _tensorName = tensorName;
+        _mainLabel = tensorName;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
         int[] index = { 0 };
         labels.forEach( ( k, v ) -> {
@@ -90,7 +90,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     private NDFrame( List<Object> hiddenKeys, Map<Object, Object> mapping, String tensorName ) {
         _hiddenKeys.addAll( hiddenKeys );
         _mapping = new LinkedHashMap<>(mapping);
-        _tensorName = tensorName;
+        _mainLabel = tensorName;
     }
 
     public NDFrame<V> withLabel( String newLabel ) {
@@ -98,7 +98,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     }
 
     public NDFrame<V> withAxesLabels( List<List<Object>> labels ) {
-        return new NDFrame<>( labels, _tensorName );
+        return new NDFrame<>( labels, _mainLabel);
     }
 
     public int[] get( List<Object> keys ) {
@@ -113,9 +113,8 @@ public final class NDFrame<V> implements Component<Tsr<V>>
             Object am = _mapping.get( i );
             if ( am instanceof Map )
                 indices[ i ] = ( (Map<Object, Integer>) am ).get( keys[ i ] );
-            else if ( am instanceof Integer ) {
+            else if ( am instanceof Integer )
                 indices[ i ] = (Integer) am;
-            }
         }
         return indices;
     }
@@ -306,6 +305,6 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     }
 
     public String getLabel() {
-        return _tensorName;
+        return _mainLabel;
     }
 }

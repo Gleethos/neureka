@@ -260,12 +260,13 @@ class FileHandle_Spec extends Specification
     {
         given:
             Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
-                    '1', 'hi', ':)',
-                    '2', 'hey', ';)'
-            ]).mut.labelAxes([
-                    'ROW':null,
-                    'COL':['A', 'B', 'C']
-            ])
+                            '1', 'hi', ':)',
+                            '2', 'hey', ';)'
+                    ])
+                    .mut.labelAxes([
+                            'ROW':null,
+                            'COL':['A', 'B', 'C']
+                    ])
 
         expect:
             t.toString() == "(2x3):[\n" +
