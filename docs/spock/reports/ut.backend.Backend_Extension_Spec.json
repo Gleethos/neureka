@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.069 seconds"
+    "duration":"0.071 seconds"
   },
   "headers":["\n                   This specification defines the behavior of\n                   Operation instances and their ability to be extended! <br> \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.",
       "result":"PASS",
-      "duration":"0.065 seconds",
+      "duration":"0.068 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"and","text":"A list of mocked function source nodes.","code":["var children = [Mock(FunctionInput), Mock(FunctionInput)]"]},
 
-        {"kind":"and","text":"A mock tensor which is the expected output","code":["Tsr output = Mock(Tsr)","var mutate = Mock(Tsr.Unsafe)"]},
+        {"kind":"and","text":"A mock tensor which is the expected output","code":["Tsr output = Mock(Tsr)","var mutate = Mock(MutateTsr)"]},
 
         {"kind":"and","text":"A mocked operation implementation.","code":["var implementation = Mock(Algorithm)"]},
 
@@ -35,7 +35,7 @@
 
         {"kind":"when","text":"The function is being called with an empty tensor array...","code":["var result = function.call(new Tsr[0])"]},
 
-        {"kind":"then","text":"The custom call hook should be accessed as outlined below.","code":["(0.._) * op.getAlgorithmFor(_) >> implementation","(0.._) * implementation.execute(_,_) >> Result.of(output)","(1.._) * output.getUnsafe() >> mutate","(1.._) * mutate.setIsIntermediate(false) >> output","(1.._) * output.isIntermediate() >> true","(1.._) * op.execute(_,_) >> Result.of(output)"]},
+        {"kind":"then","text":"The custom call hook should be accessed as outlined below.","code":["(0.._) * op.getAlgorithmFor(_) >> implementation","(0.._) * implementation.execute(_,_) >> Result.of(output)","(1.._) * output.getMut() >> mutate","(1.._) * mutate.setIsIntermediate(false) >> output","(1.._) * output.isIntermediate() >> true","(1.._) * op.execute(_,_) >> Result.of(output)"]},
 
         {"kind":"and","text":"The mocked output tensor never returns the mock device because our custom call hook replaces execution.","code":["0 * output.getDevice() >> Mock(Device)"]},
 

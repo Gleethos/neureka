@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.011 seconds"
+    "duration":"0.009 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCL backend context can load implementations.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A backend context is being created...","code":["var ctx = new CLContext()"]},
+        {"kind":"given","text":"A backend context is being created...","code":["var ctx = new CLBackend()"]},
 
         {"kind":"and","text":"A backend loader is created by the context...","code":["var loader = ctx.getLoader()"]},
 

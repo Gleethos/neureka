@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.029 seconds"
+    "duration":"0.034 seconds"
   },
   "headers":["\n                This specification covers some basic behaviour related to\n                reading and modifying the data inside a tensor.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -23,9 +23,9 @@
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"A new tensor instance with the shape (4x3).","code":["Tsr t1 = Tsr.of([4, 3], 1d..12d)"]},
+        {"kind":"and","text":"A new tensor instance with the shape (4x3).","code":["var t1 = Tsr.of([4, 3], 1d..12d)"]},
 
-        {"kind":"when","text":"Recording the index behavior before and after a reshape operation...","code":["var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})","var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})","var t1_indices = t1.indicesOfIndex(5)","Tsr t2 = Function.of(\" [ 1, 0 ]:( I[0] ) \")(t1)","var t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})","var t2_idx = t2.indicesOfIndex(7)","var t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7))","var t2_ioi_2 =  t2.indexOfIndices(t2.indicesOfIndex(7))"]},
+        {"kind":"when","text":"Recording the index behavior before and after a reshape operation...","code":["var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})","var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})","var t1_indices = t1.indicesOfIndex(5)","var t2 = Function.of(\" [ 1, 0 ]:( I[0] ) \")(t1)","var t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})","var t2_idx = t2.indicesOfIndex(7)","var t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7))","var t2_ioi_2 =  t2.indexOfIndices(t2.indicesOfIndex(7))"]},
 
         {"kind":"then","text":"These recorded values are as one would expect.","code":["t1_ioi_1 == 7","t1_ioi_2 == 5","t1_indices[0] == 1","t1_indices[1] == 2","t2_ioi_1 == 7","t2_idx[0] == 1","t2_idx[1] == 3","t1_ioi_3 == 7","t2_ioi_2 == 10","t1.toString().contains(\"[4x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0)\")","t2.toString().contains(\"[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.0, 9.0, 12.0)\")"]}
       ],
@@ -42,23 +42,23 @@
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"A new tensor instance.","code":["Tsr x = Tsr.of(3d)"]},
+        {"kind":"and","text":"A new tensor instance.","code":["var x = Tsr.of(3d)"]},
 
-        {"kind":"when","text":"Setting the value of the tensor...","code":["float[] value32 = new float[1]","value32[0] = 5","x.setItems(value32)"]},
+        {"kind":"when","text":"Setting the value of the tensor...","code":["float[] floats = new float[1]","floats[0] = 5","x.mut.setItems(floats)"]},
 
-        {"kind":"then","text":"...the tensor will change as expected.","code":["!(x.getItems() instanceof float[])","!(x.unsafe.data.ref instanceof float[])","!(x.data instanceof float[])","x.getItemsAs( float[].class )[ 0 ]==5.0f","x.getItemsAs( double[].class )[0]==5.0d"]},
+        {"kind":"then","text":"...the tensor will change as expected.","code":["!(x.getItems() instanceof float[])","!(x.mut.data.ref instanceof float[])","!(x.rawData instanceof float[])","x.getItemsAs( float[].class )[ 0 ]==5.0f","x.getItemsAs( double[].class )[0]==5.0d"]},
 
-        {"kind":"when","text":"Doing the same with double array...","code":["double[] value64 = new double[1]","value64[0] = 4.0","x.setItems(value64)"]},
+        {"kind":"when","text":"Doing the same with double array...","code":["double[] doubles = new double[1]","doubles[0] = 4.0","x.mut.setItems(doubles)"]},
 
-        {"kind":"then","text":"...once again the tensor changes as expected.","code":["x.rawItems instanceof double[]","x.unsafe.data.ref instanceof double[]","x.data instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==4.0f","x.getItemsAs( double[].class )[0]==4.0d","x.isLeave()","!x.isBranch()","!x.isOutsourced()","!x.isVirtual()","!x.isSlice()","!x.isSliceParent()","!x.belongsToGraph()","x.getDevice() !=null","x.getDevice() instanceof CPU","x.rank()==1","!x.rqsGradient()","x.size()==1"]},
+        {"kind":"then","text":"...once again the tensor changes as expected.","code":["x.rawItems instanceof double[]","x.mut.data.ref instanceof double[]","x.rawData instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==4.0f","x.getItemsAs( double[].class )[0]==4.0d","x.isLeave()","!x.isBranch()","!x.isOutsourced()","!x.isVirtual()","!x.isSlice()","!x.isSliceParent()","!x.belongsToGraph()","x.getDevice() !=null","x.getDevice() instanceof CPU","x.rank()==1","!x.rqsGradient()","x.size()==1"]},
 
-        {"kind":"when","text":"","code":["x.unsafe.toType( Float.class )"]},
+        {"kind":"when","text":"","code":["x.mut.toType( Float.class )"]},
 
         {"kind":"then","text":"","code":["x.rawItems instanceof float[]"]},
 
-        {"kind":"when","text":"","code":["value64 = new double[1]","value64[0] = 7.0","x.setItems(value64)"]},
+        {"kind":"when","text":"","code":["doubles = new double[1]","doubles[0] = 7.0","x.mut.setItems(doubles)"]},
 
-        {"kind":"then","text":"","code":["!(x.rawItems instanceof double[])","!(x.unsafe.data.ref instanceof double[])","!(x.data instanceof double[])","x.getItemsAs( float[].class )[ 0 ]==7.0f","x.getItemsAs( double[].class )[0]==7.0d"]}
+        {"kind":"then","text":"","code":["!(x.rawItems instanceof double[])","!(x.mut.data.ref instanceof double[])","!(x.rawData instanceof double[])","x.getItemsAs( float[].class )[ 0 ]==7.0f","x.getItemsAs( double[].class )[0]==7.0d"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -66,7 +66,7 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -75,7 +75,7 @@
 
         {"kind":"and","text":"We store the tensor on the given device, to ensure that it work there as well.","code":["t.to(device)"]},
 
-        {"kind":"when","text":"We call the \"setValue\" method with a scalar value passed to it...","code":["t.setItems(5)"]},
+        {"kind":"when","text":"We call the \"setValue\" method with a scalar value passed to it...","code":["t.mut.setItems(5)"]},
 
         {"kind":"then","text":"The value of the tensor will be an array of 3.","code":["t.items == [5, 5, 5]"]},
 
@@ -89,7 +89,7 @@
     {
       "id":"We can manipulate the underlying data array of a tensor through the unsafe API.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,15 +100,15 @@
 
         {"kind":"when","text":"We create a slice which should internally reference the same data as the slice parent.","code":["var s = t[1]"]},
 
-        {"kind":"then","text":"The slice has the expected state!","code":["s.isSlice()","s.items == [66]","s.data  == [42, 66, 73]"]},
+        {"kind":"then","text":"The slice has the expected state!","code":["s.isSlice()","s.items == [66]","s.rawData  == [42, 66, 73]"]},
 
-        {"kind":"when","text":"We call the \"setData\" method with a scalar value passed to it...","code":["s.unsafe.setDataAt(1, -9)"]},
+        {"kind":"when","text":"We call the \"setData\" method with a scalar value passed to it...","code":["s.mut.setDataAt(1, -9)"]},
 
         {"kind":"then","text":"The change will be reflected in the slice...","code":["s.items == [-9]"]},
 
         {"kind":"and","text":"Also in the slice parent!","code":["t.items == [42, -9, 73]"]},
 
-        {"kind":"and","text":"Both tensors should have the same data array!","code":["s.data  == [42, -9, 73]","t.data  == [42, -9, 73]"]},
+        {"kind":"and","text":"Both tensors should have the same data array!","code":["s.rawData  == [42, -9, 73]","t.rawData  == [42, -9, 73]"]},
 
         {"kind":"where","text":"","code":{"device":["CPU","CPU","CPU","CPU"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Short"]}}
       ],
@@ -118,7 +118,7 @@
     {
       "id":"When we try to manipulate the underlying data array of a virtual tensor then it will become actual.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -127,13 +127,13 @@
 
         {"kind":"and","text":"We store the tensor on the given device, to ensure that it work there as well.","code":["t.to(device)"]},
 
-        {"kind":"expect","text":"The tensor is virtual because it is filled homogeneously with the same value.","code":["t.isVirtual()","t.items == [1, 1, 1]","t.data == [1]"]},
+        {"kind":"expect","text":"The tensor is virtual because it is filled homogeneously with the same value.","code":["t.isVirtual()","t.items == [1, 1, 1]","t.rawData == [1]"]},
 
-        {"kind":"when","text":"We access the third item of the tensor and set the value 42.","code":["t.at(2).set(42)"]},
+        {"kind":"when","text":"We access the third item of the tensor and set the value 42.","code":["t.mut.at(2).set(42)"]},
 
-        {"kind":"then","text":"The tensor is no longer virtual because it now stores 2 different values.","code":["!t.isVirtual()","t.items == [1, 1, 42]","t.data == [1, 1, 42]"]},
+        {"kind":"then","text":"The tensor is no longer virtual because it now stores 2 different values.","code":["!t.isVirtual()","t.items == [1, 1, 42]","t.rawData == [1, 1, 42]"]},
 
-        {"kind":"where","text":"We ensure that this works on different devices and with different data types.","code":{"device":["CPU","CPU","CPU","CPU","CPU","CPU"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Short","class java.lang.Integer","class java.lang.Long"]}}
+        {"kind":"where","text":"We ensure that this works on different devices and with different data types.","code":{"device":["CPU","CPU","CPU","CPU","CPU","CPU","GPU"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Short","class java.lang.Integer","class java.lang.Long","class java.lang.Float"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -141,14 +141,14 @@
     {
       "id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"when","text":"Creating a simple shape array...","code":["int[] shape = new int[1]","shape[0] = 4"]},
+        {"kind":"when","text":"Creating a simple shape array...","code":["var shape = new int[]{4}"]},
 
         {"kind":"and","text":"...and passing it to the \"newRandom\" factory method to produce tensor x...","code":["Tsr x = Tsr.ofRandom(Double, shape)"]},
 
@@ -175,43 +175,43 @@
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"Two tensors which will be used for testing IO.","code":["var t = Tsr.of([2, 2], [","        1.0d, 4.0d,","        2.0d, 7.0d,","])","var v = Tsr.of([2, 2], [","        1.0d, -1.0d,","        1.0d, -1.0d","])"]},
+        {"kind":"and","text":"Two tensors which will be used for testing IO.","code":["var t = Tsr.of([2, 2], [","    1.0d, 4.0d,","    2.0d, 7.0d,","])","var v = Tsr.of([2, 2], [","    1.0d, -1.0d,","    1.0d, -1.0d","])"]},
 
         {"kind":"when","text":"","code":["t += v"]},
 
         {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, 3.0, 3.0, 6.0)\")"]},
 
-        {"kind":"when","text":"","code":["t.setItemAt( 2, 6.0 as double )"]},
+        {"kind":"when","text":"","code":["t.mut.setItemAt( 2, 6.0 as double )"]},
 
         {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, 3.0, 6.0, 6.0)\")"]},
 
-        {"kind":"when","text":"","code":["int[] indices = new int[2]","indices[1] = 1","t.setItemAt(t.indexOfIndices(indices), -6.0 as double)"]},
+        {"kind":"when","text":"","code":["int[] indices = new int[2]","indices[1] = 1","t.mut.setItemAt(t.indexOfIndices(indices), -6.0 as double)"]},
 
         {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, 6.0)\")","t.item(indices) ==-6.0d"]},
 
-        {"kind":"when","text":"","code":["indices[0] = 1","t[indices].timesAssign(-1d)"]},
+        {"kind":"when","text":"","code":["indices[0] = 1","t[indices].mut.timesAssign(-1d)"]},
 
         {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, -6.0)\")"]},
 
-        {"kind":"when","text":"","code":["t[3].timesAssign(-2d)"]},
+        {"kind":"when","text":"","code":["t[3].mut.timesAssign(-2d)"]},
 
         {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, 12.0)\")"]},
 
-        {"kind":"when","text":"","code":["t[indices] = 0d"]},
+        {"kind":"when","text":"","code":["t.mut[indices] = 0d"]},
 
         {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, 0.0)\")"]},
 
-        {"kind":"when","text":"","code":["t[2] = 99d"]},
+        {"kind":"when","text":"","code":["t.mut[2] = 99d"]},
 
         {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 99.0, 0.0)\")"]},
 
-        {"kind":"when","text":"","code":["t[2].minusAssign(99d)"]},
+        {"kind":"when","text":"","code":["t[2].mut.minusAssign(99d)"]},
 
         {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 0.0, 0.0)\")"]},
 
         {"kind":"when","text":"Modifying the first index of the indices array...","code":["indices[0] = 0"]},
 
-        {"kind":"and","text":"Using this new indices array for IO...","code":["t[indices].minusAssign(-9d)"]},
+        {"kind":"and","text":"Using this new indices array for IO...","code":["t[indices].mut.minusAssign(-9d)"]},
 
         {"kind":"then","text":"The underlying data will have changed.","code":["t.toString().contains(\"[2x2]:(2.0, 3.0, 0.0, 0.0)\")"]},
 
@@ -225,26 +225,26 @@
     {
       "id":"The tensor data array can be modified by targeting them with an index.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var t = Tsr.of(type).withShape(shape).andFill(data)"]},
 
-        {"kind":"when","text":"","code":["t.unsafe.setDataAt( 1, element )"]},
+        {"kind":"when","text":"","code":["t.mut.setDataAt( 1, element )"]},
 
         {"kind":"then","text":"","code":["t.getDataAt( 1 ) == element"]},
 
-        {"kind":"and","text":"","code":["t.unsafe.data.ref == expected","t.data == expected"]},
+        {"kind":"and","text":"","code":["t.mut.data.ref == expected","t.rawData == expected"]},
 
         {"kind":"when","text":"","code":["t = Tsr.of(type).withShape(shape).andFill(data)"]},
 
-        {"kind":"and","text":"","code":["t.setItemAt( 1, element )"]},
+        {"kind":"and","text":"","code":["t.mut.setItemAt( 1, element )"]},
 
         {"kind":"then","text":"","code":["t.item( 1 ) == element"]},
 
-        {"kind":"and","text":"","code":["t.unsafe.data.ref == expected","t.data == expected"]},
+        {"kind":"and","text":"","code":["t.mut.data.ref == expected","t.rawData == expected"]},
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Float","class java.lang.Double","class java.lang.Byte","class java.lang.Short","class java.lang.Long","class java.lang.Integer","class java.lang.Boolean","class java.lang.Character"],"shape":["[2, 2]","[2, 2]","[2, 2]","[2, 2]","[2, 2]","[2, 2]","[2, 1]","[2, 1]"],"data":["[-42.0, 24.0, 9.0, 3.0, -34.0]","[-42.0, 24.0, 9.0, 3.0, -34.0]","[-42, 24, 9, 3, -34]","[-42, 24, 9, 3, -34]","[-42, 24, 9, 3, -34]","[-42, 24, 9, 3, -34]","[false, true, false]","abc"],"element":["0.032","0.032","1","1","1","1","false","x"],"expected":["[-42.0, 0.032, 9.0, 3.0]","[-42.0, 0.032, 9.0, 3.0]","[-42, 1, 9, 3]","[-42, 1, 9, 3]","[-42, 1, 9, 3]","[-42, 1, 9, 3]","[false, false]","ax"]}}
       ],

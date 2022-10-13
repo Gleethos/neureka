@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.028 seconds"
+    "duration":"0.035 seconds"
   },
   "headers":["\n                <h2> Tensors Exception Behavior </h2>\n                <br> \n                <p>\n                    This specification covers the behavior of tensors\n                    in exceptional situations.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
@@ -23,7 +23,7 @@
       "blocks":[
         {"kind":"given","text":"A new tensor instance used for exception testing.","code":["Tsr<Integer> t = Tsr.of([6, 6], -1)"]},
 
-        {"kind":"when","text":"We try to inject an empty tensor whose size does of course not match...","code":["t[[1..3], [1..3]] = Tsr.newInstance() as Tsr<Integer>"]},
+        {"kind":"when","text":"We try to inject an empty tensor whose size does of course not match...","code":["t.mut[[1..3], [1..3]] = Tsr.newInstance() as Tsr<Integer>"]},
 
         {"kind":"then","text":"The expected message is being thrown, which tells us that ","code":["def exception = thrown(IllegalArgumentException)","assert exception.message.contains(\"Provided tensor is empty! Empty tensors cannot be injected.\")"]}
       ],
@@ -46,7 +46,7 @@
 
         {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@6cdcf93","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@68cc2117","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@69ed1fa5","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@232dfa6b","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@4e47624","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@670c3055","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@6fac4ac4","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@318d07c6","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@61b73a1","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@40540180","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@719c7cc8","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@7c450295","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@7e5ef131"]}}
+        {"kind":"where","text":"","code":{"type":["class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException","class java.lang.IllegalArgumentException"],"errorCode":["ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure1@a237607","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure2@46757ad2","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure3@4e5c8d00","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure4@5470b553","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure5@53c05182","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure6@4ce1407e","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure7@13157c93","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure8@1d36343c","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure9@24be1093","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure10@40b3d990","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure11@30bd6dab","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure12@4683a657","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure13@67389536","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure14@306056b0","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure15@47d63616","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure16@57950c89","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure17@189f89ec","ut.tensors.exceptions.Tensor_Exception_Spec$__spock_feature_0_1prov1_closure18@6d241556"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -74,7 +74,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new test tensor is being instantiated.","code":["Tsr t = Tsr.of( [2, 3], -1..6 )"]},
+        {"kind":"given","text":"A new test tensor is being instantiated.","code":["var t = Tsr.of( [2, 3], -1..6 )"]},
 
         {"kind":"when","text":"A nonsensical object is being passed to the tensor.","code":["t[ [null] ]"]},
 
@@ -91,7 +91,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"Some more complex slicing is being performed...","code":["Tsr t = Tsr.of( [3, 3, 3, 3], 0 )","t[1..2, 1..3, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )"]},
+        {"kind":"when","text":"Some more complex slicing is being performed...","code":["var t = Tsr.of( [3, 3, 3, 3], 0 )","t.mut[1..2, 1..3, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )"]},
 
         {"kind":"then","text":"The slice range 1..3 causes and exception!","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"java.lang.IllegalArgumentException: \" +","\"Cannot create slice because ranges are out of the bounds of the targeted tensor.\\n\" +","\"At index '1' : offset '1' + shape '3' = '4',\\n\" +","\"which is larger than the target shape '3' at the same index!\""]},
 
@@ -118,7 +118,7 @@
     {
       "id":"Casting a tensor as something unusual will cuas an exception to be thrown.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

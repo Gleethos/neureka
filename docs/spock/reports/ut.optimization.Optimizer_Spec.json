@@ -35,7 +35,7 @@
 
         {"kind":"then","text":"","code":["f.toString() == \"softplus(I[0])\""]},
 
-        {"kind":"when","text":"","code":["Tsr s = w1.dot(X)","Tsr a = f(s)","Tsr b = f(w2.dot(a))","var y = w3.dot(b)"]},
+        {"kind":"when","text":"","code":["var s = w1.dot(X)","var a = f(s)","var b = f(w2.dot(a))","var y = w3.dot(b)"]},
 
         {"kind":"then","text":"","code":["y.items.collect({it.round(2)}) == [5.33, 6.14, 18.8, 7.01, 8.02, 4.22, 4.07, 9.36]"]},
 

@@ -40,7 +40,7 @@
       "blocks":[
         {"kind":"given","text":"Three scalar tensors.","code":["Tsr<Double> a = Tsr.of(3d)","Tsr<Double> b = Tsr.of(2d)","Tsr<Double> c = Tsr.of(-1d)"]},
 
-        {"kind":"when","text":"","code":["Tsr t = Tsr.of(\"1+\", a, \"*\", b)"]},
+        {"kind":"when","text":"","code":["var t = Tsr.of(\"1+\", a, \"*\", b)"]},
 
         {"kind":"then","text":"","code":["t.toString().contains(\"7.0\")"]},
 

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.186 seconds"
+    "duration":"0.181 seconds"
   },
   "headers":["\n                <p>\n                    Here you can find out how the version number of a tensor is\n                    set and tracked.\n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Inline operations causes version incrementation.",
       "result":"PASS",
-      "duration":"0.066 seconds",
+      "duration":"0.064 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
 
         {"kind":"and","text":"The three tensors have the expected versions.","code":["a.getVersion() == version_of_a","b.getVersion() == version_of_b","c.getVersion() == version_of_c"]},
 
-        {"kind":"where","text":"","code":{"code":[" a.plusAssign(b) "," a.minusAssign(b) "," a.timesAssign(b) "," a.divAssign(b) "," a.plusAssign(b) "," a.minusAssign(b) "," a.timesAssign(b) "," a.divAssign(b) "],"safe_inline":["true","true","true","true","false","false","false","false"],"version_of_c":["1","1","1","1","0","0","0","0"],"version_of_a":["1","1","1","1","0","0","0","0"],"version_of_b":["0","0","0","0","0","0","0","0"],"expected":["(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]","(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]"]}}
+        {"kind":"where","text":"","code":{"code":[" a.mut.plusAssign(b) "," a.mut.minusAssign(b) "," a.mut.timesAssign(b) "," a.mut.divAssign(b) "," a.mut.plusAssign(b) "," a.mut.minusAssign(b) "," a.mut.timesAssign(b) "," a.mut.divAssign(b) "],"safe_inline":["true","true","true","true","false","false","false","false"],"version_of_c":["1","1","1","1","0","0","0","0"],"version_of_a":["1","1","1","1","0","0","0","0"],"version_of_b":["0","0","0","0","0","0","0","0"],"expected":["(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]","(1):[2.0]","(1):[10.0]","(1):[-24.0]","(1):[-1.5]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -39,7 +39,7 @@
     {
       "id":"Non-inline operations do not cause version incrementation.",
       "result":"PASS",
-      "duration":"0.066 seconds",
+      "duration":"0.071 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Inline operations cause illegal state exceptions.",
       "result":"PASS",
-      "duration":"0.027 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
 
         {"kind":"and","text":"The variable \"c\" is null!","code":["c == null"]},
 
-        {"kind":"where","text":"","code":{"code":["a.plusAssign(b) ","a.minusAssign(b)","a.timesAssign(b)","a.divAssign(b) "],"message":["Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"]}}
+        {"kind":"where","text":"","code":{"code":["a.mut.plusAssign(b) ","a.mut.minusAssign(b)","a.mut.timesAssign(b)","a.mut.divAssign(b) "],"message":["Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'","Inline operation occurred on tensor which is part of a computation graph node with autograd support!\nThe following OperationType caused an internal version mismatch: 'left_inline'"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -102,7 +102,7 @@
 
         {"kind":"then","text":"","code":["t.isOutsourced()","t.version == 0"]},
 
-        {"kind":"when","text":"","code":["t[0] = 1f","t[new int[]{1, 0}] = 6f","t[0, 1] = 42f","t.set(0, 3f)","t.setItemAt(3, 4f)","t.set(new int[]{1, 1}, -1f)","t.unsafe.setDataAt(3, 5f)"]},
+        {"kind":"when","text":"","code":["t.mut[0] = 1f","t.mut[new int[]{1, 0}] = 6f","t.mut[0, 1] = 42f","t.mut.set(0, 3f)","t.mut.setItemAt(3, 4f)","t.mut.set(new int[]{1, 1}, -1f)","t.mut.setDataAt(3, 5f)"]},
 
         {"kind":"then","text":"","code":["t.version == 7"]}
       ],

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.019 seconds"
+    "duration":"0.021 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -35,7 +35,7 @@
     {
       "id":"The simple CPU matrix multiplication implementation works as expected.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        "]
       },
@@ -44,7 +44,7 @@
 
         {"kind":"and","text":"We create the data layout type based on the provided string...","code":["var dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR"]},
 
-        {"kind":"and","text":"After that we convert both matrices to the layout!","code":["a.unsafe.toLayout( dataLayout )","b.unsafe.toLayout( dataLayout )"]},
+        {"kind":"and","text":"After that we convert both matrices to the layout!","code":["a.mut.toLayout( dataLayout )","b.mut.toLayout( dataLayout )"]},
 
         {"kind":"expect","text":"This should of cause make report that they indeed have this new layout.","code":["a.NDConf.layout == dataLayout","b.NDConf.layout == dataLayout"]},
 

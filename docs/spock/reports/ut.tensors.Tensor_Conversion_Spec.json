@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.013 seconds"
+    "duration":"0.011 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We turn a tensor into a scalar value or string through the \"as\" operator!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -40,13 +40,13 @@
       "blocks":[
         {"kind":"given","text":"","code":["Tsr x = Tsr.of(3d)"]},
 
-        {"kind":"when","text":"","code":["x.unsafe.toType( Float.class )"]},
+        {"kind":"when","text":"","code":["x.mut.toType( Float.class )"]},
 
-        {"kind":"then","text":"","code":["x.rawItems instanceof float[]","x.unsafe.data.ref instanceof float[]","x.data instanceof float[]","x.getItemsAs( float[].class )[ 0 ] == 3.0f"]},
+        {"kind":"then","text":"","code":["x.rawItems instanceof float[]","x.mut.data.ref instanceof float[]","x.rawData instanceof float[]","x.getItemsAs( float[].class )[ 0 ] == 3.0f"]},
 
-        {"kind":"when","text":"","code":["x.unsafe.toType( Double.class )"]},
+        {"kind":"when","text":"","code":["x.mut.toType( Double.class )"]},
 
-        {"kind":"then","text":"","code":["x.rawItems instanceof double[]","x.unsafe.data.ref instanceof double[]","x.data instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]}
+        {"kind":"then","text":"","code":["x.rawItems instanceof double[]","x.mut.data.ref instanceof double[]","x.rawData instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -61,7 +61,7 @@
       "blocks":[
         {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tsr.of(sourceType).withShape(data.size()).andFill(data)"]},
 
-        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.unsafe.toType(targetType)"]},
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
 
         {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
 

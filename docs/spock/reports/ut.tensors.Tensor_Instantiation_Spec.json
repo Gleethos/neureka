@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"The tensor contains the expected items.","code":["t.items == data"]},
 
-        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.data == data","t.unsafe.data.ref == data"]},
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.ref == data"]},
 
         {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["[1.1, 2.2, 3.3]","[-0.21, 543.3]","[true, false]","[1, 2, 99, -123]","[3, 8, 4, 2, 3, 0]","[66, 1, 4, 42, -40]"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Boolean","class java.lang.Short","class java.lang.Long","class java.lang.Integer"],"shape":["[3]","[2]","[2]","[4]","[6]","[5]"]}}
       ],
@@ -52,7 +52,7 @@
 
         {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
 
-        {"kind":"and","text":"The tensor has the expected data array.","code":["t.unsafe.data.ref == [data]","t.data == [data]"]},
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.ref == [data]","t.rawData == [data]"]},
 
         {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
 
@@ -75,7 +75,7 @@
 
         {"kind":"and","text":"The tensor has the expected shape and items.","code":["t.shape == [ 2, 2 ]","t.items == [ 2, 4, 4, 2 ]"]},
 
-        {"kind":"and","text":"We can also observe its state when converting it to a string.","code":["t.toString() == \"(2x2):[2.0, 4.0, 4.0, 2.0]\""]},
+        {"kind":"and","text":"We can also observe its state when converting it to a string.","code":["t.toString() == \"(2x2):[2, 4, 4, 2]\""]},
 
         {"kind":"and","text":"","code":["t.getItemsAs( double[].class ).length == 4"]}
       ],
@@ -96,7 +96,7 @@
 
         {"kind":"and","text":"The tensor has the expected shape and items.","code":["t.shape == [ 2 ]","t.items == [ 3, 5 ]"]},
 
-        {"kind":"and","text":"We can also view the entire tensor when converting it to a string.","code":["t.toString() == \"(2):[3.0, 5.0]\"","t.getItemsAs( double[].class ).length == 2"]}
+        {"kind":"and","text":"We can also view the entire tensor when converting it to a string.","code":["t.toString() == \"(2):[3, 5]\"","t.getItemsAs( double[].class ).length == 2"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

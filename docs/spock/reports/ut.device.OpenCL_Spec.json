@@ -2,14 +2,14 @@
   "className":"ut.device.OpenCL_Spec",
   "title":"Working with OpenCL",
   "narrative":"Neureka models the OpenCL API through various types of classes.\n    The most fundamental of these is the `OpenCLDevice` class which\n    represents a single device with OpenCL support.\n    Besides that, there is also the `OpenCLContext` class which\n    represents a OpenCL contexts, platforms and multiple devices on said platforms...",
-  "subjects":["neureka.devices.opencl.CLContext","neureka.devices.opencl.OpenCLDevice","neureka.devices.opencl.utility.DeviceQuery","neureka.devices.Device"],
+  "subjects":["neureka.backend.ocl.CLBackend","neureka.devices.opencl.OpenCLDevice","neureka.devices.opencl.utility.DeviceQuery","neureka.devices.Device"],
   "statistics":{
     "runs":"5",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.380 seconds"
+    "duration":"2.527 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -61,7 +61,7 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -70,7 +70,7 @@
 
         {"kind":"and","text":"A mocked tensor that is not outsourced.","code":["Tsr<?> t = Mock(Tsr)","t.isOutsourced() >> false"]},
 
-        {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tsr<?> s = Mock(Tsr)","Tsr.Unsafe<?> u = Mock(Tsr.Unsafe)","s.getUnsafe() >> u","u.getData() >> Mock(Data)"]},
+        {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tsr<?> s = Mock(Tsr)","MutateTsr<?> u = Mock(MutateTsr)","s.getMut() >> u","u.getData() >> Mock(Data)"]},
 
         {"kind":"and","text":"A mocked relation between both tensors returned by the slice as component.","code":["Relation r = Mock(Relation)","s.has(Relation.class) >> true","s.get(Relation.class) >> r","r.findRootTensor() >> t"]},
 
@@ -90,12 +90,12 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.354 seconds",
+      "duration":"2.500 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["CLContext context","List<OpenCLDevice> devices = []","Runnable dispose = {","    context = Neureka.get().backend().get(CLContext)","    assert context.platforms.size() > 0","    context.platforms.each {","        assert it.devices.size() > 0","        devices.addAll(it.devices)","    }","    context.dispose()","}","def thread = new Thread(dispose)"]},
+        {"kind":"given","text":"","code":["CLBackend context","List<OpenCLDevice> devices = []","Runnable dispose = {","    context = Neureka.get().backend().get(CLBackend)","    assert context.platforms.size() > 0","    context.platforms.each {","        assert it.devices.size() > 0","        devices.addAll(it.devices)","    }","    context.dispose()","}","def thread = new Thread(dispose)"]},
 
         {"kind":"when","text":"","code":["thread.start()","thread.join()"]},
 

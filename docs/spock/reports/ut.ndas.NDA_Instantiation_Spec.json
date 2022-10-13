@@ -1,5 +1,5 @@
 {
-  "className":"ut.ndas.NDA_Instantiation_Spec",
+  "className":"ut.ndas.Nda_Instantiation_Spec",
   "title":"ND-Array Instantiation",
   "narrative":"In this specification we cover how ND-arrays can be instantiated.",
   "subjects":["neureka.Nda"],

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.010 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":["\n            Here you will find out how to store tensors on devices,\n            how to move tensors between devices and how to use\n            the device specific methods of the tensor class.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -42,7 +42,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A mock device and a simple tensor instance.","code":["def device = Mock(Device)","Tsr t = Tsr.of(2d)","device.has(t) >>> [false, true, true]"]},
+        {"kind":"given","text":"A mock device and a simple tensor instance.","code":["def device = Mock(Device)","var t = Tsr.of(2d)","device.has(t) >>> [false, true, true]"]},
 
         {"kind":"when","text":"The mock device is being added to the tensor...","code":["t.to(device)"]},
 
@@ -63,7 +63,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A simple tensor having a device as component","code":["def device = Mock(Device)","device.has(_) >>> [false, true, true]","Tsr t = Tsr.of(1d)"]},
+        {"kind":"given","text":"A simple tensor having a device as component","code":["def device = Mock(Device)","device.has(_) >>> [false, true, true]","var t = Tsr.of(1d)"]},
 
         {"kind":"when","text":"","code":["t.to(device)"]},
 
@@ -88,9 +88,9 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A 2D tensor having a device as component","code":["def device = Mock(Device)","Tsr t = Tsr.of([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])","device.has(t) >>> [false, true]"]},
+        {"kind":"given","text":"A 2D tensor having a device as component","code":["def device = Mock(Device)","var t = Tsr.of([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])","device.has(t) >>> [false, true]"]},
 
-        {"kind":"when","text":"A slice is being created from the given tensor...","code":["Tsr s = t[1..2, 0..2]"]},
+        {"kind":"when","text":"A slice is being created from the given tensor...","code":["var s = t[1..2, 0..2]"]},
 
         {"kind":"and","text":"The \"parent tensor\" is being migrated to the device...","code":["t.to(device)"]},
 

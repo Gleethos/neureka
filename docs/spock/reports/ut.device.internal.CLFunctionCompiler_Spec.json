@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.216 seconds"
+    "duration":"0.207 seconds"
   },
   "headers":["\n            Specified below are strict tests for covering the ability of \n            OpenCL devices to be able produce optimized functions given\n            a normal function instance created from a String...\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).",
       "result":"PASS",
-      "duration":"0.132 seconds",
+      "duration":"0.122 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We get the first available OpenCLDevice we can find in the CLContext!","code":["def device = Neureka.get().backend().get(CLContext.class).platforms[0].devices[0]"]},
+        {"kind":"given","text":"We get the first available OpenCLDevice we can find in the CLContext!","code":["def device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]"]},
 
         {"kind":"and","text":"Three scalar test tensors which will be used as inputs to the optimized function.","code":["Tsr<Double> t1 = Tsr.of(-2d).to(device)","Tsr<Double> t2 = Tsr.of(5d).to(device)","Tsr<Double> t3 = Tsr.of(2d).to(device)"]},
 
@@ -102,7 +102,7 @@
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.016 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

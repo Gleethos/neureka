@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.207 seconds"
+    "duration":"0.201 seconds"
   },
   "headers":["\n            <p>\n                It is important that an OpenCLDevice gives insightful error messages\n                when encountering exceptional situations.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -25,7 +25,7 @@
 
         {"kind":"and","text":"A tensor and a slice tensor of the prior.","code":["Tsr t = Tsr.of([4, 3], 2d)","Tsr s = t[1..3, 1..2]"]},
 
-        {"kind":"expect","text":"Both tensors share not only the same data but also the same data type.","code":["t.unsafe.data.ref == s.unsafe.data.ref","t.dataType == DataType.of( Double.class )","s.dataType == DataType.of( Double.class )"]},
+        {"kind":"expect","text":"Both tensors share not only the same data but also the same data type.","code":["t.mut.data.ref == s.mut.data.ref","t.dataType == DataType.of( Double.class )","s.dataType == DataType.of( Double.class )"]},
 
         {"kind":"when","text":"We try to add the slice to the device.","code":["device.store(s)"]},
 
@@ -39,12 +39,12 @@
     {
       "id":"Ad hoc compilation produces expected exceptions.",
       "result":"PASS",
-      "duration":"0.102 seconds",
+      "duration":"0.098 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLContext.class).platforms[0].devices[0]"]},
+        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]"]},
 
         {"kind":"expect","text":"Initially there is no ad hoc kernel with the following name.","code":["!device.hasAdHocKernel( 'right_dummy_kernel_name' )"]},
 
@@ -60,12 +60,12 @@
     {
       "id":"Ad hoc compilation produces expected exceptions when duplication is found.",
       "result":"PASS",
-      "duration":"0.100 seconds",
+      "duration":"0.098 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]","def code = \"\"\"","__kernel void right_dummy_kernel_name (","        __global float* output,","        __global float* input,","        float value ","    ) { ","        unsigned int i = get_global_id( 0 );","        output[i] = input[i] + value; ","    }","\"\"\""]},
+        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]","def code = \"\"\"","__kernel void right_dummy_kernel_name (","        __global float* output,","        __global float* input,","        float value ","    ) { ","        unsigned int i = get_global_id( 0 );","        output[i] = input[i] + value; ","    }","\"\"\""]},
 
         {"kind":"expect","text":"Initially there is no ad hoc kernel with the following name.","code":["!device.hasAdHocKernel( 'right_dummy_kernel_name' )"]},
 
@@ -90,7 +90,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]"]},
+        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]"]},
 
         {"kind":"when","text":"We pass a new tensor to the restore method of the device, even though the tensor is not stored on it...","code":["device.restore( Tsr.newInstance() )"]},
 

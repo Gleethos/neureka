@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.026 seconds"
+    "duration":"0.022 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice specific Data class represents JVM data for OpenCL.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We make sure that any data will not automatically be converted to floats!","code":["if ( Neureka.get().backend.has(CLContext) )","Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = false"]},
+        {"kind":"given","text":"We make sure that any data will not automatically be converted to floats!","code":["if ( Neureka.get().backend.has(CLBackend) )","Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = false"]},
 
         {"kind":"and","text":"We create 2 different data objects, a full and a partial/sliced array.","code":["var full = JVMData.of(data)","var slice = JVMData.of(data, size, start)"]},
 
@@ -35,7 +35,7 @@
 
         {"kind":"and","text":"They produce OpenCL specific pointer objects.","code":["full.pointer != null","slice.pointer != null"]},
 
-        {"kind":"cleanup","text":"","code":["if ( Neureka.get().backend.has(CLContext) )","Neureka.get().backend.get(CLContext).settings.autoConvertToFloat = true"]},
+        {"kind":"cleanup","text":"","code":["if ( Neureka.get().backend.has(CLBackend) )","Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = true"]},
 
         {"kind":"where","text":"","code":{"data":["[2.0, 3.0, 6.0]","[8.0, -2.0, 5.0, -1.0]","4.0","[2.0, 3.0, 6.0]","[8.0, -2.0, 5.0, -1.0]","4.0","[2, 3, 6]","[8, -2, 5, -1]","4","[2, 3, 6]","[8, -2, 5, -1]","4","[2, 3, 6]","[8, -2, 5, -1]","4","[2, 3, 6]","[8, -2, 5, -1]","4"],"start":["1","1","0","1","1","0","1","1","0","1","1","0","1","1","0","1","1","0"],"size":["2","3","1","2","3","1","2","3","1","2","3","1","2","3","1","2","3","1"],"expectedType":["class [F","class [F","class [F","class [D","class [D","class [D","class [I","class [I","class [I","class [S","class [S","class [S","class [J","class [J","class [J","class [B","class [B","class [B"],"expected":["[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]"]}}
       ],

@@ -25,7 +25,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.unsafe.data.ref == data","t.data.length == 1","t.items.size() == 6"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData.length == 1","t.items.size() == 6"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -50,7 +50,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.unsafe.data.ref == data","t.data == data"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData == data"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -75,7 +75,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.unsafe.data.ref == expected","t.data == expected"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == expected","t.rawData == expected"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -100,7 +100,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.unsafe.data.ref == expected","t.data == expected"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == expected","t.rawData == expected"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -127,7 +127,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.unsafe.data.ref == expected","t.data == expected"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == expected","t.rawData == expected"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@6841676c","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@3f86c489","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@1c0ede0c","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@6c75cd10","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@36ed1f90","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@6683e1aa","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@2e061d6d","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@2ad9ed9f"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@22e0abd4","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@40421278","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@6f25f1c5","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@796a4b5f","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@1266aebe","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@4a0b2bf9","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@513915a4","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@3a8ec021"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -152,7 +152,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.unsafe.data.ref == data","t.data == data"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData == data"]},
 
         {"kind":"and","text":"The tensor will have a one dimensional shape of the same length as the provided data array.","code":["t.shape() == [values.length]"]},
 
@@ -177,7 +177,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.unsafe.data.ref == data","t.data == data"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData == data"]},
 
         {"kind":"and","text":"The tensor will have a one dimensional shape of 1.","code":["t.shape() == [1]"]},
 
