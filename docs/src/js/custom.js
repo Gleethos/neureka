@@ -24,7 +24,7 @@ function animateTop( modifier ) {
 // This is for html based dynamic content:
 
 function capitalize(input) {
-    let words = input.replaceAll('_', ' ').split(' ');
+    let words = input.replace(/_/g, ' ').split(' ');
     if ( words.length === 1 ) return words[0];
     console.log(words);
     let CapitalizedWords = [];
@@ -47,7 +47,7 @@ function loadContent(target) {
 
             page = page
                 .replace('TOC', 'Table of Content')
-                .replaceAll('_', ' ');
+                .replace(/_/g, ' ');
 
             $('#ContentTitle').html(
                 dir + page.charAt(0).toUpperCase() + page.substring(1)

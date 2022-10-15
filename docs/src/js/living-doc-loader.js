@@ -155,7 +155,7 @@ function printSearchResults(target, results) {
         let title = spec['title'];
         let narrative = spec['narrative'];
         if ( title.length === 0 ) {
-            let parts = spec['name'].replaceAll("_", " ").split(".");
+            let parts = spec['name'].replace(/_/g, " ").split(".");
             title = parts[parts.length-1];
             title = trimEnds(title, ["spec", "specification", "test", "tests", "unit test", "unit tests", "test case", "test cases"]);
         }
@@ -200,10 +200,10 @@ function printSearchResults(target, results) {
 
 function createNarrativeParagraphs(narrative) {
     if ( narrative.length === 0 ) return [];
-    //return [$('<div style="font-size:95%"></div>').html(marked.parse(narrative.replaceAll("���", "")))]
-    let paragraphs = narrative.replaceAll("\n \n", "\n\n").split("\n\n");
+    //return [$('<div style="font-size:95%"></div>').html(marked.parse(narrative.replace(/���/g, "")))]
+    let paragraphs = narrative.replace(/\n \n/g, "\n\n").split("\n\n");
     paragraphs = paragraphs.map((paragraph)=>{
-        return $('<div style="font-size:95%"></div>').html(marked.parse(paragraph).replaceAll("���", ""));
+        return $('<div style="font-size:95%"></div>').html(marked.parse(paragraph).replace(/���/g, ""));
     });
     return paragraphs;
 }
