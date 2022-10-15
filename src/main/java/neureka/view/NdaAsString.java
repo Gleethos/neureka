@@ -79,7 +79,7 @@ public final class NdaAsString
     private final Tsr<?>  _tensor;
     private final boolean _legacy;
 
-    NDPrintSettings _config;
+    private final NDPrintSettings _config;
     private StringBuilder _asStr;
 
     /**
@@ -161,7 +161,7 @@ public final class NdaAsString
      * @param toBeAppended The int which ought to be appended to this builder.
      * @return This very instance in order to enable method-chaining.
      */
-    private NdaAsString _$(int toBeAppended ) { _asStr.append( toBeAppended ); return this; }
+    private NdaAsString _$( int toBeAppended ) { _asStr.append( toBeAppended ); return this; }
 
     /**
      *  This method takes the data of a tensor and converts it into
@@ -204,8 +204,8 @@ public final class NdaAsString
     private Function<String, String> _createStringItemFilter() {
         if ( _haveSlimNumbers )
             return vStr -> {
-                        if ( vStr.endsWith("E0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
-                        if ( vStr.endsWith(".0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
+                        if ( vStr.endsWith("E0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
+                        if ( vStr.endsWith(".0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
                         return vStr.startsWith("0.") ? vStr.substring( 1 ) : vStr;
                     };
         if ( Number.class.isAssignableFrom(_tensor.itemType()) ) {
