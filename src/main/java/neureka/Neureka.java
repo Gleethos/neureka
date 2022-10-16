@@ -38,11 +38,11 @@ package neureka;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
+import neureka.backend.cpu.CPUBackend;
+import neureka.backend.ocl.CLBackend;
 import neureka.common.utility.LogUtil;
 import neureka.common.utility.SettingsLoader;
 import neureka.devices.host.CPU;
-import neureka.backend.cpu.CPUBackend;
-import neureka.backend.ocl.CLBackend;
 import neureka.devices.opencl.utility.Messages;
 import neureka.dtype.custom.F64;
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
@@ -414,7 +414,7 @@ public final class Neureka
              * In this case:
              * If the tensor is not needed for backpropagation it will be deleted.
              * The graph node will dereference the tensor either way.
-             *
+             * <p>
              * The flag determines this behavior with respect to target nodes.
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
@@ -431,7 +431,7 @@ public final class Neureka
              * In this case:
              * If the tensor is not needed for backpropagation it will be deleted.
              * The graph node will dereference the tensor either way.
-             *
+             * <p>
              * The flag determines this behavior with respect to target nodes.
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
