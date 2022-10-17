@@ -38,11 +38,11 @@ package neureka;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
+import neureka.backend.cpu.CPUBackend;
+import neureka.backend.ocl.CLBackend;
 import neureka.common.utility.LogUtil;
 import neureka.common.utility.SettingsLoader;
 import neureka.devices.host.CPU;
-import neureka.backend.cpu.CPUBackend;
-import neureka.backend.ocl.CLBackend;
 import neureka.devices.opencl.utility.Messages;
 import neureka.dtype.custom.F64;
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
@@ -414,7 +414,7 @@ public final class Neureka
              * In this case:
              * If the tensor is not needed for backpropagation it will be deleted.
              * The graph node will dereference the tensor either way.
-             *
+             * <p>
              * The flag determines this behavior with respect to target nodes.
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
@@ -431,7 +431,7 @@ public final class Neureka
              * In this case:
              * If the tensor is not needed for backpropagation it will be deleted.
              * The graph node will dereference the tensor either way.
-             *
+             * <p>
              * The flag determines this behavior with respect to target nodes.
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
@@ -473,8 +473,10 @@ public final class Neureka
             }
         }
 
-        
-        public class AutoGrad // Auto-Grad/Differentiation
+        /**
+         * This class contains settings which are related to the automatic differentiation of tensors.
+         */
+        public class AutoGrad
         {
             private boolean _isPreventingInlineOperations = true;
             private boolean _isRetainingPendingErrorForJITProp = false;
@@ -485,6 +487,7 @@ public final class Neureka
              *  Inline operations are operations where the data of a tensor passed into an operation
              *  is being modified.
              *  Usually the result of an operation is stored inside a new tensor.
+             *  Use this flag to detect if an operation is an inline operation.
              */
             public boolean isPreventingInlineOperations() { return _isPreventingInlineOperations; }
 
@@ -492,6 +495,7 @@ public final class Neureka
              *  Inline operations are operations where the data of a tensor passed into an operation
              *  is being modified.
              *  Usually the result of an operation is stored inside a new tensor.
+             *  Use this flag to detect if an operation is an inline operation.
              */
             public void setIsPreventingInlineOperations( boolean prevent ) {
                 if ( _isLocked || _currentThreadIsNotAuthorized() ) return;
@@ -598,9 +602,7 @@ public final class Neureka
         {
             private final NDPrintSettings _settings;
 
-            View() {
-                _settings = new NDPrintSettings(Settings.this::notModifiable);
-            }
+            View() { _settings = new NDPrintSettings(Settings.this::notModifiable); }
 
             /**
              *  Settings for configuring how tensors should be converted to {@link String} representations.
@@ -624,7 +626,9 @@ public final class Neureka
             }
         }
 
-        
+        /**
+         *  Settings for configuring the access pattern of nd-arrays/tensors.
+         */
         public class NDim
         {
             /**
@@ -634,8 +638,24 @@ public final class Neureka
              */
             private boolean _isOnlyUsingDefaultNDConfiguration = false;
 
+            /**
+             * This flag determines which {@link neureka.ndim.config.NDConfiguration} implementations
+             * should be used for nd-arrays/tensors.
+             * If this flag is set to true, then the less performant general purpose {@link neureka.ndim.config.NDConfiguration}
+             * will be used for all nd-arrays/tensors.
+             *
+             * @return The truth value determining if only the default {@link SlicedNDConfiguration} should be used.
+             */
             public boolean isOnlyUsingDefaultNDConfiguration() { return _isOnlyUsingDefaultNDConfiguration; }
 
+            /**
+             * Setting this flag determines which {@link neureka.ndim.config.NDConfiguration} implementations
+             * should be used for nd-arrays/tensors.
+             * If this flag is set to true, then the less performant general purpose {@link neureka.ndim.config.NDConfiguration}
+             * will be used for all nd-arrays/tensors.
+             *
+             * @param enabled The truth value determining if only the default {@link SlicedNDConfiguration} should be used.
+             */
             public void setIsOnlyUsingDefaultNDConfiguration( boolean enabled ) {
                 if ( notModifiable() ) return;
                 _isOnlyUsingDefaultNDConfiguration = enabled;
