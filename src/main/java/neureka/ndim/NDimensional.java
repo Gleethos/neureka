@@ -17,8 +17,8 @@ import java.util.List;
  *  ...
  *
  */
-public interface NDimensional {
-
+public interface NDimensional
+{
     /**
      * @return The number of dimensions of this tensor / nd-array.
      */
@@ -45,6 +45,13 @@ public interface NDimensional {
 
     default List<Integer> spread() { return Util.asList(getNDConf().spread()); }
 
+    /**
+     * The offset is the position of a slice within the n-dimensional
+     * data array of its parent array.
+     * Use this to get the offsets of all slice dimension.
+     *
+     * @return The offset position of the slice tensor inside the n-dimensional data array of the parent array.
+     */
     default List<Integer> offset() { return Util.asList(getNDConf().offset()); }
 
     /**
@@ -64,25 +71,25 @@ public interface NDimensional {
     default int shape( int i ) { return getNDConf().shape( i ); }
 
     /**
-     * @return The number of elements stored inside the tensor.
+     * @return The number of elements stored inside the nd-array.
      */
     default int size() { return NDConfiguration.Utility.sizeOfShape(getNDConf().shape()); }
 
     /**
-     * @return The number of elements stored inside the tensor.
+     * @return The number of elements stored inside the nd-array.
      */
     default int getSize() { return size(); }
 
     /**
-     *  This is a convenience method identical to {@code tensor.getNDConf().indexOfIndex(i)}.
+     *  This is a convenience method identical to {@code ndArray.getNDConf().indexOfIndex(i)}.
      *  Use this to calculate the true index for an element in the data array (data array index)
-     *  based on a provided "virtual index", or "value array index".
-     *  This virtual index may be different from the true index depending on the type of nd-array,
+     *  based on a provided "user index", or "user array index".
+     *  This user index may be different from the true data array index depending on the type of nd-array,
      *  like for example if the nd-array is
      *  a slice of another larger nd-array, or if it is in fact a reshaped version of another nd-array.
      *  The basis for performing this translation is expressed by individual implementations of
      *  this {@link NDConfiguration} interface, which contain everything
-     *  needed to treat a given block of data as a nd-array!
+     *  needed to treat a given block of data as a nd-array.
      *
      * @param index The virtual index of the tensor having this configuration.
      * @return The true index which targets the actual data within the underlying data array of an nd-array / tensor.
@@ -90,7 +97,7 @@ public interface NDimensional {
     default int indexOfIndex( int index ) { return getNDConf().indexOfIndex( index ); }
 
     /**
-     *  This is a convenience method identical to {@code tensor.getNDConf().IndicesOfIndex(i)}.
+     *  This is a convenience method identical to {@code ndArray.getNDConf().IndicesOfIndex(i)}.
      *  Use this to calculates the axis indices for an element in the nd-array array
      *  based on a provided "virtual index".
      *  The resulting index defines the position of the element for every axis.
@@ -101,7 +108,7 @@ public interface NDimensional {
     default int[] indicesOfIndex( int index ) { return getNDConf().indicesOfIndex( index ); }
 
     /**
-     *  This is a convenience method identical to {@code tensor.getNDConf().indexOfIndices(indices)}.
+     *  This is a convenience method identical to {@code ndArray.getNDConf().indexOfIndices(indices)}.
      *  Use this to calculates the true index for an element in the data array
      *  based on a provided index array.
      *
