@@ -129,8 +129,8 @@ public class Slice extends AbstractOperation
                 if ( top > parentTensor.shape( ii ) ) {
                     String message =
                             "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                                    "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
-                                    "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
+                            "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
+                            "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
                     Exception exception = new IllegalArgumentException( message );
                     _LOG.error( message, exception );
                     throw new IllegalArgumentException( exception );
@@ -147,14 +147,13 @@ public class Slice extends AbstractOperation
 
         subset.set( new Relation().addParent( input ) );
         Relation<Object> parent = input.get( Relation.class );
-        parent = ( parent != null ) ? parent : new Relation<>();
+        parent = ( parent != null ? parent : new Relation<>() );
         parent.addChild( subset );
         input.set( parent );
 
-        if ( input.isOutsourced() ) {
-            Device<Object> device = input.getDevice();
-            device.store( subset );
-        }
+        if ( input.isOutsourced() )
+            input.getDevice().store( subset );
+
         if ( input.isVirtual() ) subset.mut().setIsVirtual( true );
 
         return subset;

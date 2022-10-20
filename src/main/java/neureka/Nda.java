@@ -692,7 +692,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param indices An array of indices targeting a particular position in this nd-array...
      * @return An object which allows you to get or set individual items within this nd-array.
      */
-    Item<V> at(int... indices );
+    Item<V> at( int... indices );
 
     /**
      *  Instances of this are being returned by the {@link #at(int...)} method,

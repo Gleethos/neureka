@@ -1213,8 +1213,24 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     @Override default MutateTsr<V> mut() { return getMut(); }
 
     /** {@inheritDoc} */
-    @Override default Tsr<V> withShape( int... shape ) {
-        return Tsr.of( this.itemType(), shape, getItems() ).to( this.getDevice() );
+    @Override default Tsr<V> withShape( int... shape )
+    {
+        Tsr<V> subset = Tsr.of(
+                            this.getDataType(),
+                            NDConstructor.of( shape ),
+                            this.mut().getData()
+                        );
+
+        subset.set( new Relation().addParent( this ) );
+        Relation<V> parent = this.get( Relation.class );
+        parent = ( parent != null ? parent : new Relation<>() );
+        parent.addChild( subset );
+        this.set( parent );
+
+        if ( this.isOutsourced() )
+            this.getDevice().store( subset );
+
+        return subset;
     }
 
     /*==================================================================================================================
