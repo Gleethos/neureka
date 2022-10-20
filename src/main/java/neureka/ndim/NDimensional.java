@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -115,7 +116,7 @@ public interface NDimensional {
         public static List<Integer> asList( int[] array ) {
             List<Integer> intList = new ArrayList<>( array.length );
             for ( int i : array ) intList.add( i );
-            return intList;
+            return Collections.unmodifiableList(intList);
         }
 
     }
