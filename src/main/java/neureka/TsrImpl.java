@@ -837,7 +837,27 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     @Override
     public Tsr<V> labelAxes( String[]... labels ) {
-        return TsrImpl.this._label( labels );
+        LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
+        if ( labels.length > this.rank() )
+            throw new IllegalArgumentException(
+                    "Number of the provided axes labels is larger than the total number of axes (rank) of the nd-array."
+            );
+
+        NDFrame<V> frame = get( NDFrame.class );
+        if ( frame == null ) {
+            frame = new NDFrame<>( this, null);
+            this.set(frame);
+        }
+        for ( int i = 0; i < labels.length; i++ ) {
+            if ( labels[ i ] != null ) {
+                AxisFrame<Integer, V> atAxis = frame.atAxis( i );
+                for ( int ii = 0; ii < labels[ i ].length; ii++ ) {
+                    if ( labels[ i ][ ii ] != null )
+                        atAxis.atIndexAlias( labels[ i ][ ii ] ).setIndex( ii );
+                }
+            }
+        }
+        return this;
     }
 
     /** {@inheritDoc} */
@@ -845,7 +865,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     public Tsr<V> labelAxes( List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame<>( labels, null ) );
+        if ( frame == null ) set( new NDFrame<>( labels, this, null ) );
         else set( frame.withAxesLabels( labels ) );
         return TsrImpl.this;
     }
@@ -855,7 +875,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     public Tsr<V> label( String label ) {
         LogUtil.nullArgCheck( label, "label", List.class, "Tensors cannot be labeled 'null'!" );
         NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame<>( Collections.emptyList(), label ) );
+        if ( frame == null ) set( new NDFrame<>( Collections.emptyList(), this, label ) );
         else set( frame.withLabel(label) );
         return TsrImpl.this;
     }
@@ -921,31 +941,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     @Override
     public Tsr<V> withLabel( String label ) {
         return this.shallowCopy().mut().label( label );
-    }
-
-    private Tsr<V> _label( String[][] labels )
-    {
-        LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
-        if ( labels.length > this.rank() )
-            throw new IllegalArgumentException(
-                    "Number of the provided axes labels is larger than the total number of axes (rank) of the nd-array."
-                );
-
-        NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) {
-            frame = new NDFrame<>( this.rank(), null);
-            this.set(frame);
-        }
-        for ( int i = 0; i < labels.length; i++ ) {
-            if ( labels[ i ] != null ) {
-                AxisFrame<Integer, V> atAxis = frame.atAxis( i );
-                for ( int ii = 0; ii < labels[ i ].length; ii++ ) {
-                    if ( labels[ i ][ ii ] != null )
-                        atAxis.atIndexAlias( labels[ i ][ ii ] ).setIndex( ii );
-                }
-            }
-        }
-        return this;
     }
 
     /** {@inheritDoc} */

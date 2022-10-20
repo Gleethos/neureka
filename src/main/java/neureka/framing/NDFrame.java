@@ -46,9 +46,12 @@ public final class NDFrame<V> implements Component<Tsr<V>>
      */
     private final String _mainLabel;
 
-    public NDFrame( List<List<Object>> labels, String mainLabel ) {
-        _mainLabel = mainLabel;
-        _mapping = new LinkedHashMap<>(labels.size());
+    public NDFrame( List<List<Object>> labels, Tsr<V> host, String mainLabel ) {
+        this(Collections.emptyMap(), host, mainLabel);
+        _label(labels);
+    }
+
+    private NDFrame<V> _label( List<List<Object>> labels ) {
         for ( int i = 0; i < labels.size(); i++ ) _mapping.put( i, new LinkedHashMap<>() );
         for ( int i = 0; i < labels.size(); i++ ) {
             if ( labels.get( i ) != null ) {
@@ -58,17 +61,21 @@ public final class NDFrame<V> implements Component<Tsr<V>>
                 }
             }
         }
+        return this;
     }
 
-    public NDFrame( int size, String tensorName ) {
-        _mainLabel = tensorName;
-        _mapping = new LinkedHashMap<>( size );
-        for ( int i = 0; i < size; i++ ) _mapping.put( i, new LinkedHashMap<>() );
+    public NDFrame( Tsr<V> host, String tensorName ) {
+        this(Collections.emptyMap(), host, tensorName);
     }
 
     public NDFrame(Map<Object, List<Object>> labels, Tsr<V> host, String tensorName ) {
         _mainLabel = tensorName;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
+        for ( int i = 0; i < host.rank(); i++ ) {
+            Map<Object, Object> indicesMap = new LinkedHashMap<>();
+            //indicesMap.put( i, i );
+            _mapping.put( i, indicesMap );
+        }
         int[] index = { 0 };
         labels.forEach( ( k, v ) -> {
             if ( v != null ) {
@@ -98,7 +105,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     }
 
     public NDFrame<V> withAxesLabels( List<List<Object>> labels ) {
-        return new NDFrame<>( labels, _mainLabel);
+        return new NDFrame<V>( _hiddenKeys, _mapping, _mainLabel )._label(labels);
     }
 
     public int[] get( List<Object> keys ) {
