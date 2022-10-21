@@ -1221,9 +1221,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                             this.mut().getData()
                         );
 
-        subset.set( new Relation().addParent( this ) );
+        subset.set( Relation.newChildToParent( this ) );
         Relation<V> parent = this.get( Relation.class );
-        parent = ( parent != null ? parent : new Relation<>() );
+        parent = ( parent != null ? parent : Relation.newParentToChildren() );
         parent.addChild( subset );
         this.set( parent );
 

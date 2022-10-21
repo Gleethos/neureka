@@ -169,7 +169,7 @@ class Neureka_Spec extends Specification
             neurekaObject << [
                     CPU.get(),
                     DataType.of(String),
-                    new Relation<>(),
+                    Relation.newParentToChildren(),
                     new JITProp<>([] as Set),
                     Neureka.get(),
                     Neureka.get().settings(),

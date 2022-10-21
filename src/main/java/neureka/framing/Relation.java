@@ -35,14 +35,13 @@ SOFTWARE.
 
 package neureka.framing;
 
-import neureka.common.composition.Component;
 import neureka.Tsr;
+import neureka.common.composition.Component;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  *  This class is an important tensor component responsible for
@@ -93,6 +92,15 @@ public class Relation<V> implements Component<Tsr<V>>
      */
     private int[][] _shapeRelations;
 
+    public static <T> Relation<T> newParentToChildren() {
+        return new Relation<>( null );
+    }
+
+    public static <T> Relation<T> newChildToParent( Tsr<T> parent ) {
+        return new Relation<>( parent );
+    }
+
+    private Relation( Tsr<V> parent ) { _parent = parent; }
 
     @Override
     public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
@@ -122,14 +130,6 @@ public class Relation<V> implements Component<Tsr<V>>
         changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         return true;
     }
-
-
-    public Relation<V> addParent(Tsr<V> parent )
-    {
-        _parent = parent;
-        return this;
-    }
-
 
     public Relation<V> addChild(Tsr<V> child )
     {

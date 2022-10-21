@@ -145,9 +145,9 @@ public class Slice extends AbstractOperation
                             input.mut().getData()
                         );
 
-        subset.set( new Relation().addParent( input ) );
+        subset.set( Relation.newChildToParent( input ) );
         Relation<Object> parent = input.get( Relation.class );
-        parent = ( parent != null ? parent : new Relation<>() );
+        parent = ( parent != null ? parent : Relation.newParentToChildren() );
         parent.addChild( subset );
         input.set( parent );
 
