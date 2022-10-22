@@ -1221,7 +1221,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                         );
 
         subset.set( Relation.newChildToParent( this ) );
-        Relation<V> parent = this.find( Relation.class ).orElse( Relation.newParentToChildren() );
+        Relation<V> parent = this.find( Relation.class ).orElseGet(Relation::newParentToChildren);
         parent.addChild( subset );
         this.set( parent );
 
