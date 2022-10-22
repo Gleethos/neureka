@@ -147,8 +147,7 @@ public class Slice extends AbstractOperation
                         );
 
         subset.set( Relation.newChildToParent( input ) );
-        Relation<Object> parent = input.get( Relation.class );
-        parent = ( parent != null ? parent : Relation.newParentToChildren() );
+        Relation<Object> parent = input.find( Relation.class ).map(r->(Relation<Object>)r).orElseGet(Relation::newParentToChildren);
         parent.addChild( subset );
         input.set( parent );
 
