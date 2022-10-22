@@ -341,16 +341,19 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
             constructFor(CPU.get(),NDConstructor.of(getNDConf().shape())).newUnpopulated( isVirtual, false, getDataType() );
-            if ( isVirtual ) {
-                find( Relation.class ).ifPresent( r ->
-                        r.getChildren().forEach(c -> {
-                            ((TsrImpl<V>)c)._setData( _getData() );
-                            ((TsrImpl<V>)c).setIsVirtual( true );
-                        }));
-            } else {
-                Tsr<?> parentTensor = ( this.isSlice() ) ? get(Relation.class).getParent() : null;
-                if ( parentTensor != null ) parentTensor.get( Relation.class ).remove( this );
-            }
+            if ( isVirtual )
+                this.find( Relation.class )
+                        .ifPresent( r ->
+                            r.getChildren().forEach(c -> {
+                                ((TsrImpl<V>)c)._setData( _getData() );
+                                ((TsrImpl<V>)c).setIsVirtual( true );
+                            })
+                        );
+            else
+                this.find(Relation.class)
+                    .map( relation -> ((Relation<V>)relation).getParent().orElse(null) )
+                    .map( parent -> parent.get(Relation.class) )
+                    .ifPresent( parentRelation -> parentRelation.removeChild( this ) );
 
             try {
                 if ( device != null ) device.store( this );

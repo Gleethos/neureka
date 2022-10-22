@@ -86,8 +86,9 @@ public class Slice extends AbstractOperation
         for ( int i = 0; i < newOffset.length; i++ )
             newOffset[ i ] = newOffset[ i ] + input.getNDConf().offset( i ); // Offset is being inherited!
 
-        Tsr<?> rootTensor   = ( input.isSlice() ? input.get( Relation.class ).findRootTensor() : input );
-        Tsr<?> parentTensor = ( input.isSlice() ? input.get( Relation.class ).getParent()      : input );
+        Relation<?> inputRelation = input.get( Relation.class );
+        Tsr<?> rootTensor   = ( input.isSlice() ? inputRelation.findRootTensor().orElseThrow(IllegalStateException::new) : input );
+        Tsr<?> parentTensor = ( input.isSlice() ? inputRelation.getParent().orElseThrow(IllegalStateException::new)      : input );
         /*
             The following code check the validity of the slice shape ranges with
             respect to the 'parentTensor' of this new slice.

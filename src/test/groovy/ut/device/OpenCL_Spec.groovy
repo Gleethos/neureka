@@ -98,7 +98,7 @@ class OpenCL_Spec extends Specification
 
         and : 'Another mocked tensor that represents a slice of the prior one.'
             Tsr<?> s = Mock(Tsr) // Could be : t[1..3, 1..2]
-        MutateTsr<?> u = Mock(MutateTsr)
+            MutateTsr<?> u = Mock(MutateTsr)
             s.getMut() >> u
             u.getData() >> Mock(Data)
 
@@ -106,7 +106,8 @@ class OpenCL_Spec extends Specification
             Relation r = Mock(Relation)
             s.has(Relation.class) >> true
             s.get(Relation.class) >> r
-            r.findRootTensor() >> t
+            s.find(Relation.class) >> Optional.of(r)
+            r.findRootTensor() >> Optional.of(t)
 
         when : 'We try to add the slice to the device.'
             device.store(s)

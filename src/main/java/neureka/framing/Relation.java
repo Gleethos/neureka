@@ -42,6 +42,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *  This class is an important tensor component responsible for
@@ -131,7 +132,7 @@ public class Relation<V> implements Component<Tsr<V>>
         return true;
     }
 
-    public Relation<V> addChild(Tsr<V> child )
+    public Relation<V> addChild( Tsr<V> child )
     {
         if ( _children == null ) {
             _children = new WeakReference[]{ new WeakReference<>( child ) };
@@ -150,32 +151,29 @@ public class Relation<V> implements Component<Tsr<V>>
     }
 
     /**
-     *  When creating reshaped versions of slices then
-     *  there must be a translation between the shape configuration between
-     *  this new slice and the original parent tensor from which both slices
-     *  have been derived. <br>
-     *  This translation is in essence merely an int array which
-     *  contains the index mapping to a new shape.
-     *  When accessing data for a reshaped slice then this
-     *  translation will be necessary for getting the right data. <br>
-     *  <br>
-     *  This method enables adding such a reshape translation associated
-     *  to a slice, which is also the "child" of the tensor to which this
-     *  Reshape component belongs! <br>
-     *  <br>
+     * When creating reshaped versions of slices then
+     * there must be a translation between the shape configuration between
+     * this new slice and the original parent tensor from which both slices
+     * have been derived. <br>
+     * This translation is in essence merely an int array which
+     * contains the index mapping to a new shape.
+     * When accessing data for a reshaped slice then this
+     * translation will be necessary for getting the right data. <br>
+     * <br>
+     * This method enables adding such a reshape translation associated
+     * to a slice, which is also the "child" of the tensor to which this
+     * Reshape component belongs! <br>
+     * <br>
      *
-     * @param child The child (slice) tensor which has a shape whose dimensions are in a different order.
+     * @param child   The child (slice) tensor which has a shape whose dimensions are in a different order.
      * @param reshape The int array defining the reshaping (dimension index mapping).
-     * @return This very Relation instance in order to enable method chaining on this component.
      */
-    public Relation<V> addReshapeRelationFor(Tsr<V> child, int[] reshape ) {
+    public void addReshapeRelationFor( Tsr<V> child, int[] reshape ) {
         for ( int i = 0; i < _shapeRelations.length; i++ ) {
             Tsr<V> c = _children[ i ].get();
-            if ( c != null && c == child ) {
+            if ( c != null && c == child )
                 _shapeRelations[ i ] = reshape;
-            }
         }
-        return this;
     }
 
     /**
@@ -200,9 +198,8 @@ public class Relation<V> implements Component<Tsr<V>>
     {
         for ( int i = 0; i < _shapeRelations.length; i++ ) {
             Tsr<V> c = _children[ i ].get();
-            if ( c != null && c == child ) {
+            if ( c != null && c == child )
                 return _shapeRelations[ i ];
-            }
         }
         return null;
     }
@@ -229,11 +226,11 @@ public class Relation<V> implements Component<Tsr<V>>
      *
      * @return The root data parent which actually owns the data of the sliced data or null if the tensor is not a slice.
      */
-    public Tsr<V> findRootTensor()
+    public Optional<Tsr<V>> findRootTensor()
     {
-        if ( _parent == null ) return null;
-        else if ( !_parent.has( Relation.class ) ) return null;
-        else if ( !_parent.get( Relation.class ).hasParent() ) return _parent;
+        if ( _parent == null ) return Optional.empty();
+        else if ( !_parent.has( Relation.class ) ) return Optional.empty();
+        else if ( !_parent.get( Relation.class ).hasParent() ) return Optional.of(_parent);
         else return _parent.get( Relation.class ).findRootTensor();
     }
 
@@ -244,24 +241,47 @@ public class Relation<V> implements Component<Tsr<V>>
 
     public boolean hasChildren()
     {
-        return _children != null;
+        return _children != null && _children.length > 0;
     }
 
     public int childCount()
     {
-        return ( _children == null ? 0 : (int) Arrays.stream(_children).filter(c -> c.get() != null).count() );
+        return ( _children == null ? 0 : (int) Arrays.stream(_children).filter( c -> c.get() != null ).count() );
     }
 
-    public Relation<V> remove( Tsr<V> child )
+    public void removeChild( Tsr<V> child )
     {
-        throw new IllegalStateException("Not yet supported!");
+        if ( _children == null ) return;
+        int found = -1;
+        for ( int i = 0; i < _children.length; i++ )
+            if ( _children[i].get() == child ) {
+                found = i;
+                break;
+            }
+
+        if ( found >= 0 ) {
+            if ( _children.length == 1 ) {
+                _children = null;
+                _shapeRelations = null;
+            } else {
+                WeakReference<Tsr<V>>[] newChildren = new WeakReference[ _children.length - 1 ];
+                int[][] newShapeRelations = new int[ _children.length - 1 ][];
+                System.arraycopy( _children, 0, newChildren, 0, found );
+                System.arraycopy( _shapeRelations, 0, newShapeRelations, 0, found );
+                System.arraycopy( _children, found + 1, newChildren, found, _children.length - found - 1 );
+                System.arraycopy( _shapeRelations, found + 1, newShapeRelations, found, _children.length - found - 1 );
+                _children = newChildren;
+                _shapeRelations = newShapeRelations;
+            }
+        }
+
     }
 
     public String toString() {
         return "Relation[parent=" + _parent + ",children=" + java.util.Arrays.deepToString(_children) + ",shapeRelations=" + java.util.Arrays.deepToString(_shapeRelations) + "]";
     }
 
-    public Tsr<V> getParent() {
-        return _parent;
+    public Optional<Tsr<V>> getParent() {
+        return Optional.ofNullable( _parent );
     }
 }

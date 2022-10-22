@@ -1002,11 +1002,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override
     default boolean isShallowCopy() {
-        Relation<V> child = get( Relation.class );
-        boolean isSlice = child != null && child.hasParent();
+        Optional<Relation<V>> child = this.find( Relation.class ).map( r -> (Relation<V>) r );
+        boolean isSlice = child.map(Relation::hasParent).orElse(false);
         if ( isSlice ) {
-            Tsr<V> parent = child.getParent();
-            return parent != null && parent.getNDConf().equals(this.getNDConf());
+            return child.get()
+                            .getParent()
+                            .map( p -> p.getNDConf().equals(this.getNDConf()) )
+                            .orElse(false);
             /*
                 Note:
                 A shallow copy is conceptually always a "full slice" of the parent tensor.
@@ -1022,16 +1024,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default boolean isPartialSlice() {
         Relation<V> child = get( Relation.class );
         boolean isSlice = child != null && child.hasParent();
-        if ( isSlice ) {
-            Tsr<V> parent = child.getParent();
-            if ( parent == null ) return false;
-            return parent.size() > this.size();
+        if ( isSlice )
+            return child.getParent().map( p -> p.size() > this.size() ).orElse(false);
             /*
                 Note:
                 A partial slice is a slice which does not have the same size as the parent tensor
                 but still sharing the same underlying data as the parent tensor.
              */
-        }
+
         return false;
     }
 
@@ -1045,8 +1045,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override
     default boolean isSliceParent() {
-        Relation<V> parent = this.get( Relation.class );
-        return ( parent != null && parent.hasChildren() );
+        return this.find( Relation.class ).map(Relation::hasChildren).orElse(false);
     }
 
     /**
@@ -1222,8 +1221,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                         );
 
         subset.set( Relation.newChildToParent( this ) );
-        Relation<V> parent = this.get( Relation.class );
-        parent = ( parent != null ? parent : Relation.newParentToChildren() );
+        Relation<V> parent = this.find( Relation.class ).orElse( Relation.newParentToChildren() );
         parent.addChild( subset );
         this.set( parent );
 

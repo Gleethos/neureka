@@ -708,12 +708,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
         Tsr<Number> root = null;
         Relation<Number> relation = newOwner.get(Relation.class);
         if ( relation != null )
-            root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor();
+            root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor().orElse(null);
 
         return root;
     }
 
-    private JVMData _read(JVMData jvmData, Tsr<Number> tensor, int offset ) {
+    private JVMData _read( JVMData jvmData, Tsr<Number> tensor, int offset ) {
         cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
         clEnqueueReadBuffer(
                 _queue,

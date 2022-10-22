@@ -90,7 +90,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             if ( newOwner.has( Relation.class ) ) {
                 Relation<V> relation = newOwner.get(Relation.class);
                 if ( relation.hasParent() ) { // Root needs to be found ! :
-                    Tsr<V> root = relation.findRootTensor();
+                    Tsr<V> root = relation.findRootTensor().orElseThrow(IllegalStateException::new);
                     if (!this.has(root) || !root.isOutsourced())
                         throw new IllegalStateException("Data parent is not outsourced!");
                 }
