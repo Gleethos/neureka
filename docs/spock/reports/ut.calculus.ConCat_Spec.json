@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.022 seconds"
+    "duration":"0.023 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -66,7 +66,7 @@
     {
       "id":"We can concatenate 2 string tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
     {
       "id":"We can concatenate and then back-propagate 2 simple float tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,7 +106,7 @@
 
         {"kind":"then","text":"","code":["a.gradient.items == [-0.5, 0.25, -0.05] as float[]","b.gradient.items == [1.0, 1.5, 2.0] as float[]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x1d11cfd4eb0,platform=0x7ff8731d8000]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x233ce941af0,platform=0x7ffb85358000]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -133,7 +133,7 @@
 
         {"kind":"then","text":"","code":["a.gradient.items == [-16, -16, 7] as float[]","b.gradient.items == [30, 0.2, 16] as float[]","c.gradient.items == [0.30829078, -3.1254156, -0.52700233] as float[]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x1d11cfd4eb0,platform=0x7ff8731d8000]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x233ce941af0,platform=0x7ffb85358000]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

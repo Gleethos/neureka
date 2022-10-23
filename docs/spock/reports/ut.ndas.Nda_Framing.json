@@ -1,0 +1,52 @@
+{
+  "className":"ut.ndas.Nda_Framing",
+  "title":"NDA Framing",
+  "narrative":"Framing an nd-array is all about naming its axes and then using those names to\n    access, read or write its values in a more convenient and human readable way.",
+  "subjects":["neureka.Nda"],
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.003 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"We can label the columns of a rank 2 nd-array.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A rank 2 nd-array with shape (2, 3).","code":["def nda = Nda.of(String).withShape(2, 3).andFill(\"1\", \"a\", \"Â§\", \"2\", \"b\", \"%\")"]},
+
+        {"kind":"when","text":"We label the columns of the nd-array.","code":["nda.mut.label(\"Framed\").mut.labelAxes([null, [\"Num\", \"Letter\", \"Symbol\"]] as String[][])"]},
+
+        {"kind":"then","text":"The columns are labeled as expected.","code":["nda.toString() == \"(2x3):[\\n\" +","\"   (   Num )(Letter)(Symbol ):( Framed )\\n\" +","\"   [    1  ,    a  ,    Â§   ],\\n\" +","\"   [    2  ,    b  ,    %   ]\\n\" +","\"]\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can label the columns and rows of a rank 3 nd-array.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A rank 3 nd-array with shape (2, 3, 4).","code":["def nda = Nda.of(String)",".withShape(2, 2, 3)",".andFill(\"1\", \"a\", \"Â§\", \"2\", \"b\", \"%\" , \"3\", \"c\", \"â‚¬\", \"4\", \"d\", \"Â£\")"]},
+
+        {"kind":"when","text":"We label the columns and rows of the nd-array.","code":["nda.mut.label(\"Framed\").mut.labelAxes([null, [\"A\", \"B\"], [\"Num\", \"Letter\", \"Symbol\"]])"]},
+
+        {"kind":"then","text":"The columns and rows are labeled as expected.","code":["nda.toString() == \"(2x2x3):[\\n\" +","\"   [\\n\" +","\"      (   Num )(Letter)(Symbol ):( Framed )\\n\" +","\"      [    1  ,    a  ,    Â§   ]:( A ),\\n\" +","\"      [    2  ,    b  ,    %   ]:( B )\\n\" +","\"   ],\\n\" +","\"   [\\n\" +","\"      (   Num )(Letter)(Symbol ):( Framed )\\n\" +","\"      [    3  ,    c  ,    â‚¬   ]:( A ),\\n\" +","\"      [    4  ,    d  ,    Â£   ]:( B )\\n\" +","\"   ]\\n\" +","\"]\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.527 seconds"
+    "duration":"2.424 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -72,7 +72,7 @@
 
         {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tsr<?> s = Mock(Tsr)","MutateTsr<?> u = Mock(MutateTsr)","s.getMut() >> u","u.getData() >> Mock(Data)"]},
 
-        {"kind":"and","text":"A mocked relation between both tensors returned by the slice as component.","code":["Relation r = Mock(Relation)","s.has(Relation.class) >> true","s.get(Relation.class) >> r","r.findRootTensor() >> t"]},
+        {"kind":"and","text":"A mocked relation between both tensors returned by the slice as component.","code":["Relation r = Mock(Relation)","s.has(Relation.class) >> true","s.get(Relation.class) >> r","s.find(Relation.class) >> Optional.of(r)","r.findRootTensor() >> Optional.of(t)"]},
 
         {"kind":"when","text":"We try to add the slice to the device.","code":["device.store(s)"]},
 
@@ -90,7 +90,7 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.500 seconds",
+      "duration":"2.398 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

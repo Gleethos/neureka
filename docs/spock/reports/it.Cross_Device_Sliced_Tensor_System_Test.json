@@ -16,7 +16,7 @@
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.034 seconds",
+      "duration":"0.037 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
 
         {"kind":"then","text":"","code":["y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
 
-        {"kind":"where","text":"","code":{"device":["OpenCLDevice[id=0x1d11cfd4eb0,platform=0x7ff8731d8000]","CPU[cores=32]"]}}
+        {"kind":"where","text":"","code":{"device":["OpenCLDevice[id=0x233ce941af0,platform=0x7ffb85358000]","CPU[cores=32]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -41,7 +41,7 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.076 seconds",
+      "duration":"0.072 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +98,7 @@
 
         {"kind":"and","text":"","code":["x.toString().replace(\".0\", \"\").contains(\"->d[2x2]:(-2, 3, 1, 2)\")"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x1d11cfd4eb0,platform=0x7ff8731d8000]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x233ce941af0,platform=0x7ffb85358000]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

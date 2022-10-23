@@ -50,7 +50,7 @@
     {
       "id":"A simple vector ND-Array can be mutated using the \"at(..).set(..)\" methods.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
