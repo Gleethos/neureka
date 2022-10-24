@@ -59,6 +59,39 @@ class Nda_Framing extends Specification
                               "]"
     }
 
+    def 'We can use labels as selectors for slicing.'()
+    {
+        given : 'A rank 3 nd-array with shape (2, 3, 4).'
+            def nda = Nda.of(String)
+                                        .withShape(2, 2, 3)
+                                        .andFill("1", "a", "§", "2", "b", "%" , "3", "c", "€", "4", "d", "£")
+        when : 'We label the columns and rows of the nd-array.'
+            nda.mut.label("Framed").mut.labelAxes([["M1", "M2"], ["A", "B"], ["Num", "Letter", "Symbol"]])
+        then : 'The columns and rows are labeled as expected.'
+            nda.toString() == "(2x2x3):[\n" +
+                              "   ( M1 ):[\n" +
+                              "      (   Num )(Letter)(Symbol ):( Framed )\n" +
+                              "      [    1  ,    a  ,    §   ]:( A ),\n" +
+                              "      [    2  ,    b  ,    %   ]:( B )\n" +
+                              "   ],\n" +
+                              "   ( M2 ):[\n" +
+                              "      (   Num )(Letter)(Symbol ):( Framed )\n" +
+                              "      [    3  ,    c  ,    €   ]:( A ),\n" +
+                              "      [    4  ,    d  ,    £   ]:( B )\n" +
+                              "   ]\n" +
+                              "]"
+        when : 'We slice the nd-array using labels.'
+            def slice = nda["M1", "A", "Num"]
+        then : 'The slice is as expected.'
+            slice.items == ["1"]
+            slice.toString() == "(1x1x1):[\n" +
+                                "   ( M1 ):[\n" +
+                                "      (   Num  ):( Framed:slice )\n" +
+                                "      [    1   ]:( A )\n" +
+                                "   ]\n" +
+                                "]"
+    }
+
 
 
 }

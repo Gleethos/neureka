@@ -308,7 +308,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     }
 
     public Map<Object, Object> getMapping() {
-        return _mapping;
+        return Collections.unmodifiableMap(_mapping);
     }
 
     public String getLabel() {

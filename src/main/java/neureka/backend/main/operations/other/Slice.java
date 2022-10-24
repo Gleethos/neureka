@@ -12,9 +12,12 @@ import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
+import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.ndim.NDConstructor;
 import org.slf4j.Logger;
+
+import java.util.*;
 
 public class Slice extends AbstractOperation
 {
@@ -48,7 +51,8 @@ public class Slice extends AbstractOperation
                     int[]          shape = input.getNDConf().shape();
                     boolean        isOutsourced = input.isOutsourced();
                     Device<Object> device = input.getDevice();
-
+                    //---
+                    _sliceFrame( input, subset, newShape, newOffset, newSpread );
                     return
                         Result.of(subset.mut().setIsIntermediate(true))
                             .withADAction( t -> {
@@ -157,6 +161,38 @@ public class Slice extends AbstractOperation
         if ( input.isVirtual() ) subset.mut().setIsVirtual( true );
 
         return subset;
+    }
+
+    private void _sliceFrame(
+            Tsr<?> input, Tsr<?> subset, int[] newShape, int[] newOffset, int[] newSpread
+    ) {
+        // Now if the parent tensor has a name and or axes labels we carry them over to the subset:
+        String label = input.label();
+        if ( !label.isEmpty() ) subset.mut().label( label + ":slice" );
+        input.frame().ifPresent( frame -> {
+            Map<Object, Object> state = frame.getMapping();
+            Map<Object, List<Object>> sliceState = new LinkedHashMap<>();
+            int i = 0;
+            for ( Object k : state.keySet() ) {
+                Object al = state.get(k);
+                if ( al instanceof Integer )
+                    sliceState.put( k, null ); // newShape[i]
+                else {
+                    List<Object> map = new ArrayList<>();
+                    List<Map.Entry<Object,Object>> entries = new ArrayList<>(((Map<Object,Object>)al).entrySet());
+                    for ( int j = 0; j < newShape[i]; j++ ) {
+                        int index = newOffset[i] + j * newSpread[i];
+                        Map.Entry<Object, Object> entry = entries.get(index);
+                        map.add( entry.getKey() );
+                    }
+                    sliceState.put( k, map );
+                }
+                i++;
+                if ( i == newShape.length ) break;
+            }
+            subset.mut().labelAxes( sliceState );
+        });
+
     }
 
     @Override

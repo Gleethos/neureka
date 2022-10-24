@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.014 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A simple vector ND-Array can be mutated using the \"setItemAt\" method.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"A ND-Array can be mutated simply using the \"set\" method.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            This method of mutation is best used in Kotlin where it translates\n            to the \"set\" operator.\n            So it is possible to write code like this: `nda[2, 3] = 42.0`\n        "]
       },
@@ -50,7 +50,7 @@
     {
       "id":"A simple vector ND-Array can be mutated using the \"at(..).set(..)\" methods.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -101,7 +101,7 @@
     {
       "id":"We can use the subscription operator to mutate an ND-Array.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

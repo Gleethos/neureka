@@ -9,31 +9,31 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.020 seconds"
+    "duration":"0.050 seconds"
   },
   "headers":["\n                    This specification covers the behavior\n                    of tensors with respect to specifying aliases for\n                    indices and then using them for slicing.     \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can add labels to tensors through lists or maps passed to the \"label()\" method.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a 3D tensor and label its indices.","code":["Tsr t = Tsr.of([2, 3, 2], 1..100)","t.mut.labelAxes([","        [\"1\", \"2\"],","        [\"a\", \"b\", \"c\"],","        [1, 2]","])","String asString = t.frame().toString()"]},
+        {"kind":"given","text":"We create a 3D tensor and label its indices.","code":["Tsr t = Tsr.of([2, 3, 2], 1..100)","t.mut.labelAxes([","        [\"1\", \"2\"],","        [\"a\", \"b\", \"c\"],","        [1, 2]","])","String asString = t.frame().get().toString()"]},
 
         {"kind":"expect","text":"The string representation of the tensor should include these labels.","code":["asString.contains(\"a\")","asString.contains(\"b\")","asString.contains(\"c\")","asString.contains(\"1\")","!asString.contains(\"Axis One\")","!asString.contains(\"Axis Two\")","!asString.contains(\"Axis Three\")"]},
 
-        {"kind":"when","text":"We provide a map, where the keys are axis labels...","code":["t.mut.labelAxes([","        \"Axis One\" : [\"1\", \"2\"],","        \"Axis Two\" : [\"a\", \"b\", \"c\"],","        \"Axis Three\" : [1, 2]","])","asString = t.frame().toString()"]},
+        {"kind":"when","text":"We provide a map, where the keys are axis labels...","code":["t.mut.labelAxes([","        \"Axis One\" : [\"1\", \"2\"],","        \"Axis Two\" : [\"a\", \"b\", \"c\"],","        \"Axis Three\" : [1, 2]","])","asString = t.frame().get().toString()"]},
 
         {"kind":"then","text":"Once again, the string will mention all labels","code":["asString.contains(\"a\")","asString.contains(\"b\")","asString.contains(\"c\")","asString.contains(\"1\")","asString.contains(\"Axis One\")","asString.contains(\"Axis Two\")","asString.contains(\"Axis Three\")","asString.contains(\"|     Axis One     |     Axis Two     |    Axis Three    |\")"]},
 
-        {"kind":"when","text":"","code":["t.mut.labelAxes([","        \"Axis One\" : [\"x\", \"y\"],","        \"Axis Two\" : null,","        \"Axis Three\" : [\"tim\", \"tina\"]","])","asString = t.frame().toString()"]},
+        {"kind":"when","text":"","code":["t.mut.labelAxes([","        \"Axis One\" : [\"x\", \"y\"],","        \"Axis Two\" : null,","        \"Axis Three\" : [\"tim\", \"tina\"]","])","asString = t.frame().get().toString()"]},
 
-        {"kind":"then","text":"","code":["t.frame().atAxis(\"Axis Three\").getAllAliasesForIndex(0) == [\"tim\"]","t.frame().atAxis(\"Axis Three\").getAllAliasesForIndex(1) == [\"tina\"]","t.frame().atAxis(\"Axis One\").getAllAliases().contains(\"x\")","t.frame().atAxis(\"Axis One\").getAllAliases().contains(\"y\")","!asString.contains(\" a \")","!asString.contains(\" b \")","!asString.contains(\" c \")","asString.contains(\"x\")","asString.contains(\"tim\")","asString.contains(\"tina\")","asString.contains(\"0\")","asString.contains(\"1\")","asString.contains(\"2\")","asString.contains(\"Axis One\")","asString.contains(\"Axis Two\")","asString.contains(\"Axis Three\")","asString.contains(\"|     Axis One     |     Axis Two     |    Axis Three    |\")"]},
+        {"kind":"then","text":"","code":["t.frame().get().atAxis(\"Axis Three\").getAllAliasesForIndex(0) == [\"tim\"]","t.frame().get().atAxis(\"Axis Three\").getAllAliasesForIndex(1) == [\"tina\"]","t.frame().get().atAxis(\"Axis One\").getAllAliases().contains(\"x\")","t.frame().get().atAxis(\"Axis One\").getAllAliases().contains(\"y\")","!asString.contains(\" a \")","!asString.contains(\" b \")","!asString.contains(\" c \")","asString.contains(\"x\")","asString.contains(\"tim\")","asString.contains(\"tina\")","asString.contains(\"0\")","asString.contains(\"1\")","asString.contains(\"2\")","asString.contains(\"Axis One\")","asString.contains(\"Axis Two\")","asString.contains(\"Axis Three\")","asString.contains(\"|     Axis One     |     Axis Two     |    Axis Three    |\")"]},
 
-        {"kind":"when","text":"","code":["t.frame().atAxis(\"Axis Two\").replace(1).with(\"Hello\")","asString = t.frame().toString()"]},
+        {"kind":"when","text":"","code":["t.frame().get().atAxis(\"Axis Two\").replace(1).with(\"Hello\")","asString = t.frame().get().toString()"]},
 
         {"kind":"then","text":"","code":["!asString.contains(\" a \")","!asString.contains(\" b \")","!asString.contains(\" c \")","asString.contains(\"x\")","asString.contains(\"tim\")","asString.contains(\"tina\")","asString.contains(\"0\")","!asString.contains(\"1\")","asString.contains(\"Hello\")","asString.contains(\"2\")"]}
       ],
@@ -43,7 +43,7 @@
     {
       "id":"A matrix (rank 2 tensor) can be labeled and their labels can be used to extract slices / subsets.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,7 +84,7 @@
     {
       "id":"Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -103,7 +103,7 @@
 
         {"kind":"and","text":"Calling the \"contains\" method will also return true.","code":["t.contains(s)"]},
 
-        {"kind":"and","text":"The String representation is as expected.","code":["s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","      \"   (\\n\" +","      \"      (  -6.0 ,  -4.0  ),\\n\" +","      \"      (  -2.0 ,   0.0  )\\n\" +","      \"   )\\n\" +","      \")\""]},
+        {"kind":"and","text":"The String representation is as expected.","code":["s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","      \"   [ 2 ]:(\\n\" +","      \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","      \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","      \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","      \"   )\\n\" +","      \")\""]},
 
         {"kind":"and","text":"The tensor \"x\" is of course a slice:","code":["s.isSlice()"]},
 
@@ -113,15 +113,15 @@
 
         {"kind":"when","text":"We slice the tensor t by passing a map of start and end labels as keys and strides as values.","code":["s = t[\"2\", [[\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
 
-        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","      \"   (\\n\" +","      \"      (  -6.0 ,  -4.0  ),\\n\" +","      \"      (  -2.0 ,   0.0  )\\n\" +","      \"   )\\n\" +","      \")\"","!s.isVirtual()","s.isSlice()","t.isSliceParent()","t.sliceCount()==2"]},
+        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","        \"   [ 2 ]:(\\n\" +","        \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","        \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","        \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","        \"   )\\n\" +","        \")\"","!s.isVirtual()","s.isSlice()","t.isSliceParent()","t.sliceCount()==2"]},
 
         {"kind":"when","text":"We slice the tensor t by passing a map of start and end labels as keys and strides as values.","code":["s = t[[[\"2\"]:1, [\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
 
-        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","      \"   (\\n\" +","      \"      (  -6.0 ,  -4.0  ),\\n\" +","      \"      (  -2.0 ,   0.0  )\\n\" +","      \"   )\\n\" +","      \")\"","!s.isVirtual()","s.isSlice()","t.isSliceParent()","t.sliceCount()==3"]},
+        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","        \"   [ 2 ]:(\\n\" +","        \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","        \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","        \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","        \"   )\\n\" +","        \")\"","!s.isVirtual()","s.isSlice()","t.isSliceParent()","t.sliceCount()==3"]},
 
         {"kind":"when","text":"","code":["t.mut.labelAxes(","    new String[][]{","        new String[]{ \"1\", \"2\" },","        new String[]{ \"a\", \"b\", \"y\" },","        new String[]{ \"tim\", \"tom\", \"tina\", \"tanya\" }","    }",")","s = t[ [\"1\",\"2\"], \"b\"..\"y\", [[\"tim\",\"tanya\"]:2] ]"]},
 
-        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[2x2x2]:(\\n\" +","      \"   (\\n\" +","      \"      (  -3.0 ,  -1.0  ),\\n\" +","      \"      (   1.0 ,   3.0  )\\n\" +","      \"   ),\\n\" +","      \"   (\\n\" +","      \"      (  -6.0 ,  -4.0  ),\\n\" +","      \"      (  -2.0 ,   0.0  )\\n\" +","      \"   )\\n\" +","      \")\"","!s.isVirtual()","s.isSlice()","t.isSliceParent()","t.sliceCount() == 4"]}
+        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[2x2x2]:(\\n\" +","      \"   [ 1 ]:(\\n\" +","      \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","      \"      (  -3.0 ,  -1.0  ):[ b ],\\n\" +","      \"      (   1.0 ,   3.0  ):[ y ]\\n\" +","      \"   ),\\n\" +","      \"   [ 2 ]:(\\n\" +","      \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","      \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","      \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","      \"   )\\n\" +","      \")\"","!s.isVirtual()","s.isSlice()","t.isSliceParent()","t.sliceCount() == 4"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -129,7 +129,7 @@
     {
       "id":"A tensor can be labeled partially.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

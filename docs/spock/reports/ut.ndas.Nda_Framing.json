@@ -4,19 +4,19 @@
   "narrative":"Framing an nd-array is all about naming its axes and then using those names to\n    access, read or write its values in a more convenient and human readable way.",
   "subjects":["neureka.Nda"],
   "statistics":{
-    "runs":"2",
+    "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.046 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can label the columns of a rank 2 nd-array.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.024 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"We can label the columns and rows of a rank 3 nd-array.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,6 +43,27 @@
         {"kind":"when","text":"We label the columns and rows of the nd-array.","code":["nda.mut.label(\"Framed\").mut.labelAxes([null, [\"A\", \"B\"], [\"Num\", \"Letter\", \"Symbol\"]])"]},
 
         {"kind":"then","text":"The columns and rows are labeled as expected.","code":["nda.toString() == \"(2x2x3):[\\n\" +","\"   [\\n\" +","\"      (   Num )(Letter)(Symbol ):( Framed )\\n\" +","\"      [    1  ,    a  ,    Â§   ]:( A ),\\n\" +","\"      [    2  ,    b  ,    %   ]:( B )\\n\" +","\"   ],\\n\" +","\"   [\\n\" +","\"      (   Num )(Letter)(Symbol ):( Framed )\\n\" +","\"      [    3  ,    c  ,    â‚¬   ]:( A ),\\n\" +","\"      [    4  ,    d  ,    Â£   ]:( B )\\n\" +","\"   ]\\n\" +","\"]\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use labels as selectors for slicing.",
+      "result":"PASS",
+      "duration":"0.007 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A rank 3 nd-array with shape (2, 3, 4).","code":["def nda = Nda.of(String)",".withShape(2, 2, 3)",".andFill(\"1\", \"a\", \"Â§\", \"2\", \"b\", \"%\" , \"3\", \"c\", \"â‚¬\", \"4\", \"d\", \"Â£\")"]},
+
+        {"kind":"when","text":"We label the columns and rows of the nd-array.","code":["nda.mut.label(\"Framed\").mut.labelAxes([[\"M1\", \"M2\"], [\"A\", \"B\"], [\"Num\", \"Letter\", \"Symbol\"]])"]},
+
+        {"kind":"then","text":"The columns and rows are labeled as expected.","code":["nda.toString() == \"(2x2x3):[\\n\" +","\"   ( M1 ):[\\n\" +","\"      (   Num )(Letter)(Symbol ):( Framed )\\n\" +","\"      [    1  ,    a  ,    Â§   ]:( A ),\\n\" +","\"      [    2  ,    b  ,    %   ]:( B )\\n\" +","\"   ],\\n\" +","\"   ( M2 ):[\\n\" +","\"      (   Num )(Letter)(Symbol ):( Framed )\\n\" +","\"      [    3  ,    c  ,    â‚¬   ]:( A ),\\n\" +","\"      [    4  ,    d  ,    Â£   ]:( B )\\n\" +","\"   ]\\n\" +","\"]\""]},
+
+        {"kind":"when","text":"We slice the nd-array using labels.","code":["def slice = nda[\"M1\", \"A\", \"Num\"]"]},
+
+        {"kind":"then","text":"The slice is as expected.","code":["slice.items == [\"1\"]","slice.toString() == \"(1x1x1):[\\n\" +","\"   ( M1 ):[\\n\" +","\"      (   Num  ):( Framed:slice )\\n\" +","\"      [    1   ]:( A )\\n\" +","\"   ]\\n\" +","\"]\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

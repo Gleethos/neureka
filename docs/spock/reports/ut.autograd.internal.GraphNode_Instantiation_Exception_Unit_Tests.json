@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.180 seconds"
+    "duration":"0.679 seconds"
   },
   "headers":["\n            <h2> GraphNode Instantiation Tests </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the GraphNode class during instantiation where\n                inputs are setup to cause expected exceptions.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.",
       "result":"PASS",
-      "duration":"0.146 seconds",
+      "duration":"0.643 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

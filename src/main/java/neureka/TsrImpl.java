@@ -888,7 +888,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     public Tsr<V> labelAxes( Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
-        TsrImpl.this.set( new NDFrame<>( labels, TsrImpl.this, null ) );
+        String label = getLabel();
+        label = label == null || label.isEmpty() ? null : label;
+        TsrImpl.this.set( new NDFrame<>( labels, TsrImpl.this, label ) );
         return TsrImpl.this;
     }
 

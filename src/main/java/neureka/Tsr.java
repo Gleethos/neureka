@@ -1383,7 +1383,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /**
      * @return An instance of the {@link NDFrame} component if present.
      */
-    default NDFrame<V> frame() { return get( NDFrame.class ); }
+    default Optional<NDFrame<V>> frame() { return (Optional<NDFrame<V>>) ((Optional)find( NDFrame.class )); }
 
     /**
      *  <b>This method returns a new tensor detached from any underlying computation-graph
