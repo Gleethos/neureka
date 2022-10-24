@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.016 seconds"
+    "duration":"0.089 seconds"
   },
   "headers":["\n            Here you will find out how to store tensors on devices,\n            how to move tensors between devices and how to use\n            the device specific methods of the tensor class.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Adding OpenCL device to tensor makes tensor be \"outsourced\" and contain the Device instance as component.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.063 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Tensors try to migrate themselves to a device that is being added to them as component.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"The device of a tensor can be accessed via the \"device()\" method.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -83,7 +83,7 @@
     {
       "id":"When creating slices of tensors then this should trigger a \"parent - child\" relation noticeable to the device!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

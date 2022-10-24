@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.280 seconds"
+    "duration":"0.146 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCL backend context can load implementations.",
       "result":"PASS",
-      "duration":"0.201 seconds",
+      "duration":"0.137 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

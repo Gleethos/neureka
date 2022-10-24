@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.146 seconds"
+    "duration":"0.106 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The DeviceCleaner triggers registered cleaner actions when things are eligible for GC.",
       "result":"PASS",
-      "duration":"0.141 seconds",
+      "duration":"0.102 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

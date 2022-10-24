@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.539 seconds"
+    "duration":"13.570 seconds"
   },
   "headers":[" \n                <p>\n                    This specification covers the behavior of tensors when being sliced\n                    on multiple different device types in conjunction with \n                    the autograd system.\n                    Autograd should work on slices as well.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.441 seconds",
+      "duration":"0.129 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
 
         {"kind":"then","text":"","code":["y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
 
-        {"kind":"where","text":"","code":{"device":["OpenCLDevice[id=0x1c72a378350,platform=0x7ffba79e8000]","CPU[cores=32]"]}}
+        {"kind":"where","text":"","code":{"device":["OpenCLDevice[id=0x1fb7b28a9d0,platform=0x7ffba79e8000]","CPU[cores=32]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -41,7 +41,7 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.963 seconds",
+      "duration":"13.337 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +98,7 @@
 
         {"kind":"and","text":"","code":["x.toString().replace(\".0\", \"\").contains(\"->d[2x2]:(-2, 3, 1, 2)\")"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x1c72a378350,platform=0x7ffba79e8000]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x1fb7b28a9d0,platform=0x7ffba79e8000]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.186 seconds"
+    "duration":"0.030 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the \"mut\" API to assign the contents of one tensor into another one.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Assignment can be easily achieved through subscription operators.",
       "result":"PASS",
-      "duration":"0.026 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"We can assign one slice into another one.",
       "result":"PASS",
-      "duration":"0.106 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note that using the 'assign' operation on slices should be handled with care,\n            since the operation has side effects on the underlying data array\n            which is shared by both the slice and its parent.\n            Use the 'copy' operation on slices if you want to avoid this.\n        "]
       },

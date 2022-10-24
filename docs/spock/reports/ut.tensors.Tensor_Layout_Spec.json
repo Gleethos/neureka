@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.974 seconds"
+    "duration":"0.651 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A new transposed version of a given tensor will be returned by the \"T()\" method.",
       "result":"PASS",
-      "duration":"0.106 seconds",
+      "duration":"0.139 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Matrix multiplication works for both column and row major matrices across devices.",
       "result":"PASS",
-      "duration":"1.862 seconds",
+      "duration":"0.503 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.884 seconds"
+    "duration":"0.812 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The long broad integration test runs successfully.",
       "result":"PASS",
-      "duration":"0.772 seconds",
+      "duration":"0.681 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
