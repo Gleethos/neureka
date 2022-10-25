@@ -106,6 +106,10 @@ class Tensor_Framing_Spec extends Specification
             t.frame().get().atAxis("Axis Three").getAllAliasesForIndex(1) == ["tina"]
             t.frame().get().atAxis("Axis One").getAllAliases().contains("x")
             t.frame().get().atAxis("Axis One").getAllAliases().contains("y")
+            t.frame().get().atAxis(2).getAllAliasesForIndex(0) == ["tim"]
+            t.frame().get().atAxis(2).getAllAliasesForIndex(1) == ["tina"]
+            t.frame().get().atAxis(0).getAllAliases().contains("x")
+            t.frame().get().atAxis(0).getAllAliases().contains("y")
             !asString.contains(" a ")
             !asString.contains(" b ")
             !asString.contains(" c ")

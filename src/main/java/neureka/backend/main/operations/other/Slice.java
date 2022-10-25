@@ -164,7 +164,7 @@ public class Slice extends AbstractOperation
     }
 
     private void _sliceFrame(
-            Tsr<?> input, Tsr<?> subset, int[] newShape, int[] newOffset, int[] newSpread
+        Tsr<?> input, Tsr<?> subset, int[] newShape, int[] newOffset, int[] newSpread
     ) {
         // Now if the parent tensor has a name and or axes labels we carry them over to the subset:
         String label = input.label();

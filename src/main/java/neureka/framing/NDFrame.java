@@ -68,30 +68,34 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         this(Collections.emptyMap(), host, tensorName);
     }
 
-    public NDFrame(Map<Object, List<Object>> labels, Tsr<V> host, String tensorName ) {
-        _mainLabel = tensorName;
+    public NDFrame(
+            Map<Object, List<Object>> labels,
+            Tsr<V> host,
+            String ndaMainLabel
+    ) {
+        _mainLabel = ndaMainLabel;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
-        for ( int i = 0; i < host.rank(); i++ ) {
-            Map<Object, Object> indicesMap = new LinkedHashMap<>();
-            //indicesMap.put( i, i );
-            _mapping.put( i, indicesMap );
-        }
         int[] index = { 0 };
         labels.forEach( ( k, v ) -> {
+            if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
             if ( v != null ) {
                 Map<Object, Integer> indicesMap = new LinkedHashMap<>( v.size() * 3 );
                 for ( int i = 0; i < v.size(); i++ ) indicesMap.put( v.get( i ), i );
-                if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
                 _mapping.put( k, indicesMap );
-                _mapping.put( index[ 0 ], indicesMap ); // default integer index should also always work!
             }
-            else {
-                if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
-                _mapping.put( k, host.getNDConf().shape()[ index[ 0 ] ] );
-                _mapping.put( index[ 0 ], host.getNDConf().shape()[ index[ 0 ] ] );// default integer index should also always work!
-            }
+            else
+                _mapping.put( k, host.getNDConf().shape( index[ 0 ] ) );
+
             index[ 0 ]++;
         });
+        index[0] = 0;
+        labels.forEach( ( k, v ) -> {
+            _mapping.put( index[ 0 ], _mapping.get(k) ); // default integer index should also always work!
+            index[ 0 ]++;
+        });
+        for ( int i = index[0]; i < host.rank(); i++ )
+            if ( !_mapping.containsKey( i ) )
+                _mapping.put(i, new LinkedHashMap<>());
     }
 
     private NDFrame( List<Object> hiddenKeys, Map<Object, Object> mapping, String tensorName ) {
@@ -158,14 +162,14 @@ public final class NDFrame<V> implements Component<Tsr<V>>
                 .setter(
                         atKey -> (int setValue) ->
                         {
-                            Map<Object, Integer> am = _initializeIdxmap( axisAlias, atKey, setValue );
+                            Map<Object, Integer> am = _initializeIndexMap( axisAlias, atKey, setValue );
                             am.put( atKey, setValue );
                             return this;
                         }
                 )
                 .replacer(
                         ( currentIndexKey ) -> (newIndexKey ) -> {
-                            Map<Object, Integer> am = _initializeIdxmap( axisAlias, currentIndexKey, (Integer) currentIndexKey );
+                            Map<Object, Integer> am = _initializeIndexMap( axisAlias, currentIndexKey, (Integer) currentIndexKey );
                             if (am.containsKey( currentIndexKey ) )
                                 am.put( newIndexKey, am.remove( currentIndexKey ) ); // This...
                             return this;
@@ -193,7 +197,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
                 .build();
     }
 
-    private Map<Object, Integer> _initializeIdxmap( Object axis, Object key, int index ) {
+    private Map<Object, Integer> _initializeIndexMap(Object axis, Object key, int index ) {
         Object am =  _mapping.get( axis );
         if ( am instanceof Map )
             return (Map<Object, Integer>) _mapping.get( axis );
@@ -307,12 +311,10 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         return true;
     }
 
-    public Map<Object, Object> getMapping() {
-        return Collections.unmodifiableMap(_mapping);
-    }
+    private Map<Object, Object> _mapping() { return Collections.unmodifiableMap(_mapping); }
 
     public Map<Object, List<Object>> getState() {
-        Map<Object, Object> internalState = getMapping();
+        Map<Object, Object> internalState = _mapping();
         Map<Object, List<Object>> simpleState = new LinkedHashMap<>();
         for ( Object k : internalState.keySet() ) {
             Object al = internalState.get(k);
