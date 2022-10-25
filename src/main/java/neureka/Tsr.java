@@ -60,6 +60,7 @@ import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.calculus.Function;
 import neureka.calculus.Functions;
+import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
 import neureka.common.composition.ComponentOwner;
 import neureka.common.utility.DataConverter;
@@ -90,6 +91,8 @@ import neureka.view.NdaAsString;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *  {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
@@ -1911,6 +1914,16 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /** {@inheritDoc} */
     @Override AxisOrGetTsr<V> slice();
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> concatAt( int axis, Nda<V>... ndArrays ) {
+        String args = IntStream.range(0,ndArrays.length+1).mapToObj(i->"I["+ i +"]").collect(Collectors.joining(", "));
+        Function concat = Function.of( "concat("+ args +")" );
+        Tsr<V>[] allArgs = new Tsr[ndArrays.length+1];
+        allArgs[0] = this;
+        System.arraycopy( ndArrays, 0, allArgs, 1, ndArrays.length );
+        return concat.with(Arg.Axis.of(axis)).call( allArgs );
+    }
 
     /** {@inheritDoc} */
     @Override

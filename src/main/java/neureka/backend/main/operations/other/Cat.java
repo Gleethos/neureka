@@ -10,10 +10,9 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.framing.NDFrame;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Cat extends AbstractOperation
@@ -74,6 +73,13 @@ public class Cat extends AbstractOperation
                         Neureka.get().backend().getFunction().idy().execute( slice, call.input( i ) );
                     }
                     c.mut().setIsIntermediate(true);
+                    try {
+                        _catFrames( inputs, c, dim );
+                    } catch ( Exception e ) {
+                        e.printStackTrace();
+                        // Framing is not that important, a result however is!
+                        // So an exception in the frame concatenation is not fatal!
+                    }
                     return
                         Result.of(c)
                             .withADAction( target -> {
@@ -86,6 +92,87 @@ public class Cat extends AbstractOperation
             )
             .buildFunAlgorithm()
         );
+    }
+
+    private void _catFrames( Tsr<?>[] inputs, Tsr<?> concat, int dim )
+    {
+        String label =
+                Arrays.stream(inputs)
+                .map(Tsr::frame)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(NDFrame::getLabel)
+                .collect(Collectors.joining("+"));
+
+        if ( !label.isEmpty() ) concat.mut().label(label);
+
+        List<Map<Object, List<Object>>> labels =
+                                            Arrays.stream(inputs)
+                                                    .map(Tsr::frame)
+                                                    .filter(Optional::isPresent)
+                                                    .map(Optional::get)
+                                                    .map(NDFrame::getState)
+                                                    .collect(Collectors.toList());
+
+        List<List<Object>> allKeys = labels.stream().map( l -> new ArrayList<>(l.keySet()) ).collect(Collectors.toList());
+
+        Map<Object, List<Object>> concatFrame = new LinkedHashMap<>();
+        for ( int ci = 0; ci < concat.rank(); ci++ ) {
+
+            int finalCi = ci;
+            List<Object> distinctKeys = allKeys.stream().map(ks->ks.get(finalCi) ).distinct().collect(Collectors.toList());
+            Object key;
+            {
+                boolean allString = distinctKeys.stream().allMatch(k -> k instanceof String);
+                if (allString) // We join using the "+" operator:
+                    key = distinctKeys.stream().map(k -> (String) k).collect(Collectors.joining("+"));
+                else // We simply take the first one:
+                    key = distinctKeys.get(0);
+            }
+
+            List<Object> values = new ArrayList<>();
+            if ( ci == dim ) {
+                /*
+                    We need to join the value lists of all the frames
+                    and then set the state of the concatenated tensor frame.
+                 */
+                for ( int i = 0; i < inputs.length; i++ ) {
+                    Map<Object, List<Object>> current = labels.get(i);
+                    List<Object> currentKeys = allKeys.get(i);
+                    List<Object> currentValues = current.get(currentKeys.get(ci));
+                    values.addAll(currentValues);
+                }
+            } else {
+                /*
+                    This is not as simple as the above case!
+                    We have conflicting values for the same key, so we do the following:
+                    1. If the values are all equal we just take the first one.
+                    2. If the values are not equal but all of type string, we join them with a "+".
+                    3. If the values are not equal and not all of type string, we just take the first one.
+                 */
+                for ( int j = 0; j < concat.shape(ci); j++ ) {
+                    List<Object> valuesForThisIndex = new ArrayList<>();
+                    for ( int i = 0; i < inputs.length; i++ ) {
+                        Map<Object, List<Object>> current = labels.get(i);
+                        List<Object> currentKeys = allKeys.get(i);
+                        List<Object> currentValues = current.get(currentKeys.get(ci));
+                        valuesForThisIndex.add(currentValues.get(j));
+                    }
+                    boolean allEqual = valuesForThisIndex.stream().distinct().count() == 1;
+                    if ( allEqual )
+                        values.add(valuesForThisIndex.get(0));
+                    else {
+                        boolean allString = valuesForThisIndex.stream().allMatch( v -> v instanceof String );
+                        if ( allString )
+                            values.add(valuesForThisIndex.stream().map( v -> (String) v ).collect(Collectors.joining("+")));
+                        else
+                            values.add(valuesForThisIndex.get(0));
+                    }
+                }
+            }
+            concatFrame.put(key, values);
+        }
+        if ( !concatFrame.isEmpty() ) concat.mut().labelAxes(concatFrame);
     }
 
     @Override

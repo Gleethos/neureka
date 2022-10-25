@@ -58,6 +58,7 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.memory.MemUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
@@ -84,6 +85,7 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -1065,7 +1067,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      */
     @Override
     public AxisOrGetTsr<V> slice() { return new SliceBuilder<>( this ); }
-
 
     /**
      *  {@inheritDoc}

@@ -16,7 +16,7 @@
     {
       "id":"Tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
@@ -41,7 +41,7 @@
     {
       "id":"Range based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@a5ca424","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@638b17a3","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@3fd89337","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@6274827a","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@25f81669","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@76dc1aea","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@772845d7","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@2a28d7b1"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@2ff47c5e","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@195967aa","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@20641b0","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@41343a30","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@65e0fc24","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@4fe5030b","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@373ea456","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@512c41c7"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

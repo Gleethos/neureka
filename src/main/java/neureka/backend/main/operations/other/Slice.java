@@ -170,22 +170,20 @@ public class Slice extends AbstractOperation
         String label = input.label();
         if ( !label.isEmpty() ) subset.mut().label( label + ":slice" );
         input.frame().ifPresent( frame -> {
-            Map<Object, Object> state = frame.getMapping();
+            Map<Object, List<Object>> state = frame.getState();
             Map<Object, List<Object>> sliceState = new LinkedHashMap<>();
             int i = 0;
             for ( Object k : state.keySet() ) {
-                Object al = state.get(k);
-                if ( al instanceof Integer )
+                List<Object> axesLabels = state.get(k);
+                if ( axesLabels == null )
                     sliceState.put( k, null ); // newShape[i]
                 else {
-                    List<Object> map = new ArrayList<>();
-                    List<Map.Entry<Object,Object>> entries = new ArrayList<>(((Map<Object,Object>)al).entrySet());
+                    List<Object> slicedLabels = new ArrayList<>();
                     for ( int j = 0; j < newShape[i]; j++ ) {
                         int index = newOffset[i] + j * newSpread[i];
-                        Map.Entry<Object, Object> entry = entries.get(index);
-                        map.add( entry.getKey() );
+                        slicedLabels.add( axesLabels.get(index) );
                     }
-                    sliceState.put( k, map );
+                    sliceState.put( k, slicedLabels );
                 }
                 i++;
                 if ( i == newShape.length ) break;

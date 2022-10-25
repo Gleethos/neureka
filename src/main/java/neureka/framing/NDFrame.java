@@ -311,6 +311,22 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         return Collections.unmodifiableMap(_mapping);
     }
 
+    public Map<Object, List<Object>> getState() {
+        Map<Object, Object> internalState = getMapping();
+        Map<Object, List<Object>> simpleState = new LinkedHashMap<>();
+        for ( Object k : internalState.keySet() ) {
+            Object al = internalState.get(k);
+            if ( al instanceof Integer ) simpleState.put( k, null ); // newShape[i]
+            else {
+                List<Object> map = new ArrayList<>();
+                List<Map.Entry<Object,Object>> entries = new ArrayList<>(((Map<Object,Object>)al).entrySet());
+                for ( Map.Entry<Object, Object> entry : entries ) map.add(entry.getKey());
+                simpleState.put( k, map );
+            }
+        }
+        return simpleState;
+    }
+
     public String getLabel() {
         return _mainLabel;
     }

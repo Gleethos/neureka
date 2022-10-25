@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"3.943 seconds"
+    "duration":"5.852 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can perform a convolution operation on a 2D tensor.",
       "result":"PASS",
-      "duration":"1.249 seconds",
+      "duration":"2.824 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Convolution with tensors of the same shape is equivalent to a dot product.",
       "result":"PASS",
-      "duration":"0.319 seconds",
+      "duration":"0.745 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Convolution can be performed using non-quadratic matrix tensors.",
       "result":"PASS",
-      "duration":"0.337 seconds",
+      "duration":"0.387 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
     {
       "id":"Convolution can be performed using tensors with an additional dimension as batch size.",
       "result":"PASS",
-      "duration":"0.355 seconds",
+      "duration":"0.319 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -102,7 +102,7 @@
     {
       "id":"The \"x\" (convolution) operator produces expected results (On the CPU).",
       "result":"PASS",
-      "duration":"0.269 seconds",
+      "duration":"0.221 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        ","\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        "]
       },
@@ -129,7 +129,7 @@
     {
       "id":"Manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.257 seconds",
+      "duration":"0.185 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -146,7 +146,7 @@
     {
       "id":"Very simple manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.820 seconds",
+      "duration":"0.712 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -157,7 +157,7 @@
 
         {"kind":"then","text":"","code":["xAsStr.contains(\"(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]\")","yAsStr.contains(\"(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]\")","zAsStr.contains(\"(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]\")","rcAsStr.contains(\"(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]\")","kAsStr.contains(\"(2x2):[15.0, 18.0, 27.0, 30.0]\")","vAsStr.contains(\"(2x2):[12.0, 15.0, 24.0, 27.0]\")","jAsStr.contains(\"(2x2):[18.0, 21.0, 30.0, 33.0]\")","uAsStr.contains(\"(2x2):[5.0, 6.0, 9.0, 10.0]\")","colconvol.toString().contains(\"(2x2):[0.0, 0.0, 0.0, 0.0]\")"]},
 
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x1d90dc79020,platform=0x7ffba79e8000]"]}}
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x20b9caf9ad0,platform=0x7ffbc3928000]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -165,7 +165,7 @@
     {
       "id":"Autograd works with simple 2D convolution.",
       "result":"PASS",
-      "duration":"0.099 seconds",
+      "duration":"0.098 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -190,7 +190,7 @@
     {
       "id":"Sime convolution works as expected eith autograd.",
       "result":"PASS",
-      "duration":"0.097 seconds",
+      "duration":"0.085 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -215,7 +215,7 @@
     {
       "id":"Tensors have the correct layout after convolution.",
       "result":"PASS",
-      "duration":"0.098 seconds",
+      "duration":"0.096 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

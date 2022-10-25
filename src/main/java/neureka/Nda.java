@@ -474,6 +474,19 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     AxisOrGet<V> slice();
 
     /**
+     * This method concatenates the provided nd-arrays together with this nd-array along a specified axis.
+     * The provided nd-arrays must have the same shape and data type as the current nd-array, except for the specified axis.
+     *
+     * @param axis The axis along which the provided nd-arrays should be concatenated.
+     *             The axis must be within the range of the rank of the current nd-array.
+     * @param ndArrays The non-null, non-empty nd-arrays which should be concatenated together with the current nd-array.
+     *                 The nd-arrays must have the same shape as the current nd-array, except for the specified axis.
+     *                 Also, it must have the same data type as the current nd-array.
+     * @return A new nd-array which is the concatenation of the current nd-array and the provided nd-arrays.
+     */
+    Nda<V> concatAt( int axis, Nda<V>... ndArrays );
+
+    /**
      *  The following method enables access to specific scalar elements within the nd-array.
      *  The method name also translates to the subscription operator in Groovy.
      *

@@ -33,7 +33,6 @@ class Nda_Framing extends Specification
                               "   [    1  ,    a  ,    §   ],\n" +
                               "   [    2  ,    b  ,    %   ]\n" +
                               "]"
-
     }
 
     def 'We can label the columns and rows of a rank 3 nd-array.'()
@@ -107,7 +106,40 @@ class Nda_Framing extends Specification
             slice.items == ["b", "e"]
             slice.toString() == "(2):(    B  )(   E   ):( Framed:slice )\n" +
                                 "    [    b  ,    e   ]"
+    }
 
+    def 'Concatenating 2 labeled nd-arrays will produce a nd-array which is also labeled.'()
+    {
+        given : 'Two rank 2 nd-arrays with shape (2x3).'
+            var nda1 = Nda.of("a", "1", "!", "b", "2", "§").withShape(2,3)
+            var nda2 = Nda.of("x", "2,50", "%", "y", "4,90", "&").withShape(2,3)
+        when : 'We label the nd-arrays.'
+            nda1.mut.label("Nda1").mut.labelAxes(["rows":["A", "B"], "cols":["Letter", "Num", "Symbol"]])
+            nda2.mut.label("Nda2").mut.labelAxes(["rows":["1", "2"], "cols":["Letter",  "€",  "Symbol"]])
+        then : 'The nd-arrays are labeled as expected.'
+            nda1.toString() == "(2x3):[\n" +
+                                "   ( Letter)(  Num )(Symbol ):( Nda1 )\n" +
+                                "   [    a  ,    1  ,    !   ]:( A ),\n" +
+                                "   [    b  ,    2  ,    §   ]:( B )\n" +
+                                "]"
+            nda2.toString() == "(2x3):[\n" +
+                               "   ( Letter)(   €  )(Symbol ):( Nda2 )\n" +
+                               "   [    x  ,  2,50 ,    %   ]:( 1 ),\n" +
+                               "   [    y  ,  4,90 ,    &   ]:( 2 )\n" +
+                               "]"
+        when : 'We concatenate the nd-arrays.'
+            var nda = nda1.concatAt(0, nda2)
+        then : """
+                The concatenated nd-array is labeled as expected.
+                Note that conflicting labels will simply be merged into a single label.    
+            """
+            nda.toString() == "(4x3):[\n" +
+                              "   ( Letter)( Num+€)(Symbol ):( Nda1+Nda2 )\n" +
+                              "   [    a  ,    1  ,    !   ]:( A ),\n" +
+                              "   [    b  ,    2  ,    §   ]:( B ),\n" +
+                              "   [    x  ,  2,50 ,    %   ]:( 1 ),\n" +
+                              "   [    y  ,  4,90 ,    &   ]:( 2 )\n" +
+                              "]"
     }
 
 

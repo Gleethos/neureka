@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.177 seconds"
+    "duration":"0.175 seconds"
   },
   "headers":["\n                   This specification defines the behavior of implementations of the \n                   Algorithm interface! <br> \n        "],"tags":{},"see":[],
   "features":[ 
@@ -25,7 +25,7 @@
 
         {"kind":"then","text":"The variables containing the executor instances are not null.","code":["hostExecutor != null","clExecutor != null || !Neureka.get().canAccessOpenCLDevice()"]},
 
-        {"kind":"where","text":"The variable \"imp\" is from a List of OperationType implementations of type \"Operator\".","code":{"imp":["BiElementWise@4a8574aa[name=elementwise,support=[CPU,OpenCLDevice]]","BiElementWise@2a6e3eae[name=elementwise,support=[CPU,OpenCLDevice]]","BiElementWise@37982163[name=elementwise,support=[CPU,OpenCLDevice]]","BiElementWise@46cd9c4f[name=elementwise,support=[CPU,OpenCLDevice]]","BiElementWise@3d9cc089[name=elementwise,support=[CPU,OpenCLDevice]]"]}}
+        {"kind":"where","text":"The variable \"imp\" is from a List of OperationType implementations of type \"Operator\".","code":{"imp":["BiElementWise@617bfe94[name=elementwise,support=[OpenCLDevice,CPU]]","BiElementWise@405eda6f[name=elementwise,support=[OpenCLDevice,CPU]]","BiElementWise@1aff44c8[name=elementwise,support=[OpenCLDevice,CPU]]","BiElementWise@4e2d0d47[name=elementwise,support=[OpenCLDevice,CPU]]","BiElementWise@2205e97d[name=elementwise,support=[OpenCLDevice,CPU]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -42,7 +42,7 @@
 
         {"kind":"then","text":"The variables containing the executor instances are not null.","code":["hostExecutor != null","clExecutor != null || !Neureka.get().canAccessOpenCLDevice()"]},
 
-        {"kind":"where","text":"The variable \"imp\" is from a List of OperationType implementations of type \"Operator\".","code":{"imp":["Activation@6bd47193[name=activation,support=[CPU,OpenCLDevice]]","Activation@19b1110c[name=activation,support=[CPU,OpenCLDevice]]","Activation@242687e8[name=activation,support=[CPU,OpenCLDevice]]","Activation@36d4eb50[name=activation,support=[CPU,OpenCLDevice]]","Activation@7b6edb46[name=activation,support=[CPU,OpenCLDevice]]","Activation@2871d358[name=activation,support=[CPU,OpenCLDevice]]","Activation@18ddd5ef[name=activation,support=[CPU,OpenCLDevice]]","Activation@5f2558a1[name=activation,support=[CPU,OpenCLDevice]]","Activation@16dd4970[name=activation,support=[CPU,OpenCLDevice]]","Activation@1a193b10[name=activation,support=[CPU,OpenCLDevice]]","Activation@3cfd7964[name=activation,support=[CPU,OpenCLDevice]]","Activation@7b1b63c3[name=activation,support=[CPU,OpenCLDevice]]","Activation@437de102[name=activation,support=[CPU,OpenCLDevice]]","Activation@1f95b0c3[name=activation,support=[CPU,OpenCLDevice]]","Activation@82651bd[name=activation,support=[CPU,OpenCLDevice]]","Activation@6e6641b2[name=activation,support=[CPU,OpenCLDevice]]","Activation@55b290fa[name=activation,support=[CPU,OpenCLDevice]]","Activation@40d9ca2e[name=activation,support=[CPU,OpenCLDevice]]","Activation@21558051[name=activation,support=[CPU,OpenCLDevice]]","Activation@364d0f79[name=activation,support=[CPU,OpenCLDevice]]","Activation@5496b2ae[name=activation,support=[CPU,OpenCLDevice]]","Activation@6b0349c1[name=activation,support=[CPU,OpenCLDevice]]","Activation@34a5633d[name=activation,support=[CPU,OpenCLDevice]]","Activation@2d6cd15f[name=activation,support=[CPU,OpenCLDevice]]","Activation@5aa70bed[name=activation,support=[CPU,OpenCLDevice]]"]}}
+        {"kind":"where","text":"The variable \"imp\" is from a List of OperationType implementations of type \"Operator\".","code":{"imp":["Activation@65b6bf66[name=activation,support=[OpenCLDevice,CPU]]","Activation@5f5cac8f[name=activation,support=[OpenCLDevice,CPU]]","Activation@2dae0c6c[name=activation,support=[OpenCLDevice,CPU]]","Activation@73222dd[name=activation,support=[OpenCLDevice,CPU]]","Activation@397bfc4c[name=activation,support=[OpenCLDevice,CPU]]","Activation@148b355a[name=activation,support=[OpenCLDevice,CPU]]","Activation@4d6e3cf2[name=activation,support=[OpenCLDevice,CPU]]","Activation@538b82fc[name=activation,support=[OpenCLDevice,CPU]]","Activation@78697515[name=activation,support=[OpenCLDevice,CPU]]","Activation@61624707[name=activation,support=[OpenCLDevice,CPU]]","Activation@47c5a28e[name=activation,support=[OpenCLDevice,CPU]]","Activation@6f333983[name=activation,support=[OpenCLDevice,CPU]]","Activation@18b31b3[name=activation,support=[OpenCLDevice,CPU]]","Activation@339df636[name=activation,support=[OpenCLDevice,CPU]]","Activation@247830f[name=activation,support=[OpenCLDevice,CPU]]","Activation@7b51f6eb[name=activation,support=[OpenCLDevice,CPU]]","Activation@6858db57[name=activation,support=[OpenCLDevice,CPU]]","Activation@75d63874[name=activation,support=[OpenCLDevice,CPU]]","Activation@13fc5603[name=activation,support=[OpenCLDevice,CPU]]","Activation@7a17c32f[name=activation,support=[OpenCLDevice,CPU]]","Activation@33c65a2a[name=activation,support=[OpenCLDevice,CPU]]","Activation@7b8e71b4[name=activation,support=[OpenCLDevice,CPU]]","Activation@62fa1530[name=activation,support=[OpenCLDevice,CPU]]","Activation@73321d36[name=activation,support=[OpenCLDevice,CPU]]","Activation@429ff87b[name=activation,support=[OpenCLDevice,CPU]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -50,7 +50,7 @@
     {
       "id":"HostExecutors of Operator implementations behave as expected.",
       "result":"PASS",
-      "duration":"0.083 seconds",
+      "duration":"0.084 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +61,7 @@
 
         {"kind":"then","text":"The mock objects are being called as expected.","code":["(0.._) * tensor.getMut() >> mutate","(0.._) * tensor.mut() >> mutate","(1.._) * call.getDevice() >> device","1 * device.getExecutor() >> nativeExecutor","1 * nativeExecutor.threaded( _, _ )","(0.._) * call.inputs() >> new Tsr[]{ tensor, tensor, tensor }","(0.._) * call.input({it >= 0 && it <= 2}) >> tensor","(0.._) * call.input( Number.class, 0 ) >> tensor","(0.._) * call.input(0) >> tensor","(0.._) * call.input( Number.class, 1 ) >> tensor","(1.._) * tensor.size() >> 0","(0.._) * tensor.itemType >> Double","(0.._) * tensor.getDataAs(double[]) >> new double[0]","(0.._) * mutate.data >> dataObj","(0.._) * dataObj.ref >> new double[0]","(0.._) * mutate.getDataAs(double[]) >> new double[0]","(0.._) * mutate.getDataForWriting(double[]) >> new double[0]","(1.._) * tensor.getNDConf() >> ndConf","(1.._) * ndConf.isSimple() >> false"]},
 
-        {"kind":"where","text":"The variable \"imp\" is from a List of OperationType implementations of type \"Operator\".","code":{"imp":["BiElementWise@4a8574aa[name=elementwise,support=[CPU,OpenCLDevice]]","BiElementWise@2a6e3eae[name=elementwise,support=[CPU,OpenCLDevice]]","BiElementWise@37982163[name=elementwise,support=[CPU,OpenCLDevice]]","BiElementWise@46cd9c4f[name=elementwise,support=[CPU,OpenCLDevice]]","BiElementWise@3d9cc089[name=elementwise,support=[CPU,OpenCLDevice]]"]}}
+        {"kind":"where","text":"The variable \"imp\" is from a List of OperationType implementations of type \"Operator\".","code":{"imp":["BiElementWise@617bfe94[name=elementwise,support=[OpenCLDevice,CPU]]","BiElementWise@405eda6f[name=elementwise,support=[OpenCLDevice,CPU]]","BiElementWise@1aff44c8[name=elementwise,support=[OpenCLDevice,CPU]]","BiElementWise@4e2d0d47[name=elementwise,support=[OpenCLDevice,CPU]]","BiElementWise@2205e97d[name=elementwise,support=[OpenCLDevice,CPU]]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

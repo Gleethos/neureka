@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.421 seconds"
+    "duration":"0.393 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice specific Data class represents JVM data for OpenCL.",
       "result":"PASS",
-      "duration":"0.049 seconds",
+      "duration":"0.057 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,7 +45,7 @@
     {
       "id":"The \"Data\" class can represent various OpenCL data types.",
       "result":"PASS",
-      "duration":"0.108 seconds",
+      "duration":"0.124 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
