@@ -30,13 +30,31 @@ public interface WithShapeOrScalarOrVector<V>
 
 
     /**
-     *  This method created and return a vector {@link Tsr} instance
+     *  This method creates and returns a vector {@link Tsr} instance
      *  which wraps the provided values.
      *
      * @param values The values which ought to be wrapped by a new vector {@link Tsr} instance.
      * @return A vector {@link Tsr} instance wrapping the provided values.
      */
     Nda<V> vector( V... values );
+
+    /**
+     *  This method creates and returns a vector {@link Tsr} instance
+     *  which wraps the provided values.
+     *
+     * @param values The list of values which ought to be turned into a vector.
+     * @return A vector representing the provided values.
+     */
+    Nda<V> vector( List<V> values );
+
+    /**
+     *  This method creates and returns a vector {@link Tsr} instance
+     *  which wraps the provided values.
+     *
+     * @param values The list of values which ought to be turned into a vector.
+     * @return A vector representing the provided values.
+     */
+    Nda<V> vector( Iterable<V> values );
 
     /**
      *  This method created and return a scalar {@link Tsr} instance

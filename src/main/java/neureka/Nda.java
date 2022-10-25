@@ -143,6 +143,22 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     static <T> Nda<T> of( T... values ) { return Tsr.of(values); }
 
     /**
+     * Constructs a vector of objects based on the provided iterable.
+     *
+     * @param values The iterable of objects from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of objects.
+     */
+    static <T> Nda<T> of( Iterable<T> values ) { return Tsr.of(values); }
+
+    /**
+     * Constructs a vector of objects based on the provided list.
+     *
+     * @param values The list of objects from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of objects.
+     */
+    static <T> Nda<T> of( List<T> values ) { return TsrImpl._of(values); }
+
+    /**
      *  A nd-array can have a label. This label is used for example when printing the nd-array.
      *  When loading a CSV file for example the label of the nd-array
      *  will be taken from the cell where the header row and the first column intersect.

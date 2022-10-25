@@ -215,7 +215,21 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param args The arguments which ought to be interpreted.
      * @return The result of the interpretation in the form of a {@link Tsr} instance of typ {@link Object}.
      */
-    static <T> Tsr<T> of( Object... args ) { return TsrImpl._of( args ); }
+    static <T> Tsr<T> of( Object... args ) {
+        LogUtil.nullArgCheck( args, "args", Object[].class );
+        return TsrImpl._of( args );
+    }
+
+    /**
+     * Constructs a vector of objects based on the provided iterable.
+     *
+     * @param iterable The iterable of objects from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D tensor of objects.
+     */
+    static <T> Tsr<T> of( Iterable<T> iterable ) {
+        LogUtil.nullArgCheck( iterable, "iterable", Iterable.class );
+        return TsrImpl._of( iterable );
+    }
 
     /**
      *  This is a convenient factory method for creating {@link Tsr} instances for

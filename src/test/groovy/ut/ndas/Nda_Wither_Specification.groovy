@@ -21,7 +21,7 @@ class Nda_Wither_Specification extends Specification
     def 'We can create a new Nda instance with a different shape.'()
     {
         given : 'We create a new Nda instance with a shape of [3, 2].'
-            Nda<?> nda = Nda.of( 1, 2, 3, 4, 5, 6 ).withShape( 3, 2 )
+            Nda<?> nda = Nda.of( 1..6 ).withShape( 3, 2 )
         expect : 'The new instance will have the expected shape.'
             nda.shape() == [3, 2]
         and : 'The new instance will have the expected items.'
@@ -33,7 +33,7 @@ class Nda_Wither_Specification extends Specification
     def 'An Nda can be labeled.'()
     {
         given : 'We create a vector of Strings.'
-            Nda<?> nda = Nda.of( "a", "b", "c" )
+            Nda<String> nda = Nda.of("a".."c")
         expect : 'Initially the vector is not labeled.'
             nda.label == ""
         when : 'We label the vector.'

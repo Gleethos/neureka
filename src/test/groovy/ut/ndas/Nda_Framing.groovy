@@ -94,7 +94,7 @@ class Nda_Framing extends Specification
     def 'The slice of a labeled vector is labeled too.'()
     {
         given : 'A rank 1 nd-array with shape (6).'
-            var nda = Nda.of("a", "b", "c", "d", "e", "f", "g", "h")
+            var nda = Nda.of("a".."h")
         when : 'We label the nd-array.'
             nda.mut.label("Framed").mut.labelAxes(["Letters":["A", "B", "C", "D", "E", "F", "G", "H"]])
         then : 'The nd-array is labeled as expected.'

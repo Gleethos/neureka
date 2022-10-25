@@ -182,6 +182,28 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         return Function.of( f.toString(), true ).call( tensors );
     }
 
+    static <T> Tsr<T> _of( Iterable<T> iterable )
+    {
+        TsrImpl<T> t = new TsrImpl<>();
+        List<T> list = new ArrayList<>();
+        iterable.forEach( list::add );
+        return _of( t );
+    }
+
+    static <T> Tsr<T> _of( List<T> list )
+    {
+        TsrImpl<T> t = new TsrImpl<>();
+        Class<?> commonType = _extractCommonType( list.toArray() );
+        // We construct the tensor:
+        t.constructFor(CPU.get(), NDConstructor.of(new int[]{ list.size() }))
+                .tryConstructing(
+                        DataType.of(commonType),
+                        list.toArray()
+                );
+        return t;
+    }
+
+
     /**
      * @param args The objects which should be checked.
      * @return A common type or null if they are not all of the same type.

@@ -3,6 +3,7 @@ package neureka.fluent.building.states;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface WithShapeOrScalarOrVectorTsr<V> extends WithShapeOrScalarOrVector<V>
@@ -20,6 +21,18 @@ public interface WithShapeOrScalarOrVectorTsr<V> extends WithShapeOrScalarOrVect
 
     /** {@inheritDoc} */
     @Override Tsr<V> vector( V... values );
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> vector( List<V> values ) {
+        return vector( values.toArray( (V[]) new Object[values.size()] ) );
+    }
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> vector( Iterable<V> values ) {
+        List<V> list = new ArrayList<>();
+        values.forEach( list::add );
+        return vector( list );
+    }
 
     /** {@inheritDoc} */
     @Override Tsr<V> scalar( V value );
