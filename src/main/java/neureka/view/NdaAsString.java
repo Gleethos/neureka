@@ -75,6 +75,10 @@ public final class NdaAsString
     private final String  _postfix;
     private final String  _indent;
 
+    private final int _hardSidePadding = 1;
+    private final int _labelSidePadding = 1;
+    private final boolean _preferLeftPadding = true;
+
     private final int[]   _shape;
     private final Tsr<?>  _tensor;
     private final boolean _legacy;
@@ -178,13 +182,18 @@ public final class NdaAsString
         final ValStringifier function = _createBasicStringifierFor( data, _isCompact );
         int cellSize = _cellSize;
         final ValStringifier postProcessing;
-        if ( cellSize >= 3 ) postProcessing = i -> {
-            String s = function.stringify( i );
-            int margin = cellSize - s.length();
-            int right = ( margin % 2 == 0 ) ? margin / 2 : ( margin-1 ) / 2;
-            if ( margin > 0 ) s = Util.pad( margin - right, Util.pad( s, right ) );
-            return s;
-        };
+        if ( cellSize >= 3 )
+            postProcessing = i -> {
+                String s = function.stringify( i );
+                int margin = cellSize - s.length();
+                int left = margin / 2;
+                int right = margin - left; // When the margin is uneven then the right margin is bigger than the left one!
+                if ( _preferLeftPadding ) // We swap the padding sides if we want to pad right less!
+                    right = right^left^(left = right); // This is a fast XOR based swap!
+
+                if ( margin > 0 ) s = Util.pad( left, Util.pad( s, right ) );
+                return s;
+            };
         else postProcessing = function;
 
         final ValStringifier finalProcessing;
@@ -418,7 +427,7 @@ public final class NdaAsString
                 List<Object> aliases = alias.atAxis( indices.length - 1 ).getAllAliases();
                 if ( aliases != null ) {
                     _$( Util.indent( dim ) );
-                    _$( _legacy ? "[ " : "( " );
+                    _$( _legacy ? "[" : "(" )._$( Util.spaces(_hardSidePadding) );
                     int missing = _shape[ indices.length - 1 ] - aliases.size();
                     if ( missing > 0 ) { // This is a basic requirement for the label size...
                         aliases = new ArrayList<>(aliases);
@@ -431,21 +440,23 @@ public final class NdaAsString
                         iarr -> getter.stringify( iarr[ iarr.length -1 ] ),
                         _legacy ? "][" : ")("
                     );
-                    _$( _legacy ? " ]" : " )" );
+                    _$( Util.spaces(_hardSidePadding) )._$( _legacy ? "]" : ")" );
                     if ( alias.getLabel() != null )
-                        _$( (_legacy) ? ":[ " : ":( " )._$( alias.getLabel() )._$( (_legacy) ? " ]" : " )" );
+                        _$( (_legacy) ? ":[" : ":(" )
+                        ._$( Util.spaces(_labelSidePadding) )._$( alias.getLabel() )._$( Util.spaces(_labelSidePadding) )
+                        ._$( (_legacy) ? "]" : ")" );
                     _$( _breakAndIndent() );
                 }
             }
             _$( Util.indent( dim ) )._$( Util.spaces( lastBreakLength ) );
-            _$( _legacy ? "( " : "[ " );
+            _$( _legacy ? "(" : "[" )._$( Util.spaces(_hardSidePadding) );
             ValStringifier getter = _createValStringifierAndFormatter( _tensor.getRawData() );
             NDValStringifier fun = _tensor.isVirtual()
                                         ? iarr -> getter.stringify( 0 )
                                         : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );
 
             _buildRow( trimStart, trimEnd, trimSize, indices, fun, ", " );
-            _$( _legacy ? " )" : " ]" );
+            _$( Util.spaces(_hardSidePadding) )._$( _legacy ? ")" : "]" );
 
             if ( alias != null && alias.hasLabelsForAxis( dim - 1 ) )
                 _$( ":" )._buildSingleLabel( alias, dim, indices );
@@ -476,12 +487,12 @@ public final class NdaAsString
         int pos = dim - 1;
         List<Object> key = alias.atAxis( pos ).getAllAliases();
         if ( pos >= 0 && key != null ) {
-            _$( _legacy ? "[ " : "( " );
+            _$( _legacy ? "[" : "(" )._$( Util.spaces(_labelSidePadding) );
             int i = ( dim == indices.length - 1 )
                     ? ( _shape[ pos ] + indices[ pos ] - 1 ) % _shape[ pos ]
                     : indices[ pos ];
             _$( i >= key.size() ? "" : key.get( i ).toString() );
-            _$( _legacy ? " ]" : " )" );
+            _$( Util.spaces(_labelSidePadding) )._$( _legacy ? "]" : ")" );
         }
         return this;
     }
