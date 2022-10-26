@@ -421,6 +421,9 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     default List<V> items() { return getItems(); }
 
+    /**
+     * @return The items of this nd-array as a (if possible) primitive array.
+     */
     Object getRawItems();
 
     /**

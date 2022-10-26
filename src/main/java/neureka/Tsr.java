@@ -756,7 +756,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  very instance.                                                                      <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", 12f, -6.34f )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", 12f, -6.34f )'</i></li>
      * </ul>
      *
      * @param expression A String which will be used for parsing a Function AST.
@@ -780,7 +780,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  very instance.                                                                      <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
      * </ul>
      *
      * @param expression A String which will be used for parsing a Function AST.
@@ -799,7 +799,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", true, List.of(b, c) )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", true, List.of(b, c) )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  element-wise to produce a new tensor 'a'!
@@ -823,7 +823,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  namely : "I[0]" <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) * 2", b )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) * 2", b )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and applies the function "f(x) = sin(x) * 2"
@@ -844,7 +844,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ... <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", b, c )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", b, c )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
@@ -867,7 +867,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", true, b, c )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", true, b, c )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  element-wise to produce a new tensor 'a'!
