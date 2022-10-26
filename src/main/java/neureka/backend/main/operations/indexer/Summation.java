@@ -43,42 +43,10 @@ public final class Summation extends AbstractOperation
                         .isDifferentiable( true        )
                         .isInline(         false       )
         );
-
-        //________________
-        // BROADCASTING :
-
-        Broadcast operationAlgorithm = new Broadcast(ElemWiseUtil::forAdditions)
-                .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setSupplyADActionFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
-                    {
-                        if ( call.autogradMode().allowsForward() )
-                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        Function mul = Neureka.get().backend().getFunction().mul();
-                        if ( ctxDerivative != null ) {
-                            return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
-                        }
-                        int d = call.getValOf( Arg.DerivIdx.class );
-                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                        return ADAction.of( target -> mul.execute( target.error(), derivative ) );
-                    }
-                )
-                .buildFunAlgorithm();
-
-
-        setAlgorithm(
-                Broadcast.class,
-                operationAlgorithm.setImplementationFor(
-                    CPU.class,
-                    new CPUBroadcastSummation()
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLBroadcastAddition( this.getIdentifier() )
-                )
-        );
-
+        /*
+            The summation operation does not have algorithms because it is
+            a special case of the "addition" operation.
+         */
     }
 
     @Override
