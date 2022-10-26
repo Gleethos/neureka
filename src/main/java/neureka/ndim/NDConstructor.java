@@ -38,7 +38,7 @@ public interface NDConstructor {
         };
     }
 
-    static NDConstructor of(int[] newShape)
+    static NDConstructor of(int... newShape)
     {
         int size = NDConfiguration.Utility.sizeOfShape(newShape);
         if (size == 0) {

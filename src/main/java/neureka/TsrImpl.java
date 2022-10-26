@@ -141,7 +141,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         Class<?> commonType = _extractCommonType(args);
         if ( commonType != null ) {
             TsrImpl<T> t = new TsrImpl<>();
-            t.constructFor(CPU.get(), NDConstructor.of(new int[]{args.length}))
+            t.constructFor(CPU.get(), NDConstructor.of( args.length ))
                 .tryConstructing(
                     DataType.of(commonType),
                     args
@@ -195,7 +195,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         TsrImpl<T> t = new TsrImpl<>();
         Class<?> commonType = _extractCommonType( list.toArray() );
         // We construct the tensor:
-        t.constructFor(CPU.get(), NDConstructor.of(new int[]{ list.size() }))
+        t.constructFor(CPU.get(), NDConstructor.of( list.size() ))
                 .tryConstructing(
                         DataType.of(commonType),
                         list.toArray()

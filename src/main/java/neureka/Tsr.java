@@ -1537,6 +1537,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
+     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.<br>
+     *  This is an alternative to the functionally identical {@link #T()} method.
+     *
+     * @return A new transposed tensor with the same underlying {@link Data} as this tensor.
+     */
+    default Tsr<V> getT() { return this.T(); } // Transposed
+
+    /**
      *  Calculate the mean value of all values
      *  within this tensor and returns it
      *  in the form of a scalar tensor. <br>
@@ -1694,14 +1702,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }
 
     /**
-     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.<br>
-     *  This is an alternative to the functionally identical {@link #T()} method.
-     *
-     * @return A new transposed tensor with the same underlying {@link Data} as this tensor.
-     */
-    default Tsr<V> getT() { return this.T(); } // Transposed
-
-    /**
      *  This method name translates to the "in" keyword in Groovy!
      *  The same is true for the "contains" method in Kotlin.
      *  Both methods do the exact same thing, however they exist
@@ -1750,7 +1750,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /**
      * @param other The value which should be broadcast to all elements of a clone of this tensor.
-     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     * @return A new tensor where all elements are multiplied by the provided value.
      */
     default Tsr<V> multiply( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getItemType(), "Cannot multiply 'null' with a tensor!");
@@ -1785,7 +1785,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /**
      * @param other The value which should be broadcast to all elements of a clone of this tensor.
-     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     * @return A new tensor where all elements are multiplied by the provided value.
      */
     default Tsr<V> times( V other ) {
         LogUtil.nullArgCheck(other, "other", getItemType(), "Cannot multiply 'null' with a tensor!");
@@ -1794,7 +1794,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /**
      * @param value The value which should be broadcast to all elements of a clone of this tensor.
-     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     * @return A new tensor where all elements are multiplied by the provided value.
      */
     default Tsr<V> multiply( double value ) { return multiply( of( getItemType(), getNDConf().shape(), value ) ); }
 
@@ -1841,6 +1841,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return Neureka.get().backend().getAutogradFunction().mod().call( this, other );
     }
 
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new tensor where the modulo operation is applied to all
+     *          elements using the provided int as right operand.
+     */
     default Tsr<V> mod( int other ) { return mod(of(getItemType(), getNDConf().shape(), other)); }
 
     /**
@@ -1874,7 +1879,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  The returned tensor is a new instance which will have the same shape as this tensor.
      * 
      * @param value The value which should be used to raise all items of this tensor to the power of.
-     * @return A new clone of this tensor where all items are raised to the power of the provided value.
+     * @return A new tensor where all items are raised to the power of the provided value.
      */
     default Tsr<V> power( V value ) {
         LogUtil.nullArgCheck(value, "value", getItemType(), "Cannot raise a tensor to the power of 'null'!");
@@ -1894,29 +1899,173 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> xor( double value ) { return xor( of( this.itemType(), this.shape(), value ) ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().sigmoid().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("sig(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>sigmoid function</b> applied to the items of this tensor.
+     */
     default Tsr<V> sig() { return Neureka.get().backend().getAutogradFunction().sigmoid().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().tanh().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("tanh(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>tanh function</b> applied to the items of this tensor.
+     */
     default Tsr<V> tanh() { return Neureka.get().backend().getAutogradFunction().tanh().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().relu().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("relu(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>relu function</b> applied to the items of this tensor.
+     */
     default Tsr<V> relu() { return Neureka.get().backend().getAutogradFunction().relu().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().sin().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("sin(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>sin function</b> applied to the items of this tensor.
+     */
     default Tsr<V> sin() { return Neureka.get().backend().getAutogradFunction().sin().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().cos().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("cos(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>cos function</b> applied to the items of this tensor.
+     */
     default Tsr<V> cos() { return Neureka.get().backend().getAutogradFunction().cos().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().ln().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("ln(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>ln function</b> applied to the items of this tensor.
+     */
     default Tsr<V> ln() { return Neureka.get().backend().getAutogradFunction().ln().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().softplus().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("softplus(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>softplus function</b> applied to the items of this tensor.
+     */
     default Tsr<V> softplus() { return Neureka.get().backend().getAutogradFunction().softplus().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().exp().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("exp(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>exp function</b> applied to the items of this tensor.
+     */
     default Tsr<V> exp() { return Neureka.get().backend().getAutogradFunction().exp().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().sqrt().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("sqrt(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>sqrt function</b> applied to the items of this tensor.
+     */
     default Tsr<V> sqrt() { return Neureka.get().backend().getAutogradFunction().sqrt().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().log10().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("log10(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>log10 function</b> applied to the items of this tensor.
+     */
     default Tsr<V> log10() { return Neureka.get().backend().getAutogradFunction().log10().call( this ); }
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().cbrt().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("cbrt(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>cbrt function</b> applied to the items of this tensor.
+     */
     default Tsr<V> cbrt() { return Neureka.get().backend().getAutogradFunction().cbrt().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().abs().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("abs(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>abs function</b> applied to the items of this tensor.
+     */
     default Tsr<V> abs() { return Neureka.get().backend().getAutogradFunction().abs().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().neg().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("neg(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensors whose items are the result of the <b>neg function</b> applied to the items of this tensor.
+     */
     default Tsr<V> neg() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }
 
     /*==================================================================================================================
