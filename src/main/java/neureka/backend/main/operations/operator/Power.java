@@ -5,16 +5,15 @@ import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -74,7 +73,11 @@ public class Power extends AbstractOperation
             new Scalarization()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-            .setDeviceExecution( (call, traverse) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
+            .setExecution(
+                (caller, call) ->
+                    Result.of(AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
+                            .withAutoDiff( FallbackAlgorithm::ADAction )
+            )
             .buildFunAlgorithm()
         );
 

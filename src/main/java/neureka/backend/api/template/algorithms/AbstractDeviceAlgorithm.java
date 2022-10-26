@@ -155,15 +155,26 @@ implements DeviceAlgorithm<C>
     public static <D extends Device<?>> ExecutionCall<D> flatten(
             Function caller, ExecutionCall<D> call
     ) {
-        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]) );
+        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]), true );
     }
 
+    public static <D extends Device<?>> ExecutionCall<D> flattenForIndexer(
+            Function caller, ExecutionCall<D> call
+    ) {
+        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]), false );
+    }
 
-    
     private static <D extends Device<?>> ExecutionCall<D> _flatten(
             ExecutionCall<D> call, Function[] src
     ) {
-        ExecutionCall<D> innerCall = call.withArgs( Arg.DerivIdx.of(-1) );
+        return _flatten( call, src, true );
+    }
+
+    
+    private static <D extends Device<?>> ExecutionCall<D> _flatten(
+            ExecutionCall<D> call, Function[] src, boolean ignoreJs
+    ) {
+        ExecutionCall<D> innerCall = !ignoreJs ? call : call.withArgs( Arg.DerivIdx.of(-1) );
         Tsr<?>[] inputs = innerCall.inputs();
         return MemUtil.keep( inputs, () ->
         {

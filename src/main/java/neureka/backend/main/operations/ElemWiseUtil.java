@@ -143,7 +143,7 @@ public class ElemWiseUtil
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor // This will indirectly be a recursive call!
     ) {
-        return _forAdditionsOrSubtractions(call, recursiveExecutor, true);
+        return _forAdditionsOrSubtractions(call, recursiveExecutor);
     }
 
     
@@ -151,50 +151,15 @@ public class ElemWiseUtil
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor
     ) {
-        return _forAdditionsOrSubtractions(call, recursiveExecutor, false);
+        return _forAdditionsOrSubtractions(call, recursiveExecutor);
     }
 
     
     private static Tsr<?> _forAdditionsOrSubtractions(
             ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor,
-            boolean thisIsForAddition
+            CallExecutor recursiveExecutor
     ) {
-        call = call.withInputs(call.inputs().clone()); // Let's make sure there are no side effects!
-        Device<?> device = call.getDevice();
-        int d = call.getValOf( Arg.DerivIdx.class );
-        Operation operation = call.getOperation();
-
-        Tsr<?> result = null;
-        if ( call.arity() > 3 ) {
-            if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
-                result = recursiveExecutor.execute(
-                                    ExecutionCall.of( reduction )
-                                                    .andArgs(Arg.DerivIdx.of(d))
-                                                    .running(operation)
-                                                    .on(device)
-                            );
-                call = call.withInputAt(0, result );
-
-                reduction = Operation.Utility.offsetted(call.inputs(), 1);
-                result = recursiveExecutor.execute(
-                                        ExecutionCall.of( reduction )
-                                                        .andArgs(Arg.DerivIdx.of(d))
-                                                        .running(operation)
-                                                        .on(device)
-                                );
-                call = call.withInputAt(0, result );
-            }
-            else
-                call = call.withInputAt(0,
-                        call.input( 1 ).deepCopy()
-                           .mut().setIsIntermediate( true )
-                           .mut().setItems( d == 0 || thisIsForAddition ? 1f : -1f )
-                    );
-        }
-        if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
-        return result;
+        return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
     }
 
 

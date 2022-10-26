@@ -5,6 +5,9 @@ import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Operation;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.Broadcast;
@@ -13,6 +16,7 @@ import neureka.backend.main.implementations.broadcast.CLBroadcastAddition;
 import neureka.backend.main.implementations.broadcast.CPUBroadcastSummation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -75,6 +79,21 @@ public final class Summation extends AbstractOperation
                 )
         );
 
+    }
+
+    @Override
+    public Result execute( final Function caller, final ExecutionCall<?> call )
+    {
+        Tsr<?>[] inputs = new Tsr[ call.arity() ];
+        for ( int i = 0; i < inputs.length; i++ ) {
+            ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flattenForIndexer( caller, call.withArgs(Arg.VarIdx.of(i)) );
+            inputs[ i ] = flatCall.input( 0 );
+        }
+        Operation plusOp = Neureka.get().backend().getOperation("+");
+        Function plus = new FunctionParser(Neureka.get().backend())
+                                .parse( plusOp, inputs.length, caller.isDoingAD() );
+
+        return plusOp.execute( plus, call.withInputs(inputs).withOperation(plusOp).withArgs(Arg.DerivIdx.of(-1)) );
     }
 
     @Override

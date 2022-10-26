@@ -91,6 +91,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             hostExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
+            (1.._) * call.arity() >> 3
             (0.._) * tensor.getMut() >> mutate
             (0.._) * tensor.mut() >> mutate
             (1.._) * call.getDevice() >> device
