@@ -341,7 +341,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return true if every item in the nd-array matches the predicate, false otherwise.
      */
-    default boolean every( Predicate<V> predicate ) { return stream().allMatch(predicate); }
+    default boolean every( Predicate<V> predicate ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return predicate.test( this.item() );
+        return stream().allMatch(predicate);
+    }
 
     /**
      * Iterates over every element of this nd-array, and checks whether any
@@ -349,7 +352,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return true if any item in the nd-array matches the predicate, false otherwise.
      */
-    default boolean any( Predicate<V> predicate ) { return stream().anyMatch(predicate); }
+    default boolean any( Predicate<V> predicate ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return predicate.test( this.item() );
+        return stream().anyMatch(predicate);
+    }
 
     /**
      * Iterates over every element of this nd-array, and checks whether none
@@ -357,7 +363,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return true if none of the items in the nd-array match the predicate, false otherwise.
      */
-    default boolean none( Predicate<V> predicate ) { return stream().noneMatch(predicate);}
+    default boolean none( Predicate<V> predicate ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return !predicate.test( this.item() );
+        return stream().noneMatch(predicate);
+    }
 
     /**
      *  Iterates over every element of this nd-array, and counts the number of
@@ -365,7 +374,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return The number of items in the nd-array that match the predicate.
      */
-    default int count( Predicate<V> predicate ) { return (int) stream().filter(predicate).count(); }
+    default int count( Predicate<V> predicate ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return predicate.test( this.item() ) ? this.size() : 0;
+        return (int) stream().filter(predicate).count();
+    }
 
     /**
      * Returns the minimum item of this nd-array according to the provided
@@ -374,7 +386,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
      * @return The minimum value in the nd-array.
      */
-    default V minItem( Comparator<V> comparator ) { return stream().min( comparator ).orElse(null); }
+    default V minItem( Comparator<V> comparator ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return this.item();
+        return stream().min( comparator ).orElse(null);
+    }
 
     /**
      * Returns the maximum item of this nd-array according to the provided
@@ -383,7 +398,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
      * @return The maximum value in the nd-array.
      */
-    default V maxItem( Comparator<V> comparator ) { return stream().max( comparator ).orElse(null); }
+    default V maxItem( Comparator<V> comparator ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return this.item();
+        return stream().max( comparator ).orElse(null);
+    }
 
     /**
      *  This returns an unprocessed version of the underlying data of this nd-array.
