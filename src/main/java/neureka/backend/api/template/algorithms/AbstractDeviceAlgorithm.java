@@ -211,56 +211,50 @@ implements DeviceAlgorithm<C>
         int j = call.getValOf( Arg.VarIdx.class );
         assert call.getValOf( Arg.DerivIdx.class ) == -1;
 
-        Tsr<?>[] tensors =
-                call.getOperation().isIndexer()
-                        ? new Tsr[ 1 + call.arity() ]
-                        : new Tsr[ 1 + nodes.length  ];
+        ExecutionCall<?> flattenedCall = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes );
 
-        if ( call.getOperation().isIndexer() )
-            throw new UnsupportedOperationException( "Indexers are not supported yet!" );
-        else
-        {
-            ExecutionCall<?> flattenedCall = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes );
-            if (
-                    !isFlat && j < 0 && (
-                            call.getOperation().isOperator()
-                                    ||
-                            call.getOperation().supportsAlgorithm(Activation.class)
-                    )
-            ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-                String asStr = call.getOperation().stringify(
-                                            IntStream.range(0, nodes.length)
-                                                .mapToObj(i -> "I[" + i + "]")
-                                                .toArray(String[]::new)
-                                        );
-                Tsr<?>[] finalTensors = flattenedCall.inputs();
-                Tsr<?> result = MemUtil.keep(finalTensors, () -> new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));
-                for ( int i = 1; i < finalTensors.length; i++ )
-                    _deleteIfNotIn(call.inputs(), finalTensors[i]);
+        if (
+                !isFlat && j < 0 && (
+                        call.getOperation().isOperator()
+                                ||
+                        call.getOperation().supportsAlgorithm(Activation.class)
+                )
+        ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
+            String asStr = call.getOperation().stringify(
+                                        IntStream.range(0, nodes.length)
+                                            .mapToObj(i -> "I[" + i + "]")
+                                            .toArray(String[]::new)
+                                    );
+            Tsr<?>[] finalTensors = flattenedCall.inputs();
+            Tsr<?> result = MemUtil.keep(finalTensors, () -> new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));
+            for ( int i = 1; i < finalTensors.length; i++ )
+                _deleteIfNotIn(call.inputs(), finalTensors[i]);
 
-                return result;
-            } else {
-                int numberOfInputs = flattenedCall.arity();
-                boolean anyNumberOfInputs = flattenedCall.getOperation().getArity() < 0;
-                int operationArity = flattenedCall.getOperation().getArity();
-                if (numberOfInputs < operationArity)
-                    throw new IllegalArgumentException(
-                            "The number of inputs to the operation " + flattenedCall.getOperation() + " is " + numberOfInputs +
-                            " but the operation requires " + operationArity + " inputs."
-                        );
+            return result;
+        } else {
+            int numberOfInputs = flattenedCall.arity();
+            boolean anyNumberOfInputs = flattenedCall.getOperation().getArity() < 0;
+            int operationArity = flattenedCall.getOperation().getArity();
+            if (numberOfInputs < operationArity)
+                throw new IllegalArgumentException(
+                        "The number of inputs to the operation " + flattenedCall.getOperation() + " is " + numberOfInputs +
+                        " but the operation requires " + operationArity + " inputs."
+                    );
 
-                boolean tooManyArgs = numberOfInputs > operationArity + 1;
+            boolean tooManyArgs = numberOfInputs > operationArity + 1;
 
-                if ( !tooManyArgs || anyNumberOfInputs )
-                    tensors = flattenedCall.withAddedInputAt(0, null).inputs();
-                else
-                    tensors = flattenedCall.inputs();
-            }
+            Tsr<?>[] tensors;
+
+            if ( !tooManyArgs || anyNumberOfInputs )
+                tensors = flattenedCall.withAddedInputAt(0, null).inputs();
+            else
+                tensors = flattenedCall.inputs();
+
+            return prepareAndExecuteRecursively(
+                        call.withInputs( tensors ).withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
+                        executor
+                    );
         }
-        return prepareAndExecuteRecursively(
-                                call.withInputs( tensors ).withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
-                                executor
-                            );
     }
 
     /**
