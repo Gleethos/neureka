@@ -20,18 +20,9 @@ public class ElemWiseUtil
 {
     private static final Logger _LOG = LoggerFactory.getLogger( ElemWiseUtil.class );
 
-    public static Tsr<?> forMultiplications(
-            ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor
-    ) {
-        return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
-
-    }
-
-    
     public static Tsr<?> forDivisionsOrModuli(
             ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
+            CallExecutor recursiveExecutor
     ) {
         call = call.withInputs(call.inputs().clone()); // Let's make sure we prevent any side effects.
         Device<?> device = call.getDevice();
