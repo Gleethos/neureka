@@ -34,18 +34,18 @@ public final class Summation extends AbstractOperation
     public Summation()
     {
         super (
-                new OperationBuilder()
-                        .identifier(        "sumJs"    )
-                        .operator(          "sumJs"    )
-                        .arity(            1           )
-                        .isOperator(       false       )
-                        .isIndexer(        true        )
-                        .isDifferentiable( true        )
-                        .isInline(         false       )
+            new OperationBuilder()
+            .identifier(       "sumJs" )
+            .operator(         "sumJs" )
+            .arity(            1       )
+            .isOperator(       false   )
+            .isIndexer(        true    )
+            .isDifferentiable( true    )
+            .isInline(         false   )
         );
         /*
             The summation operation does not have algorithms because it is
-            a special case of the "addition" operation.
+            a special derivative case of the "addition" operation.
          */
     }
 

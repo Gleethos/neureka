@@ -37,38 +37,18 @@ public final class Product extends AbstractOperation
     {
         super (
             new OperationBuilder()
-            .identifier(       "prodJs"    )
-            .operator(         "prodJs"    )
-            .arity(            1           )
-            .isOperator(       false       )
-            .isIndexer(        true        )
-            .isDifferentiable( true        )
-            .isInline(         false       )
+            .identifier(       "prodJs" )
+            .operator(         "prodJs" )
+            .arity(            1        )
+            .isOperator(       false    )
+            .isIndexer(        true     )
+            .isDifferentiable( true     )
+            .isInline(         false    )
         );
-
-        setAlgorithm(
-            new Broadcast(ElemWiseUtil::forMultiplications)
-            .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-            .setSupplyADActionFor(
-                ( Function f, ExecutionCall<? extends Device<?>> call ) ->
-                {
-                    if ( call.autogradMode().allowsForward() )
-                        throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                    Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                    Function mul = Neureka.get().backend().getFunction().mul();
-                    if ( ctxDerivative != null ) {
-                        return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
-                    }
-                    int d = call.getValOf( Arg.DerivIdx.class );
-                    Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                    return ADAction.of( target -> mul.execute( target.error(), derivative ) );
-                }
-            )
-            .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUBroadcastMultiplication())
-            .setImplementationFor( OpenCLDevice.class, new CLBroadcastMultiplication( this.getIdentifier() ) )
-        );
-
+        /*
+            The product operation does not have algorithms because it is
+            a special derivative case of the "multiplication" operation.
+         */
     }
 
     @Override
