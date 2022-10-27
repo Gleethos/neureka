@@ -3,6 +3,7 @@ package neureka.backend.main.operations;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.NDConvolution;
 import neureka.backend.main.operations.other.Reshape;
@@ -23,24 +24,28 @@ public class ConvUtil
                     }
                     return AutoDiffMode.FORWARD_AND_BACKWARD;
                 })
-                .setDeviceExecution(
-                    call ->
-                    {
-                        int offset = ( call.input(0) == null ? 1 : 0 );
-                        Tsr<?>[] tensors = new Tsr[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};
-                        Reshape.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)
-                        for ( Tsr<?> t : tensors ) t.mut().setIsVirtual( false );
-                        return AbstractDeviceAlgorithm.prepareAndExecute(
-                                                ExecutionCall.of( tensors )
-                                                        .andArgs( Arg.DerivIdx.of(0) )
-                                                        .running( call.getOperation() )
-                                                        .on( call.getDevice() ),
-                                                a -> ConvUtil.executeRecursively(op, a)
-                                            );
-                    },
-                    ( Function f, ExecutionCall<? extends Device<?>> adCall ) -> {
+                .setExecution(
+                    (outerCaller, outerCall) ->
+                    Result.of(AbstractDeviceAlgorithm.executeFor(
+                        outerCaller, outerCall,
+                        call ->
+                        {
+                            int offset = ( call.input(0) == null ? 1 : 0 );
+                            Tsr<?>[] tensors = new Tsr[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};
+                            Reshape.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)
+                            for ( Tsr<?> t : tensors ) t.mut().setIsVirtual( false );
+                            return AbstractDeviceAlgorithm.prepareAndExecute(
+                                    ExecutionCall.of( tensors )
+                                            .andArgs( Arg.DerivIdx.of(0) )
+                                            .running( call.getOperation() )
+                                            .on( call.getDevice() ),
+                                    a -> ConvUtil.executeRecursively(op, a)
+                            );
+                        }
+                    ))
+                    .withAutoDiff( ( Function f, ExecutionCall<? extends Device<?>> adCall ) -> {
                         throw new UnsupportedOperationException("Not yet implemented!");
-                    }
+                    } )
                 )
                 .setCallPreparation(
                      call -> {

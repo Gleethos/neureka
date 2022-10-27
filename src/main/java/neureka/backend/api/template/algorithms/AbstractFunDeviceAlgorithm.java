@@ -239,30 +239,14 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return this;
     }
 
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(
-            Execute exec, ADActionSupplier adActionSupplier
-    ) {
-        return
-            adActionSupplier == null
-                ? setExecution( (outerCaller, outerCall) ->
-                    Result.of(AbstractDeviceAlgorithm.executeFor(
-                        outerCaller, outerCall,
-                        innerCall -> exec.execute( innerCall )
-                    ))
-                )
-                : setExecution( (outerCaller, outerCall) ->
-                    Result.of(AbstractDeviceAlgorithm.executeFor(
-                        outerCaller, outerCall,
-                        innerCall -> exec.execute( innerCall )
-                    ))
-                    .withAutoDiff( adActionSupplier )
-                );
-    }
-
-
-
     public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Execute executor ) {
-        return setDeviceExecution( executor, FallbackAlgorithm::ADAction );
+        return setExecution( (outerCaller, outerCall) ->
+                Result.of(AbstractDeviceAlgorithm.executeFor(
+                                outerCaller, outerCall,
+                                innerCall -> executor.execute( innerCall )
+                        ))
+                        .withAutoDiff( FallbackAlgorithm::ADAction )
+        );
     }
     public interface Execute {
 

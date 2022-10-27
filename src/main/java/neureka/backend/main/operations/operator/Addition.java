@@ -80,7 +80,7 @@ public class Addition extends AbstractOperation {
 
         setAlgorithm(
             new Scalarization()
-            .setDeviceExecution(call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ))
+            .setDeviceExecution( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
             .buildFunAlgorithm()
         );
     }

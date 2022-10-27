@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
@@ -41,40 +42,44 @@ public class Convolution extends AbstractOperation
                 }
                 return AutoDiffMode.FORWARD_AND_BACKWARD;
             })
-            .setDeviceExecution(
-                call ->
-                {
-                    Tsr<?>[] tensors = call.inputs();
-                    for ( Tsr<?> t : tensors ) if ( t != null ) t.mut().setIsVirtual( false );
+            .setExecution(
+                (outerCaller, outerCall) ->
+                    Result.of(AbstractDeviceAlgorithm.executeFor(
+                        outerCaller, outerCall,
+                        call ->
+                        {
+                            Tsr<?>[] tensors = call.inputs();
+                            for ( Tsr<?> t : tensors ) if ( t != null ) t.mut().setIsVirtual( false );
 
-                    ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
-                    return AbstractDeviceAlgorithm.executeOnCommonDevice(
-                            prepared,()->ConvUtil.executeRecursively( "x", prepared )
-                    );
-                },
-                ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                {
-                    int d = adCall.getDerivativeIndex();
-                    Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
-                            "I[ 0 ] x>> I[ 1 ] x>> I[ 2 ]",
-                            false
-                    );
-                    Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
-                    assert d >= 0 && d <= 1;
-                    assert derivative != null;
-                    assert deConv != null;
-                    assert adCall.arity() >= 2 && adCall.arity() <= 3;
-                    // Now we need to remember the shape of the input which is targeted for back prop.
-                    int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
-                    // This is because it will be the shape of the output to the de-convolution!
-                    return ADAction.of( target ->
-                                            deConv.execute(
-                                                target.error(),
-                                                derivative,
-                                                Tsr.of(shape, 0).mut().setIsIntermediate( false )
-                                            )
-                                    );
-                }
+                            ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
+                            return AbstractDeviceAlgorithm.executeOnCommonDevice(
+                                    prepared,()->ConvUtil.executeRecursively( "x", prepared )
+                            );
+                        }
+                    ))
+                    .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                    {
+                        int d = adCall.getDerivativeIndex();
+                        Function deConv = new FunctionParser( Neureka.get().backend() ).parse(
+                                "I[ 0 ] x>> I[ 1 ] x>> I[ 2 ]",
+                                false
+                        );
+                        Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
+                        assert d >= 0 && d <= 1;
+                        assert derivative != null;
+                        assert deConv != null;
+                        assert adCall.arity() >= 2 && adCall.arity() <= 3;
+                        // Now we need to remember the shape of the input which is targeted for back prop.
+                        int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
+                        // This is because it will be the shape of the output to the de-convolution!
+                        return ADAction.of( target ->
+                                deConv.execute(
+                                        target.error(),
+                                        derivative,
+                                        Tsr.of(shape, 0).mut().setIsIntermediate( false )
+                                )
+                        );
+                    })
             )
             .setCallPreparation(
                  call -> {

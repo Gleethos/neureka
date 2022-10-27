@@ -114,7 +114,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
             type                        | setter
             ExecutionPreparation.class  | { TestAlgorithm it -> it.setCallPreparation( call -> null ) }
             SuitabilityPredicate.class  | { TestAlgorithm it -> it.setIsSuitableFor( call -> SuitabilityPredicate.NOT_GOOD ) }
-            Execution.class             | { TestAlgorithm it -> it.setDeviceExecution((call, callback ) -> null ) }
+            Execution.class             | { TestAlgorithm it -> it.setDeviceExecution( (call, callback ) -> null ) }
     }
 
 

@@ -49,7 +49,7 @@ public class Subtraction extends AbstractOperation
             Scalarization.class,
             new Scalarization()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-            .setDeviceExecution(call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ))
+            .setDeviceExecution( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
             .buildFunAlgorithm()
         );
 
