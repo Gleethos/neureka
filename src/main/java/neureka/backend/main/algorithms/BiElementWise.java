@@ -3,17 +3,16 @@ package neureka.backend.main.algorithms;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
-import neureka.backend.api.fun.ADActionSupplier;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
-import neureka.backend.main.internal.RecursiveExecutor;
+import neureka.backend.main.internal.FinalExecutor;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.NDimensional;
 
 public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWise>
 {
-    public BiElementWise(RecursiveExecutor finalExecutor ) {
+    public BiElementWise(FinalExecutor finalExecutor ) {
         super("elementwise");
         setIsSuitableFor(
             call -> call

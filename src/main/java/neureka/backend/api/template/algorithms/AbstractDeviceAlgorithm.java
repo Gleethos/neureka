@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.main.algorithms.Activation;
-import neureka.backend.main.internal.RecursiveExecutor;
+import neureka.backend.main.internal.FinalExecutor;
 import neureka.backend.main.memory.MemUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -78,11 +78,10 @@ implements DeviceAlgorithm<C>
     }
 
 
-    
     public static Tsr<?> executeFor(
             final Function caller,
             final ExecutionCall<? extends Device<?>> call,
-            final RecursiveExecutor executor
+            final FinalExecutor executor
     ) {
         Function[] nodes = caller.getSubFunctions().toArray(new Function[0]);
         Operation operation = caller.getOperation();
@@ -97,7 +96,7 @@ implements DeviceAlgorithm<C>
 
     public static Tsr<?> prepareAndExecuteRecursively(
             ExecutionCall<? extends Device<?>> executionCall,
-            RecursiveExecutor executor
+            FinalExecutor executor
     ) {
         executionCall = _prepareForExecution(executionCall);
         return
@@ -202,7 +201,7 @@ implements DeviceAlgorithm<C>
             final Function[] nodes,
             final boolean isFlat,
             final boolean isDoingAD,
-            final RecursiveExecutor executor
+            final FinalExecutor executor
     ) {
         int j = call.getValOf( Arg.VarIdx.class );
         assert call.getValOf( Arg.DerivIdx.class ) == -1;
@@ -289,7 +288,7 @@ implements DeviceAlgorithm<C>
     private static Tsr<?> _deepDerivative(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
-            final RecursiveExecutor executor
+            final FinalExecutor executor
     ) {
         Supplier<Tsr<?>> actor = () ->
                 MemUtil.keep( call.inputs(), () -> {
@@ -437,7 +436,7 @@ implements DeviceAlgorithm<C>
     
     private static Tsr<?> _recursiveReductiveExecutionOf(
             final ExecutionCall<? extends Device<?>> call,
-            final RecursiveExecutor executor
+            final FinalExecutor executor
     ) {
         return executeOnCommonDevice(call, ()->{
              /*
