@@ -14,7 +14,6 @@ import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.memory.MemUtil;
-import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -43,7 +42,7 @@ public class Multiplication extends AbstractOperation
 
         setAlgorithm(
             BiElementWise.class,
-            new BiElementWise( call ->AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
+            new BiElementWise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );

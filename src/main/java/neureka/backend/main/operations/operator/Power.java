@@ -41,7 +41,7 @@ public class Power extends AbstractOperation
 
 
         setAlgorithm(BiElementWise.class,
-            new BiElementWise( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
+            new BiElementWise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );

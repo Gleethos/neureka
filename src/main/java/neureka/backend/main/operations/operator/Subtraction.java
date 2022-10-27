@@ -40,7 +40,7 @@ public class Subtraction extends AbstractOperation
         );
 
         setAlgorithm(
-            new BiElementWise(call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ))
+            new BiElementWise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );

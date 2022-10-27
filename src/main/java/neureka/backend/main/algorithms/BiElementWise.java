@@ -12,7 +12,7 @@ import neureka.ndim.NDimensional;
 
 public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWise>
 {
-    public BiElementWise(FinalExecutor finalExecutor ) {
+    public BiElementWise() {
         super("elementwise");
         setIsSuitableFor(
             call -> call
@@ -31,6 +31,7 @@ public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWis
         );
         setCallPreparation(
             call -> {
+                if ( call.arity() < 3 ) call = call.withAddedInputAt(0, null);
                 Device<Object> device = (Device<Object>) call.getDevice();
                 if ( call.input( 0 ) == null ) // Creating a new tensor:
                 {

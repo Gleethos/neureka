@@ -120,13 +120,13 @@ implements ExecutionPreparation, ADActionSupplier
         return ADAction( function, call );
     }
 
-    public static ADAction ADAction(Function function, ExecutionCall<? extends Device<?>> call )
+    public static ADAction ADAction( Function function, ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().backend().getFunction().mul();
-        if ( derivative != null ) {
+        if ( derivative != null )
             return ADAction.of( target -> mul.execute( target.error(), derivative ) );
-        }
+
         Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
         localDerivative.mut().setIsIntermediate( false );
         return ADAction.of( target -> mul.execute( target.error(), localDerivative ) );
