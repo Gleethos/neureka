@@ -451,10 +451,9 @@ implements DeviceAlgorithm<C>
             Tsr<?> result = null;
             if ( executor != null )
                 result = executor.execute( // This is where the recursion occurs:
-                        call,
-                        innerCall -> // This lambda performs the recursive call, implementations decide if they want to dive deeper.
-                                _recursiveReductiveExecutionOf( innerCall, executor )
-                );
+                                call,
+                                null
+                        );
             return result;
         });
     }
