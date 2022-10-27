@@ -2,7 +2,9 @@ package neureka.backend.main.algorithms;
 
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
 import neureka.backend.api.fun.ADActionSupplier;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.devices.Device;
@@ -22,7 +24,12 @@ public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWis
                     .basicSuitability()
         );
         setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD );
-        setDeviceExecution( (call, callback) -> finalExecutor.execute(call, callback), (ADActionSupplier) null );
+        setExecution( (outerCaller, outerCall) ->
+                Result.of(AbstractDeviceAlgorithm.executeFor(
+                        outerCaller, outerCall,
+                        (innerCall, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall, callback)
+                ))
+        );
         setCallPreparation(
             call -> {
                 Device<Object> device = (Device<Object>) call.getDevice();
