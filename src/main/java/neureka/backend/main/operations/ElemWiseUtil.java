@@ -24,71 +24,7 @@ public class ElemWiseUtil
             ExecutionCall<? extends Device<?>> call,
             CallExecutor recursiveExecutor
     ) {
-        call = call.withInputs(call.inputs().clone()); // Let's make sure we prevent any side effects.
-        Device<?> device = call.getDevice();
-        int d = call.getValOf( Arg.DerivIdx.class );
-
-        Tsr<?> result = null;
-        if ( call.arity() > 3 )
-        {
-            if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
-                result = recursiveExecutor.execute( call.withInputs( reduction ) );
-                call = call.withInputAt( 0, result );
-
-                reduction = Operation.Utility.offsetted(call.inputs(), 1);
-                result = recursiveExecutor.execute(
-                                    call.withInputs(reduction)
-                            );
-                call = call.withInputAt( 0, result );
-            } else {
-                Tsr<?> a;
-                if ( d > 1 ) {
-                    Tsr<?>[] reduction = Operation.Utility.subset(call.inputs(), 1, 1, d+1);
-                    reduction[ 0 ] = call.input( 1 ).deepCopy().mut().setIsIntermediate( true );
-                    result = recursiveExecutor.execute(
-                                        ExecutionCall.of( reduction )
-                                                        .andArgs(Arg.DerivIdx.of(-1))
-                                                        .running(Neureka.get().backend().getOperation("/"))
-                                                        .on(device)
-                                    );
-                    a = result;
-                }
-                else if ( d == 1 ) a = call.input( 1 );
-                else a = newTsrLike( call.input( 1 ), 1.0 );
-                Tsr<?> b;
-                if ( call.arity() -  d - 2  > 1 ) {
-                    Tsr<?>[] reduction = Operation.Utility.subset( call.inputs(), 2, d+2, call.arity()-(d+2) );
-                    reduction[ 1 ] = newTsrLike( call.input( 1 ), 1.0 );
-                    reduction[ 0 ] = reduction[ 1 ];
-                    result = recursiveExecutor.execute(
-                                        ExecutionCall.of( reduction )
-                                                        .andArgs(Arg.DerivIdx.of(-1))
-                                                        .running(Neureka.get().backend().getOperation("/"))
-                                                        .on(device)
-                                );
-                    b = result;
-                }
-                else b = newTsrLike( call.input( 1 ), 1.0 );
-
-                result = recursiveExecutor.execute(
-                                        ExecutionCall.of( call.input( 0 ), a, b )
-                                                        .andArgs( Arg.DerivIdx.of( -1 ) )
-                                                        .running( Neureka.get().backend().getOperation("*") )
-                                                        .on( device )
-                                );
-                result = recursiveExecutor.execute(
-                                        ExecutionCall.of( result, call.input( 0 ), call.input( d + 1 ) )
-                                                        .andArgs(Arg.DerivIdx.of(1))
-                                                        .running(Neureka.get().backend().getOperation("/"))
-                                                        .on(device)
-                                );
-                if ( d == 0 ) a.mut().delete();
-                b.mut().delete();
-            }
-        }
-        if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
-        return result;
+        return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
     }
 
     public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {

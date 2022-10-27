@@ -260,46 +260,4 @@ public interface Operation
      */
     double calculate( double[] inputs, int j, int d, Function[] src );
 
-    /**
-     *  This static utility class contains simple methods used for creating slices of plain old
-     *  arrays of tensor objects...
-     *  These slices may be used for many reasons, however mainly when iterating over
-     *  inputs to a Function recursively in order to execute them pairwise for example...
-     */
-    class Utility
-    {
-        public static Tsr<?>[] subset( Tsr<?>[] tsrs, int padding, int index, int offset ) {
-            if ( offset < 0 ) {
-                index += offset;
-                offset *= -1;
-            }
-            Tsr<?>[] newTsrs = new Tsr[ offset + padding ];
-            System.arraycopy( tsrs, index, newTsrs, padding, offset );
-            return newTsrs;
-        }
-
-        public static Tsr<?>[] without( Tsr<?>[] tsrs, int index ) {
-            Tsr<?>[] newTsrs = new Tsr[ tsrs.length - 1 ];
-            for ( int i = 0; i < newTsrs.length; i++ ) newTsrs[ i ] = tsrs[ i + ( ( i < index ) ? 0 : 1 ) ];
-            return newTsrs;
-        }
-
-        public static Tsr<?>[] offsetted( Tsr<?>[] tensors, int offset ) {
-            Tsr<?>[] newTensors = new Tsr[ tensors.length - offset ];
-            newTensors[ 0 ] = tensors[ 1 ].deepCopy().mut().setIsIntermediate( true );
-            if ( !tensors[ 1 ].has( GraphNode.class ) && tensors[ 1 ] != tensors[ 0 ] ) {//Deleting intermediate results!
-                tensors[ 1 ].mut().delete();
-                tensors[ 1 ] = null;
-            }
-            if (!tensors[ 2 ].has( GraphNode.class ) && tensors[ 2 ] != tensors[ 0 ]) {//Deleting intermediate results!
-                tensors[ 2 ].mut().delete();
-                tensors[ 2 ] = null;
-            }
-            System.arraycopy( tensors, 1 + offset, newTensors, 1, tensors.length - 1 - offset );
-            newTensors[ 1 ] = tensors[ 0 ];
-            return newTensors;
-        }
-
-    }
-
 }
