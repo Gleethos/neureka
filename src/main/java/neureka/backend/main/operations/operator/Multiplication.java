@@ -99,38 +99,48 @@ public class Multiplication extends AbstractOperation
                 Function noAd = Function.of( caller.toString(), false );
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( noAd, call.withArgs(Arg.DerivIdx.of(-1)) );
 
+                Tsr[] results = flatCall.inputs();
                 Function finalCaller = caller;
                 int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())
                                                 .filter( i -> finalCaller.getSubFunctions().get(i).dependsOn(d) )
                                                 .toArray();
 
-                Tsr[] derivatives = new Tsr[ toBeDerived.length ];
-                Tsr[] results = flatCall.inputs();
-                Function mul = Neureka.get().backend().getFunction().mul();
-                Function add = Neureka.get().backend().getFunction().add();
-                Tsr<?> finalDerivative = null;
-                for ( int i = 0; i < derivatives.length; i++ ) {
-                    Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );
-                    Tsr<?> deriv = noAD.call( (Call) (noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation())) );
-                    derivatives[ i ] = deriv;
-                    Tsr<?> localDeriv = null;
-                    for ( int j = 0; j < results.length; j++ ) {
-                        // Now we calculate the local derivatives of the multiplication operation:
-                        if ( j == toBeDerived[i] ) {
-                            if ( localDeriv == null ) localDeriv = derivatives[ i ];
-                            else localDeriv = mul.call( localDeriv, derivatives[ i ] );
-                        } else {
-                            if ( localDeriv == null ) localDeriv = results[ j ].mut().setIsIntermediate(false);
-                            else localDeriv = mul.call( localDeriv, results[ j ].mut().setIsIntermediate(false) );
-                        }
-                    }
-                    if ( finalDerivative == null ) finalDerivative = localDeriv;
-                    else finalDerivative = add.call( (Tsr<Object>) finalDerivative, (Tsr<Object>) localDeriv );
-                }
-                return Result.of( finalDerivative.mut().setIsIntermediate(true) );
+                return derive( toBeDerived, results, i->{
+                    Function noAD = Function.of( caller.getSubFunctions().get( i ).toString(), false );
+                    return noAD.call( (Call) (noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation())) );
+                } );
             }
         }
         return super.execute( reducePairwise(caller), call );
+    }
+
+    public static Result derive(
+            int[] toBeDerived,
+            Tsr[] results,
+            java.util.function.Function<Integer, Tsr<?>> deriveAt
+    ) {
+        Tsr[] derivatives = new Tsr[ toBeDerived.length ];
+        Function mul = Neureka.get().backend().getFunction().mul();
+        Function add = Neureka.get().backend().getFunction().add();
+        Tsr<?> finalDerivative = null;
+        for ( int i = 0; i < derivatives.length; i++ ) {
+            Tsr<?> deriv = deriveAt.apply( toBeDerived[i] );
+            derivatives[ i ] = deriv;
+            Tsr<?> localDeriv = null;
+            for ( int j = 0; j < results.length; j++ ) {
+                // Now we calculate the local derivatives of the multiplication operation:
+                if ( j == toBeDerived[i] ) {
+                    if ( localDeriv == null ) localDeriv = derivatives[ i ];
+                    else localDeriv = mul.call( localDeriv, derivatives[ i ] );
+                } else {
+                    if ( localDeriv == null ) localDeriv = results[ j ].mut().setIsIntermediate(false);
+                    else localDeriv = mul.call( localDeriv, results[ j ].mut().setIsIntermediate(false) );
+                }
+            }
+            if ( finalDerivative == null ) finalDerivative = localDeriv;
+            else finalDerivative = add.call( (Tsr<Object>) finalDerivative, (Tsr<Object>) localDeriv );
+        }
+        return Result.of( finalDerivative.mut().setIsIntermediate(true) );
     }
 
     private Function reducePairwise( final Function fun ) {
