@@ -44,11 +44,10 @@ implements DeviceAlgorithm<C>
     public <D extends Device<?>, E extends ImplementationFor<D>> C setImplementationFor(
             Class<D> deviceClass, E implementation
     ) {
-        if ( _implementations.containsKey( deviceClass ) ) {
+        if ( _implementations.containsKey( deviceClass ) )
             _LOG.info(
                 "Implementation for device '" + deviceClass.getSimpleName() + "' already defined!"
             );
-        }
 
         _implementations.put(
             (Class<Device<?>>) deviceClass,
@@ -94,13 +93,21 @@ implements DeviceAlgorithm<C>
             return _deepDerivative( call, nodes,  executor );
     }
 
-    public static Tsr<?> prepareAndExecuteRecursively(
+    public static Tsr<?> prepareAndExecute(
             ExecutionCall<? extends Device<?>> executionCall,
             FinalExecutor executor
     ) {
-        executionCall = _prepareForExecution(executionCall);
-        return
-                _recursiveReductiveExecutionOf( executionCall, executor );
+        ExecutionCall<? extends Device<?>> call = _prepareForExecution(executionCall);
+        return executeOnCommonDevice(call, ()->{
+             /*
+                Below is the core lambda of recursive preprocessing
+                which is defined for each Algorithm individually :
+             */
+            Tsr<?> result = null;
+            if ( executor != null )
+                result = executor.execute(call);
+            return result;
+        });
     }
 
     public static ExecutionCall<? extends Device<?>> _prepareForExecution(ExecutionCall<? extends Device<?>> executionCall) {
@@ -245,7 +252,7 @@ implements DeviceAlgorithm<C>
             else
                 tensors = flattenedCall.inputs();
 
-            return prepareAndExecuteRecursively(
+            return prepareAndExecute(
                         call.withInputs( tensors ).withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
                         executor
                     );
@@ -321,7 +328,7 @@ implements DeviceAlgorithm<C>
                         if ( index >= 0 ) inner = tensors[ index ];
                         else {
                             // Optimization above did not apply, so we accumulate all the derivatives!
-                            tensors[0] = prepareAndExecuteRecursively(
+                            tensors[0] = prepareAndExecute(
                                                 ExecutionCall.of( tensors )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
                                                         .running( Neureka.get().backend().getOperation("+") )
@@ -353,7 +360,7 @@ implements DeviceAlgorithm<C>
                         }
 
                     // Use those tensors for the outer derivative:
-                    tensors[0] = prepareAndExecuteRecursively(
+                    tensors[0] = prepareAndExecute(
                                         ExecutionCall.of( tensors )
                                                 .andArgs( Arg.DerivIdx.of( d ) )
                                                 .running( call.getOperation() )
@@ -388,7 +395,7 @@ implements DeviceAlgorithm<C>
     {
         if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {
             tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
-            tensors[0] = prepareAndExecuteRecursively(
+            tensors[0] = prepareAndExecute(
                     ExecutionCall.of( tensors )
                             .andArgs( Arg.DerivIdx.of( -1 ) )
                             .running( Neureka.get().backend().getOperation("*") )
@@ -414,40 +421,6 @@ implements DeviceAlgorithm<C>
         Neureka.Settings.Debug debug = Neureka.get().settings().debug();
         if (  !tensor.isDeleted() && debug.isDeletingIntermediateTensors() )
             tensor.mut().delete();
-    }
-
-    /**
-     *  The following method can be used to split one big execution call into many
-     *  grouped execution calls which will be executed recursively.
-     *  This method receives a call which ought to be broken down as well as two lambdas
-     *  which contain implementations to perform this task.
-     *  The first lambda, namely {@param finalExecution}, will be called at the end of the
-     *  recursion dive, whereas the second lambda {@param executor} will be called for
-     *  every recursive call in order to perform the grouping.
-     *  The {@param executor} will actually receive the recursive call as lambda, which
-     *  then may or may not be called by implementations of the lambda...
-     *
-     * @param call The {@link ExecutionCall} whose arguments ought to be executed in groups.
-     * @param executor The traversing algorithm, which decides how to group arguments and when
-     *                 the {@param finalExecution} ought to be called.
-     *
-     * @return The execution result of the provided {@param call}.
-     */
-    
-    private static Tsr<?> _recursiveReductiveExecutionOf(
-            final ExecutionCall<? extends Device<?>> call,
-            final FinalExecutor executor
-    ) {
-        return executeOnCommonDevice(call, ()->{
-             /*
-                Below is the core lambda of recursive preprocessing
-                which is defined for each Algorithm individually :
-             */
-            Tsr<?> result = null;
-            if ( executor != null )
-                result = executor.execute(call);
-            return result;
-        });
     }
 
     public static <R> R executeOnCommonDevice( ExecutionCall<?> call, Supplier<R> execution ) {

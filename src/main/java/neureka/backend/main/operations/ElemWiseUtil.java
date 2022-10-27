@@ -28,9 +28,7 @@ public class ElemWiseUtil
     public static <V> Tsr<V> newTsrLike(
         Class<V> type, int[] shape, boolean isOutsourced, Device<Object> device, double value
     ) {
-        Tsr<V> t = Tsr.of( type, shape, value )
-                        .mut()
-                        .setIsIntermediate( true );
+        Tsr<V> t = Tsr.of( type, shape, value ).mut().setIsIntermediate( true );
         t.mut().setIsVirtual( false );
         t.mut().setItems( value );
         try {
