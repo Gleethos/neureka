@@ -7,6 +7,7 @@ import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
@@ -80,7 +81,7 @@ public class Addition extends AbstractOperation {
 
         setAlgorithm(
             new Scalarization()
-            .setDeviceExecution( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
+            .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
             .buildFunAlgorithm()
         );
     }

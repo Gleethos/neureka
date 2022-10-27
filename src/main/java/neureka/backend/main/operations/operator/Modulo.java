@@ -9,6 +9,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
@@ -81,7 +82,7 @@ public class Modulo extends AbstractOperation
                         .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                         .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
-            .setDeviceExecution( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
+            .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
             .buildFunAlgorithm()
         );
     }

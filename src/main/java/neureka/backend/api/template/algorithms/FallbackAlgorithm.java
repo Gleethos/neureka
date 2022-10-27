@@ -41,14 +41,8 @@ implements ExecutionPreparation, ADActionSupplier
                     .withArity( arity )
                     .andImplementation(
                         call -> {
-                            Function f = new FunctionParser(
-                                                    Neureka.get().backend()
-                                                )
-                                                .parse(
-                                                        type,
-                                                        call.arity() - 1,
-                                                        false
-                                                );
+                            Function f = new FunctionParser( Neureka.get().backend() )
+                                                .parse( type, call.arity() - 1, false );
 
                             boolean allNumeric = call.validate()
                                                         .all( t -> t.getDataType().typeClassImplements(NumericType.class) )
@@ -182,16 +176,16 @@ implements ExecutionPreparation, ADActionSupplier
             .getDevice()
             .getExecutor()
             .threaded(
-                    call.input( Object.class, 0 ).size(),
-                    ( start, end ) -> {
-                        Object[] inputs = new Object[ call.arity() - 1 ];
-                        for ( int i = start; i < end; i++ ) {
-                            for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                inputs[ ii ] = call.input( Object.class, 1 + ii ).item(i);
-                            }
-                            setAt( call.input( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));
+                call.input( Object.class, 0 ).size(),
+                ( start, end ) -> {
+                    Object[] inputs = new Object[ call.arity() - 1 ];
+                    for ( int i = start; i < end; i++ ) {
+                        for ( int ii = 0; ii < inputs.length; ii++ ) {
+                            inputs[ ii ] = call.input( Object.class, 1 + ii ).item(i);
                         }
+                        setAt( call.input( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));
                     }
+                }
             );
     }
 

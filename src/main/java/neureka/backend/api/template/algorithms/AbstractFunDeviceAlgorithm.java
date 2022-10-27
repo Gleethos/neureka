@@ -234,24 +234,9 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return _autogradModeFor.autoDiffModeFrom( call );
     }
 
-    public AbstractFunDeviceAlgorithm<C> setExecution(Execution execution) {
+    public AbstractFunDeviceAlgorithm<C> setExecution( Execution execution ) {
         _execution = _checked(execution, _execution, Execution.class);
         return this;
-    }
-
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Execute executor ) {
-        return setExecution( (outerCaller, outerCall) ->
-                Result.of(AbstractDeviceAlgorithm.executeFor(
-                                outerCaller, outerCall,
-                                innerCall -> executor.execute( innerCall )
-                        ))
-                        .withAutoDiff( FallbackAlgorithm::ADAction )
-        );
-    }
-    public interface Execute {
-
-        Tsr<?> execute( ExecutionCall<?> context );
-
     }
 
     @Override
@@ -272,19 +257,19 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         if ( checker.isWronglyIntermediate() ) {
             throw new IllegalStateException(
                     "Output of algorithm '" + this.getName() + "' " +
-                            "is marked as intermediate result, despite the fact " +
-                            "that it is a member of the input array. " +
-                            "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
-                            "as 'intermediate', because they are not eligible for deletion!"
-            );
+                    "is marked as intermediate result, despite the fact " +
+                    "that it is a member of the input array. " +
+                    "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
+                    "as 'intermediate', because they are not eligible for deletion!"
+                );
         }
         if ( checker.isWronglyNonIntermediate() ) {
             throw new IllegalStateException(
                     "Output of algorithm '" + this.getName() + "' " +
-                            "is neither marked as intermediate result nor a member of the input array. " +
-                            "Tensors instantiated by operations in the backend are expected to be flagged " +
-                            "as 'intermediate' in order to be eligible for deletion!"
-            );
+                    "is neither marked as intermediate result nor a member of the input array. " +
+                    "Tensors instantiated by operations in the backend are expected to be flagged " +
+                    "as 'intermediate' in order to be eligible for deletion!"
+                );
         }
         return checker.getResult();
     }
