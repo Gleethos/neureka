@@ -40,7 +40,7 @@ public class Division extends AbstractOperation
 
         setAlgorithm(
             BiElementWise.class,
-            new BiElementWise( (call,callbacl)->AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
+            new BiElementWise( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -77,7 +77,7 @@ public class Division extends AbstractOperation
             new Scalarization()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-            .setDeviceExecution( (call,callbacl)->AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
+            .setDeviceExecution( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
             .buildFunAlgorithm()
         );
     }

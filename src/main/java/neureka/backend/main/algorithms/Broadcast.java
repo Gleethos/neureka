@@ -56,7 +56,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
         setExecution( (outerCaller, outerCall) ->
                         Result.of(AbstractDeviceAlgorithm.executeFor(
                                 outerCaller, outerCall,
-                                (innerCall, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall, callback)
+                                innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
                         ))
         );
         setCallPreparation(

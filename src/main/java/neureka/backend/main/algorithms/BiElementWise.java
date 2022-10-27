@@ -27,7 +27,7 @@ public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWis
         setExecution( (outerCaller, outerCall) ->
                 Result.of(AbstractDeviceAlgorithm.executeFor(
                         outerCaller, outerCall,
-                        (innerCall, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall, callback)
+                        innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
                 ))
         );
         setCallPreparation(

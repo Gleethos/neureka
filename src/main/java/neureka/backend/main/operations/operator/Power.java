@@ -41,7 +41,7 @@ public class Power extends AbstractOperation
 
 
         setAlgorithm(BiElementWise.class,
-            new BiElementWise( (call, traverse) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
+            new BiElementWise( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -75,7 +75,7 @@ public class Power extends AbstractOperation
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setExecution(
                 (caller, call) ->
-                    Result.of(AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
+                    Result.of(AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ))
                             .withAutoDiff( FallbackAlgorithm::ADAction )
             )
             .buildFunAlgorithm()

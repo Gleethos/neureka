@@ -42,14 +42,14 @@ public class Convolution extends AbstractOperation
                 return AutoDiffMode.FORWARD_AND_BACKWARD;
             })
             .setDeviceExecution(
-                (call, executor) ->
+                call ->
                 {
                     Tsr<?>[] tensors = call.inputs();
                     for ( Tsr<?> t : tensors ) if ( t != null ) t.mut().setIsVirtual( false );
 
                     ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
                     return AbstractDeviceAlgorithm.executeOnCommonDevice(
-                            prepared,()->ConvUtil.executeRecursively( "x", prepared, null/*recursion is not expected to happen here*/ )
+                            prepared,()->ConvUtil.executeRecursively( "x", prepared )
                     );
                 },
                 ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->

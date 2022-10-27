@@ -1,12 +1,7 @@
 package neureka.backend.main.operations;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Operation;
-import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
-import neureka.backend.main.internal.CallExecutor;
-import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +14,6 @@ import org.slf4j.LoggerFactory;
 public class ElemWiseUtil
 {
     private static final Logger _LOG = LoggerFactory.getLogger( ElemWiseUtil.class );
-
-    public static Tsr<?> forDivisionsOrModuli(
-            ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor
-    ) {
-        return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
-    }
 
     public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
         return newTsrLike(

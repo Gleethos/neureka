@@ -76,7 +76,7 @@ public final class CLFunctionCompiler
                         .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                         .setDeviceExecution(
-                            (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback),
+                            call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ),
                             (caller, call) -> ADAction.of( target -> Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )
                         )
                         .setCallPreparation(

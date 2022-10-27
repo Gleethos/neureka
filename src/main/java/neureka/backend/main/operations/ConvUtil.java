@@ -3,10 +3,8 @@ package neureka.backend.main.operations;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.NDConvolution;
-import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -26,7 +24,7 @@ public class ConvUtil
                     return AutoDiffMode.FORWARD_AND_BACKWARD;
                 })
                 .setDeviceExecution(
-                    (call, executor) ->
+                    call ->
                     {
                         int offset = ( call.input(0) == null ? 1 : 0 );
                         Tsr<?>[] tensors = new Tsr[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};
@@ -37,7 +35,7 @@ public class ConvUtil
                                                         .andArgs( Arg.DerivIdx.of(0) )
                                                         .running( call.getOperation() )
                                                         .on( call.getDevice() ),
-                                                (a, b) -> ConvUtil.executeRecursively(op, a, b)
+                                                a -> ConvUtil.executeRecursively(op, a)
                                             );
                     },
                     ( Function f, ExecutionCall<? extends Device<?>> adCall ) -> {
@@ -63,8 +61,7 @@ public class ConvUtil
     
     public static Tsr<?> executeRecursively(
             String op,
-            ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
+            ExecutionCall<? extends Device<?>> call
     ) {
         int d = call.getValOf( Arg.DerivIdx.class );
         if ( op.equals("x") ) {
@@ -81,7 +78,7 @@ public class ConvUtil
         } else if ( op.equals("x"+ ((char) 187)) ) {
             call.rearrangeInputs( 2, 1, 0 );
         }
-        return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
+        return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );
     }
 
 }

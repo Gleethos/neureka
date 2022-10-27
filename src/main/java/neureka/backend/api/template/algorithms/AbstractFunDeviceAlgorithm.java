@@ -5,7 +5,6 @@ import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.*;
-import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.memory.MemValidator;
 import neureka.calculus.Function;
 import neureka.devices.Device;
@@ -248,13 +247,13 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
                 ? setExecution( (outerCaller, outerCall) ->
                     Result.of(AbstractDeviceAlgorithm.executeFor(
                         outerCaller, outerCall,
-                        (innerCall, callback) -> exec.execute( innerCall, callback)
+                        innerCall -> exec.execute( innerCall )
                     ))
                 )
                 : setExecution( (outerCaller, outerCall) ->
                     Result.of(AbstractDeviceAlgorithm.executeFor(
                         outerCaller, outerCall,
-                        (innerCall, callback) -> exec.execute( innerCall, callback)
+                        innerCall -> exec.execute( innerCall )
                     ))
                     .withAutoDiff( adActionSupplier )
                 );
@@ -267,7 +266,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     }
     public interface Execute {
 
-        Tsr<?> execute( ExecutionCall<?> context, CallExecutor goDeeperWith );
+        Tsr<?> execute( ExecutionCall<?> context );
 
     }
 

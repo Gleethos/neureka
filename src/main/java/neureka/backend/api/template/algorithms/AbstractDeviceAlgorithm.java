@@ -5,10 +5,8 @@ import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.main.algorithms.Activation;
-import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.backend.main.memory.MemUtil;
-import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -113,17 +111,15 @@ implements DeviceAlgorithm<C>
 
         for ( Tsr<?> t : executionCall.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
-                    "Device arguments may not be null!\n" +
-                    "One or more tensor arguments within the given ExecutionCall instance is null."
-            );
+                                "Device arguments may not be null!\n" +
+                                "One or more tensor arguments within the given ExecutionCall instance is null."
+                            );
         return executionCall;
     }
 
     public static Tsr<?> executeDeviceAlgorithm(
-            ExecutionCall<? extends Device<?>> call,
-            CallExecutor executor // Ignored! Only for compatibility!
+            ExecutionCall<? extends Device<?>> call
     ) {
-
         for ( Tsr<?> t : call.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
@@ -331,7 +327,7 @@ implements DeviceAlgorithm<C>
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
                                                         .running( Neureka.get().backend().getOperation("+") )
                                                         .on( call.getDevice() ),
-                                                (innerCall, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall, null )
+                                                innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
                                         );
                             inner = tensors[ 0 ];//-> this is now the inner derivative!
                         }
@@ -450,10 +446,7 @@ implements DeviceAlgorithm<C>
              */
             Tsr<?> result = null;
             if ( executor != null )
-                result = executor.execute( // This is where the recursion occurs:
-                                call,
-                                null
-                        );
+                result = executor.execute(call);
             return result;
         });
     }

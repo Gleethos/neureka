@@ -43,7 +43,7 @@ public class Multiplication extends AbstractOperation
 
         setAlgorithm(
             BiElementWise.class,
-            new BiElementWise( (call,callback)->AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
+            new BiElementWise( call ->AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -74,7 +74,7 @@ public class Multiplication extends AbstractOperation
             Scalarization.class,
             new Scalarization()
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-            .setDeviceExecution( (call,callback)->AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
+            .setDeviceExecution( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
             .buildFunAlgorithm()
         );
     }

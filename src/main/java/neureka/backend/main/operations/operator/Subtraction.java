@@ -40,7 +40,7 @@ public class Subtraction extends AbstractOperation
         );
 
         setAlgorithm(
-            new BiElementWise((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
+            new BiElementWise(call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ))
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -49,7 +49,7 @@ public class Subtraction extends AbstractOperation
             Scalarization.class,
             new Scalarization()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-            .setDeviceExecution((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
+            .setDeviceExecution(call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ))
             .buildFunAlgorithm()
         );
 

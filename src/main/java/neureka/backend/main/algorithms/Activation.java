@@ -34,7 +34,7 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
         setExecution( (outerCaller, outerCall) ->
                 Result.of(AbstractDeviceAlgorithm.executeFor(
                         outerCaller, outerCall,
-                        (innerCall, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall, callback)
+                        innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
                 ))
         );
         setCallPreparation(

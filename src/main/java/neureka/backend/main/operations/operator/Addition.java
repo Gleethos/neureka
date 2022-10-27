@@ -39,7 +39,7 @@ public class Addition extends AbstractOperation {
         );
 
         setAlgorithm(
-            new BiElementWise((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
+            new BiElementWise(call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ))
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -80,7 +80,7 @@ public class Addition extends AbstractOperation {
 
         setAlgorithm(
             new Scalarization()
-            .setDeviceExecution((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
+            .setDeviceExecution(call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ))
             .buildFunAlgorithm()
         );
     }

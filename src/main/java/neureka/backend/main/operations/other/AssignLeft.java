@@ -52,7 +52,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution( (caller, call) -> {
-                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
+                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );
                 t.mut().incrementVersion(call);
                 return Result.of(t);
             })
@@ -81,7 +81,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution( (caller, call) -> {
-                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
+                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );
                 t.mut().incrementVersion(call);
                 return Result.of(t);
             })

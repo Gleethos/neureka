@@ -14,6 +14,6 @@ import neureka.devices.Device;
  */
 public interface RecursiveExecutor {
 
-    Tsr<?> execute( ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith );
+    Tsr<?> execute( ExecutionCall<? extends Device<?>> call );
 
 }

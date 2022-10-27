@@ -51,7 +51,7 @@ abstract class AbstractActivationOperation extends AbstractOperation
                             .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                             .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
-            .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
+            .setDeviceExecution( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
             .buildFunAlgorithm()
             .setImplementationFor( CPU.class, new CPUScalarBroadcastFunction( fun ) )
         );
@@ -64,7 +64,7 @@ abstract class AbstractActivationOperation extends AbstractOperation
                         .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                         .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
-            .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
+            .setDeviceExecution( call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ) )
             .buildFunAlgorithm()
         );
     }
