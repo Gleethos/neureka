@@ -22,47 +22,9 @@ public class ElemWiseUtil
 
     public static Tsr<?> forMultiplications(
             ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
+            CallExecutor recursiveExecutor
     ) {
-        call = call.withInputs(call.inputs().clone()); // Let's make sure we prevent any side effects.
-        Device<?> device = call.getDevice();
-        int d = call.getValOf( Arg.DerivIdx.class );
-        Operation type = call.getOperation();
-
-        Tsr<?> result = null;
-        if ( call.arity() > 3 ) {
-            if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{ call.input( 0 ), call.input( 1 ), call.input( 2 ) };
-                result = recursiveExecutor.execute(
-                                        ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
-                                );
-                call = call.withInputAt( 0, result );
-
-                reduction = Operation.Utility.offsetted(call.inputs(), 1);
-                result = recursiveExecutor.execute(
-                        ExecutionCall.of( reduction ).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
-                );
-                call = call.withInputAt( 0, result );
-            } else {
-                Tsr<?>[] reduction = Operation.Utility.without(call.inputs(), 1+d);
-                if ( reduction.length > 2 ) {
-                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? call.input( 1 ).deepCopy().mut().setIsIntermediate( true ) : reduction[ 0 ];
-                    result = recursiveExecutor.execute(
-                            ExecutionCall.of( reduction )
-                                            .andArgs( Arg.DerivIdx.of( -1 ) )
-                                            .running( Neureka.get().backend().getOperation("*") )
-                                            .on( device )
-                    );
-                    call = call.withInputAt( 0, result );
-                }
-                else
-                    call = call.withInputAt( 0, reduction[ 1 ] );
-            }
-            if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
-            return result;
-        } 
-        else
-            return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
+        return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
 
     }
 
@@ -137,31 +99,6 @@ public class ElemWiseUtil
         if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
         return result;
     }
-
-    
-    public static Tsr<?> forAdditions(
-            ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor // This will indirectly be a recursive call!
-    ) {
-        return _forAdditionsOrSubtractions(call, recursiveExecutor);
-    }
-
-    
-    public static Tsr<?> forSubtractions(
-            ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor
-    ) {
-        return _forAdditionsOrSubtractions(call, recursiveExecutor);
-    }
-
-    
-    private static Tsr<?> _forAdditionsOrSubtractions(
-            ExecutionCall<? extends Device<?>> call,
-            CallExecutor recursiveExecutor
-    ) {
-        return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
-    }
-
 
     public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
         return newTsrLike(

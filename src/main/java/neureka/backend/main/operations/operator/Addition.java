@@ -39,7 +39,7 @@ public class Addition extends AbstractOperation {
         );
 
         setAlgorithm(
-            new BiElementWise(ElemWiseUtil::forAdditions)
+            new BiElementWise((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -80,7 +80,7 @@ public class Addition extends AbstractOperation {
 
         setAlgorithm(
             new Scalarization()
-            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forAdditions(call, callback) )
+            .setDeviceExecution((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
             .buildFunAlgorithm()
         );
     }

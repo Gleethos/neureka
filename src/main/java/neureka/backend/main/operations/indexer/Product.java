@@ -90,7 +90,7 @@ public final class Product extends AbstractOperation
 
         Operation mullOp = Neureka.get().backend().getOperation("*");
         Function mul = new FunctionParser(Neureka.get().backend())
-                .parse( mullOp, inputs.length, caller.isDoingAD() );
+                            .parse( mullOp, inputs.length, caller.isDoingAD() );
 
         return mullOp.execute( mul, call.withInputs(inputs).withOperation(mullOp).withArgs(Arg.DerivIdx.of(-1)) );
     }

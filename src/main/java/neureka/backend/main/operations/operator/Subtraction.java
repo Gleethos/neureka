@@ -40,7 +40,7 @@ public class Subtraction extends AbstractOperation
         );
 
         setAlgorithm(
-            new BiElementWise(ElemWiseUtil::forSubtractions)
+            new BiElementWise((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -49,13 +49,13 @@ public class Subtraction extends AbstractOperation
             Scalarization.class,
             new Scalarization()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forSubtractions(call, callback) )
+            .setDeviceExecution((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
             Broadcast.class,
-            new Broadcast(ElemWiseUtil::forSubtractions)
+            new Broadcast((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADActionFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -65,7 +65,7 @@ public class Subtraction extends AbstractOperation
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         assert ctxDerivative == null;
                         int d = call.getDerivativeIndex();
-                        Tsr<?> derivative = ElemWiseUtil.newTsrLike( call.input( d==0?1:0 ), 0 );
+                        Tsr<?> derivative = ElemWiseUtil.newTsrLike( call.input( d == 0 ? 1 : 0 ), 0 );
                         Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike( call.input( d ), 0 );
                         Device device = call.getDevice();
                         return
