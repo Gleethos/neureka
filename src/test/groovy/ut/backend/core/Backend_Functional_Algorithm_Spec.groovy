@@ -15,7 +15,6 @@ import java.util.function.Consumer
 
 class Backend_Functional_Algorithm_Spec extends Specification
 {
-
     def 'A functional algorithm cannot be used if it was not built properly!'(
             Consumer<Algorithm> caller
     ) {
@@ -36,7 +35,6 @@ class Backend_Functional_Algorithm_Spec extends Specification
                     { Algorithm it -> it.autoDiffModeFrom(null) },
                     { Algorithm it -> it.execute(null, null) },
                     { Algorithm it -> it.prepare(null) },
-                    { Algorithm it -> it.supplyADActionFor(null, null) }
             ]
 
     }

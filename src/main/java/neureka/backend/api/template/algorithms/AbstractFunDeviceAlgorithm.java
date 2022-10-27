@@ -53,7 +53,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     private boolean _isFullyBuilt = false;
 
 
-    public AbstractFunDeviceAlgorithm(String name ) { super(name); }
+    public AbstractFunDeviceAlgorithm( String name ) { super(name); }
 
     /**
      *  The {@link SuitabilityPredicate} checks if a given instance of an {@link ExecutionCall} is
@@ -65,21 +65,6 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     public final float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         return _isSuitableFor.isSuitableFor(call);
-    }
-
-    /**
-     *  This method returns a new instance
-     *  of the {@link ADAction} class responsible for performing automatic differentiation
-     *  both for forward and backward mode differentiation. <br>
-     *  Therefore an {@link ADAction} exposes 2 different procedures. <br>
-     *  One is the forward mode differentiation, and the other one <br>
-     *  is the backward mode differentiation which is more commonly known as back-propagation... <br>
-     *  Besides that it may also contain context information used <br>
-     *  to perform said procedures.
-     */
-    public final ADAction supplyADActionFor(Function function, ExecutionCall<? extends Device<?>> call ) {
-        _checkReadiness();
-        return _supplyADActionFor.supplyADActionFor( function, call );
     }
 
     /**

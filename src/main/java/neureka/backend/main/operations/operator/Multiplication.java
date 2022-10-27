@@ -31,14 +31,14 @@ public class Multiplication extends AbstractOperation
     public Multiplication()
     {
         super(
-                new OperationBuilder()
-                        .identifier(    "multiply"    )
-                        .operator(         "*"        )
-                        .arity(            -1         )
-                        .isOperator(       true       )
-                        .isIndexer(        false      )
-                        .isDifferentiable( true       )
-                        .isInline(         false      )
+            new OperationBuilder()
+            .identifier(    "multiply"    )
+            .operator(         "*"        )
+            .arity(            -1         )
+            .isOperator(       true       )
+            .isIndexer(        false      )
+            .isDifferentiable( true       )
+            .isInline(         false      )
         );
 
         setAlgorithm(
@@ -225,8 +225,5 @@ public class Multiplication extends AbstractOperation
             return ud;
         }
     }
-
-
-
 
 }
