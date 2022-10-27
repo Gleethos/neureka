@@ -52,14 +52,15 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
         setExecution( (outerCaller, outerCall) ->
-                        Result.of(AbstractDeviceAlgorithm.executeFor(
-                                outerCaller, outerCall,
+                        Result.of(AbstractDeviceAlgorithm.prepareAndExecute(
+                                outerCall,
                                 innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
                         ))
         );
         setCallPreparation(
             call ->
             {
+                if ( call.arity() < 3 ) call = call.withAddedInputAt(0, null);
                 int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );
                 if (
                     call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()
