@@ -23,7 +23,8 @@ public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWis
                     .basicSuitability()
         );
         setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD );
-        setExecution( (outerCaller, outerCall) ->
+        setExecution(
+            (outerCaller, outerCall) ->
                 Result.of(AbstractDeviceAlgorithm.executeFor(
                         outerCaller, outerCall,
                         innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )

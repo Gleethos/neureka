@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.calculus.Function;
@@ -30,22 +31,26 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
                         .getEstimation()
         );
         setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY );
-        setDeviceExecution(
-               call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ),
-               (Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-               {
-                   if ( adCall.autogradMode().allowsForward() )
-                       throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
-                   Function matMul = Neureka.get().backend().getFunction().matMul();
-                   int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                   Tsr<?> derivative = adCall.input( d ).T().deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
-                   derivative.to(adCall.getDevice());
-                   return ADAction.of(target ->
-                           d == 1
-                                   ? matMul.execute( target.error(), derivative )
-                                   : matMul.execute( derivative, target.error() )
-                   );
-               }
+        setExecution(
+            (outerCaller, outerCall) ->
+                Result.of(AbstractDeviceAlgorithm.executeFor(
+                    outerCaller, outerCall,
+                    innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
+                ))
+                .withAutoDiff( (Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                {
+                    if ( adCall.autogradMode().allowsForward() )
+                        throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
+                    Function matMul = Neureka.get().backend().getFunction().matMul();
+                    int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
+                    Tsr<?> derivative = adCall.input( d ).T().deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                    derivative.to(adCall.getDevice());
+                    return ADAction.of(target ->
+                            d == 1
+                                    ? matMul.execute( target.error(), derivative )
+                                    : matMul.execute( derivative, target.error() )
+                    );
+                })
         );
         setCallPreparation(MatMulAlgorithm::_prepare);
     }
