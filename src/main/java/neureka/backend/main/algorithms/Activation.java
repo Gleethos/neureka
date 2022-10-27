@@ -32,14 +32,15 @@ public final class Activation extends AbstractFunDeviceAlgorithm<Activation>
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
         setExecution( (outerCaller, outerCall) ->
-                Result.of(AbstractDeviceAlgorithm.executeFor(
-                        outerCaller, outerCall,
+                Result.of(AbstractDeviceAlgorithm.prepareAndExecute(
+                        outerCall,
                         innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
                 ))
         );
         setCallPreparation(
             call -> {
                 Device device = call.getDeviceFor(Number.class);
+                if ( call.arity() < 2 ) call = call.withAddedInputAt(0, null);
                 if ( call.input(  0 ) == null ) // Creating a new tensor:
                 {
                     int[] shape = call.input(  1 ).getNDConf().shape();
