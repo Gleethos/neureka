@@ -217,8 +217,7 @@ implements DeviceAlgorithm<C>
                         : new Tsr[ 1 + nodes.length  ];
 
         if ( call.getOperation().isIndexer() )
-            for ( int i = 1; i < tensors.length; i++ )
-                tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 );
+            throw new UnsupportedOperationException( "Indexers are not supported yet!" );
         else
         {
             ExecutionCall<?> flattenedCall = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes );

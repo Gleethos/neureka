@@ -49,7 +49,7 @@ import neureka.devices.Device;
 
 /**
  *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.
- *  It represents broad and high level requests for execution which might be executed differently depending
+ *  It represents broad and high level types of algorithms which might be executed differently depending
  *  on the provided {@link ExecutionCall} arguments.
  *  An {@link Operation} implementation ought to consist of a component system
  *  containing multiple {@link Algorithm} instances, which themselves ought to contain device specific implementations
