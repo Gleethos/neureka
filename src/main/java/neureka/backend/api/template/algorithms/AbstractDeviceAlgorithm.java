@@ -334,12 +334,12 @@ implements DeviceAlgorithm<C>
                         else {
                             // Optimization above did not apply, so we accumulate all the derivatives!
                             tensors[0] = prepareAndExecuteRecursively(
-                                    ExecutionCall.of( tensors )
-                                            .andArgs( Arg.DerivIdx.of( -1 ) )
-                                            .running( Neureka.get().backend().getOperation("+") )
-                                            .on( call.getDevice() ),
-                                    ElemWiseUtil::forAdditions
-                            );
+                                                ExecutionCall.of( tensors )
+                                                        .andArgs( Arg.DerivIdx.of( -1 ) )
+                                                        .running( Neureka.get().backend().getOperation("+") )
+                                                        .on( call.getDevice() ),
+                                                (innerCall, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall, null )
+                                        );
                             inner = tensors[ 0 ];//-> this is now the inner derivative!
                         }
                     }
