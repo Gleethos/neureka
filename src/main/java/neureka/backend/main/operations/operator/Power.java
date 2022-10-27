@@ -48,7 +48,7 @@ public class Power extends AbstractOperation
 
         setAlgorithm(
             Broadcast.class,
-            new Broadcast( (call, traverse) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
+            new Broadcast()
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setSupplyADActionFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->

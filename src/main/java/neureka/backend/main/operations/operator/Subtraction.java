@@ -55,7 +55,7 @@ public class Subtraction extends AbstractOperation
 
         setAlgorithm(
             Broadcast.class,
-            new Broadcast((call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ))
+            new Broadcast()
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADActionFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->

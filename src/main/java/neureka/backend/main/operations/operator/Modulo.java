@@ -14,7 +14,6 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -40,14 +39,14 @@ public class Modulo extends AbstractOperation
 
         setAlgorithm(
             BiElementWise.class,
-            new BiElementWise(ElemWiseUtil::forDivisionsOrModuli)
+            new BiElementWise( (call,callbacl)->AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
             Broadcast.class,
-            new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
+            new Broadcast()
             .setAutogradModeFor(
                 call -> call.validate()
                         .allNotNullHaveSame(NDimensional::shape)

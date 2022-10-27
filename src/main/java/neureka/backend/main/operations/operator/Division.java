@@ -14,7 +14,6 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementWise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -41,14 +40,14 @@ public class Division extends AbstractOperation
 
         setAlgorithm(
             BiElementWise.class,
-            new BiElementWise(ElemWiseUtil::forDivisionsOrModuli)
+            new BiElementWise( (call,callbacl)->AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
                 Broadcast.class,
-                new Broadcast( ElemWiseUtil::forDivisionsOrModuli )
+                new Broadcast()
                 .setAutogradModeFor(
                     call -> call
                             .validate().allNotNullHaveSame(NDimensional::shape)
@@ -78,7 +77,7 @@ public class Division extends AbstractOperation
             new Scalarization()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forDivisionsOrModuli(call, callback) )
+            .setDeviceExecution( (call,callbacl)->AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null ) )
             .buildFunAlgorithm()
         );
     }

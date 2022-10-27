@@ -2,8 +2,10 @@ package neureka.backend.main.algorithms;
 
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
 import neureka.backend.api.fun.ADActionSupplier;
 import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.backend.main.operations.other.Reshape;
@@ -12,7 +14,7 @@ import neureka.dtype.NumericType;
 
 public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
 {
-    public Broadcast( RecursiveExecutor finalExecutor )
+    public Broadcast()
     {
         super("broadcast");
         setIsSuitableFor(
@@ -51,7 +53,12 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                     .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                     .orElse(AutoDiffMode.BACKWARD_ONLY)
         );
-        setDeviceExecution( (call, callback) -> finalExecutor.execute(call, callback), (ADActionSupplier) null );
+        setExecution( (outerCaller, outerCall) ->
+                        Result.of(AbstractDeviceAlgorithm.executeFor(
+                                outerCaller, outerCall,
+                                (innerCall, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall, callback)
+                        ))
+        );
         setCallPreparation(
             call ->
             {
@@ -84,11 +91,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                     Class<Object> type = (Class<Object>) call.input(  1 ).getItemType();
                     Tsr<?> output = Tsr.of(type).withShape(outShape).all( 0.0 ).mut().setIsIntermediate( true );
                     output.mut().setIsVirtual( false );
-                    try {
-                        device.store( output );
-                    } catch( Exception e ) {
-                        e.printStackTrace();
-                    }
+                    device.store( output );
                     call = call.withInputAt( 0, output );
                 }
                 return call;

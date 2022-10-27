@@ -45,7 +45,7 @@ public class Addition extends AbstractOperation {
         );
 
         setAlgorithm(
-            new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
+            new Broadcast()
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
             .setSupplyADActionFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->
