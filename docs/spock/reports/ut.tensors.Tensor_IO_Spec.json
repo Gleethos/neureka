@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.134 seconds"
+    "duration":"0.037 seconds"
   },
   "headers":["\n                This specification covers some basic behaviour related to\n                reading and modifying the data inside a tensor.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Indexing after reshaping works as expected.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"Tensor value type can not be changed by passing float or double arrays to it.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,9 +52,9 @@
 
         {"kind":"then","text":"...once again the tensor changes as expected.","code":["x.rawItems instanceof double[]","x.mut.data.ref instanceof double[]","x.rawData instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==4.0f","x.getItemsAs( double[].class )[0]==4.0d","x.isLeave()","!x.isBranch()","!x.isOutsourced()","!x.isVirtual()","!x.isSlice()","!x.isSliceParent()","!x.belongsToGraph()","x.getDevice() !=null","x.getDevice() instanceof CPU","x.rank()==1","!x.rqsGradient()","x.size()==1"]},
 
-        {"kind":"when","text":"","code":["x.mut.toType( Float.class )"]},
+        {"kind":"when","text":"","code":["when : x.mut.toType( Float.class )"]},
 
-        {"kind":"then","text":"","code":["x.rawItems instanceof float[]"]},
+        {"kind":"then","text":"","code":["then : x.rawItems instanceof float[]"]},
 
         {"kind":"when","text":"","code":["doubles = new double[1]","doubles[0] = 7.0","x.mut.setItems(doubles)"]},
 
@@ -66,7 +66,7 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
     {
       "id":"We can manipulate the underlying data array of a tensor through the unsafe API.",
       "result":"PASS",
-      "duration":"0.024 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"When we try to manipulate the underlying data array of a virtual tensor then it will become actual.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -141,7 +141,7 @@
     {
       "id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -168,22 +168,22 @@
     {
       "id":"Tensor values can be manipulated via static method calls within the \"Tsr.IO\" class.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"Two tensors which will be used for testing IO.","code":["var t = Tsr.of([2, 2], [","    1.0d, 4.0d,","    2.0d, 7.0d,","])","var v = Tsr.of([2, 2], [","    1.0d, -1.0d,","    1.0d, -1.0d","])"]},
+        {"kind":"and","text":"Two tensors which will be used for testing IO.","code":["var t = Tsr.of([2, 2], [","                1.0d, 4.0d,","                2.0d, 7.0d,","            ])","var v = Tsr.of([2, 2], [","                1.0d, -1.0d,","                1.0d, -1.0d","            ])"]},
 
-        {"kind":"when","text":"","code":["t += v"]},
+        {"kind":"when","text":"","code":["when : t += v"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, 3.0, 3.0, 6.0)\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"[2x2]:(2.0, 3.0, 3.0, 6.0)\")"]},
 
-        {"kind":"when","text":"","code":["t.mut.setItemAt( 2, 6.0 as double )"]},
+        {"kind":"when","text":"","code":["when : t.mut.setItemAt( 2, 6.0 as double )"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, 3.0, 6.0, 6.0)\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"[2x2]:(2.0, 3.0, 6.0, 6.0)\")"]},
 
         {"kind":"when","text":"","code":["int[] indices = new int[2]","indices[1] = 1","t.mut.setItemAt(t.indexOfIndices(indices), -6.0 as double)"]},
 
@@ -191,23 +191,23 @@
 
         {"kind":"when","text":"","code":["indices[0] = 1","t[indices].mut.timesAssign(-1d)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, -6.0)\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, -6.0)\")"]},
 
-        {"kind":"when","text":"","code":["t[3].mut.timesAssign(-2d)"]},
+        {"kind":"when","text":"","code":["when : t[3].mut.timesAssign(-2d)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, 12.0)\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, 12.0)\")"]},
 
-        {"kind":"when","text":"","code":["t.mut[indices] = 0d"]},
+        {"kind":"when","text":"","code":["when : t.mut[indices] = 0d"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, 0.0)\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"[2x2]:(2.0, -6.0, 6.0, 0.0)\")"]},
 
-        {"kind":"when","text":"","code":["t.mut[2] = 99d"]},
+        {"kind":"when","text":"","code":["when : t.mut[2] = 99d"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 99.0, 0.0)\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"[2x2]:(2.0, -6.0, 99.0, 0.0)\")"]},
 
-        {"kind":"when","text":"","code":["t[2].mut.minusAssign(99d)"]},
+        {"kind":"when","text":"","code":["when : t[2].mut.minusAssign(99d)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(2.0, -6.0, 0.0, 0.0)\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"[2x2]:(2.0, -6.0, 0.0, 0.0)\")"]},
 
         {"kind":"when","text":"Modifying the first index of the indices array...","code":["indices[0] = 0"]},
 
@@ -215,9 +215,9 @@
 
         {"kind":"then","text":"The underlying data will have changed.","code":["t.toString().contains(\"[2x2]:(2.0, 3.0, 0.0, 0.0)\")"]},
 
-        {"kind":"when","text":"","code":["t -= Tsr.of([2, 2], [1d, 2d, 3d, 4d])"]},
+        {"kind":"when","text":"","code":["when : t -= Tsr.of([2, 2], [1d, 2d, 3d, 4d])"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"[2x2]:(1.0, 1.0, -3.0, -4.0)\")"]}
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"[2x2]:(1.0, 1.0, -3.0, -4.0)\")"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -225,7 +225,7 @@
     {
       "id":"The tensor data array can be modified by targeting them with an index.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.178 seconds"
+    "duration":"0.012 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCL backend context can load implementations.",
       "result":"PASS",
-      "duration":"0.169 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
 
         {"kind":"when","text":"The context is being asked to load implementations...","code":["loader.load(registry)"]},
 
-        {"kind":"then","text":"","code":["(12..666) * receiver.accept(","{ Operation.isAssignableFrom(it) },","{ DeviceAlgorithm.isAssignableFrom(it) },","{ Device.isAssignableFrom(it) },","{ it != null }",")"]}
+        {"kind":"then","text":"","code":["(12..666) * receiver.accept(","        { Operation.isAssignableFrom(it) },","        { DeviceAlgorithm.isAssignableFrom(it) },","        { Device.isAssignableFrom(it) },","        { it != null }","        )"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.059 seconds"
+    "duration":"0.014 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"BackendContext instances can be created by cloning from Singleton instance.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting.",
       "result":"PASS",
-      "duration":"0.014 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -68,7 +68,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting with return values.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
 
         {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
 
-        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@13083c50","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@db2e161","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@2369db96"]}}
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@1ad20280","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@52ca6326","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@3ab3f1e5"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.424 seconds"
+    "duration":"0.019 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A functional algorithm cannot be used if it was not built properly!",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"The exception tells us this:","code":["exception.message == \"Trying use an instance of 'TestAlgorithm' with name 'test_name' which was not fully built!\""]},
 
-        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@2c01480f","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@43a67f77","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@3c79ba","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure4@75223acf"]}}
+        {"kind":"where","text":"We call the following methods:","code":{"caller":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure1@466885ed","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure2@17122e63","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_0prov0_closure3@442f280f"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -37,20 +37,20 @@
     {
       "id":"A functional algorithm does not accept null as an answer!",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create a dumb test algorithm.","code":["def algorithm = new TestAlgorithm()"]},
 
-        {"kind":"when","text":"We build it thoroughly...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )",".setExecution((caller, call ) -> null)",".setCallPreparation(call -> null)",".buildFunAlgorithm()"]},
+        {"kind":"when","text":"We build it thoroughly...","code":["algorithm","        .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)","        .setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )","        .setExecution((caller, call ) -> null)","        .setCallPreparation(call -> null)","        .buildFunAlgorithm()"]},
 
         {"kind":"then","text":"The algorithm should be usable just fine!","code":["algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT","algorithm.autoDiffModeFrom(null) == AutoDiffMode.BACKWARD_ONLY","algorithm.execute(null, null) == null","algorithm.prepare(null) == null"]},
 
         {"kind":"when","text":"We create a new instance!","code":["algorithm = new TestAlgorithm()"]},
 
-        {"kind":"and","text":"Which we do not build fully this time...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )",".setExecution((caller, call ) -> null)",".setCallPreparation(null) // This is not acceptable!",".buildFunAlgorithm()"]},
+        {"kind":"and","text":"Which we do not build fully this time...","code":["algorithm","        .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)","        .setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )","        .setExecution((caller, call ) -> null)","        .setCallPreparation(null) // This is not acceptable!","        .buildFunAlgorithm()"]},
 
         {"kind":"then","text":"This should throw an illegal state exception, because we have not built the algorithm properly!","code":["def exception = thrown(IllegalStateException)"]},
 
@@ -62,7 +62,7 @@
     {
       "id":"A functional algorithm warns us when modified after it has been built!",
       "result":"PASS",
-      "duration":"0.273 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,17 +71,17 @@
 
         {"kind":"and","text":"","code":["def oldStream = System.err","System.err = Mock(PrintStream)"]},
 
-        {"kind":"when","text":"We build it thoroughly...","code":["algorithm",".setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)",".setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )",".setExecution((caller, call ) -> null)",".setCallPreparation(call -> null)",".buildFunAlgorithm()"]},
+        {"kind":"when","text":"We build it thoroughly...","code":["algorithm","        .setIsSuitableFor(call -> SuitabilityPredicate.EXCELLENT)","        .setAutogradModeFor( call ->  AutoDiffMode.BACKWARD_ONLY )","        .setExecution((caller, call ) -> null)","        .setCallPreparation(call -> null)","        .buildFunAlgorithm()"]},
 
         {"kind":"then","text":"The algorithm should be usable just fine!","code":["algorithm.isSuitableFor(null) == SuitabilityPredicate.EXCELLENT","algorithm.autoDiffModeFrom(null) == AutoDiffMode.BACKWARD_ONLY","algorithm.execute(null, null) == null","algorithm.prepare(null) == null"]},
 
         {"kind":"when","text":"We try to modify the algorithm even if it is already built...","code":["setter(algorithm)"]},
 
-        {"kind":"then","text":"We will get a warning which wells us that mutating the state of the algorithm is discouraged!","code":["1 * System.err.println(","    \"[Test worker] WARN neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm - \" +","    \"Implementation '$type.simpleName' in algorithm '$algorithm' was modified! \" +","    \"Please consider only modifying the standard backend state of Neureka for experimental reasons.\"",")"]},
+        {"kind":"then","text":"We will get a warning which wells us that mutating the state of the algorithm is discouraged!","code":["1 * System.err.println(","        \"[Test worker] WARN neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm - \" +","        \"Implementation '$type.simpleName' in algorithm '$algorithm' was modified! \" +","        \"Please consider only modifying the standard backend state of Neureka for experimental reasons.\"","    )"]},
 
         {"kind":"cleanup","text":"","code":["System.err = oldStream"]},
 
-        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@3b7ef18b","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@74e1614d","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure18@5c4c4a54"]}}
+        {"kind":"where","text":"","code":{"type":["interface neureka.backend.api.fun.ExecutionPreparation","interface neureka.backend.api.fun.SuitabilityPredicate","interface neureka.backend.api.fun.Execution"],"setter":["ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure15@30846276","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure16@66f9aee6","ut.backend.core.Backend_Functional_Algorithm_Spec$__spock_feature_0_2prov1_closure17@7a84f06"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

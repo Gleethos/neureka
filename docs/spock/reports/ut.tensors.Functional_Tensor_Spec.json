@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.016 seconds"
+    "duration":"0.588 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can initialize a tensor using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.121 seconds",
+      "duration":"0.068 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"We instantiate a tensor using an initializer lambda...","code":["Tsr<Integer> t = Tsr.of(","    DataType.of( Integer.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { i - 2 }",")"]},
+        {"kind":"when","text":"We instantiate a tensor using an initializer lambda...","code":["Tsr<Integer> t = Tsr.of(","                        DataType.of( Integer.class ),","                        [ 2, 3 ],","                        ( int i, int[] indices ) -> { i - 2 }","                    )"]},
 
         {"kind":"then","text":"It is initialized with the expected values:","code":["t.toString() == \"(2x3):[-2, -1, 0, 1, 2, 3]\""]}
       ],
@@ -31,7 +31,7 @@
     {
       "id":"We can analyse the values of a tensor using various predicate receiving methods",
       "result":"PASS",
-      "duration":"0.253 seconds",
+      "duration":"0.181 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -44,7 +44,7 @@
 
         {"kind":"and","text":"","code":["a.count((Predicate<Integer>){it == 0}) == 1","a.count((Predicate<Integer>){it == 1}) == 2","b.count((Predicate<Integer>){it == 1}) == 2","b.count((Predicate<Integer>){it == 3}) == 0"]},
 
-        {"kind":"and","text":"We can also easily turn a tensor into a stream!","code":["a.stream()",".filter({it < 3})",".map({(it-4)*2})",".collect(Collectors.toList()) == [-4, -8, -6, -6]"]},
+        {"kind":"and","text":"We can also easily turn a tensor into a stream!","code":["a.stream()","        .filter({it < 3})","        .map({(it-4)*2})","        .collect(Collectors.toList()) == [-4, -8, -6, -6]"]},
 
         {"kind":"where","text":"","code":{"device":["CPU","GPU"]}}
       ],
@@ -54,12 +54,12 @@
     {
       "id":"Tensor mapping lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.281 seconds",
+      "duration":"0.140 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","DataType.of( Double.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { (i - 2) as Double }",")",".to(device)"]},
+        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","        DataType.of( Double.class ),","            [ 2, 3 ],","            ( int i, int[] indices ) -> { (i - 2) as Double }","        )","        .to(device)"]},
 
         {"kind":"then","text":"The tensor has been initialized with the expected values:","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]},
 
@@ -77,12 +77,12 @@
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
       "result":"PASS",
-      "duration":"0.228 seconds",
+      "duration":"0.126 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a tensor with a single element.","code":["var t = Tsr.of(","    DataType.of( Integer.class ),","    [ 1 ],","    ( int i, int[] indices ) -> { 1 }",")",".to(device)"]},
+        {"kind":"given","text":"We create a tensor with a single element.","code":["var t = Tsr.of(","                        DataType.of( Integer.class ),","                        [ 1 ],","                        ( int i, int[] indices ) -> { 1 }","                    )","                    .to(device)"]},
 
         {"kind":"when","text":"We map the tensor to a new tensor of the same type.","code":["var b = t.map( it -> it + 1 )"]},
 
@@ -98,12 +98,12 @@
     {
       "id":"We can find both min and max items in a tensor by providing a comparator.",
       "result":"PASS",
-      "duration":"0.120 seconds",
+      "duration":"0.064 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a tensor of chars for which we want to find a min and max values:","code":["var t = Tsr.of(Character)",".withShape(2, 13)",".andWhere(( int i, int[] indices ) -> { (i+65) as char } )"]},
+        {"kind":"given","text":"We create a tensor of chars for which we want to find a min and max values:","code":["var t = Tsr.of(Character)","                    .withShape(2, 13)","                    .andWhere(( int i, int[] indices ) -> { (i+65) as char } )"]},
 
         {"kind":"when","text":"We find the min value by passing a comparator (which takes 2 values and returns an int):","code":["var min = t.minItem( ( Character a, Character b ) -> a.compareTo( b ) )"]},
 

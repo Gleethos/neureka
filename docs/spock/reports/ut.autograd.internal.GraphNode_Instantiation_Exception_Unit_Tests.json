@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.660 seconds"
+    "duration":"0.169 seconds"
   },
   "headers":["\n            <h2> GraphNode Instantiation Tests </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the GraphNode class during instantiation where\n                inputs are setup to cause expected exceptions.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.",
       "result":"PASS",
-      "duration":"0.631 seconds",
+      "duration":"0.139 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"when","text":"We try to instantiate a GraphNode...","code":["new GraphNode( function, context, supplier )"]},
 
-        {"kind":"then","text":"The expected exception message is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message ==","\"Input tensor at index '1' did not return a GraphNode instance.\" +","\"Input tensors of a new GraphNode must be part of the computation graph!\""]},
+        {"kind":"then","text":"The expected exception message is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message ==","        \"Input tensor at index '1' did not return a GraphNode instance.\" +","        \"Input tensors of a new GraphNode must be part of the computation graph!\""]},
 
         {"kind":"and","text":"The mock objects are being called as expected.","code":["1 * context.inputs() >> inputs","0 * function.isDoingAD() >> true","0 * payload.getDevice() >> device","0 * payload.to( _ )","0 * device.cleaning( payload, _ )","(1..2) * function.getOperation() >> type","(0.._) * type.isDifferentiable() >> true","(1.._) * type.isInline() >> true","1 * inputs[0].getGraphNode() >> inputsNodeMock","1 * inputs[1].getGraphNode() >> null","0 * inputs[2].getGraphNode() >> null","0 * context.allowsForward() >> true"]}
       ],
@@ -35,7 +35,7 @@
     {
       "id":"GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.",
       "result":"PASS",
-      "duration":"0.025 seconds",
+      "duration":"0.026 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -44,7 +44,7 @@
 
         {"kind":"when","text":"We try to instantiate a GraphNode...","code":["new GraphNode( function, context, supplier )"]},
 
-        {"kind":"then","text":"The expected exception message is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message ==","\"Trying to apply inline operation 'SOME_TEST_FUNCTION_STRING'\\n\"+","\"on active autograd computation graph in non detached function.\\n\"+","\"Please use detached functions instead! ( 'Function.create(\\\"SOME_TEST_FUNCTION_STRING(...)\\\", false)' )\\n\""]},
+        {"kind":"then","text":"The expected exception message is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message ==","        \"Trying to apply inline operation 'SOME_TEST_FUNCTION_STRING'\\n\"+","        \"on active autograd computation graph in non detached function.\\n\"+","        \"Please use detached functions instead! ( 'Function.create(\\\"SOME_TEST_FUNCTION_STRING(...)\\\", false)' )\\n\""]},
 
         {"kind":"and","text":"The mock objects have been called as expected.","code":["1 * context.inputs() >> inputs","0 * function.isDoingAD() >> true","1 * type.isInline() >> true","0 * payload.getDevice() >> device","0 * payload.to( _ )","0 * device.cleaning( payload, _ )","1 * inputs[0].getGraphNode() >> inputsNodeMock","0 * inputs[1].getGraphNode() >> inputsNodeMock","0 * inputs[2].getGraphNode() >> inputsNodeMock","0 * inputsNodeMock.getMode() >> -2","1 * inputsNodeMock.usesAD() >> true","0 * inputs[0].rqsGradient() >> true","0 * inputs[1].rqsGradient() >> false","0 * inputs[2].rqsGradient() >> true","0 * context.allowsForward() >> true","0 * context.allowsBackward() >> true","(2..3) * function.getOperation() >> type","(1..3) * type.getIdentifier() >> \"SOME_TEST_FUNCTION_STRING\"","0 * type.getOperator() >> \"*\"","0 * inputsNodeMock.getPayload() >> payload","0 * payload.hashCode() >> 3"]}
       ],

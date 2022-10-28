@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"6.402 seconds"
+    "duration":"2.343 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"First found OpenCLDevice will have realistic properties inside summary query.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
     {
       "id":"First found OpenCLDevice will have realistic numeric properties.",
       "result":"PASS",
-      "duration":"0.013 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,7 +46,7 @@
     {
       "id":"First found OpenCLDevice will have realistic text properties.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +61,7 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"2.700 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -90,7 +90,7 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"3.543 seconds",
+      "duration":"2.316 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

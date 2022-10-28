@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.314 seconds"
+    "duration":"0.155 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can initialize an ND-Array using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.163 seconds",
+      "duration":"0.082 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,12 +33,12 @@
     {
       "id":"We can find both min and max items in an ND-array by providing a comparator.",
       "result":"PASS",
-      "duration":"0.148 seconds",
+      "duration":"0.069 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create an ND-array of strings for which we want to find a min and max value:","code":["var n = Nda.of(String)",".withShape(2, 3)",".andWhere(( int i, int[] indices ) -> { \"a\" + i } )"]},
+        {"kind":"given","text":"We create an ND-array of strings for which we want to find a min and max value:","code":["var n = Nda.of(String)","                    .withShape(2, 3)","                    .andWhere(( int i, int[] indices ) -> { \"a\" + i } )"]},
 
         {"kind":"when","text":"We find the min value by passing a comparator (which takes 2 values and returns an int):","code":["var min = n.minItem( ( String a, String b ) -> a.compareTo( b ) )"]},
 

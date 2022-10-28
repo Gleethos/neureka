@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.084 seconds"
+    "duration":"0.003 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can create a new Nda instance with a different shape.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new Nda instance with a shape of [3, 2].","code":["Nda<?> nda = Nda.of( 1, 2, 3, 4, 5, 6 ).withShape( 3, 2 )"]},
+        {"kind":"given","text":"We create a new Nda instance with a shape of [3, 2].","code":["Nda<?> nda = Nda.of( 1..6 ).withShape( 3, 2 )"]},
 
         {"kind":"expect","text":"The new instance will have the expected shape.","code":["nda.shape() == [3, 2]"]},
 
@@ -35,12 +35,12 @@
     {
       "id":"An Nda can be labeled.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a vector of Strings.","code":["Nda<?> nda = Nda.of( \"a\", \"b\", \"c\" )"]},
+        {"kind":"given","text":"We create a vector of Strings.","code":["Nda<String> nda = Nda.of(\"a\"..\"c\")"]},
 
         {"kind":"expect","text":"Initially the vector is not labeled.","code":["nda.label == \"\""]},
 
