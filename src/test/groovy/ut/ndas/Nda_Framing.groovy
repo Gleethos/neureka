@@ -93,14 +93,20 @@ class Nda_Framing extends Specification
 
     def 'The slice of a labeled vector is labeled too.'()
     {
-        given : 'A rank 1 nd-array with shape (6).'
+        given : 'A rank 1 nd-array with shape (8).'
             var nda = Nda.of("a".."h")
         when : 'We label the nd-array.'
             nda.mut.label("Framed").mut.labelAxes(["Letters":["A", "B", "C", "D", "E", "F", "G", "H"]])
         then : 'The nd-array is labeled as expected.'
             nda.toString() == "(8):(    A  )(   B  )(   C  )(   D  )(   E  )(   F  )(   G  )(   H   ):( Framed )\n" +
                               "    [    a  ,    b  ,    c  ,    d  ,    e  ,    f  ,    g  ,    h   ]"
-        when : 'We slice the nd-array using labels.'
+        when : """
+            We slice the nd-array using labels...
+            Note that we are using the map syntax of `[i..j]:k` which is 
+            semantically equivalent to pythons `i:j:k` syntax for indexing! (numpy)
+            Here `i` is the start index (or alias),
+            `j` is the end index (alias) and `k` is the step size.
+        """
             var slice = nda.getAt(["B".."G"]:3)
         then : 'The slice is as expected.'
             slice.items == ["b", "e"]
