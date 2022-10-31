@@ -216,7 +216,7 @@ public interface Operation
                                 });
 
         for ( Tsr<?> t : call.inputs() )
-            if ( t.getGraphNode() == null )
+            if ( !t.graphNode().isPresent() )
                 new GraphNode<>( caller, null, () -> Result.of(t) );
 
         if ( caller.isFlat() )

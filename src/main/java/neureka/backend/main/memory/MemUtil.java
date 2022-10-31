@@ -43,8 +43,11 @@ public class MemUtil {
             for ( Tsr<?> t : tensors ) {
                 // Tensors flagged as 'intermediate' will automatically be deleted!
                 if ( !t.isDeleted() && t.isIntermediate() ) {
-                    GraphNode<?> node = t.getGraphNode();
-                    if ( node == null || !node.isUsedAsDerivative() )
+                    if (
+                        t.getGraphNode()
+                        .map(n->!n.isUsedAsDerivative())
+                        .orElse(true) // No graph, we can delete it!
+                    )
                         t.mut().delete();
                 }
             }

@@ -80,14 +80,14 @@ final class GraphNodeAssemblyState<V> {
      *
      * @param call The call containing inputs for the function which created the payload tensor of this GraphNode.
      */
-    public void modeOf(ExecutionCall<? extends Device<?>> call )
+    public void modeOf( ExecutionCall<? extends Device<?>> call )
     {
         Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
         int resultMode = 0;
         int[] modes = new int[ inputs.length ];
         int inputMode = 0;
         for ( int i = 0; i < inputs.length; i++ ) {
-            GraphNode<V> node = inputs[ i ].getGraphNode(); // Not null checked in constructor!
+            GraphNode<V> node = inputs[ i ].getGraphNode().orElseThrow(IllegalStateException::new); // Not null checked in constructor!
             modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();
             inputMode += ( modes[ i ] != 0) ? 1 : 0;
         }

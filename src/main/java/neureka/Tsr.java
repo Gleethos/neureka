@@ -1055,8 +1055,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override
     default int sliceCount() {
-        Relation<V> child = this.get( Relation.class );
-        return ( child != null ) ? child.childCount() : 0;
+        return this.find(Relation.class).map(Relation::childCount).orElse(0);
     }
 
     /** {@inheritDoc} */
@@ -1075,7 +1074,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *
      * @return The truth value determining if this tensor belongs to a recorded computation graph.
      */
-    default boolean belongsToGraph() { return this.has( GraphNode.class ); }
+    default boolean belongsToGraph() { return this.graphNode().isPresent(); }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1087,7 +1086,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *
      * @return The truth value determining if this tensor is attached to a computation graph as leave node.
      */
-    default boolean isLeave() { return (!this.belongsToGraph() || getGraphNode().isLeave()); }
+    default boolean isLeave() { return (!this.belongsToGraph() || this.graphNode().map(GraphNode::isLeave).orElse(false) ); }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1395,12 +1394,26 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /**
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
-    default GraphNode<V> getGraphNode() { return get( GraphNode.class ); }
+    default Optional<GraphNode<V>> getGraphNode() { return find( GraphNode.class ).map( g-> (GraphNode<V>) g ); }
+
+    /**
+     *  This is a functionally identical alternative to {@link #getGraphNode()}.
+     *
+     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
+     */
+    default Optional<GraphNode<V>> graphNode() { return getGraphNode(); }
 
     /**
      * @return An instance of the {@link NDFrame} component if present.
      */
-    default Optional<NDFrame<V>> frame() { return (Optional<NDFrame<V>>) ((Optional)find( NDFrame.class )); }
+    default Optional<NDFrame<V>> getFrame() { return (Optional<NDFrame<V>>) ((Optional)find( NDFrame.class )); }
+
+    /**
+     *  This is a functionally identical alternative to {@link #getFrame()}.
+     *
+     * @return An instance of the {@link NDFrame} component if present.
+     */
+    default Optional<NDFrame<V>> frame() { return getFrame(); }
 
     /**
      *  <b>This method returns a new tensor detached from any underlying computation-graph

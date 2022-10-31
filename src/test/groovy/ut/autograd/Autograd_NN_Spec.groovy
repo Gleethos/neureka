@@ -115,7 +115,7 @@ class Autograd_NN_Spec extends Specification
         when :
             def graph
             6.times {
-                def node = forwardAndBackward(X).graphNode
+                def node = forwardAndBackward(X).graphNode.get()
                 graph = node.toString(GraphNode.Print.FANCY)
             }
 
@@ -231,7 +231,7 @@ class Autograd_NN_Spec extends Specification
             when :
                 def graph
                 6.times {
-                    def node = forwardAndBackward(X).graphNode
+                    def node = forwardAndBackward(X).graphNode.get()
                     graph = node.toString(GraphNode.Print.FANCY)
                 }
 
@@ -359,7 +359,7 @@ class Autograd_NN_Spec extends Specification
         when :
             def graph
             6.times {
-                def node = forwardAndBackward(X).graphNode
+                def node = forwardAndBackward(X).graphNode.get()
                 graph = node.toString(GraphNode.Print.FANCY)
             }
 

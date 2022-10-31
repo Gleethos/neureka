@@ -290,7 +290,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         if ( rqsGradient() != rqsGradient ) {
             if ( !rqsGradient ) this.remove( TsrImpl.class );
             else if ( has(GraphNode.class) ) {
-                if ( getGraphNode().getMode() == 0 )
+                if ( getGraphNode().map( n -> n.getMode() == 0 ).orElse(false) )
                     remove(GraphNode.class);
                 else
                     throw new IllegalArgumentException(

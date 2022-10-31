@@ -166,11 +166,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
             if ( call != null ) {
                 Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    a.parents()[i] = inputs[i].getGraphNode();
-                    if ( a.parents()[i] == null )
-                        throw new IllegalStateException("Input tensors of a new graph-node must contain leave graph-nodes!");
-                    else
-                        a.parents()[i]._attachChild(this);
+                    a.parents()[i] = inputs[i].getGraphNode()
+                                                .orElseThrow(()->new IllegalStateException("Input tensors of a new graph-node must contain leave graph-nodes!"));
+                    a.parents()[i]._attachChild(this);
                 }
             }
         }
@@ -188,7 +186,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private void _checkInputValidity( Tsr<?>[] inputs, Function function )
     {
         for ( int i = 0; i < inputs.length; i++ ) {
-            GraphNode<V> child = (GraphNode<V>) inputs[ i ].getGraphNode();
+            GraphNode<V> child = (GraphNode<V>) inputs[ i ].getGraphNode().orElse(null);
             if ( child == null )
                 throw new IllegalStateException(
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
@@ -236,7 +234,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             if ( this.usesForwardAD() )
             {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode<V> srcNode = inputs[ i ].getGraphNode();
+                    GraphNode<V> srcNode = inputs[ i ].getGraphNode().orElseThrow(IllegalStateException::new);
                     if ( srcNode.usesAD() && function.dependsOn(i) ) {
                         if (
                             srcNode.size() == 0 && this.size() == 0
@@ -277,7 +275,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             else if ( this.usesReverseAD() )
             {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode<V> srcNode = inputs[ i ].getGraphNode();
+                    GraphNode<V> srcNode = inputs[ i ].getGraphNode().orElseThrow(IllegalStateException::new);
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
                         ADAction agent = output.getAgentSupplier().supplyADActionFor(
                                                         function,
