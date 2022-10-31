@@ -1012,44 +1012,45 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override
     default boolean isSlice() {
-        Relation<V> child = get( Relation.class );
-        return ( child != null && child.hasParent() );
+        return this.find(Relation.class).map(Relation::hasParent).orElse(false);
     }
 
     /** {@inheritDoc} */
     @Override
     default boolean isShallowCopy() {
-        Optional<Relation<V>> child = this.find( Relation.class ).map( r -> (Relation<V>) r );
-        boolean isSlice = child.map(Relation::hasParent).orElse(false);
-        if ( isSlice ) {
-            return child.get()
-                            .getParent()
-                            .map( p -> p.getNDConf().equals(this.getNDConf()) )
-                            .orElse(false);
-            /*
-                Note:
-                A shallow copy is conceptually always a "full slice" of the parent tensor.
-                This means that the parent tensor and the shallow copy
-                share the same nd-configurations (shape and data access pattern).
-             */
-        }
-        return false;
+        return this
+                .find( Relation.class )
+                .map( r -> (Relation<V>) r )
+                .map( child ->
+                        child.getParent()
+                                .map( p -> p.getNDConf().equals(this.getNDConf()) )
+                                .orElse(false)
+                    /*
+                        Note:
+                        A shallow copy is conceptually always a "full slice" of the parent tensor.
+                        This means that the parent tensor and the shallow copy
+                        share the same nd-configurations (shape and data access pattern).
+                     */
+                )
+                .orElse(false);
     }
 
     /** {@inheritDoc} */
     @Override
     default boolean isPartialSlice() {
-        Relation<V> child = get( Relation.class );
-        boolean isSlice = child != null && child.hasParent();
-        if ( isSlice )
-            return child.getParent().map( p -> p.size() > this.size() ).orElse(false);
-            /*
-                Note:
-                A partial slice is a slice which does not have the same size as the parent tensor
-                but still sharing the same underlying data as the parent tensor.
-             */
-
-        return false;
+        return this
+                .find( Relation.class )
+                .map( r -> (Relation<V>) r )
+                .map( child -> child.getParent()
+                                    .map( p -> p.size() > this.size() )
+                                    .orElse(false)
+                    /*
+                        Note:
+                        A partial slice is a slice which does not have the same size as the parent tensor
+                        but still sharing the same underlying data as the parent tensor.
+                     */
+                )
+                .orElse(false);
     }
 
     /** {@inheritDoc} */
