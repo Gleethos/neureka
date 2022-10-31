@@ -90,9 +90,9 @@ class Optimizer_Spec extends Specification
             w2.applyGradient()
             w3.applyGradient()
         then :
-            w1.gradient.items.collect({it.round(2)}) == []
-            w2.gradient.items.collect({it.round(2)})== []
-            w3.gradient.items.collect({it.round(2)}) == []
+            w1.gradient.get().items.collect({it.round(2)}) == []
+            w2.gradient.get().items.collect({it.round(2)})== []
+            w3.gradient.get().items.collect({it.round(2)}) == []
 
         when :
             y.backward(-2)
@@ -100,9 +100,9 @@ class Optimizer_Spec extends Specification
             w2.applyGradient()
             w3.applyGradient()
         then :
-            w1.gradient.items.collect({it.round(2)}) == []
-            w2.gradient.items.collect({it.round(2)}) == []
-            w3.gradient.items.collect({it.round(2)}) == []
+            w1.gradient.get().items.collect({it.round(2)}) == []
+            w2.gradient.get().items.collect({it.round(2)}) == []
+            w3.gradient.get().items.collect({it.round(2)}) == []
 
     }
 

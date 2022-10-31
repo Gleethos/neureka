@@ -204,7 +204,7 @@ class Tensor_Function_Spec extends Specification
         then :
             back == trimmed
         and :
-            t.getGradient().toString() == "(1x1x3x2x1):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
+            t.gradient.get().toString() == "(1x1x3x2x1):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
     }
 
     def 'Executed tensors are intermediate tensors.'() 

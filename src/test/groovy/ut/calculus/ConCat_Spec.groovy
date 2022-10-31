@@ -45,7 +45,7 @@ class ConCat_Spec extends Specification
             y.backward(-3)
 
         then : 'The gradient of the first tensor should look as follows!'
-            a.gradient.every( it -> it == -6 )
+            a.gradient.get().every(it -> it == -6 )
     }
 
 
@@ -69,8 +69,8 @@ class ConCat_Spec extends Specification
             y.backward(-2)
 
         then : 'The original leave tensors used for the merging have received the expected gradients.'
-            a.gradient.every( it -> it == -10 )
-            b.gradient.every( it -> it == -10 )
+            a.gradient.get().every(it -> it == -10 )
+            b.gradient.get().every(it -> it == -10 )
     }
 
 
@@ -115,8 +115,8 @@ class ConCat_Spec extends Specification
             y.backward(Tsr.ofFloats().withShape(3,2).andFill(-1, 2, 0.5, 3, -0.1, 4))
 
         then :
-            a.gradient.items == [-0.5, 0.25, -0.05] as float[]
-            b.gradient.items == [1.0, 1.5, 2.0] as float[]
+            a.gradient.get().items == [-0.5, 0.25, -0.05] as float[]
+            b.gradient.get().items == [1.0, 1.5, 2.0] as float[]
 
         where :
             device << [CPU.get(), Device.get(OpenCLDevice, 'gpu')]
@@ -146,9 +146,9 @@ class ConCat_Spec extends Specification
             y.backward(Tsr.ofFloats().withShape(3,3).andFill(-1, 2, 0.5, 3, -0.1, 4))
 
         then :
-            a.gradient.items == [-16, -16, 7] as float[]
-            b.gradient.items == [30, 0.2, 16] as float[]
-            c.gradient.items == [0.30829078, -3.1254156, -0.52700233] as float[]
+            a.gradient.get().items == [-16, -16, 7] as float[]
+            b.gradient.get().items == [30, 0.2, 16] as float[]
+            c.gradient.get().items == [0.30829078, -3.1254156, -0.52700233] as float[]
 
         where :
             device << [CPU.get(), Device.get(OpenCLDevice, 'gpu')]

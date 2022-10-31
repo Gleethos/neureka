@@ -401,7 +401,7 @@ class Tensor_Operation_Spec extends Specification
         and :
             t2.toString() == "[1]:(-8.0)"
         and :
-            t2 == x.gradient
+            t2 == x.gradient.get()
 
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
 

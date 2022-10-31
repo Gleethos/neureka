@@ -296,7 +296,7 @@ public final class NdaAsString
 
         if ( _hasGradient && ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {
             _$( ":g" );
-            Tsr<?> gradient = _tensor.getGradient();
+            Tsr<?> gradient = _tensor.getGradientOrNull();
             if ( gradient != null )
                 _$(
                     gradient.toString(

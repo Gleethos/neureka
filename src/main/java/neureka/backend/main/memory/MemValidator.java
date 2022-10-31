@@ -40,7 +40,7 @@ public class MemValidator {
         */
         Tsr<?>[] inputs = tensors.clone();
         Boolean[] areIntermediates = Arrays.stream(tensors).map(Tsr::isIntermediate).toArray(Boolean[]::new);
-        Boolean[] gradIntermediates = Arrays.stream(tensors).map(t -> (t.hasGradient() && t.getGradient().isIntermediate())).toArray(Boolean[]::new);
+        Boolean[] gradIntermediates = Arrays.stream(tensors).map(t -> (t.hasGradient() && t.getGradientOrNull().isIntermediate())).toArray(Boolean[]::new);
         /*
             Finally, we dispatch the call to the function implementation to get as result!
         */
@@ -60,7 +60,7 @@ public class MemValidator {
             We expect internally created tensors to be flagged as 'intermediate':
             First we check if the result tensor was created inside the function or not:
          */
-        boolean resultIsInputGradient = Arrays.stream( tensors ).anyMatch( t -> t.getGradient() == result.get() );
+        boolean resultIsInputGradient = Arrays.stream( tensors ).anyMatch( t -> t.getGradientOrNull() == result.get() );
         boolean resultIsInputMember   = Arrays.stream( tensors ).anyMatch( t -> t == result.get() );
         /*
             Then we check if this is valid with respect to the "isIntermediate" flag:
@@ -69,7 +69,7 @@ public class MemValidator {
             int positionInInput =
                     resultIsInputGradient
                         ? IntStream.range( 0, inputs.length )
-                                   .filter( i -> inputs[i].getGradient() == result.get())
+                                   .filter( i -> inputs[i].getGradientOrNull() == result.get())
                                    .findFirst()
                                    .getAsInt()
                         : IntStream.range( 0, inputs.length )

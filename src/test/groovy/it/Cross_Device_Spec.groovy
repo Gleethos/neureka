@@ -167,7 +167,7 @@ class Cross_Device_Spec extends Specification
         when : 'We now call the backward method on the tensor directly without having done any operations...'
             t.backward(1)
         and : 'Then we take the gradient to see what happened.'
-            Tsr g = t.getGradient()
+            Tsr g = t.gradient.get()
 
         then : 'We expect this gradient to be all ones with the shape of our matrix!'
             g.toString().contains("[2x2]:(1.0, 1.0, 1.0, 1.0)")
