@@ -61,7 +61,7 @@ public class SGD<V> implements Optimizer<V>
     @Override
     public Tsr<V> optimize( Tsr<V> w ) {
         LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
-        Tsr<V> g = w.getGradientOrNull();
+        Tsr<V> g = w.gradient().orElse(null);
         return Tsr.of("-" + _lr + " * ", g);
     }
 

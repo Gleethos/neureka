@@ -88,7 +88,10 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensorAutoGrad(Tsr[] source, String operation, String[] expected, Tsr error, double[][] expectedGradient){
+    public int testTensorAutoGrad(
+            Tsr[] source, String operation, String[] expected,
+            Tsr error, double[][] expectedGradient
+    ){
         printSessionStart("Testing Tsr: autograd!");
         println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
@@ -101,12 +104,12 @@ public class UnitTester_Tensor extends UnitTester
         for(int i=0; i<source.length; i++){
             double[] gradient;
             if ( source[ i ].hasGradient() && source[ i ].is(Float.class) ) {
-                float[] data = (float[]) source[i].getGradientOrNull().getRawItems();
+                float[] data = (float[]) ((Tsr)source[i].get(Tsr.class)).getRawItems();
                 gradient = new double[data.length];
                 for ( int ii = 0; ii < data.length; ii++ ) gradient[ii] = data[ii];
             } else
                 gradient = source[ i ].hasGradient()
-                                ? (double[])source[ i ].getGradientOrNull().getRawItems()
+                                ? (double[])((Tsr)source[ i ].get(Tsr.class)).getRawItems()
                                 : null;
             this.assertIsEqual(
                     stringified(gradient),

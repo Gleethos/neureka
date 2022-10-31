@@ -76,7 +76,7 @@ public class FunctionInput implements Function, GradientProvider
     private Tsr<?> _extract( Tsr<?> t )
     {
         if ( this.providesGradient() ) {
-            Tsr<?> gradient = t.getGradientOrNull();
+            Tsr<?> gradient = t.gradient().orElse(null);
             if ( t.rqsGradient() ) {
                 if ( gradient == null ) {
                     gradient = Tsr.of( t.getItemType(), t.shape(), 0.0 );

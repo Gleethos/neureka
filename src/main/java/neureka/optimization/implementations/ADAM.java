@@ -76,7 +76,7 @@ public class ADAM<V extends Number> implements Optimizer<V>
     public Tsr<V> optimize( Tsr<V> w ) {
         LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
         t++;
-        Tsr<V> g = w.getGradientOrNull();
+        Tsr<V> g = w.gradient().orElse(null);
         double b1Inverse = ( 1 - B1 );
         double b2Inverse = ( 1 - B2 );
         double b1hat = ( 1 - Math.pow( B1, t ) );

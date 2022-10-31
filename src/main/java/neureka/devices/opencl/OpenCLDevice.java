@@ -471,7 +471,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if ( parent == null ) {
             _store(jvmData, newClt);
             if ( tensor.rqsGradient() && tensor.has(Tsr.class) )
-                this.store(tensor.getGradientOrNull());
+                this.store(tensor.gradient().orElse(null));
         }
 
         cl_mem[] memos;

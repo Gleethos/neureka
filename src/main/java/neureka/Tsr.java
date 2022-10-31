@@ -1356,9 +1356,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Optional<Tsr<V>> gradient() { return getGradient(); }
 
-    @Deprecated
-    default Tsr<V> getGradientOrNull() { return this.get( Tsr.class ); }
-
     /**
      *  If this tensor owns a gradient tensor as component, then it can be applied by this method. <br>
      *  "Applying" a gradient to a tensor simply means adding the values inside the gradient element-wise
