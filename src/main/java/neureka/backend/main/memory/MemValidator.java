@@ -40,7 +40,7 @@ public class MemValidator {
         */
         Tsr<?>[] inputs = tensors.clone();
         Boolean[] areIntermediates = Arrays.stream(tensors).map(Tsr::isIntermediate).toArray(Boolean[]::new);
-        Boolean[] gradIntermediates = Arrays.stream(tensors).map(t -> (t.hasGradient() && t.gradient().orElse(null).isIntermediate())).toArray(Boolean[]::new);
+        Boolean[] gradIntermediates = Arrays.stream(tensors).map(t -> (t.hasGradient() && t.gradient().get().isIntermediate())).toArray(Boolean[]::new);
         /*
             Finally, we dispatch the call to the function implementation to get as result!
         */

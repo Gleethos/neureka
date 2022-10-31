@@ -1400,14 +1400,16 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
+     * @return The graph node optional of the computation graph to which this tensor belongs
+     *         or an empty optional if not part of a graph.
      */
     default Optional<GraphNode<V>> getGraphNode() { return find( GraphNode.class ).map( g-> (GraphNode<V>) g ); }
 
     /**
      *  This is a functionally identical alternative to {@link #getGraphNode()}.
      *
-     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
+     * @return The graph node optional of the computation graph to which this tensor belongs
+     *         or an empty optional if not part of a graph.
      */
     default Optional<GraphNode<V>> graphNode() { return getGraphNode(); }
 

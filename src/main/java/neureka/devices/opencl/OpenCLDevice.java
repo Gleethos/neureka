@@ -470,8 +470,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
         //VALUE TRANSFER:
         if ( parent == null ) {
             _store(jvmData, newClt);
-            if ( tensor.rqsGradient() && tensor.has(Tsr.class) )
-                this.store(tensor.gradient().orElse(null));
+            if ( tensor.rqsGradient() && tensor.hasGradient() )
+                this.store(tensor.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!")));
         }
 
         cl_mem[] memos;
