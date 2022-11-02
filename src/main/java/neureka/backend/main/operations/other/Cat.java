@@ -156,7 +156,8 @@ public class Cat extends AbstractOperation
                         Map<Object, List<Object>> current = labels.get(i);
                         List<Object> currentKeys = allKeys.get(i);
                         List<Object> currentValues = current.get(currentKeys.get(ci));
-                        valuesForThisIndex.add(currentValues.get(j));
+                        if ( j < currentValues.size() )
+                            valuesForThisIndex.add(currentValues.get(j));
                     }
                     boolean allEqual = valuesForThisIndex.stream().distinct().count() == 1;
                     if ( allEqual )
