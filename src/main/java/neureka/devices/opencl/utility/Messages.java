@@ -25,7 +25,7 @@ public final class Messages
 
     public static String clContextCouldNotFindAnyDevices() {
         return LogUtil.format(
-                "OpenCL could not detect any devices in the current '{}'.\n{}",
+                "OpenCL could not detect any devices in the current {}.\n{}",
                 CLBackend.class.getSimpleName(),
                 findTip().HOW_TO_INSTALL_OPENCL_DRIVERS
             );

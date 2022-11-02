@@ -140,7 +140,7 @@ public final class Neureka
             if ( _OPENCL_AVAILABLE )
                 _backend.set( new CLBackend() );
             else
-                _LOG.warn( Messages.clContextCreationFailed() );
+                _LOG.info( Messages.clContextCreationFailed() );
         }
         return _backend;
     }

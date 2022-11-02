@@ -140,7 +140,7 @@ public final class CLBackend implements BackendExtension
                 loadedPlatforms.add( newPlatform );
         }
         if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -> p.getDevices().isEmpty() ) )
-            _LOG.warn( Messages.clContextCouldNotFindAnyDevices() );
+            _LOG.info( Messages.clContextCouldNotFindAnyDevices() );
 
         if ( loadedPlatforms.isEmpty() && platforms.length > 0 )
             // There should be at least one platform with at least one device!
