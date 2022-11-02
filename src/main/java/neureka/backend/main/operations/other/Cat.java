@@ -162,7 +162,7 @@ public class Cat extends AbstractOperation
                     boolean allEqual = valuesForThisIndex.stream().distinct().count() == 1;
                     if ( allEqual )
                         values.add(valuesForThisIndex.get(0));
-                    else {
+                    else if ( !valuesForThisIndex.isEmpty() ) {
                         boolean allString = valuesForThisIndex.stream().allMatch( v -> v instanceof String );
                         if ( allString )
                             values.add(valuesForThisIndex.stream().map( v -> (String) v ).collect(Collectors.joining("+")));
