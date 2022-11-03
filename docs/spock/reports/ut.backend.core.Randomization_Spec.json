@@ -9,25 +9,25 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.025 seconds"
+    "duration":"0.028 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can make slices of tensors random.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":[" var r = Function.of(\"random(I[0])\")"]},
+        {"kind":"given","text":"","code":["var r = Function.of(\"random(I[0])\")"]},
 
-        {"kind":"and","text":"","code":[" var t = Tsr.of(values)[1..<(values.length-1)]"]},
+        {"kind":"and","text":"","code":["var t = Tsr.of(values)[1..<(values.length-1)] //"]},
 
         {"kind":"when","text":"","code":["r.with(Arg.Seed.of(73)).call(t)"]},
 
-        {"kind":"then","text":"","code":[" t.items == expected"]},
+        {"kind":"then","text":"","code":["t.items == expected"]},
 
         {"kind":"where","text":"","code":{"values":["[0, 1682321148, -442781155, 1450818241, 0]","[0, -4, 29, -63, 0]","[0, 12028, -19939, -17727, 0]","[0, 7225514313620035527, -1901730580994377074, 6231216898071663791, 0]","[0.0, 1.0493218, 0.96351904, 1.3803823, 0.0]","[0.0, 1.0493217368660326, 0.9635190511757348, 1.3803823236577413, 0.0]","\u0000\u0000\u0000\u0000\u0000","[false, false, true, false, false]"],"expected":["[1682321148, -442781155, 1450818241]","[-4, 29, -63]","[12028, -19939, -17727]","[7225514313620035527, -1901730580994377074, 6231216898071663791]","[1.0493218, 0.96351904, 1.3803823]","[1.0493217368660326, 0.9635190511757348, 1.3803823236577413]","⻼눝뫁","[false, true, false]"]}}
       ],
@@ -37,7 +37,7 @@
     {
       "id":"Randomization is in essence the same algorithm as JDKs \"Random\".",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,7 +56,7 @@
     {
       "id":"The Randomization class can fill various types of arrays with pseudo random numbers.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

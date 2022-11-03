@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.100 seconds"
+    "duration":"0.095 seconds"
   },
   "headers":["\n            <b> Autograd Advanced - Custom Autograd </b>                                                            <br>\n                                                                                                                    <br>\n            Neureka does not necessarily perform autograd eagerly.                                                  <br>\n            If required then auto-differentiation will occur as one would expect                                    <br>\n            similarly to the way PyTorch's autograd works.                                                          <br>\n            However for many use cases it might make sense to use different variants                                <br>\n            of auto-differentiation.                                                                                <br>\n            This specification covers precisely these different autograd modes.                                     <br>\n                                                                                                                    <br>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -21,37 +21,37 @@
       "tags":{},"see":[],"extraInfo":["\n            What is JIT-Prop and how does it affect autograd ? <b> Let's take a look ! </b>                 <br>\n            This run covers the feature having the following settings :                                     <br>\n                                                                                                            <br>\n            <b> Neureka.instance().settings().autograd().: </b>                                             <br>\n            isRetainingPendingErrorForJITProp := false                                                   <br>      \n            isApplyingGradientWhenTensorIsUsed := false                                                <br>    \n            isApplyingGradientWhenRequested := false                                                   <br>  \n                                                                                                            <br>\n            ...code producing the result : 'y*y*3'                                                        <br>                                                                                                        \n                                                                                                            <br>                                                                                                       \n            <b> is-Retaining-Pending-Error-For-JITProp : </b>                                               <br>\n                                                                                                            <br>\n            This flag enables an optimization technique which only propagates error values to               <br>\n            gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them        <br>\n            at divergent differentiation paths within the computation graph.                                <br>\n            If the flag is set to true                                                                      <br>\n            then error values will accumulate at such junction nodes.                                       <br>\n            This technique however uses more memory but will                                                <br>\n            improve performance for some networks substantially.                                            <br>\n            The technique is termed JIT-Propagation.                                                        <br>\n                                                                                                            <br>\n                                                                                                            <br>\n            <b> is-Applying-Gradient-When-Tensor-Is-Used : </b>                                             <br>\n                                                                                                            <br>\n            Gradients will automatically be applied (or JITed) to tensors as soon as                        <br>\n            they are being used for calculation (GraphNode instantiation).                                  <br>\n            This feature works well with JIT-Propagation.                                                   <br>\n                                                                                                            <br>\n                                                                                                            <br>      \n            <b> is-Applying-Gradient-When-Requested : </b>                                                  <br>\n                                                                                                            <br>\n            Gradients will only be applied if requested.                                                    <br>\n            Usually this happens immediately, however                                                       <br>\n            if the flag 'applyGradientWhenTensorIsUsed' is set                                              <br>\n            to true, then the tensor will only be updated by its                                            <br>\n            gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).         <br>\n                                                                                                            <br>\n            <b> Let's take a look :  </b>\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We configure Neureka autograd:","code":["    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
+        {"kind":"given","text":"We configure Neureka autograd:","code":["Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
 
-        {"kind":"and","text":"","code":["    def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","    def y = x + 2","    Binding binding = new Binding()","    binding.setVariable('x', x)","    binding.setVariable('y', y)"]},
+        {"kind":"and","text":"","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","def y = x + 2","Binding binding = new Binding()","binding.setVariable('x', x)","binding.setVariable('y', y)"]},
 
-        {"kind":"when","text":"The code snippet is being execute...","code":["    Tsr z = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The code snippet is being execute...","code":["Tsr z = new GroovyShell(binding).evaluate((code))"]},
 
-        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["    z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
+        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
 
-        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["    def result = z.mean()"]},
+        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["def result = z.mean()"]},
 
-        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["    result.toString().contains(\"27.0\")"]},
+        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"27.0\")"]},
 
-        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["    z.backward(0.25)","    def xAsStr = x.toString()"]},
+        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["z.backward(0.25)","def xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterBack )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterBack )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterUse )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterUse )"]},
 
-        {"kind":"when","text":"","code":["    x.setGradientApplyRequested( true )","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x.setGradientApplyRequested( true )","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterRqd )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterRqd )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterAll )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterAll )"]},
 
-        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["    result.mut.detach()"]},
+        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["result.mut.detach()"]},
 
-        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["    !result.has( GraphNode.class )"]},
+        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["!result.has( GraphNode.class )"]},
 
         {"kind":"where","text":"","code":{"code":["y*y*3"],"whenRsd":["false"],"whenUse":["false"],"doJIT":["false"],"afterBack":[".*1.*4\\.5.*"],"afterUse":[".*1.*4\\.5.*"],"afterRqd":[".*1.*4\\.5.*"],"afterAll":[".*1.*4\\.5.*"]}}
       ],
@@ -66,37 +66,37 @@
       "tags":{},"see":[],"extraInfo":["\n            What is JIT-Prop and how does it affect autograd ? <b> Let's take a look ! </b>                 <br>\n            This run covers the feature having the following settings :                                     <br>\n                                                                                                            <br>\n            <b> Neureka.instance().settings().autograd().: </b>                                             <br>\n            isRetainingPendingErrorForJITProp := false                                                   <br>      \n            isApplyingGradientWhenTensorIsUsed := false                                                <br>    \n            isApplyingGradientWhenRequested := true                                                   <br>  \n                                                                                                            <br>\n            ...code producing the result : 'y*y*3'                                                        <br>                                                                                                        \n                                                                                                            <br>                                                                                                       \n            <b> is-Retaining-Pending-Error-For-JITProp : </b>                                               <br>\n                                                                                                            <br>\n            This flag enables an optimization technique which only propagates error values to               <br>\n            gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them        <br>\n            at divergent differentiation paths within the computation graph.                                <br>\n            If the flag is set to true                                                                      <br>\n            then error values will accumulate at such junction nodes.                                       <br>\n            This technique however uses more memory but will                                                <br>\n            improve performance for some networks substantially.                                            <br>\n            The technique is termed JIT-Propagation.                                                        <br>\n                                                                                                            <br>\n                                                                                                            <br>\n            <b> is-Applying-Gradient-When-Tensor-Is-Used : </b>                                             <br>\n                                                                                                            <br>\n            Gradients will automatically be applied (or JITed) to tensors as soon as                        <br>\n            they are being used for calculation (GraphNode instantiation).                                  <br>\n            This feature works well with JIT-Propagation.                                                   <br>\n                                                                                                            <br>\n                                                                                                            <br>      \n            <b> is-Applying-Gradient-When-Requested : </b>                                                  <br>\n                                                                                                            <br>\n            Gradients will only be applied if requested.                                                    <br>\n            Usually this happens immediately, however                                                       <br>\n            if the flag 'applyGradientWhenTensorIsUsed' is set                                              <br>\n            to true, then the tensor will only be updated by its                                            <br>\n            gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).         <br>\n                                                                                                            <br>\n            <b> Let's take a look :  </b>\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We configure Neureka autograd:","code":["    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
+        {"kind":"given","text":"We configure Neureka autograd:","code":["Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
 
-        {"kind":"and","text":"","code":["    def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","    def y = x + 2","    Binding binding = new Binding()","    binding.setVariable('x', x)","    binding.setVariable('y', y)"]},
+        {"kind":"and","text":"","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","def y = x + 2","Binding binding = new Binding()","binding.setVariable('x', x)","binding.setVariable('y', y)"]},
 
-        {"kind":"when","text":"The code snippet is being execute...","code":["    Tsr z = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The code snippet is being execute...","code":["Tsr z = new GroovyShell(binding).evaluate((code))"]},
 
-        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["    z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
+        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
 
-        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["    def result = z.mean()"]},
+        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["def result = z.mean()"]},
 
-        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["    result.toString().contains(\"27.0\")"]},
+        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"27.0\")"]},
 
-        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["    z.backward(0.25)","    def xAsStr = x.toString()"]},
+        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["z.backward(0.25)","def xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterBack )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterBack )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterUse )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterUse )"]},
 
-        {"kind":"when","text":"","code":["    x.setGradientApplyRequested( true )","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x.setGradientApplyRequested( true )","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterRqd )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterRqd )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterAll )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterAll )"]},
 
-        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["    result.mut.detach()"]},
+        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["result.mut.detach()"]},
 
-        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["    !result.has( GraphNode.class )"]},
+        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["!result.has( GraphNode.class )"]},
 
         {"kind":"where","text":"","code":{"code":["y*y*3"],"whenRsd":["true"],"whenUse":["false"],"doJIT":["false"],"afterBack":[".*1.*4\\.5.*"],"afterUse":[".*1.*4\\.5.*"],"afterRqd":[".*5\\.5.*null.*"],"afterAll":[".*5\\.5.*null.*"]}}
       ],
@@ -106,42 +106,42 @@
     {
       "id":"Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: true, doJIT: false, afterBack: .*1.*4\\.5.*, afterUse: .*5\\.5.*null.*, afterRqd: .*5\\.5.*null.*, afterAll: .*5\\.5.*null.*, #2]",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            What is JIT-Prop and how does it affect autograd ? <b> Let's take a look ! </b>                 <br>\n            This run covers the feature having the following settings :                                     <br>\n                                                                                                            <br>\n            <b> Neureka.instance().settings().autograd().: </b>                                             <br>\n            isRetainingPendingErrorForJITProp := false                                                   <br>      \n            isApplyingGradientWhenTensorIsUsed := true                                                <br>    \n            isApplyingGradientWhenRequested := false                                                   <br>  \n                                                                                                            <br>\n            ...code producing the result : 'y*y*3'                                                        <br>                                                                                                        \n                                                                                                            <br>                                                                                                       \n            <b> is-Retaining-Pending-Error-For-JITProp : </b>                                               <br>\n                                                                                                            <br>\n            This flag enables an optimization technique which only propagates error values to               <br>\n            gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them        <br>\n            at divergent differentiation paths within the computation graph.                                <br>\n            If the flag is set to true                                                                      <br>\n            then error values will accumulate at such junction nodes.                                       <br>\n            This technique however uses more memory but will                                                <br>\n            improve performance for some networks substantially.                                            <br>\n            The technique is termed JIT-Propagation.                                                        <br>\n                                                                                                            <br>\n                                                                                                            <br>\n            <b> is-Applying-Gradient-When-Tensor-Is-Used : </b>                                             <br>\n                                                                                                            <br>\n            Gradients will automatically be applied (or JITed) to tensors as soon as                        <br>\n            they are being used for calculation (GraphNode instantiation).                                  <br>\n            This feature works well with JIT-Propagation.                                                   <br>\n                                                                                                            <br>\n                                                                                                            <br>      \n            <b> is-Applying-Gradient-When-Requested : </b>                                                  <br>\n                                                                                                            <br>\n            Gradients will only be applied if requested.                                                    <br>\n            Usually this happens immediately, however                                                       <br>\n            if the flag 'applyGradientWhenTensorIsUsed' is set                                              <br>\n            to true, then the tensor will only be updated by its                                            <br>\n            gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).         <br>\n                                                                                                            <br>\n            <b> Let's take a look :  </b>\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We configure Neureka autograd:","code":["    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
+        {"kind":"given","text":"We configure Neureka autograd:","code":["Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
 
-        {"kind":"and","text":"","code":["    def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","    def y = x + 2","    Binding binding = new Binding()","    binding.setVariable('x', x)","    binding.setVariable('y', y)"]},
+        {"kind":"and","text":"","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","def y = x + 2","Binding binding = new Binding()","binding.setVariable('x', x)","binding.setVariable('y', y)"]},
 
-        {"kind":"when","text":"The code snippet is being execute...","code":["    Tsr z = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The code snippet is being execute...","code":["Tsr z = new GroovyShell(binding).evaluate((code))"]},
 
-        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["    z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
+        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
 
-        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["    def result = z.mean()"]},
+        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["def result = z.mean()"]},
 
-        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["    result.toString().contains(\"27.0\")"]},
+        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"27.0\")"]},
 
-        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["    z.backward(0.25)","    def xAsStr = x.toString()"]},
+        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["z.backward(0.25)","def xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterBack )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterBack )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterUse )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterUse )"]},
 
-        {"kind":"when","text":"","code":["    x.setGradientApplyRequested( true )","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x.setGradientApplyRequested( true )","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterRqd )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterRqd )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterAll )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterAll )"]},
 
-        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["    result.mut.detach()"]},
+        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["result.mut.detach()"]},
 
-        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["    !result.has( GraphNode.class )"]},
+        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["!result.has( GraphNode.class )"]},
 
         {"kind":"where","text":"","code":{"code":["y*y*3"],"whenRsd":["false"],"whenUse":["true"],"doJIT":["false"],"afterBack":[".*1.*4\\.5.*"],"afterUse":[".*5\\.5.*null.*"],"afterRqd":[".*5\\.5.*null.*"],"afterAll":[".*5\\.5.*null.*"]}}
       ],
@@ -156,37 +156,37 @@
       "tags":{},"see":[],"extraInfo":["\n            What is JIT-Prop and how does it affect autograd ? <b> Let's take a look ! </b>                 <br>\n            This run covers the feature having the following settings :                                     <br>\n                                                                                                            <br>\n            <b> Neureka.instance().settings().autograd().: </b>                                             <br>\n            isRetainingPendingErrorForJITProp := false                                                   <br>      \n            isApplyingGradientWhenTensorIsUsed := true                                                <br>    \n            isApplyingGradientWhenRequested := true                                                   <br>  \n                                                                                                            <br>\n            ...code producing the result : 'y*y*3'                                                        <br>                                                                                                        \n                                                                                                            <br>                                                                                                       \n            <b> is-Retaining-Pending-Error-For-JITProp : </b>                                               <br>\n                                                                                                            <br>\n            This flag enables an optimization technique which only propagates error values to               <br>\n            gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them        <br>\n            at divergent differentiation paths within the computation graph.                                <br>\n            If the flag is set to true                                                                      <br>\n            then error values will accumulate at such junction nodes.                                       <br>\n            This technique however uses more memory but will                                                <br>\n            improve performance for some networks substantially.                                            <br>\n            The technique is termed JIT-Propagation.                                                        <br>\n                                                                                                            <br>\n                                                                                                            <br>\n            <b> is-Applying-Gradient-When-Tensor-Is-Used : </b>                                             <br>\n                                                                                                            <br>\n            Gradients will automatically be applied (or JITed) to tensors as soon as                        <br>\n            they are being used for calculation (GraphNode instantiation).                                  <br>\n            This feature works well with JIT-Propagation.                                                   <br>\n                                                                                                            <br>\n                                                                                                            <br>      \n            <b> is-Applying-Gradient-When-Requested : </b>                                                  <br>\n                                                                                                            <br>\n            Gradients will only be applied if requested.                                                    <br>\n            Usually this happens immediately, however                                                       <br>\n            if the flag 'applyGradientWhenTensorIsUsed' is set                                              <br>\n            to true, then the tensor will only be updated by its                                            <br>\n            gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).         <br>\n                                                                                                            <br>\n            <b> Let's take a look :  </b>\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We configure Neureka autograd:","code":["    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
+        {"kind":"given","text":"We configure Neureka autograd:","code":["Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
 
-        {"kind":"and","text":"","code":["    def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","    def y = x + 2","    Binding binding = new Binding()","    binding.setVariable('x', x)","    binding.setVariable('y', y)"]},
+        {"kind":"and","text":"","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","def y = x + 2","Binding binding = new Binding()","binding.setVariable('x', x)","binding.setVariable('y', y)"]},
 
-        {"kind":"when","text":"The code snippet is being execute...","code":["    Tsr z = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The code snippet is being execute...","code":["Tsr z = new GroovyShell(binding).evaluate((code))"]},
 
-        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["    z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
+        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
 
-        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["    def result = z.mean()"]},
+        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["def result = z.mean()"]},
 
-        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["    result.toString().contains(\"27.0\")"]},
+        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"27.0\")"]},
 
-        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["    z.backward(0.25)","    def xAsStr = x.toString()"]},
+        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["z.backward(0.25)","def xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterBack )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterBack )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterUse )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterUse )"]},
 
-        {"kind":"when","text":"","code":["    x.setGradientApplyRequested( true )","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x.setGradientApplyRequested( true )","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterRqd )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterRqd )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterAll )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterAll )"]},
 
-        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["    result.mut.detach()"]},
+        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["result.mut.detach()"]},
 
-        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["    !result.has( GraphNode.class )"]},
+        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["!result.has( GraphNode.class )"]},
 
         {"kind":"where","text":"","code":{"code":["y*y*3"],"whenRsd":["true"],"whenUse":["true"],"doJIT":["false"],"afterBack":[".*1.*4\\.5.*"],"afterUse":[".*1.*4\\.5.*"],"afterRqd":[".*1.*4\\.5.*"],"afterAll":[".*5\\.5.*null.*"]}}
       ],
@@ -196,42 +196,42 @@
     {
       "id":"Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: false, doJIT: true, afterBack: .*1.*null.*, afterUse: .*1.*null.*, afterRqd: .*1.*null.*, afterAll: .*1.*null.*, #4]",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            What is JIT-Prop and how does it affect autograd ? <b> Let's take a look ! </b>                 <br>\n            This run covers the feature having the following settings :                                     <br>\n                                                                                                            <br>\n            <b> Neureka.instance().settings().autograd().: </b>                                             <br>\n            isRetainingPendingErrorForJITProp := true                                                   <br>      \n            isApplyingGradientWhenTensorIsUsed := false                                                <br>    \n            isApplyingGradientWhenRequested := false                                                   <br>  \n                                                                                                            <br>\n            ...code producing the result : 'y*y*3'                                                        <br>                                                                                                        \n                                                                                                            <br>                                                                                                       \n            <b> is-Retaining-Pending-Error-For-JITProp : </b>                                               <br>\n                                                                                                            <br>\n            This flag enables an optimization technique which only propagates error values to               <br>\n            gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them        <br>\n            at divergent differentiation paths within the computation graph.                                <br>\n            If the flag is set to true                                                                      <br>\n            then error values will accumulate at such junction nodes.                                       <br>\n            This technique however uses more memory but will                                                <br>\n            improve performance for some networks substantially.                                            <br>\n            The technique is termed JIT-Propagation.                                                        <br>\n                                                                                                            <br>\n                                                                                                            <br>\n            <b> is-Applying-Gradient-When-Tensor-Is-Used : </b>                                             <br>\n                                                                                                            <br>\n            Gradients will automatically be applied (or JITed) to tensors as soon as                        <br>\n            they are being used for calculation (GraphNode instantiation).                                  <br>\n            This feature works well with JIT-Propagation.                                                   <br>\n                                                                                                            <br>\n                                                                                                            <br>      \n            <b> is-Applying-Gradient-When-Requested : </b>                                                  <br>\n                                                                                                            <br>\n            Gradients will only be applied if requested.                                                    <br>\n            Usually this happens immediately, however                                                       <br>\n            if the flag 'applyGradientWhenTensorIsUsed' is set                                              <br>\n            to true, then the tensor will only be updated by its                                            <br>\n            gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).         <br>\n                                                                                                            <br>\n            <b> Let's take a look :  </b>\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We configure Neureka autograd:","code":["    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
+        {"kind":"given","text":"We configure Neureka autograd:","code":["Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
 
-        {"kind":"and","text":"","code":["    def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","    def y = x + 2","    Binding binding = new Binding()","    binding.setVariable('x', x)","    binding.setVariable('y', y)"]},
+        {"kind":"and","text":"","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","def y = x + 2","Binding binding = new Binding()","binding.setVariable('x', x)","binding.setVariable('y', y)"]},
 
-        {"kind":"when","text":"The code snippet is being execute...","code":["    Tsr z = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The code snippet is being execute...","code":["Tsr z = new GroovyShell(binding).evaluate((code))"]},
 
-        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["    z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
+        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
 
-        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["    def result = z.mean()"]},
+        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["def result = z.mean()"]},
 
-        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["    result.toString().contains(\"27.0\")"]},
+        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"27.0\")"]},
 
-        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["    z.backward(0.25)","    def xAsStr = x.toString()"]},
+        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["z.backward(0.25)","def xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterBack )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterBack )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterUse )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterUse )"]},
 
-        {"kind":"when","text":"","code":["    x.setGradientApplyRequested( true )","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x.setGradientApplyRequested( true )","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterRqd )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterRqd )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterAll )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterAll )"]},
 
-        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["    result.mut.detach()"]},
+        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["result.mut.detach()"]},
 
-        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["    !result.has( GraphNode.class )"]},
+        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["!result.has( GraphNode.class )"]},
 
         {"kind":"where","text":"","code":{"code":["y*y*3"],"whenRsd":["false"],"whenUse":["false"],"doJIT":["true"],"afterBack":[".*1.*null.*"],"afterUse":[".*1.*null.*"],"afterRqd":[".*1.*null.*"],"afterAll":[".*1.*null.*"]}}
       ],
@@ -246,37 +246,37 @@
       "tags":{},"see":[],"extraInfo":["\n            What is JIT-Prop and how does it affect autograd ? <b> Let's take a look ! </b>                 <br>\n            This run covers the feature having the following settings :                                     <br>\n                                                                                                            <br>\n            <b> Neureka.instance().settings().autograd().: </b>                                             <br>\n            isRetainingPendingErrorForJITProp := true                                                   <br>      \n            isApplyingGradientWhenTensorIsUsed := false                                                <br>    \n            isApplyingGradientWhenRequested := true                                                   <br>  \n                                                                                                            <br>\n            ...code producing the result : 'y*y*3'                                                        <br>                                                                                                        \n                                                                                                            <br>                                                                                                       \n            <b> is-Retaining-Pending-Error-For-JITProp : </b>                                               <br>\n                                                                                                            <br>\n            This flag enables an optimization technique which only propagates error values to               <br>\n            gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them        <br>\n            at divergent differentiation paths within the computation graph.                                <br>\n            If the flag is set to true                                                                      <br>\n            then error values will accumulate at such junction nodes.                                       <br>\n            This technique however uses more memory but will                                                <br>\n            improve performance for some networks substantially.                                            <br>\n            The technique is termed JIT-Propagation.                                                        <br>\n                                                                                                            <br>\n                                                                                                            <br>\n            <b> is-Applying-Gradient-When-Tensor-Is-Used : </b>                                             <br>\n                                                                                                            <br>\n            Gradients will automatically be applied (or JITed) to tensors as soon as                        <br>\n            they are being used for calculation (GraphNode instantiation).                                  <br>\n            This feature works well with JIT-Propagation.                                                   <br>\n                                                                                                            <br>\n                                                                                                            <br>      \n            <b> is-Applying-Gradient-When-Requested : </b>                                                  <br>\n                                                                                                            <br>\n            Gradients will only be applied if requested.                                                    <br>\n            Usually this happens immediately, however                                                       <br>\n            if the flag 'applyGradientWhenTensorIsUsed' is set                                              <br>\n            to true, then the tensor will only be updated by its                                            <br>\n            gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).         <br>\n                                                                                                            <br>\n            <b> Let's take a look :  </b>\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We configure Neureka autograd:","code":["    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
+        {"kind":"given","text":"We configure Neureka autograd:","code":["Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
 
-        {"kind":"and","text":"","code":["    def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","    def y = x + 2","    Binding binding = new Binding()","    binding.setVariable('x', x)","    binding.setVariable('y', y)"]},
+        {"kind":"and","text":"","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","def y = x + 2","Binding binding = new Binding()","binding.setVariable('x', x)","binding.setVariable('y', y)"]},
 
-        {"kind":"when","text":"The code snippet is being execute...","code":["    Tsr z = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The code snippet is being execute...","code":["Tsr z = new GroovyShell(binding).evaluate((code))"]},
 
-        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["    z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
+        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
 
-        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["    def result = z.mean()"]},
+        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["def result = z.mean()"]},
 
-        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["    result.toString().contains(\"27.0\")"]},
+        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"27.0\")"]},
 
-        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["    z.backward(0.25)","    def xAsStr = x.toString()"]},
+        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["z.backward(0.25)","def xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterBack )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterBack )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterUse )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterUse )"]},
 
-        {"kind":"when","text":"","code":["    x.setGradientApplyRequested( true )","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x.setGradientApplyRequested( true )","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterRqd )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterRqd )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterAll )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterAll )"]},
 
-        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["    result.mut.detach()"]},
+        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["result.mut.detach()"]},
 
-        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["    !result.has( GraphNode.class )"]},
+        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["!result.has( GraphNode.class )"]},
 
         {"kind":"where","text":"","code":{"code":["y*y*3"],"whenRsd":["true"],"whenUse":["false"],"doJIT":["true"],"afterBack":[".*1.*null.*"],"afterUse":[".*1.*null.*"],"afterRqd":[".*5\\.5.*null.*"],"afterAll":[".*5\\.5.*null.*"]}}
       ],
@@ -286,42 +286,42 @@
     {
       "id":"Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: true, doJIT: true, afterBack: .*1.*null.*, afterUse: .*5\\.5.*null.*, afterRqd: .*5\\.5.*null.*, afterAll: .*5\\.5.*null.*, #6]",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            What is JIT-Prop and how does it affect autograd ? <b> Let's take a look ! </b>                 <br>\n            This run covers the feature having the following settings :                                     <br>\n                                                                                                            <br>\n            <b> Neureka.instance().settings().autograd().: </b>                                             <br>\n            isRetainingPendingErrorForJITProp := true                                                   <br>      \n            isApplyingGradientWhenTensorIsUsed := true                                                <br>    \n            isApplyingGradientWhenRequested := false                                                   <br>  \n                                                                                                            <br>\n            ...code producing the result : 'y*y*3'                                                        <br>                                                                                                        \n                                                                                                            <br>                                                                                                       \n            <b> is-Retaining-Pending-Error-For-JITProp : </b>                                               <br>\n                                                                                                            <br>\n            This flag enables an optimization technique which only propagates error values to               <br>\n            gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them        <br>\n            at divergent differentiation paths within the computation graph.                                <br>\n            If the flag is set to true                                                                      <br>\n            then error values will accumulate at such junction nodes.                                       <br>\n            This technique however uses more memory but will                                                <br>\n            improve performance for some networks substantially.                                            <br>\n            The technique is termed JIT-Propagation.                                                        <br>\n                                                                                                            <br>\n                                                                                                            <br>\n            <b> is-Applying-Gradient-When-Tensor-Is-Used : </b>                                             <br>\n                                                                                                            <br>\n            Gradients will automatically be applied (or JITed) to tensors as soon as                        <br>\n            they are being used for calculation (GraphNode instantiation).                                  <br>\n            This feature works well with JIT-Propagation.                                                   <br>\n                                                                                                            <br>\n                                                                                                            <br>      \n            <b> is-Applying-Gradient-When-Requested : </b>                                                  <br>\n                                                                                                            <br>\n            Gradients will only be applied if requested.                                                    <br>\n            Usually this happens immediately, however                                                       <br>\n            if the flag 'applyGradientWhenTensorIsUsed' is set                                              <br>\n            to true, then the tensor will only be updated by its                                            <br>\n            gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).         <br>\n                                                                                                            <br>\n            <b> Let's take a look :  </b>\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We configure Neureka autograd:","code":["    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
+        {"kind":"given","text":"We configure Neureka autograd:","code":["Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
 
-        {"kind":"and","text":"","code":["    def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","    def y = x + 2","    Binding binding = new Binding()","    binding.setVariable('x', x)","    binding.setVariable('y', y)"]},
+        {"kind":"and","text":"","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","def y = x + 2","Binding binding = new Binding()","binding.setVariable('x', x)","binding.setVariable('y', y)"]},
 
-        {"kind":"when","text":"The code snippet is being execute...","code":["    Tsr z = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The code snippet is being execute...","code":["Tsr z = new GroovyShell(binding).evaluate((code))"]},
 
-        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["    z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
+        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
 
-        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["    def result = z.mean()"]},
+        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["def result = z.mean()"]},
 
-        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["    result.toString().contains(\"27.0\")"]},
+        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"27.0\")"]},
 
-        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["    z.backward(0.25)","    def xAsStr = x.toString()"]},
+        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["z.backward(0.25)","def xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterBack )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterBack )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterUse )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterUse )"]},
 
-        {"kind":"when","text":"","code":["    x.setGradientApplyRequested( true )","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x.setGradientApplyRequested( true )","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterRqd )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterRqd )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterAll )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterAll )"]},
 
-        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["    result.mut.detach()"]},
+        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["result.mut.detach()"]},
 
-        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["    !result.has( GraphNode.class )"]},
+        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["!result.has( GraphNode.class )"]},
 
         {"kind":"where","text":"","code":{"code":["y*y*3"],"whenRsd":["false"],"whenUse":["true"],"doJIT":["true"],"afterBack":[".*1.*null.*"],"afterUse":[".*5\\.5.*null.*"],"afterRqd":[".*5\\.5.*null.*"],"afterAll":[".*5\\.5.*null.*"]}}
       ],
@@ -331,42 +331,42 @@
     {
       "id":"Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: true, whenUse: true, doJIT: true, afterBack: .*1.*null.*, afterUse: .*1.*null.*, afterRqd: .*1.*null.*, afterAll: .*5\\.5.*null.*, #7]",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            What is JIT-Prop and how does it affect autograd ? <b> Let's take a look ! </b>                 <br>\n            This run covers the feature having the following settings :                                     <br>\n                                                                                                            <br>\n            <b> Neureka.instance().settings().autograd().: </b>                                             <br>\n            isRetainingPendingErrorForJITProp := true                                                   <br>      \n            isApplyingGradientWhenTensorIsUsed := true                                                <br>    \n            isApplyingGradientWhenRequested := true                                                   <br>  \n                                                                                                            <br>\n            ...code producing the result : 'y*y*3'                                                        <br>                                                                                                        \n                                                                                                            <br>                                                                                                       \n            <b> is-Retaining-Pending-Error-For-JITProp : </b>                                               <br>\n                                                                                                            <br>\n            This flag enables an optimization technique which only propagates error values to               <br>\n            gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them        <br>\n            at divergent differentiation paths within the computation graph.                                <br>\n            If the flag is set to true                                                                      <br>\n            then error values will accumulate at such junction nodes.                                       <br>\n            This technique however uses more memory but will                                                <br>\n            improve performance for some networks substantially.                                            <br>\n            The technique is termed JIT-Propagation.                                                        <br>\n                                                                                                            <br>\n                                                                                                            <br>\n            <b> is-Applying-Gradient-When-Tensor-Is-Used : </b>                                             <br>\n                                                                                                            <br>\n            Gradients will automatically be applied (or JITed) to tensors as soon as                        <br>\n            they are being used for calculation (GraphNode instantiation).                                  <br>\n            This feature works well with JIT-Propagation.                                                   <br>\n                                                                                                            <br>\n                                                                                                            <br>      \n            <b> is-Applying-Gradient-When-Requested : </b>                                                  <br>\n                                                                                                            <br>\n            Gradients will only be applied if requested.                                                    <br>\n            Usually this happens immediately, however                                                       <br>\n            if the flag 'applyGradientWhenTensorIsUsed' is set                                              <br>\n            to true, then the tensor will only be updated by its                                            <br>\n            gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).         <br>\n                                                                                                            <br>\n            <b> Let's take a look :  </b>\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We configure Neureka autograd:","code":["    Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","    Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","    Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
+        {"kind":"given","text":"We configure Neureka autograd:","code":["Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse","Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT"]},
 
-        {"kind":"and","text":"","code":["    def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","    def y = x + 2","    Binding binding = new Binding()","    binding.setVariable('x', x)","    binding.setVariable('y', y)"]},
+        {"kind":"and","text":"","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)","def y = x + 2","Binding binding = new Binding()","binding.setVariable('x', x)","binding.setVariable('y', y)"]},
 
-        {"kind":"when","text":"The code snippet is being execute...","code":["    Tsr z = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The code snippet is being execute...","code":["Tsr z = new GroovyShell(binding).evaluate((code))"]},
 
-        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["    z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
+        {"kind":"then","text":"As expected, this new tensor contains four times 27 :","code":["z.toString().contains(\"(2x2):[27.0, 27.0, 27.0, 27.0]\")"]},
 
-        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["    def result = z.mean()"]},
+        {"kind":"when","text":"\n                We call the \"mean()\" method as a simple loss function!\n                This produces a scalar output tensor which is ideal as entrypoint\n                for the autograd algorithm.\n            ","code":["def result = z.mean()"]},
 
-        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["    result.toString().contains(\"27.0\")"]},
+        {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"27.0\")"]},
 
-        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["    z.backward(0.25)","    def xAsStr = x.toString()"]},
+        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["z.backward(0.25)","def xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterBack )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterBack )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterUse )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterUse )"]},
 
-        {"kind":"when","text":"","code":["    x.setGradientApplyRequested( true )","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x.setGradientApplyRequested( true )","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterRqd )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterRqd )"]},
 
-        {"kind":"when","text":"","code":["    x * 2","    xAsStr = x.toString()"]},
+        {"kind":"when","text":"","code":["x * 2","xAsStr = x.toString()"]},
 
-        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["    xAsStr.matches( afterAll )"]},
+        {"kind":"then","text":"The variable \"x\" contains every expected String :","code":["xAsStr.matches( afterAll )"]},
 
-        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["    result.mut.detach()"]},
+        {"kind":"when","text":"It is time to free some memory because our history of computation has grown a bit...","code":["result.mut.detach()"]},
 
-        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["    !result.has( GraphNode.class )"]},
+        {"kind":"then","text":"Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !","code":["!result.has( GraphNode.class )"]},
 
         {"kind":"where","text":"","code":{"code":["y*y*3"],"whenRsd":["true"],"whenUse":["true"],"doJIT":["true"],"afterBack":[".*1.*null.*"],"afterUse":[".*1.*null.*"],"afterRqd":[".*1.*null.*"],"afterAll":[".*5\\.5.*null.*"]}}
       ],
@@ -376,7 +376,7 @@
     {
       "id":"We can create a shallow copy of a tensor detached from the computation graph.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -385,7 +385,7 @@
 
         {"kind":"when","text":"","code":["var b = a * 2","var c = b.detached()"]},
 
-        {"kind":"then","text":"","code":["c !== b","c === c.detached()"]},
+        {"kind":"then","text":"","code":["c !== b","c === c.detached() // c is already detached, so this is a no-op"]},
 
         {"kind":"and","text":"","code":["b.isBranch()","!c.isBranch()"]},
 

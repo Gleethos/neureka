@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.019 seconds"
+    "duration":"0.020 seconds"
   },
   "headers":["\n            <h2> Autograd Tensor Behavior </h2>\n            <p>\n                Specified below is the behavior of the autograd system.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -57,7 +57,7 @@
     {
       "id":"Second-Test \"x-mul\" autograd behaviour. (Not on device)",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -122,7 +122,7 @@
     {
       "id":"A tensor used as derivative within a computation graph will throw exception when trying to deleting it.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

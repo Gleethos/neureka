@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -38,11 +38,11 @@
       "tags":{},"see":[],"extraInfo":["\n            This method of mutation is best used in Kotlin where it translates\n            to the \"set\" operator.\n            So it is possible to write code like this: `nda[2, 3] = 42.0`\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"A rank 2 nd-array with 4 values.","code":["    var nda = Nda.of(Byte).withShape(2, 2).andFill(1,2,3,4)"]},
+        {"kind":"given","text":"A rank 2 nd-array with 4 values.","code":["var nda = Nda.of(Byte).withShape(2, 2).andFill(1,2,3,4)"]},
 
-        {"kind":"when","text":"We mutate the nd-array by setting the value at index 1 to 5.","code":["    nda.mut.set(1, 0, 5 as byte)"]},
+        {"kind":"when","text":"We mutate the nd-array by setting the value at index 1 to 5.","code":["nda.mut.set(1, 0, 5 as byte)"]},
 
-        {"kind":"then","text":"The list of items now reflects the change.","code":["    nda.items == [1, 2, 5, 4]"]}
+        {"kind":"then","text":"The list of items now reflects the change.","code":["nda.items == [1, 2, 5, 4]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

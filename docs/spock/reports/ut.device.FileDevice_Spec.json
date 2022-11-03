@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.080 seconds"
+    "duration":"0.074 seconds"
   },
   "headers":["\n                    This specification covers the behavior of the `FileDevice`\n                    class, which enables the persistence of tensor data.      \n            "],"tags":{},"see":[],
   "features":[ 
@@ -45,7 +45,7 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.045 seconds",
+      "duration":"0.041 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
       "blocks":[
         {"kind":"given","text":"A file device instance is being accessed for a simple test path.","code":["def device = FileDevice.at( 'build/resources/test/csv' )"]},
 
-        {"kind":"expect","text":"The device contains the expected number of files and it tells as how many files could be loaded.","code":["device.loadable.toSet() == ['biostats-without-head.csv', 'biostats.csv'].toSet()","device.loaded == []"]},
+        {"kind":"expect","text":"The device contains the expected number of files and it tells as how many files could be loaded.","code":["device.loadable.toSet() == ['biostats-without-head.csv', 'biostats.csv'].toSet() // If this fails: consider deleting the build folder!!","device.loaded == []"]},
 
         {"kind":"when","text":"We load a file...","code":["def t = device.load('biostats-without-head.csv')"]},
 

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"4.085 seconds"
+    "duration":"4.229 seconds"
   },
   "headers":["\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -41,7 +41,7 @@
     {
       "id":"We can get the items of an outsourced tensor as a primitive array.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,7 +85,7 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"0.109 seconds",
+      "duration":"0.106 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -94,11 +94,11 @@
 
         {"kind":"expect","text":"The OpenCL device initially does not have the \"dummy_kernel\" we are going to create.","code":["!device.hasAdHocKernel( 'dummy_kernel' )"]},
 
-        {"kind":"when","text":"Compiling a kernel called \"dummy_kernel\"...","code":["device.compileAdHocKernel( 'dummy_kernel', \"\"\"","    __kernel void dummy_kernel (","            __global float* output,","            __global float* input,","            float value ","        ) { ","            unsigned int i = get_global_id( 0 );","            output[i] = input[i] + value; ","        }","    \"\"\"",")"]},
+        {"kind":"when","text":"Compiling a kernel called \"dummy_kernel\"...","code":["device.compileAdHocKernel( 'dummy_kernel', \"\"\"","    __kernel void dummy_kernel (","            __global float* output,","            __global float* input,","            float value","        ) {","            unsigned int i = get_global_id( 0 );","            output[i] = input[i] + value;","        }","    \"\"\"",")"]},
 
         {"kind":"then","text":"The OpenCL device contrary to before now has a kernel by this name.","code":["device.hasAdHocKernel( 'dummy_kernel' )"]},
 
-        {"kind":"and","text":"The device still references the source code od that kernel.","code":["device._kernelCache._adhocKernels['dummy_kernel'].source == \"\"\"","    __kernel void dummy_kernel (","            __global float* output,","            __global float* input,","            float value ","        ) { ","            unsigned int i = get_global_id( 0 );","            output[i] = input[i] + value; ","        }","    \"\"\""]},
+        {"kind":"and","text":"The device still references the source code od that kernel.","code":["device._kernelCache._adhocKernels['dummy_kernel'].source == \"\"\"","    __kernel void dummy_kernel (","            __global float* output,","            __global float* input,","            float value","        ) {","            unsigned int i = get_global_id( 0 );","            output[i] = input[i] + value;","        }","    \"\"\""]},
 
         {"kind":"when","text":"Executing the kernel by passing the previously defined tensor...","code":["device.findAdHocKernel( 'dummy_kernel' ).get()","        .pass( someData )","        .pass( someData )","        .pass( -4f )","        .call( someData.size() )"]},
 
@@ -110,12 +110,12 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"0.594 seconds",
+      "duration":"0.595 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]","var kernelName = \"dummy_mm_${M}x${K}x${N}\"","var params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)","var TSM  = params[0]","var TSN  = params[1]","var TSK  = params[2]","var WPTM = params[3]","var WPTN = params[4]","long[] local=   new long[]{ TSM/WPTM, TSN/WPTN }","long[] global = new long[]{ (M/WPTM), (N/WPTN) }","Tsr A = Tsr.of( [M,K], 0f )","Tsr B = Tsr.of( [K,N], 0f )","Tsr C = Tsr.of( [M,N], 0f )","A.mut[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)","B.mut[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)","var reference = A.matMul(B).items","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
+        {"kind":"given","text":"","code":["var device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]","var kernelName = \"dummy_mm_${M}x${K}x${N}\"","var params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)","var TSM  = params[0] //4   //= 128","var TSN  = params[1] //4   //= 128","var TSK  = params[2] //2   //= 16","var WPTM = params[3] // 2  //=  8","var WPTN = params[4] // 2  //=  8","long[] local=   new long[]{ TSM/WPTM, TSN/WPTN }","long[] global = new long[]{ (M/WPTM), (N/WPTN) }","Tsr A = Tsr.of( [M,K], 0f )","Tsr B = Tsr.of( [K,N], 0f )","Tsr C = Tsr.of( [M,N], 0f )","A.mut[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)","B.mut[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -125,7 +125,7 @@
 
         {"kind":"when","text":"","code":["device.getAdHocKernel( kernelName )","        .pass( M ).pass( N ).pass( K )","        .pass( A ).pass( B ).pass( C )","        .call( global, local )"]},
 
-        {"kind":"then","text":"","code":["C.items == reference"]},
+        {"kind":"then","text":"","code":["C.items == reference // GPU should produce the same as CPU!"]},
 
         {"kind":"and","text":"","code":["expected == null || C.toString({it.setRowLimit(50)}) == expected"]},
 
@@ -137,12 +137,12 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"0.378 seconds",
+      "duration":"0.393 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]","var kernelName = \"backend_mm_${M}x${K}x${N}\"","long[] local=   new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, K }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
+        {"kind":"given","text":"","code":["var device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]","var kernelName = \"backend_mm_${M}x${K}x${N}\"","long[] local=   new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, K }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -152,7 +152,7 @@
 
         {"kind":"when","text":"","code":["device.getAdHocKernel( kernelName )","        .pass( C ).pass( A ).pass( B )","        .pass( M ).pass( N ).pass( K )","        .call( global, local )"]},
 
-        {"kind":"then","text":"","code":["C.items == reference"]},
+        {"kind":"then","text":"","code":["C.items == reference // GPU should produce the same as CPU!"]},
 
         {"kind":"and","text":"","code":["expected == null || C.toString({it.setRowLimit(50)}) == expected"]},
 
@@ -164,12 +164,12 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"0.842 seconds",
+      "duration":"0.884 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]","var kernelName = \"simple_backend_mm_${M}x${K}x${N}\"","long[] local=   null","long[] global = new long[]{ M, N }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
+        {"kind":"given","text":"","code":["var device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]","var kernelName = \"simple_backend_mm_${M}x${K}x${N}\"","long[] local=   null //new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, N }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -179,7 +179,7 @@
 
         {"kind":"when","text":"","code":["device.getAdHocKernel( kernelName )","        .pass( M ).pass( N ).pass( K )","        .pass( A ).pass( B ).pass( C )","        .call( global, local )"]},
 
-        {"kind":"then","text":"","code":["C.items == reference"]},
+        {"kind":"then","text":"","code":["C.items == reference // GPU should produce the same as CPU!"]},
 
         {"kind":"and","text":"","code":["expected == null || C.toString({it.setRowLimit(50)}) == expected"]},
 
@@ -191,14 +191,14 @@
     {
       "id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.",
       "result":"PASS",
-      "duration":"2.126 seconds",
+      "duration":"2.220 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]","def kernelName = \"fast_columns_major_mm_${M}x${K}x${N}\"","def data = (0..(M*K-1)).collect( v-> v + seed )","def data1 = data.collect( v -> ((v+5)%11)-5 as float )","def data2 = data.collect( v -> ((v+7)%11)-5 as float )"]},
 
-        {"kind":"and","text":"We create column major based matrices!","code":["Tsr A = Tsr.of( [M,K], data1    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr B = Tsr.of( [K,N], data2    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr C = Tsr.of( [M,N], 0f ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","var reference = A.matMul(B).rawData","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)","var MW = 1","var KW = 1","for ( s in [16,8,4,2,1] )","    if ( M % s == 0 ) { MW = s; break }","for ( s in [8,4,2,1] )","    if ( N % s == 0 && K % s == 0 ) { KW = s; break }","var NW = KW","long[] local =  null","long[] global = new long[]{ Math.floor(M/MW), Math.floor(N/NW), 1 }"]},
+        {"kind":"and","text":"We create column major based matrices!","code":["Tsr A = Tsr.of( [M,K], data1    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr B = Tsr.of( [K,N], data2    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr C = Tsr.of( [M,N], 0f ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","var reference = A.matMul(B).rawData // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)","var MW = 1","var KW = 1","for ( s in [16,8,4,2,1] )","    if ( M % s == 0 ) { MW = s; break }","for ( s in [8,4,2,1] )","    if ( N % s == 0 && K % s == 0 ) { KW = s; break }","var NW = KW","long[] local =  null // This kernel does not have local memory (uses register/private memory instead)","long[] global = new long[]{ Math.floor(M/MW), Math.floor(N/NW), 1 }"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -208,7 +208,7 @@
 
         {"kind":"when","text":"","code":["device.getAdHocKernel( kernelName )","        .pass( A ).pass( B ).pass( C )","        .call( global, local )"]},
 
-        {"kind":"then","text":"","code":["C.rawData == reference"]},
+        {"kind":"then","text":"","code":["C.rawData == reference // GPU should produce the same as CPU!"]},
 
         {"kind":"and","text":"","code":["C.toString({it.setRowLimit(50)}) == expected"]},
 

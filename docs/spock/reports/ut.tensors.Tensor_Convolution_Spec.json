@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.315 seconds"
+    "duration":"1.330 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can perform a convolution operation on a 2D tensor.",
       "result":"PASS",
-      "duration":"0.192 seconds",
+      "duration":"0.191 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Convolution with tensors of the same shape is equivalent to a dot product.",
       "result":"PASS",
-      "duration":"0.193 seconds",
+      "duration":"0.214 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Convolution can be performed using non-quadratic matrix tensors.",
       "result":"PASS",
-      "duration":"0.175 seconds",
+      "duration":"0.194 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
     {
       "id":"Convolution can be performed using tensors with an additional dimension as batch size.",
       "result":"PASS",
-      "duration":"0.191 seconds",
+      "duration":"0.183 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -102,24 +102,24 @@
     {
       "id":"The \"x\" (convolution) operator produces expected results (On the CPU).",
       "result":"PASS",
-      "duration":"0.130 seconds",
+      "duration":"0.126 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        ","\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        "]
       },
       "blocks":[
-        {"kind":"given","text":"Gradient auto apply for tensors in ue is set to false.","code":["    Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
+        {"kind":"given","text":"Gradient auto apply for tensors in ue is set to false.","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
 
-        {"kind":"and","text":"Tensor legacy view is set to true.","code":["    Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+        {"kind":"and","text":"Tensor legacy view is set to true.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].","code":["    var x = Tsr.of(new int[]{2, 3, 1},","                            new double[]{","                                3,  2, -1,","                                -2,  2,  4","                            }","                        )","                        .mut.toType(type)","    var y = Tsr.of(new int[]{1, 3, 2},","            new double[]{","                4, -1,","                3,  2,","                3, -1","            }","        )","        .mut.toType(type)"]},
+        {"kind":"and","text":"Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].","code":["var x = Tsr.of(new int[]{2, 3, 1},","                        new double[]{","                            3,  2, -1,","                            -2,  2,  4","                        }","                    )","                    .mut.toType(type)","var y = Tsr.of(new int[]{1, 3, 2},","        new double[]{","            4, -1,","            3,  2,","            3, -1","        }","    )","    .mut.toType(type)"]},
 
-        {"kind":"when","text":"The x-mul result is being instantiated by passing a simple equation to the tensor constructor.","code":["    var z = Tsr.of(\"I0xi1\", x, y)"]},
+        {"kind":"when","text":"The x-mul result is being instantiated by passing a simple equation to the tensor constructor.","code":["var z = Tsr.of(\"I0xi1\", x, y)"]},
 
-        {"kind":"then","text":"The result contains the expected String.","code":["    z.toString().contains(expected)"]},
+        {"kind":"then","text":"The result contains the expected String.","code":["z.toString().contains(expected)"]},
 
-        {"kind":"when","text":"The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.","code":["    z = Tsr.of(new Object[]{x, \"x\", y})"]},
+        {"kind":"when","text":"The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.","code":["z = Tsr.of(new Object[]{x, \"x\", y})"]},
 
-        {"kind":"then","text":"The result contains the expected String.","code":["    z.toString().contains(expected)"]},
+        {"kind":"then","text":"The result contains the expected String.","code":["z.toString().contains(expected)"]},
 
         {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float"],"expected":["[2x1x2]:(15.0, 2.0, 10.0, 2.0)","[2x1x2]:(15.0, 2.0, 10.0, 2.0)"]}}
       ],
@@ -129,14 +129,14 @@
     {
       "id":"Manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.074 seconds",
+      "duration":"0.071 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)","Tsr a = Tsr.of([100, 100], 3d..19d)","Tsr x = a[1..-2,0..-1]","Tsr y = a[0..-3,0..-1]","Tsr z = a[2..-1,0..-1]"]},
 
-        {"kind":"when","text":"","code":["Tsr rowconvol = x + y + z","Tsr k = rowconvol[0..-1,1..-2]","Tsr v = rowconvol[0..-1,0..-3]","Tsr j = rowconvol[0..-1,2..-1]","Tsr u = a[1..-2,1..-2]","Tsr colconvol = k + v + j - 9 * u","String xAsStr = x.toString()","String yAsStr = y.toString()","String zAsStr = z.toString()","String rcAsStr = rowconvol.toString()","String kAsStr = k.toString()","String vAsStr = v.toString()","String jAsStr = j.toString()","String uAsStr = u.toString()"]},
+        {"kind":"when","text":"","code":["Tsr rowconvol = x + y + z // (98, 100) (98, 100) (98, 100)","Tsr k = rowconvol[0..-1,1..-2]","Tsr v = rowconvol[0..-1,0..-3]","Tsr j = rowconvol[0..-1,2..-1]","Tsr u = a[1..-2,1..-2]","Tsr colconvol = k + v + j - 9 * u // (98, 98)+(98, 98)+(98, 98)-9*(98, 98)","String xAsStr = x.toString()","String yAsStr = y.toString()","String zAsStr = z.toString()","String rcAsStr = rowconvol.toString()","String kAsStr = k.toString()","String vAsStr = v.toString()","String jAsStr = j.toString()","String uAsStr = u.toString()"]},
 
         {"kind":"then","text":"","code":["xAsStr.contains(\"(98x100):[18.0, 19.0, 3.0, 4.0, 5.0\")","yAsStr.contains(\"(98x100):[3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0\")","zAsStr.contains(\"(98x100):[16.0, 17.0, 18.0, 19.0, 3.0\")","rcAsStr.contains(\"(98x100):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0\")","kAsStr.contains(\"(98x98):[40.0, 26.0, 29.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0\")","vAsStr.contains(\"(98x98):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0, 21.0\")","jAsStr.contains(\"(98x98):[26.0, 29.0, 15.0, 18.0, 21.0, 24.0\")","uAsStr.contains(\"(98x98):[19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, \")","colconvol.toString().contains(\"(98x98):[-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, \" +","        \"-34.0, -68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, -34.0, \" +","        \"-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, ... + 9554 more]\")"]}
       ],
@@ -146,7 +146,7 @@
     {
       "id":"Very simple manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.140 seconds",
+      "duration":"0.138 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -157,7 +157,7 @@
 
         {"kind":"then","text":"","code":["xAsStr.contains(\"(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]\")","yAsStr.contains(\"(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]\")","zAsStr.contains(\"(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]\")","rcAsStr.contains(\"(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]\")","kAsStr.contains(\"(2x2):[15.0, 18.0, 27.0, 30.0]\")","vAsStr.contains(\"(2x2):[12.0, 15.0, 24.0, 27.0]\")","jAsStr.contains(\"(2x2):[18.0, 21.0, 30.0, 33.0]\")","uAsStr.contains(\"(2x2):[5.0, 6.0, 9.0, 10.0]\")","colconvol.toString().contains(\"(2x2):[0.0, 0.0, 0.0, 0.0]\")"]},
 
-        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x158cbf6d440,platform=0x7fff5aaf8000]"]}}
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x27748fc2260,platform=0x7fff5aaf8000]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -165,7 +165,7 @@
     {
       "id":"Autograd works with simple 2D convolution.",
       "result":"PASS",
-      "duration":"0.070 seconds",
+      "duration":"0.068 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -190,7 +190,7 @@
     {
       "id":"Sime convolution works as expected eith autograd.",
       "result":"PASS",
-      "duration":"0.069 seconds",
+      "duration":"0.066 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -215,7 +215,7 @@
     {
       "id":"Tensors have the correct layout after convolution.",
       "result":"PASS",
-      "duration":"0.063 seconds",
+      "duration":"0.062 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

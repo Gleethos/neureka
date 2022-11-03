@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.140 seconds"
+    "duration":"0.135 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Reshaping produces expected computation graph and also works with reverse mode AD.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,7 +27,7 @@
 
         {"kind":"when","text":"","code":["Tsr b = rs(a)","GraphNode na = a.get( GraphNode.class )","GraphNode nb = b.get( GraphNode.class )"]},
 
-        {"kind":"then","text":"","code":["na.getChildren().size() == 1","b.toString().contains(\"\")","b.backward(Tsr.of([3, 2],[","                    -1d, 2d,","                     4d, 7d,","                    -9d, 8d","            ]))","a.toString().contains(\"[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)\")","b.toString().contains(\"[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)\")","na.isLeave()","na.function==null","na.getMode() == 1"]},
+        {"kind":"then","text":"","code":["na.getChildren().size() == 1","b.toString().contains(\"\")//Todo!","b.backward(Tsr.of([3, 2],[","                    -1d, 2d,","                     4d, 7d,","                    -9d, 8d","            ]))","a.toString().contains(\"[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)\")","b.toString().contains(\"[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)\")","na.isLeave()","na.function==null","na.getMode() == 1"]},
 
         {"kind":"and","text":"We expect the partial derivative to be cleaned up! (size == 0)","code":["na.size()==0","na.getNodeID()==1","!nb.isLeave()","nb.function != null","nb.getMode() == -1","nb.size()==0","nb.getNodeID()!=1"]}
       ],
@@ -37,7 +37,7 @@
     {
       "id":"Payloads and derivatives are null after garbage collection.",
       "result":"PASS",
-      "duration":"0.129 seconds",
+      "duration":"0.128 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

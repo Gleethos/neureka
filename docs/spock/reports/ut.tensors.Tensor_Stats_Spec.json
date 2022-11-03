@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.391 seconds"
+    "duration":"0.408 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.212 seconds",
+      "duration":"0.219 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,7 +100,7 @@
     {
       "id":"We can use the \"sum\" method to sum the items of a tensor.",
       "result":"PASS",
-      "duration":"0.159 seconds",
+      "duration":"0.169 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

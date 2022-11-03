@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.058 seconds"
+    "duration":"0.054 seconds"
   },
   "headers":["\n                This specification covers some basic behaviour related to\n                reading and modifying the data inside a tensor.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -25,9 +25,9 @@
 
         {"kind":"and","text":"A new tensor instance with the shape (4x3).","code":["var t1 = Tsr.of([4, 3], 1d..12d)"]},
 
-        {"kind":"when","text":"Recording the index behavior before and after a reshape operation...","code":["var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})","var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})","var t1_indices = t1.indicesOfIndex(5)","var t2 = Function.of(\" [ 1, 0 ]:( I[0] ) \")(t1)","var t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})","var t2_idx = t2.indicesOfIndex(7)","var t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7))","var t2_ioi_2 =  t2.indexOfIndices(t2.indicesOfIndex(7))"]},
+        {"kind":"when","text":"Recording the index behavior before and after a reshape operation...","code":["var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})","var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})","var t1_indices = t1.indicesOfIndex(5)","var t2 = Function.of(\" [ 1, 0 ]:( I[0] ) \")(t1)","var t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})","var t2_idx = t2.indicesOfIndex(7)","var t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7)) // Element 7 '8.0' is at index 7!","var t2_ioi_2 =  t2.indexOfIndices(t2.indicesOfIndex(7)) // Element 7 '11.0' is at index 10!"]},
 
-        {"kind":"then","text":"These recorded values are as one would expect.","code":["t1_ioi_1 == 7","t1_ioi_2 == 5","t1_indices[0] == 1","t1_indices[1] == 2","t2_ioi_1 == 7","t2_idx[0] == 1","t2_idx[1] == 3","t1_ioi_3 == 7","t2_ioi_2 == 10","t1.toString().contains(\"[4x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0)\")","t2.toString().contains(\"[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.0, 9.0, 12.0)\")"]}
+        {"kind":"then","text":"These recorded values are as one would expect.","code":["t1_ioi_1 == 7","t1_ioi_2 == 5","t1_indices[0] == 1","t1_indices[1] == 2","t2_ioi_1 == 7","t2_idx[0] == 1","t2_idx[1] == 3","t1_ioi_3 == 7 // Element 7 '8.0' is at index 7!","t2_ioi_2 == 10 // Element 7 '11.0' is at index 10!","t1.toString().contains(\"[4x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0)\")","t2.toString().contains(\"[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.0, 9.0, 12.0)\")"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -89,7 +89,7 @@
     {
       "id":"We can manipulate the underlying data array of a tensor through the mut API.",
       "result":"PASS",
-      "duration":"0.019 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -127,7 +127,7 @@
 
         {"kind":"and","text":"We store the tensor on the given device, to ensure that it work there as well.","code":["t.to(device)"]},
 
-        {"kind":"expect","text":"The tensor is virtual because it is filled homogeneously with the same value.","code":["t.isVirtual()","t.items == [1, 1, 1]","t.rawData == [1]"]},
+        {"kind":"expect","text":"The tensor is virtual because it is filled homogeneously with the same value.","code":["t.isVirtual()","t.items == [1, 1, 1]","t.rawData == [1] // The data array is a single element array."]},
 
         {"kind":"when","text":"We access the third item of the tensor and set the value 42.","code":["t.mut.at(2).set(42)"]},
 

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.218 seconds"
+    "duration":"0.210 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"One can write a simple neural network with custom back-prop in 11 lines of code!",
       "result":"PASS",
-      "duration":"0.057 seconds",
+      "duration":"0.056 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
     {
       "id":"One can write a simple neural network in less than 11 lines of code!",
       "result":"PASS",
-      "duration":"0.057 seconds",
+      "duration":"0.056 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,12 +46,12 @@
     {
       "id":"One can write a simple float based neural network in less than 11 lines of java like code!",
       "result":"PASS",
-      "duration":"0.045 seconds",
+      "duration":"0.044 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var X = Tsr.ofFloats().withShape(4,3).andFill(0f, 0f, 1f,  0f, 1f, 1f,  1f, 0f, 1f,  1f, 1f, 1f)","var y = Tsr.ofFloats().withShape(1,4).andFill(0f, 1f, 1f, 0f).T()","var W1 = Tsr.ofRandom(Float.class, 3,4).setRqsGradient(true)","var W2 = Tsr.ofRandom(Float.class, 4,1).setRqsGradient(true)","for ( int i = 0; i < 60; i++ ) {","    Tsr<Float> l2 = Tsr.of('sig(',Tsr.of('sig(',X.matMul(W1),')').matMul(W2),')');","    l2.backward(y.minus(l2));","    W1.applyGradient(); W2.applyGradient();","}"]},
+        {"kind":"given","text":"","code":["var X = Tsr.ofFloats().withShape(4,3).andFill(0f, 0f, 1f,  0f, 1f, 1f,  1f, 0f, 1f,  1f, 1f, 1f);","var y = Tsr.ofFloats().withShape(1,4).andFill(0f, 1f, 1f, 0f).T();","var W1 = Tsr.ofRandom(Float.class, 3,4).setRqsGradient(true);","var W2 = Tsr.ofRandom(Float.class, 4,1).setRqsGradient(true);","for ( int i = 0; i < 60; i++ ) {","    Tsr<Float> l2 = Tsr.of('sig(',Tsr.of('sig(',X.matMul(W1),')').matMul(W2),')');","    l2.backward(y.minus(l2));","    W1.applyGradient(); W2.applyGradient();","}"]},
 
         {"kind":"expect","text":"","code":["W1.mut.data.ref == RESULT_W1_F32 as float[]","W2.mut.data.ref == RESULT_W2_F32 as float[]"]}
       ],
@@ -61,12 +61,12 @@
     {
       "id":"One can write a simple double based neural network in less than 11 lines of java like code using the \"@\" operator!",
       "result":"PASS",
-      "duration":"0.054 seconds",
+      "duration":"0.048 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var X  = Tsr.ofDoubles().withShape(4,3).andFill(0d, 0d, 1d, 0d, 1d, 1d, 1d, 0d, 1d, 1d, 1d, 1d)","var y  = Tsr.ofDoubles().withShape(1,4).andFill(0d, 1d, 1d, 0d).T()","var W1 = Tsr.ofRandom(Double.class, 3, 4).setRqsGradient(true)","var W2 = Tsr.ofRandom(Double.class, 4, 1).setRqsGradient(true)","for ( int i = 0; i < 60; i++ ) {","    var l2 = Tsr.of(\"sig(\",Tsr.of(\"sig(\",X,'@' as char,W1,\")\"),\"@\",W2,\")\");","    l2.backward(Tsr.of(y,\"-\",l2)); // Back-propagating the error!","    W1.applyGradient(); W2.applyGradient();","}"]},
+        {"kind":"given","text":"","code":["var X  = Tsr.ofDoubles().withShape(4,3).andFill(0d, 0d, 1d, 0d, 1d, 1d, 1d, 0d, 1d, 1d, 1d, 1d);","var y  = Tsr.ofDoubles().withShape(1,4).andFill(0d, 1d, 1d, 0d).T();","var W1 = Tsr.ofRandom(Double.class, 3, 4).setRqsGradient(true);","var W2 = Tsr.ofRandom(Double.class, 4, 1).setRqsGradient(true);","for ( int i = 0; i < 60; i++ ) {","    var l2 = Tsr.of(\"sig(\",Tsr.of(\"sig(\",X,'@' as char,W1,\")\"),\"@\",W2,\")\");","    l2.backward(Tsr.of(y,\"-\",l2)); // Back-propagating the error!","    W1.applyGradient(); W2.applyGradient();","}"]},
 
         {"kind":"expect","text":"","code":["W1.mut.data.ref == RESULT_W1","W2.mut.data.ref == RESULT_W2"]}
       ],

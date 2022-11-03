@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.210 seconds"
+    "duration":"0.205 seconds"
   },
   "headers":["\n            <p>\n                It is important that an OpenCLDevice gives insightful error messages\n                when encountering exceptional situations.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -39,7 +39,7 @@
     {
       "id":"Ad hoc compilation produces expected exceptions.",
       "result":"PASS",
-      "duration":"0.102 seconds",
+      "duration":"0.104 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,7 +48,7 @@
 
         {"kind":"expect","text":"Initially there is no ad hoc kernel with the following name.","code":["!device.hasAdHocKernel( 'right_dummy_kernel_name' )"]},
 
-        {"kind":"when","text":"We try to compile a new ad hoc kernel named \"right_dummy_kernel_name\" containing the wrong name in source...","code":["device.compileAdHocKernel( 'right_dummy_kernel_name', \"\"\"","        __kernel void wrong_dummy_kernel_name (","                __global float* output,","                __global float* input,","                float value ","            ) { ","                unsigned int i = get_global_id( 0 );","                output[i] = input[i] + value; ","            }","        \"\"\"",")"]},
+        {"kind":"when","text":"We try to compile a new ad hoc kernel named \"right_dummy_kernel_name\" containing the wrong name in source...","code":["device.compileAdHocKernel( 'right_dummy_kernel_name', \"\"\"","        __kernel void wrong_dummy_kernel_name (","                __global float* output,","                __global float* input,","                float value","            ) {","                unsigned int i = get_global_id( 0 );","                output[i] = input[i] + value;","            }","        \"\"\"",")"]},
 
         {"kind":"then","text":"An exception is being raised because the kernel name provided does not match the one in the source.","code":["def exception = thrown( IllegalArgumentException )","exception.message == \"Method 'clCreateKernel' failed! The name of the '__kernel' method declared inside \\n\" +","        \"the source String does not match the provided name needed for kernel creation.\""]},
 
@@ -60,12 +60,12 @@
     {
       "id":"Ad hoc compilation produces expected exceptions when duplication is found.",
       "result":"PASS",
-      "duration":"0.103 seconds",
+      "duration":"0.097 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]","def code = \"\"\"","            __kernel void right_dummy_kernel_name (","                    __global float* output,","                    __global float* input,","                    float value ","                ) { ","                    unsigned int i = get_global_id( 0 );","                    output[i] = input[i] + value; ","                }","            \"\"\""]},
+        {"kind":"given","text":"","code":["def device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]","def code = \"\"\"","            __kernel void right_dummy_kernel_name (","                    __global float* output,","                    __global float* input,","                    float value","                ) {","                    unsigned int i = get_global_id( 0 );","                    output[i] = input[i] + value;","                }","            \"\"\""]},
 
         {"kind":"expect","text":"Initially there is no ad hoc kernel with the following name.","code":["!device.hasAdHocKernel( 'right_dummy_kernel_name' )"]},
 
