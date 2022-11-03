@@ -149,10 +149,10 @@ dependencies {
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     //-----------------------------------------------------
     // mandatory dependencies for using Spock
-    testImplementation 'org.codehaus.groovy:groovy:3.0.11'
-    testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
-    testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
-    testImplementation 'com.github.gleethos:spock-reports:e020edc'//, { transitive = false }
+  testImplementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.6'
+    testImplementation platform('org.spockframework:spock-bom:2.1-groovy-3.0')
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+    testImplementation 'com.github.renatoathaydes:spock-reports:groovy-4-SNAPSHOT'
 
     testRuntimeOnly group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.10' // allows mocking of classes (in addition to interfaces)
     testRuntimeOnly group: 'org.objenesis', name: 'objenesis', version: '3.2'      // allows mocking of classes without default constructor (together with ByteBuddy or CGLIB)
@@ -190,7 +190,7 @@ test {
     maxHeapSize = "5g"
 
     // Number of threads used for testing :
-    maxParallelForks = Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
+    maxParallelForks = 1//Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
 }
 
 
