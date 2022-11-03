@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.017 seconds"
+    "duration":"0.019 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -108,7 +108,7 @@
 
         {"kind":"and","text":"We verify that they share the same ints through the \"every\" method.","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) })"]},
 
-        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_3prov0_closure5@cd1d904","ut.tensors.Copy_Spec$__spock_feature_0_3prov0_closure6@5d66ca09"]}}
+        {"kind":"where","text":"","code":{"cloner":["ut.tensors.Copy_Spec$__spock_feature_0_3prov0_closure5@7b9c41b8","ut.tensors.Copy_Spec$__spock_feature_0_3prov0_closure6@7e1b960a"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -116,7 +116,7 @@
     {
       "id":"We can deep copy various types of tensors.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -16,7 +16,7 @@
     {
       "id":"Momentum optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -76,13 +76,13 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A rank 1 nd-array with shape (6).","code":["var nda = Nda.of(\"a\"..\"h\")"]},
+        {"kind":"given","text":"A rank 1 nd-array with shape (8).","code":["var nda = Nda.of(\"a\"..\"h\")"]},
 
         {"kind":"when","text":"We label the nd-array.","code":["nda.mut.label(\"Framed\").mut.labelAxes([\"Letters\":[\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\"]])"]},
 
         {"kind":"then","text":"The nd-array is labeled as expected.","code":["nda.toString() == \"(8):(    A  )(   B  )(   C  )(   D  )(   E  )(   F  )(   G  )(   H   ):( Framed )\\n\" +","                  \"    [    a  ,    b  ,    c  ,    d  ,    e  ,    f  ,    g  ,    h   ]\""]},
 
-        {"kind":"when","text":"We slice the nd-array using labels.","code":["var slice = nda.getAt([\"B\"..\"G\"]:3)"]},
+        {"kind":"when","text":"\n            We slice the nd-array using labels...\n            Note that we are using the map syntax of `[i..j]:k` which is \n            semantically equivalent to pythons `i:j:k` syntax for indexing! (numpy)\n            Here `i` is the start index (or alias),\n            `j` is the end index (alias) and `k` is the step size.\n        ","code":["var slice = nda.getAt([\"B\"..\"G\"]:3)"]},
 
         {"kind":"then","text":"The slice is as expected.","code":["slice.items == [\"b\", \"e\"]","slice.toString() == \"(2):(    B  )(   E   ):( Framed:slice )\\n\" +","                    \"    [    b  ,    e   ]\""]}
       ],
@@ -92,7 +92,7 @@
     {
       "id":"Concatenating 2 labeled nd-arrays will produce a nd-array which is also labeled.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.125 seconds"
+    "duration":"0.653 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.371 seconds",
+      "duration":"0.153 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
 
         {"kind":"and","text":"","code":[" (device instanceof OpenCLDevice) || t.mut.data.ref == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]"," (device instanceof OpenCLDevice) || source.mut.data.ref == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x184f9170420,platform=0x7ffbf0ae8000]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x158cbf6d440,platform=0x7fff5aaf8000]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -43,7 +43,7 @@
     {
       "id":"Dot operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.043 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"The broadcast operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.066 seconds",
+      "duration":"0.037 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -73,7 +73,7 @@
 
         {"kind":"then","text":"","code":["t.toString() == expected"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","CPU[cores=32]","CPU[cores=32]","CPU[cores=32]","OpenCLDevice[id=0x184f9170420,platform=0x7ffbf0ae8000]","OpenCLDevice[id=0x184f9170420,platform=0x7ffbf0ae8000]","CPU[cores=32]","CPU[cores=32]","OpenCLDevice[id=0x184f9170420,platform=0x7ffbf0ae8000]","OpenCLDevice[id=0x184f9170420,platform=0x7ffbf0ae8000]","CPU[cores=32]","CPU[cores=32]","OpenCLDevice[id=0x184f9170420,platform=0x7ffbf0ae8000]","OpenCLDevice[id=0x184f9170420,platform=0x7ffbf0ae8000]","CPU[cores=32]","CPU[cores=32]"],"shape1":["[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]"],"shape2":["[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]"],"operation":["i0%i1","i0%i1","i0*i1","i0*i1","i0*i1","i0*i1","i0+i1","i0+i1","i0+i1","i0+i1","i0-i1","i0-i1","i0-i1","i0-i1","i0/i1","i0/i1"],"expected":["(2x2):[-1.0, -0.0, -0.0, NaN]","(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[1.33333, 2.0, 3.0, -∞]","(2x3x2):[1.33333, 2.0, 3.0, -∞, -2.0, -1.0, 0.33333, 0.5, -0.0, NaN, 1.0, 0.5]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","CPU[cores=32]","CPU[cores=32]","CPU[cores=32]","OpenCLDevice[id=0x158cbf6d440,platform=0x7fff5aaf8000]","OpenCLDevice[id=0x158cbf6d440,platform=0x7fff5aaf8000]","CPU[cores=32]","CPU[cores=32]","OpenCLDevice[id=0x158cbf6d440,platform=0x7fff5aaf8000]","OpenCLDevice[id=0x158cbf6d440,platform=0x7fff5aaf8000]","CPU[cores=32]","CPU[cores=32]","OpenCLDevice[id=0x158cbf6d440,platform=0x7fff5aaf8000]","OpenCLDevice[id=0x158cbf6d440,platform=0x7fff5aaf8000]","CPU[cores=32]","CPU[cores=32]"],"shape1":["[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]"],"shape2":["[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]"],"operation":["i0%i1","i0%i1","i0*i1","i0*i1","i0*i1","i0*i1","i0+i1","i0+i1","i0+i1","i0+i1","i0-i1","i0-i1","i0-i1","i0-i1","i0/i1","i0/i1"],"expected":["(2x2):[-1.0, -0.0, -0.0, NaN]","(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[12.0, 8.0, 3.0, -0.0]","(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-7.0, -6.0, -4.0, -3.0]","(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[-1.0, -2.0, -2.0, -3.0]","(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]","(2x2):[1.33333, 2.0, 3.0, -∞]","(2x3x2):[1.33333, 2.0, 3.0, -∞, -2.0, -1.0, 0.33333, 0.5, -0.0, NaN, 1.0, 0.5]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -81,7 +81,7 @@
     {
       "id":"Activation functions work across types, on large prime sized 1D slices and non sliced 1D tensors.",
       "result":"PASS",
-      "duration":"0.376 seconds",
+      "duration":"0.292 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
     {
       "id":"Activation functions work across types.",
       "result":"PASS",
-      "duration":"0.091 seconds",
+      "duration":"0.037 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

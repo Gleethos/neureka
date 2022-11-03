@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.015 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -43,7 +43,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
 
         {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
 
-        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@1ad20280","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@52ca6326","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@3ab3f1e5"]}}
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@643995d","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@53782935","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@44d33afc"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

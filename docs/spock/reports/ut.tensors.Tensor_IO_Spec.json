@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.037 seconds"
+    "duration":"0.058 seconds"
   },
   "headers":["\n                This specification covers some basic behaviour related to\n                reading and modifying the data inside a tensor.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -87,9 +87,9 @@
     },
   
     {
-      "id":"We can manipulate the underlying data array of a tensor through the unsafe API.",
+      "id":"We can manipulate the underlying data array of a tensor through the mut API.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
 
         {"kind":"and","text":"Both tensors should have the same data array!","code":["s.rawData  == [42, -9, 73]","t.rawData  == [42, -9, 73]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU","CPU","CPU","CPU"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Short"]}}
+        {"kind":"where","text":"","code":{"device":["CPU","CPU","CPU","CPU","CPU","CPU","GPU","GPU","GPU","GPU","GPU","GPU"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Short","class java.lang.Integer","class java.lang.Long","class java.lang.Double","class java.lang.Float","class java.lang.Byte","class java.lang.Short","class java.lang.Integer","class java.lang.Long"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

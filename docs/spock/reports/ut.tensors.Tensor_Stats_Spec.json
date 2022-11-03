@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.407 seconds"
+    "duration":"0.391 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.231 seconds",
+      "duration":"0.212 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -92,7 +92,7 @@
 
         {"kind":"when","text":"We back-propagate both paths by adding them and calling backward:","code":["(x+y).backward()"]},
 
-        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.items == [0f, 0f, 0f, 1.5f, 0f, 0.75f, 0f]"]}
+        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.get().items == [0f, 0f, 0f, 1.5f, 0f, 0.75f, 0f]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -100,7 +100,7 @@
     {
       "id":"We can use the \"sum\" method to sum the items of a tensor.",
       "result":"PASS",
-      "duration":"0.153 seconds",
+      "duration":"0.159 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -132,7 +132,7 @@
 
         {"kind":"when","text":"We back-propagate the path by calling backward:","code":["x.backward()"]},
 
-        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.items == [3f, 3f, 3f, 3f]"]}
+        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.get().items == [3f, 3f, 3f, 3f]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

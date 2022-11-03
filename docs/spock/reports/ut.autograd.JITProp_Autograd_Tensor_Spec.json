@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.155 seconds"
+    "duration":"0.151 seconds"
   },
   "headers":["\n            <h2>Autograd Tensor Integration Tests</h2>\n            <p>\n                This specification contains tests which\n                cover the autograd behavior of tensors. <br>\n                The classes involved in governing the tested features are\n                the Tsr, GraphNode and Function (& implementations) classes.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -81,7 +81,7 @@
     {
       "id":"Gradient auto-apply kicks in when used AD uses JIT prop",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -90,19 +90,19 @@
 
         {"kind":"when","text":"","code":["var s = (a+b) * c","var x = (s/a)+s"]},
 
-        {"kind":"then","text":"","code":["!a.has(JITProp.class)","!b.has(JITProp.class)","!c.has(JITProp.class)","!s.getGraphNode().isReliesOnJustInTimeProp()","!a.getGraphNode().isReliesOnJustInTimeProp()","!b.getGraphNode().isReliesOnJustInTimeProp()","!c.getGraphNode().isReliesOnJustInTimeProp()"]},
+        {"kind":"then","text":"","code":["!a.has(JITProp.class)","!b.has(JITProp.class)","!c.has(JITProp.class)","!s.getGraphNode().get().isReliesOnJustInTimeProp()","!a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","!c.getGraphNode().get().isReliesOnJustInTimeProp()"]},
 
         {"kind":"when","text":"","code":["when : x.backward(1d)"]},
 
-        {"kind":"then","text":"","code":["a.has(JITProp.class)","!b.has(JITProp.class)","c.has(JITProp.class)","s.getGraphNode().isReliesOnJustInTimeProp()","a.getGraphNode().isReliesOnJustInTimeProp()","!b.getGraphNode().isReliesOnJustInTimeProp()","c.getGraphNode().isReliesOnJustInTimeProp()","a.toString().contains(\"g:(0.75)\")","c.toString().contains(\"g:(null)\")","x.toString().contains(\"(-4.5)\")"]},
+        {"kind":"then","text":"","code":["a.has(JITProp.class)","!b.has(JITProp.class)","c.has(JITProp.class)","s.getGraphNode().get().isReliesOnJustInTimeProp()","a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","c.getGraphNode().get().isReliesOnJustInTimeProp()","a.toString().contains(\"g:(0.75)\")","c.toString().contains(\"g:(null)\")","x.toString().contains(\"(-4.5)\")"]},
 
         {"kind":"when","text":"","code":["def f = new FunctionParser( Neureka.get().backend() ).parse(\"I[0]*I[1]\", false)","Tsr[] inputs = new Tsr[]{c, a}","var result = f(inputs)"]},
 
-        {"kind":"then","text":"","code":["s.getGraphNode().isReliesOnJustInTimeProp()","a.getGraphNode().isReliesOnJustInTimeProp()","!b.getGraphNode().isReliesOnJustInTimeProp()","c.getGraphNode().isReliesOnJustInTimeProp()","! result.toString().contains(\"d[1]:\")","! result.toString().contains(\"d[1]:\")","a.toString().contains(\"(2.0):g:(0.75)\")","c.toString().contains(\"g:(null)\")","x.toString().contains(\"(-4.5)\")"]},
+        {"kind":"then","text":"","code":["s.getGraphNode().get().isReliesOnJustInTimeProp()","a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","c.getGraphNode().get().isReliesOnJustInTimeProp()","! result.toString().contains(\"d[1]:\")","! result.toString().contains(\"d[1]:\")","a.toString().contains(\"(2.0):g:(0.75)\")","c.toString().contains(\"g:(null)\")","x.toString().contains(\"(-4.5)\")"]},
 
         {"kind":"when","text":"","code":["f = new FunctionParser( Neureka.get().backend() ).parse(\"I[0]*I[1]\", true)","result = f(inputs)"]},
 
-        {"kind":"then","text":"","code":["result.toString().contains(\"d[1]:(7.25)\")","result.toString().contains(\"d[1]:(1.5)\")","a.toString().contains(\"(7.25):g:(null)\")","c.toString().contains(\"(1.5):g:(null)\")","x.toString().contains(\"(-4.5)\")","!c.has(JITProp.class)","!b.has(JITProp.class)","!s.getGraphNode().isReliesOnJustInTimeProp()","!a.getGraphNode().isReliesOnJustInTimeProp()","!b.getGraphNode().isReliesOnJustInTimeProp()","!c.getGraphNode().isReliesOnJustInTimeProp()"]}
+        {"kind":"then","text":"","code":["result.toString().contains(\"d[1]:(7.25)\")","result.toString().contains(\"d[1]:(1.5)\")","a.toString().contains(\"(7.25):g:(null)\")","c.toString().contains(\"(1.5):g:(null)\")","x.toString().contains(\"(-4.5)\")","!c.has(JITProp.class)","!b.has(JITProp.class)","!s.getGraphNode().get().isReliesOnJustInTimeProp()","!a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","!c.getGraphNode().get().isReliesOnJustInTimeProp()"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -110,7 +110,7 @@
     {
       "id":"Test no preemptive gradient apply when not requested and auto apply and JIT_prop",
       "result":"PASS",
-      "duration":"0.120 seconds",
+      "duration":"0.119 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -119,11 +119,11 @@
 
         {"kind":"when","text":"","code":["var s = (a+b) * c","var x = (s/a) + s","System.gc()","Thread.sleep(50)"]},
 
-        {"kind":"then","text":"","code":["!a.has(JITProp.class)","!b.has(JITProp.class)","!c.has(JITProp.class)","!s.has(JITProp.class)","!s.getGraphNode().isReliesOnJustInTimeProp()","!a.getGraphNode().isReliesOnJustInTimeProp()","!b.getGraphNode().isReliesOnJustInTimeProp()","!c.getGraphNode().isReliesOnJustInTimeProp()"]},
+        {"kind":"then","text":"","code":["!a.has(JITProp.class)","!b.has(JITProp.class)","!c.has(JITProp.class)","!s.has(JITProp.class)","!s.getGraphNode().get().isReliesOnJustInTimeProp()","!a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","!c.getGraphNode().get().isReliesOnJustInTimeProp()"]},
 
         {"kind":"when","text":"","code":["when : x.backward(1)"]},
 
-        {"kind":"then","text":"","code":["s.getGraphNode().isReliesOnJustInTimeProp()","a.getGraphNode().isReliesOnJustInTimeProp()","!b.getGraphNode().isReliesOnJustInTimeProp()","c.getGraphNode().isReliesOnJustInTimeProp()","a.has(JITProp.class)","!b.has(JITProp.class)","c.has(JITProp.class)","a.toString().contains(\"(2.0):g:(0.75)\")","c.toString().contains(\"(3.0):g:(null)\")","x.toString().contains(\"(-4.5)\")"]},
+        {"kind":"then","text":"","code":["s.getGraphNode().get().isReliesOnJustInTimeProp()","a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","c.getGraphNode().get().isReliesOnJustInTimeProp()","a.has(JITProp.class)","!b.has(JITProp.class)","c.has(JITProp.class)","a.toString().contains(\"(2.0):g:(0.75)\")","c.toString().contains(\"(3.0):g:(null)\")","x.toString().contains(\"(-4.5)\")"]},
 
         {"kind":"when","text":"","code":["def f = new FunctionParser( Neureka.get().backend() ).parse(\"I[0]*I[1]\", false)","Tsr[] inputs = new Tsr[]{c, a}","var result = f(inputs)"]},
 
@@ -139,7 +139,7 @@
 
         {"kind":"when","text":"","code":["when : result = f(inputs)"]},
 
-        {"kind":"then","text":"","code":["result.toString().contains(\"d[1]:(7.25)\")","result.toString().contains(\"d[1]:(3.0)\")","a.toString().contains(\"(7.25):g:(null)\")","c.toString().contains(\"(3.0):g:(-1.5)\")","x.toString().contains(\"(-4.5)\")","!a.has(JITProp.class)","!c.has(JITProp.class)","!s.getGraphNode().isReliesOnJustInTimeProp()","!a.getGraphNode().isReliesOnJustInTimeProp()","!b.getGraphNode().isReliesOnJustInTimeProp()","!c.getGraphNode().isReliesOnJustInTimeProp()"]}
+        {"kind":"then","text":"","code":["result.toString().contains(\"d[1]:(7.25)\")","result.toString().contains(\"d[1]:(3.0)\")","a.toString().contains(\"(7.25):g:(null)\")","c.toString().contains(\"(3.0):g:(-1.5)\")","x.toString().contains(\"(-4.5)\")","!a.has(JITProp.class)","!c.has(JITProp.class)","!s.getGraphNode().get().isReliesOnJustInTimeProp()","!a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","!c.getGraphNode().get().isReliesOnJustInTimeProp()"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -147,7 +147,7 @@
     {
       "id":"Test autograd without JIT and auto apply.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -193,7 +193,7 @@
     {
       "id":"Test no JIT prop when forward AD",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

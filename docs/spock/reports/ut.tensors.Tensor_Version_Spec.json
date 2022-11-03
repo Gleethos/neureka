@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.198 seconds"
+    "duration":"0.179 seconds"
   },
   "headers":["\n                <p>\n                    Here you can find out how the version number of a tensor is\n                    set and tracked.\n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
@@ -39,7 +39,7 @@
     {
       "id":"Non-inline operations do not cause version incrementation.",
       "result":"PASS",
-      "duration":"0.078 seconds",
+      "duration":"0.068 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Inline operations cause illegal state exceptions.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.023 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

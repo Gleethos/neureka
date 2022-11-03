@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"0"
+    "duration":"0.001 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -41,11 +41,11 @@
 
         {"kind":"when","text":"","code":["y.backward(-4)","w1.applyGradient()","w2.applyGradient()","w3.applyGradient()"]},
 
-        {"kind":"then","text":"","code":["w1.gradient.items.collect({it.round(2)}) == []","w2.gradient.items.collect({it.round(2)})== []","w3.gradient.items.collect({it.round(2)}) == []"]},
+        {"kind":"then","text":"","code":["w1.gradient.get().items.collect({it.round(2)}) == []","w2.gradient.get().items.collect({it.round(2)})== []","w3.gradient.get().items.collect({it.round(2)}) == []"]},
 
         {"kind":"when","text":"","code":["y.backward(-2)","w1.applyGradient()","w2.applyGradient()","w3.applyGradient()"]},
 
-        {"kind":"then","text":"","code":["w1.gradient.items.collect({it.round(2)}) == []","w2.gradient.items.collect({it.round(2)}) == []","w3.gradient.items.collect({it.round(2)}) == []"]}
+        {"kind":"then","text":"","code":["w1.gradient.get().items.collect({it.round(2)}) == []","w2.gradient.get().items.collect({it.round(2)}) == []","w3.gradient.get().items.collect({it.round(2)}) == []"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

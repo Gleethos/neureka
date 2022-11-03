@@ -16,7 +16,7 @@
     {
       "id":"Test parsed equations when building Function instances.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
