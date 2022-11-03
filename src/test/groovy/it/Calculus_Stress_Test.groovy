@@ -175,42 +175,45 @@ class Calculus_Stress_Test extends Specification
         when : 'We apply the function to both tensors...'
             var result1 = func(t1)
             var result2 = func(t2)
+            var data1 = result1.mut.data.ref
+            var data2 = result2.mut.data.ref
+
         then : 'First we ensure that both tensors have the correct value/element type.'
             result1.itemType == type
             result2.itemType == type
         and : 'The underlying data object should match the data array type as is defined by the data type!'
-            result1.mut.data.ref.class == result1.dataType.dataArrayType()
-            result2.mut.data.ref.class == result2.dataType.dataArrayType()
+            data1.class == result1.dataType.dataArrayType()
+            data2.class == result2.dataType.dataArrayType()
 
         and : 'The data of the first non slice tensor as well as its slice should be as expected.'
-            Arrays.hashCode(result1.mut.data.ref) == expected[0]
-            Arrays.hashCode(result2.mut.data.ref) == expected[1]
+            data1.collect({(it as BigDecimal).round(3)}).sum().round(3) == expected[0]
+            data2.collect({(it as BigDecimal).round(3)}).sum().round(3) == expected[1]
 
         where :
             type   |  funExpression            || expected
 
-            Double | 'gaus(i0)*100 % i0'       || [-341638852,  -341638852]
-            Float  | 'gaus(i0)*100 % i0'       || [945052504, 945052504]
-            Integer| 'gaus(i0)*100 % i0'       || [ 566202463,   566202463]
+            Double | 'gaus(i0)*100 % i0'       || [2840.044, 2840.044]
+            Float  | 'gaus(i0)*100 % i0'       || [2840.043, 2840.043]
+            Integer| 'gaus(i0)*100 % i0'       || [0.000, 0.000]
 
-            Double | 'tanh(i0)*100 % i0'       || [-1157698679, -1157698679]
-            Float  | 'tanh(i0)*100 % i0'       || [1967446493, 1967446493]
-            Integer| 'tanh(i0)*100 % i0'       || [-1054395405,  -1054395405]
+            Double | 'tanh(i0)*100 % i0'       || [625.914, 625.914]
+            Float  | 'tanh(i0)*100 % i0'       || [625.910, 625.910]
+            Integer| 'tanh(i0)*100 % i0'       || [-20900.000, -20900.000]
 
-            Double | 'fast_tanh(i0)*100 % i0'  || [-465291508, -465291508]
-            Float  | 'fast_tanh(i0)*100 % i0'  || [-1372925001, -1372925001]
-            Integer| 'fast_tanh(i0)*100 % i0'  || [-1054395405,  -1054395405]
+            Double | 'fast_tanh(i0)*100 % i0'  || [637.151, 637.151]
+            Float  | 'fast_tanh(i0)*100 % i0'  || [637.011, 637.011]
+            Integer| 'fast_tanh(i0)*100 % i0'  || [-20900.000, -20900.000]
 
-            Double | 'fast_gaus(i0)+i0'        || [-662875915, -662875915]
-            Float  | 'fast_gaus(i0)+i0'        || [-1211048977, -1211048977]
-            Integer| 'fast_gaus(i0)+i0'        || [-1237330383, -1237330383]
+            Double | 'fast_gaus(i0)+i0'        || [6632.311, 6632.311]
+            Float  | 'fast_gaus(i0)+i0'        || [6632.311, 6632.311]
+            Integer| 'fast_gaus(i0)+i0'        || [-233722189118.000, -233722189118.000]
 
-            Double | 'softsign(i0)*100 % i0'   || [1967097666, 1967097666]
-            Float  | 'softsign(i0)*100 % i0'   || [71072251, 71072251]
-            Integer| 'softsign(i0)*100 % i0'   || [-1054395405, -1054395405]
+            Double | 'softsign(i0)*100 % i0'   || [647.562, 647.562]
+            Float  | 'softsign(i0)*100 % i0'   || [647.564, 647.564]
+            Integer| 'softsign(i0)*100 % i0'   || [-20900.000, -20900.000]
 
-            Double | 'random(i0)'              || [-2059799883, 276852681]
-            Float  | 'random(i0)'              || [-2100773274, -590726536]
+            Double | 'random(i0)'              || [93.662, 93.662]
+            Float  | 'random(i0)'              || [93.662, 93.662]
     }
 
     def 'Activation functions work across types.'(
