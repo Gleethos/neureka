@@ -136,7 +136,7 @@ public class Cat extends AbstractOperation
                     We need to join the value lists of all the frames
                     and then set the state of the concatenated tensor frame.
                  */
-                for ( int i = 0; i < inputs.length; i++ ) {
+                for ( int i = 0; i < labels.size(); i++ ) {
                     Map<Object, List<Object>> current = labels.get(i);
                     List<Object> currentKeys = allKeys.get(i);
                     List<Object> currentValues = current.get(currentKeys.get(ci));
@@ -152,7 +152,7 @@ public class Cat extends AbstractOperation
                  */
                 for ( int j = 0; j < concat.shape(ci); j++ ) {
                     List<Object> valuesForThisIndex = new ArrayList<>();
-                    for ( int i = 0; i < inputs.length; i++ ) {
+                    for ( int i = 0; i < labels.size(); i++ ) {
                         Map<Object, List<Object>> current = labels.get(i);
                         List<Object> currentKeys = allKeys.get(i);
                         List<Object> currentValues = current.get(currentKeys.get(ci));
