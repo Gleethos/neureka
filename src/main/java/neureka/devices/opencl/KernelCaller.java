@@ -106,8 +106,26 @@ public class KernelCaller
         return this;
     }
 
-    public KernelCaller passLocalFloats(long size ) {
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_float * (long) size, null );
+    public KernelCaller pass( double... values ) {
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_double * (long) values.length, Pointer.to( values ) );
+        _argId++;
+        return this;
+    }
+
+    public KernelCaller pass( short... values ) {
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_short * (long) values.length, Pointer.to( values ) );
+        _argId++;
+        return this;
+    }
+
+    public KernelCaller pass( long... values ) {
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_long * (long) values.length, Pointer.to( values ) );
+        _argId++;
+        return this;
+    }
+
+    public KernelCaller pass( byte... values ) {
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_char * (long) values.length, Pointer.to( values ) );
         _argId++;
         return this;
     }
@@ -118,6 +136,38 @@ public class KernelCaller
      */
     public KernelCaller pass( float value ) {
         return this.pass( new float[]{ value } );
+    }
+
+    public KernelCaller pass( double value ) {
+        return this.pass( new double[]{ value } );
+    }
+
+    public KernelCaller pass( short value ) {
+        return this.pass( new short[]{ value } );
+    }
+
+    public KernelCaller pass( long value ) {
+        return this.pass( new long[]{ value } );
+    }
+
+    public KernelCaller pass( byte value ) {
+        return this.pass( new byte[]{ value } );
+    }
+
+    public KernelCaller pass( Number value ) {
+        if ( value instanceof Float ) return this.pass( value.floatValue() );
+        else if ( value instanceof Double ) return this.pass( value.doubleValue() );
+        else if ( value instanceof Integer ) return this.pass( value.intValue() );
+        else if ( value instanceof Long ) return this.pass( value.longValue() );
+        else if ( value instanceof Short ) return this.pass( value.shortValue() );
+        else if ( value instanceof Byte ) return this.pass( value.byteValue() );
+        else throw new IllegalArgumentException( "Unsupported number type: " + value.getClass().getName() );
+    }
+
+    public KernelCaller passLocalFloats( long size ) {
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_float * (long) size, null );
+        _argId++;
+        return this;
     }
 
     /**

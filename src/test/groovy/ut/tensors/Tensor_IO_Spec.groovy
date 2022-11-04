@@ -201,12 +201,12 @@ class Tensor_IO_Spec extends Specification
 
         where :
             device | type
-            //'CPU'  | Double
-            //'CPU'  | Float
-            //'CPU'  | Byte
-            //'CPU'  | Short
-            //'CPU'  | Integer
-            //'CPU'  | Long
+            'CPU'  | Double
+            'CPU'  | Float
+            'CPU'  | Byte
+            'CPU'  | Short
+            'CPU'  | Integer
+            'CPU'  | Long
             'GPU'  | Double
             'GPU'  | Float
             'GPU'  | Byte

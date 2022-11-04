@@ -151,8 +151,8 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         return new Access<T>() {
             @Override public Writer write(T item) {
                 return new Writer() {
-                    @Override public void intoRange(int start, int limit) { _writeItem( tensor, item, start, limit-start ); }
-                    @Override public void fully() { _writeItem( tensor, item, 0, tensor.size() ); }
+                    @Override public void intoRange(int start, int limit) { _writeItemInternal( tensor, item, start, limit-start ); }
+                    @Override public void fully() { _writeItemInternal( tensor, item, 0, tensor.size() ); }
                 };
             }
             @Override public Writer writeFrom( Object array, int offset ) {
@@ -169,6 +169,13 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
             @Override public neureka.Data<V> actualize() { return _actualize( tensor ); }
         };
+    }
+
+    private  <T extends V> void _writeItemInternal( Tsr<T> tensor, T item, int start, int size ) {
+        Class<T> itemType = tensor.itemType();
+        if ( !itemType.isAssignableFrom( item.getClass() ) )
+            item = DataConverter.get().convert( item, itemType );
+        _writeItem( tensor, item, start, size );
     }
 
     private <T extends V> void _writeArrayInternal(

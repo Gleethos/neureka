@@ -23,7 +23,7 @@ public class CLScalarBroadcastIdentity extends CLScalarBroadcast
                 .getKernel(call)
                 .passAllOf( t )
                 .passAllOf( t )
-                .pass( call.input( Number.class, 1 ).at(0).get().floatValue() )
+                .pass( call.input( Number.class, 1 ).at(0).get() )
                 .pass( t.rank() )
                 .pass( call.getValOf( Arg.DerivIdx.class ) )
                 .call( gwz );

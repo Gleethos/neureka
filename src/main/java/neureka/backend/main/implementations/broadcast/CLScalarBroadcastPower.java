@@ -10,11 +10,11 @@ public class CLScalarBroadcastPower extends CLScalarBroadcast
     public CLScalarBroadcastPower( String id ) {
         super(
             id,
-            "output = pow( input1, value );",
-            "   if ( d == 0 )                                            \n" +
-            "       output = value * pow( input1, value - (float) 1 );   \n" +
-            "   else                                                     \n" +
-            "       output = pow( input1, value ) * log( value );        \n"
+            "output = ("+TYPE+") pow( (float) input1, (float) value );",
+            "   if ( d == 0 )                                                            \n" +
+            "       output = ("+TYPE+")( value * pow( (float) input1, (float)( value - 1 ) ) );   \n" +
+            "   else                                                                              \n" +
+            "       output = ("+TYPE+") ( pow( (float) input1, (float) value ) * log( (float) value ) );  \n"
         );
     }
     @Override
