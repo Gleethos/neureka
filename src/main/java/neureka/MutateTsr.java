@@ -75,7 +75,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * {@inheritDoc}
      */
     @Override
-    <V> Tsr<V> toType(Class<V> typeClass);
+    <V> Tsr<V> toType( Class<V> typeClass );
 
     /**
      * Use this to do a runtime checked upcast of the type parameter of the tensor.

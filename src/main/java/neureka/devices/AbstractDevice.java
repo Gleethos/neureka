@@ -40,6 +40,8 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.calculus.args.Arg;
 import neureka.common.composition.Component;
+import neureka.common.utility.DataConverter;
+import neureka.dtype.DataType;
 import neureka.framing.Relation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,8 +157,8 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             }
             @Override public Writer writeFrom( Object array, int offset ) {
                 return new Writer() {
-                    @Override public void intoRange( int start, int limit ) { _writeArray( tensor, array, offset, start, limit-start ); }
-                    @Override public void fully() { _writeArray( tensor, array, offset, 0, tensor.size() ); }
+                    @Override public void intoRange( int start, int limit ) { _writeArrayInternal( tensor, array, offset, start, limit-start ); }
+                    @Override public void fully() { _writeArrayInternal( tensor, array, offset, 0, tensor.size() ); }
                 };
             }
             @Override public T readAt( int index ) { return _readItem( tensor, index ); }
@@ -167,6 +169,16 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
             @Override public neureka.Data<V> actualize() { return _actualize( tensor ); }
         };
+    }
+
+    private <T extends V> void _writeArrayInternal(
+            Tsr<T> tensor, Object array,
+            int offset, int start, int size
+    ) {
+        Class<?> arrayType = tensor.getDataType().dataArrayType();
+        if ( !arrayType.isAssignableFrom( array.getClass() ) )
+            array = DataConverter.get().convert( array, arrayType );
+        _writeArray( tensor, array, offset, start, size );
     }
 
     /**
@@ -192,13 +204,16 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
 
-    protected abstract neureka.Data<V> _actualize(Tsr<?> tensor );
+    protected abstract neureka.Data<V> _actualize( Tsr<?> tensor );
+
+    protected abstract DataType<?> _dataTypeOf( Object rawData );
 
     protected <T extends V> neureka.Data<T> _dataArrayOf( Object data ) {
         assert !(data instanceof neureka.Data);
         return new neureka.Data<T>() {
             @Override public Device<T> owner() { return (Device<T>) AbstractDevice.this; }
             @Override public Object getRef() { return data; }
+            @Override public DataType<T> dataType() { return (DataType<T>) _dataTypeOf(data); }
         };
     }
 

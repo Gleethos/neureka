@@ -38,20 +38,24 @@ class JVMData
     }
 
     public static JVMData of( Object data ) {
-        return new JVMData( data, 0, lengthOf(data) );
+        return new JVMData( data, 0, lengthOf(data), false );
+    }
+
+    public static JVMData of( Object data, boolean convertToFloat ) {
+        return new JVMData( data, 0, lengthOf(data), convertToFloat );
     }
 
     public static JVMData of( Object data, int size, int start ) {
-        return new JVMData( data, start, size );
+        return new JVMData( data, start, size, false );
     }
 
-    private JVMData( Object data, int start, int size ) {
-        _data = _preprocess( data, start, size );
+    private JVMData( Object data, int start, int size, boolean convertToFloat ) {
+        _data = _preprocess( data, start, size, convertToFloat );
     }
 
     Object getArray() { return _data; }
 
-    private Object _preprocess( Object data, int start, int size )
+    private Object _preprocess( Object data, int start, int size, boolean convertToFloat )
     {
         if ( data instanceof Number ) {
             if ( data instanceof Float ) {
@@ -79,15 +83,17 @@ class JVMData
                 Arrays.fill( newData, ((Long) (data)) );
                 data = newData;
             }
+            else throw new IllegalArgumentException("Unsupported data type: "+data.getClass());
         }
 
         BackendContext backend = Neureka.get().backend();
         boolean clContextFound = backend.has(CLBackend.class);
-        boolean convertToFloat = clContextFound && backend.get(CLBackend.class).getSettings().isAutoConvertToFloat();
-        if ( convertToFloat ) // NOTE: Currently we only support floats!
-            data = DataConverter.get().convert(data, float[].class);
+        boolean gg = clContextFound && backend.get(CLBackend.class).getSettings().isAutoConvertToFloat();
 
-        // TODO: Enable this for more types:
+
+        if ( convertToFloat )
+            data = DataConverter.get().convert( data, float[].class );
+
         if ( data instanceof float[] ) {
             float[] array = (float[]) data;
             if ( start > 0 || size < array.length ) {
@@ -131,6 +137,8 @@ class JVMData
                 data = newData;
             }
         }
+        else throw new IllegalArgumentException("Unsupported data type: "+data.getClass().getName());
+
         return data;
     }
 

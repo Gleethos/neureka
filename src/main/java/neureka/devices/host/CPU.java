@@ -327,7 +327,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public neureka.Data allocate(Object jvmData, int desiredSize )
+    public neureka.Data allocate( Object jvmData, int desiredSize )
     {
         neureka.Data data = _dataArrayOf(jvmData);
         if ( jvmData instanceof int[] ) {
@@ -475,6 +475,21 @@ public class CPU extends AbstractDevice<Object>
             if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
         }
         return _dataArrayOf(newValue);
+    }
+
+    @Override
+    protected final DataType<?> _dataTypeOf(Object rawData) {
+        LogUtil.nullArgCheck( rawData, "rawData", Object.class );
+        if ( rawData instanceof double[] ) return DataType.of( F64.class );
+        if ( rawData instanceof float[] ) return DataType.of( F32.class );
+        if ( rawData instanceof int[] ) return DataType.of( I32.class );
+        if ( rawData instanceof short[] ) return DataType.of( I16.class );
+        if ( rawData instanceof byte[] ) return DataType.of( I8.class );
+        if ( rawData instanceof long[] ) return DataType.of( I64.class );
+        if ( rawData instanceof boolean[] ) return DataType.of( Boolean.class );
+        if ( rawData instanceof char[] ) return DataType.of( Character.class );
+        if ( rawData instanceof Object[] ) return DataType.of( Object.class );
+        throw new IllegalArgumentException( "Unsupported data type: " + rawData.getClass() );
     }
 
     @Override

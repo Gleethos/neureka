@@ -1413,15 +1413,17 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      */
     private <T> Tsr<T> _toType( Class<T> typeClass )
     {
-        if ( this.isOutsourced() ) {
-            _setDataType( DataType.of( typeClass ) );
-            return (Tsr<T>) this;
-        }
-        else {
-            Object newData = _convertedDataOfType( typeClass );
-            _setData( null );
-            _setDataType( DataType.of( typeClass ) );
-            _setData( CPU.get().allocate(newData) );
+        DataType<?> newDataType = DataType.of( typeClass );
+        if ( newDataType == this.getData().dataType() )
+            _setDataType( newDataType );
+        else if ( newDataType != this.getDataType() ) {
+            CPU.get().borrow((Tsr<Object>) this).in(()->{
+                Object newData = _convertedDataOfType(typeClass);
+                _setData( null );
+                _setDataType( newDataType );
+                _setData( getDevice().allocate( newData, this.size() ) );
+                return null;
+            });
         }
         this.find( TsrImpl.class ).ifPresent( gradient -> gradient._toType( typeClass ) );
         return (Tsr<T>) this;

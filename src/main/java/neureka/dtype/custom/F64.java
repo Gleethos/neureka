@@ -69,7 +69,7 @@ public final class F64 extends AbstractNumericType<Double, double[], Double, dou
     @Override
     public <T> double[] readForeignDataFrom( Iterator<T> iterator, int size ) {
         double[] data = new double[ size ];
-        for ( int i=0; i<size; i++ ) data[ i ] = convertToHolder( iterator.next() );
+        for ( int i = 0; i < size; i++ ) data[ i ] = convertToHolder( iterator.next() );
         return data;
     }
 

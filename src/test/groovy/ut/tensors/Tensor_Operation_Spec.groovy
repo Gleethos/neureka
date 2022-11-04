@@ -2,6 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.backend.ocl.CLBackend
 import neureka.calculus.Function
 import neureka.calculus.args.Arg
 import neureka.calculus.assembly.FunctionParser
@@ -282,6 +283,7 @@ class Tensor_Operation_Spec extends Specification
             BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient, String device
     ) {
         given :
+            Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = true
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and :
             String wValue = whichGrad
@@ -300,8 +302,8 @@ class Tensor_Operation_Spec extends Specification
             Tsr    w      = ( whichGrad ? b      : a      )
 
         expect :
-            a.itemType == type
-            b.itemType == type
+            a.itemType == type || device == 'GPU' // The gpu backend will only be floats!
+            b.itemType == type || device == 'GPU' // This is because kernels only work on floats...
 
         when :
             Tsr c = operation.apply(a, b)
@@ -318,6 +320,9 @@ class Tensor_Operation_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
         then :
             c.toString({it.hasSlimNumbers = true}) == "(2x2):[$cValue]"
+
+        cleanup :
+            Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = false
 
         where:
             device | type   | whichGrad | bShape |    operation      ||     cValue      | wGradient
