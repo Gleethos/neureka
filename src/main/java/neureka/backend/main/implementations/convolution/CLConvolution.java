@@ -3,6 +3,7 @@ package neureka.backend.main.implementations.convolution;
 import neureka.Neureka;
 import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.calculus.args.Arg;
+import neureka.devices.opencl.KernelCode;
 
 public class CLConvolution extends ParsedCLImplementation
 {
@@ -25,7 +26,8 @@ public class CLConvolution extends ParsedCLImplementation
             Neureka.get().utility().readResource("kernels/convolution_template.cl"),
             "value = src1 * src2;\n",
             "value += handle * drain;\n",
-            id
+            id,
+            kernelCode -> new KernelCode[]{kernelCode}
         );
     }
 

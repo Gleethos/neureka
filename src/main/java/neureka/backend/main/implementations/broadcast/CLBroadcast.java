@@ -3,6 +3,7 @@ package neureka.backend.main.implementations.broadcast;
 import neureka.Neureka;
 import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.calculus.args.Arg;
+import neureka.devices.opencl.KernelCode;
 
 public class CLBroadcast extends ParsedCLImplementation
 {
@@ -26,7 +27,8 @@ public class CLBroadcast extends ParsedCLImplementation
             Neureka.get().utility().readResource("kernels/broadcast_template.cl"),
             forward,
             backward,
-            postfix
+            postfix,
+            kernelCode -> new KernelCode[]{kernelCode}
         );
     }
 

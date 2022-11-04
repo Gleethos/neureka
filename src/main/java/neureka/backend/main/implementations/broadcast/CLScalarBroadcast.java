@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.calculus.args.Arg;
+import neureka.devices.opencl.KernelCode;
 
 public class CLScalarBroadcast extends ParsedCLImplementation
 {
@@ -29,7 +30,8 @@ public class CLScalarBroadcast extends ParsedCLImplementation
             Neureka.get().utility().readResource("kernels/scalarization_template.cl"),
             activation,
             derivation,
-            postfix
+            postfix,
+            kernelCode -> new KernelCode[]{kernelCode}
         );
     }
 }

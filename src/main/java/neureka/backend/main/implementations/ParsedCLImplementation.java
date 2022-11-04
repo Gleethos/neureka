@@ -4,9 +4,12 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.opencl.KernelCode;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.dtype.DataType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ParsedCLImplementation extends CLImplementation
 {
@@ -33,7 +36,7 @@ public class ParsedCLImplementation extends CLImplementation
                             .replace("//-=<ARGUMENT>=-//", "")
                             .replace("//-=<CONFIGURATION>=-//", "");
 
-    private final KernelCode _kernel;
+    private final KernelCode[] _kernels;
 
     public ParsedCLImplementation(
         ImplementationFor<OpenCLDevice> lambda,
@@ -41,7 +44,8 @@ public class ParsedCLImplementation extends CLImplementation
         String kernelSource,
         String activationSource,
         String differentiationSource,
-        String postfix
+        String postfix,
+        Function<KernelCode, KernelCode[]> dataTypeAdapter
     ) {
         super( lambda, arity );
         String parsedCode = null;
@@ -68,7 +72,7 @@ public class ParsedCLImplementation extends CLImplementation
                 parsedCode = map.values().toArray(new String[ 0 ])[ 0 ];
             }
         }
-        _kernel = new KernelCode(parsedName, parsedCode);
+        _kernels = dataTypeAdapter.apply( new KernelCode( parsedName, parsedCode ) );
     }
 
     private Map<String, String> _getParsedKernelsFromTemplate(
@@ -111,12 +115,16 @@ public class ParsedCLImplementation extends CLImplementation
 
     @Override
     public KernelCode getKernelFor( ExecutionCall<OpenCLDevice> call ) {
-        return _kernel;
+        DataType<?> callType = call.input(0 ).getDataType();
+        return Arrays.stream(_kernels)
+                        .filter( k -> k.getDataType().equals( callType ) )
+                        .findFirst()
+                        .orElse(_kernels[0]);
     }
 
     @Override
     public KernelCode[] getKernelCode() {
-        return new KernelCode[]{ _kernel };
+        return _kernels;
     }
 
     private interface Parser
