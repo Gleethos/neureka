@@ -33,7 +33,7 @@ public class ParsedCLImplementation extends CLImplementation
                             .replace("//-=<ARGUMENT>=-//", "")
                             .replace("//-=<CONFIGURATION>=-//", "");
 
-    private KernelCode _kernel;
+    private final KernelCode _kernel;
 
     public ParsedCLImplementation(
         ImplementationFor<OpenCLDevice> lambda,
@@ -44,16 +44,19 @@ public class ParsedCLImplementation extends CLImplementation
         String postfix
     ) {
         super( lambda, arity );
-        boolean templateFound;
-        if ( activationSource == null && differentiationSource == null )
-            _kernel = new KernelCode( postfix, kernelSource );
-        else if (kernelSource.contains("__kernel")) {
+        String parsedCode = null;
+        String parsedName = null;
+        if ( activationSource == null && differentiationSource == null ) {
+            parsedCode = kernelSource;
+            parsedName = postfix;
+        } else if (kernelSource.contains("__kernel")) {
+            boolean templateFound;
             String[] parts = kernelSource.split("__kernel")[ 1 ].split("\\(")[ 0 ].split(" ");
 
             templateFound = parts[parts.length - 1].contains("template");
-            if (!templateFound) {
+            if (!templateFound)
                 throw new IllegalStateException("Invalid source code passed to AbstractCLExecution!");
-            } else {
+            else {
                 Map<String, String> map = _getParsedKernelsFromTemplate(
                         parts[parts.length - 1],
                         kernelSource,
@@ -61,11 +64,11 @@ public class ParsedCLImplementation extends CLImplementation
                         differentiationSource,
                         postfix
                 );
-                String name = map.keySet().toArray(new String[ 0 ])[ 0 ];
-                String source = map.values().toArray(new String[ 0 ])[ 0 ];
-                _kernel = new KernelCode( name, source );
+                parsedName = map.keySet().toArray(new String[ 0 ])[ 0 ];
+                parsedCode = map.values().toArray(new String[ 0 ])[ 0 ];
             }
         }
+        _kernel = new KernelCode(parsedName, parsedCode);
     }
 
     private Map<String, String> _getParsedKernelsFromTemplate(
@@ -107,8 +110,13 @@ public class ParsedCLImplementation extends CLImplementation
     }
 
     @Override
-    public KernelCode getKernelFor(ExecutionCall<OpenCLDevice> call) {
+    public KernelCode getKernelFor( ExecutionCall<OpenCLDevice> call ) {
         return _kernel;
+    }
+
+    @Override
+    public KernelCode[] getKernelCode() {
+        return new KernelCode[]{ _kernel };
     }
 
     private interface Parser

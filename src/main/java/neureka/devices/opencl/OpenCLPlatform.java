@@ -176,9 +176,10 @@ public class OpenCLPlatform
                             impl = type.getAlgorithm(DeviceAlgorithm.class).getImplementationFor( OpenCLDevice.class );
                         }
                         if ( impl instanceof CLImplementation ) {
-                            KernelCode kernelCode = ((CLImplementation) impl).getKernelCode();
-                            if ( kernelCode.getCode() != null )
-                                code.put( kernelCode.getName(), kernelCode.getCode() );
+                            for ( KernelCode kernelCode : ((CLImplementation) impl).getKernelCode() ) {
+                                if (kernelCode.getCode() != null)
+                                    code.put(kernelCode.getName(), kernelCode.getCode());
+                            }
                         }
                     }
                     code.forEach( ( n, s ) -> { names.add( n ); sources.add( s ); } );
@@ -194,8 +195,10 @@ public class OpenCLPlatform
                 if ( impl instanceof CLImplementation ) {
                     CLImplementation cli = ((CLImplementation) impl);
                     if ( cli instanceof SimpleCLImplementation ) {
-                        names.add(cli.getKernelCode().getName());
-                        sources.add(cli.getKernelCode().getCode());
+                        for ( KernelCode kernelCode : cli.getKernelCode() ) {
+                            names.add( kernelCode.getName() );
+                            sources.add( kernelCode.getCode() );
+                        }
                     }
                 }
             }
