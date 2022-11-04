@@ -42,13 +42,11 @@ class Functional_Tensor_Spec extends Specification
             it.hasSlimNumbers    = false
         })
 
-        if ( Neureka.get().backend().has(CLBackend) )
-            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = false
+        Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }
     }
 
     def cleanup() {
-        if ( Neureka.get().backend().has(CLBackend) )
-            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+        Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
     }
 
     def 'We can initialize a tensor using a filler lambda mapping indices to items.'()

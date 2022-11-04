@@ -28,8 +28,7 @@ import java.util.function.Function
 class Cross_Device_Spec extends Specification
 {
     def setup() {
-        if ( Neureka.get().backend().has(CLBackend) )
-            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = false
+        Neureka.get().backend().find(CLBackend).ifPresent{it.getSettings().autoConvertToFloat = false }
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
@@ -49,8 +48,7 @@ class Cross_Device_Spec extends Specification
     }
 
     def cleanup() {
-        if ( Neureka.get().backend().has(CLBackend) )
-            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+        Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
     }
 
     @IgnoreIf({ data.deviceType == "GPU" && !Neureka.get().canAccessOpenCLDevice() })
@@ -116,15 +114,13 @@ class Cross_Device_Spec extends Specification
             Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.get('first')
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            if ( Neureka.get().backend().has(CLBackend) )
-                Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
 
         expect : 'The integration test runs successful.'
             CrossDeviceSystemTest.on(device)
 
         cleanup:
-            if ( Neureka.get().backend().has(CLBackend) )
-                Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
 
         where : 'The following settings are being used: '
             deviceType << ['CPU', 'GPU']
@@ -136,8 +132,7 @@ class Cross_Device_Spec extends Specification
     {
         given:
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            if ( Neureka.get().backend().has(CLBackend) )
-                Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
 
         expect:
             device != null

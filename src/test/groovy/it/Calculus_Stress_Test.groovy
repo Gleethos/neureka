@@ -38,7 +38,7 @@ class Calculus_Stress_Test extends Specification
         Device device
     ) {
         given : 'For this test we tell the CL-Backend to auto-convert to floats.'
-            Neureka.get().backend.find(CLBackend.class).ifPresent { it.settings.autoConvertToFloat = true }
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
         and:
             def stress = ( Tsr t ) -> {
                 t = t + Tsr.of( t.shape(), -3d..12d )
@@ -81,7 +81,7 @@ class Calculus_Stress_Test extends Specification
             (device instanceof OpenCLDevice) || source.mut.data.ref == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]
 
         cleanup :
-            Neureka.get().backend.find(CLBackend.class).ifPresent { it.settings.autoConvertToFloat = false }
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }
 
         where :
            device << [CPU.get(), Device.get('gpu')]
@@ -116,7 +116,7 @@ class Calculus_Stress_Test extends Specification
             String expected
     ) {
         given : 'For this test we tell the CL-Backend to auto-convert to floats.'
-            Neureka.get().backend.find(CLBackend.class).ifPresent { it.settings.autoConvertToFloat = true }
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
         and :
             Tsr<Double> t1 = Tsr.of( shape1, -4d..2d ).to( device )
             Tsr<Double> t2 = Tsr.of( shape2, -3d..5d ).to( device )
@@ -128,7 +128,7 @@ class Calculus_Stress_Test extends Specification
             t.toString() == expected
 
         cleanup :
-            Neureka.get().backend.find(CLBackend.class).ifPresent { it.settings.autoConvertToFloat = false }
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }
 
         where :
             device             | shape1    | shape2    | operation || expected

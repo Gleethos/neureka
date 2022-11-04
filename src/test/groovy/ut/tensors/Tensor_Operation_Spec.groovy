@@ -283,7 +283,7 @@ class Tensor_Operation_Spec extends Specification
             BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient, String device
     ) {
         given :
-            Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = true
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and :
             String wValue = whichGrad
@@ -322,7 +322,7 @@ class Tensor_Operation_Spec extends Specification
             c.toString({it.hasSlimNumbers = true}) == "(2x2):[$cValue]"
 
         cleanup :
-            Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = false
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }
 
         where:
             device | type   | whichGrad | bShape |    operation      ||     cValue      | wGradient

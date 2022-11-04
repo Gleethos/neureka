@@ -50,7 +50,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         Device device
     ) {
         given : 'For this test we tell the CL-Backend to auto-convert to floats.'
-            Neureka.get().backend.find(CLBackend.class).ifPresent { it.settings.autoConvertToFloat = true }
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
         and :
             if ( device == null ) return
             Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
@@ -101,7 +101,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'
 
         cleanup :
-            Neureka.get().backend.find(CLBackend.class).ifPresent { it.settings.autoConvertToFloat = false }
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }
 
         where:
             device << [Device.get('gpu'), CPU.get() ]
@@ -114,7 +114,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         given :
             if ( device == null ) return
         and : 'For this test we tell the CL-Backend to auto-convert to floats.'
-            Neureka.get().backend.find(CLBackend.class).ifPresent { it.settings.autoConvertToFloat = true }
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
             Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
@@ -337,7 +337,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             x.toString().replace(".0", "").contains("->d[2x2]:(-2, 3, 1, 2)")
 
         cleanup :
-            Neureka.get().backend.find(CLBackend.class).ifPresent { it.settings.autoConvertToFloat = false }
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }
 
         where:
             device << [CPU.get(),Device.get('gpu')]
