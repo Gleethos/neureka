@@ -250,12 +250,12 @@ class Cross_Device_Spec extends Specification
             Tsr.ofFloats().scalar(0.9f)| CPU.get()            | Byte.class     | {it*2}   || '(1):[1]'
             Tsr.ofFloats().scalar(3.8f)| CPU.get()            | Short.class    | {it/2}   || '(1):[1]'
 
-            //Tsr.ofInts().scalar( 3 )   | Device.get('first') | Double.class   | {it*it} || '(1):[9.0]' // TODO: Allow for ints on the GPU
-            //Tsr.ofInts().scalar(-1 )   | Device.get('first') | Float.class    | {it/2}  || '(1):[-0.5]'
-            //Tsr.ofInts().scalar( 5 )   | Device.get('first') | Integer.class  | {it*10} || '(1):[50]'
-            //Tsr.ofInts().scalar( 70)   | Device.get('first') | Long.class     | {it*5}  || '(1):[350]'
-            //Tsr.ofInts().scalar( 90)   | Device.get('first') | Byte.class     | {it*2}  || '(1):[180]'
-            //Tsr.ofInts().scalar( 37)   | Device.get('first') | Short.class    | {it/2}  || '(1):[18]'
+            Tsr.ofInts().scalar( 3 )   | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]' 
+            Tsr.ofInts().scalar(-1 )   | Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
+            Tsr.ofInts().scalar( 5 )   | Device.get('first')  | Integer.class  | {it*10}  || '(1):[50]'
+            Tsr.ofInts().scalar( 70)   | Device.get('first')  | Long.class     | {it*5}   || '(1):[350]'
+            Tsr.ofInts().scalar( 90)   | Device.get('first')  | Byte.class     | {it*2}   || '(1):[-76]'
+            Tsr.ofInts().scalar( 37)   | Device.get('first')  | Short.class    | {it/2}   || '(1):[18]'
             Tsr.ofInts().scalar( 3 )   | CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
             Tsr.ofInts().scalar(-1 )   | CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
             Tsr.ofInts().scalar( 5 )   | CPU.get()            | Integer.class  | {it*10}  || '(1):[50]'
@@ -288,7 +288,6 @@ class Cross_Device_Spec extends Specification
             Tsr.ofBytes().scalar( 70)  | CPU.get()           | Long.class     | {it*5}   || '(1):[350]'
             Tsr.ofBytes().scalar( 90)  | CPU.get()           | Byte.class     | {it*2}   || '(1):[-76]'
             Tsr.ofBytes().scalar( 37)  | CPU.get()           | Short.class    | {it/2}   || '(1):[18]'
-
     }
 
 
