@@ -246,6 +246,14 @@ public final class BackendContext implements Cloneable
     }
 
     /**
+     *  Returns an {@link Optional} instance of the provided {@link BackendExtension} type
+     *  or an empty {@link Optional} if no extension of that type was found.
+     */
+    public <E extends BackendExtension> Optional<E> find( Class<E> componentClass ) {
+        return extensions.find( componentClass );
+    }
+
+    /**
      * @return A list of all {@link BackendExtension} instances.
      */
     public List<BackendExtension> getExtensions() {
