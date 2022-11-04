@@ -149,9 +149,12 @@ dependencies {
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     //-----------------------------------------------------
     // mandatory dependencies for using Spock
-    testImplementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.6'
-    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
-    testImplementation 'com.github.renatoathaydes:spock-reports:groovy-4-SNAPSHOT'
+    testImplementation 'org.codehaus.groovy:groovy:3.0.13'
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
+    testImplementation 'com.github.gleethos:spock-reports:e020edc'
+    //testImplementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.6'
+    //testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+    //testImplementation 'com.github.renatoathaydes:spock-reports:groovy-4-SNAPSHOT'
 
     testRuntimeOnly group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.10' // allows mocking of classes (in addition to interfaces)
     testRuntimeOnly group: 'org.objenesis', name: 'objenesis', version: '3.2'      // allows mocking of classes without default constructor (together with ByteBuddy or CGLIB)
