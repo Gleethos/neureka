@@ -143,8 +143,7 @@ class Cross_Device_Spec extends Specification
                 new SimpleNNSystemTest(SimpleNNSystemTest.Mode.MAT_MUL).on(device)
 
         cleanup:
-            if ( Neureka.get().backend().has(CLBackend) )
-                Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = false
+            Neureka.get().backend().find(CLBackend).ifPresent{ it.getSettings().autoConvertToFloat = false }
 
         where :
             device << [CPU.get(), Device.get('first gpu')]

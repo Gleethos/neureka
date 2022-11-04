@@ -458,10 +458,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
             }
         }
 
-        BackendContext backend = Neureka.get().backend();
-        boolean clContextFound = backend.has(CLBackend.class);
-        boolean convertToFloat = clContextFound && backend.get(CLBackend.class).getSettings().isAutoConvertToFloat();
-
+        boolean convertToFloat = Neureka.get()
+                                        .backend()
+                                        .find(CLBackend.class)
+                                        .map( it -> it.getSettings().isAutoConvertToFloat() )
+                                        .orElse(false);
         JVMData jvmData = null;
 
         if ( parent == null )

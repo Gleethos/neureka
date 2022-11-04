@@ -1,8 +1,5 @@
 package neureka.devices.opencl;
 
-import neureka.Neureka;
-import neureka.backend.api.BackendContext;
-import neureka.backend.ocl.CLBackend;
 import neureka.common.utility.DataConverter;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
@@ -85,11 +82,6 @@ class JVMData
             }
             else throw new IllegalArgumentException("Unsupported data type: "+data.getClass());
         }
-
-        BackendContext backend = Neureka.get().backend();
-        boolean clContextFound = backend.has(CLBackend.class);
-        boolean gg = clContextFound && backend.get(CLBackend.class).getSettings().isAutoConvertToFloat();
-
 
         if ( convertToFloat )
             data = DataConverter.get().convert( data, float[].class );

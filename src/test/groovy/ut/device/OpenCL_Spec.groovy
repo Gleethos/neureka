@@ -137,7 +137,7 @@ class OpenCL_Spec extends Specification
             CLBackend context
             List<OpenCLDevice> devices = []
             Runnable dispose = {
-                context = Neureka.get().backend().get(CLBackend)
+                context = Neureka.get().backend().find(CLBackend).get()
                 assert context.platforms.size() > 0
                 context.platforms.each {
                     assert it.devices.size() > 0

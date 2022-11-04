@@ -202,10 +202,10 @@ class Neureka_Spec extends Specification
 
         where : 'The following objects are being used..'
             neurekaCLObject << [
-                    Neureka.get().backend.get(CLBackend),
-                    Neureka.get().backend.get(CLBackend).platforms[0],
-                    Neureka.get().backend.get(CLBackend).platforms[0].devices[0]
-            ]
+                    Neureka.get().backend.find(CLBackend).get(),
+                    Neureka.get().backend.find(CLBackend).get().platforms[0],
+                    Neureka.get().backend.find(CLBackend).get().platforms[0].devices[0]
+                ]
     }
     
     def 'Backend related library objects adhere to the same toString formatting convention!'(

@@ -216,8 +216,10 @@ public final class Neureka
      */
     public boolean canAccessOpenCL() {
         return _OPENCL_AVAILABLE &&
-                get().backend().has(CLBackend.class) &&
-                get().backend().get(CLBackend.class).getTotalNumberOfDevices() > 0;
+                get().backend()
+                        .find(CLBackend.class)
+                        .map( it -> it.getTotalNumberOfDevices() > 0 )
+                        .orElse(false);
     }
 
     /**
@@ -225,8 +227,10 @@ public final class Neureka
      */
     public boolean canAccessOpenCLDevice() {
         return canAccessOpenCL() &&
-                get().backend().has(CLBackend.class) &&
-                get().backend().get(CLBackend.class).getTotalNumberOfDevices() > 0;
+                get().backend()
+                        .find(CLBackend.class)
+                        .map( it -> it.getTotalNumberOfDevices() > 0 )
+                        .orElse(false);
     }
 
     /**

@@ -238,14 +238,6 @@ public final class BackendContext implements Cloneable
     }
 
     /**
-     *  Returns an instance of the provided {@link BackendExtension} type
-     *  or null if no extension of that type was found.
-     */
-    public <E extends BackendExtension> E get( Class<E> componentClass ) {
-        return extensions.get( componentClass );
-    }
-
-    /**
      *  Returns an {@link Optional} instance of the provided {@link BackendExtension} type
      *  or an empty {@link Optional} if no extension of that type was found.
      */
@@ -278,7 +270,7 @@ public final class BackendContext implements Cloneable
 
     /**
      *  Registers the provided {@link BackendExtension} instance
-     *  which can then be accessed via {@link #get(Class)}.
+     *  which can then be accessed via {@link #find(Class)}.
      *
      * @param extension The backend extension component which ought to be stored by this.
      * @return This very {@link BackendContext} instance to allow for method chaining.
