@@ -2,6 +2,7 @@ package it
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.backend.ocl.CLBackend
 import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -36,7 +37,9 @@ class Calculus_Stress_Test extends Specification
     def 'Stress test runs error free and produces expected result'(
         Device device
     ) {
-        given:
+        given : 'For this test we tell the CL-Backend to auto-convert to floats.'
+            Neureka.get().backend.get(CLBackend.class).settings.autoConvertToFloat = true
+        and:
             def stress = ( Tsr t ) -> {
                 t = t + Tsr.of( t.shape(), -3d..12d )
                 t = t * Tsr.of( t.shape(),  2d..3d  )
@@ -50,16 +53,16 @@ class Calculus_Stress_Test extends Specification
 
         when :
             source.mut[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4d..2d )
-            Tsr t = source[1..2, 0..2, 1..1, 0d..2d]
+            Tsr s = source[1..2, 0..2, 1..1, 0d..2d]
 
         then :
-            t.toString() == Tsr.of( [2, 3, 1, 3], -4d..2d ).toString()
+            s.toString() == Tsr.of( [2, 3, 1, 3], -4d..2d ).toString()
 
         when :
-            t = stress(t)
+            s = stress(s)
 
         then :
-            t.toString({it.hasSlimNumbers = true}) ==
+            s.toString({it.hasSlimNumbers = true}) ==
                     "(2x3x1x3):[" +
                         "198, -6.5, " +
                         "36, -2.5, " +
@@ -74,8 +77,11 @@ class Calculus_Stress_Test extends Specification
                         "101, -4.5" +
                     "]"
         and :
-            (device instanceof OpenCLDevice) || t.mut.data.ref == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]
+            (device instanceof OpenCLDevice) || s.mut.data.ref == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]
             (device instanceof OpenCLDevice) || source.mut.data.ref == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]
+
+        cleanup :
+            Neureka.get().backend.get(CLBackend.class).settings.autoConvertToFloat = false
 
         where :
            device << [CPU.get(), Device.get('gpu')]
@@ -109,7 +115,9 @@ class Calculus_Stress_Test extends Specification
             String operation,
             String expected
     ) {
-        given:
+        given : 'For this test we tell the CL-Backend to auto-convert to floats.'
+            Neureka.get().backend.get(CLBackend.class).settings.autoConvertToFloat = true
+        and :
             Tsr<Double> t1 = Tsr.of( shape1, -4d..2d ).to( device )
             Tsr<Double> t2 = Tsr.of( shape2, -3d..5d ).to( device )
 
@@ -118,6 +126,9 @@ class Calculus_Stress_Test extends Specification
 
         then :
             t.toString() == expected
+
+        cleanup :
+            Neureka.get().backend.get(CLBackend.class).settings.autoConvertToFloat = false
 
         where :
             device             | shape1    | shape2    | operation || expected
