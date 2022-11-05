@@ -7,9 +7,9 @@ import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 
-public class Scalarization extends AbstractFunDeviceAlgorithm<Scalarization>
+public class BiScalarBroadcast extends AbstractFunDeviceAlgorithm<BiScalarBroadcast>
 {
-    public Scalarization() {
+    public BiScalarBroadcast() {
         super("scalarization");
         setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD );
         setIsSuitableFor( call ->

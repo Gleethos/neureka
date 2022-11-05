@@ -158,12 +158,12 @@ public class OpenCLPlatform
                     Map<String, String> code = new HashMap<>();
                     ImplementationFor<OpenCLDevice> impl = null;
                     for ( Operation type : Neureka.get().backend().getOperations() ) {
-                        if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) )
-                            impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
-                        else if ( preName.contains("elementwise") && type.supportsAlgorithm(BiElementWise.class) )
-                            impl = type.getAlgorithm(BiElementWise.class).getImplementationFor( OpenCLDevice.class );
-                        else if ( preName.contains("scalarization") && type.supportsAlgorithm(Scalarization.class) )
-                            impl = type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );
+                        if ( preName.contains("activation") && type.supportsAlgorithm(ElementwiseAlgorithm.class) )
+                            impl = type.getAlgorithm(ElementwiseAlgorithm.class).getImplementationFor( OpenCLDevice.class );
+                        else if ( preName.contains("elementwise") && type.supportsAlgorithm(BiElementwise.class) )
+                            impl = type.getAlgorithm(BiElementwise.class).getImplementationFor( OpenCLDevice.class );
+                        else if ( preName.contains("scalarization") && type.supportsAlgorithm(BiScalarBroadcast.class) )
+                            impl = type.getAlgorithm(BiScalarBroadcast.class).getImplementationFor( OpenCLDevice.class );
                         else if ( preName.contains("broadcast") && type.supportsAlgorithm(Broadcast.class) )
                             impl = type.getAlgorithm(Broadcast.class).getImplementationFor( OpenCLDevice.class );
                         else if ( preName.contains("convolution") && type.supportsAlgorithm(NDConvolution.class) )

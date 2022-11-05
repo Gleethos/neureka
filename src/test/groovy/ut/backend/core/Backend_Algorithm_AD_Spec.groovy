@@ -6,9 +6,9 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.AutoDiffMode
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
-import neureka.backend.main.algorithms.Activation
-import neureka.backend.main.algorithms.BiElementWise
+import neureka.backend.main.algorithms.BiElementwise
 import neureka.backend.main.algorithms.Broadcast
+import neureka.backend.main.algorithms.ElementwiseAlgorithm
 import neureka.backend.main.algorithms.NDConvolution
 import neureka.devices.Device
 import spock.lang.Specification
@@ -26,7 +26,7 @@ class Backend_Algorithm_AD_Spec extends Specification
         expect : 'The algorithm is not null.'
             alg != null
         and : 'The algorithm is a bi-elementwise algorithm.'
-            alg instanceof BiElementWise
+            alg instanceof BiElementwise
         and : 'It has a non empty name and string representation.'
             !alg.name.isEmpty()
             !alg.toString().isEmpty()
@@ -41,8 +41,8 @@ class Backend_Algorithm_AD_Spec extends Specification
             alg << Neureka.get().backend()
                     .getOperations()
                     .stream()
-                    .filter( e -> e.isOperator() && e.getOperator().length()==1 && e.supports( BiElementWise.class ) )
-                    .map( e -> e.getAlgorithm( BiElementWise.class ) )
+                    .filter( e -> e.isOperator() && e.getOperator().length()==1 && e.supports( BiElementwise.class ) )
+                    .map( e -> e.getAlgorithm( BiElementwise.class ) )
     }
 
 
@@ -56,7 +56,7 @@ class Backend_Algorithm_AD_Spec extends Specification
         expect : 'The algorithm is not null.'
             alg != null
         and : 'The algorithm is a activation algorithm.'
-            alg instanceof Activation
+            alg instanceof ElementwiseAlgorithm
         and : 'It has a non empty name and string representation.'
             !alg.name.isEmpty()
             !alg.toString().isEmpty()
@@ -75,8 +75,8 @@ class Backend_Algorithm_AD_Spec extends Specification
             alg << Neureka.get().backend()
                     .getOperations()
                     .stream()
-                    .filter( e -> e.supports( Activation.class ) )
-                    .map( e -> e.getAlgorithm( Activation.class ) )
+                    .filter( e -> e.supports( ElementwiseAlgorithm.class ) )
+                    .map( e -> e.getAlgorithm( ElementwiseAlgorithm.class ) )
     }
 
     def 'Convolution implementations behave as expected.'( Algorithm alg )

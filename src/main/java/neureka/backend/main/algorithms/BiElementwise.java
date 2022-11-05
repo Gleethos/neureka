@@ -5,14 +5,13 @@ import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
-import neureka.backend.main.internal.FinalExecutor;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.NDimensional;
 
-public final class BiElementWise extends AbstractFunDeviceAlgorithm<BiElementWise>
+public final class BiElementwise extends AbstractFunDeviceAlgorithm<BiElementwise>
 {
-    public BiElementWise() {
+    public BiElementwise() {
         super("elementwise");
         setIsSuitableFor(
             call -> call

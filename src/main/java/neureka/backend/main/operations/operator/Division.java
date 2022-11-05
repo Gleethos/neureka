@@ -12,9 +12,9 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.BiElementwise;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -40,8 +40,8 @@ public class Division extends AbstractOperation
         );
 
         setAlgorithm(
-            BiElementWise.class,
-            new BiElementWise()
+            BiElementwise.class,
+            new BiElementwise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -74,8 +74,8 @@ public class Division extends AbstractOperation
         );
 
         setAlgorithm(
-            Scalarization.class,
-            new Scalarization()
+            BiScalarBroadcast.class,
+            new BiScalarBroadcast()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))

@@ -196,38 +196,38 @@ public final class CLBackend implements BackendExtension
     private void _load( ReceiveForDevice<OpenCLDevice> receive )
     {
         receive.forOperation( Power.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastPower( context.getOperationIdentidier() ) )
+                .set( BiScalarBroadcast.class, context -> new CLScalarBroadcastPower( context.getOperationIdentidier() ) )
                 .set( Broadcast.class,     context -> new CLBroadcastPower( context.getOperationIdentidier() )       )
-                .set( BiElementWise.class, context -> new CLBiElementwisePower( context.getOperationIdentidier() )   );
+                .set( BiElementwise.class, context -> new CLBiElementwisePower( context.getOperationIdentidier() )   );
 
         receive.forOperation( Addition.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastAddition(context.getOperationIdentidier()) )
+                .set( BiScalarBroadcast.class, context -> new CLScalarBroadcastAddition(context.getOperationIdentidier()) )
                 .set( Broadcast.class,     context -> new CLBroadcastAddition( context.getOperationIdentidier() )       )
-                .set( BiElementWise.class, context -> new CLBiElementwiseAddition( context.getOperationIdentidier() ));
+                .set( BiElementwise.class, context -> new CLBiElementwiseAddition( context.getOperationIdentidier() ));
 
         receive.forOperation( Subtraction.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastSubtraction( context.getOperationIdentidier() ) )
+                .set( BiScalarBroadcast.class, context -> new CLScalarBroadcastSubtraction( context.getOperationIdentidier() ) )
                 .set( Broadcast.class,     context -> new CLBroadcastSubtraction( context.getOperationIdentidier() )       )
-                .set( BiElementWise.class, context -> new CLBiElementwiseSubtraction( context.getOperationIdentidier() ) );
+                .set( BiElementwise.class, context -> new CLBiElementwiseSubtraction( context.getOperationIdentidier() ) );
 
         receive.forOperation( Multiplication.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastMultiplication( context.getOperationIdentidier() ) )
+                .set( BiScalarBroadcast.class, context -> new CLScalarBroadcastMultiplication( context.getOperationIdentidier() ) )
                 .set( Broadcast.class,     context -> new CLBroadcastMultiplication( context.getOperationIdentidier() )       )
-                .set( BiElementWise.class, context -> new CLBiElementwiseMultiplication( context.getOperationIdentidier() ) );
+                .set( BiElementwise.class, context -> new CLBiElementwiseMultiplication( context.getOperationIdentidier() ) );
 
         receive.forOperation( Division.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastDivision( context.getOperationIdentidier() ) )
+                .set( BiScalarBroadcast.class, context -> new CLScalarBroadcastDivision( context.getOperationIdentidier() ) )
                 .set( Broadcast.class,     context -> new CLBroadcastDivision( context.getOperationIdentidier() )       )
-                .set( BiElementWise.class, context -> new CLBiElementwiseDivision( context.getOperationIdentidier() ) );
+                .set( BiElementwise.class, context -> new CLBiElementwiseDivision( context.getOperationIdentidier() ) );
 
         receive.forOperation( Modulo.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastModulo( context.getOperationIdentidier() ) )
+                .set( BiScalarBroadcast.class, context -> new CLScalarBroadcastModulo( context.getOperationIdentidier() ) )
                 .set( Broadcast.class,     context -> new CLBroadcastModulo( context.getOperationIdentidier() )       )
-                .set( BiElementWise.class, context -> new CLBiElementwiseModulo( context.getOperationIdentidier() ) );
+                .set( BiElementwise.class, context -> new CLBiElementwiseModulo( context.getOperationIdentidier() ) );
 
         receive.forOperation( AssignLeft.class )
-                .set( Scalarization.class, context -> new CLScalarBroadcastIdentity( context.getOperationIdentidier() ) )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.IDENTITY ) );
+                .set( BiScalarBroadcast.class, context -> new CLScalarBroadcastIdentity( context.getOperationIdentidier() ) )
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.IDENTITY ) );
 
         receive.forOperation( Convolution.class )
                 .set( NDConvolution.class, context -> new CLConvolution( context.getOperationIdentidier() ) );
@@ -243,75 +243,75 @@ public final class CLBackend implements BackendExtension
                 .set( SumAlgorithm.class, context -> new CLSum() );
 
         receive.forOperation( Absolute.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.ABSOLUTE) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.ABSOLUTE) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.ABSOLUTE) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.ABSOLUTE) );
         receive.forOperation( Cosinus.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.COSINUS) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.COSINUS) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.COSINUS) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.COSINUS) );
         receive.forOperation( GaSU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GASU) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GASU) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.GASU) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.GASU) );
         receive.forOperation( GaTU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GATU) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GATU) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.GATU) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.GATU) );
         receive.forOperation( Gaussian.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GAUSSIAN) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GAUSSIAN) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.GAUSSIAN) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.GAUSSIAN) );
         receive.forOperation( GaussianFast.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GAUSSIAN_FAST) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.GAUSSIAN_FAST) );
         receive.forOperation( GeLU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.GELU) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.GELU) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.GELU) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.GELU) );
         receive.forOperation( Identity.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.IDENTITY) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.IDENTITY) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.IDENTITY) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.IDENTITY) );
         receive.forOperation( Logarithm.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.LOGARITHM) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.LOGARITHM) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.LOGARITHM) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.LOGARITHM) );
         receive.forOperation( Quadratic.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.QUADRATIC) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.QUADRATIC) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.QUADRATIC) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.QUADRATIC) );
         receive.forOperation( ReLU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.RELU) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.RELU) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.RELU) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.RELU) );
         receive.forOperation( SeLU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SELU) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SELU) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.SELU) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.SELU) );
         receive.forOperation( Sigmoid.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SIGMOID) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SIGMOID) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.SIGMOID) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.SIGMOID) );
         receive.forOperation( SiLU.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SILU) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SILU) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.SILU) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.SILU) );
         receive.forOperation( Sinus.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SINUS) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SINUS) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.SINUS) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.SINUS) );
         receive.forOperation( Softplus.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SOFTPLUS) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SOFTPLUS) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.SOFTPLUS) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.SOFTPLUS) );
         receive.forOperation( Softsign.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SOFTSIGN) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SOFTSIGN) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.SOFTSIGN) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.SOFTSIGN) );
         receive.forOperation( Tanh.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.TANH) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.TANH) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.TANH) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.TANH) );
         receive.forOperation( TanhFast.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.TANH_FAST) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.TANH_FAST) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.TANH_FAST) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.TANH_FAST) );
 
         receive.forOperation( Exp.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.EXP) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.EXP) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.EXP) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.EXP) );
         receive.forOperation( Cbrt.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.CBRT) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.CBRT) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.CBRT) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.CBRT) );
         receive.forOperation( Log10.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.LOG10) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.LOG10) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.LOG10) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.LOG10) );
         receive.forOperation( Sqrt.class )
-                .set( Activation.class, context -> new CLElementwiseFunction( ScalarFun.SQRT) )
-                .set( ScalarActivation.class, context -> new CLScalarFunction(ScalarFun.SQRT) );
+                .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.SQRT) )
+                .set( ScalarAlgorithm.class, context -> new CLScalarFunction(ScalarFun.SQRT) );
     }
 
 }

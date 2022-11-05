@@ -11,9 +11,9 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.BiElementwise;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -40,8 +40,8 @@ public class Power extends AbstractOperation
         // DEFAULT OPERATION :
 
 
-        setAlgorithm(BiElementWise.class,
-            new BiElementWise()
+        setAlgorithm(BiElementwise.class,
+            new BiElementwise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -69,8 +69,8 @@ public class Power extends AbstractOperation
         );
 
         setAlgorithm(
-            Scalarization.class,
-            new Scalarization()
+            BiScalarBroadcast.class,
+            new BiScalarBroadcast()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setExecution(

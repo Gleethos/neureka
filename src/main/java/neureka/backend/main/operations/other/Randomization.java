@@ -8,7 +8,7 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Activation;
+import neureka.backend.main.algorithms.ElementwiseAlgorithm;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -49,7 +49,7 @@ public class Randomization extends AbstractOperation
         );
 
         setAlgorithm(
-            new Activation()
+            new ElementwiseAlgorithm()
                 .setIsSuitableFor(
                     call -> call.validate()
                             .allNotNull( t ->

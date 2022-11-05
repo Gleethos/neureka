@@ -9,8 +9,8 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Activation;
-import neureka.backend.main.algorithms.Scalarization;
+import neureka.backend.main.algorithms.ElementwiseAlgorithm;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -30,8 +30,8 @@ public class AssignLeft extends AbstractOperation
         );
 
         setAlgorithm(
-            Scalarization.class,
-            new Scalarization()
+            BiScalarBroadcast.class,
+            new BiScalarBroadcast()
             .setIsSuitableFor(
                call -> {
                    if ( call.arity() > 3 )
@@ -71,7 +71,7 @@ public class AssignLeft extends AbstractOperation
         );
 
         setAlgorithm(
-            new Activation()
+            new ElementwiseAlgorithm()
             .setIsSuitableFor(
                 call -> call.validate()
                         .allNotNull( t -> t.getDataType().typeClassImplements(Object.class) )

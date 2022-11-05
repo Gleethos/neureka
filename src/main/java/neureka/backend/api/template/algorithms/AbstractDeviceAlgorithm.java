@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
-import neureka.backend.main.algorithms.Activation;
+import neureka.backend.main.algorithms.ElementwiseAlgorithm;
 import neureka.backend.main.internal.FinalExecutor;
 import neureka.backend.main.memory.MemUtil;
 import neureka.calculus.Function;
@@ -219,7 +219,7 @@ implements DeviceAlgorithm<C>
                 !isFlat && j < 0 && (
                         call.getOperation().isOperator()
                                 ||
-                        call.getOperation().supportsAlgorithm(Activation.class)
+                        call.getOperation().supportsAlgorithm(ElementwiseAlgorithm.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
             String asStr = call.getOperation().stringify(

@@ -10,8 +10,8 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Activation;
-import neureka.backend.main.algorithms.ScalarActivation;
+import neureka.backend.main.algorithms.ElementwiseAlgorithm;
+import neureka.backend.main.algorithms.ScalarAlgorithm;
 import neureka.backend.main.algorithms.ScalarBroadcast;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.scalar.CPUScalarBroadcastFunction;
@@ -37,36 +37,21 @@ abstract class AbstractActivationOperation extends AbstractOperation
                 .isDifferentiable( true          )
                 .isInline(         false         )
         );
+
         _fun = fun;
+
         setAlgorithm(
-            new Activation()
+            new ElementwiseAlgorithm()
                 .setSupplyADActionFor( getDefaultAlgorithm() )
                 .buildFunAlgorithm()
         );
 
         setAlgorithm(
-            new ScalarBroadcast(fun)
-            .setAutogradModeFor(
-                    call -> call
-                            .validate().allNotNullHaveSame(NDimensional::shape)
-                            .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
-                            .orElse(AutoDiffMode.BACKWARD_ONLY)
-            )
-            .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
-            .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUScalarBroadcastFunction( fun ) )
+            new ScalarBroadcast(fun).buildFunAlgorithm()
         );
 
         setAlgorithm(
-            new ScalarActivation()
-            .setAutogradModeFor(
-                call -> call
-                        .validate().allNotNullHaveSame(NDimensional::shape)
-                        .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
-                        .orElse(AutoDiffMode.BACKWARD_ONLY)
-            )
-            .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
-            .buildFunAlgorithm()
+            new ScalarAlgorithm().buildFunAlgorithm()
         );
     }
 

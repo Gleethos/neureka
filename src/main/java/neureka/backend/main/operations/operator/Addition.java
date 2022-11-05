@@ -10,9 +10,9 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.BiElementwise;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -40,7 +40,7 @@ public class Addition extends AbstractOperation {
         );
 
         setAlgorithm(
-            new BiElementWise()
+            new BiElementwise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
@@ -62,7 +62,7 @@ public class Addition extends AbstractOperation {
         );
 
         setAlgorithm(
-            new Scalarization()
+            new BiScalarBroadcast()
             .setExecution(
                 (iniCaller, iniCall) ->
                     Result.of(AbstractDeviceAlgorithm.prepareAndExecute( iniCall, AbstractDeviceAlgorithm::executeDeviceAlgorithm))
