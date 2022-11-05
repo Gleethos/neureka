@@ -298,23 +298,24 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param e This is an error value passed to this method ba a backward traversal.
      */
     private void _migrateAndOrApplyError( Tsr<V> e, Consumer<Tsr<V>> also ) {
-        Tsr<V> payload = getPayload();
-        if ( payload == null ) return; // Garbage collected!
-        try {
-            if ( payload.isOutsourced() ) payload.getDevice().store( e );
-        } catch ( Exception exception ) {
-            if ( payload.isUndefined() ) {
-                throw new IllegalStateException(
-                        "An undefined payload tensor has been detected inside the computation graph!\n" +
-                        "This is most likely due to an error occurring during tensor identity transfer (Also see AbstractComponentOwner).\n" +
-                        "One type of constructor in the 'Tsr' class enables passing a String expression for execution, " +
-                        "whose resulting tensor needs to be merged into the newly created one..."
-                );
+        this.getPayload().ifPresent( payload -> {
+            // It was not garbage collected:
+            try {
+                if ( payload.isOutsourced() ) payload.getDevice().store( e );
+            } catch ( Exception exception ) {
+                if ( payload.isUndefined() ) {
+                    throw new IllegalStateException(
+                            "An undefined payload tensor has been detected inside the computation graph!\n" +
+                                    "This is most likely due to an error occurring during tensor identity transfer (Also see AbstractComponentOwner).\n" +
+                                    "One type of constructor in the 'Tsr' class enables passing a String expression for execution, " +
+                                    "whose resulting tensor needs to be merged into the newly created one..."
+                    );
+                }
+                else exception.printStackTrace();
             }
-            else exception.printStackTrace();
-        }
-        if ( payload.rqsGradient() ) payload.getMut().addToGradient( e );
-        if ( also != null ) also.accept( payload );
+            if ( payload.rqsGradient() ) payload.getMut().addToGradient( e );
+            if ( also != null ) also.accept( payload );
+        });
     }
 
 
@@ -392,7 +393,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return The tensor payload of this graph-node.
      */
-    public Tsr<V> getPayload() { return _nodePayload.getPayload(); }
+    public Optional<Tsr<V>> getPayload() { return Optional.ofNullable(_nodePayload.getPayload()); }
 
     @Override
     public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
@@ -501,12 +502,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private void _carryPendingBackPropToGradients( Set<GraphNode<V>> pendingBackProp ) {
         _reliesOnJustInTimeProp = true; //:=> Shall be traversed at a later point in time...
         this.forEachTarget( t -> t._carryPendingBackPropToGradients( pendingBackProp ) );
-        if ( this.isLeave() && getPayload().rqsGradient() ) {
-            JITProp<V> jit = getPayload().get( JITProp.class );
-            if ( jit == null ) jit = new JITProp<>( pendingBackProp );
-            else jit.addPending( pendingBackProp );
-            getPayload().set( jit );
-        }
+        this.getPayload().ifPresent( p -> {
+            if ( this.isLeave() && p.rqsGradient() ) {
+                JITProp<V> jit = p.get( JITProp.class );
+                if ( jit == null ) jit = new JITProp<>( pendingBackProp );
+                else jit.addPending( pendingBackProp );
+                p.set( jit );
+            }
+        });
     }
 
     /**
@@ -785,9 +788,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 .map( WeakReference::get )
                 .filter( Objects::nonNull )
                 .mapToInt( n -> {
-                    int count = 0;
-                    Tsr<V> payload = n.getPayload();
-                    if ( payload != null && !payload.isDeleted() ) count++;
+                    int count = n.getPayload().map( p -> !p.isDeleted() ? 1 : 0 ).orElse( 0 );
                     return count + n._numberOfExistingAncestors();
                 })
                 .sum();
@@ -826,8 +827,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
         String type = "";
         if ( this.isLeave() ) type += "LEAVE";
         else type += "BRANCH";
-        if ( getPayload() == null ) type = type + " DELETED";
-        else if ( getPayload().rqsGradient() ) type += " RQS GRADIENT";
+        type += this.getPayload()
+                    .filter( p -> !p.isDeleted() )
+                    .map( p -> p.rqsGradient() ? " RQS GRADIENT" : "" )
+                    .orElse(" DELETED");
         return type;
     }
 
@@ -842,11 +845,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public String toString( Print mode ) {
         LogUtil.nullArgCheck( mode, "mode", Print.class );
-        Tsr<?> payload = getPayload();
+        Optional<Tsr<V>> payload = getPayload();
         switch ( mode ) {
             case SIMPLE:
                 return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
-                        "parents=[" + (_parents == null ? "?" : Arrays.stream(_parents).map(GraphNode::getPayload).map(t -> (t==null ? "?" : t.shape().stream().map(Object::toString).collect(Collectors.joining("x")))).collect(Collectors.joining(", "))) + "]," +
+                        "parents=[" + ( _parentsToString() ) + "]," +
                         "function=" +_function + "," +
                         "shape=" + (getPayloadShape() != null ? getPayloadShape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
                         "]";
@@ -859,9 +862,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 return " " + nid + "[ "
                         + ( _function == null ? "" : _function + " => " )
                         + (
-                        payload == null
-                                ? "?"
-                                : payload.toString(
+                            payload.map( p -> p.toString(
                                 settings -> settings
                                         .setRowLimit(  3  )
                                         .setIsScientific(  true   )
@@ -876,13 +877,29 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                         .setPostfix(  ""      )
                                         .setPrefix(  ""      )
                                         .setHasSlimNumbers(  false      )
-                        )
-                ) +
-                ", type='" + this.type() + "'" +
-                "] ";
+                                )
+                            ).orElse("?")
+                        ) +
+                        ", type='" + this.type() + "'" +
+                        "] ";
         }
 
         throw new IllegalStateException();
+    }
+
+    private String _parentsToString() {
+        return
+            Optional.ofNullable( _parents ).map( parents ->
+                Arrays.stream(_parents)
+                .map(GraphNode::getPayload)
+                .map( p ->
+                    p.filter( t -> !t.isDeleted() )
+                    .map( t->t.shape().stream().map(Object::toString).collect(Collectors.joining("x")))
+                    .orElse("?")
+                )
+                .collect(Collectors.joining(", "))
+            )
+            .orElse("?");
     }
 
     /**

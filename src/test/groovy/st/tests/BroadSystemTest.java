@@ -626,7 +626,7 @@ public class BroadSystemTest
                         //"deleted",
                         //"(I[0] * -1.0) => deleted, type='BRANCH'"
                         "(I[0] * -1.0) =>",
-                        "type='LEAVE'",
+                        "type='LEAVE DELETED'",
                         "[1]:(2.0), type='LEAVE RQS GRADIENT'"
                 },
                 "Testing 'toString' of GraphNode");

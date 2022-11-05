@@ -124,7 +124,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             (2..3) * function.getOperation() >> type
             (1..3) * type.getIdentifier() >> "SOME_TEST_FUNCTION_STRING"
             0 * type.getOperator() >> "*"
-            0 * inputsNodeMock.getPayload() >> payload
+            0 * inputsNodeMock.getPayload() >> Optional.of(payload)
             0 * payload.hashCode() >> 3
 
     }

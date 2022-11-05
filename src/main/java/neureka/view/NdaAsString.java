@@ -319,7 +319,7 @@ public final class NdaAsString
                         base + delimiter + agent.partialDerivative().get().toString( _config.clone().setPrefix("").setPostfix("") ) + " " +
                         base + half + "]|:t{ " +
                         base + delimiter + (
-                            ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix("").setPostfix("") ) : t.toString()
+                            t.getPayload().map( p -> p.toString( _config.clone().setPrefix("").setPostfix("") ) ).orElse( t.toString() )
                         ) +
                         " " + base + half + "}, "
                     );

@@ -80,7 +80,7 @@ class AD_And_Computation_Graph_Spec extends Specification
             Tsr<Double> d = b ** c
             Tsr<Double> e = d * c
             GraphNode n = e.get( GraphNode.class )
-            var strongRefs = n.parents.collect { it.payload }
+            var strongRefs = n.parents.collect { it.payload.get() }
 
         expect :
             n.parents[0].isCacheable()
@@ -91,7 +91,7 @@ class AD_And_Computation_Graph_Spec extends Specification
 
         and :
             for ( int i = 0; i < n.parents.size(); i++ ) {
-                assert n.parents[ i ].payload != null
+                assert n.parents[ i ].payload.isPresent()
                 boolean[] exists = {false}
                 n.parents[ i ].forEachTarget({ t -> exists[0] = true })
                 assert exists[0]
@@ -106,16 +106,16 @@ class AD_And_Computation_Graph_Spec extends Specification
             e = null
             System.gc()
             Sleep.until(220, {
-                n.parents.every {it.payload == null && !it.hasDerivatives()}
+                n.parents.every {!it.payload.isPresent() && !it.hasDerivatives()}
             })
             System.gc()
             Sleep.until(220, {
-                n.parents.every {it.payload == null && !it.hasDerivatives()}
+                n.parents.every {!it.payload.isPresent() && !it.hasDerivatives()}
             })
 
         then :
             for ( GraphNode p : n.parents ) {
-                assert p.payload == null
+                assert !p.payload.isPresent()
                 assert !p.hasDerivatives()
             }
     }
