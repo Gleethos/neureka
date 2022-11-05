@@ -55,25 +55,7 @@ public class Addition extends AbstractOperation {
                         throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                     Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                     assert ctxDerivative == null;
-                    int d = call.getDerivativeIndex();
-                    Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
-                    Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
-                    Device device = call.getDeviceFor(Number.class);
-                    return ADAction.of(
-                                target ->
-                                    this.getAlgorithm( Broadcast.class )
-                                         .getImplementationFor( device )
-                                         .run(
-                                             ExecutionCall.of(
-                                                 toBeDerived.mut().setIsVirtual(false),
-                                                 derivative,
-                                                 target.error()
-                                             )
-                                             .andArgs( Arg.DerivIdx.of(d) )
-                                             .running( this )
-                                             .on( device )
-                                         )
-                            );
+                    return _autogradBroadcast( call );
                 }
             )
             .buildFunAlgorithm()
@@ -81,9 +63,43 @@ public class Addition extends AbstractOperation {
 
         setAlgorithm(
             new Scalarization()
-            .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
+            .setExecution( (iniCaller, iniCall) ->
+                    Result.of(
+                        AbstractDeviceAlgorithm.executeFor(iniCaller, iniCall, AbstractDeviceAlgorithm::executeDeviceAlgorithm))
+                        .withAutoDiff( (caller, call) -> {
+                            if ( call.getDerivativeIndex() >= 0 && call.arity() >= 2 ) {
+                                int offset = call.input(0) == null ? 1 : 0;
+                                boolean thisIsBroadcasting = !call.input(offset).shape().equals(call.input(offset + 1).shape());
+                                if ( thisIsBroadcasting )
+                                    return _autogradBroadcast( call );
+                            }
+                            return FallbackAlgorithm.ADAction(caller, call);
+                        } )
+            )
             .buildFunAlgorithm()
         );
+    }
+
+    private ADAction _autogradBroadcast(ExecutionCall<? extends Device<?>> call) {
+        int d = call.getDerivativeIndex();
+        Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
+        Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
+        Device device = call.getDeviceFor(Number.class);
+        return ADAction.of(
+                target ->
+                        this.getAlgorithm( Broadcast.class )
+                                .getImplementationFor( device )
+                                .run(
+                                        ExecutionCall.of(
+                                                        toBeDerived.mut().setIsVirtual(false),
+                                                        derivative,
+                                                        target.error()
+                                                )
+                                                .andArgs( Arg.DerivIdx.of(d) )
+                                                .running( this )
+                                                .on( device )
+                                )
+                );
     }
 
     @Override
