@@ -730,9 +730,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * Recorded Function which produced this {@link GraphNode}.
      */
-    public Function getFunction() { return _function; }
+    public Optional<Function> getFunction() { return Optional.ofNullable( _function ); }
 
-    public List<GraphNode<V>> getParents() { return Arrays.asList( _parents ); }
+    public List<GraphNode<V>> getParents() { return _parents == null ? Collections.emptyList() : Arrays.asList( _parents ); }
 
     /**
      *  This variable holds a copy of the version of the payload tensor
