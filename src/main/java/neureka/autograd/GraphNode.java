@@ -716,7 +716,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * Used by the Just-In-Time back-prop component.
      */
-    public PendingError<V> getPendingError() { return _pendingError; }
+    public Optional<PendingError<V>> getPendingError() { return Optional.ofNullable( _pendingError ); }
 
     /**
      * The chain-rule states that the derivative of f(x) = h(g(x)) with respect to x is: g'(x) * h'(g(x))

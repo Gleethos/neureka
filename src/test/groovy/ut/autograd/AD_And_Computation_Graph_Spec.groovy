@@ -31,8 +31,8 @@ class AD_And_Computation_Graph_Spec extends Specification
         })
     }
 
-    def "Reshaping produces expected computation graph and also works with reverse mode AD."(){
-
+    def "Reshaping produces expected computation graph and also works with reverse mode AD."()
+    {
         given :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             Tsr<Double> a = Tsr.of([2, 3], [
@@ -59,6 +59,8 @@ class AD_And_Computation_Graph_Spec extends Specification
             b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
             na.isLeave()
             !na.function.isPresent()
+            na.parents == []
+            !na.pendingError.isPresent()
             na.getMode() == 1
         and : 'We expect the partial derivative to be cleaned up! (size == 0)'
             na.size()==0
