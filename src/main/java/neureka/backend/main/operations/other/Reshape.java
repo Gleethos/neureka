@@ -162,12 +162,12 @@ public class Reshape extends AbstractOperation
         if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {
             throw new IllegalArgumentException(
                     "New shape does not match tensor size!" +
-                            " (" +
+                    " (" +
                             NDUtil.shapeString( newShp ) +
                             ((NDConfiguration.Utility.sizeOfShape( newShp ) < t.size()) ? "<" : ">") +
                             NDUtil.shapeString(t.getNDConf().shape()) + "" +
-                            ")"
-            );
+                    ")"
+                );
         }
     }
     

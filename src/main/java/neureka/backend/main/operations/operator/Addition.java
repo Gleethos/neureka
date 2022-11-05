@@ -91,12 +91,19 @@ public class Addition extends AbstractOperation {
     {
         int d = call.getDerivativeIndex();
         if ( caller.isFlat() ) {
-            if ( d >= 0 ) {
-                if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
-                    throw new IllegalArgumentException("The shapes of the operands of the addition operation must be equal! (when deriving nested functions)");
-
+            if ( d >= 0 && call.arity() >= 2 ) {
+                int offset = call.input( 0 ) == null ? 1 : 0;
+                boolean thisIsBroadcasting = !call.input( offset ).shape().equals( call.input( offset + 1 ).shape() );
+                if ( thisIsBroadcasting ) {
+                    /*
+                        In autograd broadcasting is similar to matrix multiplication.
+                        If the derivative index is 0 then the second operand is used for backward broadcasting.
+                        If the derivative index is 1 then the first operand is used for backward broadcasting.
+                     */
+                    return Result.of( call.input( d == 0 ? 1 : 0 ) );
+                }
                 int j = call.getValOf(Arg.VarIdx.class);
-                Tsr<?> template = call.input(0) == null ? call.input(1) : call.input(0);
+                Tsr<?> template = call.input( offset + d );
                 long dependencies = caller.getSubFunctions()
                                             .stream()
                                             .filter( f -> f.dependsOn(d) && j < 0 || (j == d && f.dependsOn(d)))

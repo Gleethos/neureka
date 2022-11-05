@@ -378,6 +378,39 @@ class Tensor_Operation_Spec extends Specification
             'GPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' })
+    def 'Scalar broadcasting works across devices.'(
+            String device,
+            Class<Object> type,
+            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation,
+            String cValue
+    ) {
+        given :
+            var a = Tsr.of(type).withShape(3, 2).andFill(-4..4).to(Device.get(device))
+            var b = Tsr.of(type).withShape(1, 1).andFill(3).to(Device.get(device))
+
+        expect :
+            a.itemType == type
+            b.itemType == type
+
+        when :
+            Tsr c = operation.apply(a, b)
+        then :
+            c.toString() == "(3x2):[$cValue]"
+
+        where:
+            device | type    |    operation      ||     cValue
+            'CPU'  | Double  | { x, y -> x + y } || "-1.0, 0.0, 1.0, 2.0, 3.0, 4.0"
+            //'GPU'  | Double  | { x, y -> x + y } || "-1.0, 0.0, 1.0, 2.0, 3.0, 4.0"
+            'CPU'  | Float   | { x, y -> x + y } || "-1.0, 0.0, 1.0, 2.0, 3.0, 4.0"
+            'GPU'  | Float   | { x, y -> x + y } || "-1.0, 0.0, 1.0, 2.0, 3.0, 4.0"
+            'CPU'  | Long    | { x, y -> x + y } || "-1, 0, 1, 2, 3, 4"
+            //'GPU'  | Long    | { x, y -> x + y } || "-1, 0, 1, 2, 3, 4"
+            'CPU'  | Integer | { x, y -> x + y } || "-1, 0, 1, 2, 3, 4"
+            //'GPU'  | Integer | { x, y -> x + y } || "-1, 0, 1, 2, 3, 4"
+
+    }
+
     def 'Operators "+,*,**" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'

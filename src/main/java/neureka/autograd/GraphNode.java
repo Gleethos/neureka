@@ -462,7 +462,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @param error A tensor which traverses the computation graph according to the rules of reverse mode AutoDiff.
      */
-    private void _backward(Tsr<V> error, Set<GraphNode<V>> pendingNodes, boolean allowPendingError )
+    private void _backward( Tsr<V> error, Set<GraphNode<V>> pendingNodes, boolean allowPendingError )
     {
         _migrateAndOrApplyError( error, null );
         if ( this.usesAD() ) {
@@ -653,12 +653,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * @param action The action which ought to be applied to each target {@link GraphNode} / {@link ADAction} pair.
      */
-    public void forEachTargetActionPair(BiConsumer<BackPropTargets<V>, ADAction> action ) {
+    public void forEachTargetActionPair( BiConsumer<BackPropTargets<V>, ADAction> action ) {
         if ( _targetsToAgents == null ) return;
-        new ArrayList<>(_targetsToAgents)
-                .forEach(
-                    ( ref ) -> ref.actions().forEach(a -> action.accept( ref, a ) )
-                );
+        new ArrayList<>( _targetsToAgents )
+                .forEach( ref  -> ref.actions().forEach(a -> action.accept( ref, a ) ) );
     }
 
 

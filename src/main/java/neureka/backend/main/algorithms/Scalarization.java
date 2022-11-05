@@ -13,37 +13,34 @@ public class Scalarization extends AbstractFunDeviceAlgorithm<Scalarization>
         super("scalarization");
         setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD );
         setIsSuitableFor( call ->
-            call.validate()
-                .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                //.first( Objects::isNull )
-                .tensors( tensors ->  {
-                    if ( tensors.length != 2 && tensors.length != 3 ) return false;
-                    int offset = ( tensors.length == 2 ? 0 : 1 );
-                    if ( tensors[1+offset].size() > 1 && !tensors[1+offset].isVirtual() ) return false;
-                    return
-                        (tensors.length == 2 && tensors[0] == null && tensors[1] != null)
-                        ||
-                        //tensors[1+offset].shape().stream().allMatch( d -> d == 1 )
-                        //||
-                        tensors[offset].shape().equals(tensors[1+offset].shape());
-                })
-                .suitabilityIfValid( SuitabilityPredicate.VERY_GOOD )
+                call.validate()
+                    .allNotNull(t -> t.getDataType().typeClassImplements(NumericType.class))
+                    .tensors(tensors -> {
+                        if (tensors.length != 2 && tensors.length != 3) return false;
+                        int offset = ( tensors.length -2 );
+                        if (tensors[1 + offset].size() > 1 && !tensors[1 + offset].isVirtual()) return false;
+                        return
+                            (tensors.length == 2 && tensors[0] != null && tensors[1] != null)
+                                    ||
+                            (tensors.length == 3 && tensors[1] != null && tensors[2] != null);
+                    })
+                    .suitabilityIfValid(SuitabilityPredicate.VERY_GOOD)
         );
         setCallPreparation(
             call -> {
+                int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );
                 Device<Number> device = call.getDeviceFor(Number.class);
-                assert call.input( 0 ) == null;  // Creating a new tensor:
-
-                int[] outShape = call.input( 1 ).getNDConf().shape();
-                Class<Object> type = (Class<Object>) call.input( 1 ).getItemType();
+                int[] outShape = call.input( offset ).getNDConf().shape();
+                Class<Object> type = (Class<Object>) call.input( offset ).getItemType();
                 Tsr output = Tsr.of( type, outShape, 0.0 ).mut().setIsIntermediate( true );
                 output.mut().setIsVirtual( false );
-                try {
-                    device.store( output );
-                } catch( Exception e ) {
-                    e.printStackTrace();
+                device.store( output );
+                if ( call.arity() == 3 ) {
+                    assert call.input( 0 ) == null;
+                    return call.withInputAt( 0, output );
                 }
-                return call.withInputAt( 0, output );
+                else
+                    return call.withAddedInputAt( 0, output );
             }
         );
     }

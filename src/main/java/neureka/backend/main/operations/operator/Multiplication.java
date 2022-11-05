@@ -73,7 +73,6 @@ public class Multiplication extends AbstractOperation
         setAlgorithm(
             Scalarization.class,
             new Scalarization()
-            .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
             .buildFunAlgorithm()
         );

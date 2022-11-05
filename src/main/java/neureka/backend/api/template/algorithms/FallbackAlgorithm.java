@@ -9,9 +9,12 @@ import neureka.backend.api.fun.ADActionSupplier;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.api.Result;
+import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.memory.MemUtil;
+import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.linear.MatMul;
+import neureka.backend.main.operations.operator.Addition;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionParser;
@@ -116,6 +119,31 @@ implements ExecutionPreparation, ADActionSupplier
 
     public static ADAction ADAction( Function function, ExecutionCall<? extends Device<?>> call )
     {
+        if ( call.getDerivativeIndex() >= 0 && call.arity() >= 2 && call.getOperation() instanceof Addition ) {
+            int offset = call.input(0) == null ? 1 : 0;
+            boolean thisIsBroadcasting = !call.input(offset).shape().equals(call.input(offset + 1).shape());
+            if ( thisIsBroadcasting ) {
+                int d = call.getDerivativeIndex();
+                Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input(d == 0 ? 1 : 0), 0);
+                Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input(d), 0);
+                Device device = call.getDeviceFor(Number.class);
+                return ADAction.of(
+                        target ->
+                            call.getOperation().getAlgorithm(Broadcast.class)
+                                .getImplementationFor(device)
+                                .run(
+                                    ExecutionCall.of(
+                                            toBeDerived.mut().setIsVirtual(false),
+                                            derivative,
+                                            target.error()
+                                        )
+                                        .andArgs(Arg.DerivIdx.of(d))
+                                        .running(call.getOperation())
+                                        .on(device)
+                                )
+                );
+            }
+        }
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().backend().getFunction().mul();
         if ( derivative != null )

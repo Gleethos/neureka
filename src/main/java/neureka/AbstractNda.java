@@ -354,7 +354,6 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
         }
         _NDConf = ndConfiguration;
         getDevice().access(this).updateNDConf();
-
     }
 
 }
