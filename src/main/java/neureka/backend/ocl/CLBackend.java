@@ -20,6 +20,7 @@ import neureka.backend.main.operations.linear.XConvRight;
 import neureka.backend.main.operations.linear.internal.opencl.CLSum;
 import neureka.backend.main.operations.operator.*;
 import neureka.backend.main.operations.other.AssignLeft;
+import neureka.backend.main.operations.other.Randomization;
 import neureka.backend.main.operations.other.Sum;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
@@ -241,6 +242,9 @@ public final class CLBackend implements BackendExtension
 
         receive.forOperation( Sum.class )
                 .set( SumAlgorithm.class, context -> new CLSum() );
+
+        receive.forOperation( Randomization.class )
+                .set( ElementwiseAlgorithm.class, context -> new CLRandomization() );
 
         receive.forOperation( Absolute.class )
                 .set( ElementwiseAlgorithm.class, context -> new CLElementwiseFunction( ScalarFun.ABSOLUTE) )

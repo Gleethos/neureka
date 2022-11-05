@@ -13,6 +13,7 @@ import neureka.backend.main.operations.functions.*;
 import neureka.backend.main.operations.linear.*;
 import neureka.backend.main.operations.operator.*;
 import neureka.backend.main.operations.other.AssignLeft;
+import neureka.backend.main.operations.other.Randomization;
 import neureka.backend.main.operations.other.Sum;
 import neureka.backend.main.operations.other.internal.CPUSum;
 import neureka.devices.host.CPU;
@@ -83,6 +84,9 @@ public class CPUBackend implements BackendExtension
 
         receive.forOperation( Sum.class )
                 .set( SumAlgorithm.class, context -> new CPUSum() );
+
+        receive.forOperation( Randomization.class )
+                .set( ElementwiseAlgorithm.class, context -> new CPURandomization() );
 
         receive.forOperation( Absolute.class )
                 .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.ABSOLUTE) )
