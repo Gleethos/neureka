@@ -90,7 +90,7 @@ class AD_And_Computation_Graph_Spec extends Specification
             n.parents[1].isGraphLeave()
 
         and :
-            for ( int i = 0; i < n.parents.length; i++ ) {
+            for ( int i = 0; i < n.parents.size(); i++ ) {
                 assert n.parents[ i ].payload != null
                 boolean[] exists = {false}
                 n.parents[ i ].forEachTarget({ t -> exists[0] = true })

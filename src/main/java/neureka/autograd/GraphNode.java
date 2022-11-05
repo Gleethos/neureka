@@ -101,7 +101,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     private final long _nodeID;
 
-    private boolean _isUsedAsDerivative = false;
+    private int _usedAsDerivative = 0;
 
     private boolean _reliesOnJustInTimeProp = false;
 
@@ -592,7 +592,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private void _informPartialDerivative( ADAction agent ) {
         agent.partialDerivative()
             .ifPresent( d ->  {
-                if ( d.has( GraphNode.class ) ) d.get( GraphNode.class )._isUsedAsDerivative = true;
+                if ( d.has( GraphNode.class ) ) d.get( GraphNode.class )._usedAsDerivative++;
             });
     }
 
@@ -622,7 +622,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public void forEachDerivative( BiConsumer<GraphNode<V>, ADAction> action ) {
         if ( _targetsToAgents == null ) return;
         new ArrayList<>(_targetsToAgents).forEach(
-            ( ref ) -> ref.agents().forEach( a -> action.accept( ref.node(), a ) )
+            ( ref ) -> ref.actions().forEach(a -> action.accept( ref.node(), a ) )
         );
     }
 
@@ -634,7 +634,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( _targetsToAgents == null ) return;
         error.getMut().setIsIntermediate( false );
         new ArrayList<>(_targetsToAgents).forEach( ref -> {
-            for ( ADAction a : ref.agents() )
+            for ( ADAction a : ref.actions() )
                 action.accept( ref.node(), (Tsr<V>) a.act( new ADTarget<>(ref.index(), ref.node(), error) ));
         });
     }
@@ -654,7 +654,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( _targetsToAgents == null ) return;
         new ArrayList<>(_targetsToAgents)
                 .forEach(
-                    ( ref ) -> ref.agents().forEach( a -> action.accept( ref, a ) )
+                    ( ref ) -> ref.actions().forEach(a -> action.accept( ref, a ) )
                 );
     }
 
@@ -722,14 +722,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * f'(x) = (1*y) * (1*z) = z*y
      * The values z,y or z*y must not be deleted as they are needed for back-propagation!
      */
-    public boolean isUsedAsDerivative() { return _isUsedAsDerivative; }
+    public boolean isUsedAsDerivative() { return _usedAsDerivative > 0; }
 
     /**
      * Recorded Function which produced this {@link GraphNode}.
      */
     public Function getFunction() { return _function; }
 
-    public GraphNode<V>[] getParents() { return _parents; }
+    public List<GraphNode<V>> getParents() { return Arrays.asList( _parents ); }
 
     /**
      *  This variable holds a copy of the version of the payload tensor
@@ -746,7 +746,73 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  The children are {@link GraphNode} instances which represent computations
      *  involving the payload of this very {@link GraphNode} instance.
      */
-    public List<WeakReference<GraphNode<V>>> getChildren() { return Collections.unmodifiableList(_children); }
+    public List<WeakReference<GraphNode<V>>> getChildren() {
+        return _children == null ? Collections.emptyList() : Collections.unmodifiableList( _children );
+    }
+
+    public boolean canBeDeleted() {
+        Tsr<V> payload = _nodePayload.getPayload();
+        if ( payload == null ) return true;
+        if ( !isUsedAsDerivative() ) return true;
+        /*
+            This node is a derivative of another node.
+            Should we delete it? Usually not, but if the
+            payload tensor is not used by any other node
+            then we can delete it.
+         */
+        int aliveAncestors = _numberOfExistingAncestors();
+        if ( aliveAncestors > 0 ) {
+            /*
+                This node has ancestors whose "backward()" methods could be called.
+                In this case we must not delete this node, because it might be used!
+             */
+            return false;
+        }
+        else {
+            /*
+                If the number of ancestors is zero then this means that it can most likely be deleted
+                because no ancestors means that theoretically this node is not used as a derivative in the computation...
+                However, it is theoretically possible that this node is used as a derivative
+                in an alternative computation graph which is not connected to this computation graph.
+             */
+            return _numberOfDerivativeUsages(payload) == _usedAsDerivative;
+        }
+    }
+
+    private int _numberOfExistingAncestors() {
+        return getChildren()
+                .stream()
+                .map( WeakReference::get )
+                .filter( Objects::nonNull )
+                .mapToInt( n -> {
+                    int count = 0;
+                    Tsr<V> payload = n.getPayload();
+                    if ( payload != null && !payload.isDeleted() ) count++;
+                    return count + n._numberOfExistingAncestors();
+                })
+                .sum();
+    }
+
+    private long _numberOfDerivativeUsages( Tsr<V> derivative ) {
+        return getChildren()
+                .stream()
+                .map( WeakReference::get )
+                .filter( Objects::nonNull )
+                .mapToLong( n -> {
+                    long usages =
+                            n._targetsToAgents
+                            .stream()
+                            .flatMap( t -> t.actions().stream() )
+                            .map( a -> a.partialDerivative().orElse(null) )
+                            .filter( Objects::nonNull )
+                            .filter( d -> d == derivative )
+                            .count();
+
+                    return usages + n._numberOfDerivativeUsages( derivative );
+                })
+                .sum();
+    }
+
 
     /**
      * @return The long Node-ID (Used for caching to avoid redundant computation within one computation graph)

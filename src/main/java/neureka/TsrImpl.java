@@ -58,7 +58,6 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.memory.MemUtil;
 import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
@@ -85,7 +84,6 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 /**
@@ -449,8 +447,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     private Tsr<V> _delete()
     {
         if ( isDeleted() ) return this;
-        this.find( GraphNode.class ).ifPresent( n -> {
-            if ( n.isUsedAsDerivative() ) {
+        getGraphNode().ifPresent( n -> {
+            if ( !n.canBeDeleted() ) {
                 String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
                 _LOG.error( message );
                 throw new IllegalStateException( message );
@@ -460,10 +458,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         _setData( null );
         _setNDConf( null );
         _flags = 0;
-        this.find( TsrImpl.class ).ifPresent( t -> t.getMut().delete() );
+        this.find( TsrImpl.class ).ifPresent( t -> t.mut().delete() );
         _deleteComponents();
         _flags += IS_DELETED_MASK;
-
         return this;
     }
 

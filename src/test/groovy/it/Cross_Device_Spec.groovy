@@ -97,9 +97,9 @@ class Cross_Device_Spec extends Specification
             )
 
         cleanup:
-            product.getMut().delete()
-            tensor1.getMut().delete()
-            //tensor2.delete() // TODO: FIX EXCEPTION!
+            product.mut.delete()
+            tensor1.mut.delete()
+            tensor2.mut.delete()
 
         where : 'The following settings are being used: '
             deviceType << ['CPU',  'GPU']
@@ -250,7 +250,7 @@ class Cross_Device_Spec extends Specification
             Tsr.ofFloats().scalar(0.9f)| CPU.get()            | Byte.class     | {it*2}   || '(1):[1]'
             Tsr.ofFloats().scalar(3.8f)| CPU.get()            | Short.class    | {it/2}   || '(1):[1]'
 
-            Tsr.ofInts().scalar( 3 )   | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]' 
+            Tsr.ofInts().scalar( 3 )   | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]'
             Tsr.ofInts().scalar(-1 )   | Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
             Tsr.ofInts().scalar( 5 )   | Device.get('first')  | Integer.class  | {it*10}  || '(1):[50]'
             Tsr.ofInts().scalar( 70)   | Device.get('first')  | Long.class     | {it*5}   || '(1):[350]'
