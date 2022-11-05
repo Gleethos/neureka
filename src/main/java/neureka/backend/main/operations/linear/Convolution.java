@@ -110,6 +110,15 @@ public class Convolution extends AbstractOperation
             for ( Tsr<?> t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);
             return this.execute( flat, flatCall );
         }
+        if ( call.getDerivativeIndex() >= 0 ) {
+            int d = call.getDerivativeIndex();
+            /*
+                In autograd convolution is similar to matrix multiplication.
+                If the derivative index is 0 then the second operand is used for backward broadcasting.
+                If the derivative index is 1 then the first operand is used for backward broadcasting.
+             */
+            return Result.of( call.input( d == 0 ? 1 : 0 ) );
+        }
         return super.execute( reducePairwise(caller), call );
     }
 
