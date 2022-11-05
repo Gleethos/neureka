@@ -55,7 +55,7 @@ public class Randomization extends AbstractOperation
                             .basicSuitability()
                 )
                 .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
-                .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
+                .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.prepareAndExecute(call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
                 .setCallPreparation( call ->
                 {
                     if ( call.input( 0 ) == null )
