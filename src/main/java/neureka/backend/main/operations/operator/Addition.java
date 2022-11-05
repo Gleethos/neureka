@@ -63,9 +63,9 @@ public class Addition extends AbstractOperation {
 
         setAlgorithm(
             new Scalarization()
-            .setExecution( (iniCaller, iniCall) ->
-                    Result.of(
-                        AbstractDeviceAlgorithm.executeFor(iniCaller, iniCall, AbstractDeviceAlgorithm::executeDeviceAlgorithm))
+            .setExecution(
+                (iniCaller, iniCall) ->
+                    Result.of(AbstractDeviceAlgorithm.prepareAndExecute( iniCall, AbstractDeviceAlgorithm::executeDeviceAlgorithm))
                         .withAutoDiff( (caller, call) -> {
                             if ( call.getDerivativeIndex() >= 0 && call.arity() >= 2 ) {
                                 int offset = call.input(0) == null ? 1 : 0;
@@ -153,7 +153,13 @@ public class Addition extends AbstractOperation {
                 return addAll.getOperation().execute(addAll, call.withInputs(results).withArgs(Arg.DerivIdx.of(-1)));
             }
         }
-        return super.execute( reducePairwise(caller), call );
+        Function reducedCaller = reducePairwise(caller);
+        ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
+        Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
+        Result r = super.execute( flat, flatCall );
+        //for ( int i = 0; i < flatCall.inputs().length; i++ )
+        //    _deleteIfNotIn(call.inputs(), flatCall.input(i)); // TODO: Make it possible to delete more stuff
+        return r;
     }
 
     private Function reducePairwise( final Function fun ) {
