@@ -2132,7 +2132,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return Neureka.get()
                 .backend()
                 .getAutogradFunction()
-                .conv()
+                .concat()
                 .with(Arg.Axis.of(axis))
                 .call( this, (Tsr<V>) other );
     }

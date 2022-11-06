@@ -55,6 +55,8 @@ public class Functions {
     private final Function _sqrt;
     private final Function _cbrt;
 
+    private final Function _concat;
+
 
     public Functions( boolean doingAD ) {
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
@@ -101,6 +103,7 @@ public class Functions {
         _log10  = Function.of("log10(I[0])",                   doingAD );
         _sqrt  = Function.of("sqrt(I[0])",                     doingAD );
         _cbrt  = Function.of("cbrt(I[0])",                     doingAD );
+        _concat = Function.of("concat(I[0], I[1])",            doingAD );
     }
 
     public final Function getDimTrim() { return _dimTrim; }
@@ -429,6 +432,15 @@ public class Functions {
 
     public final Function cbrt() { return _cbrt; }
 
+    /**
+     * @return The "concat" {@link Function} that concatenates two {@link neureka.Tsr}s alongside a specific axis.
+     */
+    public final Function getConcat() { return _concat; }
+
+    /**
+     * @return The "concat" {@link Function} that concatenates two {@link neureka.Tsr}s alongside a specific axis.
+     */
+    public final Function concat() { return _concat; }
 
     @Override
     public final String toString() {
