@@ -205,6 +205,12 @@ class Tensor_Function_Spec extends Specification
 
     def 'The "DimTrim" operation works forward as well as backward!'()
     {
+        reportInfo """
+            The "DimTrim" operation used to trim the padding of a tensor shape,
+            which are dimensions with a size of 1.
+            So a shape like [1, 3, 1] would be trimmed to [3].
+        """
+
         given :
             var t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)
 
