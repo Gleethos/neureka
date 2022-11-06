@@ -191,12 +191,12 @@ class Tensor_Function_Spec extends Specification
     {
         given :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            Function f = Function.of("[2, 0, 1]:(I[0])")
+            var f = Function.of("[2, 0, 1]:(I[0])")
 
-        when : Tsr t = Tsr.of([3, 4, 2], 1d..5d)
+        when : var t = Tsr.of([3, 4, 2], 1d..5d)
         then : t.toString().contains("[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)")
 
-        when : Tsr r = f(t)
+        when : var r = f(t)
         then :
             r.toString().contains("[2x3x4]")
             r.toString().contains("[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0)")
@@ -206,16 +206,16 @@ class Tensor_Function_Spec extends Specification
     def 'The "DimTrim" operation works forward as well as backward!'()
     {
         given :
-            Tsr t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)
+            var t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)
 
         when :
-            Tsr trimmed = Function.of("dimtrim(I[0])")(t)
+            var trimmed = Function.of("dimtrim(I[0])")(t)
 
         then :
             trimmed.toString().contains("(3x2):[8.0, 8.0, 8.0, 8.0, 8.0, 8.0]; ->d(")
 
         when :
-            Tsr back = trimmed.backward()
+            var back = trimmed.backward()
 
         then :
             back == trimmed
@@ -232,7 +232,7 @@ class Tensor_Function_Spec extends Specification
             These types of methods are the `execute` methods which 
             distinguish themselves in that the tensors returned by 
             these methods are flagged as "intermediate".
-            If a tensor is an intermediate one, it becomes eligable 
+            If a tensor is an intermediate one, it becomes eligible 
             for deletion when consumed by another function.
             Note that internally every function is usually a composite
             of other functions forming a syntax tree which will process
@@ -241,7 +241,7 @@ class Tensor_Function_Spec extends Specification
             When executing a function as a user of Neureka
             one should generally avoid using the `execute` method in order to avoid
             accidental deletion of results.
-            This is mostly relevent for when designing custom operations.
+            This is mostly relevant for when designing custom operations.
         """
         given : 'We create a simple function taking one input.'
             var fun = Function.of('i0 * relu(i0) + 1')
