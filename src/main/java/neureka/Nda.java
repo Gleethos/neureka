@@ -165,8 +165,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  @return The label/name of the nd-array.
      */
     default String getLabel() {
-        String name = ((TsrImpl<?>)this).find(NDFrame.class).map(NDFrame::getLabel).orElse("");
-        return name == null ? "" : name;
+        return ((TsrImpl<?>) this).find(NDFrame.class).map(NDFrame::getLabel).orElse("");
     }
 
     /**
@@ -382,7 +381,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     /**
      * Returns the minimum item of this nd-array according to the provided
      * {@link Comparator}.  This is a special case of a reduction.
-
+     *
      * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
      * @return The minimum value in the nd-array.
      */
@@ -516,12 +515,24 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *
      * @param axis The axis along which the provided nd-arrays should be concatenated.
      *             The axis must be within the range of the rank of the current nd-array.
-     * @param ndArrays The non-null, non-empty nd-arrays which should be concatenated together with the current nd-array.
-     *                 The nd-arrays must have the same shape as the current nd-array, except for the specified axis.
+     * @param other The other nd-arrays which should be concatenated with this nd-array.
+     * @param ndArrays The non-null, non-empty nd-arrays which should be concatenated together with this and the other nd-array.
+     *                 The nd-arrays all must have the same shape as this nd-array, except for the specified axis.
      *                 Also, it must have the same data type as the current nd-array.
      * @return A new nd-array which is the concatenation of the current nd-array and the provided nd-arrays.
      */
-    Nda<V> concatAt( int axis, Nda<V>... ndArrays );
+    Nda<V> concatAt( int axis, Nda<V> other, Nda<V>... ndArrays );
+
+    /**
+     * This method concatenates the provided nd-array together with this nd-array along a specified axis.
+     * The provided nd-array must have the same shape and data type as this nd-array, except for the specified axis.
+     *
+     * @param axis The axis along which the provided nd-arrays should be concatenated.
+     *             The axis must be within the range of the rank of the current nd-array.
+     * @param other The other nd-arrays which should be concatenated with this nd-array.
+     * @return A new nd-array which is the concatenation of the current nd-array and the provided nd-arrays.
+     */
+    Nda<V> concatAt( int axis, Nda<V> other );
 
     /**
      *  The following method enables access to specific scalar elements within the nd-array.

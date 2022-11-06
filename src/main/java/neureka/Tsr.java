@@ -1453,6 +1453,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override Tsr<V> withLabels( Map<Object, List<Object>> labels );
 
+
     /*==================================================================================================================
     |
     |       §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
@@ -1931,7 +1932,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("sig(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>sigmoid function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>sigmoid function</b> applied to the items of this tensor.
      */
     default Tsr<V> sig() { return Neureka.get().backend().getAutogradFunction().sigmoid().call( this ); }
 
@@ -1944,7 +1945,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("tanh(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>tanh function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>tanh function</b> applied to the items of this tensor.
      */
     default Tsr<V> tanh() { return Neureka.get().backend().getAutogradFunction().tanh().call( this ); }
 
@@ -1957,7 +1958,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("relu(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>relu function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>relu function</b> applied to the items of this tensor.
      */
     default Tsr<V> relu() { return Neureka.get().backend().getAutogradFunction().relu().call( this ); }
 
@@ -1970,7 +1971,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("sin(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>sin function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>sin function</b> applied to the items of this tensor.
      */
     default Tsr<V> sin() { return Neureka.get().backend().getAutogradFunction().sin().call( this ); }
 
@@ -1983,7 +1984,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("cos(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>cos function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>cos function</b> applied to the items of this tensor.
      */
     default Tsr<V> cos() { return Neureka.get().backend().getAutogradFunction().cos().call( this ); }
 
@@ -1996,7 +1997,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("ln(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>ln function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>ln function</b> applied to the items of this tensor.
      */
     default Tsr<V> ln() { return Neureka.get().backend().getAutogradFunction().ln().call( this ); }
 
@@ -2009,7 +2010,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("softplus(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>softplus function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>softplus function</b> applied to the items of this tensor.
      */
     default Tsr<V> softplus() { return Neureka.get().backend().getAutogradFunction().softplus().call( this ); }
 
@@ -2022,7 +2023,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("exp(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>exp function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>exp function</b> applied to the items of this tensor.
      */
     default Tsr<V> exp() { return Neureka.get().backend().getAutogradFunction().exp().call( this ); }
 
@@ -2035,7 +2036,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("sqrt(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>sqrt function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>sqrt function</b> applied to the items of this tensor.
      */
     default Tsr<V> sqrt() { return Neureka.get().backend().getAutogradFunction().sqrt().call( this ); }
 
@@ -2048,7 +2049,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("log10(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>log10 function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>log10 function</b> applied to the items of this tensor.
      */
     default Tsr<V> log10() { return Neureka.get().backend().getAutogradFunction().log10().call( this ); }
 
@@ -2061,7 +2062,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("cbrt(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>cbrt function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>cbrt function</b> applied to the items of this tensor.
      */
     default Tsr<V> cbrt() { return Neureka.get().backend().getAutogradFunction().cbrt().call( this ); }
 
@@ -2074,7 +2075,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("abs(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>abs function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>abs function</b> applied to the items of this tensor.
      */
     default Tsr<V> abs() { return Neureka.get().backend().getAutogradFunction().abs().call( this ); }
 
@@ -2087,9 +2088,23 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *      var out2 = Function.of("neg(I[0])").call(myTensor);
      *  }</pre>
      *
-     * @return A new tensors whose items are the result of the <b>neg function</b> applied to the items of this tensor.
+     * @return A new tensor whose items are the result of the <b>neg function</b> applied to the items of this tensor.
      */
     default Tsr<V> neg() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }
+
+    /**
+     * @return A new tensor whose items are the result of the <b>softmax function</b> applied to the items of this tensor.
+     */
+    default Tsr<V> softmax() { 
+        // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
+        return exp().div( exp().sum() );
+    }
+
+    /**
+     * @return A new tensor whose items are the result of the <b>sigmoid function</b> applied to the items of this tensor.
+     */
+    default Tsr<V> sigmoid() { return Neureka.get().backend().getAutogradFunction().sigmoid().call( this ); }
+
 
     /*==================================================================================================================
     |
@@ -2102,14 +2117,26 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     @Override AxisOrGetTsr<V> slice();
 
     /** {@inheritDoc} */
-    @Override default Tsr<V> concatAt( int axis, Nda<V>... ndArrays ) {
-        String args = IntStream.range(0,ndArrays.length+1).mapToObj(i->"I["+ i +"]").collect(Collectors.joining(", "));
+    @Override default Tsr<V> concatAt( int axis, Nda<V> other, Nda<V>... ndArrays ) {
+        String args = IntStream.range(0,ndArrays.length+2).mapToObj(i->"I["+ i +"]").collect(Collectors.joining(", "));
         Function concat = Function.of( "concat("+ args +")" );
-        Tsr<V>[] allArgs = new Tsr[ndArrays.length+1];
+        Tsr<V>[] allArgs = new Tsr[ndArrays.length+2];
         allArgs[0] = this;
-        System.arraycopy( ndArrays, 0, allArgs, 1, ndArrays.length );
+        allArgs[1] = (Tsr<V>) other;
+        System.arraycopy( ndArrays, 0, allArgs, 2, ndArrays.length );
         return concat.with(Arg.Axis.of(axis)).call( allArgs );
     }
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> concatAt( int axis, Nda<V> other ) {
+        return Neureka.get()
+                .backend()
+                .getAutogradFunction()
+                .conv()
+                .with(Arg.Axis.of(axis))
+                .call( this, (Tsr<V>) other );
+    }
+
 
     /** {@inheritDoc} */
     @Override
@@ -2307,6 +2334,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return slice().get();
     }
 
+    /**
+     * Use this enum as argument for the {@link Tsr#asImage(Tsr.ImageType)} method to
+     * specify the type of image that should be returned.
+     */
     enum ImageType
     {
         RGB_1INT(1, UI32.class, 1),

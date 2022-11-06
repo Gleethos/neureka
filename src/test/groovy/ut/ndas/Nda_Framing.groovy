@@ -148,6 +148,24 @@ class Nda_Framing extends Specification
                               "]"
     }
 
+    def 'We can concatenate more than 2 nd-arrays.'()
+    {
+        given : 'Three rank 2 nd-arrays with shape (2x3).'
+            var nda1 = Nda.of("a", "1", "!", "b", "2", "§").withShape(2,3)
+            var nda2 = Nda.of("x", "2,50", "%", "y", "4,90", "&").withShape(2,3)
+            var nda3 = Nda.of("1", "2", "3", "4", "5", "6").withShape(2,3)
+        when : 'We concatenate the nd-arrays.'
+            var nda = nda1.concatAt(0, nda2, nda3)
+        then : 'The concatenated nd-array is as expected.'
+            nda.toString() == "(6x3):[\n" +
+                              "   [    a  ,    1  ,    !   ],\n" +
+                              "   [    b  ,    2  ,    §   ],\n" +
+                              "   [    x  ,  2,50 ,    %   ],\n" +
+                              "   [    y  ,  4,90 ,    &   ],\n" +
+                              "   [    1  ,    2  ,    3   ],\n" +
+                              "   [    4  ,    5  ,    6   ]\n" +
+                              "]"
+    }
 
 
 }

@@ -68,6 +68,8 @@ class Tensor_Function_Spec extends Specification
             var neg  = x.neg()
             var cbrt = x.cbrt()
             var l10  = x.log10()
+            var smax = x.softmax()
+            var sigm = x.sigmoid()
 
         then: 'We get the expected results for each variable.'
             sig.toString()  == "(1):[0.98201]"
@@ -82,6 +84,22 @@ class Tensor_Function_Spec extends Specification
             neg.toString()  == "(1):[-4.0]"
             cbrt.toString() == "(1):[1.5874]"
             l10.toString()  == "(1):[0.60205]"
+            smax.toString() == "(1):[1.0]"
+            sigm.toString() == "(1):[0.98201]"
+    }
+
+    def 'The softmax function can be applied to tensors with more than one dimension.'()
+    {
+        given : 'A tensor with more than one dimension.'
+            var x = Tsr.of( -3f..7f ).withShape( 2, 3 )
+
+        when: 'We apply the softmax function to it.'
+            var softmax = x.softmax()
+
+        then: 'We get the expected results.'
+            softmax.toString() == "(2x3):[0.00426, 0.01160, 0.03154, 0.08576, 0.23312, 0.63369]"
+        and : 'The resulting values have the property we expect from softmax: their sum is 1!'
+            softmax.sum().item() == 1.0
     }
 
     def 'The optimization function for the SGD algorithm produces the expected result'()
@@ -175,12 +193,12 @@ class Tensor_Function_Spec extends Specification
     {
         given :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            Function f = Function.of("[2, 0, 1]:(I[0])")
+            var f = Function.of("[2, 0, 1]:(I[0])")
 
-        when : Tsr t = Tsr.of([3, 4, 2], 1d..5d)
+        when : var t = Tsr.of([3, 4, 2], 1d..5d)
         then : t.toString().contains("[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)")
 
-        when : Tsr r = f(t)
+        when : var r = f(t)
         then :
             r.toString().contains("[2x3x4]")
             r.toString().contains("[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0)")
@@ -189,17 +207,23 @@ class Tensor_Function_Spec extends Specification
 
     def 'The "DimTrim" operation works forward as well as backward!'()
     {
+        reportInfo """
+            The "DimTrim" operation used to trim the padding of a tensor shape,
+            which are dimensions with a size of 1.
+            So a shape like [1, 3, 1] would be trimmed to [3].
+        """
+
         given :
-            Tsr t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)
+            var t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)
 
         when :
-            Tsr trimmed = Function.of("dimtrim(I[0])")(t)
+            var trimmed = Function.of("dimtrim(I[0])")(t)
 
         then :
             trimmed.toString().contains("(3x2):[8.0, 8.0, 8.0, 8.0, 8.0, 8.0]; ->d(")
 
         when :
-            Tsr back = trimmed.backward()
+            var back = trimmed.backward()
 
         then :
             back == trimmed
@@ -216,7 +240,7 @@ class Tensor_Function_Spec extends Specification
             These types of methods are the `execute` methods which 
             distinguish themselves in that the tensors returned by 
             these methods are flagged as "intermediate".
-            If a tensor is an intermediate one, it becomes eligable 
+            If a tensor is an intermediate one, it becomes eligible 
             for deletion when consumed by another function.
             Note that internally every function is usually a composite
             of other functions forming a syntax tree which will process
@@ -225,7 +249,7 @@ class Tensor_Function_Spec extends Specification
             When executing a function as a user of Neureka
             one should generally avoid using the `execute` method in order to avoid
             accidental deletion of results.
-            This is mostly relevent for when designing custom operations.
+            This is mostly relevant for when designing custom operations.
         """
         given : 'We create a simple function taking one input.'
             var fun = Function.of('i0 * relu(i0) + 1')
