@@ -1347,7 +1347,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /**
      * @return The gradient of this tensor which is internally stored as component.
      */
-    default Optional<Tsr<V>> getGradient() { return this.find( Tsr.class ).map(t -> (Tsr<V>) t ); }
+    default Optional<Tsr<V>> getGradient() { return this.find( Tsr.class ).map( t -> (Tsr<V>) t ); }
 
     /**
      *  This is a functionally identical alternative to the {@link #getGradient()} method.
