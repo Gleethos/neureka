@@ -96,6 +96,10 @@ public class Cat extends AbstractOperation
 
     private void _catFrames( Tsr<?>[] inputs, Tsr<?> concat, int dim )
     {
+        boolean inputsAreFramed = Arrays.stream(inputs).anyMatch( t -> t.getFrame().isPresent() );
+
+        if ( !inputsAreFramed ) return;
+
         String label =
                 Arrays.stream(inputs)
                 .map(Tsr::frame)

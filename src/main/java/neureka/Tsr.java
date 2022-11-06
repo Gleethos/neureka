@@ -2111,14 +2111,26 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     @Override AxisOrGetTsr<V> slice();
 
     /** {@inheritDoc} */
-    @Override default Tsr<V> concatAt( int axis, Nda<V>... ndArrays ) {
-        String args = IntStream.range(0,ndArrays.length+1).mapToObj(i->"I["+ i +"]").collect(Collectors.joining(", "));
+    @Override default Tsr<V> concatAt( int axis, Nda<V> other, Nda<V>... ndArrays ) {
+        String args = IntStream.range(0,ndArrays.length+2).mapToObj(i->"I["+ i +"]").collect(Collectors.joining(", "));
         Function concat = Function.of( "concat("+ args +")" );
-        Tsr<V>[] allArgs = new Tsr[ndArrays.length+1];
+        Tsr<V>[] allArgs = new Tsr[ndArrays.length+2];
         allArgs[0] = this;
-        System.arraycopy( ndArrays, 0, allArgs, 1, ndArrays.length );
+        allArgs[1] = (Tsr<V>) other;
+        System.arraycopy( ndArrays, 0, allArgs, 2, ndArrays.length );
         return concat.with(Arg.Axis.of(axis)).call( allArgs );
     }
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> concatAt( int axis, Nda<V> other ) {
+        return Neureka.get()
+                .backend()
+                .getAutogradFunction()
+                .conv()
+                .with(Arg.Axis.of(axis))
+                .call( this, (Tsr<V>) other );
+    }
+
 
     /** {@inheritDoc} */
     @Override
