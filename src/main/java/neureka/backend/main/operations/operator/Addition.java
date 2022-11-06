@@ -41,6 +41,13 @@ public class Addition extends AbstractOperation {
 
         setAlgorithm(
             new BiElementwise()
+            .setExecution(
+                (outerCaller, outerCall) ->
+                    Result.of(AbstractDeviceAlgorithm.prepareAndExecute(
+                        outerCall,
+                        innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
+                    ))
+            )
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
