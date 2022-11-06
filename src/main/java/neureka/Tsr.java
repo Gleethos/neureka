@@ -2334,6 +2334,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return slice().get();
     }
 
+    /**
+     * Use this enum as argument for the {@link Tsr#asImage(Tsr.ImageType)} method to
+     * specify the type of image that should be returned.
+     */
     enum ImageType
     {
         RGB_1INT(1, UI32.class, 1),
