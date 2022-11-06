@@ -69,6 +69,7 @@ class Tensor_Function_Spec extends Specification
             var cbrt = x.cbrt()
             var l10  = x.log10()
             var smax = x.softmax()
+            var sigm = x.sigmoid()
 
         then: 'We get the expected results for each variable.'
             sig.toString()  == "(1):[0.98201]"
@@ -84,6 +85,7 @@ class Tensor_Function_Spec extends Specification
             cbrt.toString() == "(1):[1.5874]"
             l10.toString()  == "(1):[0.60205]"
             smax.toString() == "(1):[1.0]"
+            sigm.toString() == "(1):[0.98201]"
     }
 
     def 'The softmax function can be applied to tensors with more than one dimension.'()

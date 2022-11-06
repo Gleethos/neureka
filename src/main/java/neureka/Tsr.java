@@ -1453,6 +1453,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override Tsr<V> withLabels( Map<Object, List<Object>> labels );
 
+
     /*==================================================================================================================
     |
     |       §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
@@ -2098,6 +2099,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
         return exp().div( exp().sum() );
     }
+
+    /**
+     * @return A new tensor whose items are the result of the <b>sigmoid function</b> applied to the items of this tensor.
+     */
+    default Tsr<V> sigmoid() { return Neureka.get().backend().getAutogradFunction().sigmoid().call( this ); }
 
 
     /*==================================================================================================================
