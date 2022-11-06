@@ -68,6 +68,7 @@ class Tensor_Function_Spec extends Specification
             var neg  = x.neg()
             var cbrt = x.cbrt()
             var l10  = x.log10()
+            var smax = x.softmax()
 
         then: 'We get the expected results for each variable.'
             sig.toString()  == "(1):[0.98201]"
@@ -82,6 +83,21 @@ class Tensor_Function_Spec extends Specification
             neg.toString()  == "(1):[-4.0]"
             cbrt.toString() == "(1):[1.5874]"
             l10.toString()  == "(1):[0.60205]"
+            smax.toString() == "(1):[1.0]"
+    }
+
+    def 'The softmax function can be applied to tensors with more than one dimension.'()
+    {
+        given : 'A tensor with more than one dimension.'
+            var x = Tsr.of( -3f..7f ).withShape( 2, 3 )
+
+        when: 'We apply the softmax function to it.'
+            var softmax = x.softmax()
+
+        then: 'We get the expected results.'
+            softmax.toString() == "(2x3):[0.00426, 0.01160, 0.03154, 0.08576, 0.23312, 0.63369]"
+        and : 'The resulting values have the property we expect from softmax: their sum is 1!'
+            softmax.sum().item() == 1.0
     }
 
     def 'The optimization function for the SGD algorithm produces the expected result'()
