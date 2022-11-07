@@ -45,18 +45,12 @@ public class Convolution extends AbstractOperation
             })
             .setExecution(
                 (outerCaller, outerCall) ->
-                    Result.of(AbstractDeviceAlgorithm.executeFor(
-                        outerCaller, outerCall,
+                    Result.of(AbstractDeviceAlgorithm.prepareAndExecute(
+                        outerCall,
                         call ->
-                        {
-                            Tsr<?>[] tensors = call.inputs();
-                            for ( Tsr<?> t : tensors ) if ( t != null ) t.mut().setIsVirtual( false );
-
-                            ExecutionCall<?> prepared = AbstractDeviceAlgorithm._prepareForExecution( call.withInputs(tensors) );
-                            return AbstractDeviceAlgorithm.executeOnCommonDevice(
-                                    prepared,()->ConvUtil.executeRecursively( "x", prepared )
-                            );
-                        }
+                                AbstractDeviceAlgorithm.executeDeviceAlgorithm(
+                                        call
+                                )
                     ))
                     .withAutoDiff(( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                     {
@@ -84,6 +78,7 @@ public class Convolution extends AbstractOperation
             )
             .setCallPreparation(
                  call -> {
+                     if ( call.arity() <= 2 ) call = call.withAddedInputAt( 0, null );
                      Device<Number> device = call.getDeviceFor(Number.class);
                      int[] shp = ConvUtil.shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
                      Tsr<Number> output = (Tsr<Number>) Tsr.of( call.input(1).getItemType(), shp, 0 )
@@ -110,7 +105,20 @@ public class Convolution extends AbstractOperation
             for ( Tsr<?> t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);
             return this.execute( flat, flatCall );
         }
-        return super.execute( reducePairwise(caller), call );
+        if ( call.getDerivativeIndex() >= 0 ) {
+            int d = call.getDerivativeIndex();
+            /*
+                In autograd convolution is similar to matrix multiplication.
+                If the derivative index is 0 then the second operand is used for backward broadcasting.
+                If the derivative index is 1 then the first operand is used for backward broadcasting.
+             */
+            return Result.of( call.input( d == 0 ? 1 : 0 ) );
+        }
+        Function reducedCaller = reducePairwise(caller);
+        ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
+        Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
+        for ( Tsr<?> t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);
+        return super.execute( flat, flatCall );
     }
 
     private Function reducePairwise( final Function fun ) {

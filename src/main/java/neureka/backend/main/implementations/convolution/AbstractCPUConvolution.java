@@ -39,8 +39,8 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
         ExecutionCall<CPU> call
     ) {
         Tsr<Number> t0_drn = call.input( Number.class, 0 );
-        Tsr<Number> t1_src = call.input( Number.class, 1 );
-        Tsr<Number> t2_src = call.input( Number.class, 2 );
+        Tsr<Number> t1_src = call.input( Number.class, 1 ).mut().setIsVirtual(false);
+        Tsr<Number> t2_src = call.input( Number.class, 2 ).mut().setIsVirtual(false);
 
         Class<?> typeClass = t0_drn.getItemType();
 
