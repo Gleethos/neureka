@@ -920,14 +920,27 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                 .withShape( template.getNDConf().shape() );
     }
 
-    static <T> Collector<T, ?, Tsr<T>> shaped(int... shape ) {
-        return new NdaCollector<>(
+    /**
+     * Returns a {@code Collector} that accumulates the input elements into a
+     * new {@link Tsr} with the specified shape. <br>
+     * Usage example : <br>
+     * <pre>{@code
+     *    var tensor = Stream.of( 1, 2, 3, 4, 5, 6 )
+     *                      .collect( Tsr.shaped( 2, 3 ) );
+     * }</pre>
+     *
+     * @param shape The shape of the tensor to be returned.
+     * @param <T> the type of the input elements
+     * @return a {@code Collector} which collects all the input elements into a
+     *          {@link Tsr}, in encounter order.
+     */
+    static <T> Collector<T, ?, Tsr<T>> shaped( int... shape ) {
+        return Collector.of(
                 (Supplier<List<T>>) ArrayList::new,
                 List::add,
                 (left, right) -> { left.addAll(right); return left; },
-                list -> Tsr.of( shape, list ),
-                Collections.emptySet()
-        );
+                list -> Tsr.of( shape, list )
+            );
     }
 
     /*==================================================================================================================

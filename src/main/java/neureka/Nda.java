@@ -358,13 +358,26 @@ public interface Nda<V> extends NDimensional, Iterable<V>
         });
     }
 
+    /**
+     * Returns a {@code Collector} that accumulates the input elements into a
+     * new {@link Nda} with the specified shape. <br>
+     * Usage example : <br>
+     * <pre>{@code
+     *    var nda = Stream.of( 1, 2, 3, 4, 5, 6 )
+     *                      .collect( Nda.shaped( 2, 3 ) );
+     * }</pre>
+     *
+     * @param shape The shape of the nd-array to be returned.
+     * @param <T> the type of the input elements
+     * @return a {@code Collector} which collects all the input elements into a
+     *          {@link Nda}, in encounter order.
+     */
     static <T> Collector<T, ?, Nda<T>> shaped( int... shape ) {
-        return new NdaCollector<>(
+        return Collector.of(
                 (Supplier<List<T>>) ArrayList::new,
                 List::add,
                 (left, right) -> { left.addAll(right); return left; },
-                list -> Tsr.of( shape, list ),
-                Collections.emptySet()
+                list -> Tsr.of( shape, list )
             );
     }
 
