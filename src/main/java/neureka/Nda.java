@@ -12,12 +12,8 @@ import neureka.ndim.NDimensional;
 import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 /**
@@ -332,6 +328,44 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 
         boolean executeInParallel = ( this.size() > 1_000 );
         return executeInParallel ? stream.parallel() : stream;
+    }
+
+    /**
+     *  A convenience method for {@code stream().filter( predicate )}.
+     *
+     * @param predicate The predicate to filter the items of this {@link Nda}.
+     * @return A {@link Stream} of the items in this {@link Nda} which match the predicate.
+     */
+    default Stream<V> filter( Predicate<V> predicate ) {
+        return stream().filter( predicate );
+    }
+
+    /**
+     *  A convenience method for {@code stream().flatMap( mapper )}.
+     *
+     * @param mapper The mapper to map the items of this {@link Nda}.
+     * @return A {@link Stream} of the items in this {@link Nda} which match the predicate.
+     */
+    default <R> Stream<R> flatMap( Function<V, Stream<R>> mapper ) {
+        return stream().flatMap( v -> {
+            Object o = mapper.apply( v );
+            if ( o instanceof Iterable )
+                return (Stream<R>) StreamSupport.stream( ((Iterable) o).spliterator(), false );
+            else if ( o instanceof Stream )
+                return (Stream<R>) o;
+            else
+                return Stream.of( (R) o );
+        });
+    }
+
+    static <T> Collector<T, ?, Nda<T>> shaped( int... shape ) {
+        return new NdaCollector<>(
+                (Supplier<List<T>>) ArrayList::new,
+                List::add,
+                (left, right) -> { left.addAll(right); return left; },
+                list -> Tsr.of( shape, list ),
+                Collections.emptySet()
+            );
     }
 
     /**

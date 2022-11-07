@@ -1,5 +1,6 @@
 package ut.calculus
 
+import neureka.Nda
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
@@ -7,6 +8,8 @@ import neureka.calculus.assembly.FunctionParser
 import neureka.devices.Device
 import neureka.view.NDPrintSettings
 import spock.lang.*
+
+import java.util.stream.Stream
 
 @Title("Applying Functions to Tensors")
 @Narrative('''
@@ -274,6 +277,19 @@ class Tensor_Function_Spec extends Specification
             result1.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
             result2.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
             result3.toString() == "(5):[2.0, 1.25, 1.09, 5.0, 65.0]"
+    }
+
+
+    def 'We can collect a stream into a tensor.'()
+    {
+        given : 'We create a stream of integers.'
+            var stream = Stream.of(1, 2, 3, 4, 5, 6)
+
+        when : 'We collect the stream into a tensor.'
+            var t = stream.collect(Tsr.shaped(2, 3))
+
+        then : 'The resulting tensor should have the same values as the stream.'
+            t.toString() == "(2x3):[1, 2, 3, 4, 5, 6]"
     }
 
 

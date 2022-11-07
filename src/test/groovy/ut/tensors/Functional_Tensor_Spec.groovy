@@ -93,6 +93,26 @@ class Functional_Tensor_Spec extends Specification
             device << ['CPU', 'GPU']
     }
 
+    def 'We can use the "filter" method as a shortcut for "stream().filter(..)".'()
+    {
+        when : 'We create a tensor...'
+            Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)
+
+        then : 'The filter method returns a filtered stream which we can collect!'
+            t.filter({it < 3})
+                    .collect(Collectors.toList()) == [1, 0, 1, -4]
+    }
+
+    def 'We can use the "flatMap" method as a shortcut for "stream().flatMap(..)".'()
+    {
+        when : 'We create a tensor...'
+            Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)
+
+        then : 'We can use the "flatMap" method as a shortcut for "stream().flatMap(..)"'
+            t.flatMap({it < 3 ? [it, it] : []})
+                    .collect(Collectors.toList()) == [1, 1, 0, 0, 1, 1, -4, -4]
+    }
+
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Tensor mapping lambdas produce expected tensors.'(
        String device

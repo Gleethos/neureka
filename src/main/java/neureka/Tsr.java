@@ -91,6 +91,8 @@ import neureka.view.NdaAsString;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -916,6 +918,16 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return of( template.getDataType().getItemTypeClass() )
                 .on( template.getDevice() )
                 .withShape( template.getNDConf().shape() );
+    }
+
+    static <T> Collector<T, ?, Tsr<T>> shaped(int... shape ) {
+        return new NdaCollector<>(
+                (Supplier<List<T>>) ArrayList::new,
+                List::add,
+                (left, right) -> { left.addAll(right); return left; },
+                list -> Tsr.of( shape, list ),
+                Collections.emptySet()
+        );
     }
 
     /*==================================================================================================================
