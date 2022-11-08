@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.018 seconds"
+    "duration":"0.047 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -21,17 +21,17 @@
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new homogeneously filled Tsr instance using the fluent builder API.","code":["Tsr<?> t = Tsr.of( type )","                     .withShape( 3, 2 )","                     .all( value )"]},
+        {"kind":"given","text":"We create a new homogeneously filled Tsr instance using the fluent builder API.","code":["    Tsr<?> t = Tsr.of( type )","                         .withShape( 3, 2 )","                         .all( value )"]},
 
-        {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
+        {"kind":"expect","text":"This new instance will have the expected data type...","code":["    t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData.length == 1","t.items.size() == 6"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["    t.mut.data.ref == data","    t.rawData.length == 1","    t.items.size() == 6"]},
 
-        {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
+        {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["    t.shape() == [3, 2]"]},
 
-        {"kind":"and","text":"The size of the tensor will be the product of all shape entries!","code":["t.size() == 6"]},
+        {"kind":"and","text":"The size of the tensor will be the product of all shape entries!","code":["    t.size() == 6"]},
 
-        {"kind":"and","text":"\n                Based on the fact that the tensor is homogeneously filled it will be a \"virtual tensor\"\n                This means that the tensor will not have allocated the memory proportional to the size\n                of the tensor!\n            ","code":["t.isVirtual()"]},
+        {"kind":"and","text":"\n                Based on the fact that the tensor is homogeneously filled it will be a \"virtual tensor\"\n                This means that the tensor will not have allocated the memory proportional to the size\n                of the tensor!\n            ","code":["    t.isVirtual()"]},
 
         {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Long","class java.lang.Boolean","class java.lang.Character"],"value":["4","4.0","4.0","42","false","°"],"data":["[4]","[4.0]","[4.0]","[42]","[false]","°"]}}
       ],
@@ -41,7 +41,7 @@
     {
       "id":"Range based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@281142a0","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@13a3fdee","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@55daac2","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@5c81c5ea","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@50be3b7e","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@5aaf388b","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@2f8adc5a","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@61bc74d0"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@5054695","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@5d38f7c0","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@315f5087","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@44856d52","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@7112457f","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@8204687","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@46db3a50","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@13eed5d"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

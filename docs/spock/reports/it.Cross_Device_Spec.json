@@ -1,0 +1,137 @@
+{
+  "className":"it.Cross_Device_Spec",
+  "title":"Cross Device Stress Test Specification",
+  "narrative":"This specification is pretty much a system test which covers\n    the behavior of the library as a whole across multiple devices!\n    No matter which device is being used for a given stress test, the result should be the same...",
+  "subjects":["neureka.devices.Device"],
+  "statistics":{
+    "runs":"5",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"12.193 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Convolution can model matrix multiplications across devices.",
+      "result":"PASS",
+      "duration":"0.021 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A given device of any type and the settings configured for testing.","code":["Device device = ( deviceType == \"CPU\" ) ? CPU.get() : Device.get('first')","Neureka.get().reset()","Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+
+        {"kind":"and","text":"Two tensors, one requiring gradients and the other one does not.","code":["var tensor1 = Tsr.of(new int[]{2, 2, 1}, new float[]{","                                                        1,  2, //  3, 1,","                                                        2, -3, // -2, -1,","                                                })","                                                .setRqsGradient( true )","var tensor2 = Tsr.of(new int[]{1, 2, 2}, new float[]{","                                                        -2, 3, //  0  7","                                                        1, 2,  // -7  0","                                                })","device.store(tensor1).store(tensor2)"]},
+
+        {"kind":"and","text":"","code":["Tsr product = Tsr.of(\"i0xi1\", tensor1, tensor2)","product.backward( Tsr.of(new int[]{2, 1, 2}, new float[]{1, 1, 1, 1}) )","String result = product.toString({","    it.rowLimit = 15 // \"rc\"","    it.isScientific = false","    it.isMultiline = false","    it.hasGradient = false","    it.cellSize = 1","    it.hasValue = true","    it.hasRecursiveGraph = true","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","})"]},
+
+        {"kind":"expect","text":"","code":["result.contains(","    \"[2x1x2]:(0.0, 7.0, -7.0, 0.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }\"",")"]},
+
+        {"kind":"cleanup","text":"","code":["product.mut.delete()","tensor1.mut.delete()","tensor2.mut.delete()"]},
+
+        {"kind":"where","text":"The following settings are being used: ","code":{"deviceType":["CPU","GPU"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Cross device system test runs successfully.",
+      "result":"PASS",
+      "duration":"4.361 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A given device of any type and the settings configured for testing.","code":["Device device = ( deviceType == \"CPU\" ) ? CPU.get() : Device.get('first')","Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }"]},
+
+        {"kind":"expect","text":"The integration test runs successful.","code":["CrossDeviceSystemTest.on(device)"]},
+
+        {"kind":"cleanup","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }"]},
+
+        {"kind":"where","text":"The following settings are being used: ","code":{"deviceType":["CPU","GPU"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test simple NN implementation with manual backprop",
+      "result":"PASS",
+      "duration":"7.626 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }"]},
+
+        {"kind":"expect","text":"","code":["device != null"]},
+
+        {"kind":"and","text":"","code":["new SimpleNNSystemTest(SimpleNNSystemTest.Mode.CONVOLUTION).on(device)"]},
+
+        {"kind":"and","text":"","code":["if ( !(device instanceof OpenCLDevice) )","    new SimpleNNSystemTest(SimpleNNSystemTest.Mode.MAT_MUL).on(device)"]},
+
+        {"kind":"cleanup","text":"","code":["Neureka.get().backend().find(CLBackend).ifPresent{ it.getSettings().autoConvertToFloat = false }"]},
+
+        {"kind":"where","text":"","code":{"device":["CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A gradient of ones can be set by calling the backward method on a tensor sitting on any device.",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use the legacy representation of tensors for this little test!","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+
+        {"kind":"and","text":"We create a small matrix of 4 fours which requires a gradient and is stored on the provided device!","code":["Tsr t = Tsr.of([2, 2], 4d).setRqsGradient(true).to(device)"]},
+
+        {"kind":"when","text":"We now call the backward method on the tensor directly without having done any operations...","code":["t.backward(1)"]},
+
+        {"kind":"and","text":"Then we take the gradient to see what happened.","code":["Tsr g = t.gradient.get()"]},
+
+        {"kind":"then","text":"We expect this gradient to be all ones with the shape of our matrix!","code":["g.toString().contains(\"[2x2]:(1.0, 1.0, 1.0, 1.0)\")","t.toString().contains(\"[2x2]:(4.0, 4.0, 4.0, 4.0):g:(1.0, 1.0, 1.0, 1.0)\")"]},
+
+        {"kind":"and","text":"","code":["t.isOutsourced() == !(device instanceof CPU)","g.isOutsourced() == !(device instanceof CPU)"]},
+
+        {"kind":"and","text":"","code":["t.device == device","g.device == device"]},
+
+        {"kind":"where","text":"","code":{"device":["testutility.mock.DummyDevice@4b9bbe37","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Mapping tensors works for every device (even if they are not used).",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We first make a note of the type we started with.","code":["var originalType = tensor.itemType()"]},
+
+        {"kind":"when","text":"","code":["when :  \"\"\"","            We start off by storing the provided tensor on the provided device.","            This might be any kind of device like for example an $OpenCLDevice.","            Which means the tensor might not be sitting in RAM!","        \"\"\"","tensor.to(device)"]},
+
+        {"kind":"then","text":"After the tensor is stored on the device, we expect it to be still of the original type.","code":["tensor.itemType == originalType"]},
+
+        {"kind":"when","text":"\n                    We call the mapping method which is supposed to create a new tensor of the provided type.\n                    This procedure is only supported when the tensor is stored in RAM, so when\n                    the tensor is outsourced (stored on a device), then we expect that the mapping method\n                    temporarily migrates the tensor back and forth internally...\n               ","code":["Tsr<?> result = tensor.mapTo(target, lambda)"]},
+
+        {"kind":"then","text":"We expect the String representation of the tensor to be as expected!","code":["result.toString() == expected"]},
+
+        {"kind":"and","text":"We expect the result to have the expected target class!","code":["result.itemType == target"]},
+
+        {"kind":"and","text":"Lastly, the original tensor used as mapping source should be stored on the original device!","code":["tensor.isOutsourced() == !(device instanceof CPU)","tensor.device == device"]},
+
+        {"kind":"where","text":"We use the following data to test this mapping for a wide range of types and values!","code":{"tensor":["(1):[3.5]","(1):[3.5]","(1):[3.5]","(1):[3.5]","(1):[3]","(1):[3]","(1):[2]","(1):[2]","(1):[6]","(1):[6]","(1):[3.0]","(1):[-1.0]","(1):[0.5]","(1):[0.7]","(1):[0.9]","(1):[3.8]","(1):[3.0]","(1):[-1.0]","(1):[0.5]","(1):[0.7]","(1):[0.9]","(1):[3.8]","(1):[3.0]","(1):[-1.0]","(1):[0.5]","(1):[0.69999]","(1):[0.89999]","(1):[3.8]","(1):[3.0]","(1):[-1.0]","(1):[0.5]","(1):[0.69999]","(1):[0.89999]","(1):[3.8]","(1):[3]","(1):[-1]","(1):[5]","(1):[70]","(1):[90]","(1):[37]","(1):[3]","(1):[-1]","(1):[5]","(1):[70]","(1):[90]","(1):[37]","(1):[3]","(1):[-1]","(1):[5]","(1):[70]","(1):[90]","(1):[37]","(1):[3]","(1):[-1]","(1):[5]","(1):[70]","(1):[90]","(1):[37]","(1):[3]","(1):[-1]","(1):[5]","(1):[70]","(1):[90]","(1):[37]","(1):[3]","(1):[-1]","(1):[5]","(1):[70]","(1):[90]","(1):[37]"],"device":["CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]","CPU[cores=12]"],"target":["class java.lang.String","class java.lang.String","class java.lang.String","class java.lang.String","class java.lang.String","class java.lang.String","class java.lang.String","class java.lang.String","class java.lang.String","class java.lang.String","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short","class java.lang.Double","class java.lang.Float","class java.lang.Integer","class java.lang.Long","class java.lang.Byte","class java.lang.Short"],"lambda":["it.Cross_Device_Spec$__spock_feature_0_4prov3_closure14@76220a39","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure15@3e926e38","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure16@1aff593d","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure17@7db8efc7","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure18@72d9fe98","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure19@237f40f0","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure20@71a6ae0d","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure21@2b016049","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure22@1e6321c7","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure23@71971cd8","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure24@38f567b5","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure25@1af4298","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure26@32011dc2","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure27@4838ba17","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure28@4b85030c","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure29@5a7ecf56","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure30@5bf7a314","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure31@341a1475","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure32@20f0ab5e","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure33@1776b7c6","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure34@3e70ad3b","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure35@32fc4330","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure36@68ba61d4","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure37@e4f282c","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure38@74910f4f","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure39@48d3d619","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure40@3f41863b","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure41@143a06e4","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure42@7d7d25e5","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure43@577325a2","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure44@5d5ac1f","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure45@5264bd65","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure46@74ea89e0","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure47@39f7ee05","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure48@7efbfb73","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure49@409cbd54","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure50@42d0cd82","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure51@5eaba573","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure52@441dfcbd","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure53@5794f922","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure54@39b27283","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure55@de7b3f3","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure56@525b68a8","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure57@553098cb","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure58@1d6bc84a","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure59@6f2a08b6","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure60@5f2ded18","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure61@33dab837","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure62@5497f399","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure63@493d9976","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure64@4ba53669","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure65@7c915900","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure66@7e689fe2","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure67@3fe106fd","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure68@3cd68ca","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure69@dc2211","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure70@5259e50b","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure71@6c717681","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure72@19c23133","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure73@68ab8962","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure74@3924bfb2","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure75@4b4777cf","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure76@5da047e3","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure77@2015ebbb","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure78@3c60f3e7","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure79@655c3395","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure80@772b071","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure81@c61a5f1","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure82@16220e2c","it.Cross_Device_Spec$__spock_feature_0_4prov3_closure83@301094d3"],"expected":["(1):[~3.5]","(1):[~3.5]","(1):[~3.5]","(1):[~3.5]","(1):[~3]","(1):[~3]","(1):[~2]","(1):[~2]","(1):[~6]","(1):[~6]","(1):[9.0]","(1):[-0.5]","(1):[5]","(1):[3]","(1):[1]","(1):[1]","(1):[9.0]","(1):[-0.5]","(1):[5]","(1):[3]","(1):[1]","(1):[1]","(1):[9.0]","(1):[-0.5]","(1):[5]","(1):[3]","(1):[1]","(1):[1]","(1):[9.0]","(1):[-0.5]","(1):[5]","(1):[3]","(1):[1]","(1):[1]","(1):[9.0]","(1):[-0.5]","(1):[50]","(1):[350]","(1):[-76]","(1):[18]","(1):[9.0]","(1):[-0.5]","(1):[50]","(1):[350]","(1):[-76]","(1):[18]","(1):[9.0]","(1):[-0.5]","(1):[50]","(1):[350]","(1):[-76]","(1):[18]","(1):[9.0]","(1):[-0.5]","(1):[50]","(1):[350]","(1):[-76]","(1):[18]","(1):[9.0]","(1):[-0.5]","(1):[50]","(1):[350]","(1):[-76]","(1):[18]","(1):[9.0]","(1):[-0.5]","(1):[50]","(1):[350]","(1):[-76]","(1):[18]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

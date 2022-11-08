@@ -4,28 +4,47 @@
   "narrative":"A tensor would be nothing without being able to apply operations on them.\n    However, calling operations manually in order to process your\n    tensors can be a verbose and error prone task.\n    This is where functions come into play.\n    Neureka's functions are composed of operations forming an abstract syntax tree.\n    Passing tensors to a function will route them trough this tree and apply\n    all of the operations on the tensors for you.",
   "subjects":["neureka.Tsr","neureka.calculus.Function"],
   "statistics":{
-    "runs":"6",
+    "runs":"8",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.111 seconds"
+    "duration":"0.848 seconds"
   },
   "headers":[" \n                This specification ensures that tensors supplied\n                to functions are executed successfully and produce the expected results.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The tensor API has built-in methods for applying functions.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.216 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A simple scalar tensor containing the number \"4\".","code":["var x = Tsr.of(4d)"]},
 
-        {"kind":"when","text":"We use the following methods...","code":["var sig  = x.sig()","var tanh = x.tanh()","var ln   = x.ln()","var sin  = x.sin()","var cos  = x.cos()","var sfp  = x.softplus()","var exp  = x.exp()","var sqrt = x.sqrt()","var abs  = x.abs()","var neg  = x.neg()","var cbrt = x.cbrt()","var l10  = x.log10()"]},
+        {"kind":"when","text":"We use the following methods...","code":["var sig  = x.sig()","var tanh = x.tanh()","var ln   = x.ln()","var sin  = x.sin()","var cos  = x.cos()","var sfp  = x.softplus()","var exp  = x.exp()","var sqrt = x.sqrt()","var abs  = x.abs()","var neg  = x.neg()","var cbrt = x.cbrt()","var l10  = x.log10()","var smax = x.softmax()","var sigm = x.sigmoid()"]},
 
-        {"kind":"then","text":"We get the expected results for each variable.","code":["sig.toString()  == \"(1):[0.98201]\"","tanh.toString() == \"(1):[0.99932]\"","ln.toString()   == \"(1):[1.38629]\"","sin.toString()  == \"(1):[-0.75680]\"","cos.toString()  == \"(1):[-0.65364]\"","sfp.toString()  == \"(1):[4.01815]\"","exp.toString()  == \"(1):[54.5982]\"","sqrt.toString() == \"(1):[2.0]\"","abs.toString()  == \"(1):[4.0]\"","neg.toString()  == \"(1):[-4.0]\"","cbrt.toString() == \"(1):[1.5874]\"","l10.toString()  == \"(1):[0.60205]\""]}
+        {"kind":"then","text":"We get the expected results for each variable.","code":["sig.toString()  == \"(1):[0.98201]\"","tanh.toString() == \"(1):[0.99932]\"","ln.toString()   == \"(1):[1.38629]\"","sin.toString()  == \"(1):[-0.75680]\"","cos.toString()  == \"(1):[-0.65364]\"","sfp.toString()  == \"(1):[4.01815]\"","exp.toString()  == \"(1):[54.5982]\"","sqrt.toString() == \"(1):[2.0]\"","abs.toString()  == \"(1):[4.0]\"","neg.toString()  == \"(1):[-4.0]\"","cbrt.toString() == \"(1):[1.5874]\"","l10.toString()  == \"(1):[0.60205]\"","smax.toString() == \"(1):[1.0]\"","sigm.toString() == \"(1):[0.98201]\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The softmax function can be applied to tensors with more than one dimension.",
+      "result":"PASS",
+      "duration":"0.047 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A tensor with more than one dimension.","code":["var x = Tsr.of( -3f..7f ).withShape( 2, 3 )"]},
+
+        {"kind":"when","text":"We apply the softmax function to it.","code":["var softmax = x.softmax()"]},
+
+        {"kind":"then","text":"We get the expected results.","code":["softmax.toString() == \"(2x3):[0.00426, 0.01160, 0.03154, 0.08576, 0.23312, 0.63369]\""]},
+
+        {"kind":"and","text":"The resulting values have the property we expect from softmax: their sum is 1!","code":["softmax.sum().item() == 1.0"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -33,7 +52,7 @@
     {
       "id":"The optimization function for the SGD algorithm produces the expected result",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,12 +75,14 @@
     {
       "id":"Tensor results of various Function instances return expected results.",
       "result":"PASS",
-      "duration":"0.059 seconds",
+      "duration":"0.351 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["given : \"A new Function instance created from ${equation}.\"","Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, true) // TODO : test with 'doAD' : false!"]},
+        {"kind":"given","text":"We set the experimental \"autoConvertToFloat\" flag to true.","code":["Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })"]},
+
+        {"kind":"and","text":"","code":["and : \"A new Function instance created from ${equation}.\"","Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, true)"]},
 
         {"kind":"and","text":"","code":["inputs.each {it.to(Device.get(device))}"]},
 
@@ -79,18 +100,18 @@
     {
       "id":"Reshaping on 3D tensors works by instantiate a Function instance built from a String.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Function f = Function.of(\"[2, 0, 1]:(I[0])\")"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","var f = Function.of(\"[2, 0, 1]:(I[0])\")"]},
 
-        {"kind":"when","text":"","code":["when : Tsr t = Tsr.of([3, 4, 2], 1d..5d)"]},
+        {"kind":"when","text":"","code":["when : var t = Tsr.of([3, 4, 2], 1d..5d)"]},
 
         {"kind":"then","text":"","code":["then : t.toString().contains(\"[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)\")"]},
 
-        {"kind":"when","text":"","code":["when : Tsr r = f(t)"]},
+        {"kind":"when","text":"","code":["when : var r = f(t)"]},
 
         {"kind":"then","text":"","code":["r.toString().contains(\"[2x3x4]\")","r.toString().contains(\"[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0)\")"]}
       ],
@@ -100,22 +121,22 @@
     {
       "id":"The \"DimTrim\" operation works forward as well as backward!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.013 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":[]
+      "tags":{},"see":[],"extraInfo":["\n            The \"DimTrim\" operation used to trim the padding of a tensor shape,\n            which are dimensions with a size of 1.\n            So a shape like [1, 3, 1] would be trimmed to [3].\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Tsr t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)"]},
+        {"kind":"given","text":"","code":["    var t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)"]},
 
-        {"kind":"when","text":"","code":["Tsr trimmed = Function.of(\"dimtrim(I[0])\")(t)"]},
+        {"kind":"when","text":"","code":["    var trimmed = Function.of(\"dimtrim(I[0])\")(t)"]},
 
-        {"kind":"then","text":"","code":["trimmed.toString().contains(\"(3x2):[8.0, 8.0, 8.0, 8.0, 8.0, 8.0]; ->d(\")"]},
+        {"kind":"then","text":"","code":["    trimmed.toString().contains(\"(3x2):[8.0, 8.0, 8.0, 8.0, 8.0, 8.0]; ->d(\")"]},
 
-        {"kind":"when","text":"","code":["Tsr back = trimmed.backward()"]},
+        {"kind":"when","text":"","code":["    var back = trimmed.backward()"]},
 
-        {"kind":"then","text":"","code":["back == trimmed"]},
+        {"kind":"then","text":"","code":["    back == trimmed"]},
 
-        {"kind":"and","text":"","code":["t.gradient.get().toString() == \"(1x1x3x2x1):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]\""]}
+        {"kind":"and","text":"","code":["    t.gradient.get().toString() == \"(1x1x3x2x1):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -123,26 +144,43 @@
     {
       "id":"Executed tensors are intermediate tensors.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\n            Functions expose different kinds of methods for different kinds of\n            purposes, however there is one species of methods with a very important role\n            in ensuring memory efficiency.\n            These types of methods are the `execute` methods which \n            distinguish themselves in that the tensors returned by \n            these methods are flagged as \"intermediate\".\n            If a tensor is an intermediate one, it becomes eligable \n            for deletion when consumed by another function.\n            Note that internally every function is usually a composite\n            of other functions forming a syntax tree which will process\n            input tensors through the execute methods, which causes\n            intermediate results to be deleted automatically.\n            When executing a function as a user of Neureka\n            one should generally avoid using the `execute` method in order to avoid\n            accidental deletion of results.\n            This is mostly relevent for when designing custom operations.\n        "]
+      "tags":{},"see":[],"extraInfo":["\n            Functions expose different kinds of methods for different kinds of\n            purposes, however there is one species of methods with a very important role\n            in ensuring memory efficiency.\n            These types of methods are the `execute` methods which \n            distinguish themselves in that the tensors returned by \n            these methods are flagged as \"intermediate\".\n            If a tensor is an intermediate one, it becomes eligible \n            for deletion when consumed by another function.\n            Note that internally every function is usually a composite\n            of other functions forming a syntax tree which will process\n            input tensors through the execute methods, which causes\n            intermediate results to be deleted automatically.\n            When executing a function as a user of Neureka\n            one should generally avoid using the `execute` method in order to avoid\n            accidental deletion of results.\n            This is mostly relevant for when designing custom operations.\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We create a simple function taking one input.","code":["var fun = Function.of('i0 * relu(i0) + 1')"]},
+        {"kind":"given","text":"We create a simple function taking one input.","code":["    var fun = Function.of('i0 * relu(i0) + 1')"]},
 
-        {"kind":"and","text":"A vector tensor of 5 float numbers","code":["var t = Tsr.of(1f, -5f, -3f, 2f, 8f)"]},
+        {"kind":"and","text":"A vector tensor of 5 float numbers","code":["    var t = Tsr.of(1f, -5f, -3f, 2f, 8f)"]},
 
-        {"kind":"expect","text":"Both the tensor as well as the function were created successfully.","code":["t.itemType == Float","fun.toString() == \"((I[0] * relu(I[0])) + 1.0)\""]},
+        {"kind":"expect","text":"Both the tensor as well as the function were created successfully.","code":["    t.itemType == Float","    fun.toString() == \"((I[0] * relu(I[0])) + 1.0)\""]},
 
-        {"kind":"when","text":"We try different kinds of ways of passing the tensor to the function...","code":["var result1 = fun.call(t)","var result2 = fun.invoke(t)","var result3 = fun.execute(t)"]},
+        {"kind":"when","text":"We try different kinds of ways of passing the tensor to the function...","code":["    var result1 = fun.call(t)","    var result2 = fun.invoke(t)","    var result3 = fun.execute(t)"]},
 
-        {"kind":"then","text":"The \"call\" method will not return an intermediate result.","code":["!result1.isIntermediate()"]},
+        {"kind":"then","text":"The \"call\" method will not return an intermediate result.","code":["    !result1.isIntermediate()"]},
 
-        {"kind":"and","text":"The functionally identical synonym method \"invoke\" will also yield a non-intermediate result.","code":["!result2.isIntermediate()"]},
+        {"kind":"and","text":"The functionally identical synonym method \"invoke\" will also yield a non-intermediate result.","code":["    !result2.isIntermediate()"]},
 
-        {"kind":"and","text":"As expected, the tensor of the \"execute\" method is indeed intermediate.","code":["result3.isIntermediate()"]},
+        {"kind":"and","text":"As expected, the tensor of the \"execute\" method is indeed intermediate.","code":["    result3.isIntermediate()"]},
 
-        {"kind":"and","text":"Otherwise all 3 tensors are basically the same.","code":["result1.toString() == \"(5):[2.0, 1.25, 1.09, 5.0, 65.0]\"","result2.toString() == \"(5):[2.0, 1.25, 1.09, 5.0, 65.0]\"","result3.toString() == \"(5):[2.0, 1.25, 1.09, 5.0, 65.0]\""]}
+        {"kind":"and","text":"Otherwise all 3 tensors are basically the same.","code":["    result1.toString() == \"(5):[2.0, 1.25, 1.09, 5.0, 65.0]\"","    result2.toString() == \"(5):[2.0, 1.25, 1.09, 5.0, 65.0]\"","    result3.toString() == \"(5):[2.0, 1.25, 1.09, 5.0, 65.0]\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can collect a stream into a tensor.",
+      "result":"PASS",
+      "duration":"0.012 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a stream of integers.","code":["var stream = Stream.of(1, 2, 3, 4, 5, 6)"]},
+
+        {"kind":"when","text":"We collect the stream into a tensor.","code":["var t = stream.collect(Tsr.shaped(2, 3))"]},
+
+        {"kind":"then","text":"The resulting tensor should have the same values as the stream.","code":["t.toString() == \"(2x3):[1, 2, 3, 4, 5, 6]\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

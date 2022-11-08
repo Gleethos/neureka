@@ -9,19 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.128 seconds"
+    "duration":"0.099 seconds"
   },
   "headers":[" \n                <p>\n                    This specification covers the behavior of tensors when being sliced\n                    on multiple different device types in conjunction with \n                    the autograd system.\n                    Autograd should work on slices as well.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"0.026 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["if ( device == null ) return","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)","if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
+        {"kind":"given","text":"For this test we tell the CL-Backend to auto-convert to floats.","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }"]},
+
+        {"kind":"and","text":"","code":["if ( device == null ) return","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)","if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
         {"kind":"and","text":"A tensor which ought to be sliced:","code":["var a = Tsr.of([4, 6], [","                1d, 2d, 3d, 4d, 5d, 6d,","                7d, 8d, 9d, 1d, 2d, 3d,","                4d, 5d, 6d, 7d, 8d, 9d,","                1d, 2d, 3d, 4d, 5d, 6d","            ])","device.store(a)"]},
 
@@ -31,9 +33,11 @@
 
         {"kind":"when","text":"","code":["var y = ( s * 4 ) ** 1.5"]},
 
-        {"kind":"then","text":"","code":["y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
+        {"kind":"then","text":"","code":[" y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
 
-        {"kind":"where","text":"","code":{"device":["OpenCLDevice[id=0x27748fc2260,platform=0x7fff5aaf8000]","CPU[cores=32]"]}}
+        {"kind":"cleanup","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }"]},
+
+        {"kind":"where","text":"","code":{"device":["OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]","CPU[cores=12]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -41,12 +45,14 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.081 seconds",
+      "duration":"0.067 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["if ( device == null ) return","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
+        {"kind":"given","text":"","code":["if ( device == null ) return"]},
+
+        {"kind":"and","text":"For this test we tell the CL-Backend to auto-convert to floats.","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }","Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
         {"kind":"when","text":"","code":["var x = Tsr.of([1],  3d).setRqsGradient(true)","var b = Tsr.of([1], -4d)","var w = Tsr.of([1],  2d)","device.store(x).store(b).store(w)","var y = Tsr.of(\"((i0+i1)*i2)**2\", [x, b, w])"]},
 
@@ -92,13 +98,15 @@
 
         {"kind":"then","text":"","code":["b.toString().contains(","        \"1.0, 2.0, \"+","        \"8.0, 4.0\"",")","a.toString().contains(","        \"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, \" +","        \"7.0, 8.0, 8.0, 1.0, 2.0, 3.0, \" +","        \"4.0, 8.0, 8.0, 4.0, 8.0, 9.0, \" +","        \"1.0, 2.0, 3.0, 4.0, 5.0, 6.0\"",")"]},
 
-        {"kind":"when","text":"","code":["b.setRqsGradient(true)","c = Tsr.of([2, 2], [","                -2, 3,//-2 + 24 + 3 + 8","                 1, 2,","            ])","device.store(b).store(c) // -2 + 6 + 8 + 8 = 22","x = Tsr.of(b, \"x\", c) // This test is important because it tests convolution on slices!"]},
+        {"kind":"when","text":"","code":["b.setRqsGradient(true)","c = Tsr.of([2, 2], [","                -2, 3,//-2 + 24 + 3 + 8","                 1, 2,","            ])","device.store(b).store(c)","x = Tsr.of(b, \"x\", c)"]},
 
         {"kind":"then","text":"","code":["x.item() == 20"]},
 
         {"kind":"and","text":"","code":["x.toString().replace(\".0\", \"\").contains(\"->d[2x2]:(-2, 3, 1, 2)\")"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[cores=32]","OpenCLDevice[id=0x27748fc2260,platform=0x7fff5aaf8000]"]}}
+        {"kind":"cleanup","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }"]},
+
+        {"kind":"where","text":"","code":{"device":["CPU[cores=12]","OpenCLDevice[id=0x19a7007fb40,platform=0x19a7007faf0]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

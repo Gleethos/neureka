@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.024 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Vector tensors can be instantiated via factory methods.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"The tensor contains the expected items.","code":["t.items == data"]},
 
-        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.ref == data // This exposes the internal data array"]},
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.ref == data"]},
 
         {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["[1.1, 2.2, 3.3]","[-0.21, 543.3]","[true, false]","[1, 2, 99, -123]","[3, 8, 4, 2, 3, 0]","[66, 1, 4, 42, -40]"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Boolean","class java.lang.Short","class java.lang.Long","class java.lang.Integer"],"shape":["[3]","[2]","[2]","[4]","[6]","[5]"]}}
       ],
@@ -39,7 +39,7 @@
     {
       "id":"Scalar tensors can be created via static factory methods",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
 
         {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
 
-        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.ref == [data] // Internal data","t.rawData == [data]"]},
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.ref == [data]","t.rawData == [data]"]},
 
         {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
 
@@ -69,15 +69,15 @@
       "tags":{},"see":[],"extraInfo":["\n            Note that the following example of tensor instantiation is \n            best suited for when Neureka is used in a scripting environment\n            like Groovy or Jython which support square bracket list notation.\n            In Java code it is recommended to use the fluent API.\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"\n            We create a tensor using the \"of\" factory method by passing a shape list and a list of items.\n            Note that that length of the values list does not need to match the product of the shape list.\n            The values list will be repeatedly iterated over until the tensor is filled.\n        ","code":["Tsr<Integer> t = Tsr.of([2, 2], [2, 4, 4])"]},
+        {"kind":"given","text":"\n            We create a tensor using the \"of\" factory method by passing a shape list and a list of items.\n            Note that that length of the values list does not need to match the product of the shape list.\n            The values list will be repeatedly iterated over until the tensor is filled.\n        ","code":["    Tsr<Integer> t = Tsr.of([2, 2], [2, 4, 4])"]},
 
-        {"kind":"expect","text":"We passed integers to the factory method, so the resulting tensor is expected to be a tensor of that type.","code":["t.itemType == Integer"]},
+        {"kind":"expect","text":"We passed integers to the factory method, so the resulting tensor is expected to be a tensor of that type.","code":["    t.itemType == Integer"]},
 
-        {"kind":"and","text":"The tensor has the expected shape and items.","code":["t.shape == [ 2, 2 ]","t.items == [ 2, 4, 4, 2 ]"]},
+        {"kind":"and","text":"The tensor has the expected shape and items.","code":["    t.shape == [ 2, 2 ]","    t.items == [ 2, 4, 4, 2 ]"]},
 
-        {"kind":"and","text":"We can also observe its state when converting it to a string.","code":["t.toString() == \"(2x2):[2, 4, 4, 2]\""]},
+        {"kind":"and","text":"We can also observe its state when converting it to a string.","code":["    t.toString() == \"(2x2):[2, 4, 4, 2]\""]},
 
-        {"kind":"and","text":"","code":["t.getItemsAs( double[].class ).length == 4"]}
+        {"kind":"and","text":"","code":["    t.getItemsAs( double[].class ).length == 4"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -90,13 +90,13 @@
       "tags":{},"see":[],"extraInfo":["\n            Note that the following example of tensor instantiation is \n            best suited for when Neureka is used in a scripting environment\n            like Groovy or Jython which support square bracket list notation.\n            In Java code it is recommended to use the fluent API.\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"\n            We create a tensor using the \"of\" factory method by passing a shape list and a list of items.\n            Note that that length of the values list does not need to match the product of the shape list.\n            The values list will be repeatedly iterated over until the tensor is filled.\n        ","code":["Tsr<Integer> t = Tsr.of([2], [3, 5, 7])"]},
+        {"kind":"given","text":"\n            We create a tensor using the \"of\" factory method by passing a shape list and a list of items.\n            Note that that length of the values list does not need to match the product of the shape list.\n            The values list will be repeatedly iterated over until the tensor is filled.\n        ","code":["    Tsr<Integer> t = Tsr.of([2], [3, 5, 7])"]},
 
-        {"kind":"expect","text":"We passed integers to the factory method, so the resulting tensor is expected to be a tensor of that type.","code":["t.itemType == Integer"]},
+        {"kind":"expect","text":"We passed integers to the factory method, so the resulting tensor is expected to be a tensor of that type.","code":["    t.itemType == Integer"]},
 
-        {"kind":"and","text":"The tensor has the expected shape and items.","code":["t.shape == [ 2 ]","t.items == [ 3, 5 ]"]},
+        {"kind":"and","text":"The tensor has the expected shape and items.","code":["    t.shape == [ 2 ]","    t.items == [ 3, 5 ]"]},
 
-        {"kind":"and","text":"We can also view the entire tensor when converting it to a string.","code":["t.toString() == \"(2):[3, 5]\"","t.getItemsAs( double[].class ).length == 2"]}
+        {"kind":"and","text":"We can also view the entire tensor when converting it to a string.","code":["    t.toString() == \"(2):[3, 5]\"","    t.getItemsAs( double[].class ).length == 2"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

@@ -4,19 +4,19 @@
   "narrative":"Framing an nd-array is all about naming its axes and then using those names to\n    access, read or write its values in a more convenient and human readable way.",
   "subjects":["neureka.Nda"],
   "statistics":{
-    "runs":"5",
+    "runs":"6",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.008 seconds"
+    "duration":"0.021 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can label the columns of a rank 2 nd-array.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"We can label the columns and rows of a rank 3 nd-array.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -50,7 +50,7 @@
     {
       "id":"We can use labels as selectors for slicing.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"The slice of a labeled vector is labeled too.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -92,7 +92,7 @@
     {
       "id":"Concatenating 2 labeled nd-arrays will produce a nd-array which is also labeled.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,6 +106,23 @@
         {"kind":"when","text":"We concatenate the nd-arrays.","code":["var nda = nda1.concatAt(0, nda2)"]},
 
         {"kind":"then","text":"\n                The concatenated nd-array is labeled as expected.\n                Note that conflicting labels will simply be merged into a single label.    \n            ","code":["nda.toString() == \"(4x3):[\\n\" +","                  \"   ( Letter)( Num+â‚¬)(Symbol ):( Nda1+Nda2 )\\n\" +","                  \"   [    a  ,    1  ,    !   ]:( A ),\\n\" +","                  \"   [    b  ,    2  ,    Â§   ]:( B ),\\n\" +","                  \"   [    x  ,  2,50 ,    %   ]:( 1 ),\\n\" +","                  \"   [    y  ,  4,90 ,    &   ]:( 2 )\\n\" +","                  \"]\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can concatenate more than 2 nd-arrays.",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Three rank 2 nd-arrays with shape (2x3).","code":["var nda1 = Nda.of(\"a\", \"1\", \"!\", \"b\", \"2\", \"Â§\").withShape(2,3)","var nda2 = Nda.of(\"x\", \"2,50\", \"%\", \"y\", \"4,90\", \"&\").withShape(2,3)","var nda3 = Nda.of(\"1\", \"2\", \"3\", \"4\", \"5\", \"6\").withShape(2,3)"]},
+
+        {"kind":"when","text":"We concatenate the nd-arrays.","code":["var nda = nda1.concatAt(0, nda2, nda3)"]},
+
+        {"kind":"then","text":"The concatenated nd-array is as expected.","code":["nda.toString() == \"(6x3):[\\n\" +","                  \"   [    a  ,    1  ,    !   ],\\n\" +","                  \"   [    b  ,    2  ,    Â§   ],\\n\" +","                  \"   [    x  ,  2,50 ,    %   ],\\n\" +","                  \"   [    y  ,  4,90 ,    &   ],\\n\" +","                  \"   [    1  ,    2  ,    3   ],\\n\" +","                  \"   [    4  ,    5  ,    6   ]\\n\" +","                  \"]\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

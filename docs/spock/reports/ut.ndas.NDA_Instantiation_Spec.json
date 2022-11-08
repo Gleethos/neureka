@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.005 seconds"
+    "duration":"0.010 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A vector can be created from an array of values through the \"of\" method.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,20 +39,20 @@
     {
       "id":"ND-arrays can be created fluently.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new homogeneously filled Nda instance using a fluent builder API.","code":["Nda<?> t = Nda.of( type )","                     .withShape( 3, 2 )","                     .all( value )"]},
+        {"kind":"given","text":"We create a new homogeneously filled Nda instance using a fluent builder API.","code":["    Nda<?> t = Nda.of( type )","                         .withShape( 3, 2 )","                         .all( value )"]},
 
-        {"kind":"expect","text":"This new instance will have the expected data type!","code":["t.itemType() == type"]},
+        {"kind":"expect","text":"This new instance will have the expected data type!","code":["    t.itemType() == type"]},
 
-        {"kind":"and","text":"...all items of the array will have the same value, which is the one we passed to the fluent builder.","code":["t.every((Predicate<Object>){ it == value })"]},
+        {"kind":"and","text":"...all items of the array will have the same value, which is the one we passed to the fluent builder.","code":["    t.every((Predicate<Object>){ it == value })"]},
 
-        {"kind":"and","text":"The nd-array will have the shape we passed to the builder.","code":["t.shape == [3, 2]"]},
+        {"kind":"and","text":"The nd-array will have the shape we passed to the builder.","code":["    t.shape == [3, 2]"]},
 
-        {"kind":"and","text":"The size of the tensor will be the product of all shape entries: 2 * 3 = 6.","code":["t.size == 6"]},
+        {"kind":"and","text":"The size of the tensor will be the product of all shape entries: 2 * 3 = 6.","code":["    t.size == 6"]},
 
         {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Long","class java.lang.Boolean","class java.lang.Character"],"value":["42","4.0","4.0","42","false","°"],"data":["[42]","[4.0]","[4.0]","[42]","[false]","°"]}}
       ],

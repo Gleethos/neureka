@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.065 seconds"
+    "duration":"0.128 seconds"
   },
   "headers":["\n                   This specification defines the behavior of\n                   Operation instances and their ability to be extended! <br> \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.",
       "result":"PASS",
-      "duration":"0.062 seconds",
+      "duration":"0.125 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

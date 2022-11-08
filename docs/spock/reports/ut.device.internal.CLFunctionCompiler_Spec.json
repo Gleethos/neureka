@@ -4,38 +4,65 @@
   "narrative":"Neureka parses mathematical expressions into an AST representation\n    hidden behind the Function interface...\n    This feature does not exist without reason, we can use\n    this abstract syntax tree to compile to OpenCL kernels\n    for optimal execution speed!",
   "subjects":[],
   "statistics":{
-    "runs":"3",
+    "runs":"4",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.217 seconds"
+    "duration":"0.207 seconds"
   },
   "headers":["\n            Specified below are strict tests for covering the ability of \n            OpenCL devices to be able produce optimized functions given\n            a normal function instance created from a String...\n        "],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).",
+      "id":"The OpenCLDevice produces a working optimized Function for doubles.",
       "result":"PASS",
-      "duration":"0.129 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We get the first available OpenCLDevice we can find in the CLContext!","code":["def device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]"]},
+        {"kind":"given","text":"We get the first available OpenCLDevice we can find in the CLContext!","code":["def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]"]},
 
         {"kind":"and","text":"Three scalar test tensors which will be used as inputs to the optimized function.","code":["Tsr<Double> t1 = Tsr.of(-2d).to(device)","Tsr<Double> t2 = Tsr.of(5d).to(device)","Tsr<Double> t3 = Tsr.of(2d).to(device)"]},
 
-        {"kind":"and","text":"A test function which will be the optimization target for this test.","code":["def funToBeOptimized = Function.of(\"i2 + (i0 / i1)\") // 2 + (-2 / 5)"]},
+        {"kind":"and","text":"A test function which will be the optimization target for this test.","code":["def funToBeOptimized = Function.of(\"i2 + (i0 / i1)\")"]},
 
         {"kind":"when","text":"We instruct the device to produce an optimized Function based on the provided test function...","code":["Function optimized = device.optimizedFunctionOf(funToBeOptimized, \"my_test_fun\")"]},
 
-        {"kind":"then","text":"Initially we expect that the device does not contain the \"ad hoc\" kernel with the following signature...","code":["!device.hasAdHocKernel(\"my_test_fun_F32\\$1_F32\\$1_F32\\$1_F32\\$1\")"]},
+        {"kind":"then","text":"Initially we expect that the device does not contain the \"ad hoc\" kernel with the following signature...","code":["!device.hasAdHocKernel(\"my_test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\")"]},
 
         {"kind":"when","text":"We test the optimized function by calling it with three arguments...","code":["Tsr result = optimized( t1, t2, t3 )"]},
 
         {"kind":"then","text":"...the result should look as follows:","code":["result.toString() == \"(1):[1.6]\""]},
 
-        {"kind":"and","text":"We expect that the device has an underlying kernel with the following name:","code":["device.hasAdHocKernel(\"my_test_fun_F32\\$1_F32\\$1_F32\\$1_F32\\$1\")"]}
+        {"kind":"and","text":"We expect that the device has an underlying kernel with the following name:","code":["device.hasAdHocKernel(\"my_test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\")"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The OpenCLDevice produces a working optimized Function for floats.",
+      "result":"PASS",
+      "duration":"0.007 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We get the first available OpenCLDevice we can find in the CLContext!","code":["def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]"]},
+
+        {"kind":"and","text":"Three scalar test tensors which will be used as inputs to the optimized function.","code":["Tsr<Float> t1 = Tsr.of(-3f).to(device)","Tsr<Float> t2 = Tsr.of(6f).to(device)","Tsr<Float> t3 = Tsr.of(2f).to(device)"]},
+
+        {"kind":"and","text":"A test function which will be the optimization target for this test.","code":["def funToBeOptimized = Function.of(\"i0 * (i1 / i2)\")"]},
+
+        {"kind":"when","text":"We instruct the device to produce an optimized Function based on the provided test function...","code":["Function optimized = device.optimizedFunctionOf(funToBeOptimized, \"my_fun\")"]},
+
+        {"kind":"then","text":"Initially we expect that the device does not contain the \"ad hoc\" kernel with the following signature...","code":["!device.hasAdHocKernel(\"my_fun_F32\\$1_F32\\$1_F32\\$1_F32\\$1\")"]},
+
+        {"kind":"when","text":"We test the optimized function by calling it with three arguments...","code":["Tsr result = optimized( t1, t2, t3 )"]},
+
+        {"kind":"then","text":"...the result should look as follows:","code":["result.toString() == \"(1):[-9.0]\""]},
+
+        {"kind":"and","text":"We expect that the device has an underlying kernel with the following name:","code":["device.hasAdHocKernel(\"my_fun_F32\\$1_F32\\$1_F32\\$1_F32\\$1\")"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -43,7 +70,7 @@
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.139 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,7 +111,7 @@
 
         {"kind":"when","text":"We set the mocked device as components of our three scalar tensors...","code":["t1.to(mockDevice)","t2.to(mockDevice)","t3.to(mockDevice)"]},
 
-        {"kind":"then","text":"\n                This will require the mocked OpenCLDevice to notify the tensors that they are not already members.\n                This will cause the tensor to add themselves to the device after which\n                the tensors will ask the device again if they are now their members!\n        ","code":["(0.._) * mockDevice.has(t1) >>> [false, true] // doesn't have it, then storing it, then has it!","(0.._) * mockDevice.has(t2) >>> [false, true]","(0.._) * mockDevice.has(t3) >>> [false, true]"]},
+        {"kind":"then","text":"\n                This will require the mocked OpenCLDevice to notify the tensors that they are not already members.\n                This will cause the tensor to add themselves to the device after which\n                the tensors will ask the device again if they are now their members!\n        ","code":["(0.._) * mockDevice.has(t1) >>> [false, true]","(0.._) * mockDevice.has(t2) >>> [false, true]","(0.._) * mockDevice.has(t3) >>> [false, true]"]},
 
         {"kind":"and","text":"The update method is being called on the device because it becomes the component of 3 tensors!","code":["(1.._) * mockDevice.update(_) >> true"]},
 
@@ -102,7 +129,7 @@
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.041 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

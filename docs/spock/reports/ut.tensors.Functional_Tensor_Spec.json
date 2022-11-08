@@ -4,19 +4,19 @@
   "narrative":"Tensors expose a powerful API for performing operations on them\n    in a functional style.",
   "subjects":[],
   "statistics":{
-    "runs":"5",
+    "runs":"7",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.631 seconds"
+    "duration":"0.844 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can initialize a tensor using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.071 seconds",
+      "duration":"0.069 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
     {
       "id":"We can analyse the values of a tensor using various predicate receiving methods",
       "result":"PASS",
-      "duration":"0.220 seconds",
+      "duration":"0.131 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,9 +52,39 @@
     },
   
     {
+      "id":"We can use the \"filter\" method as a shortcut for \"stream().filter(..)\".",
+      "result":"PASS",
+      "duration":"0.061 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We create a tensor...","code":["Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)"]},
+
+        {"kind":"then","text":"The filter method returns a filtered stream which we can collect!","code":["t.filter({it < 3})","        .collect(Collectors.toList()) == [1, 0, 1, -4]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use the \"flatMap\" method as a shortcut for \"stream().flatMap(..)\".",
+      "result":"PASS",
+      "duration":"0.066 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We create a tensor...","code":["Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)"]},
+
+        {"kind":"then","text":"We can use the \"flatMap\" method as a shortcut for \"stream().flatMap(..)\"","code":["t.flatMap({it < 3 ? [it, it] : []})","        .collect(Collectors.toList()) == [1, 1, 0, 0, 1, 1, -4, -4]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
       "id":"Tensor mapping lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.129 seconds",
+      "duration":"0.280 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -77,7 +107,7 @@
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
       "result":"PASS",
-      "duration":"0.136 seconds",
+      "duration":"0.166 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +128,7 @@
     {
       "id":"We can find both min and max items in a tensor by providing a comparator.",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.061 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

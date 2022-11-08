@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.072 seconds"
+    "duration":"0.085 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.",
       "result":"PASS",
-      "duration":"0.059 seconds",
+      "duration":"0.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

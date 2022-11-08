@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.466 seconds"
+    "duration":"0.823 seconds"
   },
   "headers":["\n            This specification covers the expected functionality of\n            various \"FileHandle\" implementations.\n            Such implementations ought to be able to save tensors to\n            a given directory in the file format that they represent.\n            Functionalities like : \"store\", \"restore\" and \"free\" must\n            behave as expected.\n            (For more information take a look a the \"FileHandle\" & \"Storage\" interface)\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test writing IDX file format.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Test reading IDX file format.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,7 +56,7 @@
 
         {"kind":"and","text":"It contains the correct array type.","code":["loaded.mut.data.ref instanceof short[]"]},
 
-        {"kind":"and","text":"The \"IDXHead\" instance has the expected state :","code":["idx.valueSize == 28 * 28","idx.valueSize == 28 * 28 * 1 // 1 := ubyte","idx.fileName == filename","idx.location.endsWith( filename )","idx.totalSize == 28 * 28 * 1 + 16","idx.dataType != loaded.dataType","idx.dataType == DataType.of( UI8.class ) // The underlying data is unsigned byte! (Not supported by JVM)"]},
+        {"kind":"and","text":"The \"IDXHead\" instance has the expected state :","code":["idx.valueSize == 28 * 28","idx.valueSize == 28 * 28 * 1","idx.fileName == filename","idx.location.endsWith( filename )","idx.totalSize == 28 * 28 * 1 + 16","idx.dataType != loaded.dataType","idx.dataType == DataType.of( UI8.class )"]},
 
         {"kind":"where","text":"The following files and the expected hashes of their data were used :","code":{"filename":["MNIST-sample-1.idx","MNIST-sample-2.idx","MNIST-sample-3.idx"],"expected":["c74e87c7a93605e7a1660ec9e17dcf9f","4a57297981456a467a302c8738b3ac50","87eade8bb5659d324030f4e84f6745e7"]}}
       ],
@@ -66,7 +66,7 @@
     {
       "id":"We can load image files as tensors.",
       "result":"PASS",
-      "duration":"0.428 seconds",
+      "duration":"0.781 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -75,9 +75,9 @@
 
         {"kind":"when","text":"","code":["FileHandle handle = FileHandle.FACTORY.getLoader(type).load(\"build/resources/test/$type/\" + filename, null)","Tsr loaded = handle.load()","loaded.forEach(e -> hash = ( hash + e ).digest('md5') )"]},
 
-        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getRepresentativeType() == I16.class // Auto convert! (stored as I16)","hash == expected"]},
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getRepresentativeType() == I16.class","hash == expected"]},
 
-        {"kind":"and","text":"","code":["handle.shape == shape as int[]","handle.valueSize == shape.inject( 1, {prod, value -> prod * value} )","handle.totalSize == shape.inject( 1, {prod, value -> prod * value} ) //28 * 28 * 1 + 16","handle.location.endsWith( filename )","handle.dataType == DataType.of( UI8.class )","loaded.dataType == DataType.of( I16.class )"]},
+        {"kind":"and","text":"","code":["handle.shape == shape as int[]","handle.valueSize == shape.inject( 1, {prod, value -> prod * value} )","handle.totalSize == shape.inject( 1, {prod, value -> prod * value} )","handle.location.endsWith( filename )","handle.dataType == DataType.of( UI8.class )","loaded.dataType == DataType.of( I16.class )"]},
 
         {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":{"filename":["small.JPG","tiny.JPG","super-tiny.JPG","tiny.png"],"shape":["[260, 410, 3]","[10, 46, 3]","[3, 4, 3]","[90, 183, 4]"],"expected":["b0e336b03f2ead7297e56b8ca050f34d","79bf5dd367b5ec05603e395c41dafaa7","a834038d8ddc53f170fa426c76d45df2","63bcd21a7580242a1b562bb49cb53e74"]}}
       ],
@@ -87,14 +87,14 @@
     {
       "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"","code":["CSVHandle csv = new CSVHandle( \"build/resources/test/csv/\" + filename, params )","Tsr loaded = csv.load()","var hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )"]},
+        {"kind":"when","text":"","code":["CSVHandle csv = new CSVHandle( \"build/resources/test/csv/\" + filename, params )","Tsr loaded = csv.load()","var hash = loaded.toString().digest('md5')"]},
 
-        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getItemTypeClass() == String.class // Auto convert! (stored as String)","hash == expected"]},
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getItemTypeClass() == String.class","hash == expected"]},
 
         {"kind":"and","text":"","code":["csv.shape == shape as int[]","csv.valueSize == shape.inject( 1, {prod, value -> prod * value} )","csv.totalSize == byteSize","csv.dataSize == byteSize","csv.location.endsWith( filename )","csv.dataType == DataType.of( String.class )","loaded.dataType == DataType.of( String.class )"]},
 
@@ -106,7 +106,7 @@
     {
       "id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,7 +129,7 @@
     {
       "id":"Partially labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
