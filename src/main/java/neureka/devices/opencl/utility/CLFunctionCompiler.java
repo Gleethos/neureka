@@ -84,9 +84,9 @@ public final class CLFunctionCompiler
                             call -> {
                                 if ( call.input( 0 ) == null ) // Creating a new tensor:
                                 {
-                                    Tsr<Double> output = Tsr.of(call.input(1).getNDConf().shape(), 0.0);
+                                    Tsr<Number> output = Tsr.like( (Tsr<Number>) call.input( 1 ) ).all(0);
                                     output.getMut().setIsVirtual( false );
-                                    call.getDeviceFor(Double.class).store(output);
+                                    call.getDeviceFor(Number.class).store(output);
                                     call = call.withInputAt( 0, output );
                                 }
                                 return call;
