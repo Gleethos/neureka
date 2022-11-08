@@ -11,9 +11,9 @@ import neureka.devices.host.CPU;
     public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
 <span class="pc bpc" id="L12" title="2 of 4 branches missed.">        assert call.arity() == 3;</span>
 <span class="fc bfc" id="L13" title="All 2 branches covered.">        if ( call.getDerivativeIndex() == 0 )</span>
-<span class="fc" id="L14">            return call.input( 2 ).shallowCopy().getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L14">            return call.input( 2 ).shallowCopy().mut().setIsIntermediate( true );</span>
 <span class="fc bfc" id="L15" title="All 2 branches covered.">        else if ( call.getDerivativeIndex() == 1 )</span>
-<span class="fc" id="L16">            return call.input( 1 ).shallowCopy().getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L16">            return call.input( 1 ).shallowCopy().mut().setIsIntermediate( true );</span>
         else
 <span class="fc" id="L18">            return super.run(call);</span>
     }

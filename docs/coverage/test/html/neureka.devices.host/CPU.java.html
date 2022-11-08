@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host</a> &gt; <span class="el_source">CPU.java</span></div><h1>CPU.java</h1><pre class="source lang-java linenums">package neureka.devices.host;
 
-import neureka.Data;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.common.utility.DataConverter;
+import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.host.concurrent.Parallelism;
@@ -96,7 +96,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     @Override
     public &lt;T&gt; CPU store( Tsr&lt;T&gt; tensor ) {
 <span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if ( !this.has( tensor ) )</span>
-<span class="nc" id="L99">            tensor.getUnsafe().getData().owner().restore( tensor );</span>
+<span class="nc" id="L99">            tensor.getMut().getData().owner().restore( tensor );</span>
 
 <span class="fc" id="L101">        _tensors.add( (Tsr&lt;Object&gt;) tensor);</span>
 <span class="fc" id="L102">        return this;</span>
@@ -106,7 +106,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 
     @Override
     protected final &lt;T&gt; int _sizeOccupiedBy(Tsr&lt;T&gt; tensor) {
-<span class="fc" id="L109">        Object data = tensor.getUnsafe().getData().getRef();</span>
+<span class="fc" id="L109">        Object data = tensor.getMut().getData().getRef();</span>
 <span class="fc bfc" id="L110" title="All 2 branches covered.">        if      ( data instanceof float[]   ) return ( (float[])   data).length;</span>
 <span class="fc bfc" id="L111" title="All 2 branches covered.">        else if ( data instanceof double[]  ) return ( (double[])  data).length;</span>
 <span class="fc bfc" id="L112" title="All 2 branches covered.">        else if ( data instanceof short[]   ) return ( (short[])   data).length;</span>
@@ -120,7 +120,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 
     @Override
     protected final &lt;T&gt; Object _readAll(Tsr&lt;T&gt; tensor, boolean clone ) {
-<span class="fc" id="L123">        Object data = tensor.getUnsafe().getData().getRef();</span>
+<span class="fc" id="L123">        Object data = tensor.getMut().getData().getRef();</span>
 <span class="fc bfc" id="L124" title="All 2 branches covered.">        if ( clone ) {</span>
 <span class="fc bfc" id="L125" title="All 2 branches covered.">            if ( data instanceof double[]  ) return ( (double[])  data ).clone();</span>
 <span class="fc bfc" id="L126" title="All 2 branches covered.">            if ( data instanceof float[]   ) return ( (float[])   data ).clone();</span>
@@ -137,7 +137,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 
     @Override
     protected final &lt;T&gt; T _readItem( Tsr&lt;T&gt; tensor, int index ) {
-<span class="fc" id="L140">        Object data = tensor.getUnsafe().getData().getRef();</span>
+<span class="fc" id="L140">        Object data = tensor.getMut().getData().getRef();</span>
 <span class="fc bfc" id="L141" title="All 2 branches covered.">        if      ( data instanceof float[]   ) return (T)Float.valueOf( ((float[])   data)[ index ] );</span>
 <span class="fc bfc" id="L142" title="All 2 branches covered.">        else if ( data instanceof double[]  ) return (T)Double.valueOf( ((double[])  data)[ index ] );</span>
 <span class="fc bfc" id="L143" title="All 2 branches covered.">        else if ( data instanceof short[]   ) return (T)Short.valueOf( ((short[])   data)[ index ] );</span>
@@ -145,7 +145,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="fc bfc" id="L145" title="All 2 branches covered.">        else if ( data instanceof byte[]    ) return (T)Byte.valueOf( ((byte[])    data)[ index ] );</span>
 <span class="fc bfc" id="L146" title="All 2 branches covered.">        else if ( data instanceof long[]    ) return (T)Long.valueOf( ((long[])    data)[ index ] );</span>
 <span class="fc bfc" id="L147" title="All 2 branches covered.">        else if ( data instanceof boolean[] ) return (T)Boolean.valueOf( ((boolean[]) data)[ index ] );</span>
-<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        else if ( data instanceof char[]    ) return (T)Character.valueOf( ((char[])  data)[ index ] );</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        else if ( data instanceof char[]    ) return (T)Character.valueOf( ((char[])  data)[ index ] );</span>
 <span class="fc" id="L149">        else return (T)( (Object[]) data)[ index ];</span>
     }
 
@@ -154,41 +154,41 @@ public class CPU extends AbstractDevice&lt;Object&gt;
             Tsr&lt;T&gt; tensor, Class&lt;A&gt; arrayType, int start, int size
     ) {
 <span class="fc bfc" id="L156" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
-<span class="fc" id="L157">            float[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), float[].class);</span>
+<span class="fc" id="L157">            float[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), float[].class);</span>
 <span class="fc" id="L158">            float[] data = new float[size];</span>
 <span class="fc" id="L159">            System.arraycopy(source, start, data, 0, size);</span>
 <span class="fc" id="L160">            return (A) data;</span>
 <span class="fc bfc" id="L161" title="All 2 branches covered.">        } else if ( arrayType == short[].class ){</span>
-<span class="fc" id="L162">            short[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), short[].class);</span>
+<span class="fc" id="L162">            short[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), short[].class);</span>
 <span class="fc" id="L163">            short[] data = new short[size];</span>
 <span class="fc" id="L164">            System.arraycopy(source, start, data, 0, size);</span>
 <span class="fc" id="L165">            return (A) data;</span>
 <span class="fc bfc" id="L166" title="All 2 branches covered.">        } else if ( arrayType == byte[].class ){</span>
-<span class="fc" id="L167">            byte[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), byte[].class);</span>
+<span class="fc" id="L167">            byte[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), byte[].class);</span>
 <span class="fc" id="L168">            byte[] data = new byte[size];</span>
 <span class="fc" id="L169">            System.arraycopy(source, start, data, 0, size);</span>
 <span class="fc" id="L170">            return (A) data;</span>
 <span class="fc bfc" id="L171" title="All 2 branches covered.">        } else if ( arrayType == boolean[].class ){</span>
-<span class="fc" id="L172">            boolean[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), boolean[].class);</span>
+<span class="fc" id="L172">            boolean[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), boolean[].class);</span>
 <span class="fc" id="L173">            boolean[] data = new boolean[size];</span>
 <span class="fc" id="L174">            System.arraycopy(source, start, data, 0, size);</span>
 <span class="fc" id="L175">            return (A) data;</span>
 <span class="pc bpc" id="L176" title="1 of 2 branches missed.">        } else if ( arrayType == char[].class ){</span>
-<span class="nc" id="L177">            char[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), char[].class);</span>
+<span class="nc" id="L177">            char[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), char[].class);</span>
 <span class="nc" id="L178">            char[] data = new char[size];</span>
 <span class="nc" id="L179">            System.arraycopy(source, start, data, 0, size);</span>
 <span class="nc" id="L180">            return (A) data;</span>
 <span class="fc bfc" id="L181" title="All 2 branches covered.">        } else if ( arrayType == double[].class ){</span>
-<span class="fc" id="L182">            double[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), double[].class);</span>
+<span class="fc" id="L182">            double[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), double[].class);</span>
 <span class="fc" id="L183">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
 <span class="fc bfc" id="L184" title="All 2 branches covered.">        } else if ( arrayType == int[].class ){</span>
-<span class="fc" id="L185">            int[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), int[].class);</span>
+<span class="fc" id="L185">            int[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), int[].class);</span>
 <span class="fc" id="L186">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
 <span class="fc bfc" id="L187" title="All 2 branches covered.">        } else if ( arrayType == long[].class ){</span>
-<span class="fc" id="L188">            long[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), long[].class);</span>
+<span class="fc" id="L188">            long[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), long[].class);</span>
 <span class="fc" id="L189">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
 <span class="pc bpc" id="L190" title="1 of 2 branches missed.">        } else if ( arrayType == Object[].class ){</span>
-<span class="fc" id="L191">            Object[] source = DataConverter.get().convert(tensor.getUnsafe().getData().getRef(), Object[].class);</span>
+<span class="fc" id="L191">            Object[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), Object[].class);</span>
 <span class="fc" id="L192">            return (A) java.util.Arrays.stream(source, start, start + size).toArray();</span>
         }
 <span class="nc" id="L194">        throw new IllegalArgumentException(&quot;Array type '&quot;+arrayType.getSimpleName()+&quot;' not supported!&quot;);</span>
@@ -196,7 +196,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 
     @Override
     protected final &lt;T&gt; void _writeItem( Tsr&lt;T&gt; tensor, T item, int start, int size ) {
-<span class="fc" id="L199">        Object data = tensor.getUnsafe().getData().getRef();</span>
+<span class="fc" id="L199">        Object data = tensor.getMut().getData().getRef();</span>
 <span class="fc" id="L200">        Class&lt;?&gt; arrayType = data.getClass();</span>
 <span class="fc bfc" id="L201" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
 <span class="fc" id="L202">            float source = DataConverter.get().convert(item, Float.class);</span>
@@ -240,9 +240,9 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     protected final &lt;T&gt; void _writeArray(
             Tsr&lt;T&gt; tensor, Object array, int offset, int start, int size
     ) {
-<span class="fc bfc" id="L243" title="All 2 branches covered.">        Object data = tensor.getUnsafe().getData() == null ? null : tensor.getUnsafe().getData().getRef();</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getRef();</span>
 <span class="fc bfc" id="L244" title="All 2 branches covered.">        if ( data == null ) {</span>
-<span class="fc" id="L245">            tensor.getUnsafe().setData( _dataArrayOf(array) );</span>
+<span class="fc" id="L245">            tensor.getMut().setData( _dataArrayOf(array) );</span>
 <span class="fc" id="L246">            return;</span>
         }
 <span class="fc" id="L248">        Class&lt;?&gt; arrayType = data.getClass();</span>
@@ -327,7 +327,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     }
 
     @Override
-    public neureka.Data allocate(Object jvmData, int desiredSize )
+    public neureka.Data allocate( Object jvmData, int desiredSize )
     {
 <span class="fc" id="L332">        neureka.Data data = _dataArrayOf(jvmData);</span>
 <span class="fc bfc" id="L333" title="All 2 branches covered.">        if ( jvmData instanceof int[] ) {</span>
@@ -398,22 +398,22 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="nc" id="L398">            throw new IllegalArgumentException(&quot;Array type '&quot;+jvmData.getClass().getSimpleName()+&quot;' not supported!&quot;);</span>
     }
 
-    public neureka.Data allocate(Object data ) {
+    public neureka.Data allocate( Object data ) {
         int size;
-<span class="pc bpc" id="L403" title="1 of 2 branches missed.">        if ( data instanceof Object[] ) {</span>
+<span class="nc bnc" id="L403" title="All 2 branches missed.">        if ( data instanceof Object[] ) {</span>
 <span class="nc" id="L404">            size = ( (Object[]) data ).length;</span>
-<span class="fc bfc" id="L405" title="All 2 branches covered.">        } else if ( data instanceof int[] ) {</span>
-<span class="fc" id="L406">            size = ( (int[]) data ).length;</span>
-<span class="fc bfc" id="L407" title="All 2 branches covered.">        } else if ( data instanceof long[] ) {</span>
-<span class="fc" id="L408">            size = ( (long[]) data ).length;</span>
-<span class="fc bfc" id="L409" title="All 2 branches covered.">        } else if ( data instanceof float[] ) {</span>
-<span class="fc" id="L410">            size = ( (float[]) data ).length;</span>
-<span class="fc bfc" id="L411" title="All 2 branches covered.">        } else if ( data instanceof double[] ) {</span>
-<span class="fc" id="L412">            size = ( (double[]) data ).length;</span>
-<span class="fc bfc" id="L413" title="All 2 branches covered.">        } else if ( data instanceof short[] ) {</span>
-<span class="fc" id="L414">            size = ( (short[]) data ).length;</span>
-<span class="pc bpc" id="L415" title="1 of 2 branches missed.">        } else if ( data instanceof byte[] ) {</span>
-<span class="fc" id="L416">            size = ( (byte[]) data ).length;</span>
+<span class="nc bnc" id="L405" title="All 2 branches missed.">        } else if ( data instanceof int[] ) {</span>
+<span class="nc" id="L406">            size = ( (int[]) data ).length;</span>
+<span class="nc bnc" id="L407" title="All 2 branches missed.">        } else if ( data instanceof long[] ) {</span>
+<span class="nc" id="L408">            size = ( (long[]) data ).length;</span>
+<span class="nc bnc" id="L409" title="All 2 branches missed.">        } else if ( data instanceof float[] ) {</span>
+<span class="nc" id="L410">            size = ( (float[]) data ).length;</span>
+<span class="nc bnc" id="L411" title="All 2 branches missed.">        } else if ( data instanceof double[] ) {</span>
+<span class="nc" id="L412">            size = ( (double[]) data ).length;</span>
+<span class="nc bnc" id="L413" title="All 2 branches missed.">        } else if ( data instanceof short[] ) {</span>
+<span class="nc" id="L414">            size = ( (short[]) data ).length;</span>
+<span class="nc bnc" id="L415" title="All 2 branches missed.">        } else if ( data instanceof byte[] ) {</span>
+<span class="nc" id="L416">            size = ( (byte[]) data ).length;</span>
 <span class="nc bnc" id="L417" title="All 2 branches missed.">        } else if ( data instanceof boolean[] ) {</span>
 <span class="nc" id="L418">            size = ( (boolean[]) data ).length;</span>
 <span class="nc bnc" id="L419" title="All 2 branches missed.">        } else if ( data instanceof char[] ) {</span>
@@ -422,16 +422,16 @@ public class CPU extends AbstractDevice&lt;Object&gt;
         else
 <span class="nc" id="L423">            throw new IllegalArgumentException( &quot;Unsupported data type: &quot; + data.getClass() );</span>
 
-<span class="fc" id="L425">        neureka.Data dataArray = CPU.get().allocate( data, size );</span>
-<span class="pc bpc" id="L426" title="1 of 2 branches missed.">        if ( dataArray.getRef() != data )</span>
+<span class="nc" id="L425">        neureka.Data dataArray = CPU.get().allocate( data, size );</span>
+<span class="nc bnc" id="L426" title="All 2 branches missed.">        if ( dataArray.getRef() != data )</span>
 <span class="nc" id="L427">            throw new IllegalStateException( &quot;CPU seems to have reallocated some already valid data unnecessarily! This is most likely a bug.&quot; );</span>
 
-<span class="fc" id="L429">        return dataArray;</span>
+<span class="nc" id="L429">        return dataArray;</span>
     }
 
     @Override
-    protected final neureka.Data _actualize(Tsr&lt;?&gt; tensor ) {
-<span class="fc" id="L434">        neureka.Data data = tensor.getUnsafe().getData();</span>
+    protected final neureka.Data&lt;Object&gt; _actualize(Tsr&lt;?&gt; tensor ) {
+<span class="fc" id="L434">        neureka.Data&lt;Object&gt; data = (neureka.Data&lt;Object&gt;) tensor.getMut().getData();</span>
 <span class="fc" id="L435">        Object value = data.getRef();</span>
 <span class="fc" id="L436">        DataType&lt;?&gt; dataType = tensor.getDataType();</span>
 <span class="fc" id="L437">        int size = tensor.size();</span>
@@ -478,19 +478,35 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     }
 
     @Override
-    public &lt;T&gt; CPU free( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L482">        _tensors.remove( tensor );</span>
-<span class="fc" id="L483">        return this;</span>
+    protected final DataType&lt;?&gt; _dataTypeOf(Object rawData) {
+<span class="fc" id="L482">        LogUtil.nullArgCheck( rawData, &quot;rawData&quot;, Object.class );</span>
+<span class="fc bfc" id="L483" title="All 2 branches covered.">        if ( rawData instanceof double[] ) return DataType.of( F64.class );</span>
+<span class="fc bfc" id="L484" title="All 2 branches covered.">        if ( rawData instanceof float[] ) return DataType.of( F32.class );</span>
+<span class="fc bfc" id="L485" title="All 2 branches covered.">        if ( rawData instanceof int[] ) return DataType.of( I32.class );</span>
+<span class="fc bfc" id="L486" title="All 2 branches covered.">        if ( rawData instanceof short[] ) return DataType.of( I16.class );</span>
+<span class="fc bfc" id="L487" title="All 2 branches covered.">        if ( rawData instanceof byte[] ) return DataType.of( I8.class );</span>
+<span class="pc bpc" id="L488" title="1 of 2 branches missed.">        if ( rawData instanceof long[] ) return DataType.of( I64.class );</span>
+<span class="nc bnc" id="L489" title="All 2 branches missed.">        if ( rawData instanceof boolean[] ) return DataType.of( Boolean.class );</span>
+<span class="nc bnc" id="L490" title="All 2 branches missed.">        if ( rawData instanceof char[] ) return DataType.of( Character.class );</span>
+<span class="nc bnc" id="L491" title="All 2 branches missed.">        if ( rawData instanceof Object[] ) return DataType.of( Object.class );</span>
+<span class="nc" id="L492">        throw new IllegalArgumentException( &quot;Unsupported data type: &quot; + rawData.getClass() );</span>
     }
 
     @Override
-<span class="nc" id="L487">    protected &lt;T&gt; void _swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement ) {}</span>
+    public &lt;T&gt; CPU free( Tsr&lt;T&gt; tensor ) {
+<span class="fc" id="L497">        LogUtil.nullArgCheck( tensor, &quot;tensor&quot;, Tsr.class );</span>
+<span class="fc" id="L498">        _tensors.remove( tensor );</span>
+<span class="fc" id="L499">        return this;</span>
+    }
 
     @Override
-<span class="fc" id="L490">    public Collection&lt;Tsr&lt;Object&gt;&gt; getTensors() { return _tensors; }</span>
+<span class="nc" id="L503">    protected &lt;T&gt; void _swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement ) {}</span>
 
     @Override
-<span class="nc" id="L493">    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }</span>
+<span class="fc" id="L506">    public Collection&lt;Tsr&lt;Object&gt;&gt; getTensors() { return _tensors; }</span>
+
+    @Override
+<span class="nc" id="L509">    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }</span>
 
     /**
      *  This method is part of the component system built into the {@link Tsr} class.
@@ -501,8 +517,8 @@ public class CPU extends AbstractDevice&lt;Object&gt;
      */
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;Object&gt;&gt; changeRequest ) {
-<span class="fc" id="L504">        super.update( changeRequest );</span>
-<span class="fc" id="L505">        return false; // This type of device can not be a component simply because it is the default device</span>
+<span class="fc" id="L520">        super.update( changeRequest );</span>
+<span class="fc" id="L521">        return false; // This type of device can not be a component simply because it is the default device</span>
     }
 
     /**
@@ -514,10 +530,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
      * @return The maximum number of CPU cores available to the JVM.
      *         This number is never smaller than one!
      */
-<span class="fc" id="L517">    public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }</span>
+<span class="fc" id="L533">    public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }</span>
 
     @Override
-<span class="fc" id="L520">    public String toString() { return this.getClass().getSimpleName()+&quot;[coreCount=&quot;+getCoreCount()+&quot;]&quot;; }</span>
+<span class="fc" id="L536">    public String toString() { return this.getClass().getSimpleName()+&quot;[cores=&quot;+getCoreCount()+&quot;]&quot;; }</span>
 
     /**
      *  A simple functional interface for executing a range whose implementations will
@@ -525,11 +541,11 @@ public class CPU extends AbstractDevice&lt;Object&gt;
      *  a thread-pool, given that the provided workload is large enough.
      */
     @FunctionalInterface
-    public interface RangeWorkload {  void execute( int start, int end );  }
+    public interface RangeWorkload { void execute( int start, int end );  }
 
 
     @FunctionalInterface
-    public interface IndexedWorkload {  void execute( int i );  }
+    public interface IndexedWorkload { void execute( int i );  }
 
     /**
      *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
@@ -541,10 +557,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
      *  If the workload is very small, then the current main thread will process the entire workload range
      *  whereas the underlying {@link ThreadPoolExecutor} will not be used to avoid unnecessary overhead.
      */
-<span class="fc" id="L544">    public static class JVMExecutor</span>
+<span class="fc" id="L560">    public static class JVMExecutor</span>
     {
-<span class="fc" id="L546">        private static final AtomicInteger _COUNTER = new AtomicInteger();</span>
-<span class="fc" id="L547">        private static final ThreadGroup   _GROUP   = new ThreadGroup(THREAD_PREFIX+&quot;-group&quot;);</span>
+<span class="fc" id="L562">        private static final AtomicInteger _COUNTER = new AtomicInteger();</span>
+<span class="fc" id="L563">        private static final ThreadGroup   _GROUP   = new ThreadGroup(THREAD_PREFIX+&quot;-group&quot;);</span>
 
         /*
             The following 2 constants determine if any given workload size will be parallelized or not...
@@ -553,31 +569,31 @@ public class CPU extends AbstractDevice&lt;Object&gt;
         private static final int _MIN_THREADED_WORKLOAD_SIZE = 32;
         private static final int _MIN_WORKLOAD_PER_THREAD    = 8;
 
-<span class="fc" id="L556">        private final ThreadPoolExecutor _pool =</span>
+<span class="fc" id="L572">        private final ThreadPoolExecutor _pool =</span>
                                             new ThreadPoolExecutor(
                                                     ConcreteMachine.ENVIRONMENT.units,
                                                     Integer.MAX_VALUE,
                                                     5L,
                                                     TimeUnit.SECONDS,
                                                     new SynchronousQueue&lt;Runnable&gt;(), // This is basically always of size 1
-<span class="fc" id="L563">                                                    _newThreadFactory(THREAD_PREFIX+&quot;-&quot;)</span>
+<span class="fc" id="L579">                                                    _newThreadFactory(THREAD_PREFIX+&quot;-&quot;)</span>
                                             );
 
         private static ThreadFactory _newThreadFactory( final String name ) {
-<span class="fc" id="L567">            return _newThreadFactory( _GROUP, name );</span>
+<span class="fc" id="L583">            return _newThreadFactory( _GROUP, name );</span>
         }
 
         private static ThreadFactory _newThreadFactory( final ThreadGroup group, final String name ) {
 
-<span class="pc bpc" id="L572" title="1 of 2 branches missed.">            String prefix = name.endsWith(&quot;-&quot;) ? name : name + &quot;-&quot;;</span>
+<span class="pc bpc" id="L588" title="1 of 2 branches missed.">            String prefix = name.endsWith(&quot;-&quot;) ? name : name + &quot;-&quot;;</span>
 
-<span class="fc" id="L574">            return target -&gt; {</span>
-<span class="fc" id="L575">                Thread thread = new Thread(</span>
+<span class="fc" id="L590">            return target -&gt; {</span>
+<span class="fc" id="L591">                Thread thread = new Thread(</span>
                                     group, target,
-<span class="fc" id="L577">                                    prefix + _COUNTER.incrementAndGet() // The name, including the thread number.</span>
+<span class="fc" id="L593">                                    prefix + _COUNTER.incrementAndGet() // The name, including the thread number.</span>
                                 );
-<span class="fc" id="L579">                thread.setDaemon(true);</span>
-<span class="fc" id="L580">                return thread;</span>
+<span class="fc" id="L595">                thread.setDaemon(true);</span>
+<span class="fc" id="L596">                return thread;</span>
             };
         }
 
@@ -587,14 +603,14 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          *
          * @return the number of threads
          */
-<span class="fc" id="L590">        public int getActiveThreadCount() { return _pool.getActiveCount(); }</span>
+<span class="fc" id="L606">        public int getActiveThreadCount() { return _pool.getActiveCount(); }</span>
 
         /**
          * Returns the core number of threads.
          *
          * @return the core number of threads
          */
-<span class="fc" id="L597">        public int getCorePoolSize() { return _pool.getCorePoolSize(); }</span>
+<span class="fc" id="L613">        public int getCorePoolSize() { return _pool.getCorePoolSize(); }</span>
 
         /**
          * Returns the approximate total number of tasks that have
@@ -605,7 +621,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          *
          * @return the number of tasks
          */
-<span class="fc" id="L608">        public long getCompletedTaskCount() { return _pool.getCompletedTaskCount(); }</span>
+<span class="fc" id="L624">        public long getCompletedTaskCount() { return _pool.getCompletedTaskCount(); }</span>
 
         /**
          *  This method slices the provided workload size into multiple ranges which can be executed in parallel.
@@ -615,13 +631,14 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          */
         public void threaded( int workloadSize, RangeWorkload workload )
         {
-<span class="fc" id="L618">            int cores = get().getCoreCount();</span>
-<span class="pc bpc" id="L619" title="1 of 2 branches missed.">            cores = ( cores == 0 ? 1 : cores );</span>
-<span class="fc bfc" id="L620" title="All 4 branches covered.">            if ( workloadSize &gt;= _MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= _MIN_WORKLOAD_PER_THREAD) ) {</span>
-<span class="fc" id="L621">                threaded(0, workloadSize, workload );</span>
+<span class="fc" id="L634">            LogUtil.nullArgCheck( workload, &quot;workload&quot;, RangeWorkload.class );</span>
+<span class="fc" id="L635">            int cores = get().getCoreCount();</span>
+<span class="pc bpc" id="L636" title="1 of 2 branches missed.">            cores = ( cores == 0 ? 1 : cores );</span>
+<span class="fc bfc" id="L637" title="All 4 branches covered.">            if ( workloadSize &gt;= _MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= _MIN_WORKLOAD_PER_THREAD) ) {</span>
+<span class="fc" id="L638">                threaded(0, workloadSize, workload );</span>
             }
-<span class="fc" id="L623">            else sequential( workloadSize, workload );</span>
-<span class="fc" id="L624">        }</span>
+<span class="fc" id="L640">            else sequential( workloadSize, workload );</span>
+<span class="fc" id="L641">        }</span>
 
         /**
          *  Executes the provided workload lambda across multiple threads
@@ -631,10 +648,11 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          * @param workload The workload lambda to be executed.
          */
         public void threaded( int numberOfWorkloads, IndexedWorkload workload ) {
-<span class="fc" id="L634">            _DIVIDER.parallelism( _PARALLELISM )</span>
-<span class="fc" id="L635">                    .threshold( 1 )</span>
-<span class="fc" id="L636">                    .submit( numberOfWorkloads, (i)-&gt; workload.execute(i) );</span>
-<span class="fc" id="L637">        }</span>
+<span class="fc" id="L651">            LogUtil.nullArgCheck( workload, &quot;workload&quot;, IndexedWorkload.class );</span>
+<span class="fc" id="L652">            _DIVIDER.parallelism( _PARALLELISM )</span>
+<span class="fc" id="L653">                    .threshold( 1 )</span>
+<span class="fc" id="L654">                    .submit( numberOfWorkloads, (i)-&gt; workload.execute(i) );</span>
+<span class="fc" id="L655">        }</span>
 
         /**
          *  This method will simply execute the provided {@link RangeWorkload} lambda sequentially
@@ -643,7 +661,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
          * @param workloadSize The workload size which will be passed to the provided {@link RangeWorkload} as second argument.
          * @param workload The {@link RangeWorkload} which will be executed sequentially.
          */
-<span class="fc" id="L646">        public void sequential( int workloadSize, RangeWorkload workload ) { workload.execute( 0, workloadSize ); }</span>
+        public void sequential( int workloadSize, RangeWorkload workload ) {
+<span class="fc" id="L665">            LogUtil.nullArgCheck( workload, &quot;workload&quot;, RangeWorkload.class );</span>
+<span class="fc" id="L666">            workload.execute( 0, workloadSize );</span>
+<span class="fc" id="L667">        }</span>
 
 
         /**
@@ -658,10 +679,11 @@ public class CPU extends AbstractDevice&lt;Object&gt;
                 final int limit,
                 final RangeWorkload rangeWorkload
         ) {
-<span class="fc" id="L661">            _DIVIDER.parallelism( _PARALLELISM )</span>
-<span class="fc" id="L662">                    .threshold( PARALLELIZATION_THRESHOLD )</span>
-<span class="fc" id="L663">                    .divide( first, limit, rangeWorkload);</span>
-<span class="fc" id="L664">        }</span>
+<span class="fc" id="L682">            LogUtil.nullArgCheck( rangeWorkload, &quot;rangeWorkload&quot;, RangeWorkload.class );</span>
+<span class="fc" id="L683">            _DIVIDER.parallelism( _PARALLELISM )</span>
+<span class="fc" id="L684">                    .threshold( PARALLELIZATION_THRESHOLD )</span>
+<span class="fc" id="L685">                    .divide( first, limit, rangeWorkload);</span>
+<span class="fc" id="L686">        }</span>
 
     }
 

@@ -6,6 +6,7 @@ neureka.backend.api.ini
 neureka.backend.api.template.algorithms
 neureka.backend.api.template.implementations
 neureka.backend.api.template.operations
+neureka.backend.cpu
 neureka.backend.main.algorithms
 neureka.backend.main.algorithms.internal
 neureka.backend.main.implementations
@@ -14,6 +15,7 @@ neureka.backend.main.implementations.convolution
 neureka.backend.main.implementations.elementwise
 neureka.backend.main.implementations.fun
 neureka.backend.main.implementations.fun.api
+neureka.backend.main.implementations.matmul
 neureka.backend.main.implementations.scalar
 neureka.backend.main.internal
 neureka.backend.main.memory
@@ -26,6 +28,7 @@ neureka.backend.main.operations.linear.internal.opencl
 neureka.backend.main.operations.operator
 neureka.backend.main.operations.other
 neureka.backend.main.operations.other.internal
+neureka.backend.ocl
 neureka.calculus
 neureka.calculus.args
 neureka.calculus.assembly
@@ -34,8 +37,6 @@ neureka.common.composition
 neureka.common.utility
 neureka.devices
 neureka.devices.file
-neureka.devices.file.handles
-neureka.devices.file.handles.util
 neureka.devices.host
 neureka.devices.host.concurrent
 neureka.devices.host.machine

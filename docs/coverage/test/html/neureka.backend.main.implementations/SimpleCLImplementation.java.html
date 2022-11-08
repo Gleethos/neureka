@@ -5,9 +5,9 @@ import neureka.backend.api.ExecutionCall;
 import neureka.devices.opencl.KernelCode;
 import neureka.devices.opencl.OpenCLDevice;
 
-public class SimpleCLImplementation extends CLImplementation {
-
-    private KernelCode _kernel;
+public class SimpleCLImplementation extends CLImplementation
+{
+    private final KernelCode _kernel;
 
     protected SimpleCLImplementation(
             ImplementationFor&lt;OpenCLDevice&gt; execution,
@@ -24,5 +24,9 @@ public class SimpleCLImplementation extends CLImplementation {
 <span class="fc" id="L24">        return _kernel;</span>
     }
 
+    @Override
+    public KernelCode[] getKernelCode() {
+<span class="fc" id="L29">        return new KernelCode[]{ _kernel };</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

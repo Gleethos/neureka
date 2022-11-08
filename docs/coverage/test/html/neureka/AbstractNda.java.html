@@ -86,7 +86,7 @@ import java.util.Arrays;
     private Data&lt;V&gt; _data;
 
     /**
-     *  This integer represents the version of the data (accessible through {@link #getData()})
+     *  This integer represents the version of the data (accessible through {@link #getRawData()})
      *  stored within this tensor.
      *  It gets incremented every time an inline operation occurs!
      *  {@link GraphNode} instances tied to this tensor (as component) store
@@ -94,7 +94,7 @@ import java.util.Arrays;
      *  If this version changes, despite there being a GraphNode which might
      *  perform auto-differentiation at some point, then an exception will be thrown for debugging.
      *  &lt;br&gt;
-     *  The corresponding getter returns the version of the data (accessible through {@link #getData()})
+     *  The corresponding getter returns the version of the data (accessible through {@link #getRawData()})
      *  stored within this tensor.
      */
 <span class="fc" id="L100">    protected int _version = 0;</span>
@@ -283,8 +283,8 @@ import java.util.Arrays;
             new TsrConstructor(
                 targetDevice, ndConstructor,
 <span class="fc" id="L285">                new TsrConstructor.API() {</span>
-<span class="fc" id="L286">                    @Override public void   setType( DataType&lt;?&gt; type       ) { nda.getUnsafe().setDataType( type ); }</span>
-<span class="fc" id="L287">                    @Override public void   setConf( NDConfiguration conf   ) { nda.getUnsafe().setNDConf( conf ); }</span>
+<span class="fc" id="L286">                    @Override public void   setType( DataType&lt;?&gt; type       ) { nda.getMut().setDataType( type ); }</span>
+<span class="fc" id="L287">                    @Override public void   setConf( NDConfiguration conf   ) { nda.getMut().setNDConf( conf ); }</span>
 <span class="fc" id="L288">                    @Override public void   setData( Data o                 ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }</span>
 <span class="fc" id="L289">                    @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }</span>
                 }
@@ -300,7 +300,7 @@ import java.util.Arrays;
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  &lt;br&gt;
      */
-<span class="fc" id="L303">    protected final void _virtualize() { _data = _dataType.virtualize(_data); }</span>
+<span class="fc" id="L303">    protected final void _virtualize() { _data = _dataType.virtualize( _data ); }</span>
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. &lt;br&gt;
@@ -354,8 +354,7 @@ import java.util.Arrays;
         }
 <span class="fc" id="L355">        _NDConf = ndConfiguration;</span>
 <span class="fc" id="L356">        getDevice().access(this).updateNDConf();</span>
-
-<span class="fc" id="L358">    }</span>
+<span class="fc" id="L357">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

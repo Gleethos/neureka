@@ -234,6 +234,11 @@ pitest {
 //----------------------------------------------------------------------------------------------------------------------
 // 10. CUSTOM DEPLOYMENT TASKS :
 
+task releaseJDocs(type: Copy) {
+    from "$rootDir/build/docs/javadoc"
+    into "$rootDir/docs/jdocs"
+}
+
 // 1:
 task cleanForDeployment(type: Delete) {
     delete "$rootDir/build"
@@ -257,11 +262,6 @@ task deploy() {
 
 }
 // 3:
-task releaseJDocs(type: Copy) {
-    from "$rootDir/build/docs/javadoc"
-    into "$rootDir/docs/jdocs"
-}
-// 4:
 //     execute publishToSonatype
 //     go to https://oss.sonatype.org/#stagingRepositories
 //     close and release the repository

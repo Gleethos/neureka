@@ -23,6 +23,10 @@ public interface ScalarFun
 <span class="fc" id="L23">    ScalarSoftsign SOFTSIGN          = new ScalarSoftsign();</span>
 <span class="fc" id="L24">    ScalarTanh TANH                  = new ScalarTanh();</span>
 <span class="fc" id="L25">    ScalarTanhFast TANH_FAST         = new ScalarTanhFast();</span>
+<span class="fc" id="L26">    ScalarExp EXP                    = new ScalarExp();</span>
+<span class="fc" id="L27">    ScalarLog10 LOG10                = new ScalarLog10();</span>
+<span class="fc" id="L28">    ScalarSqrt SQRT                  = new ScalarSqrt();</span>
+<span class="fc" id="L29">    ScalarCbrt CBRT                  = new ScalarCbrt();</span>
 
     String id();
 
@@ -31,10 +35,10 @@ public interface ScalarFun
     String derivationCode();
 
     default double calculate(double input, boolean derive) {
-<span class="fc bfc" id="L34" title="All 2 branches covered.">        if ( !derive )</span>
-<span class="fc" id="L35">            return getActivation().invoke( input );</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if ( !derive )</span>
+<span class="fc" id="L39">            return getActivation().invoke( input );</span>
         else
-<span class="fc" id="L37">            return getDerivative().invoke( input ) ;</span>
+<span class="fc" id="L41">            return getDerivative().invoke( input ) ;</span>
     }
 
     CPUFun getActivation();

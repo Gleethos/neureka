@@ -15,82 +15,84 @@ import neureka.ndim.iterator.NDIterator;
 
     @Override
     public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
-<span class="fc" id="L18">        call.getDevice()</span>
-<span class="fc" id="L19">                .getExecutor()</span>
-<span class="fc" id="L20">                .threaded(</span>
-<span class="fc" id="L21">                    call.input(0).size(),</span>
-<span class="fc" id="L22">                    _workloadFor(call)</span>
+<span class="pc bpc" id="L18" title="1 of 2 branches missed.">        if ( call.arity() &lt; 3 )</span>
+<span class="nc" id="L19">            throw new IllegalArgumentException(&quot;The element-wise operation requires at least two arguments and one output!&quot;);</span>
+<span class="fc" id="L20">        call.getDevice()</span>
+<span class="fc" id="L21">                .getExecutor()</span>
+<span class="fc" id="L22">                .threaded(</span>
+<span class="fc" id="L23">                    call.input(0).size(),</span>
+<span class="fc" id="L24">                    _workloadFor(call)</span>
                 );
 
-<span class="fc" id="L25">        return call.input(0);</span>
+<span class="fc" id="L27">        return call.input(0);</span>
     }
 
     private CPU.RangeWorkload _workloadFor(
             ExecutionCall&lt;CPU&gt; call
     ) {
-<span class="fc" id="L31">        Class&lt;?&gt; typeClass = call.input( 1 ).getItemType();</span>
+<span class="fc" id="L33">        Class&lt;?&gt; typeClass = call.input( 1 ).getItemType();</span>
 
-<span class="fc" id="L33">        int d = call.getDerivativeIndex();</span>
-<span class="fc bfc" id="L34" title="All 4 branches covered.">        CPUBiFun f = ( d == 0 ? _getDeriveAt0() : ( d == 1 ? _getDeriveAt1() : _getFun() ) );</span>
+<span class="fc" id="L35">        int d = call.getDerivativeIndex();</span>
+<span class="fc bfc" id="L36" title="All 4 branches covered.">        CPUBiFun f = ( d == 0 ? _getDeriveAt0() : ( d == 1 ? _getDeriveAt1() : _getFun() ) );</span>
 
-<span class="fc" id="L36">        CPU.RangeWorkload workload = null;</span>
+<span class="fc" id="L38">        CPU.RangeWorkload workload = null;</span>
 
-<span class="fc bfc" id="L38" title="All 2 branches covered.">        if ( typeClass == Double.class )</span>
-<span class="fc" id="L39">            workload = _newWorkloadF64(  call.input( 0 ), call.input( 1 ), call.input( 2 ), f );</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if ( typeClass == Double.class )</span>
+<span class="fc" id="L41">            workload = _newWorkloadF64(  call.input( 0 ), call.input( 1 ), call.input( 2 ), f );</span>
 
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        if ( typeClass == Float.class )</span>
-<span class="fc" id="L42">            workload = _newWorkloadF32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), f );</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if ( typeClass == Float.class )</span>
+<span class="fc" id="L44">            workload = _newWorkloadF32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), f );</span>
 
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if ( typeClass == Integer.class )</span>
-<span class="fc" id="L45">            workload = _newWorkloadI32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), f );</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if ( typeClass == Integer.class )</span>
+<span class="fc" id="L47">            workload = _newWorkloadI32(  call.input( 0 ), call.input( 1 ), call.input( 2 ), f );</span>
 
-<span class="pc bpc" id="L47" title="1 of 2 branches missed.">        if ( workload == null )</span>
-<span class="nc" id="L48">            throw new IllegalArgumentException(&quot;&quot;);</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if ( workload == null )</span>
+<span class="nc" id="L50">            throw new IllegalArgumentException(&quot;&quot;);</span>
         else
-<span class="fc" id="L50">            return workload;</span>
+<span class="fc" id="L52">            return workload;</span>
     }
 
     private static CPU.RangeWorkload _newWorkloadF64(
             Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             CPUBiFun operation
     ) {
-<span class="fc" id="L57">        t1_src.setIsVirtual( false );</span>
-<span class="fc" id="L58">        t2_src.setIsVirtual( false );</span>
-<span class="fc" id="L59">        double[] t0_val = t0_drn.getUnsafe().getDataForWriting( double[].class );</span>
-<span class="fc" id="L60">        double[] t1_val = t1_src.getUnsafe().getDataAs( double[].class );</span>
-<span class="fc" id="L61">        double[] t2_val = t2_src.getUnsafe().getDataAs( double[].class );</span>
+<span class="fc" id="L59">        t1_src.mut().setIsVirtual( false );</span>
+<span class="fc" id="L60">        t2_src.mut().setIsVirtual( false );</span>
+<span class="fc" id="L61">        double[] t0_val = t0_drn.mut().getDataForWriting( double[].class );</span>
+<span class="fc" id="L62">        double[] t1_val = t1_src.mut().getDataAs( double[].class );</span>
+<span class="fc" id="L63">        double[] t2_val = t2_src.mut().getDataAs( double[].class );</span>
 
-<span class="pc bpc" id="L63" title="2 of 4 branches missed.">        assert t0_val != null;</span>
-<span class="pc bpc" id="L64" title="2 of 4 branches missed.">        assert t1_val != null;</span>
-<span class="pc bpc" id="L65" title="2 of 4 branches missed.">        assert t2_val != null;</span>
+<span class="pc bpc" id="L65" title="2 of 4 branches missed.">        assert t0_val != null;</span>
+<span class="pc bpc" id="L66" title="2 of 4 branches missed.">        assert t1_val != null;</span>
+<span class="pc bpc" id="L67" title="2 of 4 branches missed.">        assert t2_val != null;</span>
 
-<span class="fc bfc" id="L67" title="All 6 branches covered.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
+<span class="fc bfc" id="L69" title="All 6 branches covered.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
 
-<span class="pc bpc" id="L69" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() )</span>
-<span class="nc" id="L70">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
+<span class="pc bpc" id="L71" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() )</span>
+<span class="nc" id="L72">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
         else {
-<span class="fc bfc" id="L72" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L73">                return (start, end) -&gt; {</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
-<span class="fc" id="L75">                };</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L75">                return (start, end) -&gt; {</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
+<span class="fc" id="L77">                };</span>
             else
-<span class="fc" id="L77">                return (i, end) -&gt; {</span>
-<span class="fc" id="L78">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L79">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
-<span class="fc" id="L80">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
-<span class="fc" id="L81">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L82">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
-<span class="fc" id="L83">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L84" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L79">                return (i, end) -&gt; {</span>
+<span class="fc" id="L80">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L81">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
+<span class="fc" id="L82">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
+<span class="fc" id="L83">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L84">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
+<span class="fc" id="L85">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
                         //setInto _value in drn:
-<span class="fc" id="L86">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
+<span class="fc" id="L88">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
                         //increment on drain:
-<span class="fc" id="L88">                        t0Idx.increment();</span>
-<span class="fc" id="L89">                        t1Idx.increment();</span>
-<span class="fc" id="L90">                        t2Idx.increment();</span>
-<span class="fc" id="L91">                        i++;</span>
+<span class="fc" id="L90">                        t0Idx.increment();</span>
+<span class="fc" id="L91">                        t1Idx.increment();</span>
+<span class="fc" id="L92">                        t2Idx.increment();</span>
+<span class="fc" id="L93">                        i++;</span>
                     }
-<span class="fc" id="L93">                };</span>
+<span class="fc" id="L95">                };</span>
         }
     }
 
@@ -98,44 +100,44 @@ import neureka.ndim.iterator.NDIterator;
             Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             CPUBiFun operation
     ) {
-<span class="fc" id="L101">        t1_src.setIsVirtual( false );</span>
-<span class="fc" id="L102">        t2_src.setIsVirtual( false );</span>
+<span class="fc" id="L103">        t1_src.mut().setIsVirtual( false );</span>
+<span class="fc" id="L104">        t2_src.mut().setIsVirtual( false );</span>
 
-<span class="fc" id="L104">        float[] t0_val = t0_drn.getUnsafe().getDataForWriting( float[].class );</span>
-<span class="fc" id="L105">        float[] t1_val = t1_src.getUnsafe().getDataAs( float[].class );</span>
-<span class="fc" id="L106">        float[] t2_val = t2_src.getUnsafe().getDataAs( float[].class );</span>
+<span class="fc" id="L106">        float[] t0_val = t0_drn.mut().getDataForWriting( float[].class );</span>
+<span class="fc" id="L107">        float[] t1_val = t1_src.mut().getDataAs( float[].class );</span>
+<span class="fc" id="L108">        float[] t2_val = t2_src.mut().getDataAs( float[].class );</span>
 
-<span class="pc bpc" id="L108" title="2 of 4 branches missed.">        assert t0_val != null;</span>
-<span class="pc bpc" id="L109" title="2 of 4 branches missed.">        assert t1_val != null;</span>
-<span class="pc bpc" id="L110" title="2 of 4 branches missed.">        assert t2_val != null;</span>
+<span class="pc bpc" id="L110" title="2 of 4 branches missed.">        assert t0_val != null;</span>
+<span class="pc bpc" id="L111" title="2 of 4 branches missed.">        assert t1_val != null;</span>
+<span class="pc bpc" id="L112" title="2 of 4 branches missed.">        assert t2_val != null;</span>
 
-<span class="pc bpc" id="L112" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
+<span class="pc bpc" id="L114" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
 
-<span class="pc bpc" id="L114" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() )</span>
-<span class="nc" id="L115">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
+<span class="pc bpc" id="L116" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() )</span>
+<span class="nc" id="L117">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
         else {
-<span class="fc bfc" id="L117" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L118">                return  (start, end) -&gt; {</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
-<span class="fc" id="L120">                };</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L120">                return  (start, end) -&gt; {</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
+<span class="fc" id="L122">                };</span>
             else
-<span class="fc" id="L122">                return (i, end) -&gt; {</span>
-<span class="fc" id="L123">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L124">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
-<span class="fc" id="L125">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
-<span class="fc" id="L126">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L127">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
-<span class="fc" id="L128">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L124">                return (i, end) -&gt; {</span>
+<span class="fc" id="L125">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L126">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
+<span class="fc" id="L127">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
+<span class="fc" id="L128">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L129">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
+<span class="fc" id="L130">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
                         //setInto _value in drn:
-<span class="fc" id="L131">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
+<span class="fc" id="L133">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
                         //increment on drain:
-<span class="fc" id="L133">                        t0Idx.increment();</span>
-<span class="fc" id="L134">                        t1Idx.increment();</span>
-<span class="fc" id="L135">                        t2Idx.increment();</span>
-<span class="fc" id="L136">                        i++;</span>
+<span class="fc" id="L135">                        t0Idx.increment();</span>
+<span class="fc" id="L136">                        t1Idx.increment();</span>
+<span class="fc" id="L137">                        t2Idx.increment();</span>
+<span class="fc" id="L138">                        i++;</span>
                     }
-<span class="fc" id="L138">                };</span>
+<span class="fc" id="L140">                };</span>
         }
     }
 
@@ -143,43 +145,43 @@ import neureka.ndim.iterator.NDIterator;
             Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             CPUBiFun operation
     ) {
-<span class="fc" id="L146">        t1_src.setIsVirtual( false );</span>
-<span class="fc" id="L147">        t2_src.setIsVirtual( false );</span>
-<span class="fc" id="L148">        int[] t0_val = (int[]) t0_drn.getUnsafe().getData().getRef();</span>
-<span class="fc" id="L149">        int[] t1_val = t1_src.getUnsafe().getDataAs( int[].class );</span>
-<span class="fc" id="L150">        int[] t2_val = t2_src.getUnsafe().getDataAs( int[].class );</span>
+<span class="fc" id="L148">        t1_src.mut().setIsVirtual( false );</span>
+<span class="fc" id="L149">        t2_src.mut().setIsVirtual( false );</span>
+<span class="fc" id="L150">        int[] t0_val = (int[]) t0_drn.mut().getData().getRef();</span>
+<span class="fc" id="L151">        int[] t1_val = t1_src.mut().getDataAs( int[].class );</span>
+<span class="fc" id="L152">        int[] t2_val = t2_src.mut().getDataAs( int[].class );</span>
 
-<span class="pc bpc" id="L152" title="2 of 4 branches missed.">        assert t0_val != null;</span>
-<span class="pc bpc" id="L153" title="2 of 4 branches missed.">        assert t1_val != null;</span>
-<span class="pc bpc" id="L154" title="2 of 4 branches missed.">        assert t2_val != null;</span>
+<span class="pc bpc" id="L154" title="2 of 4 branches missed.">        assert t0_val != null;</span>
+<span class="pc bpc" id="L155" title="2 of 4 branches missed.">        assert t1_val != null;</span>
+<span class="pc bpc" id="L156" title="2 of 4 branches missed.">        assert t2_val != null;</span>
 
-<span class="pc bpc" id="L156" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
+<span class="pc bpc" id="L158" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
 
-<span class="pc bpc" id="L158" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() )</span>
-<span class="nc" id="L159">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
+<span class="pc bpc" id="L160" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() )</span>
+<span class="nc" id="L161">            return (start, end) -&gt; t0_val[ 0 ] = operation.invoke( t1_val[0], t2_val[1] );</span>
         else {
-<span class="fc bfc" id="L161" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L162">                return  (start, end) -&gt; {</span>
-<span class="fc bfc" id="L163" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
-<span class="fc" id="L164">                };</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L164">                return  (start, end) -&gt; {</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_val[i] = operation.invoke(t1_val[i], t2_val[i]);</span>
+<span class="fc" id="L166">                };</span>
             else
-<span class="fc" id="L166">                return (i, end) -&gt; {</span>
-<span class="fc" id="L167">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="fc" id="L168">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
-<span class="fc" id="L169">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
-<span class="fc" id="L170">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="fc" id="L171">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
-<span class="fc" id="L172">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
-<span class="fc bfc" id="L173" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
+<span class="fc" id="L168">                return (i, end) -&gt; {</span>
+<span class="fc" id="L169">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L170">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
+<span class="fc" id="L171">                    NDIterator t2Idx = NDIterator.of(t2_src);</span>
+<span class="fc" id="L172">                    t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L173">                    t1Idx.set(t1_src.indicesOfIndex(i));</span>
+<span class="fc" id="L174">                    t2Idx.set(t2_src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                    while ( i &lt; end ) {//increment on drain accordingly:</span>
                         //setInto _value in drn:
-<span class="fc" id="L175">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
+<span class="fc" id="L177">                        t0_val[t0Idx.i()] = operation.invoke(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);</span>
                         //increment on drain:
-<span class="fc" id="L177">                        t0Idx.increment();</span>
-<span class="fc" id="L178">                        t1Idx.increment();</span>
-<span class="fc" id="L179">                        t2Idx.increment();</span>
-<span class="fc" id="L180">                        i++;</span>
+<span class="fc" id="L179">                        t0Idx.increment();</span>
+<span class="fc" id="L180">                        t1Idx.increment();</span>
+<span class="fc" id="L181">                        t2Idx.increment();</span>
+<span class="fc" id="L182">                        i++;</span>
                     }
-<span class="fc" id="L182">                };</span>
+<span class="fc" id="L184">                };</span>
         }
     }
 

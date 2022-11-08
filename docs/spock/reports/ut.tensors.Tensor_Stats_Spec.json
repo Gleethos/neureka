@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.742 seconds"
+    "duration":"0.618 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.026 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -79,7 +79,7 @@
     {
       "id":"Both the min and max operation support autograd (back-propagation).",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,7 +100,7 @@
     {
       "id":"We can use the \"sum\" method to sum the items of a tensor.",
       "result":"PASS",
-      "duration":"0.685 seconds",
+      "duration":"0.565 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

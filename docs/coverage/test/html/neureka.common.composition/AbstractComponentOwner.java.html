@@ -44,7 +44,7 @@ import neureka.common.utility.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Optional;
 
 /**
  *  Together with the {@link Component} interface, this class defines a simple
@@ -310,9 +310,6 @@ import java.util.function.Consumer;
     protected abstract &lt;T extends Component&lt;C&gt;&gt; T _setOrReject( T newComponent );
 
     /**
-     * This method abstract ought to be implemented further down
-     * the inheritance hierarchy where it's responsibility
-     * makes more sense, namely :
      * An implementation of this method checks if the passed component
      * should be removed from the component collection of this class
      * or its removal should be &quot;rejected&quot;.
@@ -324,26 +321,11 @@ import java.util.function.Consumer;
      */
     protected abstract &lt;T extends Component&lt;C&gt;&gt; T _removeOrReject( T newComponent );
 
-    /**
-     * This method tries to find a stored component by identifying it
-     * via the given Class instance in order to pass it
-     * into the provided Consumer lambda.
-     * If however no component was found then this lambda is being left untouched.
-     *
-     * @param componentClass Component class of whose type the requested component is.
-     * @param action An action applied on the requested component if found.
-     * @return True if a component could be found, false otherwise.
-     */
+    /** {@inheritDoc} */
     @Override
-    public &lt;T extends Component&lt;C&gt;&gt; boolean forComponent( Class&lt;T&gt; componentClass, Consumer&lt;T&gt; action ) {
-<span class="fc" id="L339">        T component = this.get( componentClass );</span>
-<span class="fc bfc" id="L340" title="All 2 branches covered.">        if ( component != null ) {</span>
-<span class="fc" id="L341">            action.accept( component );</span>
-<span class="fc" id="L342">            return true;</span>
-        }
-<span class="fc" id="L344">        else return false;</span>
+    public &lt;T extends Component&gt; Optional&lt;T&gt; find( Class&lt;T&gt; componentClass ) {
+<span class="fc" id="L327">        return Optional.ofNullable( this.get( componentClass ) );</span>
     }
-
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

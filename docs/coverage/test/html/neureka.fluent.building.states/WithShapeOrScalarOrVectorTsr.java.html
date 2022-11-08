@@ -3,6 +3,7 @@
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface WithShapeOrScalarOrVectorTsr&lt;V&gt; extends WithShapeOrScalarOrVector&lt;V&gt;
@@ -12,14 +13,26 @@ public interface WithShapeOrScalarOrVectorTsr&lt;V&gt; extends WithShapeOrScalar
 
     /** {@inheritDoc} */
     @Override default &lt;N extends Number&gt; IterByOrIterFromOrAllTsr&lt;V&gt; withShape( List&lt;N&gt; shape ) {
-<span class="fc" id="L15">        LogUtil.nullArgCheck(shape, &quot;shape&quot;, List.class, &quot;Cannot create a tensor without shape!&quot;);</span>
-<span class="fc" id="L16">        return this.withShape(</span>
-<span class="fc" id="L17">                shape.stream().mapToInt(Number::intValue).toArray()</span>
+<span class="fc" id="L16">        LogUtil.nullArgCheck(shape, &quot;shape&quot;, List.class, &quot;Cannot create a tensor without shape!&quot;);</span>
+<span class="fc" id="L17">        return this.withShape(</span>
+<span class="fc" id="L18">                shape.stream().mapToInt(Number::intValue).toArray()</span>
         );
     }
 
     /** {@inheritDoc} */
     @Override Tsr&lt;V&gt; vector( V... values );
+
+    /** {@inheritDoc} */
+    @Override default Tsr&lt;V&gt; vector( List&lt;V&gt; values ) {
+<span class="fc" id="L27">        return vector( values.toArray( (V[]) new Object[values.size()] ) );</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override default Tsr&lt;V&gt; vector( Iterable&lt;V&gt; values ) {
+<span class="nc" id="L32">        List&lt;V&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L33">        values.forEach( list::add );</span>
+<span class="nc" id="L34">        return vector( list );</span>
+    }
 
     /** {@inheritDoc} */
     @Override Tsr&lt;V&gt; scalar( V value );

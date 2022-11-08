@@ -69,7 +69,7 @@ public final class F64 extends AbstractNumericType&lt;Double, double[], Double, 
     @Override
     public &lt;T&gt; double[] readForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
 <span class="fc" id="L71">        double[] data = new double[ size ];</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">        for ( int i=0; i&lt;size; i++ ) data[ i ] = convertToHolder( iterator.next() );</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) data[ i ] = convertToHolder( iterator.next() );</span>
 <span class="fc" id="L73">        return data;</span>
     }
 

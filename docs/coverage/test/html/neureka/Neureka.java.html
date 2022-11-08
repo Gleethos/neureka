@@ -38,11 +38,11 @@ package neureka;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
+import neureka.backend.cpu.CPUBackend;
+import neureka.backend.ocl.CLBackend;
 import neureka.common.utility.LogUtil;
 import neureka.common.utility.SettingsLoader;
 import neureka.devices.host.CPU;
-import neureka.devices.host.CPUContext;
-import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.utility.Messages;
 import neureka.dtype.custom.F64;
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
@@ -77,7 +77,7 @@ import java.util.function.Supplier;
     /**
      *  The current semantic version of this library build.
      */
-<span class="fc" id="L80">    private static String _VERSION = &quot;0.18.0&quot;;</span>
+<span class="fc" id="L80">    private static String _VERSION = &quot;0.19.0&quot;;</span>
 
     /**
      *  The truth value determining if OpenCL is available or not.
@@ -87,7 +87,7 @@ import java.util.function.Supplier;
     static
     {
 <span class="fc" id="L89">        _INSTANCES = new ThreadLocal&lt;&gt;();</span>
-<span class="pc" id="L90">        _OPENCL_AVAILABLE = Utility.isPresent( &quot;org.jocl.CL&quot;, () -&gt; Messages.findTip().bootstrapTip() );</span>
+<span class="fc" id="L90">        _OPENCL_AVAILABLE = Utility.isPresent( &quot;org.jocl.CL&quot;, () -&gt; Messages.findTip().bootstrapTip() );</span>
 <span class="fc" id="L91">    }</span>
 
     private final Settings _settings;
@@ -135,12 +135,12 @@ import java.util.function.Supplier;
 <span class="nc" id="L135">                _LOG.error(&quot;Failed to load operations!&quot;, e);</span>
 <span class="fc" id="L136">            }</span>
 
-<span class="fc" id="L138">            _backend.set( new CPUContext() ); // CPU (JVM) is always available!</span>
+<span class="fc" id="L138">            _backend.set( new CPUBackend() ); // CPU (JVM) is always available!</span>
 
 <span class="pc bpc" id="L140" title="1 of 2 branches missed.">            if ( _OPENCL_AVAILABLE )</span>
-<span class="fc" id="L141">                _backend.set( new CLContext() );</span>
+<span class="fc" id="L141">                _backend.set( new CLBackend() );</span>
             else
-<span class="nc" id="L143">                _LOG.warn( Messages.clContextCreationFailed() );</span>
+<span class="nc" id="L143">                _LOG.info( Messages.clContextCreationFailed() );</span>
         }
 <span class="fc" id="L145">        return _backend;</span>
     }
@@ -216,41 +216,45 @@ import java.util.function.Supplier;
      */
     public boolean canAccessOpenCL() {
 <span class="pc bpc" id="L218" title="1 of 2 branches missed.">        return _OPENCL_AVAILABLE &amp;&amp;</span>
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">                get().backend().has(CLContext.class) &amp;&amp;</span>
-<span class="pc bpc" id="L220" title="1 of 2 branches missed.">                get().backend().get(CLContext.class).getTotalNumberOfDevices() &gt; 0;</span>
+<span class="fc" id="L219">                get().backend()</span>
+<span class="fc" id="L220">                        .find(CLBackend.class)</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                        .map( it -&gt; it.getTotalNumberOfDevices() &gt; 0 )</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                        .orElse(false);</span>
     }
 
     /**
      * @return The truth value determining if at least 1 {@link neureka.devices.opencl.OpenCLDevice} is accessible.
      */
     public boolean canAccessOpenCLDevice() {
-<span class="pc bpc" id="L227" title="1 of 2 branches missed.">        return canAccessOpenCL() &amp;&amp;</span>
-<span class="pc bpc" id="L228" title="1 of 2 branches missed.">                get().backend().has(CLContext.class) &amp;&amp;</span>
-<span class="pc bpc" id="L229" title="1 of 2 branches missed.">                get().backend().get(CLContext.class).getTotalNumberOfDevices() &gt; 0;</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">        return canAccessOpenCL() &amp;&amp;</span>
+<span class="fc" id="L230">                get().backend()</span>
+<span class="fc" id="L231">                        .find(CLBackend.class)</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                        .map( it -&gt; it.getTotalNumberOfDevices() &gt; 0 )</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">                        .orElse(false);</span>
     }
 
     /**
      * @return An instance of library wide {@link Settings} determining the behaviour of many classes...
      */
-<span class="fc" id="L235">    public Settings settings() { return _settings; }</span>
+<span class="fc" id="L239">    public Settings settings() { return _settings; }</span>
 
     /**
      *  This allows you to configure Neureka using a Groovy DSL.
      */
     public Settings settings(Object closure) {
-<span class="fc" id="L241">        SettingsLoader.tryGroovyClosureOn( closure, _settings );</span>
-<span class="fc" id="L242">        return _settings;</span>
+<span class="fc" id="L245">        SettingsLoader.tryGroovyClosureOn( closure, _settings );</span>
+<span class="fc" id="L246">        return _settings;</span>
     }
 
     /**
      * @return An instance of an utility class useful for loading resources or checking if they are even available.
      */
-<span class="fc" id="L248">    public Utility utility() { return _utility; }</span>
+<span class="fc" id="L252">    public Utility utility() { return _utility; }</span>
 
     /**
      * @return The semantic version of the Neureka library.
      */
-<span class="fc" id="L253">    public static String version() { return _VERSION; }</span>
+<span class="fc" id="L257">    public static String version() { return _VERSION; }</span>
 
     /**
      *  This method will try to reload the &quot;library_settings.groovy&quot; script
@@ -259,21 +263,22 @@ import java.util.function.Supplier;
      */
     public void reset() {
         try {
-<span class="fc" id="L262">            SettingsLoader.loadProperties(this);</span>
+<span class="fc" id="L266">            SettingsLoader.loadProperties(this);</span>
             // The following can be used when one desires a Groovy DSL as settings source!:
             //SettingsLoader.tryGroovyScriptsOn(this, script -&gt; new GroovyShell(getClass().getClassLoader()).evaluate(script));
-<span class="nc" id="L265">        } catch ( Exception e ) {</span>
-<span class="nc" id="L266">            settings().autograd().setIsRetainingPendingErrorForJITProp( true );</span>
-<span class="nc" id="L267">            settings().autograd().setIsApplyingGradientWhenTensorIsUsed( true );</span>
-<span class="nc" id="L268">            settings().autograd().setIsApplyingGradientWhenRequested( true );</span>
-<span class="nc" id="L269">            settings().debug().setIsKeepingDerivativeTargetPayloads( false );</span>
-<span class="fc" id="L270">        }</span>
-<span class="fc" id="L271">    }</span>
+<span class="nc" id="L269">        } catch ( Exception e ) {</span>
+<span class="nc" id="L270">            settings().autograd().setIsRetainingPendingErrorForJITProp( true );</span>
+<span class="nc" id="L271">            settings().autograd().setIsApplyingGradientWhenTensorIsUsed( true );</span>
+<span class="nc" id="L272">            settings().autograd().setIsApplyingGradientWhenRequested( true );</span>
+<span class="nc" id="L273">            settings().debug().setIsKeepingDerivativeTargetPayloads( false );</span>
+<span class="fc" id="L274">        }</span>
+<span class="fc" id="L275">        backend().reset();</span>
+<span class="fc" id="L276">    }</span>
 
-<span class="pc bpc" id="L273" title="1 of 2 branches missed.">    private boolean _currentThreadIsNotAuthorized() { return !this.equals(_INSTANCES.get()); }</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">    private boolean _currentThreadIsNotAuthorized() { return !this.equals(_INSTANCES.get()); }</span>
 
     public String toString() {
-<span class="fc" id="L276">        return &quot;Neureka[&quot; +</span>
+<span class="fc" id="L281">        return &quot;Neureka[&quot; +</span>
                     &quot;settings=&quot; + _settings + &quot;,&quot; +
                     &quot;utility=&quot;  + _utility  + &quot;,&quot; +
                     &quot;backend=&quot;  + _backend  +
@@ -283,7 +288,7 @@ import java.util.function.Supplier;
     /**
      * @return A context object which is expected to host all the tensor operations...
      */
-<span class="fc" id="L286">    public BackendContext getBackend() { return this.backend(); }</span>
+<span class="fc" id="L291">    public BackendContext getBackend() { return this.backend(); }</span>
 
     /**
      *  Use this method to attach a backend context (for operations)
@@ -291,7 +296,7 @@ import java.util.function.Supplier;
      *
      * @param backendContext The {@link BackendContext} which should be set for this thread local library context.
      */
-<span class="fc" id="L294">    public void setBackend( BackendContext backendContext ) { _backend = backendContext; }</span>
+<span class="fc" id="L299">    public void setBackend( BackendContext backendContext ) { _backend = backendContext; }</span>
 
     /**
      *  This class hosts the settings of the {@link Neureka} instance which will be used throughout the library.
@@ -304,72 +309,72 @@ import java.util.function.Supplier;
         private final NDim     _nDim;
         private final DType    _dTpe;
 
-<span class="fc" id="L307">        private boolean _isLocked = false;</span>
+<span class="fc" id="L312">        private boolean _isLocked = false;</span>
 
-<span class="fc" id="L309">        private Settings() {</span>
-<span class="fc" id="L310">            _debug    = new Debug();</span>
-<span class="fc" id="L311">            _autograd = new AutoGrad();</span>
-<span class="fc" id="L312">            _view     = new View();</span>
-<span class="fc" id="L313">            _nDim = new NDim();</span>
-<span class="fc" id="L314">            _dTpe = new DType();</span>
-<span class="fc" id="L315">        }</span>
+<span class="fc" id="L314">        private Settings() {</span>
+<span class="fc" id="L315">            _debug    = new Debug();</span>
+<span class="fc" id="L316">            _autograd = new AutoGrad();</span>
+<span class="fc" id="L317">            _view     = new View();</span>
+<span class="fc" id="L318">            _nDim = new NDim();</span>
+<span class="fc" id="L319">            _dTpe = new DType();</span>
+<span class="fc" id="L320">        }</span>
 
         private boolean notModifiable() {
-<span class="pc bpc" id="L318" title="1 of 4 branches missed.">            if ( _isLocked || _currentThreadIsNotAuthorized() ) {</span>
-<span class="pc bpc" id="L319" title="1 of 2 branches missed.">                if ( _isLocked )</span>
-<span class="fc" id="L320">                    _LOG.error(&quot;Cannot modify settings! They are locked.&quot;);</span>
+<span class="pc bpc" id="L323" title="1 of 4 branches missed.">            if ( _isLocked || _currentThreadIsNotAuthorized() ) {</span>
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">                if ( _isLocked )</span>
+<span class="fc" id="L325">                    _LOG.error(&quot;Cannot modify settings! They are locked.&quot;);</span>
                 else
-<span class="nc" id="L322">                    _LOG.error(&quot;Cannot modify settings! Current thread not authorized.&quot;);</span>
-<span class="fc" id="L323">                return true;</span>
+<span class="nc" id="L327">                    _LOG.error(&quot;Cannot modify settings! Current thread not authorized.&quot;);</span>
+<span class="fc" id="L328">                return true;</span>
             }
-<span class="fc" id="L325">            else return false;</span>
+<span class="fc" id="L330">            else return false;</span>
         }
         
-<span class="fc" id="L328">        public Debug debug() { return _debug; }</span>
+<span class="fc" id="L333">        public Debug debug() { return _debug; }</span>
 
         /**
          *  This allows you to configure Neureka using a Groovy DSL.
          */
         public Debug debug(Object closure) {
-<span class="fc" id="L334">            SettingsLoader.tryGroovyClosureOn(closure, _debug);</span>
-<span class="fc" id="L335">            return _debug;</span>
+<span class="fc" id="L339">            SettingsLoader.tryGroovyClosureOn(closure, _debug);</span>
+<span class="fc" id="L340">            return _debug;</span>
         }
 
-<span class="fc" id="L338">        public AutoGrad autograd() { return _autograd; }</span>
+<span class="fc" id="L343">        public AutoGrad autograd() { return _autograd; }</span>
 
         /**
          *  This allows you to configure Neureka using a Groovy DSL.
          */
         public AutoGrad autograd( Object closure ) {
-<span class="fc" id="L344">            SettingsLoader.tryGroovyClosureOn( closure, _autograd );</span>
-<span class="fc" id="L345">            return _autograd;</span>
+<span class="fc" id="L349">            SettingsLoader.tryGroovyClosureOn( closure, _autograd );</span>
+<span class="fc" id="L350">            return _autograd;</span>
         }
 
-<span class="fc" id="L348">        public View view() { return _view; }</span>
+<span class="fc" id="L353">        public View view() { return _view; }</span>
 
         public View view( Object closure ) {
-<span class="fc" id="L351">            SettingsLoader.tryGroovyClosureOn( closure, _view );</span>
-<span class="fc" id="L352">            return _view;</span>
+<span class="fc" id="L356">            SettingsLoader.tryGroovyClosureOn( closure, _view );</span>
+<span class="fc" id="L357">            return _view;</span>
         }
 
-<span class="fc" id="L355">        public NDim ndim() { return _nDim; }</span>
+<span class="fc" id="L360">        public NDim ndim() { return _nDim; }</span>
 
         /**
          *  This allows you to configure Neureka using a Groovy DSL.
          */
         public NDim ndim( Object closure ) {
-<span class="fc" id="L361">            SettingsLoader.tryGroovyClosureOn( closure, _nDim);</span>
-<span class="fc" id="L362">            return _nDim;</span>
+<span class="fc" id="L366">            SettingsLoader.tryGroovyClosureOn( closure, _nDim);</span>
+<span class="fc" id="L367">            return _nDim;</span>
         }
 
-<span class="fc" id="L365">        public DType dtype() { return _dTpe; }</span>
+<span class="fc" id="L370">        public DType dtype() { return _dTpe; }</span>
 
         /**
          *  This allows you to configure Neureka using a Groovy DSL.
          */
         public DType dtype( Object closure ) {
-<span class="fc" id="L371">            SettingsLoader.tryGroovyClosureOn( closure, _dTpe);</span>
-<span class="fc" id="L372">            return _dTpe;</span>
+<span class="fc" id="L376">            SettingsLoader.tryGroovyClosureOn( closure, _dTpe);</span>
+<span class="fc" id="L377">            return _dTpe;</span>
         }
 
         /**
@@ -377,7 +382,7 @@ import java.util.function.Supplier;
          *  Trying to write to a locked {@link Settings} instance will not have an effect.
          *  The attempt, however, will be logged.
          */
-<span class="fc" id="L380">        public boolean isLocked() { return  _isLocked; }</span>
+<span class="fc" id="L385">        public boolean isLocked() { return  _isLocked; }</span>
 
         /**
          *  Can be used to lock or unlock the settings of the current thread-local {@link Neureka} instance.
@@ -385,24 +390,24 @@ import java.util.function.Supplier;
          *  Trying to write to a locked {@link Settings} instance will not have an effect.
          *  The attempt, however, will be logged.
          */
-<span class="fc" id="L388">        public void setIsLocked( boolean locked ) { _isLocked = locked; }</span>
+<span class="fc" id="L393">        public void setIsLocked( boolean locked ) { _isLocked = locked; }</span>
 
         public String toString() {
-<span class="fc" id="L391">            return &quot;Neureka.Settings[&quot; +</span>
+<span class="fc" id="L396">            return &quot;Neureka.Settings[&quot; +</span>
                         &quot;debug=&quot;    + _debug    + &quot;,&quot; +
                         &quot;autograd=&quot; + _autograd + &quot;,&quot; +
                         &quot;view=&quot;     + _view     + &quot;,&quot; +
                         &quot;ndim=&quot;     + _nDim + &quot;,&quot; +
                         &quot;dtype=&quot;    + _dTpe + &quot;,&quot; +
-<span class="fc" id="L397">                        &quot;isLocked=&quot; + this.isLocked() +</span>
+<span class="fc" id="L402">                        &quot;isLocked=&quot; + this.isLocked() +</span>
                     &quot;]&quot;;
         }
 
         
-<span class="fc" id="L402">        public class Debug</span>
+<span class="fc" id="L407">        public class Debug</span>
         {
-<span class="fc" id="L404">            private boolean _isKeepingDerivativeTargetPayloads = false;</span>
-<span class="fc" id="L405">            private boolean _isDeletingIntermediateTensors = true;</span>
+<span class="fc" id="L409">            private boolean _isKeepingDerivativeTargetPayloads = false;</span>
+<span class="fc" id="L410">            private boolean _isDeletingIntermediateTensors = true;</span>
 
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -414,12 +419,12 @@ import java.util.function.Supplier;
              * In this case:
              * If the tensor is not needed for backpropagation it will be deleted.
              * The graph node will dereference the tensor either way.
-             *
+             * &lt;p&gt;
              * The flag determines this behavior with respect to target nodes.
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-<span class="fc" id="L422">            public boolean isKeepingDerivativeTargetPayloads() { return _isKeepingDerivativeTargetPayloads; }</span>
+<span class="fc" id="L427">            public boolean isKeepingDerivativeTargetPayloads() { return _isKeepingDerivativeTargetPayloads; }</span>
 
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -431,15 +436,15 @@ import java.util.function.Supplier;
              * In this case:
              * If the tensor is not needed for backpropagation it will be deleted.
              * The graph node will dereference the tensor either way.
-             *
+             * &lt;p&gt;
              * The flag determines this behavior with respect to target nodes.
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
             public void setIsKeepingDerivativeTargetPayloads( boolean keep ) {
-<span class="fc bfc" id="L440" title="All 2 branches covered.">                if ( notModifiable() ) return;</span>
-<span class="fc" id="L441">                _isKeepingDerivativeTargetPayloads = keep;</span>
-<span class="fc" id="L442">            }</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">                if ( notModifiable() ) return;</span>
+<span class="fc" id="L446">                _isKeepingDerivativeTargetPayloads = keep;</span>
+<span class="fc" id="L447">            }</span>
 
             /**
              * {@link neureka.calculus.Function} instances will produce hidden intermediate results
@@ -450,7 +455,7 @@ import java.util.function.Supplier;
              * or they are angle points between forward- and reverse-mode-AutoDiff!
              * This flag should not be modified in production! (memory leak)
              */
-<span class="fc" id="L453">            public boolean isDeletingIntermediateTensors() { return _isDeletingIntermediateTensors; }</span>
+<span class="fc" id="L458">            public boolean isDeletingIntermediateTensors() { return _isDeletingIntermediateTensors; }</span>
 
             /**
              * {@link neureka.calculus.Function} instances will produce hidden intermediate results
@@ -462,41 +467,45 @@ import java.util.function.Supplier;
              * This flag should not be modified in production! (memory leak)
              */
             public void setIsDeletingIntermediateTensors( boolean delete ) {
-<span class="pc bpc" id="L465" title="1 of 2 branches missed.">                if ( notModifiable() ) return;</span>
-<span class="fc" id="L466">                _isDeletingIntermediateTensors = delete;</span>
-<span class="fc" id="L467">            }</span>
+<span class="pc bpc" id="L470" title="1 of 2 branches missed.">                if ( notModifiable() ) return;</span>
+<span class="fc" id="L471">                _isDeletingIntermediateTensors = delete;</span>
+<span class="fc" id="L472">            }</span>
 
             public String toString() {
-<span class="fc" id="L470">                return &quot;Neureka.Settings.Debug[&quot; +</span>
-<span class="fc" id="L471">                            &quot;isKeepingDerivativeTargetPayloads=&quot; + this.isKeepingDerivativeTargetPayloads() +</span>
+<span class="fc" id="L475">                return &quot;Neureka.Settings.Debug[&quot; +</span>
+<span class="fc" id="L476">                            &quot;isKeepingDerivativeTargetPayloads=&quot; + this.isKeepingDerivativeTargetPayloads() +</span>
                         &quot;]&quot;;
             }
         }
 
-        
-<span class="fc" id="L477">        public class AutoGrad // Auto-Grad/Differentiation</span>
+        /**
+         * This class contains settings which are related to the automatic differentiation of tensors.
+         */
+<span class="fc" id="L484">        public class AutoGrad</span>
         {
-<span class="fc" id="L479">            private boolean _isPreventingInlineOperations = true;</span>
-<span class="fc" id="L480">            private boolean _isRetainingPendingErrorForJITProp = false;</span>
-<span class="fc" id="L481">            private boolean _isApplyingGradientWhenTensorIsUsed = false;</span>
-<span class="fc" id="L482">            private boolean _isApplyingGradientWhenRequested = false;</span>
+<span class="fc" id="L486">            private boolean _isPreventingInlineOperations = true;</span>
+<span class="fc" id="L487">            private boolean _isRetainingPendingErrorForJITProp = false;</span>
+<span class="fc" id="L488">            private boolean _isApplyingGradientWhenTensorIsUsed = false;</span>
+<span class="fc" id="L489">            private boolean _isApplyingGradientWhenRequested = false;</span>
 
             /**
              *  Inline operations are operations where the data of a tensor passed into an operation
              *  is being modified.
              *  Usually the result of an operation is stored inside a new tensor.
+             *  Use this flag to detect if an operation is an inline operation.
              */
-<span class="fc" id="L489">            public boolean isPreventingInlineOperations() { return _isPreventingInlineOperations; }</span>
+<span class="fc" id="L497">            public boolean isPreventingInlineOperations() { return _isPreventingInlineOperations; }</span>
 
             /**
              *  Inline operations are operations where the data of a tensor passed into an operation
              *  is being modified.
              *  Usually the result of an operation is stored inside a new tensor.
+             *  Use this flag to detect if an operation is an inline operation.
              */
             public void setIsPreventingInlineOperations( boolean prevent ) {
-<span class="pc bpc" id="L497" title="1 of 4 branches missed.">                if ( _isLocked || _currentThreadIsNotAuthorized() ) return;</span>
-<span class="fc" id="L498">                _isPreventingInlineOperations = prevent;</span>
-<span class="fc" id="L499">            }</span>
+<span class="pc bpc" id="L506" title="1 of 4 branches missed.">                if ( _isLocked || _currentThreadIsNotAuthorized() ) return;</span>
+<span class="fc" id="L507">                _isPreventingInlineOperations = prevent;</span>
+<span class="fc" id="L508">            }</span>
 
             /**
              *  This flag enables an optimization technique which only propagates error values to
@@ -508,7 +517,7 @@ import java.util.function.Supplier;
              *  improve performance for some networks substantially.
              *  The technique is termed JIT-Propagation.
              */
-<span class="fc" id="L511">            public boolean isRetainingPendingErrorForJITProp() { return _isRetainingPendingErrorForJITProp; }</span>
+<span class="fc" id="L520">            public boolean isRetainingPendingErrorForJITProp() { return _isRetainingPendingErrorForJITProp; }</span>
 
             /**
              *  This flag enables an optimization technique which only propagates error values to
@@ -521,16 +530,16 @@ import java.util.function.Supplier;
              *  The technique is termed JIT-Propagation.
              */
             public void setIsRetainingPendingErrorForJITProp( boolean retain ) {
-<span class="pc bpc" id="L524" title="1 of 4 branches missed.">                if ( _isLocked || _currentThreadIsNotAuthorized() ) return;</span>
-<span class="fc" id="L525">                _isRetainingPendingErrorForJITProp = retain;</span>
-<span class="fc" id="L526">            }</span>
+<span class="pc bpc" id="L533" title="1 of 4 branches missed.">                if ( _isLocked || _currentThreadIsNotAuthorized() ) return;</span>
+<span class="fc" id="L534">                _isRetainingPendingErrorForJITProp = retain;</span>
+<span class="fc" id="L535">            }</span>
 
             /**
              *  Gradients will automatically be applied (or JITed) to tensors as soon as
              *  they are being used for calculation ({@link neureka.autograd.GraphNode} instantiation).
              *  This feature works well with JIT-Propagation.
              */
-<span class="fc" id="L533">            public boolean isApplyingGradientWhenTensorIsUsed() { return _isApplyingGradientWhenTensorIsUsed; }</span>
+<span class="fc" id="L542">            public boolean isApplyingGradientWhenTensorIsUsed() { return _isApplyingGradientWhenTensorIsUsed; }</span>
 
             /**
              *  Gradients will automatically be applied (or JITed) to tensors as soon as
@@ -540,9 +549,9 @@ import java.util.function.Supplier;
              * @param apply The flag determining if gradients should be applied when their tensors are used.
              */
             public void setIsApplyingGradientWhenTensorIsUsed( boolean apply ) {
-<span class="pc bpc" id="L543" title="1 of 4 branches missed.">                if ( _isLocked || _currentThreadIsNotAuthorized() ) return;</span>
-<span class="fc" id="L544">                _isApplyingGradientWhenTensorIsUsed = apply;</span>
-<span class="fc" id="L545">            }</span>
+<span class="pc bpc" id="L552" title="1 of 4 branches missed.">                if ( _isLocked || _currentThreadIsNotAuthorized() ) return;</span>
+<span class="fc" id="L553">                _isApplyingGradientWhenTensorIsUsed = apply;</span>
+<span class="fc" id="L554">            }</span>
 
             /**
              *  Gradients will only be applied if requested.
@@ -566,7 +575,7 @@ import java.util.function.Supplier;
              *
              * @return The truth value determining if gradients should be applied upon request.
              **/
-<span class="fc" id="L569">            public boolean isApplyingGradientWhenRequested() { return _isApplyingGradientWhenRequested; }</span>
+<span class="fc" id="L578">            public boolean isApplyingGradientWhenRequested() { return _isApplyingGradientWhenRequested; }</span>
 
             /**
              * Gradients will only be applied if requested.
@@ -577,16 +586,16 @@ import java.util.function.Supplier;
              * ({@link neureka.autograd.GraphNode} instantiation).
              */
             public void setIsApplyingGradientWhenRequested(boolean apply) {
-<span class="fc bfc" id="L580" title="All 2 branches covered.">                if ( notModifiable() ) return;</span>
-<span class="fc" id="L581">                _isApplyingGradientWhenRequested = apply;</span>
-<span class="fc" id="L582">            }</span>
+<span class="fc bfc" id="L589" title="All 2 branches covered.">                if ( notModifiable() ) return;</span>
+<span class="fc" id="L590">                _isApplyingGradientWhenRequested = apply;</span>
+<span class="fc" id="L591">            }</span>
 
             public String toString() {
-<span class="fc" id="L585">                return &quot;Neureka.Settings.AutoGrad[&quot; +</span>
-<span class="fc" id="L586">                            &quot;isPreventingInlineOperations=&quot; + this.isPreventingInlineOperations() + &quot;,&quot; +</span>
-<span class="fc" id="L587">                            &quot;isRetainingPendingErrorForJITProp=&quot; + this.isRetainingPendingErrorForJITProp() + &quot;,&quot; +</span>
-<span class="fc" id="L588">                            &quot;isApplyingGradientWhenTensorIsUsed=&quot; + this.isApplyingGradientWhenTensorIsUsed() + &quot;,&quot; +</span>
-<span class="fc" id="L589">                            &quot;isApplyingGradientWhenRequested=&quot; + this.isApplyingGradientWhenRequested() +</span>
+<span class="fc" id="L594">                return &quot;Neureka.Settings.AutoGrad[&quot; +</span>
+<span class="fc" id="L595">                            &quot;isPreventingInlineOperations=&quot; + this.isPreventingInlineOperations() + &quot;,&quot; +</span>
+<span class="fc" id="L596">                            &quot;isRetainingPendingErrorForJITProp=&quot; + this.isRetainingPendingErrorForJITProp() + &quot;,&quot; +</span>
+<span class="fc" id="L597">                            &quot;isApplyingGradientWhenTensorIsUsed=&quot; + this.isApplyingGradientWhenTensorIsUsed() + &quot;,&quot; +</span>
+<span class="fc" id="L598">                            &quot;isApplyingGradientWhenRequested=&quot; + this.isApplyingGradientWhenRequested() +</span>
                         &quot;]&quot;;
             }
         }
@@ -598,14 +607,12 @@ import java.util.function.Supplier;
         {
             private final NDPrintSettings _settings;
 
-<span class="fc" id="L601">            View() {</span>
-<span class="fc" id="L602">                _settings = new NDPrintSettings(Settings.this::notModifiable);</span>
-<span class="fc" id="L603">            }</span>
+<span class="fc" id="L610">            View() { _settings = new NDPrintSettings(Settings.this::notModifiable); }</span>
 
             /**
              *  Settings for configuring how tensors should be converted to {@link String} representations.
              */
-<span class="fc" id="L608">            public NDPrintSettings getNDPrintSettings() { return _settings; }</span>
+<span class="fc" id="L615">            public NDPrintSettings getNDPrintSettings() { return _settings; }</span>
 
             /**
              *  This allows you to provide a lambda to configure how tensors should be
@@ -615,52 +622,70 @@ import java.util.function.Supplier;
              *
              * @param should A consumer of the {@link NDPrintSettings} ready to be configured.
              */
-<span class="fc" id="L618">            public void ndArrays( Consumer&lt;NDPrintSettings&gt; should ) { should.accept(_settings); }</span>
+<span class="fc" id="L625">            public void ndArrays( Consumer&lt;NDPrintSettings&gt; should ) { should.accept(_settings); }</span>
 
             public String toString() {
-<span class="fc" id="L621">                return &quot;Neureka.Settings.View[&quot; +</span>
-<span class="fc" id="L622">                            &quot;ndArrayPrintSettings=&quot; + this.getNDPrintSettings() +</span>
+<span class="fc" id="L628">                return &quot;Neureka.Settings.View[&quot; +</span>
+<span class="fc" id="L629">                            &quot;ndPrintSettings=&quot; + this.getNDPrintSettings() +</span>
                         &quot;]&quot;;
             }
         }
 
-        
-<span class="fc" id="L628">        public class NDim</span>
+        /**
+         *  Settings for configuring the access pattern of nd-arrays/tensors.
+         */
+<span class="fc" id="L637">        public class NDim</span>
         {
             /**
              *  The {@link SlicedNDConfiguration}
              *  class stores shape, translation... as cached int arrays.
              *  Disabling this flag allows for custom 1D, 2D, 3D classes to be loaded. (Improves memory locality)
              */
-<span class="fc" id="L635">            private boolean _isOnlyUsingDefaultNDConfiguration = false;</span>
+<span class="fc" id="L644">            private boolean _isOnlyUsingDefaultNDConfiguration = false;</span>
 
-<span class="fc" id="L637">            public boolean isOnlyUsingDefaultNDConfiguration() { return _isOnlyUsingDefaultNDConfiguration; }</span>
+            /**
+             * This flag determines which {@link neureka.ndim.config.NDConfiguration} implementations
+             * should be used for nd-arrays/tensors.
+             * If this flag is set to true, then the less performant general purpose {@link neureka.ndim.config.NDConfiguration}
+             * will be used for all nd-arrays/tensors.
+             *
+             * @return The truth value determining if only the default {@link SlicedNDConfiguration} should be used.
+             */
+<span class="fc" id="L654">            public boolean isOnlyUsingDefaultNDConfiguration() { return _isOnlyUsingDefaultNDConfiguration; }</span>
 
+            /**
+             * Setting this flag determines which {@link neureka.ndim.config.NDConfiguration} implementations
+             * should be used for nd-arrays/tensors.
+             * If this flag is set to true, then the less performant general purpose {@link neureka.ndim.config.NDConfiguration}
+             * will be used for all nd-arrays/tensors.
+             *
+             * @param enabled The truth value determining if only the default {@link SlicedNDConfiguration} should be used.
+             */
             public void setIsOnlyUsingDefaultNDConfiguration( boolean enabled ) {
-<span class="fc bfc" id="L640" title="All 2 branches covered.">                if ( notModifiable() ) return;</span>
-<span class="fc" id="L641">                _isOnlyUsingDefaultNDConfiguration = enabled;</span>
-<span class="fc" id="L642">            }</span>
+<span class="fc bfc" id="L665" title="All 2 branches covered.">                if ( notModifiable() ) return;</span>
+<span class="fc" id="L666">                _isOnlyUsingDefaultNDConfiguration = enabled;</span>
+<span class="fc" id="L667">            }</span>
 
             public String toString() {
-<span class="fc" id="L645">                return &quot;Neureka.Settings.NDim[&quot; +</span>
-<span class="fc" id="L646">                              &quot;isOnlyUsingDefaultNDConfiguration=&quot; + this.isOnlyUsingDefaultNDConfiguration() +</span>
+<span class="fc" id="L670">                return &quot;Neureka.Settings.NDim[&quot; +</span>
+<span class="fc" id="L671">                              &quot;isOnlyUsingDefaultNDConfiguration=&quot; + this.isOnlyUsingDefaultNDConfiguration() +</span>
                         &quot;]&quot;;
             }
         }
 
         
-<span class="fc" id="L652">        public class DType {</span>
+<span class="fc" id="L677">        public class DType {</span>
 
-<span class="fc" id="L654">            private Class&lt;?&gt; _defaultDataTypeClass = F64.class;</span>
+<span class="fc" id="L679">            private Class&lt;?&gt; _defaultDataTypeClass = F64.class;</span>
 
-<span class="fc" id="L656">            private boolean _isAutoConvertingExternalDataToJVMTypes = true;</span>
+<span class="fc" id="L681">            private boolean _isAutoConvertingExternalDataToJVMTypes = true;</span>
 
             /**
              *  The default data type is not relevant most of the time.
              *  However, if a tensor is being constructed without providing a type class,
              *  then this property will be used.
              */
-<span class="fc" id="L663">            public Class&lt;?&gt; getDefaultDataTypeClass() { return _defaultDataTypeClass; }</span>
+<span class="fc" id="L688">            public Class&lt;?&gt; getDefaultDataTypeClass() { return _defaultDataTypeClass; }</span>
 
             /**
              *  The default data type is not relevant most of the time.
@@ -668,9 +693,9 @@ import java.util.function.Supplier;
              *  then this property will be used.
              */
             public void setDefaultDataTypeClass( Class&lt;?&gt; dtype ) {
-<span class="pc bpc" id="L671" title="1 of 2 branches missed.">                if ( notModifiable() ) return;</span>
-<span class="fc" id="L672">                _defaultDataTypeClass = dtype;</span>
-<span class="fc" id="L673">            }</span>
+<span class="pc bpc" id="L696" title="1 of 2 branches missed.">                if ( notModifiable() ) return;</span>
+<span class="fc" id="L697">                _defaultDataTypeClass = dtype;</span>
+<span class="fc" id="L698">            }</span>
 
             /**
              *  This flag will determine if foreign data types will be converted into the next best fit (in terms of bits)
@@ -678,7 +703,7 @@ import java.util.function.Supplier;
              *  For example an unsigned int can be converted bit-wise into a JVM int, or
              *  it could be converted to a JVM long type in order to be compatible with JVM operations...
              */
-<span class="fc" id="L681">            public boolean getIsAutoConvertingExternalDataToJVMTypes() { return _isAutoConvertingExternalDataToJVMTypes; }</span>
+<span class="fc" id="L706">            public boolean getIsAutoConvertingExternalDataToJVMTypes() { return _isAutoConvertingExternalDataToJVMTypes; }</span>
 
             /**
              *  This flag will determine if foreign data types will be converted into the next best fit (in terms of bits)
@@ -687,13 +712,13 @@ import java.util.function.Supplier;
              *  it could be converted to a JVM long type in order to be compatible with JVM operations...
              */
             public void setIsAutoConvertingExternalDataToJVMTypes( boolean autoConvert ) {
-<span class="pc bpc" id="L690" title="1 of 2 branches missed.">                if ( notModifiable() ) return;</span>
-<span class="fc" id="L691">                _isAutoConvertingExternalDataToJVMTypes = autoConvert;</span>
-<span class="fc" id="L692">            }</span>
+<span class="pc bpc" id="L715" title="1 of 2 branches missed.">                if ( notModifiable() ) return;</span>
+<span class="fc" id="L716">                _isAutoConvertingExternalDataToJVMTypes = autoConvert;</span>
+<span class="fc" id="L717">            }</span>
 
             public String toString() {
-<span class="fc" id="L695">                return &quot;Neureka.Settings.DType[&quot; +</span>
-<span class="fc" id="L696">                            &quot;defaultDataTypeClass=&quot; + this.getDefaultDataTypeClass() + &quot;,&quot; +</span>
+<span class="fc" id="L720">                return &quot;Neureka.Settings.DType[&quot; +</span>
+<span class="fc" id="L721">                            &quot;defaultDataTypeClass=&quot; + this.getDefaultDataTypeClass() + &quot;,&quot; +</span>
                             &quot;isAutoConvertingExternalDataToJVMTypes=&quot; + _isAutoConvertingExternalDataToJVMTypes +
                         &quot;]&quot;;
             }
@@ -701,7 +726,7 @@ import java.util.function.Supplier;
 
     }
 
-<span class="fc" id="L704">    public static class Utility</span>
+<span class="fc" id="L729">    public static class Utility</span>
     {
         /**
          * Helper method which reads the file with the given name and returns
@@ -712,23 +737,23 @@ import java.util.function.Supplier;
          * @return The contents of the file
          */
         public String readResource( String path ) {
-<span class="fc" id="L715">            InputStream stream = getClass().getClassLoader().getResourceAsStream( path );</span>
-<span class="pc bpc" id="L716" title="1 of 2 branches missed.">            if ( stream == null )</span>
-<span class="nc" id="L717">                throw new IllegalStateException(</span>
+<span class="fc" id="L740">            InputStream stream = getClass().getClassLoader().getResourceAsStream( path );</span>
+<span class="pc bpc" id="L741" title="1 of 2 branches missed.">            if ( stream == null )</span>
+<span class="nc" id="L742">                throw new IllegalStateException(</span>
                         &quot;Failed to create InputStream for resource path '&quot;+path+&quot;'.&quot;
                     );
             try {
-<span class="fc" id="L721">                BufferedReader br = new BufferedReader(new InputStreamReader( stream ));</span>
-<span class="fc" id="L722">                StringBuilder sb = new StringBuilder();</span>
-<span class="fc" id="L723">                String line = &quot;&quot;;</span>
-<span class="fc bfc" id="L724" title="All 2 branches covered.">                while ( line != null ) {</span>
-<span class="fc" id="L725">                    line = br.readLine();</span>
-<span class="fc bfc" id="L726" title="All 2 branches covered.">                    if ( line != null ) sb.append( line ).append( &quot;\n&quot; );</span>
+<span class="fc" id="L746">                BufferedReader br = new BufferedReader(new InputStreamReader( stream ));</span>
+<span class="fc" id="L747">                StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L748">                String line = &quot;&quot;;</span>
+<span class="fc bfc" id="L749" title="All 2 branches covered.">                while ( line != null ) {</span>
+<span class="fc" id="L750">                    line = br.readLine();</span>
+<span class="fc bfc" id="L751" title="All 2 branches covered.">                    if ( line != null ) sb.append( line ).append( &quot;\n&quot; );</span>
                 }
-<span class="fc" id="L728">                return sb.toString();</span>
-<span class="nc" id="L729">            } catch ( IOException e ) {</span>
-<span class="nc" id="L730">                _LOG.error(&quot;Failed loading library resource at '&quot;+path+&quot;'!&quot;);</span>
-<span class="nc" id="L731">                return &quot;&quot;;</span>
+<span class="fc" id="L753">                return sb.toString();</span>
+<span class="nc" id="L754">            } catch ( IOException e ) {</span>
+<span class="nc" id="L755">                _LOG.error(&quot;Failed loading library resource at '&quot;+path+&quot;'!&quot;);</span>
+<span class="nc" id="L756">                return &quot;&quot;;</span>
             }
         }
 
@@ -738,25 +763,25 @@ import java.util.function.Supplier;
          * @param className The class whose presents ought to be checked.
          * @return The truth value determining if the class is present or not.
          */
-        public static boolean isPresent( String className, Supplier&lt;String&gt; tip ) {
-<span class="fc" id="L742">            boolean found = false;</span>
-<span class="pc bpc" id="L743" title="1 of 2 branches missed.">            String groovyInfo = ( (className.toLowerCase().contains(&quot;groovy&quot;) ) ? &quot; Library settings uninitialized!&quot; : &quot;&quot; );</span>
-<span class="fc" id="L744">            String cause = &quot; unknown &quot;;</span>
+        static boolean isPresent( String className, Supplier&lt;String&gt; tip ) {
+<span class="fc" id="L767">            boolean found = false;</span>
+<span class="fc" id="L768">            String cause = &quot; unknown &quot;;</span>
             try {
-<span class="fc" id="L746">                Class.forName( className );</span>
-<span class="fc" id="L747">                found = true;</span>
-<span class="nc" id="L748">            } catch ( Throwable ex ) {// Class or one of its dependencies is not present...</span>
-<span class="nc" id="L749">                cause = ex.getMessage();</span>
+<span class="fc" id="L770">                Class.forName( className );</span>
+<span class="fc" id="L771">                found = true;</span>
+<span class="nc" id="L772">            } catch ( Throwable ex ) {// Class or one of its dependencies is not present...</span>
+<span class="nc" id="L773">                cause = ex.getMessage();</span>
             } finally {
-<span class="pc bpc" id="L751" title="1 of 2 branches missed.">                if ( !found )</span>
-<span class="nc" id="L752">                    System.out.println(</span>
+<span class="fc" id="L775">                String tipMessage = tip.get().replace(&quot;\n&quot;, &quot;\n    &quot;+&quot;     &quot;).trim();</span>
+<span class="pc bpc" id="L776" title="1 of 2 branches missed.">                if ( !found )</span>
+<span class="nc" id="L777">                    _LOG.debug(</span>
                         &quot;Neureka:\n&quot; +
-                        &quot;    info: Failed to load class '&quot; + className + &quot;'!&quot; + groovyInfo + &quot;\n&quot; +
+                        &quot;    info: Failed to load class '&quot; + className + &quot;'!&quot; + &quot;\n&quot; +
                         &quot;    cause: &quot; + cause + &quot;\n&quot; +
-<span class="nc" id="L756">                        &quot;    tip: &quot; + tip.get().replace(&quot;\n&quot;, &quot;\n    &quot;+&quot;     &quot;).trim() + &quot;\n&quot;</span>
+                        &quot;    tip: &quot; + tipMessage + &quot;\n&quot;
                     );
             }
-<span class="fc" id="L759">            return found;</span>
+<span class="fc" id="L784">            return found;</span>
         }
 
     }

@@ -61,7 +61,7 @@ public class SGD&lt;V&gt; implements Optimizer&lt;V&gt;
     @Override
     public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
 <span class="nc" id="L63">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
-<span class="nc" id="L64">        Tsr&lt;V&gt; g = w.getGradient();</span>
+<span class="nc" id="L64">        Tsr&lt;V&gt; g = w.gradient().orElseThrow(()-&gt;new IllegalStateException(&quot;Gradient missing!&quot;));</span>
 <span class="nc" id="L65">        return Tsr.of(&quot;-&quot; + _lr + &quot; * &quot;, g);</span>
     }
 

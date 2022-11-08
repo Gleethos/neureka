@@ -49,14 +49,14 @@ import neureka.devices.opencl.OpenCLDevice;
 <span class="fc" id="L49">                int[] shape = in.getNDConf().shape();</span>
 <span class="fc" id="L50">                Device&lt;Object&gt; device = (Device&lt;Object&gt;) call.getDevice();</span>
 <span class="fc" id="L51">                return Result.of(</span>
-<span class="fc" id="L52">                            Tsr.of(in.itemType(), new int[]{1}, in.item(i)).to(call.getDevice()).getUnsafe().setIsIntermediate(true)</span>
+<span class="fc" id="L52">                            Tsr.of(in.itemType(), new int[]{1}, in.item(i)).to(call.getDevice()).mut().setIsIntermediate(true)</span>
                         )
 <span class="fc" id="L54">                        .withADAction( target -&gt; {</span>
 <span class="fc" id="L55">                            Tsr&lt;Object&gt; error = (Tsr&lt;Object&gt;) target.error();</span>
 <span class="pc bpc" id="L56" title="2 of 4 branches missed.">                            assert error.size() == 1;</span>
 <span class="fc" id="L57">                            Tsr&lt;Object&gt; newError = ElemWiseUtil.newTsrLike(typeClass, shape, true, device, 0);</span>
-<span class="fc" id="L58">                            newError.setIsVirtual(false);</span>
-<span class="fc" id="L59">                            newError.setItemAt(i, error.item(0));</span>
+<span class="fc" id="L58">                            newError.mut().setIsVirtual(false);</span>
+<span class="fc" id="L59">                            newError.mut().setItemAt(i, error.item(0));</span>
 <span class="fc" id="L60">                            return newError;</span>
                         });
             })

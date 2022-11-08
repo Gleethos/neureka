@@ -24,15 +24,15 @@ public class AdaGrad&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
 <span class="fc" id="L24">    public AdaGrad( Tsr&lt;V&gt; target ) {</span>
 <span class="fc" id="L25">        LogUtil.nullArgCheck( target, &quot;target&quot;, Tsr.class );</span>
 <span class="fc" id="L26">        List&lt;Integer&gt; shape = target.shape();</span>
-<span class="fc" id="L27">        h = Tsr.of(target.getItemType(), shape, 0).getUnsafe().upcast(Number.class);</span>
+<span class="fc" id="L27">        h = Tsr.of(target.getItemType(), shape, 0).getMut().upcast(Number.class);</span>
 <span class="fc" id="L28">        lr = 0.01; // Step size/learning rate is 0.01 by default!</span>
 <span class="fc" id="L29">    }</span>
 
     @Override
     public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
 <span class="fc" id="L33">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
-<span class="fc" id="L34">        Tsr&lt;Number&gt; g = w.getGradient().getUnsafe().upcast(Number.class);</span>
-<span class="fc" id="L35">        h.plusAssign(g.power(2));</span>
+<span class="fc" id="L34">        Tsr&lt;Number&gt; g = w.gradient().get().mut().upcast(Number.class);</span>
+<span class="fc" id="L35">        h.getMut().plusAssign(g.power(2));</span>
 <span class="fc" id="L36">        return Tsr.of(&quot;-&quot;+ lr +&quot; * &quot;, g, &quot; / ( ( &quot;, h, &quot; ** 0.5 ) + &quot;+E+&quot; )&quot;);</span>
     }
 

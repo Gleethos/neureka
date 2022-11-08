@@ -4,33 +4,63 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.calculus.args.Arg;
+import neureka.devices.opencl.KernelCode;
+import neureka.dtype.DataType;
+
+import java.util.Arrays;
 
 public class CLScalarBroadcast extends ParsedCLImplementation
 {
-    public CLScalarBroadcast(
-            String postfix, String activation, String derivation
-    ) {
-<span class="fc" id="L13">        super(</span>
-                call-&gt;{
-<span class="nc" id="L15">                    Tsr&lt;Number&gt; t = call.input( Number.class, 0 );</span>
-<span class="nc" id="L16">                    int gwz = t.size();</span>
-<span class="nc" id="L17">                    call.getDevice()</span>
-<span class="nc" id="L18">                            .getKernel(call)</span>
-<span class="nc" id="L19">                            .passAllOf( t )</span>
-<span class="nc" id="L20">                            .passAllOf( t )</span>
-<span class="nc" id="L21">                            .pass( call.input( Number.class, 1 ).at(0).get().floatValue() )</span>
-<span class="nc" id="L22">                            .pass( t.rank() )</span>
-<span class="nc" id="L23">                            .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
-<span class="nc" id="L24">                            .call( gwz );</span>
+    protected final static String TYPE = &quot;#DATA_TYPE#&quot;;
 
-<span class="nc" id="L26">                    return call.input(0);</span>
-                },
-                2,
-<span class="fc" id="L29">                Neureka.get().utility().readResource(&quot;kernels/scalarization_template.cl&quot;),</span>
-                activation,
-                derivation,
-                postfix
+    public CLScalarBroadcast(
+        String postfix, String activation, String derivation
+    ) {
+<span class="fc" id="L19">        super(</span>
+            call-&gt;{
+<span class="nc" id="L21">                Tsr&lt;Number&gt; t = call.input( Number.class, 0 );</span>
+<span class="nc" id="L22">                int gwz = t.size();</span>
+<span class="nc" id="L23">                call.getDevice()</span>
+<span class="nc" id="L24">                        .getKernel(call)</span>
+<span class="nc" id="L25">                        .passAllOf( t )</span>
+<span class="nc" id="L26">                        .passAllOf( t )</span>
+<span class="nc" id="L27">                        .pass( call.input( Number.class, 1 ).at(0).get().floatValue() )</span>
+<span class="nc" id="L28">                        .pass( t.rank() )</span>
+<span class="nc" id="L29">                        .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
+<span class="nc" id="L30">                        .call( gwz );</span>
+
+<span class="nc" id="L32">                return call.input(0);</span>
+            },
+            2,
+<span class="fc" id="L35">            Neureka.get().utility().readResource(&quot;kernels/scalarization_template.cl&quot;),</span>
+            activation,
+            derivation,
+            postfix,
+            kernelCode -&gt; {
+<span class="fc" id="L40">                String[] types = new String[]{</span>
+                        &quot;float&quot;, &quot;double&quot;, &quot;int&quot;, &quot;long&quot;, &quot;short&quot;, &quot;char&quot;
+                };
+<span class="fc" id="L43">                return</span>
+<span class="fc" id="L44">                    Arrays.stream(types).map( type -&gt; {</span>
+<span class="fc" id="L45">                        String newName = kernelCode.getName() + (&quot;_&quot; + type);</span>
+<span class="fc" id="L46">                        String newCode = kernelCode.getCode()</span>
+<span class="fc" id="L47">                                                    .replace(TYPE, type)</span>
+<span class="fc" id="L48">                                                    .replace(kernelCode.getName(), newName);</span>
+                        DataType&lt;?&gt; dt;
+<span class="pc bpc" id="L50" title="1 of 7 branches missed.">                        switch (type) {</span>
+<span class="fc" id="L51">                            case &quot;float&quot;:  dt = DataType.of(Float.class);   break;</span>
+<span class="fc" id="L52">                            case &quot;double&quot;: dt = DataType.of(Double.class);  break;</span>
+<span class="fc" id="L53">                            case &quot;int&quot;:    dt = DataType.of(Integer.class); break;</span>
+<span class="fc" id="L54">                            case &quot;long&quot;:   dt = DataType.of(Long.class);    break;</span>
+<span class="fc" id="L55">                            case &quot;short&quot;:  dt = DataType.of(Short.class);   break;</span>
+<span class="fc" id="L56">                            case &quot;char&quot;:   dt = DataType.of(Byte.class);    break;</span>
+<span class="nc" id="L57">                            default:       dt = DataType.of(Float.class);   break;</span>
+                        }
+<span class="fc" id="L59">                        return new KernelCode(newName, newCode, dt);</span>
+                    })
+<span class="fc" id="L61">                    .toArray(KernelCode[]::new);</span>
+            }
         );
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L64">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

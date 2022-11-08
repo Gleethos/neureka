@@ -4,8 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
-import neureka.devices.opencl.CLContext;
-import neureka.devices.opencl.CLSettings;
+import neureka.backend.ocl.CLBackend;
+import neureka.backend.ocl.CLSettings;
 import neureka.devices.opencl.KernelCaller;
 import neureka.devices.opencl.OpenCLDevice;
 
@@ -32,9 +32,9 @@ import java.util.function.Supplier;
 
     @Override
     public Tsr&lt;Integer&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
-<span class="fc" id="L35">        CLContext context = Neureka.get().backend().get(CLContext.class);</span>
+<span class="fc" id="L35">        CLBackend context = Neureka.get().backend().find(CLBackend.class).orElse(null);</span>
 <span class="pc bpc" id="L36" title="1 of 2 branches missed.">        CLSettings settings = context == null ? null : context.getSettings();</span>
-<span class="pc bpc" id="L37" title="2 of 4 branches missed.">        boolean autoConvert = context == null || settings.isAutoConvertToFloat();</span>
+<span class="pc bpc" id="L37" title="1 of 4 branches missed.">        boolean autoConvert = context == null || settings.isAutoConvertToFloat();</span>
 <span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if ( settings != null ) settings.setAutoConvertToFloat(false);</span>
 <span class="pc bpc" id="L39" title="1 of 2 branches missed.">        Tsr&lt;Float&gt; in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);</span>
 <span class="fc" id="L40">        int index = _runRecursively(in, call.getDevice());</span>
@@ -56,7 +56,7 @@ import java.util.function.Supplier;
 <span class="fc" id="L56">            N = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)</span>
 
 <span class="fc" id="L58">        Tsr&lt;Integer&gt; out = Tsr.of(Integer.class, new int[]{N}, 0).to(device);</span>
-<span class="fc" id="L59">        out.setIsVirtual(false);</span>
+<span class="fc" id="L59">        out.mut().setIsVirtual(false);</span>
 
 <span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if ( in.size() == 1 ) {</span>
 <span class="nc bnc" id="L62" title="All 4 branches missed.">            assert out.size() == 1;</span>
@@ -105,12 +105,12 @@ import java.util.function.Supplier;
 <span class="fc bfc" id="L105" title="All 2 branches covered.">        if ( N &gt; 1 ) {</span>
 <span class="fc" id="L106">            Tsr&lt;Float&gt; reduced = _fetch(in, out, device);</span>
 <span class="fc" id="L107">            i = out.at(_runRecursively(reduced, device)).get();</span>
-<span class="fc" id="L108">            reduced.getUnsafe().delete();</span>
+<span class="fc" id="L108">            reduced.mut().delete();</span>
 <span class="fc" id="L109">        }</span>
         else
 <span class="fc" id="L111">            i = out.at(0).get();</span>
 
-<span class="fc" id="L113">        out.getUnsafe().delete();</span>
+<span class="fc" id="L113">        out.mut().delete();</span>
 <span class="fc" id="L114">        return i;</span>
     }
 
@@ -124,7 +124,7 @@ import java.util.function.Supplier;
             Tsr&lt;Float&gt; in, Tsr&lt;Integer&gt; indices, OpenCLDevice device
     ) {
 <span class="fc" id="L126">        Tsr&lt;Float&gt; out = Tsr.of(Float.class, new int[]{indices.size()}, 0).to(device);</span>
-<span class="fc" id="L127">        out.setIsVirtual(false);</span>
+<span class="fc" id="L127">        out.mut().setIsVirtual(false);</span>
 
 <span class="fc" id="L129">        String kernelName = INDICES_MAPPER_ID;</span>
 

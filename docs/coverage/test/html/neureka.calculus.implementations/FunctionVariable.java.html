@@ -70,9 +70,9 @@ public final class FunctionVariable implements Function, GradientProvider
 <span class="pc bpc" id="L70" title="1 of 2 branches missed.">        int j = ( arguments.has(Arg.VarIdx.class)   ? arguments.valOf(Arg.VarIdx.class)   : -1 );</span>
 <span class="fc bfc" id="L71" title="All 2 branches covered.">        if ( d &gt;= 0 ) {</span>
 <span class="fc bfc" id="L72" title="All 2 branches covered.">            if ( j &lt; 0 )</span>
-<span class="fc" id="L73">                return Tsr.of( inputs[ 0 ].shape(), 1.0 ).getUnsafe().setIsIntermediate( true );</span>
+<span class="fc" id="L73">                return Tsr.of( inputs[ 0 ].shape(), 1.0 ).getMut().setIsIntermediate( true );</span>
 
-<span class="fc bfc" id="L75" title="All 2 branches covered.">            return j != d ? Tsr.of( inputs[ 0 ].shape(), 0.0 ).getUnsafe().setIsIntermediate( true ) : executeDerive(inputs, d );</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            return j != d ? Tsr.of( inputs[ 0 ].shape(), 0.0 ).getMut().setIsIntermediate( true ) : executeDerive(inputs, d );</span>
         }
 <span class="fc bfc" id="L77" title="All 2 branches covered.">        if ( j &lt; 0 ) {</span>
 <span class="fc" id="L78">            StringBuilder exp = new StringBuilder(&quot;I[ 0 ]&quot;);</span>

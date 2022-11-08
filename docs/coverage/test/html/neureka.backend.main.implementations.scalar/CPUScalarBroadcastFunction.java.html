@@ -17,53 +17,53 @@ public class CPUScalarBroadcastFunction implements ImplementationFor&lt;CPU&gt;
 
     @Override
     public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
-<span class="nc" id="L20">        call.getDevice()</span>
-<span class="nc" id="L21">            .getExecutor()</span>
-<span class="nc" id="L22">            .threaded(</span>
-<span class="nc" id="L23">                call.input(0).size(),</span>
-<span class="nc" id="L24">                _workloadFor(call)</span>
+<span class="fc" id="L20">        call.getDevice()</span>
+<span class="fc" id="L21">            .getExecutor()</span>
+<span class="fc" id="L22">            .threaded(</span>
+<span class="fc" id="L23">                call.input(0).size(),</span>
+<span class="fc" id="L24">                _workloadFor(call)</span>
             );
 
-<span class="nc" id="L27">        return call.input(0);</span>
+<span class="fc" id="L27">        return call.input(0);</span>
     }
 
     private CPU.RangeWorkload _workloadFor(
             ExecutionCall&lt;CPU&gt; call
     ) {
-<span class="nc" id="L33">        Tsr&lt;Number&gt; t0_drn = call.input( Number.class, 0 );</span>
-<span class="nc" id="L34">        Tsr&lt;Number&gt; src    = call.input( Number.class, 1 );</span>
+<span class="fc" id="L33">        Tsr&lt;Number&gt; t0_drn = call.input( Number.class, 0 );</span>
+<span class="fc" id="L34">        Tsr&lt;Number&gt; src    = call.input( Number.class, 1 );</span>
 
-<span class="nc" id="L36">        Class&lt;?&gt; typeClass = t0_drn.getItemType();</span>
+<span class="fc" id="L36">        Class&lt;?&gt; typeClass = t0_drn.getItemType();</span>
 
-<span class="nc" id="L38">        CPU.RangeWorkload workload = null;</span>
+<span class="fc" id="L38">        CPU.RangeWorkload workload = null;</span>
 
-<span class="nc" id="L40">        int d = call.getValOf(Arg.DerivIdx.class);</span>
-<span class="nc bnc" id="L41" title="All 2 branches missed.">        CPUFun f = d &lt; 0 ? _fun.getActivation() : _fun.getDerivative();</span>
+<span class="fc" id="L40">        int d = call.getValOf(Arg.DerivIdx.class);</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        CPUFun f = d &lt; 0 ? _fun.getActivation() : _fun.getDerivative();</span>
 
-<span class="nc bnc" id="L43" title="All 2 branches missed.">        if ( typeClass == Double.class ) {</span>
-<span class="nc" id="L44">            double value = src.at(0).get().doubleValue();</span>
-<span class="nc" id="L45">            double[] t0_value = t0_drn.getUnsafe().getDataForWriting(double[].class);</span>
-<span class="nc" id="L46">            double finalValue = f.invoke(value);</span>
-<span class="nc" id="L47">            workload = ( i, end ) -&gt; {</span>
-<span class="nc" id="L48">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
-<span class="nc" id="L49">                NDIterator srcIdx = NDIterator.of(src);</span>
-<span class="nc" id="L50">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
-<span class="nc" id="L51">                srcIdx.set(src.indicesOfIndex(i));</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">                while ( i &lt; end ) // increment on drain accordingly:</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if ( typeClass == Double.class ) {</span>
+<span class="fc" id="L44">            double value = src.at(0).get().doubleValue();</span>
+<span class="fc" id="L45">            double[] t0_value = t0_drn.mut().getDataForWriting(double[].class);</span>
+<span class="fc" id="L46">            double finalValue = f.invoke(value);</span>
+<span class="fc" id="L47">            workload = ( i, end ) -&gt; {</span>
+<span class="fc" id="L48">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L49">                NDIterator srcIdx = NDIterator.of(src);</span>
+<span class="fc" id="L50">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L51">                srcIdx.set(src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                while ( i &lt; end ) // increment on drain accordingly:</span>
                 {
                     // setInto _value in drn:
-<span class="nc" id="L55">                    t0_value[t0Idx.i()] = finalValue;</span>
+<span class="fc" id="L55">                    t0_value[t0Idx.i()] = finalValue;</span>
                     // increment on drain:
-<span class="nc" id="L57">                    t0Idx.increment();</span>
-<span class="nc" id="L58">                    srcIdx.increment();</span>
+<span class="fc" id="L57">                    t0Idx.increment();</span>
+<span class="fc" id="L58">                    srcIdx.increment();</span>
                     //NDConfiguration.Utility.increment(t0Idx, t0Shp);
-<span class="nc" id="L60">                    i++;</span>
+<span class="fc" id="L60">                    i++;</span>
                 }
-<span class="nc" id="L62">            };</span>
+<span class="fc" id="L62">            };</span>
         }
-<span class="nc bnc" id="L64" title="All 2 branches missed.">        if ( typeClass == Float.class ) {</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        if ( typeClass == Float.class ) {</span>
 <span class="nc" id="L65">            float value = src.at(0).get().floatValue();</span>
-<span class="nc" id="L66">            float[] t0_value = t0_drn.getUnsafe().getDataForWriting(float[].class);</span>
+<span class="nc" id="L66">            float[] t0_value = t0_drn.mut().getDataForWriting(float[].class);</span>
 <span class="nc" id="L67">            float finalValue = f.invoke(value);</span>
 <span class="nc" id="L68">            workload = ( i, end ) -&gt; {</span>
 <span class="nc" id="L69">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
@@ -82,9 +82,9 @@ public class CPUScalarBroadcastFunction implements ImplementationFor&lt;CPU&gt;
                 }
 <span class="nc" id="L83">            };</span>
         }
-<span class="nc bnc" id="L85" title="All 2 branches missed.">        if ( typeClass == Integer.class ) {</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if ( typeClass == Integer.class ) {</span>
 <span class="nc" id="L86">            int value = src.at(0).get().intValue();</span>
-<span class="nc" id="L87">            int[] t0_value = t0_drn.getUnsafe().getDataForWriting(int[].class);</span>
+<span class="nc" id="L87">            int[] t0_value = t0_drn.mut().getDataForWriting(int[].class);</span>
 <span class="nc" id="L88">            int finalValue = f.invoke(value);</span>
 <span class="nc" id="L89">            workload = ( i, end ) -&gt; {</span>
 <span class="nc" id="L90">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
@@ -103,9 +103,9 @@ public class CPUScalarBroadcastFunction implements ImplementationFor&lt;CPU&gt;
                 }
 <span class="nc" id="L104">            };</span>
         }
-<span class="nc bnc" id="L106" title="All 2 branches missed.">        if ( t0_drn.getUnsafe().getData().getRef().getClass() == Object[].class ) {</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if ( t0_drn.mut().getData().getRef().getClass() == Object[].class ) {</span>
 <span class="nc" id="L107">            Object value = src.at(0).get();</span>
-<span class="nc" id="L108">            Object[] t0_value = t0_drn.getUnsafe().getDataForWriting(Object[].class);</span>
+<span class="nc" id="L108">            Object[] t0_value = t0_drn.mut().getDataForWriting(Object[].class);</span>
 <span class="nc" id="L109">            Object finalValue = f.invoke(value);</span>
 <span class="nc" id="L110">            workload = (i, end ) -&gt; {</span>
 <span class="nc" id="L111">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
@@ -125,10 +125,10 @@ public class CPUScalarBroadcastFunction implements ImplementationFor&lt;CPU&gt;
 <span class="nc" id="L125">            };</span>
         }
 
-<span class="nc bnc" id="L128" title="All 2 branches missed.">        if ( workload == null )</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if ( workload == null )</span>
 <span class="nc" id="L129">            throw new IllegalArgumentException(&quot;&quot;);</span>
         else
-<span class="nc" id="L131">            return workload;</span>
+<span class="fc" id="L131">            return workload;</span>
     }
 
 }

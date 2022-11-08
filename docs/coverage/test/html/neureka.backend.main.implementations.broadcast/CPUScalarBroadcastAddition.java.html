@@ -10,10 +10,10 @@ import neureka.devices.host.CPU;
     @Override
     public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
 <span class="pc bpc" id="L12" title="2 of 4 branches missed.">        assert call.arity() == 3;</span>
-<span class="fc bfc" id="L13" title="All 2 branches covered.">        if ( call.getDerivativeIndex() == 0 )</span>
-<span class="fc" id="L14">            return Tsr.of( call.input( 1 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );</span>
-<span class="fc bfc" id="L15" title="All 2 branches covered.">        else if ( call.getDerivativeIndex() == 1 )</span>
-<span class="fc" id="L16">            return Tsr.of( call.input( 2 ).shape(), 1d ).getUnsafe().setIsIntermediate( true );</span>
+<span class="pc bpc" id="L13" title="1 of 2 branches missed.">        if ( call.getDerivativeIndex() == 0 )</span>
+<span class="nc" id="L14">            return Tsr.of( call.input( 1 ).shape(), 1d ).mut().setIsIntermediate( true );</span>
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">        else if ( call.getDerivativeIndex() == 1 )</span>
+<span class="nc" id="L16">            return Tsr.of( call.input( 2 ).shape(), 1d ).mut().setIsIntermediate( true );</span>
         else
 <span class="fc" id="L18">            return super.run(call);</span>
     }
@@ -23,8 +23,8 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L23">        return new CPUBiFun() {</span>
 <span class="fc" id="L24">            @Override public double  invoke( double a,  double  b ) { return a + b; }</span>
 <span class="fc" id="L25">            @Override public float   invoke( float a,   float   b ) { return a + b; }</span>
-<span class="nc" id="L26">            @Override public int     invoke( int a,     int     b ) { return a + b; }</span>
-<span class="nc" id="L27">            @Override public long    invoke( long a,    long    b ) { return a + b; }</span>
+<span class="fc" id="L26">            @Override public int     invoke( int a,     int     b ) { return a + b; }</span>
+<span class="fc" id="L27">            @Override public long    invoke( long a,    long    b ) { return a + b; }</span>
 <span class="nc" id="L28">            @Override public char    invoke( char a,    char    b ) { return (char) (((int)a)+((int)b)); }</span>
 <span class="nc bnc" id="L29" title="All 4 branches missed.">            @Override public boolean invoke( boolean a, boolean b ) { return a &amp;&amp; b; }</span>
         };

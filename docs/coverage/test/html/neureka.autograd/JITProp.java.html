@@ -88,13 +88,11 @@ public final class JITProp&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="pc bpc" id="L88" title="1 of 4 branches missed.">    public boolean isDone() { return ( _finished == null &amp;&amp; _pending == null ); }</span>
 
 
-
-
     @Override
     public String toString() {
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        int finished = ( _finished == null ? 0 : _finished.size() );</span>
-<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        int pending  = ( _pending  == null ? 0 : _pending.size()  );</span>
-<span class="fc" id="L97">        return this.getClass().getSimpleName()+&quot;@&quot;+hashCode()+&quot;[finished=&quot;+finished+&quot;,pending=&quot;+pending+&quot;,isDone=&quot;+isDone()+&quot;]&quot;;</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        int finished = ( _finished == null ? 0 : _finished.size() );</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        int pending  = ( _pending  == null ? 0 : _pending.size()  );</span>
+<span class="fc" id="L95">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[finished=&quot;+finished+&quot;,pending=&quot;+pending+&quot;,isDone=&quot;+isDone()+&quot;]&quot;;</span>
     }
 
 }

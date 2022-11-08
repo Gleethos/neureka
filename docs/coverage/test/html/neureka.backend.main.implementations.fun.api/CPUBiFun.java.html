@@ -12,7 +12,7 @@ public interface CPUBiFun
 
 <span class="nc" id="L13">    default byte invoke(byte a, byte b) { return (byte) Math.round( invoke( (double) a, (double) b ) ); }</span>
 
-<span class="nc" id="L15">    default short invoke(short a, short b) { return (short) Math.round( invoke( (double) a, (double) b ) ); }</span>
+<span class="fc" id="L15">    default short invoke(short a, short b) { return (short) Math.round( invoke( (double) a, (double) b ) ); }</span>
 
 <span class="nc bnc" id="L17" title="All 6 branches missed.">    default boolean invoke(boolean a, boolean b) { return Math.round( invoke( a ? 1 : 0, b ? 1 : 0 ) ) != 0; } // Some default behaviors, it might make sense to override this for some activations.</span>
 

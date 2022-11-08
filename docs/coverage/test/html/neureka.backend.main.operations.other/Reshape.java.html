@@ -57,10 +57,10 @@ public class Reshape extends AbstractOperation
     private static Tsr&lt;?&gt; _reshaped( Tsr&lt;?&gt; tensor, int[] newForm, boolean newTsr )
     {
 <span class="fc" id="L59">        Tsr&lt;?&gt; parent = tensor;</span>
-<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        tensor = newTsr ? tensor.shallowCopy().getUnsafe().setIsIntermediate( true ) : tensor;</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        tensor = newTsr ? tensor.shallowCopy().mut().setIsIntermediate( true ) : tensor;</span>
 <span class="fc" id="L61">        NDConfiguration newNDC = tensor.getNDConf().newReshaped( newForm );</span>
 <span class="fc" id="L62">        _shapeCheck( newNDC.shape(), tensor );</span>
-<span class="fc" id="L63">        tensor.getUnsafe().setNDConf( newNDC );</span>
+<span class="fc" id="L63">        tensor.mut().setNDConf( newNDC );</span>
 <span class="pc bpc" id="L64" title="1 of 2 branches missed.">        if ( newTsr ) {</span>
 <span class="fc" id="L65">            Relation r = parent.get( Relation.class );</span>
 <span class="fc" id="L66">            r.addReshapeRelationFor( tensor, newForm );</span>
@@ -162,12 +162,12 @@ public class Reshape extends AbstractOperation
 <span class="pc bpc" id="L162" title="1 of 2 branches missed.">        if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {</span>
 <span class="nc" id="L163">            throw new IllegalArgumentException(</span>
                     &quot;New shape does not match tensor size!&quot; +
-                            &quot; (&quot; +
+                    &quot; (&quot; +
 <span class="nc" id="L166">                            NDUtil.shapeString( newShp ) +</span>
 <span class="nc bnc" id="L167" title="All 2 branches missed.">                            ((NDConfiguration.Utility.sizeOfShape( newShp ) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) +</span>
 <span class="nc" id="L168">                            NDUtil.shapeString(t.getNDConf().shape()) + &quot;&quot; +</span>
-                            &quot;)&quot;
-            );
+                    &quot;)&quot;
+                );
         }
 <span class="fc" id="L172">    }</span>
     

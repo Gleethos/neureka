@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.196 seconds"
+    "duration":"0.213 seconds"
   },
   "headers":["\n                <p>\n                    Here you can find out how the version number of a tensor is\n                    set and tracked.\n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Inline operations causes version incrementation.",
       "result":"PASS",
-      "duration":"0.068 seconds",
+      "duration":"0.071 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Non-inline operations do not cause version incrementation.",
       "result":"PASS",
-      "duration":"0.073 seconds",
+      "duration":"0.084 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Inline operations cause illegal state exceptions.",
       "result":"PASS",
-      "duration":"0.031 seconds",
+      "duration":"0.033 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
     {
       "id":"Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

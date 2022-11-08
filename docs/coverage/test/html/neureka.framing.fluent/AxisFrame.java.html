@@ -101,7 +101,13 @@ public final class AxisFrame&lt;G, V&gt; {
         }
 
         public AxisFrame&lt;GetType, ValueType&gt; build() {
-<span class="fc" id="L104">            return new AxisFrame&lt;&gt;(keyBasedGetter, keyBasedSetter, replacer, allAliasGetter, allAliasGetterForIndex); </span>
+<span class="fc" id="L104">            return new AxisFrame&lt;&gt;(</span>
+                    keyBasedGetter,
+                    keyBasedSetter,
+                    replacer,
+                    allAliasGetter,
+                    allAliasGetterForIndex
+                );
         }
  
     }

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BackendExtension.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api</a> &gt; <span class="el_source">BackendExtension.java</span></div><h1>BackendExtension.java</h1><pre class="source lang-java linenums">package neureka.backend.api;
 
+import neureka.Neureka;
 import neureka.backend.api.ini.BackendLoader;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
+import neureka.backend.ocl.CLBackend;
 
 /**
  *  Implementations of this might introduce CUDA or ROCM to Neureka.
  *  By default, this interface is used to implement an OpenCL context
- *  via the {@link neureka.devices.opencl.CLContext} class used by the standard backend.
+ *  via the {@link CLBackend} class used by the standard backend.
  *  If you want to introduce new backends to Neureka, this is the place to start!
  */
 public interface BackendExtension extends Component&lt;Extensions&gt;
@@ -23,6 +25,12 @@ public interface BackendExtension extends Component&lt;Extensions&gt;
      * @return A suitable {@link DeviceOption} or null if nothing was found.
      */
     DeviceOption find( String searchKey );
+
+    /**
+     *  This will indirectly be called through the {@link Neureka#reset()} method,
+     *  which is responsible for resetting the library settings.
+     */
+<span class="fc" id="L33">    default void reset() {/* override this if you backend has settings to reset */}</span>
 
     /**
      *  Tells this extension to dispose itself.
@@ -42,20 +50,20 @@ public interface BackendExtension extends Component&lt;Extensions&gt;
         private final Device&lt;?&gt; _device;
         private final double _confidence;
 
-<span class="fc" id="L45">        public DeviceOption( Device&lt;?&gt; device, double confidence ) {</span>
-<span class="fc" id="L46">            _device = device;</span>
-<span class="fc" id="L47">            _confidence = confidence;</span>
-<span class="fc" id="L48">        }</span>
+<span class="fc" id="L53">        public DeviceOption( Device&lt;?&gt; device, double confidence ) {</span>
+<span class="fc" id="L54">            _device = device;</span>
+<span class="fc" id="L55">            _confidence = confidence;</span>
+<span class="fc" id="L56">        }</span>
 
         /**
          * @return The device which fits a given key word best.
          */
-<span class="fc" id="L53">        public Device&lt;?&gt; device() { return _device; }</span>
+<span class="fc" id="L61">        public Device&lt;?&gt; device() { return _device; }</span>
 
         /**
          * @return The confidence level determining how well a given search key matches the wrapped device.
          */
-<span class="fc" id="L58">        public double confidence() { return _confidence; }</span>
+<span class="fc" id="L66">        public double confidence() { return _confidence; }</span>
 
     }
 

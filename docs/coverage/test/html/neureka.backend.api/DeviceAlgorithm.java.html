@@ -65,5 +65,9 @@ public interface DeviceAlgorithm&lt;C extends DeviceAlgorithm&lt;C&gt;&gt; exten
 <span class="fc" id="L65">        return (ImplementationFor&lt;D&gt;) getImplementationFor(device.getClass());</span>
     }
 
+    default &lt;D extends Device&lt;?&gt;&gt; boolean hasImplementationFor( D device ) {
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        return getImplementationFor(device.getClass()) != null;</span>
+    }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

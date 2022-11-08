@@ -19,8 +19,8 @@ import neureka.common.composition.AbstractComponentOwner;
     }
 
     public &lt;V, T extends Arg&lt;V&gt;&gt; V valOfOr( Class&lt;T&gt; argumentClass, V fallback ) {
-<span class="fc" id="L22">        Arg&lt;V&gt; argument = get(argumentClass);</span>
-<span class="fc bfc" id="L23" title="All 2 branches covered.">        if ( argument == null ) return fallback; else return argument.get();</span>
+<span class="nc" id="L22">        Arg&lt;V&gt; argument = get(argumentClass);</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">        if ( argument == null ) return fallback; else return argument.get();</span>
     }
 
     @Override

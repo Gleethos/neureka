@@ -2,7 +2,6 @@
 
 import neureka.Tsr;
 import neureka.calculus.args.Arg;
-import neureka.fluent.slicing.states.AxisOrGet;
 import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.fluent.slicing.states.FromOrAt;
 import neureka.fluent.slicing.states.FromOrAtTsr;
@@ -40,54 +39,54 @@ public class SliceBuilder&lt;V&gt; implements AxisOrGetTsr&lt;V&gt;
      * @param toBeSliced The {@link Tsr} instance which ought to be sliced.
      */
     public SliceBuilder( Tsr&lt;V&gt; toBeSliced )
-<span class="fc" id="L43">    {</span>
-<span class="fc" id="L44">        CreationCallback&lt;V&gt; sliceCreator = // A callback lambda which receives the final slice configuration to perform the actual slicing.</span>
+<span class="fc" id="L42">    {</span>
+<span class="fc" id="L43">        CreationCallback&lt;V&gt; sliceCreator = // A callback lambda which receives the final slice configuration to perform the actual slicing.</span>
         ( int[] newShape, int[] newOffset, int[] newSpread, boolean allowAutograd )-&gt;
         {
-<span class="fc" id="L47">            boolean isIntermediate = toBeSliced.isIntermediate();</span>
-<span class="fc" id="L48">            toBeSliced.getUnsafe().setIsIntermediate(false); // To avoid deletion!</span>
-<span class="fc" id="L49">            Tsr&lt;V&gt; slice = neureka.calculus.Function.of(&quot;slice(I[0])&quot;, allowAutograd)</span>
-<span class="fc" id="L50">                                .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))</span>
-<span class="fc" id="L51">                                .call(toBeSliced);</span>
+<span class="fc" id="L46">            boolean isIntermediate = toBeSliced.isIntermediate();</span>
+<span class="fc" id="L47">            toBeSliced.getMut().setIsIntermediate(false); // To avoid deletion!</span>
+<span class="fc" id="L48">            Tsr&lt;V&gt; slice = neureka.calculus.Function.of(&quot;slice(I[0])&quot;, allowAutograd)</span>
+<span class="fc" id="L49">                                .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))</span>
+<span class="fc" id="L50">                                .call(toBeSliced);</span>
 
-<span class="fc" id="L53">            slice.getUnsafe().setIsIntermediate(false);</span>
-<span class="fc" id="L54">            toBeSliced.getUnsafe().setIsIntermediate(isIntermediate);</span>
-<span class="fc" id="L55">            return slice;</span>
+<span class="fc" id="L52">            slice.getMut().setIsIntermediate(false);</span>
+<span class="fc" id="L53">            toBeSliced.getMut().setIsIntermediate(isIntermediate);</span>
+<span class="fc" id="L54">            return slice;</span>
         };
 
-<span class="fc" id="L58">        int[] shape = toBeSliced.getNDConf().shape();</span>
-<span class="fc" id="L59">        _axisSliceBuilders = new AxisSliceBuilder[ shape.length ];</span>
-<span class="fc" id="L60">        int[] newShape = new int[shape.length];</span>
-<span class="fc" id="L61">        int[] newSpread = new int[shape.length];</span>
-<span class="fc" id="L62">        int[] newOffset = new int[shape.length];</span>
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        for ( int i = 0; i &lt; shape.length; i++ ) {</span>
-<span class="fc" id="L64">            int finalI = i;</span>
-<span class="fc" id="L65">            _axisSliceBuilders[ i ] = new AxisSliceBuilder&lt;&gt;(</span>
+<span class="fc" id="L57">        int[] shape = toBeSliced.getNDConf().shape();</span>
+<span class="fc" id="L58">        _axisSliceBuilders = new AxisSliceBuilder[ shape.length ];</span>
+<span class="fc" id="L59">        int[] newShape = new int[shape.length];</span>
+<span class="fc" id="L60">        int[] newSpread = new int[shape.length];</span>
+<span class="fc" id="L61">        int[] newOffset = new int[shape.length];</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        for ( int i = 0; i &lt; shape.length; i++ ) {</span>
+<span class="fc" id="L63">            int finalI = i;</span>
+<span class="fc" id="L64">            _axisSliceBuilders[ i ] = new AxisSliceBuilder&lt;&gt;(</span>
                                                 shape[ i ],
                                                 ( from, to, step ) -&gt; {
-<span class="pc bpc" id="L68" title="1 of 6 branches missed.">                                                    if ( from &lt; 0 &amp;&amp; to &lt; 0 &amp;&amp; from &gt; to ) {</span>
-<span class="fc" id="L69">                                                        int temp = from;</span>
-<span class="fc" id="L70">                                                        from = to;</span>
-<span class="fc" id="L71">                                                        to = temp;</span>
+<span class="pc bpc" id="L67" title="1 of 6 branches missed.">                                                    if ( from &lt; 0 &amp;&amp; to &lt; 0 &amp;&amp; from &gt; to ) {</span>
+<span class="fc" id="L68">                                                        int temp = from;</span>
+<span class="fc" id="L69">                                                        from = to;</span>
+<span class="fc" id="L70">                                                        to = temp;</span>
                                                     }
-<span class="fc bfc" id="L73" title="All 2 branches covered.">                                                    from = ( from &lt; 0 ) ? shape[finalI] + from : from;</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">                                                    to = ( to &lt; 0 ) ? shape[finalI] + to : to;</span>
-<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                                                    if ( to &lt; 0 ) to += shape[ finalI ];</span>
-<span class="pc bpc" id="L76" title="1 of 2 branches missed.">                                                    if ( from &lt; 0 ) from += shape[ finalI ];</span>
-<span class="fc" id="L77">                                                    newOffset[ finalI ] = from;</span>
-<span class="fc" id="L78">                                                    newShape[ finalI ] = ( to - from + 1 ) / step;</span>
-<span class="fc" id="L79">                                                    newSpread[ finalI ] = step;</span>
-<span class="fc" id="L80">                                                    _axisSliceBuilders[ finalI ] = null;</span>
-<span class="fc" id="L81">                                                    return this;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">                                                    from = ( from &lt; 0 ) ? shape[finalI] + from : from;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">                                                    to = ( to &lt; 0 ) ? shape[finalI] + to : to;</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                                                    if ( to &lt; 0 ) to += shape[ finalI ];</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                                                    if ( from &lt; 0 ) from += shape[ finalI ];</span>
+<span class="fc" id="L76">                                                    newOffset[ finalI ] = from;</span>
+<span class="fc" id="L77">                                                    newShape[ finalI ] = ( to - from + 1 ) / step;</span>
+<span class="fc" id="L78">                                                    newSpread[ finalI ] = step;</span>
+<span class="fc" id="L79">                                                    _axisSliceBuilders[ finalI ] = null;</span>
+<span class="fc" id="L80">                                                    return this;</span>
                                                 });
         }
-<span class="fc" id="L84">        _create = allowAutograd -&gt; {</span>
-<span class="fc bfc" id="L85" title="All 2 branches covered.">            for ( AxisSliceBuilder&lt;V&gt; axis : _axisSliceBuilders ) {</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">                if ( axis != null ) axis.resolve();</span>
+<span class="fc" id="L83">        _create = allowAutograd -&gt; {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            for ( AxisSliceBuilder&lt;V&gt; axis : _axisSliceBuilders ) {</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                if ( axis != null ) axis.resolve();</span>
             }
-<span class="fc" id="L88">            return sliceCreator.sliceOf( newShape, newOffset, newSpread, allowAutograd );</span>
+<span class="fc" id="L87">            return sliceCreator.sliceOf( newShape, newOffset, newSpread, allowAutograd );</span>
         };
-<span class="fc" id="L90">    }</span>
+<span class="fc" id="L89">    }</span>
 
     /**
      *  This method returns an instance of the {@link AxisSliceBuilder} disguised by the {@link FromOrAt} interface.
@@ -99,8 +98,8 @@ public class SliceBuilder&lt;V&gt; implements AxisOrGetTsr&lt;V&gt;
      */
     @Override
     public FromOrAtTsr&lt;V&gt; axis(int axis ) {
-<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if ( axis &gt;= _axisSliceBuilders.length ) throw new IllegalArgumentException(&quot;&quot;);</span>
-<span class="fc" id="L103">        return _axisSliceBuilders[ axis ];</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if ( axis &gt;= _axisSliceBuilders.length ) throw new IllegalArgumentException(&quot;&quot;);</span>
+<span class="fc" id="L102">        return _axisSliceBuilders[ axis ];</span>
     }
 
     /**
@@ -112,12 +111,12 @@ public class SliceBuilder&lt;V&gt; implements AxisOrGetTsr&lt;V&gt;
      */
     @Override
     public Tsr&lt;V&gt; get() {
-<span class="fc" id="L115">        return _create.apply(true);</span>
+<span class="fc" id="L114">        return _create.apply(true);</span>
     }
 
     @Override
     public Tsr&lt;V&gt; detached() {
-<span class="fc" id="L120">        return _create.apply(false);</span>
+<span class="fc" id="L119">        return _create.apply(false);</span>
     }
 
 

@@ -105,7 +105,7 @@ import java.util.List;
 <span class="fc" id="L105">            newOffset.add( 0 );</span>
         }
 <span class="fc" id="L107">        tensor</span>
-<span class="fc" id="L108">            .getUnsafe()</span>
+<span class="fc" id="L108">            .mut()</span>
 <span class="fc" id="L109">            .setNDConf(</span>
 <span class="fc" id="L110">                 NDConfiguration.of(</span>
 <span class="fc" id="L111">                     newShape.stream().mapToInt( i -&gt; i ).toArray(),</span>
@@ -123,7 +123,7 @@ import java.util.List;
 <span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
 <span class="nc" id="L124">            throw new IllegalArgumentException(&quot;Column major not yet supported for shape trimming!&quot;);</span>
 
-<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        tensor = ( newTsr ? tensor.getAt( new ArrayList&lt;&gt;() ).getUnsafe().setIsIntermediate( true ) : tensor );</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        tensor = ( newTsr ? tensor.getAt( new ArrayList&lt;&gt;() ).mut().setIsIntermediate( true ) : tensor );</span>
 <span class="fc" id="L127">        List&lt;Integer&gt; newShape = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L128">        List&lt;Integer&gt; newTranslation = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L129">        List&lt;Integer&gt; newIndicesMap = new ArrayList&lt;&gt;();</span>
@@ -142,7 +142,7 @@ import java.util.List;
 <span class="fc" id="L142">            newOffset.add( tensor.getNDConf().offset( i ) );</span>
         }
 <span class="fc" id="L144">        tensor</span>
-<span class="fc" id="L145">            .getUnsafe()</span>
+<span class="fc" id="L145">            .mut()</span>
 <span class="fc" id="L146">            .setNDConf(</span>
 <span class="fc" id="L147">                NDConfiguration.of(</span>
 <span class="fc" id="L148">                    newShape.stream().mapToInt( i -&gt; i ).toArray(),</span>

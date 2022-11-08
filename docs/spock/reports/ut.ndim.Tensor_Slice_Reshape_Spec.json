@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.009 seconds"
+    "duration":"0.012 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -45,7 +45,7 @@
     {
       "id":"Two slices of one big tensor perform matrix multiplication flawless.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Reshaping a slice works as expected.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

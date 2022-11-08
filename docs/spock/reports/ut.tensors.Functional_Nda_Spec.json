@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.867 seconds"
+    "duration":"0.907 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can initialize an ND-Array using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.091 seconds",
+      "duration":"0.153 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"We can find both min and max items in an ND-array by providing a comparator.",
       "result":"PASS",
-      "duration":"0.100 seconds",
+      "duration":"0.110 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"We can analyse the values of a nd-array using various predicate receiving methods",
       "result":"PASS",
-      "duration":"0.160 seconds",
+      "duration":"0.100 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -75,7 +75,7 @@
     {
       "id":"We can use the \"filter\" method as a shortcut for \"stream().filter(..)\".",
       "result":"PASS",
-      "duration":"0.125 seconds",
+      "duration":"0.130 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -90,7 +90,7 @@
     {
       "id":"We can use the \"flatMap\" method as a shortcut for \"stream().flatMap(..)\".",
       "result":"PASS",
-      "duration":"0.096 seconds",
+      "duration":"0.077 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -105,7 +105,7 @@
     {
       "id":"ND-Array mapping lambdas produce expected nd-arrays.",
       "result":"PASS",
-      "duration":"0.079 seconds",
+      "duration":"0.077 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -126,7 +126,7 @@
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
       "result":"PASS",
-      "duration":"0.071 seconds",
+      "duration":"0.081 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -145,7 +145,7 @@
     {
       "id":"We can find both min and max items in a tensor by providing a comparator.",
       "result":"PASS",
-      "duration":"0.068 seconds",
+      "duration":"0.087 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -166,7 +166,7 @@
     {
       "id":"We can collect a stream into a nd-array.",
       "result":"PASS",
-      "duration":"0.069 seconds",
+      "duration":"0.083 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

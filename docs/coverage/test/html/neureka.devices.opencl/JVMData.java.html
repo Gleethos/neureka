@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JVMData.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.opencl</a> &gt; <span class="el_source">JVMData.java</span></div><h1>JVMData.java</h1><pre class="source lang-java linenums">package neureka.devices.opencl;
 
-import neureka.Neureka;
-import neureka.backend.api.BackendContext;
 import neureka.common.utility.DataConverter;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
@@ -21,177 +19,180 @@ class JVMData
     private final Object _data;
 
     public static JVMData of( Class&lt;?&gt; type, int size ) {
-<span class="fc" id="L24">        Object data = null;</span>
-<span class="fc bfc" id="L25" title="All 2 branches covered.">        if      ( type == Float.class   ) data = new float[size];</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        else if ( type == Double.class  ) data = new double[size];</span>
-<span class="fc bfc" id="L27" title="All 2 branches covered.">        else if ( type == Integer.class ) data = new int[size];</span>
-<span class="fc bfc" id="L28" title="All 2 branches covered.">        else if ( type == Long.class    ) data = new long[size];</span>
-<span class="fc bfc" id="L29" title="All 2 branches covered.">        else if ( type == Short.class   ) data = new short[size];</span>
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        else if ( type == Byte.class    ) data = new byte[size];</span>
-<span class="nc bnc" id="L31" title="All 2 branches missed.">        else if ( type == Boolean.class ) data = new boolean[size];</span>
+<span class="fc" id="L22">        Object data = null;</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if      ( type == Float.class   ) data = new float[size];</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        else if ( type == Double.class  ) data = new double[size];</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        else if ( type == Integer.class ) data = new int[size];</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        else if ( type == Long.class    ) data = new long[size];</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        else if ( type == Short.class   ) data = new short[size];</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        else if ( type == Byte.class    ) data = new byte[size];</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">        else if ( type == Boolean.class ) data = new boolean[size];</span>
         else {
-<span class="nc" id="L33">            String message = &quot;Unsupported data type  '&quot;+type+&quot;' was encountered.\n&quot;;</span>
-<span class="nc" id="L34">            throw new IllegalArgumentException(message);</span>
+<span class="nc" id="L31">            String message = &quot;Unsupported data type  '&quot;+type+&quot;' was encountered.\n&quot;;</span>
+<span class="nc" id="L32">            throw new IllegalArgumentException(message);</span>
         }
-<span class="fc" id="L36">        return of(data);</span>
+<span class="fc" id="L34">        return of(data);</span>
     }
 
     public static JVMData of( Object data ) {
-<span class="fc" id="L40">        return new JVMData( data, 0, lengthOf(data) );</span>
+<span class="fc" id="L38">        return new JVMData( data, 0, lengthOf(data), false );</span>
+    }
+
+    public static JVMData of( Object data, boolean convertToFloat ) {
+<span class="fc" id="L42">        return new JVMData( data, 0, lengthOf(data), convertToFloat );</span>
     }
 
     public static JVMData of( Object data, int size, int start ) {
-<span class="fc" id="L44">        return new JVMData( data, start, size );</span>
+<span class="fc" id="L46">        return new JVMData( data, start, size, false );</span>
     }
 
-<span class="fc" id="L47">    private JVMData( Object data, int start, int size ) {</span>
-<span class="fc" id="L48">        _data = _preprocess( data, start, size );</span>
-<span class="fc" id="L49">    }</span>
+<span class="fc" id="L49">    private JVMData( Object data, int start, int size, boolean convertToFloat ) {</span>
+<span class="fc" id="L50">        _data = _preprocess( data, start, size, convertToFloat );</span>
+<span class="fc" id="L51">    }</span>
 
-<span class="fc" id="L51">    Object getArray() { return _data; }</span>
+<span class="fc" id="L53">    Object getArray() { return _data; }</span>
 
-    private Object _preprocess( Object data, int start, int size )
+    private Object _preprocess( Object data, int start, int size, boolean convertToFloat )
     {
-<span class="fc bfc" id="L55" title="All 2 branches covered.">        if ( data instanceof Number ) {</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">            if ( data instanceof Float ) {</span>
-<span class="fc" id="L57">                float[] newData = new float[size];</span>
-<span class="fc" id="L58">                Arrays.fill( newData, ((Float) (data)) );</span>
-<span class="fc" id="L59">                data = newData;</span>
-<span class="fc bfc" id="L60" title="All 2 branches covered.">            } else if ( data instanceof Double ) {</span>
-<span class="fc" id="L61">                double[] newData = new double[size];</span>
-<span class="fc" id="L62">                Arrays.fill( newData, ((Double) (data)) );</span>
-<span class="fc" id="L63">                data = newData;</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">            } else if ( data instanceof Integer ) {</span>
-<span class="fc" id="L65">                int[] newData = new int[size];</span>
-<span class="fc" id="L66">                Arrays.fill( newData, ((Integer) (data)) );</span>
-<span class="fc" id="L67">                data = newData;</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">            } else if ( data instanceof Short ) {</span>
-<span class="fc" id="L69">                short[] newData = new short[size];</span>
-<span class="fc" id="L70">                Arrays.fill( newData, ((Short) (data)) );</span>
-<span class="fc" id="L71">                data = newData;</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">            } else if ( data instanceof Byte ) {</span>
-<span class="fc" id="L73">                byte[] newData = new byte[size];</span>
-<span class="fc" id="L74">                Arrays.fill( newData, ((Byte) (data)) );</span>
-<span class="fc" id="L75">                data = newData;</span>
-<span class="pc bpc" id="L76" title="1 of 2 branches missed.">            } else if ( data instanceof Long ) {</span>
-<span class="fc" id="L77">                long[] newData = new long[size];</span>
-<span class="fc" id="L78">                Arrays.fill( newData, ((Long) (data)) );</span>
-<span class="fc" id="L79">                data = newData;</span>
-            }
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if ( data instanceof Number ) {</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            if ( data instanceof Float ) {</span>
+<span class="fc" id="L59">                float[] newData = new float[size];</span>
+<span class="fc" id="L60">                Arrays.fill( newData, ((Float) (data)) );</span>
+<span class="fc" id="L61">                data = newData;</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            } else if ( data instanceof Double ) {</span>
+<span class="fc" id="L63">                double[] newData = new double[size];</span>
+<span class="fc" id="L64">                Arrays.fill( newData, ((Double) (data)) );</span>
+<span class="fc" id="L65">                data = newData;</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            } else if ( data instanceof Integer ) {</span>
+<span class="fc" id="L67">                int[] newData = new int[size];</span>
+<span class="fc" id="L68">                Arrays.fill( newData, ((Integer) (data)) );</span>
+<span class="fc" id="L69">                data = newData;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            } else if ( data instanceof Short ) {</span>
+<span class="fc" id="L71">                short[] newData = new short[size];</span>
+<span class="fc" id="L72">                Arrays.fill( newData, ((Short) (data)) );</span>
+<span class="fc" id="L73">                data = newData;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            } else if ( data instanceof Byte ) {</span>
+<span class="fc" id="L75">                byte[] newData = new byte[size];</span>
+<span class="fc" id="L76">                Arrays.fill( newData, ((Byte) (data)) );</span>
+<span class="fc" id="L77">                data = newData;</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">            } else if ( data instanceof Long ) {</span>
+<span class="fc" id="L79">                long[] newData = new long[size];</span>
+<span class="fc" id="L80">                Arrays.fill( newData, ((Long) (data)) );</span>
+<span class="fc" id="L81">                data = newData;</span>
+<span class="fc" id="L82">            }</span>
+<span class="nc" id="L83">            else throw new IllegalArgumentException(&quot;Unsupported data type: &quot;+data.getClass());</span>
         }
 
-<span class="fc" id="L83">        BackendContext backend = Neureka.get().backend();</span>
-<span class="fc" id="L84">        boolean clContextFound = backend.has(CLContext.class);</span>
-<span class="pc bpc" id="L85" title="1 of 4 branches missed.">        boolean convertToFloat = clContextFound &amp;&amp; backend.get(CLContext.class).getSettings().isAutoConvertToFloat();</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        if ( convertToFloat ) // NOTE: Currently we only support floats!</span>
-<span class="fc" id="L87">            data = DataConverter.get().convert(data, float[].class);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if ( convertToFloat )</span>
+<span class="fc" id="L87">            data = DataConverter.get().convert( data, float[].class );</span>
 
-        // TODO: Enable this for more types:
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        if ( data instanceof float[] ) {</span>
-<span class="fc" id="L91">            float[] array = (float[]) data;</span>
-<span class="fc bfc" id="L92" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
-<span class="fc" id="L93">                float[] newData = new float[size];</span>
-<span class="fc" id="L94">                System.arraycopy(array, start, newData, 0, newData.length);</span>
-<span class="fc" id="L95">                data = newData;</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if ( data instanceof float[] ) {</span>
+<span class="fc" id="L90">            float[] array = (float[]) data;</span>
+<span class="fc bfc" id="L91" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
+<span class="fc" id="L92">                float[] newData = new float[size];</span>
+<span class="fc" id="L93">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L94">                data = newData;</span>
             }
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        } else if ( data instanceof double[] ) {</span>
-<span class="fc" id="L98">            double[] array = (double[]) data;</span>
-<span class="fc bfc" id="L99" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
-<span class="fc" id="L100">                double[] newData = new double[size];</span>
-<span class="fc" id="L101">                System.arraycopy(array, start, newData, 0, newData.length);</span>
-<span class="fc" id="L102">                data = newData;</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        } else if ( data instanceof double[] ) {</span>
+<span class="fc" id="L97">            double[] array = (double[]) data;</span>
+<span class="fc bfc" id="L98" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
+<span class="fc" id="L99">                double[] newData = new double[size];</span>
+<span class="fc" id="L100">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L101">                data = newData;</span>
             }
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        } else if ( data instanceof int[] ) {</span>
-<span class="fc" id="L105">            int[] array = (int[]) data;</span>
-<span class="fc bfc" id="L106" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
-<span class="fc" id="L107">                int[] newData = new int[size];</span>
-<span class="fc" id="L108">                System.arraycopy(array, start, newData, 0, newData.length);</span>
-<span class="fc" id="L109">                data = newData;</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        } else if ( data instanceof int[] ) {</span>
+<span class="fc" id="L104">            int[] array = (int[]) data;</span>
+<span class="fc bfc" id="L105" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
+<span class="fc" id="L106">                int[] newData = new int[size];</span>
+<span class="fc" id="L107">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L108">                data = newData;</span>
             }
-<span class="fc bfc" id="L111" title="All 2 branches covered.">        } else if ( data instanceof long[] ) {</span>
-<span class="fc" id="L112">            long[] array = (long[]) data;</span>
-<span class="fc bfc" id="L113" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
-<span class="fc" id="L114">                long[] newData = new long[size];</span>
-<span class="fc" id="L115">                System.arraycopy(array, start, newData, 0, newData.length);</span>
-<span class="fc" id="L116">                data = newData;</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        } else if ( data instanceof long[] ) {</span>
+<span class="fc" id="L111">            long[] array = (long[]) data;</span>
+<span class="fc bfc" id="L112" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
+<span class="fc" id="L113">                long[] newData = new long[size];</span>
+<span class="fc" id="L114">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L115">                data = newData;</span>
             }
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        } else if ( data instanceof short[] ) {</span>
-<span class="fc" id="L119">            short[] array = (short[]) data;</span>
-<span class="fc bfc" id="L120" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
-<span class="fc" id="L121">                short[] newData = new short[size];</span>
-<span class="fc" id="L122">                System.arraycopy(array, start, newData, 0, newData.length);</span>
-<span class="fc" id="L123">                data = newData;</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        } else if ( data instanceof short[] ) {</span>
+<span class="fc" id="L118">            short[] array = (short[]) data;</span>
+<span class="fc bfc" id="L119" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
+<span class="fc" id="L120">                short[] newData = new short[size];</span>
+<span class="fc" id="L121">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L122">                data = newData;</span>
             }
-<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        } else if ( data instanceof byte[] ) {</span>
-<span class="fc" id="L126">            byte[] array = (byte[]) data;</span>
-<span class="fc bfc" id="L127" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
-<span class="fc" id="L128">                byte[] newData = new byte[size];</span>
-<span class="fc" id="L129">                System.arraycopy(array, start, newData, 0, newData.length);</span>
-<span class="fc" id="L130">                data = newData;</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        } else if ( data instanceof byte[] ) {</span>
+<span class="fc" id="L125">            byte[] array = (byte[]) data;</span>
+<span class="fc bfc" id="L126" title="All 4 branches covered.">            if ( start &gt; 0 || size &lt; array.length ) {</span>
+<span class="fc" id="L127">                byte[] newData = new byte[size];</span>
+<span class="fc" id="L128">                System.arraycopy(array, start, newData, 0, newData.length);</span>
+<span class="fc" id="L129">                data = newData;</span>
             }
-        }
-<span class="fc" id="L133">        return data;</span>
+<span class="fc" id="L131">        }</span>
+<span class="nc" id="L132">        else throw new IllegalArgumentException(&quot;Unsupported data type: &quot;+data.getClass().getName());</span>
+
+<span class="fc" id="L134">        return data;</span>
     }
 
     Pointer getPointer() {
-<span class="fc bfc" id="L137" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return Pointer.to( (float[])  _data );</span>
-<span class="fc bfc" id="L138" title="All 2 branches covered.">        if ( _data instanceof double[] ) return Pointer.to( (double[]) _data );</span>
-<span class="fc bfc" id="L139" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return Pointer.to( (int[])    _data );</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return Pointer.to( (short[])  _data );</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return Pointer.to( (long[])   _data );</span>
-<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return Pointer.to( (byte[])   _data );</span>
-<span class="nc" id="L143">        throw new IllegalStateException();</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return Pointer.to( (float[])  _data );</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if ( _data instanceof double[] ) return Pointer.to( (double[]) _data );</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return Pointer.to( (int[])    _data );</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return Pointer.to( (short[])  _data );</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return Pointer.to( (long[])   _data );</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return Pointer.to( (byte[])   _data );</span>
+<span class="nc" id="L144">        throw new IllegalStateException();</span>
     }
 
     long getLength() {
-<span class="fc bfc" id="L147" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return ( (float[])  _data ).length;</span>
-<span class="fc bfc" id="L148" title="All 2 branches covered.">        if ( _data instanceof double[] ) return ( (double[]) _data ).length;</span>
-<span class="fc bfc" id="L149" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return ( (int[])    _data ).length;</span>
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return ( (short[])  _data ).length;</span>
-<span class="fc bfc" id="L151" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return ( (long[])   _data ).length;</span>
-<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return ( (byte[])   _data ).length;</span>
-<span class="nc" id="L153">        throw new IllegalStateException();</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return ( (float[])  _data ).length;</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if ( _data instanceof double[] ) return ( (double[]) _data ).length;</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return ( (int[])    _data ).length;</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return ( (short[])  _data ).length;</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return ( (long[])   _data ).length;</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return ( (byte[])   _data ).length;</span>
+<span class="nc" id="L154">        throw new IllegalStateException();</span>
     }
 
     int getItemSize() {
-<span class="fc bfc" id="L157" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return Sizeof.cl_float;</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">        if ( _data instanceof double[] ) return Sizeof.cl_double;</span>
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return Sizeof.cl_int;</span>
-<span class="fc bfc" id="L160" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return Sizeof.cl_short;</span>
-<span class="fc bfc" id="L161" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return Sizeof.cl_long;</span>
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return 1;</span>
-<span class="nc" id="L163">        throw new IllegalStateException();</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return Sizeof.cl_float;</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        if ( _data instanceof double[] ) return Sizeof.cl_double;</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return Sizeof.cl_int;</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return Sizeof.cl_short;</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return Sizeof.cl_long;</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return 1;</span>
+<span class="nc" id="L164">        throw new IllegalStateException();</span>
     }
 
     OpenCLDevice.cl_dtype getType() {
-<span class="fc bfc" id="L167" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return OpenCLDevice.cl_dtype.F32;</span>
-<span class="fc bfc" id="L168" title="All 2 branches covered.">        if ( _data instanceof double[] ) return OpenCLDevice.cl_dtype.F64;</span>
-<span class="fc bfc" id="L169" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return OpenCLDevice.cl_dtype.I32;</span>
-<span class="fc bfc" id="L170" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return OpenCLDevice.cl_dtype.I16;</span>
-<span class="fc bfc" id="L171" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return OpenCLDevice.cl_dtype.I64;</span>
-<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return OpenCLDevice.cl_dtype.I8;</span>
-<span class="nc" id="L173">        throw new IllegalStateException();</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return OpenCLDevice.cl_dtype.F32;</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        if ( _data instanceof double[] ) return OpenCLDevice.cl_dtype.F64;</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return OpenCLDevice.cl_dtype.I32;</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return OpenCLDevice.cl_dtype.I16;</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return OpenCLDevice.cl_dtype.I64;</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return OpenCLDevice.cl_dtype.I8;</span>
+<span class="nc" id="L174">        throw new IllegalStateException();</span>
     }
 
     Number getElementAt(int i) {
-<span class="fc bfc" id="L177" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return ( (float[])  _data )[i];</span>
-<span class="fc bfc" id="L178" title="All 2 branches covered.">        if ( _data instanceof double[] ) return ( (double[]) _data )[i];</span>
-<span class="fc bfc" id="L179" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return ( (int[])    _data )[i];</span>
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return ( (short[])  _data )[i];</span>
-<span class="fc bfc" id="L181" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return ( (long[])   _data )[i];</span>
-<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return ( (byte[])   _data )[i];</span>
-<span class="nc" id="L183">        throw new IllegalStateException();</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return ( (float[])  _data )[i];</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        if ( _data instanceof double[] ) return ( (double[]) _data )[i];</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        if ( _data instanceof int[]    ) return ( (int[])    _data )[i];</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        if ( _data instanceof short[]  ) return ( (short[])  _data )[i];</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        if ( _data instanceof long[]   ) return ( (long[])   _data )[i];</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if ( _data instanceof byte[]   ) return ( (byte[])   _data )[i];</span>
+<span class="nc" id="L184">        throw new IllegalStateException();</span>
     }
 
     private static int lengthOf( Object o ) {
-<span class="fc bfc" id="L187" title="All 2 branches covered.">        if ( o instanceof Number   ) return 1;</span>
-<span class="fc bfc" id="L188" title="All 2 branches covered.">        if ( o instanceof float[]  ) return ( (float[])  o ).length;</span>
-<span class="fc bfc" id="L189" title="All 2 branches covered.">        if ( o instanceof double[] ) return ( (double[]) o ).length;</span>
-<span class="fc bfc" id="L190" title="All 2 branches covered.">        if ( o instanceof int[]    ) return ( (int[])    o ).length;</span>
-<span class="fc bfc" id="L191" title="All 2 branches covered.">        if ( o instanceof long[]   ) return ( (long[])   o ).length;</span>
-<span class="fc bfc" id="L192" title="All 2 branches covered.">        if ( o instanceof short[]  ) return ( (short[])  o ).length;</span>
-<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        if ( o instanceof byte[]   ) return ( (byte[])   o ).length;</span>
-<span class="nc" id="L194">        throw new IllegalArgumentException();</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        if ( o instanceof Number   ) return 1;</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if ( o instanceof float[]  ) return ( (float[])  o ).length;</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        if ( o instanceof double[] ) return ( (double[]) o ).length;</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        if ( o instanceof int[]    ) return ( (int[])    o ).length;</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        if ( o instanceof long[]   ) return ( (long[])   o ).length;</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        if ( o instanceof short[]  ) return ( (short[])  o ).length;</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">        if ( o instanceof byte[]   ) return ( (byte[])   o ).length;</span>
+<span class="nc" id="L195">        throw new IllegalArgumentException();</span>
     }
 
 }

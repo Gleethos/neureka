@@ -16,13 +16,13 @@ public class CPUScalarFunction implements ImplementationFor&lt;CPU&gt;
 
     @Override
     public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
-<span class="fc" id="L19">        int d = call.getValOf(Arg.DerivIdx.class);</span>
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        CPUFun f = d &lt; 0 ? _fun.getActivation() : _fun.getDerivative();</span>
-<span class="fc" id="L21">        double      in  = call.input( Number.class, 1 ).item(0).doubleValue();</span>
-<span class="fc" id="L22">        Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
-<span class="fc" id="L23">        Number result =  f.invoke(in);</span>
-<span class="fc" id="L24">        out.getUnsafe().setDataAt(0, result);</span>
-<span class="fc" id="L25">        return call.input(0);</span>
+<span class="nc" id="L19">        int d = call.getValOf(Arg.DerivIdx.class);</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">        CPUFun f = d &lt; 0 ? _fun.getActivation() : _fun.getDerivative();</span>
+<span class="nc" id="L21">        double      in  = call.input( Number.class, 1 ).item(0).doubleValue();</span>
+<span class="nc" id="L22">        Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
+<span class="nc" id="L23">        Number result =  f.invoke(in);</span>
+<span class="nc" id="L24">        out.mut().setDataAt(0, result);</span>
+<span class="nc" id="L25">        return call.input(0);</span>
     }
 
 }

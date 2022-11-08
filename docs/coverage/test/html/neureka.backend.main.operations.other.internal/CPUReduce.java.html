@@ -111,7 +111,7 @@ import neureka.devices.host.CPU;
 
 <span class="fc bfc" id="L112" title="All 2 branches covered.">        if ( type == Float.class ) {</span>
 <span class="fc" id="L113">            ComparatorF32 comparator = _type.getFloatComparator();</span>
-<span class="fc" id="L114">            float[] inData = in.getUnsafe().getDataForWriting(float[].class);</span>
+<span class="fc" id="L114">            float[] inData = in.mut().getDataForWriting(float[].class);</span>
 <span class="fc" id="L115">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L116">                int offset = ni * RTS;</span>
 <span class="fc" id="L117">                int limit = Math.min( offset + RTS, SIZE );</span>
@@ -134,7 +134,7 @@ import neureka.devices.host.CPU;
         }
 <span class="fc bfc" id="L135" title="All 2 branches covered.">        if ( type == Double.class ) {</span>
 <span class="fc" id="L136">            ComparatorF64 comparator = _type.getDoubleComparator();</span>
-<span class="fc" id="L137">            double[] inData = in.getUnsafe().getDataForWriting(double[].class);</span>
+<span class="fc" id="L137">            double[] inData = in.mut().getDataForWriting(double[].class);</span>
 <span class="fc" id="L138">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L139">                int offset = ni * RTS;</span>
 <span class="fc" id="L140">                int limit = Math.min( offset + RTS, SIZE );</span>
@@ -157,7 +157,7 @@ import neureka.devices.host.CPU;
         }
 <span class="fc bfc" id="L158" title="All 2 branches covered.">        if ( type == Integer.class ) {</span>
 <span class="fc" id="L159">            ComparatorI32 comparator = _type.getIntComparator();</span>
-<span class="fc" id="L160">            int[] inData = in.getUnsafe().getDataForWriting(int[].class);</span>
+<span class="fc" id="L160">            int[] inData = in.mut().getDataForWriting(int[].class);</span>
 <span class="fc" id="L161">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L162">                int offset = ni * RTS;</span>
 <span class="fc" id="L163">                int limit = Math.min( offset + RTS, SIZE );</span>
@@ -180,7 +180,7 @@ import neureka.devices.host.CPU;
         }
 <span class="fc bfc" id="L181" title="All 2 branches covered.">        if ( type == Long.class ) {</span>
 <span class="fc" id="L182">            ComparatorI64 comparator = _type.getLongComparator();</span>
-<span class="fc" id="L183">            long[] inData = in.getUnsafe().getDataForWriting(long[].class);</span>
+<span class="fc" id="L183">            long[] inData = in.mut().getDataForWriting(long[].class);</span>
 <span class="fc" id="L184">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L185">                int offset = ni * RTS;</span>
 <span class="fc" id="L186">                int limit = Math.min( offset + RTS, SIZE );</span>
@@ -203,7 +203,7 @@ import neureka.devices.host.CPU;
         }
 <span class="fc bfc" id="L204" title="All 2 branches covered.">        if ( type == Short.class ) {</span>
 <span class="fc" id="L205">            ComparatorI16 comparator = _type.getShortComparator();</span>
-<span class="fc" id="L206">            short[] inData = in.getUnsafe().getDataForWriting(short[].class);</span>
+<span class="fc" id="L206">            short[] inData = in.mut().getDataForWriting(short[].class);</span>
 <span class="fc" id="L207">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L208">                int offset = ni * RTS;</span>
 <span class="fc" id="L209">                int limit = Math.min( offset + RTS, SIZE );</span>
@@ -226,7 +226,7 @@ import neureka.devices.host.CPU;
         }
 <span class="fc bfc" id="L227" title="All 2 branches covered.">        if ( type == Byte.class ) {</span>
 <span class="fc" id="L228">            ComparatorI8 comparator = _type.getByteComparator();</span>
-<span class="fc" id="L229">            byte[] inData = in.getUnsafe().getDataForWriting(byte[].class);</span>
+<span class="fc" id="L229">            byte[] inData = in.mut().getDataForWriting(byte[].class);</span>
 <span class="fc" id="L230">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L231">                int offset = ni * RTS;</span>
 <span class="fc" id="L232">                int limit = Math.min( offset + RTS, SIZE );</span>

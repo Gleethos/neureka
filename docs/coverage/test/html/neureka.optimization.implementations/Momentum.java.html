@@ -15,7 +15,7 @@ public class Momentum&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
 <span class="fc" id="L15">    public Momentum( Tsr&lt;V&gt; target ) {</span>
 <span class="fc" id="L16">        LogUtil.nullArgCheck( target, &quot;target&quot;, Tsr.class );</span>
 <span class="fc" id="L17">        List&lt;Integer&gt; shape = target.shape();</span>
-<span class="fc" id="L18">        v = Tsr.of(target.getItemType(), shape, 0).getUnsafe().upcast(Number.class);</span>
+<span class="fc" id="L18">        v = Tsr.of(target.getItemType(), shape, 0).getMut().upcast(Number.class);</span>
 <span class="fc" id="L19">        lr = 0.01; // Step size/learning rate is 0.01 by default!</span>
 <span class="fc" id="L20">        decay = 0.9; // Decay rate is 0.9 by default!</span>
 <span class="fc" id="L21">    }</span>
@@ -23,9 +23,9 @@ public class Momentum&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
     @Override
     public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
 <span class="fc" id="L25">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
-<span class="fc" id="L26">        Tsr&lt;Number&gt; g = w.getGradient().getUnsafe().upcast(Number.class);</span>
-<span class="fc" id="L27">        v.timesAssign(decay);</span>
-<span class="fc" id="L28">        v.plusAssign(g.times(1 - decay));</span>
+<span class="fc" id="L26">        Tsr&lt;Number&gt; g = w.gradient().get().mut().upcast(Number.class);</span>
+<span class="fc" id="L27">        v.getMut().timesAssign(decay);</span>
+<span class="fc" id="L28">        v.getMut().plusAssign(g.times(1 - decay));</span>
 <span class="fc" id="L29">        return Tsr.of(&quot;-&quot; + lr + &quot; * I[0]&quot;, (Tsr&lt;V&gt;) v);</span>
     }
 

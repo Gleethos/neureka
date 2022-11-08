@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.111 seconds"
+    "duration":"0.143 seconds"
   },
   "headers":["\n                    This specification covers the behavior of the `FileDevice`\n                    class, which enables the persistence of tensor data.      \n            "],"tags":{},"see":[],
   "features":[ 
@@ -45,7 +45,7 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.065 seconds",
+      "duration":"0.083 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -80,7 +80,7 @@
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.019 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

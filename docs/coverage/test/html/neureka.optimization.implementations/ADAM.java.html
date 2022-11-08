@@ -76,7 +76,7 @@ public class ADAM&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
     public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
 <span class="fc" id="L77">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
 <span class="fc" id="L78">        t++;</span>
-<span class="fc" id="L79">        Tsr&lt;V&gt; g = w.getGradient();</span>
+<span class="pc" id="L79">        Tsr&lt;V&gt; g = w.gradient().orElseThrow( () -&gt; new IllegalStateException(&quot;Gradient missing! Cannot perform optimization.&quot;) );</span>
 <span class="fc" id="L80">        double b1Inverse = ( 1 - B1 );</span>
 <span class="fc" id="L81">        double b2Inverse = ( 1 - B2 );</span>
 <span class="fc" id="L82">        double b1hat = ( 1 - Math.pow( B1, t ) );</span>
@@ -86,8 +86,8 @@ public class ADAM&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
 <span class="fc" id="L86">        Tsr&lt;V&gt; mh = Tsr.of(m, &quot;/&quot;+b1hat);</span>
 <span class="fc" id="L87">        Tsr&lt;V&gt; vh = Tsr.of(v, &quot;/&quot;+b2hat);</span>
 <span class="fc" id="L88">        Tsr&lt;V&gt; newg = Tsr.of(&quot;-&quot;+ lr +&quot; * &quot;,mh,&quot; / (&quot;,vh,&quot;**0.5 + &quot;+E+&quot;)&quot;);</span>
-<span class="fc" id="L89">        mh.getUnsafe().delete();</span>
-<span class="fc" id="L90">        vh.getUnsafe().delete();</span>
+<span class="fc" id="L89">        mh.getMut().delete();</span>
+<span class="fc" id="L90">        vh.getMut().delete();</span>
 <span class="fc" id="L91">        return newg;</span>
     }
 

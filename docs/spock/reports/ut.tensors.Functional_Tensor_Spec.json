@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.844 seconds"
+    "duration":"0.980 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can initialize a tensor using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.069 seconds",
+      "duration":"0.071 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
     {
       "id":"We can analyse the values of a tensor using various predicate receiving methods",
       "result":"PASS",
-      "duration":"0.131 seconds",
+      "duration":"0.157 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"We can use the \"filter\" method as a shortcut for \"stream().filter(..)\".",
       "result":"PASS",
-      "duration":"0.061 seconds",
+      "duration":"0.097 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +69,7 @@
     {
       "id":"We can use the \"flatMap\" method as a shortcut for \"stream().flatMap(..)\".",
       "result":"PASS",
-      "duration":"0.066 seconds",
+      "duration":"0.078 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,7 +84,7 @@
     {
       "id":"Tensor mapping lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.280 seconds",
+      "duration":"0.323 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -107,7 +107,7 @@
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
       "result":"PASS",
-      "duration":"0.166 seconds",
+      "duration":"0.164 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -128,7 +128,7 @@
     {
       "id":"We can find both min and max items in a tensor by providing a comparator.",
       "result":"PASS",
-      "duration":"0.061 seconds",
+      "duration":"0.081 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -269,7 +269,7 @@ public class Call&lt;D&gt;
 
         private boolean _allMatch( TensorCondition condition ) {
 <span class="fc" id="L271">            boolean all = true;</span>
-<span class="pc bpc" id="L272" title="1 of 6 branches missed.">            for ( Tsr&lt;?&gt; t : _inputs) all = condition.check( t ) &amp;&amp; all;</span>
+<span class="fc bfc" id="L272" title="All 6 branches covered.">            for ( Tsr&lt;?&gt; t : _inputs) all = condition.check( t ) &amp;&amp; all;</span>
 <span class="fc" id="L273">            return all;</span>
         }
 
@@ -283,7 +283,7 @@ public class Call&lt;D&gt;
         {
 <span class="fc" id="L284">            boolean all = true;</span>
 <span class="fc bfc" id="L285" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : _inputs)</span>
-<span class="fc bfc" id="L286" title="All 6 branches covered.">                if ( t != null ) all = condition.check( t ) &amp;&amp; all;</span>
+<span class="pc bpc" id="L286" title="1 of 6 branches missed.">                if ( t != null ) all = condition.check( t ) &amp;&amp; all;</span>
 <span class="fc" id="L287">            return all;</span>
         }
 
@@ -311,9 +311,9 @@ public class Call&lt;D&gt;
 <span class="fc" id="L311">                    T found = propertyProvider.apply( t );</span>
 <span class="pc bpc" id="L312" title="1 of 4 branches missed.">                    if ( first == null &amp;&amp; found != null ) first = found;</span>
 <span class="pc bpc" id="L313" title="1 of 2 branches missed.">                    else if ( first != null ) {</span>
-<span class="pc bpc" id="L314" title="1 of 2 branches missed.">                        if ( !first.equals(found) ) {</span>
-<span class="nc" id="L315">                            _isValid = false;</span>
-<span class="nc" id="L316">                            return this;</span>
+<span class="fc bfc" id="L314" title="All 2 branches covered.">                        if ( !first.equals(found) ) {</span>
+<span class="fc" id="L315">                            _isValid = false;</span>
+<span class="fc" id="L316">                            return this;</span>
                         }
                     }
                 }

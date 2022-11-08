@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Randomization.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">Randomization.java</span></div><h1>Randomization.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
 
-import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Activation;
-import neureka.backend.main.implementations.CPUImplementation;
+import neureka.backend.main.algorithms.ElementwiseAlgorithm;
+import neureka.backend.main.implementations.elementwise.CLRandomization;
+import neureka.backend.main.implementations.elementwise.CPURandomization;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.NumericType;
-import neureka.ndim.iterator.NDIterator;
 
 import java.util.Arrays;
 
@@ -28,391 +28,56 @@ import java.util.Arrays;
  */
 public class Randomization extends AbstractOperation
 {
-    private static final long   MULTIPLIER = 0x5DEECE66DL;
-    private static final long   ADDEND = 0xBL;
-    private static final long   MASK = (1L &lt;&lt; 48) - 1;
-    private static final double DOUBLE_UNIT = 0x1.0p-53; // 1.0 / (1L &lt;&lt; 53)
-
     public Randomization()
     {
-<span class="fc" id="L38">        super(</span>
+<span class="fc" id="L33">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L40">                .identifier(       &quot;random&quot;   )</span>
-<span class="fc" id="L41">                .operator(         &quot;rand&quot;     )</span>
-<span class="fc" id="L42">                .arity(            1          )</span>
-<span class="fc" id="L43">                .isOperator(       true       )</span>
-<span class="fc" id="L44">                .isIndexer(        false      )</span>
-<span class="fc" id="L45">                .isDifferentiable( false      )</span>
-<span class="fc" id="L46">                .isInline(         true       )</span>
+<span class="fc" id="L35">                .identifier(       &quot;random&quot;   )</span>
+<span class="fc" id="L36">                .operator(         &quot;rand&quot;     )</span>
+<span class="fc" id="L37">                .arity(            1          )</span>
+<span class="fc" id="L38">                .isOperator(       true       )</span>
+<span class="fc" id="L39">                .isIndexer(        false      )</span>
+<span class="fc" id="L40">                .isDifferentiable( false      )</span>
+<span class="fc" id="L41">                .isInline(         true       )</span>
         );
 
-<span class="fc" id="L49">        setAlgorithm(</span>
-            new Activation()
-<span class="fc" id="L51">                .setIsSuitableFor(</span>
-<span class="fc" id="L52">                    call -&gt; call.validate()</span>
-<span class="fc" id="L53">                            .allNotNull( t -&gt;</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">                                    t.getDataType().typeClassImplements(NumericType.class)</span>
+<span class="fc" id="L44">        setAlgorithm(</span>
+            new ElementwiseAlgorithm()
+<span class="fc" id="L46">                .setIsSuitableFor(</span>
+<span class="fc" id="L47">                    call -&gt; call.validate()</span>
+<span class="fc" id="L48">                            .allNotNull( t -&gt;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                                t.getDataType().typeClassImplements(NumericType.class)</span>
                                     ||
-<span class="fc bfc" id="L56" title="All 2 branches covered.">                                    t.itemType() == Character.class</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">                                t.itemType() == Character.class</span>
                                     ||
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                                    t.itemType() == Boolean.class</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                                t.itemType() == Boolean.class</span>
                             )
-<span class="fc" id="L60">                            .basicSuitability()</span>
+<span class="fc" id="L55">                            .basicSuitability()</span>
                 )
-<span class="fc" id="L62">                .setAutogradModeFor( call -&gt; AutoDiffMode.NOT_SUPPORTED)</span>
-<span class="fc" id="L63">                .setDeviceExecution( (call, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )</span>
-<span class="fc" id="L64">                .setCallPreparation( call -&gt;</span>
+<span class="fc" id="L57">                .setAutogradModeFor( call -&gt; AutoDiffMode.NOT_SUPPORTED)</span>
+<span class="fc" id="L58">                .setExecution( (caller, call) -&gt; Result.of(AbstractDeviceAlgorithm.prepareAndExecute(call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))</span>
+<span class="fc" id="L59">                .setCallPreparation( call -&gt;</span>
                 {
-<span class="pc bpc" id="L66" title="1 of 2 branches missed.">                    if ( call.input( 0 ) == null )</span>
-<span class="fc" id="L67">                        call = call.withInputAt( 0, call.input( 1 ) );</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                    if ( call.input( 0 ) == null )</span>
+<span class="nc" id="L62">                        call = call.withInputAt( 0, call.input( 1 ) );</span>
 
-<span class="fc" id="L69">                    call.input( 0 ).getUnsafe().incrementVersion(call);</span>
+<span class="fc" id="L64">                    call.input( 0 ).mut().incrementVersion(call);</span>
 
-<span class="fc" id="L71">                    int hash = Arrays.hashCode( call.input( 0 ).getNDConf().shape() );</span>
-<span class="fc" id="L72">                    Arg.Seed seed = call.get(Arg.Seed.class);</span>
-<span class="fc bfc" id="L73" title="All 2 branches covered.">                    if ( seed != null ) seed = Arg.Seed.of( initialScramble(seed.get() + hash) );</span>
-<span class="fc" id="L74">                    else seed = Arg.Seed.of( initialScramble(hash) );</span>
+<span class="fc" id="L66">                    int hash = Arrays.hashCode( call.input( 0 ).getNDConf().shape() );</span>
+<span class="fc" id="L67">                    Arg.Seed seed = call.get(Arg.Seed.class);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                    if ( seed != null ) seed = Arg.Seed.of( CPURandomization.initialScramble(seed.get() + hash) );</span>
+<span class="fc" id="L69">                    else seed = Arg.Seed.of( CPURandomization.initialScramble(hash) );</span>
 
-<span class="fc" id="L76">                    return call.withArgs(seed);</span>
+<span class="fc" id="L71">                    return call.withArgs(seed);</span>
                 })
-<span class="fc" id="L78">                .buildFunAlgorithm()</span>
-<span class="fc" id="L79">                .setImplementationFor(</span>
-                    CPU.class,
-                    CPUImplementation
-<span class="fc" id="L82">                        .withArity(1)</span>
-<span class="fc" id="L83">                        .andImplementation(</span>
-                            call -&gt; {
-<span class="fc" id="L85">                                call</span>
-<span class="fc" id="L86">                                .getDevice()</span>
-<span class="fc" id="L87">                                .getExecutor()</span>
-<span class="fc" id="L88">                                .threaded(</span>
-<span class="fc" id="L89">                                    call.input( 0 ).size(),</span>
-<span class="fc" id="L90">                                    _newWorkloadFor( call )</span>
-                                );
-<span class="fc" id="L92">                                return call.input( 0 );</span>
-                            }
-                        )
-                )
-<span class="fc" id="L96">                .setImplementationFor(</span>
-                    OpenCLDevice.class,
-                    call -&gt; {
-<span class="nc" id="L99">                        throw new IllegalStateException(&quot;Not yet implemented&quot;);</span>
-                    }
-                )
+<span class="fc" id="L73">                .buildFunAlgorithm()</span>
         );
 
-<span class="fc" id="L104">    }</span>
-
-
-    public static &lt;T&gt; T fillRandomly(T data, String seed) {
-<span class="fc" id="L108">        return fillRandomly(data, _longStringHash(seed));</span>
-    }
-
-    public static &lt;T&gt; T fillRandomly(T data, long seed)
-    {
-<span class="fc" id="L113">        int size = 0;</span>
-<span class="fc" id="L114">        Class&lt;?&gt; type = null;</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( data instanceof int[]     ) { type = Integer.class;   size = ((int[]    )data).length; }</span>
-<span class="fc bfc" id="L116" title="All 2 branches covered.">        if ( data instanceof double[]  ) { type = Double.class;    size = ((double[] )data).length; }</span>
-<span class="fc bfc" id="L117" title="All 2 branches covered.">        if ( data instanceof float[]   ) { type = Float.class;     size = ((float[]  )data).length; }</span>
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        if ( data instanceof short[]   ) { type = Short.class;     size = ((short[]  )data).length; }</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">        if ( data instanceof long[]    ) { type = Long.class;      size = ((long[]   )data).length; }</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">        if ( data instanceof byte[]    ) { type = Byte.class;      size = ((byte[]   )data).length; }</span>
-<span class="fc bfc" id="L121" title="All 2 branches covered.">        if ( data instanceof char[]    ) { type = Character.class; size = ((char[]   )data).length; }</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">        if ( data instanceof boolean[] ) { type = Boolean.class;   size = ((boolean[] )data).length; }</span>
-<span class="fc bfc" id="L123" title="All 2 branches covered.">        if ( type == null )</span>
-<span class="fc" id="L124">            throw new IllegalArgumentException(&quot;Type '&quot;+data.getClass()+&quot;' not supported for randomization.&quot;);</span>
-
-<span class="fc" id="L126">        CPU.RangeWorkload workload = _newWorkloadFor(</span>
-                seed, type, null,
-<span class="fc" id="L128">                new DataProvider() {</span>
-                    @Override
-                    public &lt;T&gt; T get(Class&lt;T&gt; type) {
-<span class="fc" id="L131">                        return (T) data;</span>
-                    }
-                }
-        );
-<span class="fc" id="L135">        CPU.get().getExecutor().threaded( size, workload );</span>
-<span class="fc" id="L136">        return data;</span>
-    }
-
-
-
-    
-    private static long _longStringHash( String string )
-    {
-<span class="fc" id="L144">        long h = 1125899906842597L; // prime</span>
-<span class="fc" id="L145">        int len = string.length();</span>
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        for ( int i = 0; i &lt; len; i++ ) h = 31 * h + string.charAt( i );</span>
-<span class="fc" id="L147">        return h;</span>
-    }
-
-
-    private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall&lt;?&gt; call ) {
-<span class="fc" id="L152">        Tsr&lt;?&gt; tensor = call.input( 0 );</span>
-<span class="fc" id="L153">        tensor.setIsVirtual(false);</span>
-<span class="fc" id="L154">        Class&lt;?&gt; type = tensor.getItemType();</span>
-<span class="fc" id="L155">        boolean isSimple = tensor.getNDConf().isSimple();</span>
-<span class="fc" id="L156">        NDIteratorProvider iter = i -&gt; {</span>
-<span class="fc" id="L157">            NDIterator t0Idx = NDIterator.of(tensor);</span>
-<span class="fc" id="L158">            t0Idx.set(tensor.indicesOfIndex(i));</span>
-<span class="fc" id="L159">            return t0Idx;</span>
-        };
-<span class="fc" id="L161">        long seed = call.getValOf(Arg.Seed.class);</span>
-<span class="fc" id="L162">        return _newWorkloadFor(</span>
-<span class="fc bfc" id="L163" title="All 2 branches covered.">                seed, type, isSimple ? null : iter,</span>
-<span class="fc" id="L164">                new DataProvider() {</span>
-                    @Override
-                    public &lt;T&gt; T get(Class&lt;T&gt; type) {
-<span class="fc" id="L167">                        return tensor.getUnsafe().getDataForWriting(type);</span>
-                    }
-                }
-        );
-    }
-
-    private interface DataProvider {
-        &lt;T&gt; T get(Class&lt;T&gt; type);
-    }
-
-    private interface NDIteratorProvider {
-        NDIterator get(int i);
-    }
-
-    private static CPU.RangeWorkload _newWorkloadFor(
-            long seed,
-            Class&lt;?&gt; type,
-            NDIteratorProvider iteratorProvider,
-            DataProvider dataProvider
-    ) {
-<span class="fc bfc" id="L187" title="All 2 branches covered.">        boolean isSimple = iteratorProvider == null;</span>
-<span class="fc bfc" id="L188" title="All 2 branches covered.">        if ( type == Double.class ) {</span>
-<span class="fc" id="L189">            double[] t0_value = dataProvider.get(double[].class);</span>
-<span class="fc bfc" id="L190" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L191">                return (i, end) -&gt; {</span>
-<span class="fc" id="L192">                    double[] gaussian = {0, 0};</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">                    if ( i % 2 == 1 ) {</span>
-<span class="fc" id="L194">                        gaussianFrom(seed + i - 1, gaussian);</span>
-<span class="fc" id="L195">                        t0_value[i] = gaussian[1];</span>
-<span class="fc" id="L196">                        i++;</span>
-                    }
-<span class="fc bfc" id="L198" title="All 2 branches covered.">                    for ( ; i &lt; end; i += 2 ) // increment on drain accordingly:</span>
-                    {
-<span class="fc" id="L200">                        gaussianFrom(seed + i, gaussian);</span>
-<span class="fc" id="L201">                        t0_value[i + 0] = gaussian[0];</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">                        if ( i + 1 &lt; end ) t0_value[i + 1] = gaussian[1];</span>
-                    }
-<span class="fc" id="L204">                };</span>
-            else
-<span class="fc" id="L206">                return (i, end) -&gt; {</span>
-<span class="fc" id="L207">                    NDIterator t0Idx = iteratorProvider.get(i);</span>
-<span class="fc" id="L208">                    double[] gaussian = {0, 0};</span>
-<span class="fc bfc" id="L209" title="All 2 branches covered.">                    if ( i % 2 == 1 ) {</span>
-<span class="fc" id="L210">                        gaussianFrom(seed + i - 1, gaussian);</span>
-<span class="fc" id="L211">                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[1];</span>
-<span class="fc" id="L212">                        i++;</span>
-                    }
-<span class="fc bfc" id="L214" title="All 2 branches covered.">                    for ( ; i &lt; end; i += 2 ) // increment on drain accordingly:</span>
-                    {
-<span class="fc" id="L216">                        gaussianFrom(seed + i, gaussian);</span>
-<span class="fc" id="L217">                        t0_value[t0Idx.getIndexAndIncrement()] = gaussian[0];</span>
-<span class="fc bfc" id="L218" title="All 2 branches covered.">                        if ( i + 1 &lt; end ) t0_value[t0Idx.getIndexAndIncrement()] = gaussian[1];</span>
-                    }
-<span class="fc" id="L220">                };</span>
-<span class="fc bfc" id="L221" title="All 2 branches covered.">        } else if ( type == Float.class ) {</span>
-<span class="fc" id="L222">            float[] t0_value = dataProvider.get(float[].class);</span>
-<span class="fc bfc" id="L223" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L224">                return (i, end) -&gt; {</span>
-<span class="fc" id="L225">                    double[] gaussian = {0, 0};</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">                    if ( i % 2 == 1 ) {</span>
-<span class="fc" id="L227">                        gaussianFrom(seed + i - 1, gaussian);</span>
-<span class="fc" id="L228">                        t0_value[i] = (float) gaussian[1];</span>
-<span class="fc" id="L229">                        i++;</span>
-                    }
-<span class="fc bfc" id="L231" title="All 2 branches covered.">                    for ( ; i &lt; end; i += 2 ) // increment on drain accordingly:</span>
-                    {
-<span class="fc" id="L233">                        gaussianFrom(seed + i, gaussian);</span>
-<span class="fc" id="L234">                        t0_value[i + 0] = (float) gaussian[0];</span>
-<span class="fc bfc" id="L235" title="All 2 branches covered.">                        if ( i + 1 &lt; end ) t0_value[i + 1] = (float) gaussian[1];</span>
-                    }
-<span class="fc" id="L237">                };</span>
-            else
-<span class="fc" id="L239">                return (i, end) -&gt; {</span>
-<span class="fc" id="L240">                    NDIterator t0Idx = iteratorProvider.get(i);</span>
-<span class="fc" id="L241">                    double[] gaussian = {0, 0};</span>
-<span class="fc bfc" id="L242" title="All 2 branches covered.">                    if ( i % 2 == 1 ) {</span>
-<span class="fc" id="L243">                        gaussianFrom(seed + i - 1, gaussian);</span>
-<span class="fc" id="L244">                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[1];</span>
-<span class="fc" id="L245">                        i++;</span>
-                    }
-<span class="fc bfc" id="L247" title="All 2 branches covered.">                    for ( ; i &lt; end; i += 2 ) // increment on drain accordingly:</span>
-                    {
-<span class="fc" id="L249">                        gaussianFrom(seed + i, gaussian);</span>
-<span class="fc" id="L250">                        t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[0];</span>
-<span class="fc bfc" id="L251" title="All 2 branches covered.">                        if ( i + 1 &lt; end ) t0_value[t0Idx.getIndexAndIncrement()] = (float) gaussian[1];</span>
-                    }
-<span class="fc" id="L253">                };</span>
-<span class="fc bfc" id="L254" title="All 2 branches covered.">        } else if (type == Long.class) {</span>
-<span class="fc" id="L255">            long[] t0_value = dataProvider.get(long[].class);</span>
-<span class="fc bfc" id="L256" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L257">                return (i, end) -&gt; {</span>
-<span class="fc bfc" id="L258" title="All 2 branches covered.">                            for ( ; i &lt; end; i ++ ) // increment on drain accordingly:</span>
-<span class="fc" id="L259">                                t0_value[i] = _nextLong(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L260">                        };</span>
-            else
-<span class="fc" id="L262">                return (i, end) -&gt; {</span>
-<span class="fc" id="L263">                            NDIterator t0Idx = iteratorProvider.get(i);</span>
-<span class="fc bfc" id="L264" title="All 2 branches covered.">                            for ( ; i &lt; end; i ++ ) // increment on drain accordingly:</span>
-<span class="fc" id="L265">                                t0_value[t0Idx.getIndexAndIncrement()] = _nextLong(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L266">                        };</span>
-<span class="fc bfc" id="L267" title="All 2 branches covered.">        } else if (type == Integer.class) {</span>
-<span class="fc" id="L268">            int[] t0_value = dataProvider.get(int[].class);</span>
-<span class="fc bfc" id="L269" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L270">                return (i, end) -&gt; {</span>
-<span class="fc bfc" id="L271" title="All 2 branches covered.">                            for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L272">                                t0_value[i] = _nextInt(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L273">                        };</span>
-            else
-<span class="fc" id="L275">                return (i, end) -&gt; {</span>
-<span class="fc" id="L276">                            NDIterator t0Idx = iteratorProvider.get(i);</span>
-<span class="fc bfc" id="L277" title="All 2 branches covered.">                            for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L278">                                t0_value[t0Idx.getIndexAndIncrement()] = _nextInt(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L279">                        };</span>
-<span class="fc bfc" id="L280" title="All 2 branches covered.">        } else if (type == Byte.class) {</span>
-<span class="fc" id="L281">            byte[] t0_value = dataProvider.get(byte[].class);</span>
-<span class="fc bfc" id="L282" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L283">                return (i, end) -&gt; {</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">                    for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L285">                        t0_value[i] = _nextByte(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L286">                };</span>
-            else
-<span class="fc" id="L288">                return (i, end) -&gt; {</span>
-<span class="fc" id="L289">                    NDIterator t0Idx = iteratorProvider.get(i);</span>
-<span class="fc bfc" id="L290" title="All 2 branches covered.">                    for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L291">                        t0_value[t0Idx.getIndexAndIncrement()] = _nextByte(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L292">                };</span>
-<span class="fc bfc" id="L293" title="All 2 branches covered.">        } else if (type == Short.class) {</span>
-<span class="fc" id="L294">            short[] t0_value = dataProvider.get(short[].class);</span>
-<span class="fc bfc" id="L295" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L296">                return (i, end) -&gt; {</span>
-<span class="fc bfc" id="L297" title="All 2 branches covered.">                    for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L298">                        t0_value[i] = _nextShort(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L299">                };</span>
-            else
-<span class="fc" id="L301">                return (i, end) -&gt; {</span>
-<span class="fc" id="L302">                    NDIterator t0Idx = iteratorProvider.get(i);</span>
-<span class="fc bfc" id="L303" title="All 2 branches covered.">                    for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L304">                        t0_value[t0Idx.getIndexAndIncrement()] = _nextShort(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L305">                };</span>
-<span class="fc bfc" id="L306" title="All 2 branches covered.">        } else if (type == Boolean.class) {</span>
-<span class="fc" id="L307">            boolean[] t0_value = dataProvider.get(boolean[].class);</span>
-<span class="fc bfc" id="L308" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L309">                return (i, end) -&gt; {</span>
-<span class="fc bfc" id="L310" title="All 2 branches covered.">                    for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L311">                        t0_value[i] = _nextBoolean(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L312">                };</span>
-            else
-<span class="fc" id="L314">                return (i, end) -&gt; {</span>
-<span class="fc" id="L315">                    NDIterator t0Idx = iteratorProvider.get(i);</span>
-<span class="fc bfc" id="L316" title="All 2 branches covered.">                    for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L317">                        t0_value[t0Idx.getIndexAndIncrement()] = _nextBoolean(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L318">                };</span>
-<span class="pc bpc" id="L319" title="1 of 2 branches missed.">        } else if (type == Character.class) {</span>
-<span class="fc" id="L320">            char[] t0_value = dataProvider.get(char[].class);</span>
-<span class="fc bfc" id="L321" title="All 2 branches covered.">            if ( isSimple )</span>
-<span class="fc" id="L322">                return (i, end) -&gt; {</span>
-<span class="fc bfc" id="L323" title="All 2 branches covered.">                    for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L324">                        t0_value[i] = _nextChar(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L325">                };</span>
-            else
-<span class="fc" id="L327">                return (i, end) -&gt; {</span>
-<span class="fc" id="L328">                    NDIterator t0Idx = iteratorProvider.get(i);</span>
-<span class="fc bfc" id="L329" title="All 2 branches covered.">                    for ( ; i &lt; end; i++ )</span>
-<span class="fc" id="L330">                        t0_value[t0Idx.getIndexAndIncrement()] = _nextChar(seedIndexScramble( seed, i ));</span>
-<span class="fc" id="L331">                };</span>
-        }
-<span class="nc" id="L333">        else throw new IllegalStateException(&quot;Unsupported type: &quot; + type);</span>
-    }
-
-    /**
-     *  A simple method which takes a long seed and an int (the current item index) and
-     *  does some pseudo-random number generating (~ Linear congruential generator).
-     */
-    private static long seedIndexScramble( long seed, long i ) {
-<span class="fc" id="L341">        i = ( i * 0x105139C0C031L + 0x4c0e1e9f367dL     ) ^ seed;</span>
-<span class="fc" id="L342">        i = ( i * 0x196E6109L     + 0x6c6f72656e64616eL ) ^ seed;</span>
-<span class="fc" id="L343">        i = ( i * 0x653L          + 0xCBC85B449DL       ) ^ seed;</span>
-<span class="fc" id="L344">        return ( i * seed ) ^ 0xa785a819cd72c6fdL;</span>
-    }
+<span class="fc" id="L76">    }</span>
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L349">        return src[ 0 ].call( inputs, j );</span>
-    }
-
-<span class="fc" id="L352">    public static long initialScramble( long seed ) { return (seed ^ MULTIPLIER) &amp; MASK; }</span>
-
-    public static void gaussianFrom( long seed, double[] out )
-    {
-        // See Knuth, ACP, Section 3.4.1 Algorithm C.
-        double v1, v2, s;
-        do {
-<span class="fc" id="L359">            long seed1 = _nextSeed(seed );</span>
-<span class="fc" id="L360">            long seed2 = _nextSeed(seed1);</span>
-<span class="fc" id="L361">            long seed3 = _nextSeed(seed2);</span>
-<span class="fc" id="L362">            long seed4 = _nextSeed(seed3);</span>
-<span class="fc" id="L363">            v1 = 2 * _nextDouble( seed1, seed2 ) - 1; // between -1 and 1</span>
-<span class="fc" id="L364">            v2 = 2 * _nextDouble( seed3, seed4 ) - 1; // between -1 and 1</span>
-<span class="fc" id="L365">            s = v1 * v1 + v2 * v2;</span>
-<span class="fc" id="L366">            seed = seed4;</span>
-        }
-<span class="pc bpc" id="L368" title="1 of 4 branches missed.">        while ( s &gt;= 1 || s == 0 );</span>
-
-<span class="fc" id="L370">        double multiplier = StrictMath.sqrt( -2 * StrictMath.log(s) / s );</span>
-
-<span class="fc" id="L372">        out[0] = v1 * multiplier;</span>
-<span class="fc" id="L373">        out[1] = v2 * multiplier;</span>
-<span class="fc" id="L374">    }</span>
-
-    private static long _nextLong( long seed ) {
-<span class="fc" id="L377">        long seed1 = _nextSeed(seed);</span>
-<span class="fc" id="L378">        long seed2 = _nextSeed(seed1);</span>
-<span class="fc" id="L379">        return ((long)(_next(32, seed1)) &lt;&lt; 32) + _next(32, seed2);</span>
-    }
-
-    private static byte _nextByte( long seed ) {
-<span class="fc" id="L383">        return (byte) _nextInt(seed);</span>
-    }
-
-    private static boolean _nextBoolean(long seed) {
-<span class="fc bfc" id="L387" title="All 2 branches covered.">        return _next(1, _nextSeed(seed)) != 0;</span>
-    }
-
-    private static short _nextShort( long seed ) {
-<span class="fc" id="L391">        return (short) _nextInt(seed);</span>
-    }
-
-    private static long _nextSeed( long currentSeed )
-    {
-        long oldseed, nextseed;
-        do {
-<span class="fc" id="L398">            oldseed = currentSeed;</span>
-<span class="fc" id="L399">            nextseed = (oldseed * MULTIPLIER + ADDEND) &amp; MASK;</span>
-<span class="pc bpc" id="L400" title="1 of 2 branches missed.">        } while ( oldseed == (currentSeed = nextseed) );</span>
-<span class="fc" id="L401">        return nextseed;</span>
-    }
-
-    private static double _nextDouble(long seed1, long seed2 ) {
-<span class="fc" id="L405">        return (((long)(_next(26, seed1)) &lt;&lt; 27) + _next(27, seed2)) * DOUBLE_UNIT;</span>
-    }
-
-    private static int _nextInt( long seed ) {
-<span class="fc" id="L409">        return _next(32, _nextSeed(seed));</span>
-    }
-
-<span class="fc" id="L412">    private static int _next( int bits, long seed ) { return (int)(seed &gt;&gt;&gt; (48 - bits)); }</span>
-
-    private static char _nextChar( long seed ) {
-<span class="fc" id="L415">        return (char) _nextInt(seed);</span>
+<span class="nc" id="L80">        return src[ 0 ].call( inputs, j );</span>
     }
 
 }
