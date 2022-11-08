@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPUElementwiseAssignFun.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.elementwise</a> &gt; <span class="el_source">CPUElementwiseAssignFun.java</span></div><h1>CPUElementwiseAssignFun.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.elementwise;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.main.implementations.fun.api.ScalarFun;
+import neureka.devices.host.CPU;
+import neureka.ndim.NDimensional;
+
+import java.util.Arrays;
+
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">public class CPUElementwiseAssignFun extends CPUElementwiseFunction</span>
+{
+<span class="fc" id="L13">    public CPUElementwiseAssignFun() { super(ScalarFun.IDENTITY); }</span>
+
+
+    @Override
+    public Tsr&lt;?&gt; run( ExecutionCall&lt;CPU&gt; call )
+    {
+<span class="pc bpc" id="L19" title="2 of 4 branches missed.">        assert call.arity() == 2;</span>
+
+<span class="fc" id="L21">        boolean allVirtual = call.validate().all( Tsr::isVirtual ).isValid();</span>
+
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        if ( allVirtual ) {</span>
+<span class="nc" id="L24">            call.input(Object.class, 0).mut().setDataAt(0, call.input(1).item() );</span>
+<span class="nc bnc" id="L25" title="All 4 branches missed.">            assert call.input(0).isVirtual();</span>
+<span class="nc bnc" id="L26" title="All 4 branches missed.">            assert call.input(1).isVirtual();</span>
+<span class="nc" id="L27">            return call.input(0);</span>
+        }
+
+<span class="fc" id="L30">        call.input(0).mut().setIsVirtual(false);</span>
+
+<span class="fc" id="L32">        boolean isSimple = call.validate()</span>
+<span class="fc" id="L33">                                .allShare(Tsr::isVirtual)</span>
+<span class="fc" id="L34">                                .allShare(NDimensional::getNDConf)</span>
+<span class="fc" id="L35">                                .all( t -&gt; t.getNDConf().isSimple() )</span>
+<span class="fc" id="L36">                                .isValid();</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if ( isSimple ) {</span>
+<span class="fc" id="L38">            Class&lt;?&gt; type = call.input(0).itemType();</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            if ( type == Double.class ) {</span>
+<span class="fc" id="L40">                double[] output = call.input(0).mut().getDataForWriting(double[].class);</span>
+<span class="fc" id="L41">                double[] input = call.input(1).mut().getDataAs(double[].class);</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">                if ( input.length &gt;= output.length ) {</span>
+<span class="fc" id="L43">                    System.arraycopy( input, 0, output, 0, call.input(0).size() );</span>
+<span class="fc" id="L44">                    return call.input(0);</span>
+                }
+<span class="pc bfc" id="L46" title="All 2 branches covered.">            } else if ( type == Integer.class ) {</span>
+<span class="fc" id="L47">                int[] output = call.input(0).mut().getDataForWriting(int[].class);</span>
+<span class="fc" id="L48">                int[] input = call.input(1).mut().getDataAs(int[].class);</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                if ( input.length &gt;= output.length ) {</span>
+<span class="fc" id="L50">                    System.arraycopy( input, 0, output, 0, call.input(0).size() );</span>
+<span class="fc" id="L51">                    return call.input(0);</span>
+                }
+<span class="pc bfc" id="L53" title="All 2 branches covered.">            } else if ( type == Float.class ) {</span>
+<span class="fc" id="L54">                float[] output = call.input(0).mut().getDataForWriting(float[].class);</span>
+<span class="fc" id="L55">                float[] input = call.input(1).mut().getDataAs(float[].class);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">                if ( input.length &gt;= output.length ) {</span>
+<span class="fc" id="L57">                    System.arraycopy( input, 0, output, 0, call.input(0).size() );</span>
+<span class="fc" id="L58">                    return call.input(0);</span>
+                }
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            } else if ( type == Long.class ) {</span>
+<span class="fc" id="L61">                long[] output = call.input(0).mut().getDataForWriting(long[].class);</span>
+<span class="fc" id="L62">                long[] input = call.input(1).mut().getDataAs(long[].class);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                if ( input.length &gt;= output.length ) {</span>
+<span class="fc" id="L64">                    System.arraycopy( input, 0, output, 0, call.input(0).size() );</span>
+<span class="fc" id="L65">                    return call.input(0);</span>
+                }
+<span class="pc bfc" id="L67" title="All 2 branches covered.">            } else if ( type == Boolean.class ) {</span>
+<span class="fc" id="L68">                boolean[] output = call.input(0).mut().getDataForWriting(boolean[].class);</span>
+<span class="fc" id="L69">                boolean[] input = call.input(1).mut().getDataAs(boolean[].class);</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">                if ( input.length &gt;= output.length ) {</span>
+<span class="fc" id="L71">                    System.arraycopy( input, 0, output, 0, call.input(0).size() );</span>
+<span class="fc" id="L72">                    return call.input(0);</span>
+                }
+<span class="pc bfc" id="L74" title="All 2 branches covered.">            } else if ( type == Character.class ) {</span>
+<span class="fc" id="L75">                char[] output = call.input(0).mut().getDataForWriting(char[].class);</span>
+<span class="fc" id="L76">                char[] input = call.input(1).mut().getDataAs(char[].class);</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">                if ( input.length &gt;= output.length ) {</span>
+<span class="fc" id="L78">                    System.arraycopy( input, 0, output, 0, call.input(0).size() );</span>
+<span class="fc" id="L79">                    return call.input(0);</span>
+                }
+<span class="pc bfc" id="L81" title="All 2 branches covered.">            } else if ( type == Byte.class ) {</span>
+<span class="fc" id="L82">                byte[] output = call.input(0).mut().getDataForWriting(byte[].class);</span>
+<span class="fc" id="L83">                byte[] input = call.input(1).mut().getDataAs(byte[].class);</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                if ( input.length &gt;= output.length ) {</span>
+<span class="fc" id="L85">                    System.arraycopy( input, 0, output, 0, call.input(0).size() );</span>
+<span class="fc" id="L86">                    return call.input(0);</span>
+                }
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            } else if ( type == Short.class ) {</span>
+<span class="fc" id="L89">                short[] output = call.input(0).mut().getDataForWriting(short[].class);</span>
+<span class="fc" id="L90">                short[] input = call.input(1).mut().getDataAs(short[].class);</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">                if ( input.length &gt;= output.length ) {</span>
+<span class="fc" id="L92">                    System.arraycopy( input, 0, output, 0, call.input(0).size() );</span>
+<span class="fc" id="L93">                    return call.input(0);</span>
+                }
+            }
+        }
+<span class="fc" id="L97">        return super.run( call );</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

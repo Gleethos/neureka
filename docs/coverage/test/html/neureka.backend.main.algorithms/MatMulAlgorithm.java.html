@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatMulAlgorithm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.algorithms</a> &gt; <span class="el_source">MatMulAlgorithm.java</span></div><h1>MatMulAlgorithm.java</h1><pre class="source lang-java linenums">package neureka.backend.main.algorithms;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.autograd.ADAction;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.devices.Device;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.simple.Simple2DConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm&lt;MatMulAlgorithm&gt;</span>
+{
+<span class="fc" id="L21">    private static final Logger _LOG = LoggerFactory.getLogger(MatMulAlgorithm.class);</span>
+
+    public MatMulAlgorithm() {
+<span class="fc" id="L24">        super(&quot;simple_matmul&quot;);</span>
+<span class="fc" id="L25">        setIsSuitableFor(</span>
+<span class="fc" id="L26">                call -&gt; call.validate()</span>
+<span class="fc" id="L27">                        .allNotNull( t -&gt; Number.class.isAssignableFrom(t.getItemType()) )</span>
+<span class="fc" id="L28">                        .getEstimator()</span>
+<span class="fc" id="L29">                        .goodIfAnyNonNull( t -&gt; t.getNDConf() instanceof Simple2DConfiguration)</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">                        .badIfAnyNonNull( t -&gt; !( t.getNDConf() instanceof Simple2DConfiguration) )</span>
+<span class="fc" id="L31">                        .getEstimation()</span>
+        );
+<span class="fc" id="L33">        setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY );</span>
+<span class="fc" id="L34">        setExecution(</span>
+            (outerCaller, outerCall) -&gt;
+<span class="fc" id="L36">                Result.of(AbstractDeviceAlgorithm.executeFor(</span>
+                    outerCaller, outerCall,
+<span class="fc" id="L38">                    innerCall -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )</span>
+                ))
+<span class="fc" id="L40">                .withAutoDiff( (Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; adCall ) -&gt;</span>
+                {
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">                    if ( adCall.autogradMode().allowsForward() )</span>
+<span class="nc" id="L43">                        throw new IllegalArgumentException(&quot;Matrix multiplication does not support forward-AD!&quot;);</span>
+<span class="fc" id="L44">                    Function matMul = Neureka.get().backend().getFunction().matMul();</span>
+<span class="fc" id="L45">                    int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;</span>
+<span class="fc" id="L46">                    Tsr&lt;?&gt; derivative = adCall.input( d ).T().deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...</span>
+<span class="fc" id="L47">                    derivative.to(adCall.getDevice());</span>
+<span class="fc" id="L48">                    return ADAction.of(target -&gt;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                            d == 1</span>
+<span class="fc" id="L50">                                    ? matMul.execute( target.error(), derivative )</span>
+<span class="fc" id="L51">                                    : matMul.execute( derivative, target.error() )</span>
+                    );
+                })
+        );
+<span class="fc" id="L55">        setCallPreparation(MatMulAlgorithm::_prepare);</span>
+<span class="fc" id="L56">    }</span>
+
+
+    private static ExecutionCall&lt;Device&lt;Object&gt;&gt; _prepare( ExecutionCall call )
+    {
+<span class="pc bpc" id="L61" title="2 of 4 branches missed.">        assert call.arity() &lt;= 3;</span>
+<span class="fc" id="L62">        Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
+        {
+<span class="fc" id="L66">            Class&lt;Number&gt; type = (Class&lt;Number&gt;) call.input(  1 ).getDataType().getItemTypeClass();</span>
+<span class="fc" id="L67">            int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };</span>
+<span class="fc" id="L68">            NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();</span>
+<span class="fc" id="L69">            call.input( 2 ).mut().toLayout(targetLayout);</span>
+<span class="fc" id="L70">            Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );</span>
+<span class="fc" id="L71">            output.mut().toLayout(targetLayout);</span>
+<span class="fc" id="L72">            output.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).</span>
+            try {
+<span class="fc" id="L74">                device.store( output );</span>
+<span class="nc" id="L75">            } catch ( Exception e ) {</span>
+<span class="nc" id="L76">                e.printStackTrace();</span>
+<span class="fc" id="L77">            }</span>
+<span class="fc" id="L78">            call = call.withInputAt( 0, output );</span>
+        }
+<span class="fc" id="L80">        return (ExecutionCall&lt;Device&lt;Object&gt;&gt;) _autoClone( call );</span>
+    }
+
+    /**
+     *  This method will clone {@link Tsr} instances if they do not
+     *  possess a simple {@link neureka.ndim.config.NDConfiguration}.
+     *  This is usually the case when they are slices or reshaped views on data...
+     *  The reason for this is simply that we need inline data for the OpenCL kernels!
+     *
+     *
+     * @param call The execution call whose tensors ought to be cloned based on the complexity of their access patterns.
+     */
+    private static ExecutionCall&lt;?&gt; _autoClone( ExecutionCall&lt;?&gt; call ) {
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        for (int i = 0; i &lt; call.arity(); i++ ) {</span>
+<span class="fc" id="L94">            if (</span>
+<span class="fc bfc" id="L95" title="All 4 branches covered.">                    (!_isSimpleRowMajorMatrix( call.input( i ) ) &amp;&amp; !_isSimpleColumnMajorMatrix( call.input( i ) ))</span>
+                            ||
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">                            call.input( i ).isPartialSlice()</span>
+            ) {
+<span class="fc" id="L99">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
+<span class="fc" id="L100">                call = call.withInputAt( i, call.input( i ).deepCopy().mut().setIsIntermediate( true ) );</span>
+                /*
+                    The user should do cloning explicitly because using slices
+                    will cause the backend to perform auto cloning every time the
+                    slice is being used for operations like this one...
+                 */
+            }
+        }
+<span class="fc" id="L108">        return call;</span>
+    }
+
+    private static boolean _isSimpleColumnMajorMatrix( Tsr&lt;?&gt; t ) {
+<span class="pc bpc" id="L112" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;</span>
+    }
+
+    private static boolean _isSimpleRowMajorMatrix( Tsr&lt;?&gt; t ) {
+<span class="pc bpc" id="L116" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

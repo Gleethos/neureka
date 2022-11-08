@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleCPUConvolution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.convolution</a> &gt; <span class="el_source">SimpleCPUConvolution.java</span></div><h1>SimpleCPUConvolution.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.convolution;
+
+import neureka.Tsr;
+import neureka.devices.host.CPU;
+import neureka.ndim.config.NDConfiguration;
+
+/**
+ *  Performs fast image convolution on nd-array of rank 2 (matrices) or rank 3 (tensors with batch size)
+ *  where one tensor is the kernel and the other one is the image.
+ */
+class SimpleCPUConvolution
+{
+    Conv2DImpl _impl;
+
+<span class="fc" id="L15">    SimpleCPUConvolution( Tsr&lt;?&gt; in1, Tsr&lt;?&gt; in2, Tsr&lt;?&gt; out ) {</span>
+<span class="fc" id="L16">        Conv2DImpl impl = null;</span>
+        try {
+<span class="fc" id="L18">            impl = _tryCreatingImplFor( in1, in2, out );</span>
+        }
+<span class="fc" id="L20">        catch ( Exception ignored ) {}</span>
+        try {
+<span class="fc" id="L22">            impl = _tryCreatingImplFor( in2, in1, out );</span>
+        }
+<span class="fc" id="L24">        catch ( Exception ignored ) {}</span>
+<span class="fc" id="L25">        _impl = impl;</span>
+<span class="fc" id="L26">    }</span>
+
+    public void run() {
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if ( _impl == null ) throw new IllegalStateException(&quot;Not runnable!&quot;);</span>
+<span class="fc" id="L30">        _impl.run();</span>
+<span class="fc" id="L31">    }</span>
+
+<span class="fc bfc" id="L33" title="All 2 branches covered.">    public boolean isSuitable() { return _impl != null; }</span>
+
+    private static Conv2DImpl _tryCreatingImplFor(
+            final Tsr&lt;?&gt; image,
+            final Tsr&lt;?&gt; kernel,
+            final Tsr&lt;?&gt; result
+    ) {
+<span class="fc" id="L40">        validate(image);</span>
+<span class="fc" id="L41">        validate(kernel);</span>
+<span class="fc" id="L42">        validate(result);</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        int batchSize = (image.rank() == 3 ? image.shape(0) : 1);</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        int shapeOffset = (image.rank() == 3 ? 1 : 0);</span>
+<span class="fc" id="L45">        int width = image.shape(shapeOffset + 1);</span>
+<span class="fc" id="L46">        int height = image.shape(shapeOffset + 0);</span>
+<span class="fc" id="L47">        int kernelWidth = kernel.shape(shapeOffset + 1);</span>
+<span class="fc" id="L48">        int kernelHeight = kernel.shape(shapeOffset + 0);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        int kernelBatchSize = (kernel.rank() == 3 ? kernel.shape(0) : 1);</span>
+<span class="fc" id="L50">        int resultWidth = width - kernelWidth + 1;</span>
+<span class="fc" id="L51">        int resultHeight = height - kernelHeight + 1;</span>
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if ( kernelBatchSize &gt; 1 )</span>
+<span class="fc" id="L54">            throw new IllegalArgumentException(&quot;Kernel batch size must be 1!&quot;);</span>
+
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if ( batchSize * resultHeight * resultWidth != result.size() )</span>
+<span class="fc" id="L57">            throw new IllegalArgumentException(&quot;The result array must have the same length as the batch size times the result height times the result width!&quot;);</span>
+
+<span class="fc" id="L59">        Class&lt;?&gt; c1 = image.itemType();</span>
+<span class="fc" id="L60">        Class&lt;?&gt; c2 = kernel.itemType();</span>
+<span class="fc" id="L61">        Class&lt;?&gt; c3 = result.itemType();</span>
+
+<span class="pc bpc" id="L63" title="1 of 4 branches missed.">        if ( c1 != c2 || c2 != c3 )</span>
+<span class="fc" id="L64">            throw new IllegalArgumentException(&quot;All inputs must be of the same type!&quot;);</span>
+
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if ( c1 == Float.class )</span>
+<span class="fc" id="L67">            return new ImplF32(</span>
+<span class="fc" id="L68">                    image.mut().getDataAs(float[].class),</span>
+<span class="fc" id="L69">                    kernel.mut().getDataAs(float[].class),</span>
+<span class="fc" id="L70">                    result.mut().getDataForWriting(float[].class),</span>
+                    width,
+                    height,
+                    kernelWidth,
+                    kernelHeight,
+                    resultWidth,
+                    resultHeight,
+                    batchSize
+                );
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        else if ( c1 == Double.class )</span>
+<span class="fc" id="L80">            return new ImplF64(</span>
+<span class="fc" id="L81">                    image.mut().getDataAs(double[].class),</span>
+<span class="fc" id="L82">                    kernel.mut().getDataAs(double[].class),</span>
+<span class="fc" id="L83">                    result.mut().getDataForWriting(double[].class),</span>
+                    width,
+                    height,
+                    kernelWidth,
+                    kernelHeight,
+                    resultWidth,
+                    resultHeight,
+                    batchSize
+                );
+        else
+<span class="nc" id="L93">            throw new IllegalArgumentException(&quot;Unsupported data type!&quot;);</span>
+    }
+
+    interface Conv2DImpl {
+        void run();
+    }
+
+    private static class ImplF32 implements Conv2DImpl {
+
+        private final float[] _image;
+        private final float[] _kernel;
+        private final float[] _result;
+        private final int _width, _height, _kernelWidth, _kernelHeight, _resultWidth, _resultHeight, _batchSize;
+
+        private ImplF32(
+                float[] image,
+                float[] kernel,
+                float[] result,
+                int width,
+                int height,
+                int kernelWidth,
+                int kernelHeight,
+                int resultWidth,
+                int resultHeight,
+                int batchSize
+<span class="fc" id="L118">        ) {</span>
+<span class="fc" id="L119">            _image = image;</span>
+<span class="fc" id="L120">            _kernel = kernel;</span>
+<span class="fc" id="L121">            _width = width;</span>
+<span class="fc" id="L122">            _height = height;</span>
+<span class="fc" id="L123">            _kernelWidth = kernelWidth;</span>
+<span class="fc" id="L124">            _kernelHeight = kernelHeight;</span>
+<span class="fc" id="L125">            _resultWidth = resultWidth;</span>
+<span class="fc" id="L126">            _resultHeight = resultHeight;</span>
+<span class="fc" id="L127">            _batchSize = batchSize;</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">            if ( _batchSize * _resultHeight * _resultWidth != result.length )</span>
+<span class="nc" id="L129">                throw new IllegalArgumentException(&quot;The result array must have the same length as the batch size times the result height times the result width!&quot;);</span>
+
+<span class="fc" id="L131">            _result = result;</span>
+<span class="fc" id="L132">        }</span>
+
+        @Override
+        public void run() {
+<span class="fc" id="L136">            int work = _resultHeight * _resultWidth;</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">            if ( work &lt; 1000 )</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">                for ( int bi = 0; bi &lt; _batchSize; bi++ ) run(bi);</span>
+            else
+<span class="nc" id="L140">                CPU.get().getExecutor().threaded(_batchSize, this::run);</span>
+<span class="fc" id="L141">        }</span>
+
+        private void run(int batchIndex) {
+<span class="fc" id="L144">            int imageOffset = batchIndex * _width * _height;</span>
+<span class="fc" id="L145">            int resultOffset = batchIndex * _resultWidth * _resultHeight;</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            for ( int y = 0; y &lt; _resultHeight; y++ ) {</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">                for ( int x = 0; x &lt; _resultWidth; x++ ) {</span>
+<span class="fc" id="L148">                    float sum = 0;</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                    for ( int ky = 0; ky &lt; _kernelHeight; ky++ )</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">                        for ( int kx = 0; kx &lt; _kernelWidth; kx++ )</span>
+<span class="fc" id="L151">                            sum +=</span>
+                                _image[imageOffset + (y + ky) * _width + (x + kx)]
+                                        *
+                                _kernel[ky * _kernelWidth + kx];
+
+<span class="fc" id="L156">                    _result[resultOffset + y * _resultWidth + x] = sum;</span>
+                }
+            }
+<span class="fc" id="L159">        }</span>
+    }
+
+    private static class ImplF64 implements Conv2DImpl {
+
+        private final double[] _image;
+        private final double[] _kernel;
+        private final double[] _result;
+        private final int _width, _height, _kernelWidth, _kernelHeight, _resultWidth, _resultHeight, _batchSize;
+
+        private ImplF64(
+                double[] image,
+                double[] kernel,
+                double[] result,
+                int width,
+                int height,
+                int kernelWidth,
+                int kernelHeight,
+                int resultWidth,
+                int resultHeight,
+                int batchSize
+<span class="fc" id="L180">        ) {</span>
+<span class="fc" id="L181">            _image = image;</span>
+<span class="fc" id="L182">            _kernel = kernel;</span>
+<span class="fc" id="L183">            _width = width;</span>
+<span class="fc" id="L184">            _height = height;</span>
+<span class="fc" id="L185">            _kernelWidth = kernelWidth;</span>
+<span class="fc" id="L186">            _kernelHeight = kernelHeight;</span>
+<span class="fc" id="L187">            _resultWidth = resultWidth;</span>
+<span class="fc" id="L188">            _resultHeight = resultHeight;</span>
+<span class="fc" id="L189">            _batchSize = batchSize;</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">            if ( _batchSize * _resultHeight * _resultWidth != result.length )</span>
+<span class="nc" id="L191">                throw new IllegalArgumentException(&quot;The result array must have the same length as the batch size times the result height times the result width!&quot;);</span>
+
+<span class="fc" id="L193">            _result = result;</span>
+<span class="fc" id="L194">        }</span>
+
+        @Override
+        public void run() {
+<span class="fc" id="L198">            int work = _resultHeight * _resultWidth;</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            if ( work &lt; 1000 )</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">                for ( int bi = 0; bi &lt; _batchSize; bi++ ) run(bi);</span>
+            else
+<span class="nc" id="L202">                CPU.get().getExecutor().threaded(_batchSize, this::run);</span>
+<span class="fc" id="L203">        }</span>
+
+        private void run(int batchIndex) {
+<span class="fc" id="L206">            int imageOffset = batchIndex * _width * _height;</span>
+<span class="fc" id="L207">            int resultOffset = batchIndex * _resultWidth * _resultHeight;</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">            for ( int y = 0; y &lt; _resultHeight; y++ ) {</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">                for ( int x = 0; x &lt; _resultWidth; x++ ) {</span>
+<span class="fc" id="L210">                    double sum = 0;</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">                    for ( int ky = 0; ky &lt; _kernelHeight; ky++ )</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">                        for ( int kx = 0; kx &lt; _kernelWidth; kx++ )</span>
+<span class="fc" id="L213">                            sum +=</span>
+                                _image[imageOffset + (y + ky) * _width + (x + kx)]
+                                        *
+                                _kernel[ky * _kernelWidth + kx];
+
+<span class="fc" id="L218">                    _result[resultOffset + y * _resultWidth + x] = sum;</span>
+                }
+            }
+<span class="fc" id="L221">        }</span>
+    }
+
+
+    private static void validate(Tsr&lt;?&gt; t) {
+<span class="fc bfc" id="L226" title="All 4 branches covered.">        if ( t.getRank() != 2 &amp;&amp; t.getRank() != 3 )</span>
+<span class="fc" id="L227">            throw new IllegalArgumentException(&quot;The rank of the tensor must be 2 or 3!&quot;);</span>
+
+<span class="fc" id="L229">        NDConfiguration.Layout layout = t.getNDConf().getLayout();</span>
+
+<span class="fc bfc" id="L231" title="All 4 branches covered.">        if ( layout != NDConfiguration.Layout.ROW_MAJOR &amp;&amp; layout != NDConfiguration.Layout.SYMMETRIC )</span>
+<span class="fc" id="L232">            throw new IllegalArgumentException(&quot;The layout of the tensor must be row major or symmetric!&quot;);</span>
+<span class="fc" id="L233">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
