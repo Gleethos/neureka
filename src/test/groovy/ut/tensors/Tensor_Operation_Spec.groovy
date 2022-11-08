@@ -255,7 +255,9 @@ class Tensor_Operation_Spec extends Specification
     def 'Simple slice addition produces expected result.'(
             Device device
     ) {
-        given :
+        given : 'We set the experimental "autoConvertToFloat" flag to true.'
+            Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
+        and :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
             Tsr a = Tsr.of([11, 11], 3d..19d).to( device )
             Tsr x = a[1..-2,0..-1]

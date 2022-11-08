@@ -3,6 +3,7 @@ package ut.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
+import neureka.backend.ocl.CLBackend
 import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -465,7 +466,9 @@ class Autograd_NN_Spec extends Specification
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
     def 'Autograd works for 2 matrix multiplications in a row.'( Device<?> device ) 
     {
-        given : """
+        given : 'We set the experimental "autoConvertToFloat" flag to true.'
+            Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
+        and : """
             We create 3 tensors with the shapes (2x3), (3x1) and (2x1) for matrix multiplication.
             All of them ought to be stored on the provided device and 
             only the first 2 require gradients, whereas the third one does not.
@@ -488,11 +491,11 @@ class Autograd_NN_Spec extends Specification
             x.toString() == "(1x2):[0.5, 0.5]"
 
         when : 'We perform 2 matrix multiplications in a row, using all 3 previously created tensors...'
-            def c = a.matMul(b)
-            def o = x.matMul(c)
+            var c = a.matMul(b)
+            var o = x.matMul(c)
 
         then : 'The results from the two matrix multiplications are as expected.'
-            def cStr = c.toString()
+            var cStr = c.toString()
             cStr.contains "(2x1):[4.0, -14.0]"
             cStr.contains "->d(3x2):[-1.0, 2.0, 0.0, 3.0, 1.0, 4.0]"
             cStr.contains "->d(1x3):[-4.0, -2.0, 0.0]"
@@ -520,7 +523,6 @@ class Autograd_NN_Spec extends Specification
 
         where : 'We test this feature on both the CPU as well as the GPU.'
             device << [CPU.get(), Device.get('first gpu')]
-
     }
 
 

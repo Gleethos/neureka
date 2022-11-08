@@ -14,4 +14,8 @@ public class CLSettings {
         return this;
     }
 
+    public void reset() {
+        _autoConvertToFloat = false;
+    }
+
 }

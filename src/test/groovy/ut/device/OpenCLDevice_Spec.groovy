@@ -88,7 +88,10 @@ class OpenCLDevice_Spec extends Specification
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'We can get the items of an outsourced tensor as a primitive array.'()
     {
-        given : 'A new tensor.'
+        given : 'We set the experimental "autoConvertToFloat" flag to true.'
+            Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
+
+        and : 'A new tensor.'
             Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
 
         expect : 'This tensor is initially of type "Double", meaning it is backed by a "double[]" array internally...'

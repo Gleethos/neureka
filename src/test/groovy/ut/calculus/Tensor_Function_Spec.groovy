@@ -3,6 +3,7 @@ package ut.calculus
 import neureka.Nda
 import neureka.Neureka
 import neureka.Tsr
+import neureka.backend.ocl.CLBackend
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
 import neureka.devices.Device
@@ -128,7 +129,10 @@ class Tensor_Function_Spec extends Specification
     def 'Tensor results of various Function instances return expected results.'(
             String equation, List<Tsr> inputs, Integer index, Map<List<Integer>,List<Double>> expected
     ) {
-        given : "A new Function instance created from ${equation}."
+        given : 'We set the experimental "autoConvertToFloat" flag to true.'
+            Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
+
+        and : "A new Function instance created from ${equation}."
             Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, true) // TODO : test with 'doAD' : false!
         and :
             inputs.each {it.to(Device.get(device))}

@@ -272,6 +272,7 @@ public final class Neureka
             settings().autograd().setIsApplyingGradientWhenRequested( true );
             settings().debug().setIsKeepingDerivativeTargetPayloads( false );
         }
+        backend().reset();
     }
 
     private boolean _currentThreadIsNotAuthorized() { return !this.equals(_INSTANCES.get()); }

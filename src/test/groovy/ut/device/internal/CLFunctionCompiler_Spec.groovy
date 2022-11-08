@@ -101,10 +101,10 @@ class CLFunctionCompiler_Spec extends Specification
             def funToBeOptimized = Function.of("i0 * (i1 / i2)") // -3 * (6 / 2)
 
         when : 'We instruct the device to produce an optimized Function based on the provided test function...'
-            Function optimized = device.optimizedFunctionOf(funToBeOptimized, "my_test_fun")
+            Function optimized = device.optimizedFunctionOf(funToBeOptimized, "my_fun")
 
         then : 'Initially we expect that the device does not contain the "ad hoc" kernel with the following signature...'
-            !device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
+            !device.hasAdHocKernel("my_fun_F32\$1_F32\$1_F32\$1_F32\$1")
 
         when : 'We test the optimized function by calling it with three arguments...'
             Tsr result = optimized( t1, t2, t3 )
@@ -113,7 +113,7 @@ class CLFunctionCompiler_Spec extends Specification
             result.toString() == "(1):[-9.0]"
 
         and : 'We expect that the device has an underlying kernel with the following name:'
-            device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
+            device.hasAdHocKernel("my_fun_F32\$1_F32\$1_F32\$1_F32\$1")
     }
 
     /* // WIP

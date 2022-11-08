@@ -175,6 +175,11 @@ public final class CLBackend implements BackendExtension
         return new DeviceOption( result, score );
     }
 
+    @Override
+    public void reset() {
+        _settings.reset();
+    }
+
     /**
      *  This method will free all the resources occupied by this context,
      *  meaning that all platforms and their devices will be disposed.
