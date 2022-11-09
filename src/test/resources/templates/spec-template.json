@@ -64,7 +64,7 @@ def parseWhereCodeLines = { List<String> lines ->
                     if ( c == "\n" )
                         columnNamesRead = true
                 }
-                else if ( c != "|" && !escaped  )
+                else if ( c != "|" && !isComment )
                     currentExpression += c
             }
             else if ( columnNamesRead && outsideOfAll ) {
@@ -80,10 +80,10 @@ def parseWhereCodeLines = { List<String> lines ->
                     currentExpression = ""
                     currentColumn = 0
                 }
-                else if ( c != "|" && !escaped )
+                else if ( c != "|" && !isComment )
                     currentExpression += c
             }
-            else
+            else if ( !isComment )
                 currentExpression += c
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
@@ -93,6 +93,8 @@ def parseWhereCodeLines = { List<String> lines ->
     }
     if ( isSimpleTable && !currentExpression.isEmpty() )
         table[singleKey]?.add(currentExpression.trim())
+    else if ( !currentExpression.isEmpty() )
+        table[columnNames[currentColumn]]?.add(currentExpression.trim())
     return table
 }
 
@@ -214,10 +216,12 @@ def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
             var code = '['+strCode(b.sourceCode)+']'
             if ( kind == 'where' ) {
                 var table = dataTable
-                if ( b.sourceCode.isEmpty() ) {
+                if ( !dataTable.isEmpty() ) {
                   var newTable = parseWhereCodeLines(b.sourceCode)
                   if ( newTable.size() == dataTable.size() )
                     table = newTable // If they are not the same size then parsing went wrong, so we keep the original table
+                  else
+                    println("WARNING: Parsing of where block failed, using original table instead! Failed parsing: "+'['+strCode(b.sourceCode)+']')
                 }
                 // We turn the data table into a json object:
                 code = '{'+table.collect({ k, v -> '"'+k+'":['+strCode(v)+']' }).join(",")+'}'
