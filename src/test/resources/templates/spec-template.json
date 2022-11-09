@@ -46,7 +46,7 @@ def parseWhereCodeLines = { List<String> lines ->
                 }
                 else if ( table.isEmpty() ) currentExpression += c
             }
-            else if ( squareDepth == 1 && c == "," && !escaped ) {
+            else if ( squareDepth == 1 && c == "," && !escaped && roundDepth == 0 && curlyDepth == 0 ) {
                 table[singleKey]?.add(currentExpression.trim())
                 currentExpression = ""
             }
