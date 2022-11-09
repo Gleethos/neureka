@@ -193,6 +193,8 @@ public final class DataConverter
         _set( Integer.class, Long.class,   Integer::longValue );
         _set( Integer.class, Boolean.class,   d -> d != 0);
         _set( Integer.class, Character.class, d -> (char) d.intValue() );
+        _set( Integer.class, BigInteger.class, i->BigInteger.valueOf(i) );
+        _set( Integer.class, BigDecimal.class, i->BigDecimal.valueOf(i) );
 
         _set( Short.class, Long.class, Short::longValue );
         _set( Short.class, Double.class, Short::doubleValue );
@@ -201,6 +203,8 @@ public final class DataConverter
         _set( Short.class, Byte.class, Short::byteValue );
         _set( Short.class, Boolean.class,   d -> d != 0);
         _set( Short.class, Character.class, d -> (char) d.intValue() );
+        _set( Short.class, BigInteger.class, i->BigInteger.valueOf(i) );
+        _set( Short.class, BigDecimal.class, i->BigDecimal.valueOf(i) );
 
         _set( Long.class, Integer.class,   Long::intValue );
         _set( Long.class, Double.class,    Long::doubleValue );
@@ -209,6 +213,8 @@ public final class DataConverter
         _set( Long.class, Byte.class,      Long::byteValue );
         _set( Long.class, Boolean.class,   d -> d != 0);
         _set( Long.class, Character.class, d -> (char) d.intValue() );
+        _set( Long.class, BigInteger.class, i->BigInteger.valueOf(i) );
+        _set( Long.class, BigDecimal.class, i->BigDecimal.valueOf(i) );
 
         _set( Double.class, Float.class,   Double::floatValue );
         _set( Double.class, Integer.class, Double::intValue );
@@ -217,6 +223,8 @@ public final class DataConverter
         _set( Double.class, Long.class,    Double::longValue );
         _set( Double.class, Boolean.class, d -> d != 0 );
         _set( Double.class, Character.class, d -> (char) d.doubleValue() );
+        _set( Double.class, BigInteger.class, i->BigInteger.valueOf(i.longValue()) );
+        _set( Double.class, BigDecimal.class, i->BigDecimal.valueOf(i) );
 
         _set( Float.class, Double.class,  Float::doubleValue );
         _set( Float.class, Integer.class, Float::intValue );
@@ -225,6 +233,8 @@ public final class DataConverter
         _set( Float.class, Long.class,    Float::longValue );
         _set( Float.class, Boolean.class, d -> d != 0 );
         _set( Float.class, Character.class, d -> (char) d.floatValue() );
+        _set( Float.class, BigInteger.class, i->BigInteger.valueOf(i.longValue()) );
+        _set( Float.class, BigDecimal.class, i->BigDecimal.valueOf(i.doubleValue()) );
 
         _set( Byte.class, Double.class,  Byte::doubleValue );
         _set( Byte.class, Float.class,   Byte::floatValue );
@@ -233,12 +243,18 @@ public final class DataConverter
         _set( Byte.class, Long.class,    Byte::longValue );
         _set( Byte.class, Boolean.class, d -> d != 0 );
         _set( Byte.class, Character.class, d -> (char) d.byteValue() );
+        _set( Byte.class, BigInteger.class, i->BigInteger.valueOf(i.longValue()) );
+        _set( Byte.class, BigDecimal.class, i->BigDecimal.valueOf(i.doubleValue()) );
 
-        _set( Boolean.class, Double.class,   b -> b ? 1d : 0d );
-        _set( Boolean.class, Float.class,    b -> b ? 1f : 0f );
-        _set( Boolean.class, Integer.class,  b -> b ? 1 : 0   );
-        _set( Boolean.class, Long.class,     b -> b ? 1L : 0L );
-        _set( Boolean.class, Byte.class,     b -> b ? (byte) 1 : (byte) 0 );
+        _set( Boolean.class, Double.class,     b -> b ? 1d : 0d );
+        _set( Boolean.class, Float.class,      b -> b ? 1f : 0f );
+        _set( Boolean.class, Integer.class,    b -> b ? 1  : 0  );
+        _set( Boolean.class, Long.class,       b -> b ? 1L : 0L );
+        _set( Boolean.class, Byte.class,       b -> b ? (byte)  1 : (byte)  0 );
+        _set( Boolean.class, Short.class,      b -> b ? (short) 1 : (short) 0 );
+        _set( Boolean.class, Character.class,  b -> b ? (char)  1 : (char)  0 );
+        _set( Boolean.class, BigInteger.class, b -> b ? BigInteger.ONE : BigInteger.ZERO );
+        _set( Boolean.class, BigDecimal.class, b -> b ? BigDecimal.ONE : BigDecimal.ZERO );
 
         _set( String.class, Character.class, s -> (char) ( s.chars().sum() / s.length() ) );
 
@@ -253,17 +269,17 @@ public final class DataConverter
 
         _set( Object[].class, int[].class, data ->
                 Utility.intStream( 1_000, data.length )
-                            .map( i -> {
-                                 if ( data[ i ] instanceof Number )
-                                     return ( (Number) data[ i ] ).intValue();
-                                 else if ( data[ i ] instanceof String )
-                                     return (int) Double.parseDouble( (String) data[ i ] );
-                                 else
-                                     throw new IllegalArgumentException(
-                                         "Cannot convert type '"+data[ i ].getClass().getSimpleName()+"' to int!"
-                                     );
-                             })
-                             .toArray()
+                    .map( i -> {
+                         if ( data[ i ] instanceof Number )
+                             return ( (Number) data[ i ] ).intValue();
+                         else if ( data[ i ] instanceof String )
+                             return (int) Double.parseDouble( (String) data[ i ] );
+                         else
+                             throw new IllegalArgumentException(
+                                 "Cannot convert type '"+data[ i ].getClass().getSimpleName()+"' to int!"
+                             );
+                     })
+                     .toArray()
             );
     }
 

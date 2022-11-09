@@ -90,10 +90,6 @@ final class TsrConstructor
         LogUtil.nullArgCheck( data, "data", Object.class );
 
         int size = _ndConstructor.getSize();
-        if ( data instanceof List<?> ) {
-            List<?> range = (List<?>) data;
-            data = range.toArray();// TODO: This is probably wrong!
-        }
         if ( data instanceof Object[] )
             data = _autoConvertAndOptimizeObjectArray( (Object[]) data, dataType, size );
 

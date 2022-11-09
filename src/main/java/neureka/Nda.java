@@ -12,6 +12,7 @@ import neureka.ndim.NDimensional;
 import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -66,6 +67,90 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
      */
     static <V> WithShapeOrScalarOrVector<V> of( Class<V> type ) { return new NdaBuilder<>( type ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(String.class)}
+     * used to build {@link Nda}s storing {@link String}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<String> ofStrings() { return of( String.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Integer.class)}
+     * used to build {@link Nda}s storing {@link Integer}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Integer> ofInts() { return of( Integer.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Double.class)}
+     * used to build {@link Nda}s storing {@link Double}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Double> ofDoubles() { return of( Double.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Float.class)}
+     * used to build {@link Nda}s storing {@link Float}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Float> ofFloats() { return of( Float.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Long.class)}
+     * used to build {@link Nda}s storing {@link Long}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Long> ofLongs() { return of( Long.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Boolean.class)}
+     * used to build {@link Nda}s storing {@link Boolean}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Boolean> ofBooleans() { return of( Boolean.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Character.class)}
+     * used to build {@link Nda}s storing {@link Character}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Character> ofChars() { return of( Character.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Byte.class)}
+     * used to build {@link Nda}s storing {@link Byte}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Byte> ofBytes() { return of( Byte.class ); }
+
+    /**
+     * This is a <b>short</b>cut method for {@code Nda.of(Short.class)}
+     * used to build {@link Nda}s storing {@link Short}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Short> ofShorts() { return of( Short.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Object.class)}
+     * used to build {@link Nda}s storing {@link Object}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Object> ofObjects() { return of( Object.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Number.class)}
+     * used to build {@link Nda}s storing {@link Number}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Number> ofNumbers() { return of( Number.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(BigDecimal.class)}
+     * used to build {@link Nda}s storing {@link BigDecimal}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<BigDecimal> ofBigDecimals() { return of( BigDecimal.class ); }
 
     /**
      * @param value The scalar value which ought to be represented as nd-array.
@@ -524,16 +609,42 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     }
 
     /**
-     *  Equivalent to the {@code #item(0)}.
+     *  Equivalent to the {@code #item(0)} and {@link #getItem()}.
      *
      * @return The first item of this nd-array.
      */
     default V item() { return item( 0 ); }
 
+    /**
+     *  Equivalent to the {@code #item(0)} and {@link #item()}.
+     *
+     * @return The first item of this nd-array.
+     */
+    default V getItem() { return item(); }
+
+    /**
+     * Use this to get the items of this nd-array as a primitive array
+     * of the specified type.
+     * @param arrayTypeClass The class of the array type to return.
+     * @param <A> The type of the array to return.
+     * @return The items of this nd-array as a primitive array of the specified type.
+     */
     default <A> A getItemsAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getRawItems(), arrayTypeClass );
     }
 
+
+    /**
+     * Use this to get the items of the underlying {@link Data} buffer
+     * of this nd-array as a primitive array
+     * of the specified type.
+     * Note that the length of the returned array may be different from the
+     * size of this nd-array. This is the case if this nd-array is a slice
+     * of another larger nd-array.
+     * @param arrayTypeClass The class of the array type to return.
+     * @param <A> The type of the array to return.
+     * @return The items of this nd-array as a primitive array of the specified type.
+     */
     default  <A> A getDataAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getRawData(), arrayTypeClass );
     }

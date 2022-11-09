@@ -73,5 +73,22 @@ class Nda_Instantiation_Spec extends Specification
             Character | '°' as char    || new char[] { '°' as char }
     }
 
+    def 'Common types of nd-arrays are best instantiated using type specific convenience methods.'()
+    {
+        expect : 'The operands of the following expressions are invariant to another:'
+            Nda.ofStrings().scalar("Hi").item  == Nda.of(String).scalar("Hi").item
+            Nda.ofInts().scalar(3).item        == Nda.of(Integer).scalar(3).item
+            Nda.ofDoubles().scalar(3.0).item   == Nda.of(Double).scalar(3.0).item
+            Nda.ofFloats().scalar(3f).item     == Nda.of(Float).scalar(3f).item
+            Nda.ofLongs().scalar(3L).item      == Nda.of(Long).scalar(3L).item
+            Nda.ofBooleans().scalar(true).item == Nda.of(Boolean).scalar(true).item
+            Nda.ofChars().scalar((char)'°').item    == Nda.of(Character).scalar((char)'°').item
+            Nda.ofBytes().scalar((byte)3).item      == Nda.of(Byte).scalar((byte)3).item
+            Nda.ofShorts().scalar((short)3).item    == Nda.of(Short).scalar((short)3).item
+            Nda.ofObjects().scalar([]).item         == Nda.of(Object).scalar([]).item
+            Nda.ofNumbers().scalar(3).item     == Nda.of(Number).scalar(3).item
+            Nda.ofBigDecimals().scalar(3).item == Nda.of(BigDecimal).scalar(3).item
+    }
+
 
 }

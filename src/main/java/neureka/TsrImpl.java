@@ -133,8 +133,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             }
             return t;
         }
-        args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (List<?>) args[ 0 ] ).toArray() : args[ 0 ];
-        args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
+        args[ 0 ] = ( args[ 0 ] instanceof List ) ? ( (List<?>) args[ 0 ] ).toArray() : args[ 0 ];
+        args[ 1 ] = ( args[ 1 ] instanceof List ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
 
         Class<?> commonType = _extractCommonType(args);
         if ( commonType != null ) {
@@ -194,10 +194,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         Class<?> commonType = _extractCommonType( list.toArray() );
         // We construct the tensor:
         t.constructFor(CPU.get(), NDConstructor.of( list.size() ))
-                .tryConstructing(
+                    .tryConstructing(
                         DataType.of(commonType),
                         list.toArray()
-                );
+                    );
         return t;
     }
 
@@ -228,7 +228,20 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      */
     TsrImpl() {}
 
-    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object data ) {
+    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object value ) {
+        Object data = value;
+        if ( List.class.isAssignableFrom( dataType.getItemTypeClass() ) )
+            data = new Object[]{ value }; // Make an nd-array of lists possible"
+        if ( Object[].class.isAssignableFrom( dataType.getItemTypeClass() ) )
+            data = new Object[]{ value }; // Make an nd-array of arrays possible"
+        if ( Object.class == dataType.getItemTypeClass() ) {
+            if ( value.getClass() != Object[].class )
+                data = new Object[]{ value };
+        }
+        if ( data instanceof List<?> ) {
+            List<?> range = (List<?>) data;
+            data = range.toArray();// TODO: This is probably wrong!
+        }
         constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data );
     }
 
