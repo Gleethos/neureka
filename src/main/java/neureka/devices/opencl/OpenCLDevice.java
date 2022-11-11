@@ -616,7 +616,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number>  neureka.Data<T> allocate(DataType<T> dataType, int size ) {
+    public <T extends Number>  neureka.Data<T> allocate(DataType<T> dataType, NDConfiguration ndc ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 

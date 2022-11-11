@@ -48,6 +48,7 @@ import neureka.common.composition.Component;
 import neureka.common.utility.LogUtil;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
+import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.*;
@@ -190,7 +191,11 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     Collection<Tsr<V>> getTensors();
 
-    <T extends V> neureka.Data<T> allocate( DataType<T> dataType, int size );
+    <T extends V> neureka.Data<T> allocate( DataType<T> dataType, NDConfiguration ndc );
+
+    default <T extends V> neureka.Data<T> allocate( DataType<T> dataType, int size ) {
+        return allocate( dataType, NDConstructor.of( size ).produceNDC( false ) );
+    }
 
     <T extends V> neureka.Data<T> allocate( DataType<T> dataType, int size, T initialValue );
 

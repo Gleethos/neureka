@@ -10,6 +10,7 @@ import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.common.utility.Cache;
 import neureka.dtype.DataType;
+import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,7 +247,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     public Collection<Tsr<Object>> getTensors() { return _stored.keySet(); }
 
     @Override
-    public <V> neureka.Data<V> allocate(DataType<V> dataType, int size) {
+    public <V> neureka.Data<V> allocate( DataType<V> dataType, NDConfiguration ndc ) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 

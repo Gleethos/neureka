@@ -8,6 +8,7 @@ import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
+import neureka.ndim.config.NDConfiguration;
 
 import java.util.Collection;
 
@@ -42,7 +43,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Collection<Tsr<Object>> getTensors() { return null; }
 
     @Override
-    public <V> neureka.Data<V> allocate(DataType<V> dataType, int size) { return null; }
+    public <V> neureka.Data<V> allocate( DataType<V> dataType, NDConfiguration ndc ) { return null; }
 
     @Override
     public <V> neureka.Data<V> allocate(DataType<V> dataType, int size, V initialValue) { return null; }
