@@ -246,17 +246,17 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     public Collection<Tsr<Object>> getTensors() { return _stored.keySet(); }
 
     @Override
-    public neureka.Data allocate(DataType<?> dataType, int size) {
+    public <V> neureka.Data<V> allocate(DataType<V> dataType, int size) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 
     @Override
-    public <V> neureka.Data allocate(DataType<V> dataType, int size, V initialValue) {
+    public <V> neureka.Data<V> allocate(DataType<V> dataType, int size, V initialValue) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 
     @Override
-    public neureka.Data allocate(Object jvmData, int desiredSize) {
+    public neureka.Data<Object> allocate(Object jvmData, int desiredSize) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 

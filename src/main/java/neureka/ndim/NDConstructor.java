@@ -27,7 +27,7 @@ public interface NDConstructor {
         return of(NDConfiguration.of(shape, translation, indicesMap, spread, offset));
     }
 
-    static NDConstructor of(NDConfiguration ndc)
+    static NDConstructor of( NDConfiguration ndc )
     {
         return new NDConstructor() {
             @Override public int getSize() { return ndc.size(); }
@@ -38,7 +38,7 @@ public interface NDConstructor {
         };
     }
 
-    static NDConstructor of(int... newShape)
+    static NDConstructor of( int... newShape )
     {
         int size = NDConfiguration.Utility.sizeOfShape(newShape);
         if (size == 0) {

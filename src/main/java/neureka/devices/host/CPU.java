@@ -287,7 +287,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public final neureka.Data allocate( DataType<?> dataType, int size ) {
+    public final <T> neureka.Data<T> allocate( DataType<T> dataType, int size ) {
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
             return _dataArrayOf(new double[ size ]);
@@ -310,9 +310,9 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <V> neureka.Data allocate( DataType<V> dataType, int size, V initialValue ) {
+    public <T> neureka.Data<T> allocate( DataType<T> dataType, int size, T initialValue ) {
         Class<?> type = dataType.getItemTypeClass();
-        neureka.Data array = allocate( dataType, size );
+        neureka.Data<T> array = allocate( dataType, size );
         Object data = array.getRef();
         if      ( type == Double   .class ) { Arrays.fill((double[])  data, (Double)   initialValue); }
         else if ( type == Float    .class ) { Arrays.fill((float[])   data, (Float)    initialValue); }
@@ -327,7 +327,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public neureka.Data allocate( Object jvmData, int desiredSize )
+    public neureka.Data<Object> allocate( Object jvmData, int desiredSize )
     {
         neureka.Data data = _dataArrayOf(jvmData);
         if ( jvmData instanceof int[] ) {
@@ -398,7 +398,7 @@ public class CPU extends AbstractDevice<Object>
             throw new IllegalArgumentException("Array type '"+jvmData.getClass().getSimpleName()+"' not supported!");
     }
 
-    public neureka.Data allocate( Object data ) {
+    public neureka.Data<Object> allocate( Object data ) {
         int size;
         if ( data instanceof Object[] ) {
             size = ( (Object[]) data ).length;

@@ -1431,7 +1431,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                 Object newData = _convertedDataOfType(typeClass);
                 _setData( null );
                 _setDataType( newDataType );
-                _setData( getDevice().allocate( newData, this.size() ) );
+                _setData( (Data<V>) getDevice().allocate( newData, this.size() ) );
                 return null;
             });
         }

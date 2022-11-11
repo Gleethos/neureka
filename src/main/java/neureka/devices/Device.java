@@ -190,11 +190,11 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     Collection<Tsr<V>> getTensors();
 
-    neureka.Data allocate(DataType<?> dataType, int size );
+    <T extends V> neureka.Data<T> allocate(DataType<T> dataType, int size );
 
-    <V> neureka.Data allocate(DataType<V> dataType, int size, V initialValue );
+    <T extends V> neureka.Data<T> allocate(DataType<T> dataType, int size, T initialValue );
 
-    neureka.Data allocate(Object jvmData, int desiredSize );
+    neureka.Data<Object> allocate( Object jvmData, int desiredSize );
 
     /**
      *  This method tries to allow this device to produce an optimized {@link Operation}

@@ -129,7 +129,7 @@ final class TsrConstructor
         return singleItem != null;
     }
 
-    private Data<?> _constructAllFromOne(Object singleItem, int size, Class<?> type )
+    private Data<?> _constructAllFromOne( Object singleItem, int size, Class<?> type )
     {
         if ( type == Double   .class ) { return _constructAll( size, singleItem, type ); }
         if ( type == Float    .class ) { return _constructAll( size, singleItem, type ); }
@@ -148,10 +148,10 @@ final class TsrConstructor
         return null;
     }
 
-    private Data<?> _constructAll(int size, Object singleItem, Class<?> typeClass )
+    private Data<?> _constructAll( int size, Object singleItem, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
-        return _targetDevice.allocate( dataType, Math.min(size, 1), singleItem );
+        return ((Device<Object>)_targetDevice).allocate( dataType, Math.min(size, 1), singleItem );
     }
 
     public <V> void newSeeded( Class<V> valueType, Object seed )

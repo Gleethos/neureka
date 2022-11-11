@@ -42,13 +42,13 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Collection<Tsr<Object>> getTensors() { return null; }
 
     @Override
-    public neureka.Data allocate(DataType<?> dataType, int size) { return null; }
+    public <V> neureka.Data<V> allocate(DataType<V> dataType, int size) { return null; }
 
     @Override
-    public <V> neureka.Data allocate(DataType<V> dataType, int size, V initialValue) { return null; }
+    public <V> neureka.Data<V> allocate(DataType<V> dataType, int size, V initialValue) { return null; }
 
     @Override
-    public neureka.Data allocate(Object jvmData, int desiredSize) { return null; }
+    public neureka.Data<Object> allocate(Object jvmData, int desiredSize) { return null; }
 
     @Override
     public Operation optimizedOperationOf(Function function, String name) {
