@@ -24,7 +24,7 @@ public class CLScalarBroadcastMultiplication extends CLScalarBroadcast
                     .getKernel(call)
                     .passAllOf(call.input(Number.class, 0))
                     .passAllOf(call.input(Number.class, 0 + offset))
-                    .pass( call.input( Number.class, 1 + offset ).at( 0 ).get().floatValue() )
+                    .pass( call.input( Number.class, 1 + offset ).at( 0 ).get() )
                     .pass(call.input(Number.class, 0).rank())
                     .pass(call.getValOf(Arg.DerivIdx.class))
                     .call(gwz);
