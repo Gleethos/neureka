@@ -9,7 +9,6 @@ import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -37,7 +36,7 @@ final class TsrConstructor
     }
 
     private final API _API;
-    private final Device<?> _targetDevice;
+    private final Device<Object> _targetDevice;
     private final NDConstructor _ndConstructor;
 
     /**
@@ -49,7 +48,7 @@ final class TsrConstructor
     public TsrConstructor( Device<?> targetDevice, NDConstructor ndConstructor, API API ) {
         LogUtil.nullArgCheck( targetDevice, "targetDevice", Device.class, "Cannot construct a tensor without target device." );
         LogUtil.nullArgCheck( ndConstructor, "ndConstructor", NDConstructor.class, "Cannot construct tensor without shape information." );
-        _targetDevice = targetDevice;
+        _targetDevice = (Device<Object>) targetDevice;
         _ndConstructor = ndConstructor;
         _API = API;
     }
@@ -151,7 +150,7 @@ final class TsrConstructor
     private Data<?> _constructAll( int size, Object singleItem, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
-        return ((Device<Object>)_targetDevice).allocate( dataType, Math.min(size, 1), singleItem );
+        return _targetDevice.allocate( dataType, Math.min(size, 1), singleItem );
     }
 
     public <V> void newSeeded( Class<V> valueType, Object seed )

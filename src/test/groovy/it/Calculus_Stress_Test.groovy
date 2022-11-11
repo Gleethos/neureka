@@ -175,7 +175,7 @@ class Calculus_Stress_Test extends Specification
         and : 'We create 2 tensors storing the same values, one sliced and the other a normal tensor.'
             var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed("Tempeh")
             var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[9..7915]
-            t2[0..t2.size-1] = t1
+            t2.mut[0..t2.size-1] = t1
 
         expect : 'The types of both tensors should match what was provided during instantiation.'
             t1.dataType == DataType.of(type)
