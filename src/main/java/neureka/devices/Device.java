@@ -190,7 +190,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     Collection<Tsr<V>> getTensors();
 
-    <T extends V> neureka.Data<T> allocate(DataType<T> dataType, int size );
+    <T extends V> neureka.Data<T> allocate( DataType<T> dataType, int size );
 
     <T extends V> neureka.Data<T> allocate( DataType<T> dataType, int size, T initialValue );
 

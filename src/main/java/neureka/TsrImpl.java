@@ -125,7 +125,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         if ( args == null || args.length == 0 ) return new TsrImpl<>();
         if ( args.length == 1 ) {
             TsrImpl<T> t = new TsrImpl<>();
-            boolean success = t.constructFor(CPU.get(), NDConstructor.of(new int[]{ 1 })).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
+            boolean success = t.constructFor(CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
             if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
@@ -264,8 +264,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     }
 
     TsrImpl( NDConstructor ndConstructor, DataType<?> type ) {
-        _setDataType( DataType.of( type.getRepresentativeType() ) );
-        _constructAndAllocate(ndConstructor, true );
+        _constructAndAllocate( ndConstructor, true, DataType.of( type.getRepresentativeType() ) );
     }
 
 
@@ -279,13 +278,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
         LogUtil.nullArgCheck( type, "filler", Filler.class );
-        _setDataType( type );
-        _constructAndAllocate(ndConstructor, false );
+        _constructAndAllocate( ndConstructor, false, type );
         _initDataArrayFrom( filler );
     }
 
-    private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual ) {
-        constructFor(CPU.get(), ndConstructor).newUnpopulated( virtual, true, getDataType() );
+    private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual, DataType<?> type ) {
+        constructFor(CPU.get(), ndConstructor).newUnpopulated( virtual, true, type );
     }
 
 

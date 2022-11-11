@@ -13,10 +13,6 @@ public interface NDConstructor {
 
     NDConfiguration produceNDC(boolean makeVirtual);
 
-    default NDConfiguration produceNDC() {
-        return produceNDC(getSize() > 1 );
-    }
-
     static NDConstructor of(
             int[] shape,
             int[] translation,

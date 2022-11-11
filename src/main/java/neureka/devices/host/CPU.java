@@ -314,15 +314,15 @@ public class CPU extends AbstractDevice<Object>
         Class<?> type = dataType.getItemTypeClass();
         neureka.Data<T> array = allocate( dataType, size );
         Object data = array.getRef();
-        if      ( type == Double   .class ) { Arrays.fill((double[])  data, (Double)   initialValue); }
-        else if ( type == Float    .class ) { Arrays.fill((float[])   data, (Float)    initialValue); }
-        else if ( type == Integer  .class ) { Arrays.fill((int[])     data, (Integer)  initialValue); }
-        else if ( type == Short    .class ) { Arrays.fill((short[])   data, (Short)    initialValue); }
-        else if ( type == Byte     .class ) { Arrays.fill((byte[])    data, (Byte)     initialValue); }
-        else if ( type == Long     .class ) { Arrays.fill((long[])    data, (Long)     initialValue); }
-        else if ( type == Boolean  .class ) { Arrays.fill((boolean[]) data, (Boolean)  initialValue); }
-        else if ( type == Character.class ) { Arrays.fill((char[])    data, (Character)initialValue); }
-        else { Arrays.fill((Object[])  data, initialValue); }
+        if      ( type == Double   .class ) Arrays.fill((double[])  data, (Double)   initialValue);
+        else if ( type == Float    .class ) Arrays.fill((float[])   data, (Float)    initialValue);
+        else if ( type == Integer  .class ) Arrays.fill((int[])     data, (Integer)  initialValue);
+        else if ( type == Short    .class ) Arrays.fill((short[])   data, (Short)    initialValue);
+        else if ( type == Byte     .class ) Arrays.fill((byte[])    data, (Byte)     initialValue);
+        else if ( type == Long     .class ) Arrays.fill((long[])    data, (Long)     initialValue);
+        else if ( type == Boolean  .class ) Arrays.fill((boolean[]) data, (Boolean)  initialValue);
+        else if ( type == Character.class ) Arrays.fill((char[])    data, (Character)initialValue);
+        else Arrays.fill((Object[])  data, initialValue);
         return array;
     }
 

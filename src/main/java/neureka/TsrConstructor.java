@@ -124,27 +124,26 @@ final class TsrConstructor
         _API.setIsVirtual( size > 1 );
         Data<?> array = _constructAllFromOne( singleItem, _ndConstructor.getSize(), type );
         _API.setData( array );
-        _API.setConf( _ndConstructor.produceNDC() );
+        _API.setConf( _ndConstructor.produceNDC(size > 1) );
         return singleItem != null;
     }
 
     private Data<?> _constructAllFromOne( Object singleItem, int size, Class<?> type )
     {
-        if ( type == Double   .class ) { return _constructAll( size, singleItem, type ); }
-        if ( type == Float    .class ) { return _constructAll( size, singleItem, type ); }
-        if ( type == Integer  .class ) { return _constructAll( size, singleItem, type ); }
-        if ( type == Short    .class ) { return _constructAll( size, singleItem, type ); }
-        if ( type == Byte     .class ) { return _constructAll( size, singleItem, type ); }
-        if ( type == Long     .class ) { return _constructAll( size, singleItem, type ); }
-        if ( type == Boolean  .class ) { return _constructAll( size, singleItem, type ); }
-        if ( type == Character.class ) { return _constructAll( size, singleItem, type ); }
-        if ( Number.class.isAssignableFrom( type ) ) {
+        if ( type == Double   .class ) return _constructAll( size, singleItem, type );
+        if ( type == Float    .class ) return _constructAll( size, singleItem, type );
+        if ( type == Integer  .class ) return _constructAll( size, singleItem, type );
+        if ( type == Short    .class ) return _constructAll( size, singleItem, type );
+        if ( type == Byte     .class ) return _constructAll( size, singleItem, type );
+        if ( type == Long     .class ) return _constructAll( size, singleItem, type );
+        if ( type == Boolean  .class ) return _constructAll( size, singleItem, type );
+        if ( type == Character.class ) return _constructAll( size, singleItem, type );
+        if ( Number.class.isAssignableFrom( type ) )
             return _constructAll( size, ((Number)singleItem).doubleValue(), Double.class );
-        } else
-            if ( !type.isArray() ) {
+        else if ( !type.isArray() )
             return _constructAll( size, singleItem, type );
-        }
-        return null;
+        else
+            return null;
     }
 
     private Data<?> _constructAll( int size, Object singleItem, Class<?> typeClass )
