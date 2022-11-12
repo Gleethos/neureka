@@ -254,14 +254,17 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  is ensured for such crucial procedures like the allocation of the right data. <br>
      *  The actual allocation takes place inside an instance of the DataType class.
      *  This is because the data type has to be known in order to correctly perform an allocation.<br>
-     *  <br>
-     *
-     * @param size The size of the data array which ought to be allocated.
      */
-    protected final void _allocate( int size ) { _data = getDevice().allocate( this.getDataType(), size ); }
+    protected final void _allocateVirtual() {
+        _data = getDevice()
+                .allocate(
+                    this.getDataType(),
+                    NDConstructor.of( this.getNDConf().shape() ).produceNDC(true)
+                );
+    }
 
     /**
-     *  The internal implementation handling {@link #setIsVirtual(boolean)}.
+     *  The internal implementation handling {@link MutateTsr#setIsVirtual(boolean)}.
      *
      * @param isVirtual The truth value determining if this should be made virtual or actual.
      */

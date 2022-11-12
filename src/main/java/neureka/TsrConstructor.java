@@ -156,7 +156,7 @@ final class TsrConstructor
     public <V> void newSeeded( Class<V> valueType, Object seed )
     {
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
-        Data<?> data = _targetDevice.allocate( DataType.of( valueType ), ndc.size() );
+        Data<?> data = _targetDevice.allocate( DataType.of( valueType ), ndc );
         Object out = CPURandomization.fillRandomly( data.getRef(), seed.toString() );
         assert out == data.getRef();
         _API.setType( DataType.of(valueType) );

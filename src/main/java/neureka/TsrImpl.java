@@ -400,7 +400,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                 throw new IllegalStateException( message );
             }
         }
-        else if ( isVirtual ) _allocate( 1 ); //> Only a single value representing the rest.
+        else if ( isVirtual ) _allocateVirtual(); //> Only a single value representing the rest.
         return this;
     }
 

@@ -44,7 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  *  This class is a Multiton implementation for wrapping and representing type classes.
@@ -151,7 +153,7 @@ public final class DataType<Type>
             return Object[].class;
     }
 
-    public Data virtualize( Data data )
+    public <V> Data<V> virtualize( Data<V> data )
     {
         Object value = data == null ? null : data.getRef();
         assert value != null;
@@ -171,7 +173,7 @@ public final class DataType<Type>
         else
             newValue = ( ( (Object[]) value ).length <= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };
 
-        return CPU.get().allocate(newValue, 1);
+        return (Data<V>) CPU.get().allocate( newValue, 1 );
     }
 
     public boolean equals(final Object o) {
