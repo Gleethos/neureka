@@ -122,34 +122,34 @@ final class TsrConstructor
         int size = _ndConstructor.getSize();
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
-        Data<?> array = _constructAllFromOne( singleItem, _ndConstructor.getSize(), type );
+        Data<?> array = _constructAllFromOne( singleItem, type );
         _API.setData( array );
         _API.setConf( _ndConstructor.produceNDC(size > 1) );
         return singleItem != null;
     }
 
-    private Data<?> _constructAllFromOne( Object singleItem, int size, Class<?> type )
+    private Data<?> _constructAllFromOne( Object singleItem, Class<?> type )
     {
-        if ( type == Double   .class ) return _constructAll( size, singleItem, type );
-        if ( type == Float    .class ) return _constructAll( size, singleItem, type );
-        if ( type == Integer  .class ) return _constructAll( size, singleItem, type );
-        if ( type == Short    .class ) return _constructAll( size, singleItem, type );
-        if ( type == Byte     .class ) return _constructAll( size, singleItem, type );
-        if ( type == Long     .class ) return _constructAll( size, singleItem, type );
-        if ( type == Boolean  .class ) return _constructAll( size, singleItem, type );
-        if ( type == Character.class ) return _constructAll( size, singleItem, type );
+        if ( type == Double   .class ) return _constructAll(singleItem, type );
+        if ( type == Float    .class ) return _constructAll(singleItem, type );
+        if ( type == Integer  .class ) return _constructAll(singleItem, type );
+        if ( type == Short    .class ) return _constructAll(singleItem, type );
+        if ( type == Byte     .class ) return _constructAll(singleItem, type );
+        if ( type == Long     .class ) return _constructAll(singleItem, type );
+        if ( type == Boolean  .class ) return _constructAll(singleItem, type );
+        if ( type == Character.class ) return _constructAll(singleItem, type );
         if ( Number.class.isAssignableFrom( type ) )
-            return _constructAll( size, ((Number)singleItem).doubleValue(), Double.class );
+            return _constructAll(((Number)singleItem).doubleValue(), Double.class );
         else if ( !type.isArray() )
-            return _constructAll( size, singleItem, type );
+            return _constructAll(singleItem, type );
         else
             return null;
     }
 
-    private Data<?> _constructAll( int size, Object singleItem, Class<?> typeClass )
+    private Data<?> _constructAll( Object singleItem, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
-        return _targetDevice.allocate( dataType, _ndConstructor.produceNDC(true), singleItem );
+        return _targetDevice.allocate( dataType, _ndConstructor.produceNDC(_ndConstructor.getSize() > 1), singleItem );
     }
 
     public <V> void newSeeded( Class<V> valueType, Object seed )
