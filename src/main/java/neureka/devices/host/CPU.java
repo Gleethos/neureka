@@ -291,7 +291,8 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T> neureka.Data<T> allocate( DataType<T> dataType, int size, T initialValue ) {
+    public <T> neureka.Data<T> allocate( DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
+        int size = ndc instanceof VirtualNDConfiguration ? 1 : ndc.size();
         Class<?> type = dataType.getItemTypeClass();
         neureka.Data<T> array = allocate( dataType, size );
         Object data = array.getRef();

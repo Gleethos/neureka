@@ -149,7 +149,7 @@ final class TsrConstructor
     private Data<?> _constructAll( int size, Object singleItem, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
-        return _targetDevice.allocate( dataType, Math.min(size, 1), singleItem );
+        return _targetDevice.allocate( dataType, _ndConstructor.produceNDC(true), singleItem );
     }
 
     public <V> void newSeeded( Class<V> valueType, Object seed )

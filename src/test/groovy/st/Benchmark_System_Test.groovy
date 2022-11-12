@@ -105,14 +105,14 @@ class Benchmark_System_Test extends Specification
             hash = ""
             var i = 0
             session(
-                    configuration, null,
-                    Device.get("first"),
-                        tsr -> {
-                            var str = tsr.toString(strSettings)
-                            if ( rec[i] != str ) println "Mismatch at index $i:\n${rec[i]}\n$str\n"
-                            hash = ( hash + str ).md5()
-                            i++
-                        }
+                configuration, null,
+                Device.get("first"),
+                    tsr -> {
+                        var str = tsr.toString(strSettings)
+                        if ( rec[i] != str ) println "Mismatch at index $i:\n${rec[i]}\n$str\n"
+                        hash = ( hash + str ).md5()
+                        i++
+                    }
             )
 
         then : 'The calculated hash is as expected.'

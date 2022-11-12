@@ -252,12 +252,12 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <V> neureka.Data<V> allocate(DataType<V> dataType, int size, V initialValue) {
+    public <V> neureka.Data<V> allocate( DataType<V> dataType, NDConfiguration ndc, V initialValue ) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 
     @Override
-    public neureka.Data<Object> allocate(Object jvmData, int desiredSize) {
+    public neureka.Data<Object> allocate( Object jvmData, int desiredSize ) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 

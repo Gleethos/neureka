@@ -294,7 +294,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @param source The source of the kernel which ought to be compiled.
      * @return This very instance in order to enable the factory pattern.
      */
-    public synchronized OpenCLDevice compileAdHocKernel(String name, String source) {
+    public synchronized OpenCLDevice compileAdHocKernel( String name, String source ) {
         if (this.hasAdHocKernel(name)) {
             cl_ad_hoc adHoc = _kernelCache.get(name);
             String message =
@@ -373,7 +373,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Operation optimizedOperationOf(Function function, String name) {
+    public Operation optimizedOperationOf( Function function, String name ) {
         return new CLFunctionCompiler( this, function, name ).optimize();
     }
 
@@ -427,7 +427,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      *
      * @param tensor The tensor whose data ought to be stored.
      */
-    private <T extends Number> void _store(Tsr<T> tensor, Tsr<T> parent ) {
+    private <T extends Number> void _store( Tsr<T> tensor, Tsr<T> parent ) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add(
             tensor.getMut().upcast(Number.class),
@@ -505,7 +505,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             tensor.getMut().toType(F32.class);
     }
 
-    private cl_tsr.cl_config _writeNDConfig(NDConfiguration ndc) {
+    private cl_tsr.cl_config _writeNDConfig( NDConfiguration ndc ) {
 
         cl_tsr.cl_config clf = new cl_tsr.cl_config();
 
@@ -621,7 +621,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number>  neureka.Data<T> allocate(DataType<T> dataType, int size, T initialValue ) {
+    public <T extends Number>  neureka.Data<T> allocate(DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 

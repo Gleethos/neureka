@@ -37,7 +37,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Device<Object> free( Tsr tensor ) { return this; }
 
     @Override
-    public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) { return this; }
+    public Device<Object> approve( ExecutionCall<? extends Device<?>> call ) { return this; }
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return null; }
@@ -46,18 +46,18 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public <V> neureka.Data<V> allocate( DataType<V> dataType, NDConfiguration ndc ) { return null; }
 
     @Override
-    public <V> neureka.Data<V> allocate(DataType<V> dataType, int size, V initialValue) { return null; }
+    public <V> neureka.Data<V> allocate( DataType<V> dataType, NDConfiguration ndc, V initialValue ) { return null; }
 
     @Override
-    public neureka.Data<Object> allocate(Object jvmData, int desiredSize) { return null; }
+    public neureka.Data<Object> allocate( Object jvmData, int desiredSize ) { return null; }
 
     @Override
-    public Operation optimizedOperationOf(Function function, String name) {
+    public Operation optimizedOperationOf( Function function, String name ) {
         return null;
     }
 
     @Override
-    public boolean update(OwnerChangeRequest<Tsr<Object>> changeRequest) {
+    public boolean update( OwnerChangeRequest<Tsr<Object>> changeRequest ) {
         return true;
     }
 }
