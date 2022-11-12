@@ -59,15 +59,14 @@ final class TsrConstructor
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
      */
-    public void newUnpopulated(
+    void unpopulated(
             boolean makeVirtual, boolean autoAllocate, DataType<?> type
     ) {
         _API.setType( type );
         _API.setIsVirtual( makeVirtual );
-        if ( autoAllocate )
-            _API.setData( _targetDevice.allocate( type, makeVirtual ? 1 : _ndConstructor.getSize() ) );
-
-        _API.setConf( _ndConstructor.produceNDC( makeVirtual ) );
+        NDConfiguration ndc = _ndConstructor.produceNDC( makeVirtual );
+        if ( autoAllocate ) _API.setData( _targetDevice.allocate( type, ndc ) );
+        _API.setConf( ndc );
     }
 
     public void constructTrusted(
@@ -102,9 +101,10 @@ final class TsrConstructor
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
 
-        Data<?> array = _targetDevice.allocate( data, size );
-        newUnpopulated( false, false, dataType );
-        _API.setData( array );
+        _API.setType( dataType );
+        _API.setIsVirtual( false );
+        _API.setConf( _ndConstructor.produceNDC( false ) );
+        _API.setData( _targetDevice.allocate( data, size ) );
     }
 
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
@@ -122,43 +122,46 @@ final class TsrConstructor
         int size = _ndConstructor.getSize();
         _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
-        Data<?> array = _constructAllFromOne( singleItem, type );
+        NDConfiguration ndc = _ndConstructor.produceNDC(_ndConstructor.getSize() > 1);
+        Data<?> array = _constructAllFromOne( singleItem, ndc, type );
         _API.setData( array );
-        _API.setConf( _ndConstructor.produceNDC(size > 1) );
+        _API.setConf( ndc );
         return singleItem != null;
     }
 
-    private Data<?> _constructAllFromOne( Object singleItem, Class<?> type )
+    private Data<?> _constructAllFromOne( Object singleItem, NDConfiguration ndc, Class<?> type )
     {
-        if ( type == Double   .class ) return _constructAll(singleItem, type );
-        if ( type == Float    .class ) return _constructAll(singleItem, type );
-        if ( type == Integer  .class ) return _constructAll(singleItem, type );
-        if ( type == Short    .class ) return _constructAll(singleItem, type );
-        if ( type == Byte     .class ) return _constructAll(singleItem, type );
-        if ( type == Long     .class ) return _constructAll(singleItem, type );
-        if ( type == Boolean  .class ) return _constructAll(singleItem, type );
-        if ( type == Character.class ) return _constructAll(singleItem, type );
+        if ( type == Double   .class ) return _constructAll(singleItem, ndc, type );
+        if ( type == Float    .class ) return _constructAll(singleItem, ndc, type );
+        if ( type == Integer  .class ) return _constructAll(singleItem, ndc, type );
+        if ( type == Short    .class ) return _constructAll(singleItem, ndc, type );
+        if ( type == Byte     .class ) return _constructAll(singleItem, ndc, type );
+        if ( type == Long     .class ) return _constructAll(singleItem, ndc, type );
+        if ( type == Boolean  .class ) return _constructAll(singleItem, ndc, type );
+        if ( type == Character.class ) return _constructAll(singleItem, ndc, type );
         if ( Number.class.isAssignableFrom( type ) )
-            return _constructAll(((Number)singleItem).doubleValue(), Double.class );
+            return _constructAll(((Number)singleItem).doubleValue(), ndc, Double.class );
         else if ( !type.isArray() )
-            return _constructAll(singleItem, type );
+            return _constructAll(singleItem, ndc, type );
         else
             return null;
     }
 
-    private Data<?> _constructAll( Object singleItem, Class<?> typeClass )
+    private Data<?> _constructAll( Object singleItem, NDConfiguration ndc, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
-        return _targetDevice.allocate( dataType, _ndConstructor.produceNDC(_ndConstructor.getSize() > 1), singleItem );
+        return _targetDevice.allocate( dataType, ndc, singleItem );
     }
 
     public <V> void newSeeded( Class<V> valueType, Object seed )
     {
-        int size = _ndConstructor.getSize();
-        Data<?> data = _targetDevice.allocate( DataType.of( valueType ), size );
+        NDConfiguration ndc = _ndConstructor.produceNDC( false );
+        Data<?> data = _targetDevice.allocate( DataType.of( valueType ), ndc.size() );
         Object out = CPURandomization.fillRandomly( data.getRef(), seed.toString() );
         assert out == data.getRef();
-        newUnpopulated( false, false, DataType.of(valueType) );
+        _API.setType( DataType.of(valueType) );
+        _API.setIsVirtual( false );
+        _API.setConf( ndc );
         _API.setData( data );
     }
 

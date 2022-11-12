@@ -283,7 +283,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     }
 
     private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual, DataType<?> type ) {
-        constructFor(CPU.get(), ndConstructor).newUnpopulated( virtual, true, type );
+        constructFor(CPU.get(), ndConstructor).unpopulated( virtual, true, type );
     }
 
 
@@ -373,7 +373,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                 _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            constructFor(CPU.get(),NDConstructor.of(getNDConf().shape())).newUnpopulated( isVirtual, false, getDataType() );
+            constructFor(CPU.get(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
             if ( isVirtual )
                 this.find( Relation.class )
                         .ifPresent( r ->
