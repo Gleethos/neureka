@@ -158,7 +158,6 @@ abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, Number>
             _LOG.error(message, e);
             throw new IllegalStateException(message);
         }
-        tensor.getMut().setDataType( DataType.of( _type.targetedValueType() ) );
         return this;
     }
 

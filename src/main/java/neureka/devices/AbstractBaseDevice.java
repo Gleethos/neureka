@@ -35,6 +35,8 @@ SOFTWARE.
 package neureka.devices;
 
 import neureka.Tsr;
+import neureka.common.utility.LogUtil;
+import neureka.dtype.DataType;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -68,5 +70,28 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
 
     @Override
     public Spliterator<Tsr<V>> spliterator() { return getTensors().spliterator(); }
+
+    protected abstract class DeviceData<T extends V> implements neureka.Data<T>
+    {
+        private final Device<V> _owner;
+        private final Object _ref;
+        private final DataType<T> _dataType;
+
+        public DeviceData(
+                Device<V> owner,
+                Object ref,
+                DataType<T> dataType
+        ) {
+            LogUtil.nullArgCheck( owner, "owner", Device.class );
+            LogUtil.nullArgCheck( dataType, "dataType", DataType.class );
+            _owner = owner;
+            _ref = ref;
+            _dataType = dataType;
+        }
+
+        @Override public Device<T> owner() { return (Device<T>) _owner; }
+        @Override public Object getRef() { return _ref; }
+        @Override public DataType<T> dataType() { return _dataType; }
+    }
 
 }

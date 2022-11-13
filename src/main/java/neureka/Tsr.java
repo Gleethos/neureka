@@ -1023,7 +1023,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *
      * @return The truth value determining if this tensor has no {@link Data}.
      */
-    default boolean isEmpty() { return getMut().getData() == null; }
+    default boolean isEmpty() { return getMut().getData() == null || getMut().getData().getRef() == null; }
 
     /**
      *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance

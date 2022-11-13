@@ -11,7 +11,7 @@ import neureka.devices.file.JPEGHandle
 import neureka.devices.file.PNGHandle
 import neureka.dtype.DataType
 import neureka.dtype.custom.F64
-import neureka.dtype.custom.I16
+import neureka.dtype.custom.UI8
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -60,9 +60,9 @@ class FileDevice_Spec extends Specification
         String path, String filename
     ) {
         given : 'A new tensor is being created for testing.'
-            Tsr a = Tsr.of([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])
+            var a = Tsr.of([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])
         and : 'A file device instance is being accessed for a given path.'
-            def device = FileDevice.at( path )
+            var device = FileDevice.at( path )
 
         expect : 'Initially the device does not store our newly created tensor.'
             !device.contains(a)
@@ -74,7 +74,7 @@ class FileDevice_Spec extends Specification
             new File( path + '/' + filename + '.idx' ).exists()
 
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
-            a.mut.data == null
+            a.mut.data.ref == null
 
         when : 'Freeing the tensor...'
             device.free( a )
@@ -92,11 +92,11 @@ class FileDevice_Spec extends Specification
             String path, String filename, int[] shape, Class<FileHandle<?,Number>> fileHandleClass, Class<?> dataTypeClass
     ) {
         given : 'A new tensor is being created for testing.'
-            Tsr a = Tsr.of( shape, -8d..8d )
+            var a = Tsr.of( shape, -8d..8d )
         and : 'A String representation of the shape.'
-            def shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})
+            var shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})
         and : 'A file device instance is being accessed for a given path.'
-            def device = FileDevice.at( path )
+            var device = FileDevice.at( path )
 
         expect : 'Initially the device does not store our newly created tensor.'
             !device.contains(a)
@@ -112,7 +112,7 @@ class FileDevice_Spec extends Specification
             }
 
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
-            a.mut.data == null
+            a.mut.data.ref == null
 
         and : 'The tensor is now of the expected data-type.'
             a.dataType == DataType.of( dataTypeClass )
@@ -130,8 +130,8 @@ class FileDevice_Spec extends Specification
         where : 'The following parameters are being used:'
             path             | filename            |  shape  || fileHandleClass  | dataTypeClass
             "build/test-can" | "tensor_2x4x3_.idx" | [2,4,3] || IDXHandle.class  | F64.class
-            "build/test-can" | "tensor_2x4x3_.jpg" | [2,4,3] || JPEGHandle.class | I16.class
-            "build/test-can" | "tensor_5x3x4_.png" | [5,3,4] || PNGHandle.class  | I16.class
+            "build/test-can" | "tensor_2x4x3_.jpg" | [2,4,3] || JPEGHandle.class | UI8.class
+            "build/test-can" | "tensor_5x3x4_.png" | [5,3,4] || PNGHandle.class  | UI8.class
             "build/test-can" | null                | [2,4,3] || IDXHandle.class  | F64.class
             "build/test-can" | "tensor_4x3_.csv"   | [4,3]   || CSVHandle.class  | String.class
     }

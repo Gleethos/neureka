@@ -29,7 +29,6 @@ final class TsrConstructor
      *  in the making...
      */
     public interface API {
-        void   setType( DataType<?> type );
         void   setConf( NDConfiguration conf );
         void   setData( Data<?> o );
         void   setIsVirtual(  boolean isVirtual );
@@ -62,7 +61,6 @@ final class TsrConstructor
     void unpopulated(
             boolean makeVirtual, boolean autoAllocate, DataType<?> type
     ) {
-        _API.setType( type );
         _API.setIsVirtual( makeVirtual );
         NDConfiguration ndc = _ndConstructor.produceNDC( makeVirtual );
         if ( autoAllocate ) _API.setData( _targetDevice.allocate( type, ndc ) );
@@ -70,10 +68,8 @@ final class TsrConstructor
     }
 
     public void constructTrusted(
-            DataType<?> dataType,
             Data<?> data
     ) {
-        _API.setType( dataType );
         _API.setData( data );
         _API.setConf( _ndConstructor.produceNDC( false ) );
     }
@@ -101,10 +97,9 @@ final class TsrConstructor
         if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
             if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
 
-        _API.setType( dataType );
         _API.setIsVirtual( false );
         _API.setConf( _ndConstructor.produceNDC( false ) );
-        _API.setData( _targetDevice.allocate( data, size ) );
+        _API.setData( _targetDevice.allocate( dataType, data, size ) );
     }
 
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
@@ -118,9 +113,7 @@ final class TsrConstructor
 
     public boolean newPopulatedFromOne( Object singleItem, Class<?> type )
     {
-        DataType<Object> dataType = (DataType<Object>) DataType.of( type );
         int size = _ndConstructor.getSize();
-        _API.setType( dataType );
         _API.setIsVirtual( size > 1 );
         NDConfiguration ndc = _ndConstructor.produceNDC(_ndConstructor.getSize() > 1);
         Data<?> array = _constructAllFromOne( singleItem, ndc, type );
@@ -159,7 +152,6 @@ final class TsrConstructor
         Data<?> data = _targetDevice.allocate( DataType.of( valueType ), ndc );
         Object out = CPURandomization.fillRandomly( data.getRef(), seed.toString() );
         assert out == data.getRef();
-        _API.setType( DataType.of(valueType) );
         _API.setIsVirtual( false );
         _API.setConf( ndc );
         _API.setData( data );

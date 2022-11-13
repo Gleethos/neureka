@@ -246,7 +246,8 @@ public class CPU extends AbstractDevice<Object>
     ) {
         Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getRef();
         if ( data == null ) {
-            tensor.getMut().setData( _dataArrayOf(array) );
+            DataType<?> dataType = tensor.getDataType() != null ? tensor.getDataType() : _dataTypeOf(array);
+            tensor.getMut().setData( _dataArrayOf( array, (DataType<T>) dataType) );
             return;
         }
         Class<?> arrayType = data.getClass();
@@ -309,9 +310,9 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public neureka.Data<Object> allocate( Object jvmData, int desiredSize )
+    public <T> neureka.Data<T> allocate( DataType<T> dataType, Object jvmData, int desiredSize )
     {
-        neureka.Data data = _dataArrayOf(jvmData);
+        neureka.Data data = _dataArrayOf(jvmData, (DataType<Object>) (dataType != null ? dataType : _dataTypeOf(jvmData)));
         if ( jvmData instanceof int[] ) {
             int[] array = (int[]) jvmData;
             if ( desiredSize != array.length ) {
@@ -404,7 +405,7 @@ public class CPU extends AbstractDevice<Object>
         else
             throw new IllegalArgumentException( "Unsupported data type: " + data.getClass() );
 
-        neureka.Data dataArray = CPU.get().allocate( data, size );
+        neureka.Data dataArray = CPU.get().allocate( _dataTypeOf(data), data, size );
         if ( dataArray.getRef() != data )
             throw new IllegalStateException( "CPU seems to have reallocated some already valid data unnecessarily! This is most likely a bug." );
 
@@ -456,7 +457,7 @@ public class CPU extends AbstractDevice<Object>
             newValue = new Object[ size ];
             if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
         }
-        return _dataArrayOf(newValue);
+        return _dataArrayOf(newValue, (DataType<Object>) dataType);
     }
 
     @Override
@@ -497,23 +498,23 @@ public class CPU extends AbstractDevice<Object>
 
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
-            return _dataArrayOf(new double[ size ]);
+            return _dataArrayOf(new double[ size ], dataType);
         else if ( typeClass == F32.class )
-            return _dataArrayOf(new float[ size ]);
+            return _dataArrayOf(new float[ size ], dataType);
         else if ( typeClass == I32.class || typeClass == UI32.class )
-            return _dataArrayOf(new int[ size ]);
+            return _dataArrayOf(new int[ size ], dataType);
         else if ( typeClass == I16.class || typeClass == UI16.class )
-            return _dataArrayOf(new short[ size ]);
+            return _dataArrayOf(new short[ size ], dataType);
         else if ( typeClass == I8.class || typeClass == UI8.class )
-            return _dataArrayOf(new byte[ size ]);
+            return _dataArrayOf(new byte[ size ], dataType);
         else if ( typeClass == I64.class || typeClass == UI64.class )
-            return _dataArrayOf(new long[ size ]);
+            return _dataArrayOf(new long[ size ], dataType);
         else if ( dataType.getItemTypeClass() == Boolean.class )
-            return _dataArrayOf(new boolean[ size ]);
+            return _dataArrayOf(new boolean[ size ], dataType);
         else if ( dataType.getItemTypeClass() == Character.class )
-            return _dataArrayOf(new char[ size ]);
+            return _dataArrayOf(new char[ size ], dataType);
         else
-            return _dataArrayOf(new Object[ size ]);
+            return _dataArrayOf(new Object[ size ], dataType);
     }
 
     @Override

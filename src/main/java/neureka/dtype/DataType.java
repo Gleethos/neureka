@@ -173,7 +173,7 @@ public final class DataType<Type>
         else
             newValue = ( ( (Object[]) value ).length <= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };
 
-        return (Data<V>) CPU.get().allocate( newValue, 1 );
+        return CPU.get().allocate( data.dataType(), newValue, 1 );
     }
 
     public boolean equals(final Object o) {

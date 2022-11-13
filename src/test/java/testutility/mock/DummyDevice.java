@@ -49,7 +49,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public <V> neureka.Data<V> allocate( DataType<V> dataType, NDConfiguration ndc, V initialValue ) { return null; }
 
     @Override
-    public neureka.Data<Object> allocate( Object jvmData, int desiredSize ) { return null; }
+    public <T> neureka.Data<T> allocate( DataType<T> dataType, Object jvmData, int desiredSize ) { return null; }
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) {

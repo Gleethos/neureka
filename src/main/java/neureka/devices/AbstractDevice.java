@@ -182,7 +182,10 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             Tsr<T> tensor, Object array,
             int offset, int start, int size
     ) {
-        Class<?> arrayType = tensor.getDataType().dataArrayType();
+        DataType<?> dataType = tensor.getDataType();
+        if ( dataType == null )
+            dataType = _dataTypeOf( array );
+        Class<?> arrayType = dataType.dataArrayType();
         if ( !arrayType.isAssignableFrom( array.getClass() ) )
             array = DataConverter.get().convert( array, arrayType );
         _writeArray( tensor, array, offset, start, size );
@@ -215,13 +218,9 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected abstract DataType<?> _dataTypeOf( Object rawData );
 
-    protected <T extends V> neureka.Data<T> _dataArrayOf( Object data ) {
+    protected <T extends V> neureka.Data<T> _dataArrayOf( Object data, DataType<T> dataType ) {
         assert !(data instanceof neureka.Data);
-        return new neureka.Data<T>() {
-            @Override public Device<T> owner() { return (Device<T>) AbstractDevice.this; }
-            @Override public Object getRef() { return data; }
-            @Override public DataType<T> dataType() { return (DataType<T>) _dataTypeOf(data); }
-        };
+        return new DeviceData<T>( this, data, dataType ) {};
     }
 
 }

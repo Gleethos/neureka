@@ -226,7 +226,15 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  second parameter into this {@link Tsr} instance.
      *  This constructor will be called by the {@link Tsr#newInstance()} factory method.
      */
-    TsrImpl() {}
+    TsrImpl() {
+        _setData(new Data<V>() {
+            @Override public Device<V> owner() { return (Device<V>) CPU.get(); }
+            @Override public Object getRef() { return null;}
+            @Override public DataType<V> dataType() {
+                return (DataType<V>) Neureka.get().settings().dtype().getDefaultDataType();
+            }
+        });
+    }
 
     TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object value ) {
         Object data = value;
@@ -246,7 +254,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     }
 
     TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Data data ) {
-        constructFor(CPU.get(), ndConstructor).constructTrusted( dataType, data );
+        constructFor(CPU.get(), ndConstructor).constructTrusted(data );
     }
 
     /**
@@ -675,13 +683,11 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     private void _become( TsrImpl<V> tensor )
     {
         if ( tensor == null ) return;
-        _setDataType( tensor.getDataType() );
         _setData( tensor.getMut().getData() );
         _setNDConf( tensor.getNDConf() );
         _flags = tensor._flags;
         _transferFrom( tensor );
         tensor._setData( null );
-        tensor._setDataType( null );
         tensor._setNDConf( null );
         tensor._flags = 0;
     }
@@ -737,12 +743,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         else
             throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TsrImpl.this.itemType()+"'.");
     }
-
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public <T> Tsr<T> setDataType( DataType<T> dataType ) { return (TsrImpl<T>) TsrImpl.this._setDataType(dataType); }
 
     /**
      *  {@inheritDoc}
@@ -1421,15 +1421,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      */
     private <T> Tsr<T> _toType( Class<T> typeClass )
     {
-        DataType<?> newDataType = DataType.of( typeClass );
-        if ( newDataType == this.getData().dataType() )
-            _setDataType( newDataType );
-        else if ( newDataType != this.getDataType() ) {
+        DataType<V> newDataType = (DataType<V>) DataType.of( typeClass );
+        if ( newDataType != this.getDataType() ) {
             CPU.get().borrow((Tsr<Object>) this).in(()->{
                 Object newData = _convertedDataOfType(typeClass);
                 _setData( null );
-                _setDataType( newDataType );
-                _setData( (Data<V>) getDevice().allocate( newData, this.size() ) );
+                _setData( getDevice().allocate( newDataType, newData, this.size() ) );
                 return null;
             });
         }

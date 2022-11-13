@@ -78,7 +78,6 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-        tensor.getMut().setDataType( DataType.of( String.class ) );
     }
 
     public CSVHandle(

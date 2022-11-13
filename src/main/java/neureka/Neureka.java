@@ -44,6 +44,7 @@ import neureka.common.utility.LogUtil;
 import neureka.common.utility.SettingsLoader;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.utility.Messages;
+import neureka.dtype.DataType;
 import neureka.dtype.custom.F64;
 import neureka.ndim.config.types.sliced.SlicedNDConfiguration;
 import neureka.view.NDPrintSettings;
@@ -686,6 +687,10 @@ public final class Neureka
              *  then this property will be used.
              */
             public Class<?> getDefaultDataTypeClass() { return _defaultDataTypeClass; }
+
+            public DataType<?> getDefaultDataType() {
+                return DataType.of( _defaultDataTypeClass );
+            }
 
             /**
              *  The default data type is not relevant most of the time.

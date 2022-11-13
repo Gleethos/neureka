@@ -4,7 +4,6 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
 import neureka.common.utility.LogUtil;
-import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.List;
@@ -87,19 +86,6 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @return A tensor whose type parameter is upcast.
      */
     <U/*super T*/> Tsr<U> upcast(Class<U> superType);
-
-    /**
-     * This method enables modifying the data-type configuration of this {@link AbstractNda}.
-     * Warning! The method should not be used unless absolutely necessary.
-     * This is because it can cause unpredictable inconsistencies between the
-     * underlying {@link DataType} instance of this {@link AbstractNda} and the actual type of the actual
-     * data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
-     * <br>
-     *
-     * @param dataType The new {@link DataType} which ought to be set.
-     * @return The tensor with the new data type set.
-     */
-    <V> Tsr<V> setDataType(DataType<V> dataType);
 
     /**
      * This method allows you to modify the data-layout of this {@link AbstractNda}.

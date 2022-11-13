@@ -496,7 +496,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         _tensors.add( tensor );
 
-        tensor.getMut().setData( _dataArrayOf(newClt) );
+        tensor.getMut().setData( _dataArrayOf(newClt, (DataType<Number>) _dataTypeOf(newClt)) );
         migration.run();
 
         // When tensors get stored on this device,
@@ -626,7 +626,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public neureka.Data<Object> allocate( Object jvmData, int desiredSize ) {
+    public <T extends Number> neureka.Data<T> allocate(DataType<T> dataType, Object jvmData, int desiredSize) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
@@ -678,7 +678,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     protected final <T extends Number> void _swap(Tsr<T> former, Tsr<T> replacement) {
         cl_tsr<Number, T> clTsr = former.getMut().getData().getRef( cl_tsr.class);
         former.getMut().setData(null);
-        replacement.getMut().setData( _dataArrayOf(clTsr) );
+        replacement.getMut().setData( _dataArrayOf(clTsr, (DataType<T>) _dataTypeOf(clTsr)) );
         _tensors.remove(former);
         _tensors.add( replacement.getMut().upcast(Number.class) );
     }

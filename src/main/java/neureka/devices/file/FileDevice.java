@@ -199,11 +199,13 @@ public final class FileDevice extends AbstractBaseDevice<Object>
             fullFileName = filename;
         }
         if ( FileHandle.FACTORY.hasSaver( extension ) ) {
-            _stored.put(
-                    (Tsr<Object>) tensor,
-                    FileHandle.FACTORY.getSaver(extension).save( _directory + "/" + fullFileName, tensor, configurations )
-            );
-            tensor.getMut().setData(null);
+            FileHandle handle =
+                    FileHandle.FACTORY
+                    .getSaver(extension)
+                    .save( _directory + "/" + fullFileName, tensor, configurations );
+
+            _stored.put((Tsr<Object>) tensor, handle);
+            tensor.getMut().setData( new DeviceData( this, null, handle.getDataType() ){} );
         }
         return this;
     }
@@ -257,7 +259,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public neureka.Data<Object> allocate( Object jvmData, int desiredSize ) {
+    public <T> neureka.Data<T> allocate( DataType<T> dataType, Object jvmData, int desiredSize ) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 

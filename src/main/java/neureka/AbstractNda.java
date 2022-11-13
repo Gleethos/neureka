@@ -76,10 +76,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  which imply individual access patterns for the underlying {@link #_data}.
      */
     private NDConfiguration _NDConf;
-    /**
-     *  The data type instance wrapping and representing the actual value type class.
-     */
-    private DataType<?> _dataType = DataType.of( Neureka.get().settings().dtype().getDefaultDataTypeClass() );
+
     /**
      *  The heart and sole of the nd-array / tensor: its underlying data array.
      */
@@ -124,7 +121,9 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
 
     /** {@inheritDoc} */
      @Override
-    public DataType<V> getDataType() { _guardGet("data type"); return (DataType<V>) _dataType; }
+    public DataType<V> getDataType() {
+         _guardGet("data type"); return _data != null && _data.dataType() != null ? _data.dataType() : null;
+     }
 
     protected final Data<V> _getData() { _guardGet("data object"); return _data; }
 
@@ -135,35 +134,13 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     /** {@inheritDoc} */
     @Override
     public Class<V> getItemType() {
-        _guardGet("data type class"); return ( _dataType != null ? (Class<V>) _dataType.getItemTypeClass() : null );
+        _guardGet("data type class"); return ( _data != null && _data.dataType() != null ? _data.dataType().getItemTypeClass() : null );
     }
 
     /** {@inheritDoc} */
      @Override
     public Class<?> getRepresentativeItemClass() {
-        _guardGet("representative data type class"); return ( _dataType != null ? _dataType.getRepresentativeType() : null );
-    }
-
-    /**
-     *  This method enables modifying the data-type configuration of this {@link AbstractNda}.
-     *  Warning! The method should not be used unless absolutely necessary.
-     *  This is because it can cause unpredictable inconsistencies between the
-     *  underlying {@link DataType} instance of this {@link AbstractNda} and the actual type of the actual
-     *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
-     *  <br>
-     * @param dataType The new {@link DataType} which ought to be set.
-     * @return The final instance type of this class which enables method chaining.
-     */
-    protected C _setDataType( DataType<?> dataType )
-    {
-        _guardSet( "data type" );
-        //if ( _data != null ) {
-        //    String message = "Data type of tensor can only be set when data attribute is null!\n" +
-        //                     "This is due to construction-consistency reasons.\n";
-        //    throw new IllegalStateException( message );
-        //}
-        _dataType = dataType;
-        return (C) this;
+        _guardGet("representative data type class"); return ( _data != null && _data.dataType() != null ? _data.dataType().getRepresentativeType() : null );
     }
 
     /**
@@ -174,20 +151,6 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     {
         _guardSet( "data object" );
         Object data = array == null ? null : array.getRef();
-        if ( _dataType == null ) {
-            String message = "Trying to set data in a tensor which does not have a DataTyp instance.";
-            _LOG.error( message );
-            throw new IllegalStateException( message );
-        }
-        if ( data != null && _dataType.typeClassImplements( NumericType.class ) ) {
-            NumericType<?,?,?,?> numericType = (NumericType<?,?,?,?>) _dataType.getTypeClassInstance(NumericType.class);
-            if ( data.getClass().isArray() && numericType.targetArrayType() != data.getClass() ) {
-                String message = "Cannot set data whose type does not match what is defined by the DataType instance.\n" +
-                                 "Current type '"+numericType.targetArrayType().getSimpleName()+"' does not match '"+ data.getClass().getSimpleName()+"'.\n";
-                _LOG.error( message );
-                throw new IllegalStateException( message );
-            }
-        }
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
         if ( _data != null && _data.getRef() != data && data != null && _data.getRef() != null ) {
             boolean isProbablyDeviceTransfer = ( _data.getRef().getClass().isArray() != data.getClass().isArray() );
@@ -286,7 +249,6 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             new TsrConstructor(
                 targetDevice, ndConstructor,
                 new TsrConstructor.API() {
-                    @Override public void   setType( DataType<?> type       ) { nda.getMut().setDataType( type ); }
                     @Override public void   setConf( NDConfiguration conf   ) { nda.getMut().setNDConf( conf ); }
                     @Override public void   setData( Data o                 ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }
                     @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
@@ -303,7 +265,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  <br>
      */
-    protected final void _virtualize() { _data = _dataType.virtualize( _data ); }
+    protected final void _virtualize() { _data = _getData().dataType().virtualize( _data ); }
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. <br>
@@ -338,7 +300,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      @Override
     public boolean is( Class<?> typeClass ) {
         DataType<?> type = DataType.of( typeClass );
-        return type == _dataType;
+        return type == _getData().dataType();
     }
 
     /**

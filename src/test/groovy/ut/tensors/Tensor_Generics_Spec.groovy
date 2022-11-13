@@ -47,7 +47,7 @@ class Tensor_Generics_Spec extends Specification
     def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {
 
         given : 'We create a completely uninitialized tensor instance.'
-            Tsr<Double> t = Tsr.newInstance()
+            var t = Tsr.newInstance()
 
         expect :
             t.getRepresentativeItemClass() == Neureka.get().settings().dtype().defaultDataTypeClass
