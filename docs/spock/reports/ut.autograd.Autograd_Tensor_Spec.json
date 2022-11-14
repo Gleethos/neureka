@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.035 seconds"
+    "duration":"0.032 seconds"
   },
   "headers":["\n            <h2> Autograd Tensor Behavior </h2>\n            <p>\n                Specified below is the behavior of the autograd system.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test basic autograd behaviour. (Not on device)",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -57,7 +57,7 @@
     {
       "id":"Second-Test \"x-mul\" autograd behaviour. (Not on device)",
       "result":"PASS",
-      "duration":"0.019 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -114,7 +114,7 @@
 
         {"kind":"and","text":"","code":["y.itemType == type"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.Double","class java.lang.Float"]}}
+        {"kind":"where","text":"","code":{"type":["Double","Float"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

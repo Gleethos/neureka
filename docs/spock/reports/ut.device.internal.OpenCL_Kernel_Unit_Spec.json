@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.034 seconds"
+    "duration":"0.035 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -33,7 +33,7 @@
     {
       "id":"The Reduce implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.014 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,7 +46,7 @@
 
         {"kind":"and","text":"","code":["(1.._) * device.hasAdHocKernel(CLReduce.INDICES_MAPPER_ID) >>> [false, true]","(0.._) * device.compileAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> device","(1.._) * device.compileAndGetAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> kernel","(0.._) * device.getAdHocKernel(CLReduce.INDICES_MAPPER_ID) >> kernel"]},
 
-        {"kind":"where","text":"","code":{"type":["MIN","MAX"]}}
+        {"kind":"where","text":"","code":{"type":["CLReduce.Type.MIN","CLReduce.Type.MAX"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -54,7 +54,7 @@
     {
       "id":"The Sum implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
     {
       "id":"The Sum implementation for the OpenCLDevice has realistic behaviour for when the number of elements is a prime.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

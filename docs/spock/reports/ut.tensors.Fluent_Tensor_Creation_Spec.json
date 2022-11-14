@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.039 seconds"
+    "duration":"0.046 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -21,19 +21,19 @@
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new homogeneously filled Tsr instance using the fluent builder API.","code":["    Tsr<?> t = Tsr.of( type )","                         .withShape( 3, 2 )","                         .all( value )"]},
+        {"kind":"given","text":"We create a new homogeneously filled Tsr instance using the fluent builder API.","code":["Tsr<?> t = Tsr.of( type )","                     .withShape( 3, 2 )","                     .all( value )"]},
 
-        {"kind":"expect","text":"This new instance will have the expected data type...","code":["    t.dataType == DataType.of(type)"]},
+        {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["    t.mut.data.ref == data","    t.rawData.length == 1","    t.items.size() == 6"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData.length == 1","t.items.size() == 6"]},
 
-        {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["    t.shape() == [3, 2]"]},
+        {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
-        {"kind":"and","text":"The size of the tensor will be the product of all shape entries!","code":["    t.size() == 6"]},
+        {"kind":"and","text":"The size of the tensor will be the product of all shape entries!","code":["t.size() == 6"]},
 
-        {"kind":"and","text":"\n                Based on the fact that the tensor is homogeneously filled it will be a \"virtual tensor\"\n                This means that the tensor will not have allocated the memory proportional to the size\n                of the tensor!\n            ","code":["    t.isVirtual()"]},
+        {"kind":"and","text":"\n                Based on the fact that the tensor is homogeneously filled it will be a \"virtual tensor\"\n                This means that the tensor will not have allocated the memory proportional to the size\n                of the tensor!\n            ","code":["t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Long","class java.lang.Boolean","class java.lang.Character"],"value":["4","4.0","4.0","42","false","°"],"data":["[4]","[4.0]","[4.0]","[42]","[false]","°"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer","Double","Float","Long","Boolean","Character"],"value":["4   as int","4.0 as double","4f  as float","42L as Long","false","'Â°' as char"],"data":["new int[]   { 4   }","new double[]{ 4.0 }","new float[] { 4f  }","new long[]  { 42L }","new boolean[] { false }","new char[] { 'Â°' as char }"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -58,7 +58,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Integer","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Byte","class java.lang.Long"],"from":["-9","-2","2.7","-3.0","6.4","0.0","-5","-65"],"to":["18","4","45.0","3.0","78.3","1.0","6","45"],"step":["2.0","2.0","3.0","0.5","4.0","0.2","2.0","5.0"],"data":["[-9, -7, -5, -3, -1, 1]","[-2, 0, 2, 4, -2, 0]","[2.7, 5.7, 8.7, 11.7, 14.7, 17.7]","[-3.0, -2.5, -2.0, -1.5, -1.0, -0.5]","[6.4, 10.4, 14.4, 18.4, 22.4, 26.4]","[0.0, 0.2, 0.4, 0.6, 0.8, 1.0]","[-5, -3, -1, 1, 3, 5]","[-65, -60, -55, -50, -45, -40]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer.class","Integer.class","Double.class","Double.class","Float.class","Float.class","Byte.class","Long.class"],"from":["-9   as int","-2   as int","2.7  as double","-3   as double","6.4f as float","0f   as float","-5   as byte","-65  as long"],"to":["18     as int","4      as int","45.0   as double","3      as double","78.3f  as float","1f     as float","6      as byte","45     as long"],"step":["2","2","3","0.5","4","0.2f","2","5"],"data":["[-9, -7, -5, -3, -1, 1]              as int[]","[-2, 0, 2, 4, -2, 0]                 as int[]","[2.7, 5.7, 8.7, 11.7, 14.7, 17.7]    as double[]","[-3.0, -2.5, -2.0, -1.5, -1.0, -0.5] as double[]","[6.4, 10.4, 14.4, 18.4, 22.4, 26.4]  as float[]","[0.0, 0.2, 0.4, 0.6, 0.8, 1.0]       as float[]","[-5, -3, -1, 1, 3, 5]                as byte[]","[-65, -60, -55, -50, -45, -40]       as long[]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -83,7 +83,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Boolean","class java.lang.Character"],"data":["[2, 3, 4]","[-5.0, 6.5, 7.0]","[6, -1, -2]","[22.4, 26.4]","[-20, 3, 4, -3]","[23, 199]","[true, false]","[x, y]"],"expected":["[2, 3, 4, 2, 3, 4]","[-5.0, 6.5, 7.0, -5.0, 6.5, 7.0]","[6, -1, -2, 6, -1, -2]","[22.4, 26.4, 22.4, 26.4, 22.4, 26.4]","[-20, 3, 4, -3, -20, 3]","[23, 199, 23, 199, 23, 199]","[true, false, true, false, true, false]","xyxyxy"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer.class","Double.class","Short.class","Float.class","Byte.class","Long.class","Boolean.class","Character.class"],"data":["[2, 3, 4]       as Integer[]","[-5, 6.5, 7]    as Double[]","[6,  -1, -2]    as Short[]","[22.4, 26.4]    as Float[]","[-20, 3, 4, -3] as Byte[]","[23, 199]       as Long[]","[true, false]   as Boolean[]","['x', 'y']      as Character[]"],"expected":["[2, 3, 4, 2, 3, 4]                      as int[]","[-5, 6.5, 7, -5, 6.5, 7]                as double[]","[6,  -1, -2, 6,  -1, -2]                as short[]","[22.4, 26.4, 22.4, 26.4, 22.4, 26.4]    as float[]","[-20, 3, 4, -3, -20, 3]                 as byte[]","[23, 199, 23, 199, 23, 199]             as long[]","[true, false, true, false, true, false] as boolean[]","['x', 'y', 'x', 'y', 'x', 'y']          as char[]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -110,7 +110,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Boolean","class java.lang.Character"],"seed":["a","b","c","d","e","f","g","h"],"expected":["[1431614970, 345625747, -1944974668, -1560046587, -840164727, 1545421892]","[0.5099337204650233, -0.1940291796851406, 1.4457326764876133, 1.1037197321548482, 0.5318191965243577, 0.19202511115716991]","[-14216, -20070, 24851, -22296, -9925, 31593]","[1.4457327, 1.1037197, 0.5318192, 0.19202511, 0.450341, -0.18904476]","[57, 26, -121, -59, -23, 90]","[7366351542344062765, -5751258536495446167, -794811082727408195, 283695574932216990, -455308978758056709, -8426760264878742120]","[true, false, false, false, false, true]","皜ЍꚈ寜"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer","Double","Short","Float","Byte","Long","Boolean","Character"],"seed":["\"a\"","\"b\"","\"c\"","\"d\"","\"e\"","\"f\"","\"g\"","\"h\""],"expected":["[1431614970, 345625747, -1944974668, -1560046587, -840164727, 1545421892] as int[]","[0.5099337204650233, -0.1940291796851406, 1.4457326764876133, 1.1037197321548482, 0.5318191965243577, 0.19202511115716991] as double[]","[-14216, -20070, 24851, -22296, -9925, 31593] as short[]","[1.4457327, 1.1037197, 0.5318192, 0.19202511, 0.450341, -0.18904476] as float[]","[57, 26, -121, -59, -23, 90] as byte[]","[7366351542344062765, -5751258536495446167, -794811082727408195, 283695574932216990, -455308978758056709, -8426760264878742120] as long[]","[true, false, false, false, false, true] as boolean[]","[-1747130645, -868747698, 1684960924, -1581710323, -1526159736, -842114084] as char[]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -135,7 +135,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Short","class java.lang.Float","class java.lang.Byte","class java.lang.Long","class java.lang.Character","class java.lang.Boolean"],"initializer":["ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure1@43d270e","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure2@59f3cc53","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure3@f056bb8","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure4@11e2643f","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure5@e4bb7ec","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure6@7f12c699","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure7@3c9fc497","ut.tensors.Fluent_Tensor_Creation_Spec$__spock_feature_0_4prov1_closure8@1c94cfd5"],"expected":["[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0.0, 2.0, 3.0, 5.0, 6.0, 8.0]","[0, 2, 3, 5, 6, 8]","[0, 2, 3, 5, 6, 8]","\u0000\u0002\u0003\u0005\u0006\b","[true, false, true, false, true, false]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer.class","Double.class","Short.class","Float.class","Byte.class","Long.class","Character.class","Boolean.class"],"initializer":["{ i, indices ->          (i + indices.sum()) }","{ i, indices -> (double) (i + indices.sum()) }","{ i, indices -> (short)  (i + indices.sum()) }","{ i, indices -> (float)  (i + indices.sum()) }","{ i, indices -> (byte)   (i + indices.sum()) }","{ i, indices -> (long)   (i + indices.sum()) }","{ i, indices -> (char)   (i + indices.sum()) }","{ i, indices -> (boolean)(i % 2 == 0) }"],"expected":["[0, 2, 3, 5, 6, 8] as int[]","[0, 2, 3, 5, 6, 8] as double[]","[0, 2, 3, 5, 6, 8] as short[]","[0, 2, 3, 5, 6, 8] as float[]","[0, 2, 3, 5, 6, 8] as byte[]","[0, 2, 3, 5, 6, 8] as long[]","[0, 2, 3, 5, 6, 8] as char[]","[true, false, true, false, true, false] as boolean[]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -160,7 +160,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is not homogeneously filled it will be an \"actual tensor\".\n                The opposite of that, a \"virtual tensor\", would mean that a tensor does not have allocated \n                memory proportional to the size of the tensor! \n                In this case however the tensor should be actual which means that it is not virtual.\n            ","code":["!t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Long"],"values":["[4, 5, -2]","[-1.0, 7.5]","[0.6, -32.7]","[1, 3, 2, 4]"],"data":["[4, 5, -2]","[-1.0, 7.5]","[0.6, -32.7]","[1, 3, 2, 4]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer.class","Double.class","Float.class","Long.class"],"values":["[4, 5, -2]   as Integer[]","[-1, 7.5]    as Double[]","[0.6, -32.7] as Float[]","[1, 3, 2, 4] as Long[]"],"data":["new int[]   { 4, 5, -2   }","new double[]{ -1, 7.5    }","new float[] { 0.6, -32.7 }","new long[]  { 1, 3, 2, 4 }"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -183,7 +183,7 @@
 
         {"kind":"and","text":"The size of the tensor will also 1!","code":["t.size() == 1"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Long"],"value":["3","5.7","9.4","42"],"data":["[3]","[5.7]","[9.4]","[42]"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer.class","Double.class","Float.class","Long.class"],"value":["3    as Integer","5.7  as Double","9.4f as Float","42L  as Long"],"data":["new int[]   { 3    }","new double[]{ 5.7  }","new float[] { 9.4f }","new long[]  { 42L  }"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

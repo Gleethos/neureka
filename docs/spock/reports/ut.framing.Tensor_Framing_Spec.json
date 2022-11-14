@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.031 seconds"
+    "duration":"0.030 seconds"
   },
   "headers":["\n                    This specification covers the behavior\n                    of tensors with respect to specifying aliases for\n                    indices and then using them for slicing.     \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can add labels to tensors through lists or maps passed to the \"label()\" method.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"A matrix (rank 2 tensor) can be labeled and their labels can be used to extract slices / subsets.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
 
         {"kind":"and","text":"The original tensor \"t\" is a \"parent\":","code":["t.isSliceParent()"]},
 
-        {"kind":"when","text":"We now call the \"getAt\" method manually with the same arguments...","code":["x = t.getAt(\"2\", new int[]{ 1, 2 })"]},
+        {"kind":"when","text":"We now call the \"getAt\" method manually with the same arguments...","code":["x = t.getAt(\"2\", new int[]{ 1, 2 }) // x.toString(): \"(1x2):[8.0, 6.0]\""]},
 
         {"kind":"then","text":"This will produce the same result \"x\" with the same properties...","code":["x in t","t.contains(x)","x.toString().contains(\"[1x2]:(8.0, 6.0)\")","x.isSlice()","t.isSliceParent()"]},
 
@@ -74,7 +74,7 @@
 
         {"kind":"then","text":"This slice will be as expected!","code":["x in t","t.contains(x)","x.toString().contains(\"[2x2]:(8.0, 6.0, 5.0, 6.0)\")","x.isSlice()","x.isPartialSlice()","t.isSliceParent()"]},
 
-        {"kind":"when","text":"Calling the \"getAt\" method manually with \"ranges\" as String arrays...","code":["x = t.getAt(new String[]{\"2\", \"3\"}, new String[]{\"b\", \"y\"})"]},
+        {"kind":"when","text":"Calling the \"getAt\" method manually with \"ranges\" as String arrays...","code":["x = t.getAt(new String[]{\"2\", \"3\"}, new String[]{\"b\", \"y\"}) // x.toString(): \"(2x2):[8.0, 6.0, 5.0, 6.0]\""]},
 
         {"kind":"then","text":"...this will produce the same result as previously:","code":["x in t","t.contains(x)","x.toString().contains(\"[2x2]:(8.0, 6.0, 5.0, 6.0)\")","x.isSlice()","x.isPartialSlice()","t.isSliceParent()"]}
       ],
@@ -109,19 +109,19 @@
 
         {"kind":"and","text":"The original tensor \"t\" is a \"parent\":","code":["t.isSliceParent()"]},
 
-        {"kind":"and","text":"The slice is not virtual.","code":["!s.isVirtual()"]},
+        {"kind":"and","text":"The slice is not virtual.","code":["!s.isVirtual() // This might change if possible (technically difficult)"]},
 
         {"kind":"when","text":"We slice the tensor t by passing a map of start and end labels as keys and strides as values.","code":["s = t[\"2\", [[\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
 
-        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","        \"   [ 2 ]:(\\n\" +","        \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","        \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","        \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","        \"   )\\n\" +","        \")\"","!s.isVirtual()","s.isSlice()","t.isSliceParent()","t.sliceCount()==2"]},
+        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","        \"   [ 2 ]:(\\n\" +","        \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","        \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","        \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","        \"   )\\n\" +","        \")\"","!s.isVirtual() // This might change if possible (technically difficult)","s.isSlice()","t.isSliceParent()","t.sliceCount()==2"]},
 
         {"kind":"when","text":"We slice the tensor t by passing a map of start and end labels as keys and strides as values.","code":["s = t[[[\"2\"]:1, [\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
 
-        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","        \"   [ 2 ]:(\\n\" +","        \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","        \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","        \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","        \"   )\\n\" +","        \")\"","!s.isVirtual()","s.isSlice()","t.isSliceParent()","t.sliceCount()==3"]},
+        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","        \"   [ 2 ]:(\\n\" +","        \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","        \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","        \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","        \"   )\\n\" +","        \")\"","!s.isVirtual() // This might change if possible (technically difficult)","s.isSlice()","t.isSliceParent()","t.sliceCount()==3"]},
 
         {"kind":"when","text":"","code":["t.mut.labelAxes(","    new String[][]{","        new String[]{ \"1\", \"2\" },","        new String[]{ \"a\", \"b\", \"y\" },","        new String[]{ \"tim\", \"tom\", \"tina\", \"tanya\" }","    }",")","s = t[ [\"1\",\"2\"], \"b\"..\"y\", [[\"tim\",\"tanya\"]:2] ]"]},
 
-        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","            it.rowLimit = 15","            it.isScientific = false","            it.isMultiline = true","            it.hasGradient = false","            it.cellSize = 6","            it.hasValue = true","            it.hasRecursiveGraph = false","            it.hasDerivatives = false","            it.hasShape =  true","            it.isCellBound = false","            it.postfix = \"\"","            it.prefix = \"\"","            it.hasSlimNumbers = false","        }) == \"[2x2x2]:(\\n\" +","              \"   [ 1 ]:(\\n\" +","              \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","              \"      (  -3.0 ,  -1.0  ):[ b ],\\n\" +","              \"      (   1.0 ,   3.0  ):[ y ]\\n\" +","              \"   ),\\n\" +","              \"   [ 2 ]:(\\n\" +","              \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","              \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","              \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","              \"   )\\n\" +","              \")\"","!s.isVirtual()","s.isSlice()","t.isSliceParent()","t.sliceCount() == 4"]}
+        {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","            it.rowLimit = 15","            it.isScientific = false","            it.isMultiline = true","            it.hasGradient = false","            it.cellSize = 6","            it.hasValue = true","            it.hasRecursiveGraph = false","            it.hasDerivatives = false","            it.hasShape =  true","            it.isCellBound = false","            it.postfix = \"\"","            it.prefix = \"\"","            it.hasSlimNumbers = false","        }) == \"[2x2x2]:(\\n\" +","              \"   [ 1 ]:(\\n\" +","              \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","              \"      (  -3.0 ,  -1.0  ):[ b ],\\n\" +","              \"      (   1.0 ,   3.0  ):[ y ]\\n\" +","              \"   ),\\n\" +","              \"   [ 2 ]:(\\n\" +","              \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","              \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","              \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","              \"   )\\n\" +","              \")\"","!s.isVirtual() // This might change if possible (technically difficult)","s.isSlice()","t.isSliceParent()","t.sliceCount() == 4"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

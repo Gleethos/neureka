@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.129 seconds"
+    "duration":"0.141 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.",
       "result":"PASS",
-      "duration":"0.099 seconds",
+      "duration":"0.112 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,7 +45,7 @@
     {
       "id":"Test context mock for opencl reference implementations.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -62,7 +62,7 @@
     {
       "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,7 +71,7 @@
 
         {"kind":"then","text":"","code":["result == expected as int[]"]},
 
-        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","16384","64","16"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4, 4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4, 4]"]}}
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

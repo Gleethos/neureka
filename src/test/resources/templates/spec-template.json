@@ -1,6 +1,6 @@
 <%
 
-def parseWhereCodeLines = { List<String> lines ->
+def innerParseWhereCodeLines = { List<String> lines ->
     String code = lines.join("\n")
     boolean isSimpleTable = (~/^\s*([a-zA-Z0-9_]+)\s*<<\s*/).matcher(code).find()
     Map<String, List<String>> table = [:]
@@ -96,6 +96,13 @@ def parseWhereCodeLines = { List<String> lines ->
     else if ( !currentExpression.isEmpty() )
         table[columnNames[currentColumn]]?.add(currentExpression.trim())
     return table
+}
+def parseWhereCodeLines = {
+    try { return innerParseWhereCodeLines(it) }
+    catch ( Exception e ) {
+        println "Error parsing where code lines: $e"
+        return [:]
+    }
 }
 
 def noSingleBreaks = { String s ->

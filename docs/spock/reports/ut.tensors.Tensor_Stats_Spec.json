@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.618 seconds"
+    "duration":"0.503 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.026 seconds",
+      "duration":"0.030 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
 
         {"kind":"then","text":"The result is correct:","code":["result.items[0] == expected"]},
 
-        {"kind":"where","text":"","code":{"reduceType":["MIN","MAX","MIN","MAX","MIN","MAX","MIN","MAX","MIN","MAX","MIN","MAX","MIN","MAX"],"dataType":["class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Integer","class java.lang.Integer","class java.lang.Long","class java.lang.Long","class java.lang.Short","class java.lang.Short","class java.lang.Byte","class java.lang.Byte","class java.lang.Float","class java.lang.Float"],"device":["CPU","CPU","CPU","CPU","CPU","CPU","CPU","CPU","CPU","CPU","CPU","CPU","GPU","GPU"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124","-148.0","141.0"]}}
+        {"kind":"where","text":"","code":{"reduceType":["'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte","Float","Float"],"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124","-148.0","141.0"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -71,7 +71,7 @@
 
         {"kind":"expect","text":"The results are correct:","code":["min.item(0) == -150.0","max.item(0) == 147.0"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU","GPU"]}}
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -79,7 +79,7 @@
     {
       "id":"Both the min and max operation support autograd (back-propagation).",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,7 +100,7 @@
     {
       "id":"We can use the \"sum\" method to sum the items of a tensor.",
       "result":"PASS",
-      "duration":"0.565 seconds",
+      "duration":"0.444 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

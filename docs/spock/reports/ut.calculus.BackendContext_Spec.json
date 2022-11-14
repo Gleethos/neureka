@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.036 seconds"
+    "duration":"0.035 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"BackendContext instances can be created by cloning from Singleton instance.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
 
         {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
 
-        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure3@683f63bb","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure4@6af01b13","ut.calculus.BackendContext_Spec$__spock_feature_0_2prov0_closure5@3e30935a"]}}
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["(BackendContext.Runner runner) -> { (arg) -> runner.call(arg) }","(BackendContext.Runner runner) -> { (arg) -> runner.invoke(arg) }","(BackendContext.Runner runner) -> { (arg) -> runner.runAndGet(arg) }"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

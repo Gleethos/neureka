@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.338 seconds"
+    "duration":"0.393 seconds"
   },
   "headers":["\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An OpenCLDevice loads tensors in a provided lambda temporarily.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -41,7 +41,7 @@
     {
       "id":"We can get the items of an outsourced tensor as a primitive array.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"We can take a look at the underlying data array of an outsourced tensor through the unsafe API.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.016 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -96,11 +96,11 @@
 
         {"kind":"expect","text":"The OpenCL device initially does not have the \"dummy_kernel\" we are going to create.","code":["!device.hasAdHocKernel( 'dummy_kernel' )"]},
 
-        {"kind":"when","text":"Compiling a kernel called \"dummy_kernel\"...","code":["device.compileAdHocKernel( 'dummy_kernel', \"\"\"","    __kernel void dummy_kernel (","            __global float* output,","            __global float* input,","            float value ","        ) { ","            unsigned int i = get_global_id( 0 );","            output[i] = input[i] + value; ","        }","    \"\"\"",")"]},
+        {"kind":"when","text":"Compiling a kernel called \"dummy_kernel\"...","code":["device.compileAdHocKernel( 'dummy_kernel', \"\"\"","    __kernel void dummy_kernel (","            __global float* output,","            __global float* input,","            float value","        ) {","            unsigned int i = get_global_id( 0 );","            output[i] = input[i] + value;","        }","    \"\"\"",")"]},
 
         {"kind":"then","text":"The OpenCL device contrary to before now has a kernel by this name.","code":["device.hasAdHocKernel( 'dummy_kernel' )"]},
 
-        {"kind":"and","text":"The device still references the source code od that kernel.","code":["device._kernelCache._adhocKernels['dummy_kernel'].source == \"\"\"","    __kernel void dummy_kernel (","            __global float* output,","            __global float* input,","            float value ","        ) { ","            unsigned int i = get_global_id( 0 );","            output[i] = input[i] + value; ","        }","    \"\"\""]},
+        {"kind":"and","text":"The device still references the source code od that kernel.","code":["device._kernelCache._adhocKernels['dummy_kernel'].source == \"\"\"","    __kernel void dummy_kernel (","            __global float* output,","            __global float* input,","            float value","        ) {","            unsigned int i = get_global_id( 0 );","            output[i] = input[i] + value;","        }","    \"\"\""]},
 
         {"kind":"when","text":"Executing the kernel by passing the previously defined tensor...","code":["device.findAdHocKernel( 'dummy_kernel' ).get()","        .pass( someData )","        .pass( someData )","        .pass( -4f )","        .call( someData.size() )"]},
 
@@ -112,12 +112,12 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"0.035 seconds",
+      "duration":"0.048 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]","var kernelName = \"dummy_mm_${M}x${K}x${N}\"","var params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)","var TSM  = params[0]","var TSN  = params[1]","var TSK  = params[2]","var WPTM = params[3]","var WPTN = params[4]","long[] local=   new long[]{ TSM/WPTM, TSN/WPTN }","long[] global = new long[]{ (M/WPTM), (N/WPTN) }","Tsr A = Tsr.of( [M,K], 0f )","Tsr B = Tsr.of( [K,N], 0f )","Tsr C = Tsr.of( [M,N], 0f )","A.mut[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)","B.mut[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)","var reference = A.matMul(B).items","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
+        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]","var kernelName = \"dummy_mm_${M}x${K}x${N}\"","var params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)","var TSM  = params[0] //4   //= 128","var TSN  = params[1] //4   //= 128","var TSK  = params[2] //2   //= 16","var WPTM = params[3] // 2  //=  8","var WPTN = params[4] // 2  //=  8","long[] local=   new long[]{ TSM/WPTM, TSN/WPTN }","long[] global = new long[]{ (M/WPTM), (N/WPTN) }","Tsr A = Tsr.of( [M,K], 0f )","Tsr B = Tsr.of( [K,N], 0f )","Tsr C = Tsr.of( [M,N], 0f )","A.mut[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)","B.mut[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -127,11 +127,11 @@
 
         {"kind":"when","text":"","code":["device.getAdHocKernel( kernelName )","        .pass( M ).pass( N ).pass( K )","        .pass( A ).pass( B ).pass( C )","        .call( global, local )"]},
 
-        {"kind":"then","text":"","code":["C.items == reference"]},
+        {"kind":"then","text":"","code":["C.items == reference // GPU should produce the same as CPU!"]},
 
         {"kind":"and","text":"","code":["expected == null || C.toString({it.setRowLimit(50)}) == expected"]},
 
-        {"kind":"where","text":"","code":{"regSize":["4","16","4","4"],"locSize":["16","32","16","16"],"M":["4","16","4","16"],"K":["4","16","16","16"],"N":["4","16","8","32"],"expected":["(4x4):[-35.0, -26.0, -29.0, -20.0, -30.0, -22.0, -20.0, -12.0, -19.0, -12.0, -23.0, -16.0, -35.0, -26.0, -29.0, -20.0]","(16x16):[-115.0, -82.0, -109.0, -76.0, -73.0, -40.0, -115.0, -82.0, -109.0, -76.0, -73.0, -40.0, -115.0, -82.0, -109.0, -76.0, -110.0, -78.0, -76.0, -44.0, -102.0, -70.0, -110.0, -78.0, -76.0, -44.0, -102.0, -70.0, -110.0, -78.0, -76.0, -44.0, -75.0, -44.0, -103.0, -72.0, -101.0, -70.0, -75.0, -44.0, -103.0, -72.0, -101.0, -70.0, -75.0, -44.0, -103.0, -72.0, -115.0, -82.0, ... + 206 more]","null","null"]}}
+        {"kind":"where","text":"","code":{"regSize":["2**2","16","2**2","2**2"],"locSize":["4**2","32","4**2","4**2"],"M":["4","16","4","16"],"K":["4","16","16","16"],"N":["4","16","8","32"],"expected":["'(4x4):[-35.0, -26.0, -29.0, -20.0, -30.0, -22.0, -20.0, -12.0, -19.0, -12.0, -23.0, -16.0, -35.0, -26.0, -29.0, -20.0]'","'(16x16):[-115.0, -82.0, -109.0, -76.0, -73.0, -40.0, -115.0, -82.0, -109.0, -76.0, -73.0, -40.0, -115.0, -82.0, -109.0, -76.0, -110.0, -78.0, -76.0, -44.0, -102.0, -70.0, -110.0, -78.0, -76.0, -44.0, -102.0, -70.0, -110.0, -78.0, -76.0, -44.0, -75.0, -44.0, -103.0, -72.0, -101.0, -70.0, -75.0, -44.0, -103.0, -72.0, -101.0, -70.0, -75.0, -44.0, -103.0, -72.0, -115.0, -82.0, ... + 206 more]'","null","null"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -139,12 +139,12 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"0.046 seconds",
+      "duration":"0.049 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","var kernelName = \"backend_mm_${M}x${K}x${N}\"","long[] local=   new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, K }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
+        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","var kernelName = \"backend_mm_${M}x${K}x${N}\"","long[] local=   new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, K }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -154,11 +154,11 @@
 
         {"kind":"when","text":"","code":["device.getAdHocKernel( kernelName )","        .pass( C ).pass( A ).pass( B )","        .pass( M ).pass( N ).pass( K )","        .call( global, local )"]},
 
-        {"kind":"then","text":"","code":["C.items == reference"]},
+        {"kind":"then","text":"","code":["C.items == reference // GPU should produce the same as CPU!"]},
 
         {"kind":"and","text":"","code":["expected == null || C.toString({it.setRowLimit(50)}) == expected"]},
 
-        {"kind":"where","text":"","code":{"seed":["7","7","11"],"M":["16","32","64"],"K":["16","32","64"],"N":["16","32","64"],"expected":["(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]","(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]","null"]}}
+        {"kind":"where","text":"","code":{"seed":["7","7","11"],"M":["16","32","64"],"K":["16","32","64"],"N":["16","32","64"],"expected":["'(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]'","'(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]'","null"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -166,12 +166,12 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"0.073 seconds",
+      "duration":"0.087 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","var kernelName = \"simple_backend_mm_${M}x${K}x${N}\"","long[] local=   null","long[] global = new long[]{ M, N }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
+        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","var kernelName = \"simple_backend_mm_${M}x${K}x${N}\"","long[] local=   null //new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, N }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -181,11 +181,11 @@
 
         {"kind":"when","text":"","code":["device.getAdHocKernel( kernelName )","        .pass( M ).pass( N ).pass( K )","        .pass( A ).pass( B ).pass( C )","        .call( global, local )"]},
 
-        {"kind":"then","text":"","code":["C.items == reference"]},
+        {"kind":"then","text":"","code":["C.items == reference // GPU should produce the same as CPU!"]},
 
         {"kind":"and","text":"","code":["expected == null || C.toString({it.setRowLimit(50)}) == expected"]},
 
-        {"kind":"where","text":"Matrix multiplication kernel will work for all dimensions reasonably well!","code":{"seed":["7","7","7","7","7","7","7","11"],"M":["2","4","16","2","2","17","32","16"],"K":["2","4","16","4","3","18","32","16"],"N":["2","4","16","2","2","16","32","32"],"expected":["(2x2):[8.0, 1.0, 4.0, 1.0]","(4x4):[13.0, 3.0, -7.0, -17.0, -11.0, -5.0, 1.0, 7.0, 31.0, 31.0, 31.0, 31.0, 7.0, 1.0, -5.0, -11.0]","(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]","(2x2):[0.0, -10.0, 16.0, 22.0]","(2x2):[4.0, -5.0, 4.0, 4.0]","(17x16):[-17.0, -68.0, -20.0, 39.0, 54.0, 25.0, -15.0, -77.0, 4.0, 41.0, 34.0, -17.0, -68.0, -20.0, 39.0, 54.0, 15.0, 13.0, -11.0, -101.0, 7.0, 71.0, 80.0, 67.0, -1.0, -113.0, -27.0, 15.0, 13.0, -11.0, -101.0, 7.0, -85.0, -27.0, 9.0, 23.0, -7.0, -81.0, -12.0, 35.0, 71.0, 63.0, 11.0, -85.0, -27.0, 9.0, 23.0, -7.0, 35.0, -12.0, ... + 222 more]","(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]","(16x32):[-33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, -84.0, -16.0, 30.0, 54.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, ... + 462 more]"]}}
+        {"kind":"where","text":"Matrix multiplication kernel will work for all dimensions reasonably well!","code":{"seed":["7","7","7","7","7","7","7","11"],"M":["2","4","16","2","2","17","32","16"],"K":["2","4","16","4","3","18","32","16"],"N":["2","4","16","2","2","16","32","32"],"expected":["'(2x2):[8.0, 1.0, 4.0, 1.0]'","'(4x4):[13.0, 3.0, -7.0, -17.0, -11.0, -5.0, 1.0, 7.0, 31.0, 31.0, 31.0, 31.0, 7.0, 1.0, -5.0, -11.0]'","'(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]'","'(2x2):[0.0, -10.0, 16.0, 22.0]'","'(2x2):[4.0, -5.0, 4.0, 4.0]'","'(17x16):[-17.0, -68.0, -20.0, 39.0, 54.0, 25.0, -15.0, -77.0, 4.0, 41.0, 34.0, -17.0, -68.0, -20.0, 39.0, 54.0, 15.0, 13.0, -11.0, -101.0, 7.0, 71.0, 80.0, 67.0, -1.0, -113.0, -27.0, 15.0, 13.0, -11.0, -101.0, 7.0, -85.0, -27.0, 9.0, 23.0, -7.0, -81.0, -12.0, 35.0, 71.0, 63.0, 11.0, -85.0, -27.0, 9.0, 23.0, -7.0, 35.0, -12.0, ... + 222 more]'","'(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]'","'(16x32):[-33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, -84.0, -16.0, 30.0, 54.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, ... + 462 more]'"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -193,14 +193,14 @@
     {
       "id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.",
       "result":"PASS",
-      "duration":"0.129 seconds",
+      "duration":"0.142 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","def kernelName = \"fast_columns_major_mm_${M}x${K}x${N}\"","def data = (0..(M*K-1)).collect( v-> v + seed )","def data1 = data.collect( v -> ((v+5)%11)-5 as float )","def data2 = data.collect( v -> ((v+7)%11)-5 as float )"]},
 
-        {"kind":"and","text":"We create column major based matrices!","code":["Tsr A = Tsr.of( [M,K], data1    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr B = Tsr.of( [K,N], data2    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr C = Tsr.of( [M,N], 0f ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","var reference = A.matMul(B).rawData","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)","var MW = 1","var KW = 1","for ( s in [16,8,4,2,1] )","    if ( M % s == 0 ) { MW = s; break }","for ( s in [8,4,2,1] )","    if ( N % s == 0 && K % s == 0 ) { KW = s; break }","var NW = KW","long[] local =  null","long[] global = new long[]{ Math.floor(M/MW), Math.floor(N/NW), 1 }"]},
+        {"kind":"and","text":"We create column major based matrices!","code":["Tsr A = Tsr.of( [M,K], data1    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr B = Tsr.of( [K,N], data2    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr C = Tsr.of( [M,N], 0f ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","var reference = A.matMul(B).rawData // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)","var MW = 1","var KW = 1","for ( s in [16,8,4,2,1] )","    if ( M % s == 0 ) { MW = s; break }","for ( s in [8,4,2,1] )","    if ( N % s == 0 && K % s == 0 ) { KW = s; break }","var NW = KW","long[] local =  null // This kernel does not have local memory (uses register/private memory instead)","long[] global = new long[]{ Math.floor(M/MW), Math.floor(N/NW), 1 }"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -210,11 +210,11 @@
 
         {"kind":"when","text":"","code":["device.getAdHocKernel( kernelName )","        .pass( A ).pass( B ).pass( C )","        .call( global, local )"]},
 
-        {"kind":"then","text":"","code":["C.rawData == reference"]},
+        {"kind":"then","text":"","code":["C.rawData == reference // GPU should produce the same as CPU!"]},
 
         {"kind":"and","text":"","code":["C.toString({it.setRowLimit(50)}) == expected"]},
 
-        {"kind":"where","text":"This kernel will work for all dimensions well:","code":{"seed":["7","7","7","7","7","7","7","11","5"],"M":["2","4","16","2","2","17","32","16","167"],"K":["2","4","16","4","3","18","32","16","73"],"N":["2","4","16","2","2","16","32","32","88"],"expected":["(2x2):[8.0, 1.0, 4.0, 1.0]","(4x4):[13.0, 3.0, -7.0, -17.0, -11.0, -5.0, 1.0, 7.0, 31.0, 31.0, 31.0, 31.0, 7.0, 1.0, -5.0, -11.0]","(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]","(2x2):[0.0, -10.0, 16.0, 22.0]","(2x2):[4.0, -5.0, 4.0, 4.0]","(17x16):[-17.0, -68.0, -20.0, 39.0, 54.0, 25.0, -15.0, -77.0, 4.0, 41.0, 34.0, -17.0, -68.0, -20.0, 39.0, 54.0, 15.0, 13.0, -11.0, -101.0, 7.0, 71.0, 80.0, 67.0, -1.0, -113.0, -27.0, 15.0, 13.0, -11.0, -101.0, 7.0, -85.0, -27.0, 9.0, 23.0, -7.0, -81.0, -12.0, 35.0, 71.0, 63.0, 11.0, -85.0, -27.0, 9.0, 23.0, -7.0, 35.0, -12.0, ... + 222 more]","(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]","(16x32):[-33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, -84.0, -16.0, 30.0, 54.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, ... + 462 more]","(167x88):[40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, ... + 14646 more]"]}}
+        {"kind":"where","text":"This kernel will work for all dimensions well:","code":{"seed":["7","7","7","7","7","7","7","11","5"],"M":["2","4","16","2","2","17","32","16","167"],"K":["2","4","16","4","3","18","32","16","73"],"N":["2","4","16","2","2","16","32","32","88"],"expected":["'(2x2):[8.0, 1.0, 4.0, 1.0]'","'(4x4):[13.0, 3.0, -7.0, -17.0, -11.0, -5.0, 1.0, 7.0, 31.0, 31.0, 31.0, 31.0, 7.0, 1.0, -5.0, -11.0]'","'(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]'","'(2x2):[0.0, -10.0, 16.0, 22.0]'","'(2x2):[4.0, -5.0, 4.0, 4.0]'","'(17x16):[-17.0, -68.0, -20.0, 39.0, 54.0, 25.0, -15.0, -77.0, 4.0, 41.0, 34.0, -17.0, -68.0, -20.0, 39.0, 54.0, 15.0, 13.0, -11.0, -101.0, 7.0, 71.0, 80.0, 67.0, -1.0, -113.0, -27.0, 15.0, 13.0, -11.0, -101.0, 7.0, -85.0, -27.0, 9.0, 23.0, -7.0, -81.0, -12.0, 35.0, 71.0, 63.0, 11.0, -85.0, -27.0, 9.0, 23.0, -7.0, 35.0, -12.0, ... + 222 more]'","'(32x32):[160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 122.0, 160.0, 165.0, 137.0, 76.0, -18.0, -145.0, -305.0, -190.0, -53.0, 51.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, -305.0, -145.0, -18.0, 76.0, 137.0, 165.0, 160.0, 122.0, 51.0, -53.0, -190.0, ... + 974 more]'","'(16x32):[-33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, -43.0, -33.0, -23.0, -13.0, -3.0, 40.0, 61.0, 60.0, 37.0, -8.0, -75.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, -84.0, -16.0, 30.0, 54.0, 56.0, 47.0, 38.0, 29.0, -57.0, -44.0, -53.0, ... + 462 more]'","'(167x88):[40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, -20.0, -30.0, -40.0, -50.0, 50.0, 40.0, 30.0, 20.0, 10.0, 0.0, -10.0, ... + 14646 more]'"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

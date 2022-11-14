@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"3.457 seconds"
+    "duration":"5.027 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be constructed by passing List instances.",
       "result":"PASS",
-      "duration":"1.077 seconds",
+      "duration":"1.235 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,12 +39,14 @@
     {
       "id":"Test benchmark script and simple tensor constructor.",
       "result":"PASS",
-      "duration":"2.375 seconds",
+      "duration":"3.775 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var configuration = [ \"iterations\":1, \"sample_size\":20, \"difficulty\":15, \"intensifier\":0 ]","var strSettings = (Consumer<NDPrintSettings>) { NDPrintSettings it ->","                        it.cellSize = 7; it.isCellBound = true; // We use this to cap decimals to avoid rounding errors.","                    }"]},
+        {"kind":"given","text":"","code":["Neureka.get().backend().find(CLBackend).ifPresent({it.settings.autoConvertToFloat = true})"]},
+
+        {"kind":"and","text":"","code":["var configuration = [ \"iterations\":1, \"sample_size\":20, \"difficulty\":15, \"intensifier\":0 ]","var strSettings = (Consumer<NDPrintSettings>) { NDPrintSettings it ->","                        it.cellSize = 7; it.isCellBound = true; // We use this to cap decimals to avoid rounding errors.","                    }"]},
 
         {"kind":"and","text":"The benchmark script is being loaded into a GroovyShell instance.","code":["var session = new GroovyShell().evaluate(Load.resourceAt(\"benchmark.groovy\", this))"]},
 
@@ -60,7 +62,7 @@
 
         {"kind":"when","text":"Only continue if testing system supports OpenCL.","code":["if ( !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
-        {"kind":"and","text":"The benchmark is now being executed with the first found OpenCLDevice instance...","code":["hash = \"\"","var i = 0","session(","        configuration, null,","        Device.get(\"first\"),","            tsr -> {","                var str = tsr.toString(strSettings)","                if ( rec[i] != str ) println \"Mismatch at index $i:\\n${rec[i]}\\n$str\\n\"","                hash = ( hash + str ).md5()","                i++","            }",")"]},
+        {"kind":"and","text":"The benchmark is now being executed with the first found OpenCLDevice instance...","code":["hash = \"\"","var i = 0","session(","    configuration, null,","    Device.get(\"first\"),","        tsr -> {","            var str = tsr.toString(strSettings)","            if ( rec[i] != str ) println \"Mismatch at index $i:\\n${rec[i]}\\n$str\\n\"","            hash = ( hash + str ).md5()","            i++","        }",")"]},
 
         {"kind":"then","text":"The calculated hash is as expected.","code":["hash == expected"]}
       ],

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"4.846 seconds"
+    "duration":"5.077 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"First found OpenCLDevice will have realistic properties inside summary query.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,16 +61,16 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.051 seconds",
+      "duration":"0.032 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"The first found OpenCLDevice instance.","code":["Device device = Device.get('first')"]},
 
-        {"kind":"and","text":"A mocked tensor that is not outsourced.","code":["Tsr<?> t = Mock(Tsr)","t.isOutsourced() >> false"]},
+        {"kind":"and","text":"A mocked tensor that is not outsourced.","code":["Tsr<?> t = Mock(Tsr) // Could be : Tsr.of([4, 3], 2)","t.isOutsourced() >> false"]},
 
-        {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tsr<?> s = Mock(Tsr)","MutateTsr<?> u = Mock(MutateTsr)","s.getMut() >> u","u.getData() >> Mock(Data)"]},
+        {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tsr<?> s = Mock(Tsr) // Could be : t[1..3, 1..2]","MutateTsr<?> u = Mock(MutateTsr)","s.getMut() >> u","u.getData() >> Mock(Data)"]},
 
         {"kind":"and","text":"A mocked relation between both tensors returned by the slice as component.","code":["Relation r = Mock(Relation)","s.has(Relation.class) >> true","s.get(Relation.class) >> r","s.find(Relation.class) >> Optional.of(r)","r.findRootTensor() >> Optional.of(t)"]},
 
@@ -90,7 +90,7 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"4.779 seconds",
+      "duration":"5.027 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.173 seconds"
+    "duration":"0.204 seconds"
   },
   "headers":[" \n                <p>\n                    This specification covers the behavior of tensors when being sliced\n                    on multiple different device types in conjunction with \n                    the autograd system.\n                    Autograd should work on slices as well.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.054 seconds",
+      "duration":"0.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,11 +33,11 @@
 
         {"kind":"when","text":"","code":["var y = ( s * 4 ) ** 1.5"]},
 
-        {"kind":"then","text":"","code":[" y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
+        {"kind":"then","text":"","code":["y.toString() == '(1x1):[22.6274]; ->d(1x1):[16.9706]'"]},
 
         {"kind":"cleanup","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }"]},
 
-        {"kind":"where","text":"","code":{"device":["OpenCLDevice[id=0x233028e4e10,platform=0x233028e46e0]","CPU[cores=12]"]}}
+        {"kind":"where","text":"","code":{"device":["Device.get('gpu')","CPU.get()"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -45,7 +45,7 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.108 seconds",
+      "duration":"0.128 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -98,7 +98,7 @@
 
         {"kind":"then","text":"","code":["b.toString().contains(","        \"1.0, 2.0, \"+","        \"8.0, 4.0\"",")","a.toString().contains(","        \"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, \" +","        \"7.0, 8.0, 8.0, 1.0, 2.0, 3.0, \" +","        \"4.0, 8.0, 8.0, 4.0, 8.0, 9.0, \" +","        \"1.0, 2.0, 3.0, 4.0, 5.0, 6.0\"",")"]},
 
-        {"kind":"when","text":"","code":["b.setRqsGradient(true)","c = Tsr.of([2, 2], [","                -2, 3,//-2 + 24 + 3 + 8","                 1, 2,","            ])","device.store(b).store(c)","x = Tsr.of(b, \"x\", c)"]},
+        {"kind":"when","text":"","code":["b.setRqsGradient(true)","c = Tsr.of([2, 2], [","                -2, 3,//-2 + 24 + 3 + 8","                 1, 2,","            ])","device.store(b).store(c) // -2 + 6 + 8 + 8 = 22","x = Tsr.of(b, \"x\", c) // This test is important because it tests convolution on slices!"]},
 
         {"kind":"then","text":"","code":["x.item() == 20"]},
 
@@ -106,7 +106,7 @@
 
         {"kind":"cleanup","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU[cores=12]","OpenCLDevice[id=0x233028e4e10,platform=0x233028e46e0]"]}}
+        {"kind":"where","text":"","code":{"device":["CPU.get()","Device.get('gpu')"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

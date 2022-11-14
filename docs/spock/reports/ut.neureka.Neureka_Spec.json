@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"21.668 seconds"
+    "duration":"22.018 seconds"
   },
   "headers":["\n                    This specification defines what types of settings are exposed by\n                    Neureka as well as more general things like how string representations\n                    of various library types should look like... \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Neureka class instance has expected behaviour.",
       "result":"PASS",
-      "duration":"0.257 seconds",
+      "duration":"0.137 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,7 +27,7 @@
 
         {"kind":"then","text":"This setting change applies!","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()","!Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()"]},
 
-        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"0.19.0\""]}
+        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"0.19.0\"//version"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -35,7 +35,7 @@
     {
       "id":"Neureka settings class can be locked causing its properties to be immutable.",
       "result":"PASS",
-      "duration":"2.074 seconds",
+      "duration":"1.192 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
 
         {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
 
-        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure5@46e729b4","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure6@240058c9","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure7@52788c4f","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure8@5a1d3557","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure9@65737133","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure10@6605fa2d","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure11@d069ee7","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure12@58152151","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure13@2eab4da0","ut.neureka.Neureka_Spec$__spock_feature_0_1prov1_closure14@3114d79b"],"setter":["ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure15@3351ddc0","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure16@44537075","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure17@14c7edce","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure18@7499681d","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure19@3cc2520f","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure20@8050e92","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure21@9385eae","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure22@52f9b358","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure23@138c6370","ut.neureka.Neureka_Spec$__spock_feature_0_1prov2_closure24@377d60cd"]}}
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -66,7 +66,7 @@
     {
       "id":"Every Thread instance has their own Neureka instance.",
       "result":"PASS",
-      "duration":"12.706 seconds",
+      "duration":"10.281 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,14 +87,14 @@
     {
       "id":"Various library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"2.235 seconds",
+      "duration":"2.711 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
 
-        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU[cores=12]","DataType[class=String(String)]","Relation[parent=null,children=null,shapeRelations=null]","JITProp@5ef5daf8[finished=0,pending=0,isDone=false]","Neureka[settings=Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[ndPrintSettings=neureka.view.NDPrintSettings@128efec9],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false],utility=neureka.Neureka$Utility@47dbedbd,backend=BackendContext[size=46]]","Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false],view=Neureka.Settings.View[ndPrintSettings=neureka.view.NDPrintSettings@128efec9],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false]","Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=false,isApplyingGradientWhenTensorIsUsed=false,isApplyingGradientWhenRequested=false]","Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false]","Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true]","Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false]","Neureka.Settings.View[ndPrintSettings=neureka.view.NDPrintSettings@128efec9]","Functions[_dimTrim=dimtrim(I[0]),_idy=(I[0] <- I[1]),_conv=(I[0] x I[1]),_plus=(I[0] + I[1]),_plusAssign=(I[0] <- (I[0] + I[1])),_minus=(I[0] - I[1]),_minusAssign=(I[0] <- (I[0] - I[1])),_div=(I[0] / I[1]),_divAssign=(I[0] <- (I[0] / I[1])),_pow=(I[0] ** I[1]),_powAssign=(I[0] <- (I[0] ** I[1])),_mul=(I[0] * I[1]),_mulAssign=(I[0] <- (I[0] * I[1])),_add=(I[0] + I[1]),_addAssign=(I[0] <- (I[0] + I[1])),_mod=(I[0] % I[1]),_modAssign=(I[0] <- (I[0] % I[1])),_neg=(-1.0 * I[0]),_matMul=(I[0] @ I[1]),_transpose2D=([1,0]:(I[0])),_random=(I[0]),_tanh=tanh(I[0]),_fastTanh=fast_tanh(I[0]),_softsign=softsign(I[0]),_sigmoid=sig(I[0]),_gaus=gaus(I[0]),_fastGaus=fast_gaus(I[0]),_ln=ln(I[0]),_quad=quad(I[0]),_relu=relu(I[0]),_abs=abs(I[0]),_sin=sin(I[0]),_cos=cos(I[0]),_softplus=softplus(I[0]),_silu=silu(I[0]),_gelu=gelu(I[0]),_selu=selu(I[0]),_min=min(I[0]),_max=max(I[0]),_sum=sumItems(I[0]),_exp=exp(I[0]),_log10=log10(I[0]),_sqrt=sqrt(I[0]),_cbrt=cbrt(I[0]),_concat=concat(I[0], I[1]),$jacocoData=[Z@11a70586]","Functions[_dimTrim=dimtrim(I[0]),_idy=(I[0] <- I[1]),_conv=(I[0] x I[1]),_plus=(I[0] + I[1]),_plusAssign=(I[0] <- (I[0] + I[1])),_minus=(I[0] - I[1]),_minusAssign=(I[0] <- (I[0] - I[1])),_div=(I[0] / I[1]),_divAssign=(I[0] <- (I[0] / I[1])),_pow=(I[0] ** I[1]),_powAssign=(I[0] <- (I[0] ** I[1])),_mul=(I[0] * I[1]),_mulAssign=(I[0] <- (I[0] * I[1])),_add=(I[0] + I[1]),_addAssign=(I[0] <- (I[0] + I[1])),_mod=(I[0] % I[1]),_modAssign=(I[0] <- (I[0] % I[1])),_neg=(-1.0 * I[0]),_matMul=(I[0] @ I[1]),_transpose2D=([1,0]:(I[0])),_random=(I[0]),_tanh=tanh(I[0]),_fastTanh=fast_tanh(I[0]),_softsign=softsign(I[0]),_sigmoid=sig(I[0]),_gaus=gaus(I[0]),_fastGaus=fast_gaus(I[0]),_ln=ln(I[0]),_quad=quad(I[0]),_relu=relu(I[0]),_abs=abs(I[0]),_sin=sin(I[0]),_cos=cos(I[0]),_softplus=softplus(I[0]),_silu=silu(I[0]),_gelu=gelu(I[0]),_selu=selu(I[0]),_min=min(I[0]),_max=max(I[0]),_sum=sumItems(I[0]),_exp=exp(I[0]),_log10=log10(I[0]),_sqrt=sqrt(I[0]),_cbrt=cbrt(I[0]),_concat=concat(I[0], I[1]),$jacocoData=[Z@11a70586]","BackendContext[size=46]","FunctionCache[size=393]","ExecutionCall[inputs=[..1..],device=CPU[cores=12],operation=Addition@5b3eee64[identifier='add',operator='+'],algorithm=LazyRef<>[?],arguments=[DerivIdx[-1],VarIdx[-1]]]","CustomDeviceCleaner@76a7c4be[registered=0]","GraphNode@2047d4c7[parents=[?, ?],function=(I[0] * I[1]),shape=1]","FileDevice[directory=.,stored={},loadable=[],loaded=[]]","NDConfiguration@3efee1c9#3efee1c9[layout=ROW_MAJOR,shape=[2, 3, 8, 4],translation=[96, 32, 4, 1],indicesMap=[96, 32, 4, 1],spread=[1, 1, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@b0a85ed8#ffffffffb0a85ed8[layout=UNSPECIFIC,shape=[2, 3, 8, 4],translation=[96, 200, 8, 1],indicesMap=[96, 32, 4, 1],spread=[1, 1, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@5b2f61f4#5b2f61f4[layout=UNSPECIFIC,shape=[2, 3, 8, 4],translation=[96, 32, 4, 1],indicesMap=[96, 92, 4, 1],spread=[1, 4, 1, 1],offset=[0, 0, 0, 0]]","NDConfiguration@89c1db85#ffffffff89c1db85[layout=ROW_MAJOR,shape=[2, 3, 8],translation=[24, 8, 1],indicesMap=[24, 8, 1],spread=[1, 1, 1],offset=[0, 0, 0]]"]}}
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tsr.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tsr.of(2d).setRqsGradient(true)*Tsr.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -102,14 +102,14 @@
     {
       "id":"OpenCL related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"0.273 seconds",
+      "duration":"0.347 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaCLObject.toString()).matches()"]},
 
-        {"kind":"where","text":"The following objects are being used..","code":{"neurekaCLObject":["CLBackend@408ef8cf[platforms=[OpenCLPlatform@171163c7[id=0x233028e46e0,context=0x233050eb510,kernels=[..82..]],OpenCLPlatform@1fbc0dd9[id=0x23308d01a60,context=0x23304c63360,kernels=[..82..]]]]","OpenCLPlatform@171163c7[id=0x233028e46e0,context=0x233050eb510,kernels=[..82..]]","OpenCLDevice[id=0x233028e4e10,platform=0x233028e46e0]"]}}
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaCLObject":["Neureka.get().backend.find(CLBackend).get()","Neureka.get().backend.find(CLBackend).get().platforms0]","Neureka.get().backend.find(CLBackend).get().platforms0].devices0]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -117,7 +117,7 @@
     {
       "id":"Backend related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"4.022 seconds",
+      "duration":"7.243 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -126,7 +126,7 @@
 
         {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
 
-        {"kind":"where","text":"The following operations are being used..","code":{"operation":["Absolute@6e09f6e7[identifier='abs',operator='abs']","Cosinus@6c2bd5eb[identifier='cos',operator='cos']","Gaussian@349b78d9[identifier='gaus',operator='gaus']","GaussianFast@62f995d3[identifier='fast_gaus',operator='fast_gaus']","Identity@11a0d803[identifier='idy',operator='idy']","Quadratic@16f5fc9b[identifier='quad',operator='quad']","ReLU@4df8ac3[identifier='relu',operator='relu']","Sigmoid@cae2b14[identifier='sig',operator='sig']","Sinus@7f9b15b1[identifier='sin',operator='sin']","Softplus@6b976134[identifier='softplus',operator='softplus']","Tanh@62701d51[identifier='tanh',operator='tanh']","TanhFast@1e7e2351[identifier='fast_tanh',operator='fast_tanh']","GaTU@4ca0d1cf[identifier='gatu',operator='gatu']","GaSU@18ca5708[identifier='gasu',operator='gasu']","Softsign@2fbf2b52[identifier='softsign',operator='softsign']","Logarithm@28ceaa6a[identifier='ln',operator='ln']","SiLU@583cb1aa[identifier='silu',operator='silu']","GeLU@77701e2e[identifier='gelu',operator='gelu']","SeLU@1561c50[identifier='selu',operator='selu']","Exp@763dc097[identifier='exp',operator='exp']","Log10@dd8c91e[identifier='log10',operator='log10']","Sqrt@418d01dd[identifier='sqrt',operator='sqrt']","Cbrt@3afe754c[identifier='cbrt',operator='cbrt']","Summation@2a2e2bf3[identifier='sumJs',operator='sumJs']","Product@20a5dc6[identifier='prodJs',operator='prodJs']","Power@2feca58[identifier='power',operator='**']","Division@246f0531[identifier='divide',operator='/']","Multiplication@2455ffc2[identifier='multiply',operator='*']","Modulo@3fd9c1ac[identifier='modulo',operator='%']","Subtraction@3e274318[identifier='subtract',operator='-']","Addition@5b3eee64[identifier='add',operator='+']","Convolution@7d1d368e[identifier='mul_conv',operator='x']","XConvLeft@2d0ad413[identifier='inv_convolve_mul_left',operator='«x']","XConvRight@145a7483[identifier='inv_convolve_mul_right',operator='x»']","MatMul@6714c155[identifier='matMul',operator='@']","DimTrim@41abe9f[identifier='dimtrim',operator='dimtrim']","Reshape@52b740ee[identifier='reshape',operator=',']","AssignLeft@3e67683[identifier='left_inline',operator='<']","Randomization@66391349[identifier='random',operator='rand']","Cat@6966efca[identifier='concat',operator='concat']","Slice@2d4494ac[identifier='slice',operator='slice']","Min@bbd71a3[identifier='min',operator='min']","Max@60ab871b[identifier='max',operator='max']","Sum@76a27382[identifier='sumItems',operator='sumItems']","OptimizedOperation@7966c4b0[identifier='my_test_fun',operator='my_test_fun']","OptimizedOperation@4db2926c[identifier='my_fun',operator='my_fun']"]}}
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

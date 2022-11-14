@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.016 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -35,7 +35,7 @@
     {
       "id":"The ListReader can interpret nested lists resembling a 3D tensor into a shape list and value list.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -65,7 +65,7 @@
 
         {"kind":"and","text":"The flattened data is as expected!","code":["result.data == expectedData"]},
 
-        {"kind":"where","text":"","code":{"data":["[42]","[[43]]","[[-1], [1]]","[[24, 42]]","[[24, 42]]","[[true], [false]]"],"expectedShape":["[1]","[1, 1]","[2, 1]","[1, 2]","[1, 2]","[2, 1]"],"expectedData":["[42]","[43]","[-1, 1]","[24, 42]","[24, 42]","[true, false]"]}}
+        {"kind":"where","text":"","code":{"data":["[42]","[[43]]","[[-1],[+1]]","[[24, 42]]","[[\"24\", \"42\"]]","[[true],[false]]"],"expectedShape":["[1]","[1, 1]","[2, 1]","[1, 2]","[1, 2]","[2, 1]"],"expectedData":["[42]","[43]","[-1, 1]","[24, 42]","[\"24\", \"42\"]","[true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.017 seconds"
+    "duration":"0.016 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -50,7 +50,7 @@
     {
       "id":"We can use labels as selectors for slicing.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
