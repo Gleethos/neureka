@@ -479,7 +479,7 @@ header p {
 }
 
 
-.MainContentWrapper pre code {
+.MainContentWrapper .TabWrapper pre code {
     box-shadow: inset 0 0 3px 1px black;
 }
 
