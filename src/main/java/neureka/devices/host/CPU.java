@@ -1,6 +1,5 @@
 package neureka.devices.host;
 
-import neureka.Data;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
@@ -292,7 +291,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T> neureka.Data<T> allocate( DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
+    public <T> neureka.Data<T> allocateFromOne(DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
         int size = ndc instanceof VirtualNDConfiguration ? 1 : ndc.size();
         Class<?> type = dataType.getItemTypeClass();
         neureka.Data<T> array = allocate( dataType, size );
@@ -310,8 +309,9 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T> neureka.Data<T> allocate( DataType<T> dataType, Object jvmData, int desiredSize )
+    public <T> neureka.Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object jvmData )
     {
+        int desiredSize = ndc.size();
         neureka.Data data = _dataArrayOf(jvmData, (DataType<Object>) (dataType != null ? dataType : _dataTypeOf(jvmData)));
         if ( jvmData instanceof int[] ) {
             int[] array = (int[]) jvmData;
@@ -405,7 +405,7 @@ public class CPU extends AbstractDevice<Object>
         else
             throw new IllegalArgumentException( "Unsupported data type: " + data.getClass() );
 
-        neureka.Data dataArray = CPU.get().allocate( _dataTypeOf(data), data, size );
+        neureka.Data dataArray = CPU.get().allocateFromAll( _dataTypeOf(data), NDConstructor.of(size).produceNDC(false), data );
         if ( dataArray.getRef() != data )
             throw new IllegalStateException( "CPU seems to have reallocated some already valid data unnecessarily! This is most likely a bug." );
 

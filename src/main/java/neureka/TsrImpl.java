@@ -1426,7 +1426,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             CPU.get().borrow((Tsr<Object>) this).in(()->{
                 Object newData = _convertedDataOfType(typeClass);
                 _setData( null );
-                _setData( getDevice().allocate( newDataType, newData, this.size() ) );
+                _setData( getDevice().allocateFromAll( newDataType, this.getNDConf(), newData) );
                 return null;
             });
         }

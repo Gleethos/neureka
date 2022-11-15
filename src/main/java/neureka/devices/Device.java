@@ -197,9 +197,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         return allocate( dataType, NDConstructor.of( size ).produceNDC( false ) );
     }
 
-    <T extends V> neureka.Data<T> allocate( DataType<T> dataType, NDConfiguration ndc, T initialValue );
+    <T extends V> neureka.Data<T> allocateFromOne( DataType<T> dataType, NDConfiguration ndc, T initialValue );
 
-    <T extends V> neureka.Data<T> allocate( DataType<T> dataType, Object jvmData, int desiredSize );
+    <T extends V> neureka.Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object jvmData );
     /**
      *  This method tries to allow this device to produce an optimized {@link Operation}
      *  based on the provided function.

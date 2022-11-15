@@ -98,8 +98,9 @@ final class TsrConstructor
             if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
 
         _API.setIsVirtual( false );
-        _API.setConf( _ndConstructor.produceNDC( false ) );
-        _API.setData( _targetDevice.allocate( dataType, data, size ) );
+        NDConfiguration ndc = _ndConstructor.produceNDC( false );
+        _API.setConf( ndc );
+        _API.setData( _targetDevice.allocateFromAll( dataType, ndc, data) );
     }
 
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
@@ -143,7 +144,7 @@ final class TsrConstructor
     private Data<?> _constructAll( Object singleItem, NDConfiguration ndc, Class<?> typeClass )
     {
         DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
-        return _targetDevice.allocate( dataType, ndc, singleItem );
+        return _targetDevice.allocateFromOne( dataType, ndc, singleItem );
     }
 
     public <V> void newSeeded( Class<V> valueType, Object seed )
