@@ -5,7 +5,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUFun;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.devices.host.CPU;
 
 public class CPUScalarFunction implements ImplementationFor<CPU>

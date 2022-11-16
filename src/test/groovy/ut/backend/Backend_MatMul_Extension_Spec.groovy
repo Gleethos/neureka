@@ -8,8 +8,8 @@ import neureka.backend.api.fun.ADActionSupplier
 import neureka.backend.api.fun.SuitabilityPredicate
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm
 import neureka.backend.main.implementations.CPUImplementation
-import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionParser
+import neureka.math.Function
+import neureka.math.parsing.FunctionParser
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import spock.lang.Specification

@@ -10,7 +10,7 @@ import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.main.implementations.fun.api.CPUFun;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.backend.main.implementations.scalar.CPUScalarBroadcastFunction;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;

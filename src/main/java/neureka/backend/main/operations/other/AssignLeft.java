@@ -11,9 +11,9 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.ElementwiseAlgorithm;
 import neureka.backend.main.algorithms.BiScalarBroadcast;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 
 public class AssignLeft extends AbstractOperation
 {

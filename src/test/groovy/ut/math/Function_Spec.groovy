@@ -1,9 +1,9 @@
-package ut.calculus
+package ut.math
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Functions
-import neureka.calculus.args.Args
+import neureka.math.Functions
+import neureka.math.args.Args
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
@@ -19,7 +19,7 @@ import java.util.function.Function
 
 ''')
 @Subject([Function])
-class Calculus_Function_Spec extends Specification
+class Function_Spec extends Specification
 {
 
     def 'Function implementations ensure that internally created tensors are flagged as "intermediate" initially!'()
@@ -122,7 +122,7 @@ class Calculus_Function_Spec extends Specification
 
     def 'The library context exposes a set of useful functions.'(
             String expected,
-            Function<Functions, neureka.calculus.Function> fun
+            Function<Functions, neureka.math.Function> fun
     ) {
         expect :
             fun.apply(Neureka.get().backend.function).toString() == expected

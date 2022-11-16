@@ -4,7 +4,7 @@ package neureka.devices.file;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;

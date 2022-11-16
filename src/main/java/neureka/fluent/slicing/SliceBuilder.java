@@ -1,7 +1,7 @@
 package neureka.fluent.slicing;
 
 import neureka.Tsr;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.fluent.slicing.states.FromOrAt;
 import neureka.fluent.slicing.states.FromOrAtTsr;
@@ -45,7 +45,7 @@ public class SliceBuilder<V> implements AxisOrGetTsr<V>
         {
             boolean isIntermediate = toBeSliced.isIntermediate();
             toBeSliced.getMut().setIsIntermediate(false); // To avoid deletion!
-            Tsr<V> slice = neureka.calculus.Function.of("slice(I[0])", allowAutograd)
+            Tsr<V> slice = neureka.math.Function.of("slice(I[0])", allowAutograd)
                                 .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
                                 .call(toBeSliced);
 

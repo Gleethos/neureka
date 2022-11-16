@@ -2,7 +2,7 @@ package testutility.mock;
 
 import neureka.Tsr;
 import neureka.backend.api.Operation;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;

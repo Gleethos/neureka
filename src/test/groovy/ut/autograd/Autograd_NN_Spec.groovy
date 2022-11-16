@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
 import neureka.backend.ocl.CLBackend
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.view.NDPrintSettings

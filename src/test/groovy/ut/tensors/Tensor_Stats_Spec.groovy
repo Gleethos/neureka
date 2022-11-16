@@ -2,7 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.math.Function
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
 import spock.lang.Specification

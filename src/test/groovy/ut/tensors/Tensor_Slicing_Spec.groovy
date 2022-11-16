@@ -2,8 +2,8 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
-import neureka.calculus.args.Arg
+import neureka.math.Function
+import neureka.math.args.Arg
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice

@@ -1,20 +1,17 @@
-package neureka.calculus.implementations;
+package neureka.math.implementations;
 
 import neureka.Tsr;
-import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.Result;
 import neureka.backend.main.operations.other.Reshape;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.args.Args;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.args.Args;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  *  The most common type of {@link Function} which references other {@link Function}s to

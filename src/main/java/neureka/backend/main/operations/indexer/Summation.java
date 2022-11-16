@@ -2,24 +2,15 @@ package neureka.backend.main.operations.indexer;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.implementations.broadcast.CLBroadcastAddition;
-import neureka.backend.main.implementations.broadcast.CPUBroadcastSummation;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
-import neureka.devices.Device;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 
 /**
  *  This type of operation belongs to the same species as the

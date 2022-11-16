@@ -58,9 +58,9 @@ package neureka;
 
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
-import neureka.calculus.Function;
-import neureka.calculus.Functions;
-import neureka.calculus.args.Arg;
+import neureka.math.Function;
+import neureka.math.Functions;
+import neureka.math.args.Arg;
 import neureka.common.composition.Component;
 import neureka.common.composition.ComponentOwner;
 import neureka.common.utility.DataConverter;

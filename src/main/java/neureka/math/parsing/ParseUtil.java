@@ -1,4 +1,4 @@
-package neureka.calculus.assembly;
+package neureka.math.parsing;
 
 import neureka.Neureka;
 import neureka.backend.api.Operation;

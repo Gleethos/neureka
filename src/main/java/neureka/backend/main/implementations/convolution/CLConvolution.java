@@ -2,7 +2,7 @@ package neureka.backend.main.implementations.convolution;
 
 import neureka.Neureka;
 import neureka.backend.main.implementations.ParsedCLImplementation;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.devices.opencl.KernelCode;
 
 public class CLConvolution extends ParsedCLImplementation

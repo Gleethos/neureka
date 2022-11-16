@@ -1,12 +1,12 @@
-package neureka.calculus.assembly;
+package neureka.math.parsing;
 
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
-import neureka.calculus.Function;
-import neureka.calculus.implementations.FunctionConstant;
-import neureka.calculus.implementations.FunctionInput;
-import neureka.calculus.implementations.FunctionNode;
-import neureka.calculus.implementations.FunctionVariable;
+import neureka.math.Function;
+import neureka.math.implementations.FunctionConstant;
+import neureka.math.implementations.FunctionInput;
+import neureka.math.implementations.FunctionNode;
+import neureka.math.implementations.FunctionVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

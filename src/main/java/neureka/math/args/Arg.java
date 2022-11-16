@@ -1,11 +1,11 @@
-package neureka.calculus.args;
+package neureka.math.args;
 
 import neureka.common.composition.Component;
 import neureka.Tsr;
 import neureka.devices.Device;
 
 /**
- *  Extend this class to define additional meta arguments for {@link neureka.calculus.Functions}.
+ *  Extend this class to define additional meta arguments for {@link neureka.math.Functions}.
  *  More complex types of operations need additional parameters/arguments.
  *  The {@link neureka.backend.main.operations.other.Randomization}
  *  operation for example receives the {@link Seed} argument as a basis

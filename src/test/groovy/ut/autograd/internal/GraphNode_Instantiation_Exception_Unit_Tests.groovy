@@ -6,7 +6,7 @@ import neureka.autograd.GraphNode
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.backend.api.template.operations.AbstractOperation
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.devices.Device
 import neureka.view.NDPrintSettings
 import spock.lang.Specification

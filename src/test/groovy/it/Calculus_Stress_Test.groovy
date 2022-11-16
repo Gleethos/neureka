@@ -3,7 +3,7 @@ package it
 import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.ocl.CLBackend
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice

@@ -1,11 +1,11 @@
-package ut.calculus
+package ut.math
 
-import neureka.Nda
+
 import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.ocl.CLBackend
-import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionParser
+import neureka.math.Function
+import neureka.math.parsing.FunctionParser
 import neureka.devices.Device
 import neureka.view.NDPrintSettings
 import spock.lang.*

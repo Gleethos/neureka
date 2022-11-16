@@ -3,7 +3,7 @@ package neureka.backend.api.fun;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.main.internal.FinalExecutor;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.devices.Device;
 
 /**

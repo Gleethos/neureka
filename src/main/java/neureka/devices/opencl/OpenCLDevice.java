@@ -53,7 +53,7 @@ import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.ocl.CLBackend;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;

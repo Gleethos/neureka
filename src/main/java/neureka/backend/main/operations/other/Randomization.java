@@ -7,12 +7,9 @@ import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.ElementwiseAlgorithm;
-import neureka.backend.main.implementations.elementwise.CLRandomization;
 import neureka.backend.main.implementations.elementwise.CPURandomization;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
+import neureka.math.Function;
+import neureka.math.args.Arg;
 import neureka.dtype.NumericType;
 
 import java.util.Arrays;

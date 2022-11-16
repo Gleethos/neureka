@@ -1,8 +1,8 @@
-package ut.calculus
+package ut.math
 
 import neureka.Neureka
-import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionParser
+import neureka.math.Function
+import neureka.math.parsing.FunctionParser
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
@@ -16,7 +16,7 @@ import spock.lang.Title
     they can also compute derivatives based on scalar values.
     
 ''')
-class Calculus_Scalar_Spec extends Specification
+class Function_Scalar_Spec extends Specification
 {
     def 'Function "1/I[0]" instance returns expected scalar results.'(
             double[] inputs, Integer index, double expected

@@ -100,7 +100,7 @@ This powerful feature has been inspired by PyTorch:
 | ---- | --- |
 | [**neureka**](src/main/java/neureka/README.md) | the root package containing the tensor class and the following sub-packages |
 | [**neureka.devices**](src/main/java/neureka/devices/README.md) | a sub-package which enables cross platform acceleration (`OpenCLDevice`) and tensor persistence (`FileDevice`) |
-| [**neureka.calculus**](src/main/java/neureka/calculus/README.md) | a sub-package containing collections of functions and the ability to create custom ones |
+| [**neureka.math**](src/main/java/neureka/math/README.md) | a sub-package containing collections of functions and the ability to create custom ones |
 | [**neureka.optimization**](src/main/java/neureka/optimization/README.md) | a sub-package for weight-gradient optimization |
 | [**neureka.autograd**](src/main/java/neureka/autograd/README.md) | the guts of Neurekas autograd system |
 | [**neureka.backend**](src/main/java/neureka/backend/README.md) | the backend containing both a consistent API and a standard implementation  |

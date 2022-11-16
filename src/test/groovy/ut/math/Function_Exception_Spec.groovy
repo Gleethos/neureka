@@ -1,10 +1,10 @@
-package ut.calculus
+package ut.math
 
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.math.Function
 import spock.lang.Specification
 
-class Calculus_Exception_Spec extends Specification {
+class Function_Exception_Spec extends Specification {
 
     def 'Function throws exception when not enough inputs provided.'() {
 

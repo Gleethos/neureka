@@ -34,7 +34,7 @@ SOFTWARE.
 
 */
 
-package neureka.calculus;
+package neureka.math;
 
 
 import neureka.Neureka;
@@ -44,10 +44,10 @@ import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.memory.MemValidator;
-import neureka.calculus.args.Arg;
-import neureka.calculus.args.Args;
-import neureka.calculus.assembly.FunctionParser;
-import neureka.calculus.implementations.FunctionInput;
+import neureka.math.args.Arg;
+import neureka.math.args.Args;
+import neureka.math.parsing.FunctionParser;
+import neureka.math.implementations.FunctionInput;
 import neureka.devices.Device;
 
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package neureka.devices;
 
 import neureka.Neureka;
 import neureka.backend.api.BackendExtension;
-import neureka.calculus.assembly.ParseUtil;
+import neureka.math.parsing.ParseUtil;
 import neureka.devices.host.CPU;
 
 import java.util.Arrays;
