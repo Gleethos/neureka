@@ -262,7 +262,7 @@ function createLoaderDropDownFor(specName, expandableFeature) {
 function buildFeatureListFor(expandableFeature, data, content) {
     let nothingHappened = true;
     data['features'].forEach((feature)=>{
-        if ( feature['id'] === expandableFeature ) {
+        if ( feature['id'].toString() == expandableFeature.toString() ) {
             content.append(createUIForFeature(feature));
             nothingHappened = false;
         }
