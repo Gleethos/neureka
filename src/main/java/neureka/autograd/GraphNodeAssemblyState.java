@@ -3,7 +3,7 @@ package neureka.autograd;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.devices.Device;
 
 import java.util.ArrayList;

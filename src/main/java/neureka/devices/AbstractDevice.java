@@ -38,7 +38,7 @@ import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.dtype.DataType;
@@ -49,16 +49,9 @@ import org.slf4j.LoggerFactory;
 /**
  *  This is the abstract precursor class providing
  *  some useful implementations for core concepts which are most likely
- *  applicable to most concrete implementations of the Device interface.
- *  These class provides the following features :
+ *  applicable to most concrete implementations of the {@link Device} interface.
  *
- *  - A Cleaner instance used for freeing resources of the device.
- *
- *  - A component update implementation which simply calls the swap method of the device.
- *
- *  - An implementation for the execution method which calls the underlying calculus backend.
- *
- * @param <V> The most common super type for all tensors storable on this device.
+ * @param <V> The common super type for the types of tensors storable on this device.
  */
 public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 {

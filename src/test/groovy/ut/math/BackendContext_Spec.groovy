@@ -1,4 +1,4 @@
-package ut.calculus
+package ut.math
 
 import neureka.Neureka
 import neureka.backend.api.BackendContext

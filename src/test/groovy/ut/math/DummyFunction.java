@@ -1,9 +1,9 @@
-package ut.calculus;
+package ut.math;
 
 import neureka.Tsr;
 import neureka.backend.api.Operation;
-import neureka.calculus.Function;
-import neureka.calculus.args.Args;
+import neureka.math.Function;
+import neureka.math.args.Args;
 
 import java.util.List;
 import java.util.function.BiFunction;

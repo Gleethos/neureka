@@ -2,7 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.devices.host.CPU
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf

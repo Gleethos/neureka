@@ -3,7 +3,7 @@ package ut.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.JITProp
-import neureka.calculus.assembly.FunctionParser
+import neureka.math.parsing.FunctionParser
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
 

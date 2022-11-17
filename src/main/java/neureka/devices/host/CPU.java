@@ -2,7 +2,7 @@ package neureka.devices.host;
 
 import neureka.Tsr;
 import neureka.backend.api.Operation;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractDevice;

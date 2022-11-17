@@ -2,22 +2,14 @@ package neureka.backend.main.operations.indexer;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAction;
 import neureka.backend.api.*;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.implementations.broadcast.CLBroadcastMultiplication;
-import neureka.backend.main.implementations.broadcast.CPUBroadcastMultiplication;
-import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.operator.Multiplication;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
-import neureka.devices.Device;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 import neureka.ndim.NDimensional;
 
 import java.util.Arrays;

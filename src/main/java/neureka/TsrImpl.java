@@ -57,7 +57,7 @@ package neureka;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.memory.MemUtil;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
@@ -1002,7 +1002,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     |
     |       §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
     |   -----------------------------------------------------
-    |       ...for more context see package 'calculus'...
+    |       ...for more context see package 'math'...
     |*/
 
     /** {@inheritDoc} */

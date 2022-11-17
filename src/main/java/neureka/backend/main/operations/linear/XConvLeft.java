@@ -4,7 +4,7 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.NDConvolution;
 import neureka.backend.main.operations.ConvUtil;
-import neureka.calculus.Function;
+import neureka.math.Function;
 
 public class XConvLeft extends AbstractOperation {
 

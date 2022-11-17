@@ -2,8 +2,8 @@ package ut.backend.core
 
 import neureka.Tsr
 import neureka.backend.main.implementations.elementwise.CPURandomization
-import neureka.calculus.Function
-import neureka.calculus.args.Arg
+import neureka.math.Function
+import neureka.math.args.Arg
 import spock.lang.Specification
 import spock.lang.Subject
 

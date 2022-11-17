@@ -3,9 +3,7 @@ package neureka.backend.main.operations.linear;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.MatMulAlgorithm;
-import neureka.calculus.Function;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import neureka.math.Function;
 
 public class MatMul extends AbstractOperation
 {

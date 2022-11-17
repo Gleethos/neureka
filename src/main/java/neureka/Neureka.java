@@ -62,7 +62,7 @@ import java.util.function.Supplier;
 /**
  *    {@link Neureka} is the key access point for thread local / global library settings ( see{@link Settings})
  *    as well as execution contexts (see {@link BackendContext})
- *    and pre-instantiated {@link neureka.calculus.Function}s.
+ *    and pre-instantiated {@link neureka.math.Function}s.
  *    {@link Neureka} exposes the execution context via the {@link #backend()} method,
  *    the library settings which govern the behaviour of various library components
  *    can be accessed via the {@link #settings()} method.
@@ -99,7 +99,7 @@ public final class Neureka
      *  which will instantiated and populated as soon as the {@link #backend()}
      *  method is being called for the first time.
      *  This context contains anything needed to perform operations
-     *  on tensors on using different {@link neureka.calculus.Function}
+     *  on tensors on using different {@link neureka.math.Function}
      *  or {@link neureka.devices.Device} implementation instances.
      */
     private BackendContext _backend;
@@ -448,7 +448,7 @@ public final class Neureka
             }
 
             /**
-             * {@link neureka.calculus.Function} instances will produce hidden intermediate results
+             * {@link neureka.math.Function} instances will produce hidden intermediate results
              * when executing an array of inputs.
              * These tensors might not always be used for backpropagation,
              * which means they will be deleted if possible.
@@ -459,7 +459,7 @@ public final class Neureka
             public boolean isDeletingIntermediateTensors() { return _isDeletingIntermediateTensors; }
 
             /**
-             * {@link neureka.calculus.Function} instances will produce hidden intermediate results
+             * {@link neureka.math.Function} instances will produce hidden intermediate results
              * when executing an array of inputs.
              * These tensors might not always be used for backpropagation,
              * which means they will be deleted if possible.

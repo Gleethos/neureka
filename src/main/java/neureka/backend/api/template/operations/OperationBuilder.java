@@ -1,7 +1,7 @@
 package neureka.backend.api.template.operations;
 
 import neureka.backend.api.Operation;
-import neureka.calculus.Function;
+import neureka.math.Function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public final class OperationBuilder
      *  then execute the function wile also passing the index to the function AST.
      *  The resulting array will then be available to this {@link Operation} as argument list.
      *  This feature works alongside the {@link Function} implementation found in
-     *  {@link neureka.calculus.implementations.FunctionVariable}, which represents an input indexed
+     *  {@link neureka.math.implementations.FunctionVariable}, which represents an input indexed
      *  by the identifier 'j'!
      *
      */

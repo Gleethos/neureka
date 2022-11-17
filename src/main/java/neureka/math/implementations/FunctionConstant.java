@@ -1,10 +1,10 @@
-package neureka.calculus.implementations;
+package neureka.math.implementations;
 
 import neureka.Tsr;
 import neureka.backend.api.template.operations.AbstractOperation;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.args.Args;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.args.Args;
 
 import java.util.ArrayList;
 import java.util.List;

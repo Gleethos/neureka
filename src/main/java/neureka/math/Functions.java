@@ -1,4 +1,4 @@
-package neureka.calculus;
+package neureka.math;
 
 import neureka.backend.main.operations.functions.Tanh;
 

@@ -10,7 +10,7 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.backend.main.operations.linear.internal.opencl.CLReduce;
 import neureka.backend.main.operations.other.internal.CPUReduce;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;

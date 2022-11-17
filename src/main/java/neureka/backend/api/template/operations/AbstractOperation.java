@@ -3,12 +3,10 @@ package neureka.backend.api.template.operations;
 
 
 import neureka.backend.api.Algorithm;
-import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.template.algorithms.FallbackAlgorithm;
-import neureka.calculus.Function;
-import neureka.devices.Device;
+import neureka.math.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

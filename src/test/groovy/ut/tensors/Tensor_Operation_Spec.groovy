@@ -3,9 +3,9 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.ocl.CLBackend
-import neureka.calculus.Function
-import neureka.calculus.args.Arg
-import neureka.calculus.assembly.FunctionParser
+import neureka.math.Function
+import neureka.math.args.Arg
+import neureka.math.parsing.FunctionParser
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU

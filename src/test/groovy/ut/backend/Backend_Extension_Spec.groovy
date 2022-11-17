@@ -7,8 +7,8 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.BackendContext
 import neureka.backend.api.Operation
 import neureka.backend.api.Result
-import neureka.calculus.implementations.FunctionInput
-import neureka.calculus.implementations.FunctionNode
+import neureka.math.implementations.FunctionInput
+import neureka.math.implementations.FunctionNode
 import neureka.devices.Device
 import spock.lang.Specification
 import spock.lang.Subject

@@ -3,7 +3,7 @@ package neureka.autograd;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.main.memory.MemUtil;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.math.parsing.FunctionParser;
 
 public final class PendingError<ValType>
 {

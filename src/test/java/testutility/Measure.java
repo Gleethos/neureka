@@ -1,7 +1,7 @@
 package testutility;
 
 import neureka.Tsr;
-import neureka.calculus.Function;
+import neureka.math.Function;
 
 public class Measure {
 

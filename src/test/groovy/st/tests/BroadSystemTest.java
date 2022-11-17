@@ -3,8 +3,8 @@ package st.tests;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
-import neureka.calculus.Function;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.math.Function;
+import neureka.math.parsing.FunctionParser;
 import testutility.UnitTester_Tensor;
 
 public class BroadSystemTest

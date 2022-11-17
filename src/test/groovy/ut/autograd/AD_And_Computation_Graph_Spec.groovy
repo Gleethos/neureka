@@ -3,7 +3,7 @@ package ut.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
 import testutility.Sleep

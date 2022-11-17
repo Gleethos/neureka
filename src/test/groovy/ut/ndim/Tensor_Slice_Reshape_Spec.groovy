@@ -2,7 +2,7 @@ package ut.ndim
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification

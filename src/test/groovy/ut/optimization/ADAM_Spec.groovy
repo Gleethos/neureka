@@ -2,7 +2,7 @@ package ut.optimization
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.optimization.Optimizer
 import neureka.optimization.implementations.ADAM
 import neureka.view.NDPrintSettings

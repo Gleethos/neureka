@@ -14,8 +14,8 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementwise;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.BiScalarBroadcast;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
+import neureka.math.Function;
+import neureka.math.args.Arg;
 import neureka.devices.Device;
 
 import java.util.stream.Collectors;

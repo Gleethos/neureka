@@ -2,7 +2,7 @@ package neureka.backend.api.fun;
 
 import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.devices.Device;
 
 /**

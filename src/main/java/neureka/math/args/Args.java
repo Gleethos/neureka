@@ -1,4 +1,4 @@
-package neureka.calculus.args;
+package neureka.math.args;
 
 import neureka.common.composition.Component;
 import neureka.common.composition.AbstractComponentOwner;

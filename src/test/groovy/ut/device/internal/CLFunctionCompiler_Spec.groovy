@@ -6,8 +6,8 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
-import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionParser
+import neureka.math.Function
+import neureka.math.parsing.FunctionParser
 import neureka.backend.ocl.CLBackend
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
@@ -240,7 +240,7 @@ class CLFunctionCompiler_Spec extends Specification
 
         then : """
                 We will register that the Operation created by the CLFunctionCompiler managed to 
-                integrate well with the Function backend (calculus package) and eventually
+                integrate well with the Function backend (math package) and eventually
                 dispatch an execution call to our mocked OpenCLDevice.
         """
             1 * mockDevice.approve({ ExecutionCall<OpenCLDevice> call ->

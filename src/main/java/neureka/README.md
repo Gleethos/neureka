@@ -6,7 +6,7 @@ This is the root package containing the tensor class and the following sub-packa
 | Package                                | Description                                                                                                    |
 |----------------------------------------| -------------------------------------------------------------------------------------------------------------- |
 | [devices](devices/README.md)           | a sub-package which enables cross platform acceleration (`OpenCLDevice`) and tensor persistence (`FileDevice`) |
-| [calculus](calculus/README.md)         | a sub-package containing collections of functions and the ability to create custom ones                        |
+| [math](math/README.md)                 | a sub-package containing collections of functions and the ability to create custom ones                        |
 | [optimization](optimization/README.md) | a sub-package for weight-gradient optimization                                                                 |
 | [autograd](autograd/README.md)         | the guts of Neurekas autograd system                                                                           |
 | [backend](backend/README.md)           | the backend containing both a consistent API and a standard implementation                                     |
@@ -27,7 +27,7 @@ These conceptual layers are the following:
   
 
 - 2. The routing layer: 
-  - `calculus`
+  - `math`
   - `autograd`
 
 

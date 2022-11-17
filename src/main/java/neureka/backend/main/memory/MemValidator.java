@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
  *  before and after a lambda executes a function or some kind of algorithm on said tensors.
  *  This validity refers to the {@link Tsr#isIntermediate()} flag, whose state should
  *  adhere to strict rules in order to allow for safe deletion of tensors.
- *  The lambda wrapped by this may be a {@link neureka.calculus.Function} call or a lower level
+ *  The lambda wrapped by this may be a {@link neureka.math.Function} call or a lower level
  *  procedure defined a {@link neureka.backend.api.Algorithm} implementation.
  *  <br><br>
  *  <b>Warning! This is an internal class. Do not depend on it.</b>

@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.devices.opencl.KernelCode;
 import neureka.devices.opencl.OpenCLDevice;
 

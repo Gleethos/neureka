@@ -1,7 +1,7 @@
-package ut.calculus
+package ut.math
 
-import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionParser
+import neureka.math.Function
+import neureka.math.parsing.FunctionParser
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
@@ -19,7 +19,7 @@ import spock.lang.Title
 
 ''')
 @Subject([Function, FunctionParser])
-class Calculus_Parsing_Spec extends Specification
+class Function_Parsing_Spec extends Specification
 {
     def setupSpec()
     {

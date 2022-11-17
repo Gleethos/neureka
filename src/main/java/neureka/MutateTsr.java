@@ -2,7 +2,7 @@ package neureka;
 
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.utility.LogUtil;
 import neureka.ndim.config.NDConfiguration;
 

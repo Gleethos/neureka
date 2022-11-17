@@ -24,7 +24,7 @@ SOFTWARE.
 
 */
 
-package neureka.calculus;
+package neureka.math;
 
 import neureka.backend.api.BackendContext;
 import org.slf4j.Logger;
