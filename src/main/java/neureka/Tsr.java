@@ -1483,7 +1483,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     |
     |       §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
     |   -----------------------------------------------------
-    |       ...for more context see package 'calculus'...
+    |       ...for more context see package 'math'...
     |*/
 
     /**

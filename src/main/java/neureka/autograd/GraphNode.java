@@ -254,14 +254,15 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                     // The agent multiplies the local derivative with its stored partial derivative...
                                     Tsr<?> targetDerivative = localADAction.act( new ADTarget<>(targets.index(), this, localDerivative) );
                                     // ...this is now the new partial derivative with respect to the target node!
-                                    ADAction agent = output.getAgentSupplier().supplyADActionFor(
-                                                                                    function,
-                                                                                    call.withArgs(
-                                                                                        Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
-                                                                                        Arg.DerivIdx.of(finalI),
-                                                                                        Arg.Derivative.of(targetDerivative)
-                                                                                    )
-                                                                                );
+                                    ADAction agent = output.getAgentSupplier()
+                                                            .supplyADActionFor(
+                                                                function,
+                                                                call.withArgs(
+                                                                    Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
+                                                                    Arg.DerivIdx.of(finalI),
+                                                                    Arg.Derivative.of(targetDerivative)
+                                                                )
+                                                            );
                                     a.put( finalI, targets.node(), agent );
                                     _informPartialDerivative(agent);
                                     // TODO: flag within src Tsr<ValType>s that grant that the tensor
@@ -595,7 +596,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private void _informPartialDerivative( ADAction agent ) {
         agent.partialDerivative()
             .ifPresent( d ->  {
-                if ( d.has( GraphNode.class ) ) d.get( GraphNode.class )._usedAsDerivative++;
+                if ( !d.has( GraphNode.class ) )
+                    d.set(new GraphNode<>( Function.of("I[0]"), null, () -> Result.of(d) ));
+                d.getGraphNode().get()._usedAsDerivative++;
             });
     }
 
