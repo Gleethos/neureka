@@ -118,8 +118,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param payloadSupplier Provides the payload of this node.
      */
     public GraphNode( Function function, ExecutionCall<Device<?>> call, Supplier<Result> payloadSupplier ) {
-        if ( function == null )
-            throw new IllegalArgumentException("Passed constructor argument of type Function must not be null!");
+        if ( function == null && call != null )
+            throw new IllegalArgumentException( "Branch graph nodes require a function!" );
 
         if ( call != null ) {
             Tsr<?>[] inputs = call.inputs();
@@ -140,7 +140,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( out == null ) throw new NullPointerException( "The result must no be null!" );
         GraphNodeAssemblyState<V> a = new GraphNodeAssemblyState<>();
         NodePayload<V> data = new NodePayload<>(null, null);
-        if ( function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
+        if ( function != null && function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graph!
             GraphNode<V> node = this;
             data = new NodePayload<>( out.get(), ()->{
                 boolean allChildrenUseForwardAD = true;
@@ -192,7 +192,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
                          "Input tensors of a new GraphNode must be part of the computation graph!"
                     );
-            if ( function.getOperation().isInline() && child.usesAD() )
+            if ( function != null && function.getOperation().isInline() && child.usesAD() )
                 throw new IllegalStateException(
                         "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
                         "on active autograd computation graph in non detached function.\n" +
@@ -201,7 +201,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
     }
 
-    private static long _calculateNodeID(Function function, GraphNode[] parents) {
+    private static long _calculateNodeID( Function function, GraphNode[] parents ) {
         long nid = 1;
         if ( parents != null ) {
             for ( GraphNode<?> n : parents )
@@ -436,11 +436,15 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "Pending error in graph node '"+ n +"' has not received expected accumulation during back-prop. " +
                         "This is most likely because the recorded computation graph has multiple root!\n " +
                         "Otherwise please examine function " + n._function + " and its underlying operations: '" +
-                        n._function.getAllFunctions()
+                        (
+                                n._function == null
+                                ? "[]"
+                                : n._function.getAllFunctions()
                                     .stream()
                                     .filter( f -> f.getOperation() != null )
                                     .map( f -> f.getOperation().getIdentifier() )
-                                    .collect(Collectors.joining("', '")) + "'!"
+                                    .collect(Collectors.joining("', '"))
+                        )+ "'!"
                     );
                 }
                 n.backward( n._pendingError.getAccumulatedError() ); // Continue back-propagation recursively!
@@ -597,7 +601,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         agent.partialDerivative()
             .ifPresent( d ->  {
                 if ( !d.has( GraphNode.class ) )
-                    d.set(new GraphNode<>( Function.of("I[0]"), null, () -> Result.of(d) ));
+                    d.set(new GraphNode<>( null, null, () -> Result.of(d) ));
                 d.getGraphNode().get()._usedAsDerivative++;
             });
     }
@@ -851,7 +855,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             case SIMPLE:
                 return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
                         "parents=[" + ( _parentsToString() ) + "]," +
-                        "function=" +_function + "," +
+                        "function=" + (_function == null ? "?" : _function) + "," +
                         "shape=" + (getPayloadShape() != null ? getPayloadShape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
                         "]";
 

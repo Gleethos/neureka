@@ -227,7 +227,7 @@ public interface Operation
                 only flat functions can be executed directly                         */
 
             if ( call.getDerivativeIndex() < 0 && caller.isDoingAD() )
-                new GraphNode<>(caller, (ExecutionCall<Device<?>>) call, ref::get);
+                new GraphNode<>( caller, (ExecutionCall<Device<?>>) call, ref::get );
         }
         return ref.get();
     }
