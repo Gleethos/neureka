@@ -61,10 +61,10 @@ public class BroadSystemTest
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
             z.backward(Tsr.of(new int[]{1}, 1d));
             tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0066)"});
-            tester.testTensor(z, new String[]{"[1]:(9.9668); ->ddeleted"});
+            tester.testTensor(z, new String[]{"[1]:(9.9668); ->d[1]:(99.0066)"});
             tester.testContains(
                     z.toString("dgc"),
-                    new String[]{"[1]:(9.9668); ->ddelete"},
+                    new String[]{"[1]:(9.9668); ->d[1]:(99.0066)"},
                     "test double formatting"
             );
             tester.testContains(
