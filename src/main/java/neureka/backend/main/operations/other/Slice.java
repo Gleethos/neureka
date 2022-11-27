@@ -96,15 +96,7 @@ public class Slice extends AbstractOperation
             The following code check the validity of the slice shape ranges with
             respect to the 'parentTensor' of this new slice.
          */
-        if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
-            // TODO! This requires some more thought about how to check this!
-            // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
-            _LOG.warn(
-                    "Exceptional slice request detected. " +
-                            "This type of tensor cannot yet be sliced. " +
-                            "Please copy this tensor before slicing."
-            );
-        } else {
+        if ( parentTensor.rank() == newShape.length && rootTensor == parentTensor ) {
             /*
                 1. We know that inside this else branch 'this' tensor is a first order slice!
                 (So it is not a slice of a slice... reason : 'rootTensor == parentTensor' )
@@ -125,7 +117,7 @@ public class Slice extends AbstractOperation
                 via the 'getAt(...)' method leads us to a situation where
                 the following variable is NOT NULL! :
              */
-            int[] reshaped = ( input.isSlice() ) ? parentTensor.get( Relation.class ).getReshapeRelationFor( input ) : null;
+            int[] reshaped = ( input.isSlice() ? parentTensor.get( Relation.class ).getReshapeRelationFor( input ) : null );
             reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;
             for ( int i = 0; i < parentTensor.rank(); i++ ) {
                 int ii = ( reshaped != null ) ? reshaped[ i ] : i;
@@ -140,6 +132,14 @@ public class Slice extends AbstractOperation
                     throw new IllegalArgumentException( exception );
                 }
             }
+        }
+        else if ( rootTensor != parentTensor ) {
+            // TODO! This requires some more thought about how handle slices of slices!
+            _LOG.warn(
+                "Exceptional higher order slice request detected. " +
+                "This type of tensor cannot yet be sliced. " +
+                "Please copy this tensor before slicing."
+            );
         }
 
         Tsr<Object> subset =

@@ -74,16 +74,16 @@ import java.util.stream.Collectors;
  */
 public class GraphNode<V> implements Component<Tsr<V>>
 {
-    /**
-     * mode state meaning:
-     * -----------+----------------------------------+-
-     * _mode == 0 |  no Auto-Differentiation         |
-     * -----------+----------------------------------+-
-     * _mode > 0  |  forward Auto-Differentiation    |
-     * -----------+----------------------------------+-
-     * _mode < 0  |  backward Auto-Differentiation   |
-     * -----------+----------------------------------+-
-     */
+    /*
+         mode state meaning:
+       -+------------+----------------------------------+-
+        | _mode == 0 |  no Auto-Differentiation         |
+       -+------------+----------------------------------+-
+        | _mode > 0  |  forward Auto-Differentiation    |
+       -+------------+----------------------------------+-
+        | _mode < 0  |  backward Auto-Differentiation   |
+       -+------------+----------------------------------+-
+    */
     private final int _mode;
 
     private final AutoDiffMode _adMode;
@@ -98,8 +98,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private final GraphNode<V>[] _parents;
 
     private final List<BackPropTargets<V>> _targetsToAgents;
-
-    private final long _nodeID;
 
     private int _usedAsDerivative = 0;
 
@@ -145,7 +143,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
         _function        = ( call == null ? null : function );
         _adMode          = adMode;
         _parents         = parents;
-        _nodeID          = _calculateNodeID( _function, _parents );
         _targetsToAgents = _registerADActions( out, function, call );
     }
 
@@ -199,20 +196,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
         }
         if ( allChildrenUseForwardAD && _targetsToAgents != null ) _targetsToAgents.clear();
-    }
-
-    private static long _calculateNodeID( Function function, GraphNode[] parents ) {
-        long nid = 1;
-        if ( parents != null ) {
-            for ( GraphNode<?> n : parents )
-                nid = _scramble( nid, n.hashCode() );
-        }
-        if ( function != null ) nid = _scramble( nid, function.hashCode() );
-       return nid;
-    }
-
-    private static long _scramble( long l, long r ) {
-        return ( l * 0x105139C0C031L + 0x4c0e1e9f367dL ) ^ r;
     }
 
     /**
@@ -270,8 +253,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                             );
                                     collector.put( finalI, targets.node(), agent );
                                     _informPartialDerivative(agent);
-                                    // TODO: flag within src Tsr<ValType>s that grant that the tensor
-                                    // has been created by function constructor!
                                 }
                             );
                         }
@@ -346,15 +327,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return boolean
      */
     public boolean usesReverseAD() { return ( _mode < 0 ); }
-
-
-    /**
-     * Some nodes are not cacheable! Namely: leave tensors! They are not results of
-     * any function operation.
-     *
-     * @return boolean
-     */
-    public boolean isCacheable() { return ( this.getNodeID() != 1 ); }
 
     /**
      * This node (and the corresponding tensor) was not created by a function! (it's a leave tensor)
@@ -824,12 +796,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 })
                 .sum();
     }
-
-
-    /**
-     * @return The long Node-ID (Used for caching to avoid redundant computation within one computation graph)
-     */
-    public long getNodeID() { return _nodeID; }
 
     /**
      * @return Returns the type of the node as descriptive String in capital letters.

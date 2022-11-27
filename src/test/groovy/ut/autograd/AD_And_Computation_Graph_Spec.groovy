@@ -64,13 +64,10 @@ class AD_And_Computation_Graph_Spec extends Specification
             na.getMode() == 1
         and : 'We expect the partial derivative to be cleaned up! (size == 0)'
             na.size()==0
-            na.getNodeID()==1
-
             !nb.isLeave()
             nb.function.isPresent()
             nb.getMode() == -1
             nb.size()==0
-            nb.getNodeID()!=1
     }
 
     def "Payloads and derivatives are null after garbage collection."()
@@ -85,7 +82,6 @@ class AD_And_Computation_Graph_Spec extends Specification
             var strongRefs = n.parents.collect { it.payload.get() }
 
         expect :
-            n.parents[0].isCacheable()
             !n.parents[0].isLeave()
             n.parents[0].isGraphLeave()
             n.parents[1].isLeave()
