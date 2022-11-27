@@ -7,7 +7,7 @@ import neureka.math.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 
-public class CPURandomization implements ImplementationFor<CPU>
+public strictfp class CPURandomization implements ImplementationFor<CPU>
 {
     private static final long   MULTIPLIER = 0x5DEECE66DL;
     private static final long   ADDEND = 0xBL;
