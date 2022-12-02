@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.047 seconds"
+    "duration":"0.050 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the access device API to read from a tensor.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

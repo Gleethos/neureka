@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.046 seconds"
+    "duration":"0.042 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -41,7 +41,7 @@
     {
       "id":"Range based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

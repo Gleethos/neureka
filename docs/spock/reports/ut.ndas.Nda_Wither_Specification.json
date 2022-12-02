@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0"
+    "duration":"0.006 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can create a new Nda instance with a different shape.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

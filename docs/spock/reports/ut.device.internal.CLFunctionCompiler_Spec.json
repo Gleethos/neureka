@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.251 seconds"
+    "duration":"0.263 seconds"
   },
   "headers":["\n            Specified below are strict tests for covering the ability of \n            OpenCL devices to be able produce optimized functions given\n            a normal function instance created from a String...\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice produces a working optimized Function for doubles.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.022 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"The OpenCLDevice produces a working optimized Function for floats.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -70,7 +70,7 @@
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.156 seconds",
+      "duration":"0.176 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -121,7 +121,7 @@
 
         {"kind":"and","text":"We call the function again...","code":["fun( t1, t2, t3 )"]},
 
-        {"kind":"then","text":"\n                We will register that the Operation created by the CLFunctionCompiler managed to \n                integrate well with the Function backend (calculus package) and eventually\n                dispatch an execution call to our mocked OpenCLDevice.\n        ","code":["1 * mockDevice.approve({ ExecutionCall<OpenCLDevice> call ->","    call.device == mockDevice &&","    call.operation == resultOperation","})"]}
+        {"kind":"then","text":"\n                We will register that the Operation created by the CLFunctionCompiler managed to \n                integrate well with the Function backend (math package) and eventually\n                dispatch an execution call to our mocked OpenCLDevice.\n        ","code":["1 * mockDevice.approve({ ExecutionCall<OpenCLDevice> call ->","    call.device == mockDevice &&","    call.operation == resultOperation","})"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -129,7 +129,7 @@
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.050 seconds",
+      "duration":"0.049 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

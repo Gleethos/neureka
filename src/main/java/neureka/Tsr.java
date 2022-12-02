@@ -319,7 +319,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
     static <T> Tsr<T> of( Class<T> type, List<Object> conf ) {
-        ListReader.Result result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
+        ListReader.Result result = null;
+        try {
+            result = ListReader.read( conf, o -> o );
+        } catch (Exception e) {
+            // We don't care about the first attempt...
+        }
+        if ( result == null )
+            result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
         Class<T> resultType;
         Object[] resultData;
         int[] shape = result.getShape().stream().mapToInt(i -> i).toArray();

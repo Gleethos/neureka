@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.890 seconds"
+    "duration":"2.516 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can perform a convolution operation on a 2D tensor.",
       "result":"PASS",
-      "duration":"0.284 seconds",
+      "duration":"0.370 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Convolution with tensors of the same shape is equivalent to a dot product.",
       "result":"PASS",
-      "duration":"0.242 seconds",
+      "duration":"0.363 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Convolution can be performed using non-quadratic matrix tensors.",
       "result":"PASS",
-      "duration":"0.289 seconds",
+      "duration":"0.412 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
     {
       "id":"Convolution can be performed using tensors with an additional dimension as batch size.",
       "result":"PASS",
-      "duration":"0.283 seconds",
+      "duration":"0.335 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -102,7 +102,7 @@
     {
       "id":"The \"x\" (convolution) operator produces expected results (On the CPU).",
       "result":"PASS",
-      "duration":"0.158 seconds",
+      "duration":"0.225 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        ","\n            The 'x' operator performs convolution on the provided operands.\n            The meaning of the operands is not defined, so one the kernel tensor\n            can be the first and second operand. \n        "]
       },
@@ -129,7 +129,7 @@
     {
       "id":"Manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.118 seconds",
+      "duration":"0.151 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -146,7 +146,7 @@
     {
       "id":"Very simple manual convolution produces expected result.",
       "result":"PASS",
-      "duration":"0.207 seconds",
+      "duration":"0.244 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -167,7 +167,7 @@
     {
       "id":"Autograd works with simple 2D convolution.",
       "result":"PASS",
-      "duration":"0.102 seconds",
+      "duration":"0.133 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -192,7 +192,7 @@
     {
       "id":"Sime convolution works as expected eith autograd.",
       "result":"PASS",
-      "duration":"0.111 seconds",
+      "duration":"0.119 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -217,7 +217,7 @@
     {
       "id":"Tensors have the correct layout after convolution.",
       "result":"PASS",
-      "duration":"0.085 seconds",
+      "duration":"0.138 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

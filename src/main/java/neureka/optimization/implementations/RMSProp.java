@@ -20,10 +20,14 @@ public class RMSProp<V extends Number> implements Optimizer<V>
     private final double decay; // decay rate
     private final Tsr<Number> h; // sum of squared gradients:
 
-    public RMSProp(Tsr<Number> target ) {
+    public RMSProp( Tsr<Number> target ) {
+        this( target, 0.001 );
+    }
+
+    public RMSProp( Tsr<Number> target, double learningRate ) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
         h = Tsr.of(target.getItemType(), target.shape(), 0);
-        lr = 0.001; // Step size/learning rate is 0.001 by default!
+        lr = learningRate; // Step size/learning rate is 0.001 by default!
         decay = 0.9; // Decay rate is 0.9 by default!
     }
 

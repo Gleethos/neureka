@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.035 seconds"
+    "duration":"0.034 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -37,7 +37,7 @@
     {
       "id":"A functional algorithm does not accept null as an answer!",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

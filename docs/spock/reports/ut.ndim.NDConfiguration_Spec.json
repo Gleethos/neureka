@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.115 seconds"
+    "duration":"0.091 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Various NDConfigurations behaviour exactly as their general purpose implementation.",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.049 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

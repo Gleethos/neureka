@@ -1,8 +1,13 @@
 package st
 
 import neureka.Tsr
+import neureka.optimization.implementations.ADAM
+import neureka.optimization.implementations.RMSProp
+import neureka.optimization.implementations.SGD
 import spock.lang.Specification
 import testutility.nns.SimpleFeedForwardNN
+
+import java.util.function.Consumer
 
 class Example_Neural_Net_Spec extends Specification
 {
@@ -29,5 +34,38 @@ class Example_Neural_Net_Spec extends Specification
             loss[99] < 0.005
     }
 
+    def 'A very simple 1 layer NN converges.'( Consumer<Tsr<Float>> applyOptimizer )
+    {
+        given :
+            var inputs = Tsr.ofFloats().withShape( 2, 6 ).andFill(-4f..3f)
+            var weights = Tsr.ofRandom(Float, 6, 1)
+            var targets = Tsr.of( 0.2f, -0.1f, 0.5f, 1.2f, -0.3f, 0.2f ).withShape( 2, 1 )
+        and :
+            weights.setRqsGradient( true )
+            applyOptimizer.accept(weights)
+        and :
+            var pred
+            var losses = []
+        when :
+            100.times {
+                pred = inputs.matMul( weights ).tanh()
+                var loss = ((pred - targets)**2).sum()
+                loss.backward()
+                weights.applyGradient()
+                losses << loss.item()
+            }
+        then :
+            pred.shape == [2, 1]
+            losses[0] > losses[losses.size()-1]
+            losses[0] > 2
+            losses[losses.size()-1] < 0.5
+
+        where :
+            applyOptimizer << [
+                    { it.set(new SGD<>(0.03)) },
+                    { it.set(new ADAM<>(it)) },
+                    { it.set(new RMSProp<>(it, 0.05)) }
+                ]
+    }
 
 }

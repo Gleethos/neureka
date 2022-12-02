@@ -16,7 +16,7 @@
     {
       "id":"GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.",
       "result":"PASS",
-      "duration":"0.281 seconds",
+      "duration":"0.269 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.",
       "result":"PASS",
-      "duration":"0.041 seconds",
+      "duration":"0.054 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

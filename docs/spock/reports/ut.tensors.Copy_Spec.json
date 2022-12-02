@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.047 seconds"
+    "duration":"0.042 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -39,7 +39,7 @@
     {
       "id":"A shallow copy of a tensor will be flagged as such.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -116,7 +116,7 @@
     {
       "id":"We can deep copy various types of tensors.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

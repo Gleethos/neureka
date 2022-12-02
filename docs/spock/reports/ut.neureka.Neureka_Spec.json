@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"22.018 seconds"
+    "duration":"27.498 seconds"
   },
   "headers":["\n                    This specification defines what types of settings are exposed by\n                    Neureka as well as more general things like how string representations\n                    of various library types should look like... \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Neureka class instance has expected behaviour.",
       "result":"PASS",
-      "duration":"0.137 seconds",
+      "duration":"0.165 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"Neureka settings class can be locked causing its properties to be immutable.",
       "result":"PASS",
-      "duration":"1.192 seconds",
+      "duration":"1.401 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Every Thread instance has their own Neureka instance.",
       "result":"PASS",
-      "duration":"10.281 seconds",
+      "duration":"16.528 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
     {
       "id":"Various library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"2.711 seconds",
+      "duration":"3.252 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -102,7 +102,7 @@
     {
       "id":"OpenCL related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"0.347 seconds",
+      "duration":"0.571 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -117,7 +117,7 @@
     {
       "id":"Backend related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"7.243 seconds",
+      "duration":"5.472 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

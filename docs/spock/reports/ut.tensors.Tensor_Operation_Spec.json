@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"10.902 seconds"
+    "duration":"22.099 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"dot\" operation reshapes and produces valid \"x\" operation result.",
       "result":"PASS",
-      "duration":"0.180 seconds",
+      "duration":"0.236 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"The \"matMul\" operation produces the expected result.",
       "result":"PASS",
-      "duration":"1.070 seconds",
+      "duration":"1.865 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"The \"random\" function/operation populates tensors randomly.",
       "result":"PASS",
-      "duration":"0.163 seconds",
+      "duration":"0.614 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
     {
       "id":"The values of a randomly populated tensor seems to adhere to a gaussian distribution.",
       "result":"PASS",
-      "duration":"0.167 seconds",
+      "duration":"0.445 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -112,7 +112,7 @@
     {
       "id":"New method \"asFunction\" of String added at runtime is callable by groovy and also works.",
       "result":"PASS",
-      "duration":"0.725 seconds",
+      "duration":"1.692 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +137,7 @@
     {
       "id":"New operator methods added to \"SDK-types\" at runtime are callable by groovy and also work.",
       "result":"PASS",
-      "duration":"1.796 seconds",
+      "duration":"3.636 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -156,7 +156,7 @@
     {
       "id":"Overloaded operation methods on tensors produce expected results when called.",
       "result":"PASS",
-      "duration":"0.080 seconds",
+      "duration":"0.281 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -171,7 +171,7 @@
     {
       "id":"Simple slice addition produces expected result.",
       "result":"PASS",
-      "duration":"0.175 seconds",
+      "duration":"0.432 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -192,7 +192,7 @@
     {
       "id":"Auto reshaping and broadcasting works and the result can be back propagated.",
       "result":"PASS",
-      "duration":"3.396 seconds",
+      "duration":"7.574 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -233,7 +233,7 @@
     {
       "id":"Scalar broadcasting works across devices.",
       "result":"PASS",
-      "duration":"0.383 seconds",
+      "duration":"0.629 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -254,7 +254,7 @@
     {
       "id":"Operators \"+,*,**\" produce expected results with gradients which can be accessed via a \"Ig[0]\" Function instance",
       "result":"PASS",
-      "duration":"0.084 seconds",
+      "duration":"0.283 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -303,7 +303,7 @@
     {
       "id":"Activation functions work across types on slices and non sliced tensors.",
       "result":"PASS",
-      "duration":"2.562 seconds",
+      "duration":"4.230 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
