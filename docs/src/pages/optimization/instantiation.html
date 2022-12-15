@@ -4,17 +4,23 @@
             Optimization
         </h3>
         <p class="MarkdownMe">
-The optimization package provides the `Optimization` interface for implementing
-optimizations as `Tsr` components called by them when their gradients will be applied.
-One of the most basic optimization algorithms, *stochastic gradient descent* is
-already implemented and ready for use by instantiating the `SGD` class.<br>
-Otherwise there is only a single other optimizer implementing this interface,
-namely the `ADAM` class which is still work in progress.
-If you want more options, consider implementing the interface for custom optimizers.
+The optimization package provides the `Optimization` type, a
+functional interface for implementing optimization algorithms.
+Neureka offers a number of implementations, based on the `Optimizer`
+type, which is a subtype of `Optimization`. This `Optimizer` interface
+also exposes a simple API for configuring and creating the most common
+optimization algorithms.
+
+It is important to note that optimizations are `Tsr` components.
+So a tensor will use an optimizer
+when its gradients should be applied (see `Tsr::applyGradients()`).
+
+Here an example of how to use one of the most basic optimization algorithms,
+*stochastic gradient descent*:<br>
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-6 col-lg-6">
+<div class="col-sm-12 col-md-12 col-lg-6">
     <div class="TabWrapper">
         <div class="TabHead BasicTabHeader">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
@@ -24,40 +30,35 @@ If you want more options, consider implementing the interface for custom optimiz
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var o = new SGD(0.01) // 0.01 learning rate
 var w = Tsr.of(0f)
-w.set(o)
+w.set(Optimizer.SGD.withLearningRate(0.01)) // 0.01 learning rate
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Optimizer o = new SGD(0.01); // 0.01 learning rate
 Tsr&#60;Float&#62; w = Tsr.of(0f);
-w.set(o);
+w.set(Optimizer.SGD.withLearningRate(0.01)); // 0.01 learning rate
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val o = new SGD(0.01) // 0.01 learning rate
 val w = Tsr.of(0f)
-w.set(o)
+w.set(Optimizer.SGD.withLearningRate(0.01)) // 0.01 learning rate
                 </code></pre>
             </div>
         </div>
     </div>
 </div>
 
-<div class="col-sm-12 col-md-6 col-lg-6">
+<div class="col-sm-12 col-md-12 col-lg-6">
     <div class="ContentBox">
         <p>
-            The optimizer is simply instantiated by passing the targeted tensor instance
-            and then added to the tensor as component.
-            The optimizer can easily be accessed by calling 'find(Optimizer.class)'
+            An optimizer can easily be accessed by calling 'find(Optimizer.class)'
             on the tensor of concern.
         </p>
         <p>
-            It is important to note: Every tensor has their own Optimizer instance.
-            It is therefore not allowed to be shared due to the fact that the Optimizer
+            It is important to note: Every tensor has their own `Optimizer` instance.
+            It is therefore not allowed to be shared due to the fact that the `Optimizer`
             stores a context specialized to the one given tensor.
         </p>
     </div>
@@ -72,23 +73,23 @@ w.set(o)
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-Tsr w = Tsr.of(0)
-def o = new ADAM(w)
-w.set(o)
+var w = Tsr.of(0)
+w.set(Optimizer.ADAM)
+println w.find(ADAM).isPresent() // true
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Tsr w = Tsr.of(0);
-Optimizer o = new ADAM(w);
-w.set(o);
+var w = Tsr.of(0);
+w.set(Optimizer.ADAM);
+System.out.println(w.find(ADAM.class).isPresent()); // true
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 val w = Tsr.of(0)
-val o = new ADAM(w)
-w.set(o)
+w.set(Optimizer.ADAM)
+println(w.find(ADAM::class.java).isPresent()) // true
                 </code></pre>
             </div>
         </div>

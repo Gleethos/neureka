@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"5.544 seconds"
+    "duration":"4.607 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A simple 3 layer neural network converges.",
       "result":"PASS",
-      "duration":"4.276 seconds",
+      "duration":"3.580 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"A very simple 1 layer NN converges.",
       "result":"PASS",
-      "duration":"1.258 seconds",
+      "duration":"1.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,7 +48,7 @@
 
         {"kind":"then","text":"","code":["pred.shape == [2, 1]","losses[0] > losses[losses.size()-1]","losses[0] > 2","losses[losses.size()-1] < 0.5"]},
 
-        {"kind":"where","text":"","code":{"applyOptimizer":["{ it.set(new SGD<>(0.03)) }","{ it.set(new ADAM<>(it)) }","{ it.set(new RMSProp<>(it, 0.05)) }"]}}
+        {"kind":"where","text":"","code":{"applyOptimizer":["{ it.set(Optimizer.SGD.withLearningRate(0.03)) }","{ it.set(Optimizer.ADAM) }","{ it.set(Optimizer.RMSProp.withLearningRate(0.05)) }"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

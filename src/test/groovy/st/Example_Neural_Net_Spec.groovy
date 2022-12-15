@@ -1,6 +1,7 @@
 package st
 
 import neureka.Tsr
+import neureka.optimization.Optimizer
 import neureka.optimization.implementations.ADAM
 import neureka.optimization.implementations.RMSProp
 import neureka.optimization.implementations.SGD
@@ -62,9 +63,9 @@ class Example_Neural_Net_Spec extends Specification
 
         where :
             applyOptimizer << [
-                    { it.set(new SGD<>(0.03)) },
-                    { it.set(new ADAM<>(it)) },
-                    { it.set(new RMSProp<>(it, 0.05)) }
+                    { it.set(Optimizer.SGD.withLearningRate(0.03)) },
+                    { it.set(Optimizer.ADAM) },
+                    { it.set(Optimizer.RMSProp.withLearningRate(0.05)) }
                 ]
     }
 

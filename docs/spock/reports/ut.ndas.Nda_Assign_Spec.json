@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.007 seconds"
+    "duration":"0.010 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -33,7 +33,7 @@
     {
       "id":"Assignment can be easily achieved through subscription operators.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

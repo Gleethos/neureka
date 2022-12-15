@@ -13,7 +13,7 @@ import spock.lang.Subject
 class AdaGrad_Spec extends Specification
 {
     @Shared Tsr<?> w = Tsr.of(0d)
-    @Shared Optimizer<?> o = new AdaGrad<>(w)
+    @Shared Optimizer<?> o = Optimizer.AdaGrad.create(w)
 
     def setupSpec()
     {
@@ -23,7 +23,7 @@ class AdaGrad_Spec extends Specification
                 throughout every data table iteration:
                 ```
                     Tsr<?> w = Tsr.of(0d)
-                    Optimizer<?> o = new AdaGrad<>(w)             
+                    Optimizer<?> o = Optimizer.AdaGrad.create(w)           
                     w.set(o)                       
                 ```
             """

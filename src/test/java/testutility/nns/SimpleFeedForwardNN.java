@@ -3,6 +3,7 @@ package testutility.nns;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.math.Function;
+import neureka.optimization.Optimizer;
 import neureka.optimization.implementations.ADAM;
 
 public class SimpleFeedForwardNN
@@ -23,12 +24,12 @@ public class SimpleFeedForwardNN
         _b1 = Tsr.ofFloats().withShape(1,     size1).andSeed(++seed).setRqsGradient(true);
         _b2 = Tsr.ofFloats().withShape(1,     size2).andSeed(++seed).setRqsGradient(true);
         _b3 = Tsr.ofFloats().withShape(1,     size ).andSeed(++seed).setRqsGradient(true);
-        _W1.set(new ADAM<>(_W1));
-        _W2.set(new ADAM<>(_W2));
-        _W3.set(new ADAM<>(_W3));
-        _b1.set(new ADAM<>(_b1));
-        _b2.set(new ADAM<>(_b2));
-        _b3.set(new ADAM<>(_b3));
+        _W1.set(Optimizer.ADAM);
+        _W2.set(Optimizer.ADAM);
+        _W3.set(Optimizer.ADAM);
+        _b1.set(Optimizer.ADAM);
+        _b2.set(Optimizer.ADAM);
+        _b3.set(Optimizer.ADAM);
     }
 
     public Tsr<Float> forward( Tsr<Float> x ) {

@@ -54,7 +54,7 @@ public class SGD<V> implements Optimizer<V>
 {
     private final double _lr; // learning rate
 
-    public SGD( double learningRate ) {
+    SGD( double learningRate ) {
         _lr = learningRate; // Step size/learning rate is 0.01 by default!
     }
 

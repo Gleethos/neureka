@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.324 seconds"
+    "duration":"0.298 seconds"
   },
   "headers":["\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -41,7 +41,7 @@
     {
       "id":"We can get the items of an outsourced tensor as a primitive array.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -112,7 +112,7 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.031 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -139,7 +139,7 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"0.039 seconds",
+      "duration":"0.041 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -166,7 +166,7 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"0.071 seconds",
+      "duration":"0.064 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -193,7 +193,7 @@
     {
       "id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.",
       "result":"PASS",
-      "duration":"0.126 seconds",
+      "duration":"0.108 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.216 seconds"
+    "duration":"0.152 seconds"
   },
   "headers":[" \n                <p>\n                    This specification covers the behavior of tensors when being sliced\n                    on multiple different device types in conjunction with \n                    the autograd system.\n                    Autograd should work on slices as well.          \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Slices can be created using the SliceBuilder.",
       "result":"PASS",
-      "duration":"0.071 seconds",
+      "duration":"0.047 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,7 +45,7 @@
     {
       "id":"Cross device sliced tensor integration test runs without errors.",
       "result":"PASS",
-      "duration":"0.136 seconds",
+      "duration":"0.094 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

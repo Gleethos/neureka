@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.263 seconds"
+    "duration":"0.239 seconds"
   },
   "headers":["\n            Specified below are strict tests for covering the ability of \n            OpenCL devices to be able produce optimized functions given\n            a normal function instance created from a String...\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice produces a working optimized Function for doubles.",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"The OpenCLDevice produces a working optimized Function for floats.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -70,7 +70,7 @@
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.176 seconds",
+      "duration":"0.157 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,7 +129,7 @@
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.049 seconds",
+      "duration":"0.048 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

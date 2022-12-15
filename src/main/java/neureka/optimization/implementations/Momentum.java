@@ -12,12 +12,12 @@ public class Momentum<V extends Number> implements Optimizer<V>
     private final double decay; // decay rate
     private final Tsr<Number> v; // velocity:
 
-    public Momentum( Tsr<V> target ) {
+    Momentum( Tsr<V> target, double learningRate, double decay ) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
         List<Integer> shape = target.shape();
         v = Tsr.of(target.getItemType(), shape, 0).getMut().upcast(Number.class);
-        lr = 0.01; // Step size/learning rate is 0.01 by default!
-        decay = 0.9; // Decay rate is 0.9 by default!
+        lr = learningRate; // Step size/learning rate is 0.01 by default!
+        this.decay = decay; // Decay rate is 0.9 by default!
     }
 
     @Override

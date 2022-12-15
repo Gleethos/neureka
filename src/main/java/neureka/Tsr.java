@@ -85,6 +85,7 @@ import neureka.ndim.NDConstructor;
 import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
 import neureka.optimization.Optimizer;
+import neureka.optimization.OptimizerFactory;
 import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
@@ -1308,6 +1309,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return This very tensor instance in order to enable method chaining.
      */
     default Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
+
+    default Tsr<V> set(OptimizerFactory optimizerFactory) {
+        this.set( optimizerFactory.create( (Tsr) this ) );
+        return this;
+    }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.

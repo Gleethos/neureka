@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.770 seconds"
+    "duration":"1.427 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.322 seconds",
+      "duration":"0.287 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -47,7 +47,7 @@
     {
       "id":"Dot operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.049 seconds",
+      "duration":"0.036 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"The broadcast operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.080 seconds",
+      "duration":"0.062 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +89,7 @@
     {
       "id":"Activation functions work across types, on large prime sized 1D slices and non sliced 1D tensors.",
       "result":"PASS",
-      "duration":"0.998 seconds",
+      "duration":"0.763 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -118,7 +118,7 @@
     {
       "id":"Activation functions work across types.",
       "result":"PASS",
-      "duration":"0.101 seconds",
+      "duration":"0.087 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

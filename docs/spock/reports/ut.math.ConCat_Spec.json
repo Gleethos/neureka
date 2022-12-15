@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.036 seconds"
+    "duration":"0.035 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -66,7 +66,7 @@
     {
       "id":"We can concatenate 2 string tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
     {
       "id":"We can concatenate and then back-propagate 2 simple float tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

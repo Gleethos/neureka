@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.013 seconds"
+    "duration":"0.012 seconds"
   },
   "headers":["\n            There’s one more class which is very important for autograd implementation : the 'GraphNode class'!     \n            Tsr and GraphNode instances are interconnected and build up an acyclic graph,                              \n            that encodes a complete history of computation.                                                                        \n            Each tensor has a .getGraphNode() attribute that references the GraphNode                                        \n            that has created a given Tsr instance.                                                                  \n            (except for Tsr created by the user or created by a \"detached\" Function instance... ).                  \n\n        ","\n            If you want to compute the derivatives, you can call .backward() on a Tensor.                           \n            If the given Tsr is a scalar (i.e. it holds one element and has shape \"(1)\"), you do not need to        \n            specify any arguments to backward(), however if it has more elements,                                   \n            you should specify a gradient argument that is a tensor of matching shape.                              \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Simple automatic differentiation and propagation.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            How can I compute gradients with Neureka automatically?\n        "]
       },

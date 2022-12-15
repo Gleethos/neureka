@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.038 seconds"
+    "duration":"0.037 seconds"
   },
   "headers":["\n                This specification covers the behavior of tensors when being sliced\n                on multiple different device types using the slice builder API.           \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -74,7 +74,7 @@
     {
       "id":"A tensor can be sliced by passing ranges in the form of primitive arrays.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -103,7 +103,7 @@
     {
       "id":"A tensor can be sliced by passing ranges in the form of lists (Groovy ranges).",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -159,7 +159,7 @@
     {
       "id":"Slicing is also a Function with autograd support!",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.011 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -182,7 +182,7 @@
     {
       "id":"Normal slicing will try to do autograd.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -201,7 +201,7 @@
     {
       "id":"We can avoid autograd when slicing by using the \"detached\" instead of the \"get\" method.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
