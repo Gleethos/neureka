@@ -1,4 +1,4 @@
-package ut.optimization
+package ut.miscellaneous
 
 import neureka.Neureka
 import neureka.Tsr
@@ -9,11 +9,19 @@ import neureka.optimization.implementations.ADAM
 import neureka.optimization.implementations.SGD
 import neureka.view.NDPrintSettings
 import spock.lang.Ignore
+import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
 
-@Subject([Optimizer])
-class Optimizer_Spec extends Specification
+@Narrative('''
+
+    This specification is meant less as feature documentation and more as a
+    chaos test for weired neural network architectures
+    an unusual usages of the Neureka library.
+
+''')
+@Subject([Tsr, Optimizer])
+class Weired_NN_Spec extends Specification
 {
     def setup() {
         Neureka.get().reset()
@@ -80,32 +88,37 @@ class Optimizer_Spec extends Specification
             var b = f(w2.convDot(a))
             var y = w3.convDot(b)
 
-        then:
-            y.items.collect({it.round(2)}) == [5.33, 6.14, 18.8, 7.01, 8.02, 4.22, 4.07, 9.36]
-
-        when :
-            y.backward(-4)
-            w1.applyGradient()
-            w2.applyGradient()
-            w3.applyGradient()
-        then :
-            !w1.gradient.isPresent()
-            !w2.gradient.isPresent()
-            !w3.gradient.isPresent()
-
-        when :
-            y.backward(-2)
-            w1.applyGradient()
-            w2.applyGradient()
-            w3.applyGradient()
-        then :
-            !w1.gradient.isPresent()
-            !w2.gradient.isPresent()
-            !w3.gradient.isPresent()
         and :
-            w1.items.collect({it.round(2)}) == [-0.21, 0.13, -0.66, -0.15, 0.97, -1.51, -0.34, 0.15, -0.63, -0.19, -1.25, 0.49, -0.4, 0.18, -0.59, -0.18, 0.42, 0.71, -0.48, 0.19, -0.55, -0.19, -0.66, -1.24]
-            w2.items.collect({it.round(2)}) == [-0.44, -0.27, 0.75, 0.59, 0.89, -0.22, 1.87, 0.49, 0.81, 0.49, 0.84, -0.21, -0.42, 0.88, 0.84, 0.44, 0.89, -0.06, -0.08, 1.29, 0.99, 0.67, 0.83, -0.01, -2.29, -1.63, 0.87, 0.24, 0.61, -0.36, -0.85, 0.5, 1.02, 0.54, 0.66, -0.2, 0.26, -0.6, 1.03, 0.44, 0.56, -0.14, -1.08, -0.3, 1.02, 0.47, 0.47, -0.17, 1.18, 0.98, 1.06, 0.39, 0.4, -0.11, -0.64, 1.07]
-            w3.items.collect({it.round(2)}) == [-66.47, -73.96, -65.09, -16.39, -46.11, -12.58, -99.62]
+            y.backward(-4)
+        then :
+            w1.gradient.isPresent()
+            w2.gradient.isPresent()
+            w3.gradient.isPresent()
+
+        when :
+            w1.applyGradient()
+            w2.applyGradient()
+            w3.applyGradient()
+        then :
+            !w1.gradient.isPresent()
+            !w2.gradient.isPresent()
+            !w3.gradient.isPresent()
+
+        when :
+            y.backward(-2) // Does nothing because the gradient is already applied!
+        then :
+            !w1.gradient.isPresent()
+            !w2.gradient.isPresent()
+            !w3.gradient.isPresent()
+
+        when :
+            w1.applyGradient()
+            w2.applyGradient()
+            w3.applyGradient()
+        then :
+            !w1.gradient.isPresent()
+            !w2.gradient.isPresent()
+            !w3.gradient.isPresent()
     }
 
 }

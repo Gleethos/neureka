@@ -56,6 +56,7 @@ package neureka;
 
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.LazyRef;
 import neureka.backend.main.memory.MemUtil;
 import neureka.math.Function;
 import neureka.common.composition.AbstractComponentOwner;
@@ -973,6 +974,23 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     public Tsr<V> to( Device<?> device ){
         if ( this.getDevice() != device ) super._set( device );
         return this;
+    }
+
+    /**
+     * @param error A lazy reference to a supplier of the error tensor which
+     *              may not be called if the error is not needed.
+     *              This is to avoid unnecessary allocations and computations.
+     */
+    void _backward( LazyRef<Tsr<V>> error ) {
+        LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
+        LazyRef<Tsr<V>> errorRef = this.isOutsourced()
+                                      ? LazyRef.of(()->error.get().deepCopy().to(this.getDevice()))
+                                      : error;
+
+        find( GraphNode.class ).ifPresent( node -> node.backward(errorRef.get()) );
+
+        if ( this.rqsGradient() )
+            mut().addToGradient( errorRef.get() );
     }
 
     @Override

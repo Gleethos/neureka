@@ -58,6 +58,7 @@ package neureka;
 
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
+import neureka.backend.api.LazyRef;
 import neureka.math.Function;
 import neureka.math.Functions;
 import neureka.math.args.Arg;
@@ -1327,20 +1328,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> backward( Tsr<V> error ) {
         LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
-        if ( this.isOutsourced() )
-            error = error.deepCopy().to(this.getDevice());
-
-        Tsr<V> finalError = error;
-        Optional<GraphNode> node = find( GraphNode.class );
-        if ( node.isPresent() )
-            node.get().backward(finalError);
-
-        if ( !node.isPresent() && this.rqsGradient() )
-            getMut().addToGradient( error );
-
+        ((TsrImpl<V>)this)._backward( LazyRef.of( () -> error ) );
         return this;
     }
-
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1358,7 +1348,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return The tensor, to allow for method chaining.
      */
     default Tsr<V> backward( double value ) {
-        backward( Tsr.of( this.getItemType(), getNDConf().shape(), value ) );
+        ((TsrImpl<V>)this)._backward( LazyRef.of( () -> Tsr.of( this.getItemType(), getNDConf().shape(), value )) );
         return this;
     }
 
