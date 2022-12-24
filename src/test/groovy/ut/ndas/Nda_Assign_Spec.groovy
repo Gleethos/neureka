@@ -30,7 +30,7 @@ class Nda_Assign_Spec extends Specification
     def 'Assignment can be easily achieved through subscription operators.'()
     {
         given : 'An nda of ints with shape (2, 3).'
-            var n = Nda.of(Integer).withShape(2, 3).andFill(1, 2, 3, 4, 5, 6)
+            var n = Nda.of(Integer).withShape(2, 3).andFill(1..6)
         and : 'An nda of ints with shape (1, 2).'
             var a = Nda.of(Integer).withShape(1, 2).andFill(42, 42)
 
@@ -50,8 +50,8 @@ class Nda_Assign_Spec extends Specification
         """
 
         given : 'Two nd-arrays of ints with shape (5).'
-            var n1 = Nda.of(Byte).vector(1, 2, 3, 4, 5)
-            var n2 = Nda.of(Byte).vector(6, 7, 8, 9, 10)
+            var n1 = Nda.of(Byte).vector(1..5)
+            var n2 = Nda.of(Byte).vector(6..10)
 
         when : 'We create to very simple slices which are simply the first 3 items of the above vectors.'
             var s1 = n1[0..2]

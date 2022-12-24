@@ -2,17 +2,17 @@
 
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.fun.ADActionSupplier;
+import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
-import neureka.backend.main.internal.RecursiveExecutor;
 import neureka.backend.main.operations.other.Reshape;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 
 <span class="pc bpc" id="L13" title="1 of 2 branches missed.">public final class Broadcast extends AbstractFunDeviceAlgorithm&lt;Broadcast&gt;</span>
 {
-    public Broadcast( RecursiveExecutor finalExecutor )
+    public Broadcast()
     {
 <span class="fc" id="L17">        super(&quot;broadcast&quot;);</span>
 <span class="fc" id="L18">        setIsSuitableFor(</span>
@@ -51,50 +51,52 @@ import neureka.dtype.NumericType;
 <span class="nc" id="L51">                    .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)</span>
 <span class="nc" id="L52">                    .orElse(AutoDiffMode.BACKWARD_ONLY)</span>
         );
-<span class="fc" id="L54">        setDeviceExecution( (call, callback) -&gt; finalExecutor.execute(call, callback), (ADActionSupplier) null );</span>
-<span class="fc" id="L55">        setCallPreparation(</span>
+<span class="fc" id="L54">        setExecution( (outerCaller, outerCall) -&gt;</span>
+<span class="fc" id="L55">                        Result.of(AbstractDeviceAlgorithm.prepareAndExecute(</span>
+                                outerCall,
+<span class="fc" id="L57">                                innerCall -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )</span>
+                        ))
+        );
+<span class="fc" id="L60">        setCallPreparation(</span>
             call -&gt;
             {
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );</span>
-<span class="fc" id="L59">                if (</span>
-<span class="fc bfc" id="L60" title="All 2 branches covered.">                        call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                if ( call.arity() &lt; 3 ) call = call.withAddedInputAt(0, null);</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">                int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );</span>
+<span class="fc" id="L65">                if (</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                    call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()</span>
                 )
                 {
-<span class="fc" id="L63">                    Tsr&lt;?&gt;[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };</span>
-<span class="fc" id="L64">                    Reshape.makeFit( inputs, true );</span>
-<span class="fc" id="L65">                    inputs = new Tsr[]{ null, inputs[0], inputs[1] };</span>
-<span class="fc" id="L66">                    call = call.withInputs( inputs );</span>
+<span class="fc" id="L69">                    Tsr&lt;?&gt;[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };</span>
+<span class="fc" id="L70">                    Reshape.makeFit( inputs, true );</span>
+<span class="fc" id="L71">                    inputs = new Tsr[]{ null, inputs[0], inputs[1] };</span>
+<span class="fc" id="L72">                    call = call.withInputs( inputs );</span>
                 }
 
-<span class="fc" id="L69">                Device device = call.getDevice();</span>
-<span class="pc bpc" id="L70" title="1 of 2 branches missed.">                if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
+<span class="fc" id="L75">                Device device = call.getDevice();</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">                if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
                 {
-<span class="fc" id="L72">                    int[] s1 = call.input( 1 ).getNDConf().shape();</span>
-<span class="fc" id="L73">                    int[] s2 = call.input( 2 ).getNDConf().shape();</span>
+<span class="fc" id="L78">                    int[] s1 = call.input( 1 ).getNDConf().shape();</span>
+<span class="fc" id="L79">                    int[] s2 = call.input( 2 ).getNDConf().shape();</span>
 
-<span class="pc bpc" id="L75" title="2 of 4 branches missed.">                    assert s1.length == s2.length;</span>
-<span class="fc" id="L76">                    int[] outShape = new int[s1.length];</span>
+<span class="pc bpc" id="L81" title="2 of 4 branches missed.">                    assert s1.length == s2.length;</span>
+<span class="fc" id="L82">                    int[] outShape = new int[s1.length];</span>
 
-<span class="fc bfc" id="L78" title="All 2 branches covered.">                    for ( int i = 0; i &lt; outShape.length; i++ )</span>
-<span class="pc bpc" id="L79" title="2 of 8 branches missed.">                        assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                    for ( int i = 0; i &lt; outShape.length; i++ )</span>
+<span class="pc bpc" id="L85" title="2 of 8 branches missed.">                        assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];</span>
 
-<span class="fc bfc" id="L81" title="All 2 branches covered.">                    for ( int i = 0; i &lt; outShape.length; i++ )</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">                        outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                    for ( int i = 0; i &lt; outShape.length; i++ )</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">                        outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );</span>
 
-<span class="fc" id="L84">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getItemType();</span>
-<span class="fc" id="L85">                    Tsr&lt;?&gt; output = Tsr.of(type).withShape(outShape).all( 0.0 ).getUnsafe().setIsIntermediate( true );</span>
-<span class="fc" id="L86">                    output.setIsVirtual( false );</span>
-                    try {
-<span class="fc" id="L88">                        device.store( output );</span>
-<span class="nc" id="L89">                    } catch( Exception e ) {</span>
-<span class="nc" id="L90">                        e.printStackTrace();</span>
-<span class="fc" id="L91">                    }</span>
-<span class="fc" id="L92">                    call = call.withInputAt( 0, output );</span>
+<span class="fc" id="L90">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getItemType();</span>
+<span class="fc" id="L91">                    Tsr&lt;?&gt; output = Tsr.of(type).withShape(outShape).all( 0.0 ).mut().setIsIntermediate( true );</span>
+<span class="fc" id="L92">                    output.mut().setIsVirtual( false );</span>
+<span class="fc" id="L93">                    device.store( output );</span>
+<span class="fc" id="L94">                    call = call.withInputAt( 0, output );</span>
                 }
-<span class="fc" id="L94">                return call;</span>
+<span class="fc" id="L96">                return call;</span>
             }
         );
-<span class="fc" id="L97">    }</span>
+<span class="fc" id="L99">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

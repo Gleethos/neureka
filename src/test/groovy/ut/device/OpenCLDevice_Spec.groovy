@@ -88,7 +88,10 @@ class OpenCLDevice_Spec extends Specification
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'We can get the items of an outsourced tensor as a primitive array.'()
     {
-        given : 'A new tensor.'
+        given : 'We set the experimental "autoConvertToFloat" flag to true.'
+            Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
+
+        and : 'A new tensor.'
             Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
 
         expect : 'This tensor is initially of type "Double", meaning it is backed by a "double[]" array internally...'
@@ -129,7 +132,7 @@ class OpenCLDevice_Spec extends Specification
     def 'Ad hoc compilation produces executable kernel.'() {
 
         given :
-            def device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]
             def someData  = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )
 
         expect : 'The OpenCL device initially does not have the "dummy_kernel" we are going to create.'
@@ -182,7 +185,7 @@ class OpenCLDevice_Spec extends Specification
     ) {
 
         given :
-            var device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]
+            var device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]
             var kernelName = "dummy_mm_${M}x${K}x${N}"
             var params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)
 
@@ -337,7 +340,7 @@ class OpenCLDevice_Spec extends Specification
             int seed, int M, int K, int N, String expected
     ) {
         given :
-            var device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]
+            var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]
             var kernelName = "backend_mm_${M}x${K}x${N}"
 
             long[] local=   new long[]{ Math.min(16, M), Math.min(16, K) }
@@ -424,7 +427,7 @@ class OpenCLDevice_Spec extends Specification
             int seed, int M, int K, int N, String expected
     ) {
         given :
-            var device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]
+            var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]
             var kernelName = "simple_backend_mm_${M}x${K}x${N}"
 
             long[] local=   null //new long[]{ Math.min(16, M), Math.min(16, K) }
@@ -502,7 +505,7 @@ class OpenCLDevice_Spec extends Specification
             int seed, int M, int K, int N, String expected
     ) {
         given :
-            def device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]
+            def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]
             def kernelName = "fast_columns_major_mm_${M}x${K}x${N}"
 
             def data = (0..(M*K-1)).collect( v-> v + seed )

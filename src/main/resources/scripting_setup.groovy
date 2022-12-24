@@ -1,6 +1,6 @@
 
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.math.Function
 
 /**
  *  Operator overloading for JVM native numeric types:

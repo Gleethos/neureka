@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -50,7 +50,7 @@
 
         {"kind":"then","text":"","code":["var exception = thrown(IllegalArgumentException)"]},
 
-        {"kind":"and","text":"","code":["exception.message == \"Trying to instantiate an 'ExecutionCall' \" +","\"with an arity of 1, which is not suitable for \" +","\"the targeted operation 'MatMul' with the expected \" +","\"arity of 2.\""]}
+        {"kind":"and","text":"","code":["exception.message == \"Trying to instantiate an 'ExecutionCall' \" +","                     \"with an arity of 1, which is not suitable for \" +","                     \"the targeted operation 'MatMul' with the expected \" +","                     \"arity of 2.\""]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

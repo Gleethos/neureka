@@ -1,26 +1,35 @@
 package neureka.backend.main.algorithms;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.main.implementations.fun.api.CPUFun;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
-import neureka.calculus.args.Arg;
+import neureka.backend.main.implementations.scalar.CPUScalarBroadcastFunction;
+import neureka.math.args.Arg;
 import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.NumericType;
+import neureka.ndim.NDimensional;
 
 public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
 {
     public ScalarBroadcast(ScalarFun fun) {
         super("scalar broadcast");
-        setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD );
+        setAutogradModeFor(
+            call -> call
+                    .validate().allNotNullHaveSame(NDimensional::shape)
+                    .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                    .orElse(AutoDiffMode.BACKWARD_ONLY)
+        );
         setIsSuitableFor( call ->
                 call.validate()
                         .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                        //.first( Objects::isNull )
                         .tensors( tensors ->  {
                             if ( tensors.length != 2 ) return false;
                             if ( !tensors[1].isVirtual() ) return false;
@@ -45,6 +54,13 @@ public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
                     return call.withInputAt( 0, output );
                 }
         );
+        setExecution(
+            (caller, call) ->
+                Result.of(AbstractDeviceAlgorithm.prepareAndExecute(call,AbstractDeviceAlgorithm::executeDeviceAlgorithm))
+                        .withAutoDiff( FallbackAlgorithm::ADAction )
+        );
+
+        setImplementationFor( CPU.class, new CPUScalarBroadcastFunction( fun ) );
         setImplementationFor(
             OpenCLDevice.class,
             call -> {
@@ -63,11 +79,6 @@ public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
                 return call.input(0);
             }
         );
-    }
-
-
-    public static String getKernelSource() {
-        return Neureka.get().utility().readResource("kernels/scalar_broadcast.cl");
     }
 
 }

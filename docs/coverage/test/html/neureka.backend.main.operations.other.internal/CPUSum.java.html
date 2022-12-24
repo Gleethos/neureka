@@ -18,7 +18,7 @@ import neureka.devices.host.CPU;
 <span class="pc bpc" id="L18" title="1 of 2 branches missed.">        if ( call.getDevice() != CPU.get() )</span>
 <span class="nc" id="L19">            throw new IllegalArgumentException(&quot;This implementation is only available for the CPU!&quot;);</span>
 <span class="pc bpc" id="L20" title="1 of 2 branches missed.">        Tsr&lt;?&gt; in = call.input(0) == null ? call.input(1) : call.input(0);</span>
-<span class="fc" id="L21">        in.setIsVirtual(false);</span>
+<span class="fc" id="L21">        in.mut().setIsVirtual(false);</span>
 <span class="fc" id="L22">        return _runRecursively(in, CPU.get());</span>
     }
 
@@ -42,7 +42,7 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L42">        Class&lt;?&gt; type = in.itemType();</span>
 
 <span class="fc bfc" id="L44" title="All 2 branches covered.">        if ( type == Float.class ) {</span>
-<span class="fc" id="L45">            float[] inData = in.getUnsafe().getData().getRef(float[].class);</span>
+<span class="fc" id="L45">            float[] inData = in.mut().getData().getRef(float[].class);</span>
 <span class="fc" id="L46">            float[] out = new float[N];</span>
 <span class="fc" id="L47">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L48">                int offset = ni * RTS;</span>
@@ -58,7 +58,7 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L58">                return reduced; // This is the final result!</span>
         }
 <span class="fc bfc" id="L60" title="All 2 branches covered.">        else if ( type == Double.class ) {</span>
-<span class="fc" id="L61">            double[] inData = in.getUnsafe().getData().getRef(double[].class);</span>
+<span class="fc" id="L61">            double[] inData = in.mut().getData().getRef(double[].class);</span>
 <span class="fc" id="L62">            double[] out = new double[N];</span>
 <span class="fc" id="L63">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L64">                int offset = ni * RTS;</span>
@@ -74,7 +74,7 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L74">                return reduced; // This is the final result!</span>
         }
 <span class="fc bfc" id="L76" title="All 2 branches covered.">        else if ( type == Integer.class ) {</span>
-<span class="fc" id="L77">            int[] inData = in.getUnsafe().getData().getRef(int[].class);</span>
+<span class="fc" id="L77">            int[] inData = in.mut().getData().getRef(int[].class);</span>
 <span class="fc" id="L78">            int[] out = new int[N];</span>
 <span class="fc" id="L79">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L80">                int offset = ni * RTS;</span>
@@ -90,7 +90,7 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L90">                return reduced; // This is the final result!</span>
         }
 <span class="fc bfc" id="L92" title="All 2 branches covered.">        else if ( type == Long.class ) {</span>
-<span class="fc" id="L93">            long[] inData = in.getUnsafe().getData().getRef(long[].class);</span>
+<span class="fc" id="L93">            long[] inData = in.mut().getData().getRef(long[].class);</span>
 <span class="fc" id="L94">            long[] out = new long[N];</span>
 <span class="fc" id="L95">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L96">                int offset = ni * RTS;</span>
@@ -106,7 +106,7 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L106">                return reduced; // This is the final result!</span>
         }
 <span class="fc bfc" id="L108" title="All 2 branches covered.">        else if ( type == Short.class ) {</span>
-<span class="fc" id="L109">            short[] inData = in.getUnsafe().getData().getRef(short[].class);</span>
+<span class="fc" id="L109">            short[] inData = in.mut().getData().getRef(short[].class);</span>
 <span class="fc" id="L110">            short[] out = new short[N];</span>
 <span class="fc" id="L111">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L112">                int offset = ni * RTS;</span>
@@ -122,7 +122,7 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L122">                return reduced; // This is the final result!</span>
         }
 <span class="fc bfc" id="L124" title="All 2 branches covered.">        else if ( type == Byte.class ) {</span>
-<span class="fc" id="L125">            byte[] inData = in.getUnsafe().getData().getRef(byte[].class);</span>
+<span class="fc" id="L125">            byte[] inData = in.mut().getData().getRef(byte[].class);</span>
 <span class="fc" id="L126">            byte[] out = new byte[N];</span>
 <span class="fc" id="L127">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L128">                int offset = ni * RTS;</span>
@@ -138,7 +138,7 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L138">                return reduced; // This is the final result!</span>
         }
 <span class="pc bpc" id="L140" title="1 of 2 branches missed.">        else if ( Number.class.isAssignableFrom(type) ) {</span>
-<span class="fc" id="L141">            Object[] inData = in.getUnsafe().getData().getRef(Object[].class);</span>
+<span class="fc" id="L141">            Object[] inData = in.mut().getData().getRef(Object[].class);</span>
 <span class="fc" id="L142">            Number[] out = new Number[N];</span>
 <span class="fc" id="L143">            executor.threaded( N, ni -&gt; {</span>
 <span class="fc" id="L144">                int offset = ni * RTS;</span>

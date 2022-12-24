@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.015 seconds"
+    "duration":"0.027 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Vector tensors can be instantiated via factory methods.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,9 +29,9 @@
 
         {"kind":"and","text":"The tensor contains the expected items.","code":["t.items == data"]},
 
-        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.ref == data"]},
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.ref == data // This exposes the internal data array"]},
 
-        {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["[1.1, 2.2, 3.3]","[-0.21, 543.3]","[true, false]","[1, 2, 99, -123]","[3, 8, 4, 2, 3, 0]","[66, 1, 4, 42, -40]"],"type":["class java.lang.Double","class java.lang.Float","class java.lang.Boolean","class java.lang.Short","class java.lang.Long","class java.lang.Integer"],"shape":["[3]","[2]","[2]","[4]","[6]","[5]"]}}
+        {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["new double[]{1.1, 2.2, 3.3}","new float[]{-0.21, 543.3}","new boolean[]{true, false}","new short[]{1, 2, 99, -123}","new long[]{3, 8, 4, 2, 3, 0}","new int[]{66, 1, 4, 42, -40}"],"type":["Double","Float","Boolean","Short","Long","Integer"],"shape":["[ 3 ]","[ 2 ]","[ 2 ]","[ 4 ]","[ 6 ]","[ 5 ]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -39,7 +39,7 @@
     {
       "id":"Scalar tensors can be created via static factory methods",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,11 +52,11 @@
 
         {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
 
-        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.ref == [data]","t.rawData == [data]"]},
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.ref == [data] // Internal data","t.rawData == [data]"]},
 
         {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
 
-        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1","-42.9","true","false","99","-123","3","8","1","2","-12","3"],"type":["class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Boolean","class java.lang.Boolean","class java.lang.Integer","class java.lang.Integer","class java.lang.Long","class java.lang.Long","class java.lang.Short","class java.lang.Short","class java.lang.Byte","class java.lang.Byte"]}}
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -143,13 +143,13 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"","code":["Tsr r = Tsr.of([2, 2], \"jnrejn\")"]},
+        {"kind":"when","text":"","code":["when : Tsr r = Tsr.of([2, 2], \"jnrejn\")"]},
 
-        {"kind":"then","text":"","code":["r.toString().contains(\"0.02847, -0.69068, 0.15386, 1.81382\")"]},
+        {"kind":"then","text":"","code":["then : r.toString().contains(\"0.02847, -0.69068, 0.15386, 1.81382\")"]},
 
-        {"kind":"when","text":"","code":["r = Tsr.of([2, 2], \"jnrejn2\")"]},
+        {"kind":"when","text":"","code":["when : r = Tsr.of([2, 2], \"jnrejn2\")"]},
 
-        {"kind":"then","text":"","code":["!r.toString().contains(\"0.02600, -2.06129, -0.48373, 0.94884\")"]}
+        {"kind":"then","text":"","code":["then : !r.toString().contains(\"0.02600, -2.06129, -0.48373, 0.94884\")"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

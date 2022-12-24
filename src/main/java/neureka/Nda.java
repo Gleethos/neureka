@@ -12,18 +12,15 @@ import neureka.ndim.NDimensional;
 import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 /**
  *  {@link Nda}, which is an abbreviation of <b>'N-Dimensional-Array'</b>, represents
  *  a multidimensional, homogeneously filled fixed-size array of items.
- *
+ *  <p>
  *  {@link Nda}s should be constructed using the fluent builder API exposed by {@link #of(Class)}.
  *
  * @param <V> The type of the items stored in the {@link Nda}.
@@ -70,6 +67,90 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
      */
     static <V> WithShapeOrScalarOrVector<V> of( Class<V> type ) { return new NdaBuilder<>( type ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(String.class)}
+     * used to build {@link Nda}s storing {@link String}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<String> ofStrings() { return of( String.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Integer.class)}
+     * used to build {@link Nda}s storing {@link Integer}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Integer> ofInts() { return of( Integer.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Double.class)}
+     * used to build {@link Nda}s storing {@link Double}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Double> ofDoubles() { return of( Double.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Float.class)}
+     * used to build {@link Nda}s storing {@link Float}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Float> ofFloats() { return of( Float.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Long.class)}
+     * used to build {@link Nda}s storing {@link Long}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Long> ofLongs() { return of( Long.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Boolean.class)}
+     * used to build {@link Nda}s storing {@link Boolean}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Boolean> ofBooleans() { return of( Boolean.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Character.class)}
+     * used to build {@link Nda}s storing {@link Character}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Character> ofChars() { return of( Character.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Byte.class)}
+     * used to build {@link Nda}s storing {@link Byte}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Byte> ofBytes() { return of( Byte.class ); }
+
+    /**
+     * This is a <b>short</b>cut method for {@code Nda.of(Short.class)}
+     * used to build {@link Nda}s storing {@link Short}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Short> ofShorts() { return of( Short.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Object.class)}
+     * used to build {@link Nda}s storing {@link Object}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Object> ofObjects() { return of( Object.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Number.class)}
+     * used to build {@link Nda}s storing {@link Number}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<Number> ofNumbers() { return of( Number.class ); }
+
+    /**
+     * This is a shortcut method for {@code Nda.of(BigDecimal.class)}
+     * used to build {@link Nda}s storing {@link BigDecimal}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+    static WithShapeOrScalarOrVector<BigDecimal> ofBigDecimals() { return of( BigDecimal.class ); }
 
     /**
      * @param value The scalar value which ought to be represented as nd-array.
@@ -143,14 +224,29 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     static <T> Nda<T> of( T... values ) { return Tsr.of(values); }
 
     /**
+     * Constructs a vector of objects based on the provided iterable.
+     *
+     * @param values The iterable of objects from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of objects.
+     */
+    static <T> Nda<T> of( Iterable<T> values ) { return Tsr.of(values); }
+
+    /**
+     * Constructs a vector of objects based on the provided list.
+     *
+     * @param values The list of objects from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D nd-array of objects.
+     */
+    static <T> Nda<T> of( List<T> values ) { return TsrImpl._of(values); }
+
+    /**
      *  A nd-array can have a label. This label is used for example when printing the nd-array.
      *  When loading a CSV file for example the label of the nd-array
      *  will be taken from the cell where the header row and the first column intersect.
      *  @return The label/name of the nd-array.
      */
     default String getLabel() {
-        String name = ((TsrImpl<?>)this).find(NDFrame.class).map(NDFrame::getLabel).orElse("");
-        return name == null ? "" : name;
+        return ((TsrImpl<?>) this).find(NDFrame.class).map(NDFrame::getLabel).orElse("");
     }
 
     /**
@@ -320,12 +416,66 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     }
 
     /**
+     *  A convenience method for {@code stream().filter( predicate )}.
+     *
+     * @param predicate The predicate to filter the items of this {@link Nda}.
+     * @return A {@link Stream} of the items in this {@link Nda} which match the predicate.
+     */
+    default Stream<V> filter( Predicate<V> predicate ) {
+        return stream().filter( predicate );
+    }
+
+    /**
+     *  A convenience method for {@code stream().flatMap( mapper )}.
+     *
+     * @param mapper The mapper to map the items of this {@link Nda}.
+     * @return A {@link Stream} of the items in this {@link Nda} which match the predicate.
+     */
+    default <R> Stream<R> flatMap( Function<V, Stream<R>> mapper ) {
+        return stream().flatMap( v -> {
+            Object o = mapper.apply( v );
+            if ( o instanceof Iterable )
+                return (Stream<R>) StreamSupport.stream( ((Iterable) o).spliterator(), false );
+            else if ( o instanceof Stream )
+                return (Stream<R>) o;
+            else
+                return Stream.of( (R) o );
+        });
+    }
+
+    /**
+     * Returns a {@code Collector} that accumulates the input elements into a
+     * new {@link Nda} with the specified shape. <br>
+     * Usage example : <br>
+     * <pre>{@code
+     *    var nda = Stream.of( 1, 2, 3, 4, 5, 6 )
+     *                      .collect( Nda.shaped( 2, 3 ) );
+     * }</pre>
+     *
+     * @param shape The shape of the nd-array to be returned.
+     * @param <T> the type of the input elements
+     * @return a {@code Collector} which collects all the input elements into a
+     *          {@link Nda}, in encounter order.
+     */
+    static <T> Collector<T, ?, Nda<T>> shaped( int... shape ) {
+        return Collector.of(
+                (Supplier<List<T>>) ArrayList::new,
+                List::add,
+                (left, right) -> { left.addAll(right); return left; },
+                list -> Tsr.of( shape, list )
+            );
+    }
+
+    /**
      * Iterates over every element of this nd-array, and checks whether all
      * elements are <code>true</code> according to the provided lambda.
      * @param predicate The lambda to check each element against.
      * @return true if every item in the nd-array matches the predicate, false otherwise.
      */
-    default boolean every( Predicate<V> predicate ) { return stream().allMatch(predicate); }
+    default boolean every( Predicate<V> predicate ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return predicate.test( this.item() );
+        return stream().allMatch(predicate);
+    }
 
     /**
      * Iterates over every element of this nd-array, and checks whether any
@@ -333,7 +483,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return true if any item in the nd-array matches the predicate, false otherwise.
      */
-    default boolean any( Predicate<V> predicate ) { return stream().anyMatch(predicate); }
+    default boolean any( Predicate<V> predicate ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return predicate.test( this.item() );
+        return stream().anyMatch(predicate);
+    }
 
     /**
      * Iterates over every element of this nd-array, and checks whether none
@@ -341,7 +494,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return true if none of the items in the nd-array match the predicate, false otherwise.
      */
-    default boolean none( Predicate<V> predicate ) { return stream().noneMatch(predicate);}
+    default boolean none( Predicate<V> predicate ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return !predicate.test( this.item() );
+        return stream().noneMatch(predicate);
+    }
 
     /**
      *  Iterates over every element of this nd-array, and counts the number of
@@ -349,16 +505,22 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The lambda to check each element against.
      * @return The number of items in the nd-array that match the predicate.
      */
-    default int count( Predicate<V> predicate ) { return (int) stream().filter(predicate).count(); }
+    default int count( Predicate<V> predicate ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return predicate.test( this.item() ) ? this.size() : 0;
+        return (int) stream().filter(predicate).count();
+    }
 
     /**
      * Returns the minimum item of this nd-array according to the provided
      * {@link Comparator}.  This is a special case of a reduction.
-
+     *
      * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
      * @return The minimum value in the nd-array.
      */
-    default V minItem( Comparator<V> comparator ) { return stream().min( comparator ).orElse(null); }
+    default V minItem( Comparator<V> comparator ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return this.item();
+        return stream().min( comparator ).orElse(null);
+    }
 
     /**
      * Returns the maximum item of this nd-array according to the provided
@@ -367,7 +529,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param comparator The {@link Comparator} to use to determine the order of the items in the nd-array.
      * @return The maximum value in the nd-array.
      */
-    default V maxItem( Comparator<V> comparator ) { return stream().max( comparator ).orElse(null); }
+    default V maxItem( Comparator<V> comparator ) {
+        if ( ((Tsr<V>)this).isVirtual() ) return this.item();
+        return stream().max( comparator ).orElse(null);
+    }
 
     /**
      *  This returns an unprocessed version of the underlying data of this nd-array.
@@ -405,6 +570,9 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     default List<V> items() { return getItems(); }
 
+    /**
+     * @return The items of this nd-array as a (if possible) primitive array.
+     */
     Object getRawItems();
 
     /**
@@ -441,16 +609,42 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     }
 
     /**
-     *  Equivalent to the {@code #item(0)}.
+     *  Equivalent to the {@code #item(0)} and {@link #getItem()}.
      *
      * @return The first item of this nd-array.
      */
     default V item() { return item( 0 ); }
 
+    /**
+     *  Equivalent to the {@code #item(0)} and {@link #item()}.
+     *
+     * @return The first item of this nd-array.
+     */
+    default V getItem() { return item(); }
+
+    /**
+     * Use this to get the items of this nd-array as a primitive array
+     * of the specified type.
+     * @param arrayTypeClass The class of the array type to return.
+     * @param <A> The type of the array to return.
+     * @return The items of this nd-array as a primitive array of the specified type.
+     */
     default <A> A getItemsAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getRawItems(), arrayTypeClass );
     }
 
+
+    /**
+     * Use this to get the items of the underlying {@link Data} buffer
+     * of this nd-array as a primitive array
+     * of the specified type.
+     * Note that the length of the returned array may be different from the
+     * size of this nd-array. This is the case if this nd-array is a slice
+     * of another larger nd-array.
+     * @param arrayTypeClass The class of the array type to return.
+     * @param <A> The type of the array to return.
+     * @return The items of this nd-array as a primitive array of the specified type.
+     */
     default  <A> A getDataAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getRawData(), arrayTypeClass );
     }
@@ -472,6 +666,31 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
      */
     AxisOrGet<V> slice();
+
+    /**
+     * This method concatenates the provided nd-arrays together with this nd-array along a specified axis.
+     * The provided nd-arrays must have the same shape and data type as the current nd-array, except for the specified axis.
+     *
+     * @param axis The axis along which the provided nd-arrays should be concatenated.
+     *             The axis must be within the range of the rank of the current nd-array.
+     * @param other The other nd-arrays which should be concatenated with this nd-array.
+     * @param ndArrays The non-null, non-empty nd-arrays which should be concatenated together with this and the other nd-array.
+     *                 The nd-arrays all must have the same shape as this nd-array, except for the specified axis.
+     *                 Also, it must have the same data type as the current nd-array.
+     * @return A new nd-array which is the concatenation of the current nd-array and the provided nd-arrays.
+     */
+    Nda<V> concatAt( int axis, Nda<V> other, Nda<V>... ndArrays );
+
+    /**
+     * This method concatenates the provided nd-array together with this nd-array along a specified axis.
+     * The provided nd-array must have the same shape and data type as this nd-array, except for the specified axis.
+     *
+     * @param axis The axis along which the provided nd-arrays should be concatenated.
+     *             The axis must be within the range of the rank of the current nd-array.
+     * @param other The other nd-arrays which should be concatenated with this nd-array.
+     * @return A new nd-array which is the concatenation of the current nd-array and the provided nd-arrays.
+     */
+    Nda<V> concatAt( int axis, Nda<V> other );
 
     /**
      *  The following method enables access to specific scalar elements within the nd-array.
@@ -692,7 +911,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param indices An array of indices targeting a particular position in this nd-array...
      * @return An object which allows you to get or set individual items within this nd-array.
      */
-    Item<V> at(int... indices );
+    Item<V> at( int... indices );
 
     /**
      *  Instances of this are being returned by the {@link #at(int...)} method,

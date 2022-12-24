@@ -1,5 +1,6 @@
 package neureka.backend.api;
 
+import neureka.Neureka;
 import neureka.backend.api.ini.BackendLoader;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
@@ -24,6 +25,12 @@ public interface BackendExtension extends Component<Extensions>
      * @return A suitable {@link DeviceOption} or null if nothing was found.
      */
     DeviceOption find( String searchKey );
+
+    /**
+     *  This will indirectly be called through the {@link Neureka#reset()} method,
+     *  which is responsible for resetting the library settings.
+     */
+    default void reset() {/* override this if you backend has settings to reset */}
 
     /**
      *  Tells this extension to dispose itself.

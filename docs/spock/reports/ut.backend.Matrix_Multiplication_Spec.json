@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.021 seconds"
+    "duration":"0.043 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"matMul\" method allows us to perform matrix multiplication.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,7 +27,7 @@
 
         {"kind":"then","text":"The result is a tensor with the shape (1x8).","code":["c.shape == [1, 8]","c.items == [-22, -10, -7, -22, -10, -7, -22, -10]"]},
 
-        {"kind":"where","text":"We can use the following data types:","code":{"type":["class java.lang.Integer","class java.lang.Long","class java.lang.Double","class java.lang.Float"]}}
+        {"kind":"where","text":"We can use the following data types:","code":{"type":["Integer","Long","Double","Float"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -35,7 +35,7 @@
     {
       "id":"The simple CPU matrix multiplication implementation works as expected.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.015 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        "]
       },
@@ -54,7 +54,7 @@
 
         {"kind":"and","text":"It should have the expected value array.","code":["c.items == expectedC"]},
 
-        {"kind":"where","text":"We use the following scenario parameters:","code":{"layout":["ROW","ROW","ROW","ROW","ROW","ROW","COL","COL","COL","COL","COL","COL"],"type":["class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Float"],"M":["2","1","2","2","1","2","2","1","2","2","1","2"],"K":["2","2","1","2","2","1","2","2","1","2","2","1"],"N":["2","1","2","2","1","2","2","1","2","2","1","2"],"A":["[4.0, 3.0, 2.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]","[4.0, 3.0, 2.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]","[4.0, 2.0, 3.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]","[4.0, 2.0, 3.0, 1.0]","[-2.0, 1.0]","[-2.0, 1.0]"],"B":["[-0.5, 1.5, 1.0, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]","[-0.5, 1.5, 1.0, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]","[-0.5, 1.0, 1.5, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]","[-0.5, 1.0, 1.5, -2.0]","[-1.0, -1.5]","[-1.0, -1.5]"],"expectedC":["[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]","[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]","[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]","[1.0, 0.0, 0.0, 1.0]","[0.5]","[2.0, 3.0, -1.0, -1.5]"]}}
+        {"kind":"where","text":"We use the following scenario parameters:","code":{"layout":["'ROW'","'ROW'","'ROW'","'ROW'","'ROW'","'ROW'","'COL'","'COL'","'COL'","'COL'","'COL'","'COL'"],"type":["Double","Double","Double","Float","Float","Float","Double","Double","Double","Float","Float","Float"],"M":["2","1","2","2","1","2","2","1","2","2","1","2"],"K":["2","2","1","2","2","1","2","2","1","2","2","1"],"N":["2","1","2","2","1","2","2","1","2","2","1","2"],"A":["[4, 3, 2, 1] as double[]","[-2,1] as double[]","[-2,1] as double[]","[4,3,2,1] as float[]","[-2,1] as float[]","[-2,1] as float[]","[4, 3, 2, 1] as double[]","[-2,1] as double[]","[-2,1] as double[]","[4,3,2,1] as float[]","[-2,1] as float[]","[-2,1] as float[]"],"B":["[-0.5, 1.5, 1, -2] as double[]","[-1, -1.5] as double[]","[-1, -1.5] as double[]","[-0.5, 1.5, 1, -2] as float[]","[-1, -1.5] as float[]","[-1, -1.5] as float[]","[-0.5, 1.5, 1, -2] as double[]","[-1, -1.5] as double[]","[-1, -1.5] as double[]","[-0.5, 1.5, 1, -2] as float[]","[-1, -1.5] as float[]","[-1, -1.5] as float[]"],"expectedC":["[1, 0, 0, 1 ] as double[]","[ 0.5 ] as double[]","[ 2.0, 3.0, -1.0, -1.5 ] as double[]","[ 1, 0, 0, 1 ] as float[]","[ 0.5 ] as float[]","[ 2.0, 3.0, -1.0, -1.5 ] as float[]","[1, 0, 0, 1 ] as double[]","[ 0.5 ] as double[]","[ 2.0, 3.0, -1.0, -1.5 ] as double[]","[ 1, 0, 0, 1 ] as float[]","[ 0.5 ] as float[]","[ 2.0, 3.0, -1.0, -1.5 ] as float[]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -9,25 +9,25 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.036 seconds"
+    "duration":"0.080 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The Reduce implementation for the CPU has realistic behaviour",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.035 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tsr.of(dataType)",".withShape(19, 7)",".andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tsr.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
 
         {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
 
         {"kind":"then","text":"","code":["result == expected"]},
 
-        {"kind":"where","text":"","code":{"reduceType":["MIN","MAX","MIN","MAX","MIN","MAX","MIN","MAX","MIN","MAX","MIN","MAX"],"dataType":["class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Integer","class java.lang.Integer","class java.lang.Long","class java.lang.Long","class java.lang.Short","class java.lang.Short","class java.lang.Byte","class java.lang.Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -35,18 +35,18 @@
     {
       "id":"The Sum implementation for the CPU has realistic behaviour",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode()","var a = Tsr.of(dataType)",".withShape(19, 7)",".andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode()","var a = Tsr.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
 
         {"kind":"when","text":"","code":["var result = new CPUSum().run( call )"]},
 
         {"kind":"then","text":"","code":["result.item() == expected","result.item() == result.items.stream().reduce(0, (x, y) -> x + y)"]},
 
-        {"kind":"where","text":"","code":{"dataType":["class java.lang.Float","class java.lang.Double","class java.lang.Integer","class java.lang.Long","class java.lang.Short","class java.lang.Byte","class java.math.BigInteger","class java.math.BigDecimal"],"expected":["-1222.0","-1026.0","-2251","-2083","1018","34","3930","-1502.0"]}}
+        {"kind":"where","text":"","code":{"dataType":["Float","Double","Integer","Long","Short","Byte","BigInteger","BigDecimal"],"expected":["-1222.0","-1026.0","-2251","-2083","1018","34","3930","-1502.0"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

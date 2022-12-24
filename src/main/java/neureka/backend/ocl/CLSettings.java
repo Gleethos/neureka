@@ -5,15 +5,17 @@ package neureka.backend.ocl;
  */
 public class CLSettings {
 
-    private boolean _autoConvertToFloat = true;
+    private boolean _autoConvertToFloat = false;
 
-    public boolean isAutoConvertToFloat() {
-        return _autoConvertToFloat;
-    }
+    public boolean isAutoConvertToFloat() { return _autoConvertToFloat; }
 
     public CLSettings setAutoConvertToFloat(boolean autoConvertToFloat) {
         _autoConvertToFloat = autoConvertToFloat;
         return this;
+    }
+
+    public void reset() {
+        _autoConvertToFloat = false;
     }
 
 }

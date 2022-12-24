@@ -3,7 +3,8 @@ package ut.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
-import neureka.calculus.Function
+import neureka.backend.ocl.CLBackend
+import neureka.math.Function
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.view.NDPrintSettings
@@ -60,51 +61,51 @@ class Autograd_NN_Spec extends Specification
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
-            def X = Tsr.of(
-                    [[0.6667, 1.0000],
-                     [0.3333, 0.5556],
-                     [1.0000, 0.6667]]
-            )
-            def y = Tsr.of(
-                    [[0.9200],
-                     [1.0000],
-                     [0.8900]]
-            )
-            def sig = Function.of("sig(I[0])")
-            def W1 = Tsr.of(
-                    [[-1.1843,  0.0146, -1.4647],
-                     [-1.4020, -1.0129,  0.6256]]
-            ).setRqsGradient(true)
-            def W2 = Tsr.of(
-                    [[ 1.8095],
-                     [-0.4269],
-                     [-1.1110]]
-            ).setRqsGradient(true)
+            var X = Tsr.of(
+                        [[0.6667d, 1.0000d],
+                         [0.3333d, 0.5556d],
+                         [1.0000d, 0.6667d]]
+                    )
+            var y = Tsr.of(
+                        [[0.9200d],
+                         [1.0000d],
+                         [0.8900d]]
+                    )
+            var sig = Function.of("sig(I[0])")
+            var W1 = Tsr.of(
+                        [[-1.1843d,  0.0146d, -1.4647d],
+                         [-1.4020d, -1.0129d,  0.6256d]]
+                    ).setRqsGradient(true)
+            var W2 = Tsr.of(
+                        [[ 1.8095d],
+                         [-0.4269d],
+                         [-1.1110d]]
+                    ).setRqsGradient(true)
 
-            def W1s = []
-            def z1s = []
-            def hiddenResults = []
-            def W2s = []
-            def z2s = []
-            def outputResults = []
-            def errors = []
-            def losses = []
+            var W1s = []
+            var z1s = []
+            var hiddenResults = []
+            var W2s = []
+            var z2s = []
+            var outputResults = []
+            var errors = []
+            var losses = []
 
             def forwardAndBackward = ( Tsr x ) ->
             {
                 W1s.add(W1.toString())
-                def z1 = x.matMul(W1)
+                var z1 = x.matMul(W1)
                 z1s.add(z1.toString())
-                def hidden = sig(z1)
+                var hidden = sig(z1)
                 hiddenResults.add(hidden.toString())
                 W2s.add(W2.toString())
-                def z2 = hidden.matMul(W2)
+                var z2 = hidden.matMul(W2)
                 z2s.add(z2.toString())
-                def pred = sig(z2)
+                var pred = sig(z2)
                 outputResults.add(pred.toString())
-                def error = (y - pred)
+                var error = (y - pred)
                 errors.add(error.toString())
-                def loss = (error**2).mean()
+                var loss = (error**2).mean()
                 losses.add(loss.toString())
                 pred.backward(error)
                 W1.applyGradient()
@@ -113,9 +114,9 @@ class Autograd_NN_Spec extends Specification
             }
 
         when :
-            def graph
+            var graph
             6.times {
-                def node = forwardAndBackward(X).graphNode
+                var node = forwardAndBackward(X).graphNode.get()
                 graph = node.toString(GraphNode.Print.FANCY)
             }
 
@@ -171,29 +172,29 @@ class Autograd_NN_Spec extends Specification
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
             var X = Tsr.of(
-                                [[0.6667, 1.0000],
-                                 [0.3333, 0.5556],
-                                 [1.0000, 0.6667]]
+                                [[0.6667d, 1.0000d],
+                                 [0.3333d, 0.5556d],
+                                 [1.0000d, 0.6667d]]
                             )
 
             var y = Tsr.of(
-                                [[0.9200],
-                                 [1.0000],
-                                 [0.8900]]
+                                [[0.9200d],
+                                 [1.0000d],
+                                 [0.8900d]]
                             )
 
             var sig = Function.of("sig(I[0])")
 
             var W1 = Tsr.of(
-                                [[-1.1843,  0.0146, -1.4647],
-                                 [-1.4020, -1.0129,  0.6256]]
+                                [[-1.1843d,  0.0146d, -1.4647d],
+                                 [-1.4020d, -1.0129d,  0.6256d]]
                             )
                             .setRqsGradient(true)
 
             var W2 = Tsr.of(
-                                [[ 1.8095],
-                                 [-0.4269],
-                                 [-1.1110]]
+                                [[ 1.8095d],
+                                 [-0.4269d],
+                                 [-1.1110d]]
                             )
                             .setRqsGradient(true)
 
@@ -231,7 +232,7 @@ class Autograd_NN_Spec extends Specification
             when :
                 def graph
                 6.times {
-                    def node = forwardAndBackward(X).graphNode
+                    def node = forwardAndBackward(X).graphNode.get()
                     graph = node.toString(GraphNode.Print.FANCY)
                 }
 
@@ -299,29 +300,29 @@ class Autograd_NN_Spec extends Specification
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
             var X = Tsr.of(
-                                    [[0.6667f, 1.0000f],
-                                     [0.3333f, 0.5556f],
-                                     [1.0000f, 0.6667f]]
+                                    [[0.6667d, 1.0000d],
+                                     [0.3333d, 0.5556d],
+                                     [1.0000d, 0.6667d]]
                             )
 
             var y = Tsr.of(
-                                    [[0.9200f],
-                                     [1.0000f],
-                                     [0.8900f]]
+                                    [[0.9200d],
+                                     [1.0000d],
+                                     [0.8900d]]
                             )
 
             var sig = Function.of("sig(I[0])")
 
             var W1 = Tsr.of(
-                            [[-1.1843f,  0.0146f, -1.4647f],
-                             [-1.4020f, -1.0129f,  0.6256f]]
+                            [[-1.1843d,  0.0146d, -1.4647d],
+                             [-1.4020d, -1.0129d,  0.6256d]]
                     )
                     .setRqsGradient(true)
 
             var W2 = Tsr.of(
-                                [[ 1.8095],
-                                 [-0.4269],
-                                 [-1.1110]]
+                                [[ 1.8095d],
+                                 [-0.4269d],
+                                 [-1.1110d]]
                         )
                         .setRqsGradient(true)
 
@@ -359,12 +360,12 @@ class Autograd_NN_Spec extends Specification
         when :
             def graph
             6.times {
-                def node = forwardAndBackward(X).graphNode
+                def node = forwardAndBackward(X).graphNode.get()
                 graph = node.toString(GraphNode.Print.FANCY)
             }
 
         then :
-            W1s[0].contains("(2x3):[-1.1843, 0.01460, -1.4647, -1.402, -1.0129, 0.62559]:g:[null]")
+            W1s[0].contains("(2x3):[-1.1843, 0.0146, -1.4647, -1.402, -1.0129, 0.6256]:g:[null]")
             z1s[0].contains("(3x1x3):[-2.19157, -1.00317, -0.35091, -1.17368, -0.55790, -0.14060, -2.11901, -0.66070, -1.04761]")
             hiddenResults[0].contains("(3x1x3):[0.10050, 0.26831, 0.41316, 0.23619, 0.36403, 0.46490, 0.10726, 0.34058, 0.25968]; ->d(3x1x3):[0.09040, 0.19632, 0.24245, 0.18040, 0.23151, 0.24876, 0.09575, 0.22458, 0.19224]")
             W2s[0].contains("(3x1):[1.8095, -0.4269, -1.111]:g:[null]")
@@ -404,9 +405,9 @@ class Autograd_NN_Spec extends Specification
 ]                |          \\
 ]                |           0»2» GraphNode[ (I[0] x I[1]) => (3x1x3):[-1.72064, -1.09161, -0.71770, ... + 6 more], type='BRANCH'] 
 ]                |              \\
-]                |               0»1» GraphNode[ ([0,1,-1]:(I[0])) => (3x2x1):[0.66670, 1.0, 0.33329, ... + 3 more], type='BRANCH'] 
+]                |               0»1» GraphNode[ ([0,1,-1]:(I[0])) => (3x2x1):[0.6667, 1.0, 0.3333, ... + 3 more], type='BRANCH'] 
 ]                |               |  \\
-]                |               |   0»0» GraphNode[ (3x2):[0.66670, 1.0, 0.33329, ... + 3 more], type='LEAVE'] 
+]                |               |   0»0» GraphNode[ (3x2):[0.6667, 1.0, 0.3333, ... + 3 more], type='LEAVE'] 
 ]                |               |
 ]                |               1»1» GraphNode[ ([-1,0,1]:(I[0])) => (1x2x3):[-0.88023, -0.03096, -1.67769, ... + 3 more], type='BRANCH'] 
 ]                |                  \\
@@ -465,7 +466,9 @@ class Autograd_NN_Spec extends Specification
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
     def 'Autograd works for 2 matrix multiplications in a row.'( Device<?> device ) 
     {
-        given : """
+        given : 'We set the experimental "autoConvertToFloat" flag to true.'
+            Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
+        and : """
             We create 3 tensors with the shapes (2x3), (3x1) and (2x1) for matrix multiplication.
             All of them ought to be stored on the provided device and 
             only the first 2 require gradients, whereas the third one does not.
@@ -488,11 +491,11 @@ class Autograd_NN_Spec extends Specification
             x.toString() == "(1x2):[0.5, 0.5]"
 
         when : 'We perform 2 matrix multiplications in a row, using all 3 previously created tensors...'
-            def c = a.matMul(b)
-            def o = x.matMul(c)
+            var c = a.matMul(b)
+            var o = x.matMul(c)
 
         then : 'The results from the two matrix multiplications are as expected.'
-            def cStr = c.toString()
+            var cStr = c.toString()
             cStr.contains "(2x1):[4.0, -14.0]"
             cStr.contains "->d(3x2):[-1.0, 2.0, 0.0, 3.0, 1.0, 4.0]"
             cStr.contains "->d(1x3):[-4.0, -2.0, 0.0]"
@@ -520,7 +523,6 @@ class Autograd_NN_Spec extends Specification
 
         where : 'We test this feature on both the CPU as well as the GPU.'
             device << [CPU.get(), Device.get('first gpu')]
-
     }
 
 

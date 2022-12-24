@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.045 seconds"
+    "duration":"0.068 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The long broad integration test runs successfully.",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"0.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"expect","text":"The integration test runs without exceptions or assertion errors.","code":["BroadSystemTest.on()"]}
+        {"kind":"expect","text":"The integration test runs without exceptions or assertion errors.","code":["BroadSystemTest.on() // This is the actual test."]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -10,15 +10,15 @@ public class CPUBroadcastMultiplication extends CPUBroadcast
     protected CPUBiFun _getFun() {
 <span class="fc" id="L11">        return new CPUBiFun() {</span>
 <span class="fc" id="L12">            @Override public double invoke(double a, double b) { return a * b; }</span>
-<span class="fc" id="L13">            @Override public float invoke(float a, float b) { return a * b; }</span>
+<span class="nc" id="L13">            @Override public float invoke(float a, float b) { return a * b; }</span>
         };
     }
 
     @Override
     protected CPUBiFun _getDeriveAt0() {
-<span class="fc" id="L19">        return new CPUBiFun() {</span>
-<span class="fc" id="L20">            @Override public double invoke(double a, double b) { return b; }</span>
-<span class="fc" id="L21">            @Override public float invoke(float a, float b) { return b; }</span>
+<span class="nc" id="L19">        return new CPUBiFun() {</span>
+<span class="nc" id="L20">            @Override public double invoke(double a, double b) { return b; }</span>
+<span class="nc" id="L21">            @Override public float invoke(float a, float b) { return b; }</span>
         };
     }
 

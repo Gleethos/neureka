@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.fun.api;
 
-public interface CPUFun {
+public strictfp interface CPUFun {
 
     double invoke(double x);
 

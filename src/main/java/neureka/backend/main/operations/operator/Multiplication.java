@@ -8,16 +8,16 @@ import neureka.backend.api.Call;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.BiElementwise;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
 import neureka.backend.main.memory.MemUtil;
-import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 import neureka.devices.Device;
 import neureka.ndim.NDimensional;
 
@@ -31,26 +31,26 @@ public class Multiplication extends AbstractOperation
     public Multiplication()
     {
         super(
-                new OperationBuilder()
-                        .identifier(    "multiply"    )
-                        .operator(         "*"        )
-                        .arity(            -1         )
-                        .isOperator(       true       )
-                        .isIndexer(        false      )
-                        .isDifferentiable( true       )
-                        .isInline(         false      )
+            new OperationBuilder()
+            .identifier(    "multiply"    )
+            .operator(         "*"        )
+            .arity(            -1         )
+            .isOperator(       true       )
+            .isIndexer(        false      )
+            .isDifferentiable( true       )
+            .isInline(         false      )
         );
 
         setAlgorithm(
-            BiElementWise.class,
-            new BiElementWise(ElemWiseUtil::forMultiplications)
+            BiElementwise.class,
+            new BiElementwise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
             Broadcast.class,
-            new Broadcast( ElemWiseUtil::forMultiplications )
+            new Broadcast()
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
             .setSupplyADActionFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -71,10 +71,9 @@ public class Multiplication extends AbstractOperation
         );
 
         setAlgorithm(
-            Scalarization.class,
-            new Scalarization()
-            .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forMultiplications(call, callback) )
+            BiScalarBroadcast.class,
+            new BiScalarBroadcast()
+            .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
             .buildFunAlgorithm()
         );
     }
@@ -99,38 +98,48 @@ public class Multiplication extends AbstractOperation
                 Function noAd = Function.of( caller.toString(), false );
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( noAd, call.withArgs(Arg.DerivIdx.of(-1)) );
 
+                Tsr[] results = flatCall.inputs();
                 Function finalCaller = caller;
                 int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())
                                                 .filter( i -> finalCaller.getSubFunctions().get(i).dependsOn(d) )
                                                 .toArray();
 
-                Tsr[] derivatives = new Tsr[ toBeDerived.length ];
-                Tsr[] results = flatCall.inputs();
-                Function mul = Neureka.get().backend().getFunction().mul();
-                Function add = Neureka.get().backend().getFunction().add();
-                Tsr<?> finalDerivative = null;
-                for ( int i = 0; i < derivatives.length; i++ ) {
-                    Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );
-                    Tsr<?> deriv = noAD.call( (Call) (noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation())) );
-                    derivatives[ i ] = deriv;
-                    Tsr<?> localDeriv = null;
-                    for ( int j = 0; j < results.length; j++ ) {
-                        // Now we calculate the local derivatives of the multiplication operation:
-                        if ( j == toBeDerived[i] ) {
-                            if ( localDeriv == null ) localDeriv = derivatives[ i ];
-                            else localDeriv = mul.call( localDeriv, derivatives[ i ] );
-                        } else {
-                            if ( localDeriv == null ) localDeriv = results[ j ].mut().setIsIntermediate(false);
-                            else localDeriv = mul.call( localDeriv, results[ j ].mut().setIsIntermediate(false) );
-                        }
-                    }
-                    if ( finalDerivative == null ) finalDerivative = localDeriv;
-                    else finalDerivative = add.call( (Tsr<Object>) finalDerivative, (Tsr<Object>) localDeriv );
-                }
-                return Result.of( finalDerivative.mut().setIsIntermediate(true) );
+                return derive( toBeDerived, results, i->{
+                    Function noAD = Function.of( caller.getSubFunctions().get( i ).toString(), false );
+                    return noAD.call( (Call) (noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation())) );
+                } );
             }
         }
         return super.execute( reducePairwise(caller), call );
+    }
+
+    public static Result derive(
+            int[] toBeDerived,
+            Tsr[] results,
+            java.util.function.Function<Integer, Tsr<?>> deriveAt
+    ) {
+        Tsr[] derivatives = new Tsr[ toBeDerived.length ];
+        Function mul = Neureka.get().backend().getFunction().mul();
+        Function add = Neureka.get().backend().getFunction().add();
+        Tsr<?> finalDerivative = null;
+        for ( int i = 0; i < derivatives.length; i++ ) {
+            Tsr<?> deriv = deriveAt.apply( toBeDerived[i] );
+            derivatives[ i ] = deriv;
+            Tsr<?> localDeriv = null;
+            for ( int j = 0; j < results.length; j++ ) {
+                // Now we calculate the local derivatives of the multiplication operation:
+                if ( j == toBeDerived[i] ) {
+                    if ( localDeriv == null ) localDeriv = derivatives[ i ];
+                    else localDeriv = mul.call( localDeriv, derivatives[ i ] );
+                } else {
+                    if ( localDeriv == null ) localDeriv = results[ j ].mut().setIsIntermediate(false);
+                    else localDeriv = mul.call( localDeriv, results[ j ].mut().setIsIntermediate(false) );
+                }
+            }
+            if ( finalDerivative == null ) finalDerivative = localDeriv;
+            else finalDerivative = add.call( (Tsr<Object>) finalDerivative, (Tsr<Object>) localDeriv );
+        }
+        return Result.of( finalDerivative.mut().setIsIntermediate(true) );
     }
 
     private Function reducePairwise( final Function fun ) {
@@ -215,8 +224,5 @@ public class Multiplication extends AbstractOperation
             return ud;
         }
     }
-
-
-
 
 }

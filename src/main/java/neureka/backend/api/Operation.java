@@ -43,20 +43,20 @@ import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.calculus.Function;
-import neureka.calculus.implementations.FunctionConstant;
+import neureka.math.Function;
+import neureka.math.implementations.FunctionConstant;
 import neureka.devices.Device;
 
 /**
  *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.
- *  It represents broad and high level requests for execution which might be executed differently depending
+ *  It represents broad and high level types of algorithms which might be executed differently depending
  *  on the provided {@link ExecutionCall} arguments.
  *  An {@link Operation} implementation ought to consist of a component system
  *  containing multiple {@link Algorithm} instances, which themselves ought to contain device specific implementations
  *  capable of processing {@link ExecutionCall} instances, or rather their state. <br><br>
  *
  *  Other than the component system, there is also the definition for how It's supposed to integrate into
- *  the {@link neureka.calculus} package in order to serve as part of an {@link Function} AST.
+ *  the {@link neureka.math} package in order to serve as part of an {@link Function} AST.
  *  This means that the operation should have a function name
  *  and optionally also an operator in the form of {@link String} instances.
  *  Alongside there must be an implementation of the {@link Operation#stringify(String[])} method,
@@ -172,7 +172,7 @@ public interface Operation
      *  then execute the function wile also passing the index to the function AST.
      *  The resulting array will then be available to this {@link Operation} as argument list.
      *  This feature works alongside the {@link Function} implementation found in
-     *  {@link neureka.calculus.implementations.FunctionVariable}, which represents an input indexed
+     *  {@link neureka.math.implementations.FunctionVariable}, which represents an input indexed
      *  by the identifier 'j'!
      *
      * @return If this operation is an indexer.
@@ -216,7 +216,7 @@ public interface Operation
                                 });
 
         for ( Tsr<?> t : call.inputs() )
-            if ( t.getGraphNode() == null )
+            if ( !t.graphNode().isPresent() )
                 new GraphNode<>( caller, null, () -> Result.of(t) );
 
         if ( caller.isFlat() )
@@ -227,7 +227,7 @@ public interface Operation
                 only flat functions can be executed directly                         */
 
             if ( call.getDerivativeIndex() < 0 && caller.isDoingAD() )
-                new GraphNode<>(caller, (ExecutionCall<Device<?>>) call, ref::get);
+                new GraphNode<>( caller, (ExecutionCall<Device<?>>) call, ref::get );
         }
         return ref.get();
     }
@@ -259,47 +259,5 @@ public interface Operation
      * @return The result of the calculation.
      */
     double calculate( double[] inputs, int j, int d, Function[] src );
-
-    /**
-     *  This static utility class contains simple methods used for creating slices of plain old
-     *  arrays of tensor objects...
-     *  These slices may be used for many reasons, however mainly when iterating over
-     *  inputs to a Function recursively in order to execute them pairwise for example...
-     */
-    class Utility
-    {
-        public static Tsr<?>[] subset( Tsr<?>[] tsrs, int padding, int index, int offset ) {
-            if ( offset < 0 ) {
-                index += offset;
-                offset *= -1;
-            }
-            Tsr<?>[] newTsrs = new Tsr[ offset + padding ];
-            System.arraycopy( tsrs, index, newTsrs, padding, offset );
-            return newTsrs;
-        }
-
-        public static Tsr<?>[] without( Tsr<?>[] tsrs, int index ) {
-            Tsr<?>[] newTsrs = new Tsr[ tsrs.length - 1 ];
-            for ( int i = 0; i < newTsrs.length; i++ ) newTsrs[ i ] = tsrs[ i + ( ( i < index ) ? 0 : 1 ) ];
-            return newTsrs;
-        }
-
-        public static Tsr<?>[] offsetted( Tsr<?>[] tensors, int offset ) {
-            Tsr<?>[] newTensors = new Tsr[ tensors.length - offset ];
-            newTensors[ 0 ] = tensors[ 1 ].deepCopy().mut().setIsIntermediate( true );
-            if ( !tensors[ 1 ].has( GraphNode.class ) && tensors[ 1 ] != tensors[ 0 ] ) {//Deleting intermediate results!
-                tensors[ 1 ].mut().delete();
-                tensors[ 1 ] = null;
-            }
-            if (!tensors[ 2 ].has( GraphNode.class ) && tensors[ 2 ] != tensors[ 0 ]) {//Deleting intermediate results!
-                tensors[ 2 ].mut().delete();
-                tensors[ 2 ] = null;
-            }
-            System.arraycopy( tensors, 1 + offset, newTensors, 1, tensors.length - 1 - offset );
-            newTensors[ 1 ] = tensors[ 0 ];
-            return newTensors;
-        }
-
-    }
 
 }

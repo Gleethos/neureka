@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.004 seconds"
+    "duration":"0.010 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the \"mut\" API to assign the contents of one nd-array into another one.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,12 +33,12 @@
     {
       "id":"Assignment can be easily achieved through subscription operators.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"An nda of ints with shape (2, 3).","code":["var n = Nda.of(Integer).withShape(2, 3).andFill(1, 2, 3, 4, 5, 6)"]},
+        {"kind":"given","text":"An nda of ints with shape (2, 3).","code":["var n = Nda.of(Integer).withShape(2, 3).andFill(1..6)"]},
 
         {"kind":"and","text":"An nda of ints with shape (1, 2).","code":["var a = Nda.of(Integer).withShape(1, 2).andFill(42, 42)"]},
 
@@ -52,12 +52,12 @@
     {
       "id":"We can assign one slice into another one.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Using the 'assign' operation on slices should be handled with care,\n            since the operation has side effects on the underlying data array\n            which is shared by both the slice and its parent.\n            Use the 'copy' operation on slices if you want to avoid this.\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"Two nd-arrays of ints with shape (5).","code":["var n1 = Nda.of(Byte).vector(1, 2, 3, 4, 5)","var n2 = Nda.of(Byte).vector(6, 7, 8, 9, 10)"]},
+        {"kind":"given","text":"Two nd-arrays of ints with shape (5).","code":["var n1 = Nda.of(Byte).vector(1..5)","var n2 = Nda.of(Byte).vector(6..10)"]},
 
         {"kind":"when","text":"We create to very simple slices which are simply the first 3 items of the above vectors.","code":["var s1 = n1[0..2]","var s2 = n2[0..2]"]},
 

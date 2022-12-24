@@ -112,26 +112,27 @@ import java.util.*;
     /**
      * @return An instance of the type class if possible.
      */
-    public &lt;T extends NumericType&lt;?,?,?,?&gt;&gt; T getTypeClassInstance(Class&lt;T&gt; type)
+    public &lt;T extends NumericType&lt;?,?,?,?&gt;&gt; T getTypeClassInstance( Class&lt;T&gt; type )
     {
-<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if ( !type.isAssignableFrom(_typeClass) )</span>
-<span class="nc" id="L118">            throw new IllegalArgumentException(&quot;This data type does not support built in numeric type utilities!&quot;);</span>
-<span class="fc" id="L119">        Constructor&lt;?&gt;[] constructors = _typeClass.getDeclaredConstructors();</span>
-<span class="fc" id="L120">        Constructor&lt;?&gt; constructor = null;</span>
-<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        for ( Constructor&lt;?&gt; current : constructors ) {</span>
-<span class="fc" id="L122">            constructor = current;</span>
-<span class="pc bpc" id="L123" title="1 of 2 branches missed.">            if (current.getGenericParameterTypes().length == 0)</span>
-<span class="fc" id="L124">                break;</span>
+<span class="fc" id="L117">        LogUtil.nullArgCheck( type, &quot;type&quot;, Class.class );</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if ( !type.isAssignableFrom(_typeClass) )</span>
+<span class="nc" id="L119">            throw new IllegalArgumentException(&quot;This data type does not support built in numeric type utilities!&quot;);</span>
+<span class="fc" id="L120">        Constructor&lt;?&gt;[] constructors = _typeClass.getDeclaredConstructors();</span>
+<span class="fc" id="L121">        Constructor&lt;?&gt; constructor = null;</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        for ( Constructor&lt;?&gt; current : constructors ) {</span>
+<span class="fc" id="L123">            constructor = current;</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">            if (current.getGenericParameterTypes().length == 0)</span>
+<span class="fc" id="L125">                break;</span>
         }
 
         try {
-<span class="fc" id="L128">            constructor.setAccessible( true );</span>
-<span class="fc" id="L129">            return (T) constructor.newInstance();</span>
-<span class="nc" id="L130">        } catch ( Exception e ) {</span>
-<span class="nc" id="L131">            _log.error(&quot;Could not instantiate type class '&quot;+ _typeClass.getSimpleName()+&quot;': &quot;+e.getMessage());</span>
-<span class="nc" id="L132">            e.printStackTrace();</span>
+<span class="fc" id="L129">            constructor.setAccessible( true );</span>
+<span class="fc" id="L130">            return (T) constructor.newInstance();</span>
+<span class="nc" id="L131">        } catch ( Exception e ) {</span>
+<span class="nc" id="L132">            _log.error(&quot;Could not instantiate type class '&quot;+ _typeClass.getSimpleName()+&quot;': &quot;+e.getMessage());</span>
+<span class="nc" id="L133">            e.printStackTrace();</span>
         }
-<span class="nc" id="L134">        return null;</span>
+<span class="nc" id="L135">        return null;</span>
     }
 
     /**
@@ -139,71 +140,61 @@ import java.util.*;
      * @return True if the provided type is a sub-type of the type represented by this instance.
      */
     public boolean typeClassImplements( Class&lt;?&gt; interfaceClass ) {
-<span class="fc" id="L142">        return interfaceClass.isAssignableFrom( _typeClass );</span>
+<span class="fc" id="L143">        LogUtil.nullArgCheck( interfaceClass, &quot;interfaceClass&quot;, Class.class );</span>
+<span class="fc" id="L144">        return interfaceClass.isAssignableFrom( _typeClass );</span>
     }
 
     public Class&lt;?&gt; dataArrayType() {
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        if ( this.typeClassImplements( NumericType.class ) )</span>
-<span class="fc" id="L147">            return ( (NumericType&lt;?,?,?,?&gt;) Objects.requireNonNull( getTypeClassInstance(NumericType.class) ) ).holderArrayType();</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if ( this.typeClassImplements( NumericType.class ) )</span>
+<span class="fc" id="L149">            return ( (NumericType&lt;?,?,?,?&gt;) Objects.requireNonNull( getTypeClassInstance(NumericType.class) ) ).holderArrayType();</span>
         else
-<span class="fc" id="L149">            return Object[].class;</span>
+<span class="fc" id="L151">            return Object[].class;</span>
     }
 
-    public Data virtualize(Data data)
+    public Data virtualize( Data data )
     {
-<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        Object value = data == null ? null : data.getRef();</span>
-<span class="pc bpc" id="L155" title="2 of 4 branches missed.">        assert value != null;</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        Object value = data == null ? null : data.getRef();</span>
+<span class="pc bpc" id="L157" title="2 of 4 branches missed.">        assert value != null;</span>
         Object newValue;
-<span class="fc bfc" id="L157" title="All 2 branches covered.">        if ( _typeClass == F64.class )</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">            newValue = ( ( (double[]) value ).length &lt;= 1 ) ? value : new double[]{ ( (double[]) value )[ 0 ] };</span>
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        else if ( _typeClass == F32.class )</span>
-<span class="fc bfc" id="L160" title="All 2 branches covered.">            newValue = ( ( (float[]) value ).length &lt;= 1 ) ? value : new float[]{ ( (float[]) value )[ 0 ] };</span>
-<span class="fc bfc" id="L161" title="All 2 branches covered.">        else if ( _typeClass == I64.class )</span>
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">            newValue = ( ( (long[]) value ).length &lt;= 1 ) ? value : new long[]{ ( (long[]) value )[ 0 ] };</span>
-<span class="fc bfc" id="L163" title="All 2 branches covered.">        else if ( _typeClass == I32.class )</span>
-<span class="pc bpc" id="L164" title="1 of 2 branches missed.">            newValue = ( ( (int[]) value ).length &lt;= 1 ) ? value : new int[]{ ( (int[]) value )[ 0 ] };</span>
-<span class="fc bfc" id="L165" title="All 2 branches covered.">        else if ( _typeClass == I16.class )</span>
-<span class="pc bpc" id="L166" title="1 of 2 branches missed.">            newValue = ( ( (short[]) value ).length &lt;= 1 ) ? value : new short[]{ ( (short[]) value )[ 0 ] };</span>
-<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        else if ( _typeClass == I8.class )</span>
-<span class="pc bpc" id="L168" title="1 of 2 branches missed.">            newValue = ( ( (byte[]) value ).length &lt;= 1 ) ? value : new byte[]{ ( (byte[]) value )[ 0 ] };</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        if ( _typeClass == F64.class )</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            newValue = ( ( (double[]) value ).length &lt;= 1 ) ? value : new double[]{ ( (double[]) value )[ 0 ] };</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        else if ( _typeClass == F32.class )</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            newValue = ( ( (float[]) value ).length &lt;= 1 ) ? value : new float[]{ ( (float[]) value )[ 0 ] };</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        else if ( _typeClass == I64.class )</span>
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">            newValue = ( ( (long[]) value ).length &lt;= 1 ) ? value : new long[]{ ( (long[]) value )[ 0 ] };</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        else if ( _typeClass == I32.class )</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">            newValue = ( ( (int[]) value ).length &lt;= 1 ) ? value : new int[]{ ( (int[]) value )[ 0 ] };</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        else if ( _typeClass == I16.class )</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">            newValue = ( ( (short[]) value ).length &lt;= 1 ) ? value : new short[]{ ( (short[]) value )[ 0 ] };</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        else if ( _typeClass == I8.class )</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">            newValue = ( ( (byte[]) value ).length &lt;= 1 ) ? value : new byte[]{ ( (byte[]) value )[ 0 ] };</span>
         else
-<span class="nc bnc" id="L170" title="All 2 branches missed.">            newValue = ( ( (Object[]) value ).length &lt;= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">            newValue = ( ( (Object[]) value ).length &lt;= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };</span>
 
-<span class="fc" id="L172">        return CPU.get().allocate(newValue, 1);</span>
+<span class="fc" id="L174">        return CPU.get().allocate(newValue, 1);</span>
     }
 
     public boolean equals(final Object o) {
-<span class="fc bfc" id="L176" title="All 2 branches covered.">        if (o == this) return true;</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (!(o instanceof DataType)) return false;</span>
-<span class="fc" id="L178">        final DataType&lt;?&gt; other = (DataType&lt;?&gt;) o;</span>
-<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if ( !Objects.equals(_log, other._log) ) return false;</span>
-<span class="nc" id="L180">        final Object this$_typeClass = this.getRepresentativeType();</span>
-<span class="nc" id="L181">        final Object other$_typeClass = other.getRepresentativeType();</span>
-<span class="nc" id="L182">        return Objects.equals(this$_typeClass, other$_typeClass);</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        if ( o == this ) return true;</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if ( !(o instanceof DataType) ) return false;</span>
+<span class="fc" id="L180">        final DataType&lt;?&gt; other = (DataType&lt;?&gt;) o;</span>
+<span class="fc" id="L181">        return Objects.equals(this._typeClass, other._typeClass);</span>
     }
 
-    public int hashCode() {
-<span class="nc" id="L186">        final int PRIME = 59;</span>
-<span class="nc" id="L187">        int result = 1;</span>
-<span class="nc" id="L188">        final Object $_log = _log;</span>
-<span class="nc bnc" id="L189" title="All 2 branches missed.">        result = result * PRIME + ($_log == null ? 43 : $_log.hashCode());</span>
-<span class="nc" id="L190">        final Object $_typeClass = this.getRepresentativeType();</span>
-<span class="nc bnc" id="L191" title="All 2 branches missed.">        result = result * PRIME + ($_typeClass == null ? 43 : $_typeClass.hashCode());</span>
-<span class="nc" id="L192">        return result;</span>
-    }
+<span class="nc" id="L184">    public int hashCode() { return _typeClass.hashCode() * 31; }</span>
 
     public String toString() {
-<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        String representative = (getRepresentativeType() != null ? &quot;(&quot;+getRepresentativeType().getSimpleName()+&quot;)&quot; : &quot;&quot;);</span>
-<span class="fc" id="L197">        return &quot;DataType[class=&quot; + getItemTypeClass().getSimpleName() + representative + &quot;]&quot;;</span>
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">        String representative = (getRepresentativeType() != null ? &quot;(&quot;+getRepresentativeType().getSimpleName()+&quot;)&quot; : &quot;&quot;);</span>
+<span class="fc" id="L188">        return &quot;DataType[class=&quot; + getItemTypeClass().getSimpleName() + representative + &quot;]&quot;;</span>
     }
 
-<span class="fc" id="L200">    public Class&lt;?&gt; getRepresentativeType() { return _typeClass; }</span>
+<span class="fc" id="L191">    public Class&lt;?&gt; getRepresentativeType() { return _typeClass; }</span>
 
     public Class&lt;Type&gt; getItemTypeClass() {
-<span class="fc bfc" id="L203" title="All 2 branches covered.">        if ( this.typeClassImplements(NumericType.class) )</span>
-<span class="fc" id="L204">            return (this.getTypeClassInstance(NumericType.class)).holderType();</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        if ( this.typeClassImplements(NumericType.class) )</span>
+<span class="fc" id="L195">            return (this.getTypeClassInstance(NumericType.class)).holderType();</span>
         else
-<span class="fc" id="L206">            return _typeClass;</span>
+<span class="fc" id="L197">            return _typeClass;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

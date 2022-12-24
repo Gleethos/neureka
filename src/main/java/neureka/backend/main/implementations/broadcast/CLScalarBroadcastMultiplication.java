@@ -2,7 +2,7 @@ package neureka.backend.main.implementations.broadcast;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.devices.opencl.OpenCLDevice;
 
 public class CLScalarBroadcastMultiplication extends CLScalarBroadcast
@@ -24,7 +24,7 @@ public class CLScalarBroadcastMultiplication extends CLScalarBroadcast
                     .getKernel(call)
                     .passAllOf(call.input(Number.class, 0))
                     .passAllOf(call.input(Number.class, 0 + offset))
-                    .pass( call.input( Number.class, 1 + offset ).at( 0 ).get().floatValue() )
+                    .pass( call.input( Number.class, 1 + offset ).at( 0 ).get() )
                     .pass(call.input(Number.class, 0).rank())
                     .pass(call.getValOf(Arg.DerivIdx.class))
                     .call(gwz);

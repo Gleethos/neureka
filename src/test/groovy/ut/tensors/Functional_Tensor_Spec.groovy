@@ -42,13 +42,11 @@ class Functional_Tensor_Spec extends Specification
             it.hasSlimNumbers    = false
         })
 
-        if ( Neureka.get().backend().has(CLBackend) )
-            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = false
+        Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }
     }
 
     def cleanup() {
-        if ( Neureka.get().backend().has(CLBackend) )
-            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+        Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
     }
 
     def 'We can initialize a tensor using a filler lambda mapping indices to items.'()
@@ -93,6 +91,26 @@ class Functional_Tensor_Spec extends Specification
                     .collect(Collectors.toList()) == [-4, -8, -6, -6]
         where :
             device << ['CPU', 'GPU']
+    }
+
+    def 'We can use the "filter" method as a shortcut for "stream().filter(..)".'()
+    {
+        when : 'We create a tensor...'
+            Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)
+
+        then : 'The filter method returns a filtered stream which we can collect!'
+            t.filter({it < 3})
+                    .collect(Collectors.toList()) == [1, 0, 1, -4]
+    }
+
+    def 'We can use the "flatMap" method as a shortcut for "stream().flatMap(..)".'()
+    {
+        when : 'We create a tensor...'
+            Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)
+
+        then : 'We can use the "flatMap" method as a shortcut for "stream().flatMap(..)"'
+            t.flatMap({it < 3 ? [it, it] : []})
+                    .collect(Collectors.toList()) == [1, 1, 0, 0, 1, 1, -4, -4]
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!

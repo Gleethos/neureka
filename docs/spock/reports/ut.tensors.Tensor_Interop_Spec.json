@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.009 seconds"
+    "duration":"0.014 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be converted to buffered images.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"then","text":"The resulting image has the expected shape","code":["asImage.height == shape[0]","asImage.width  == shape[1]"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.Byte","class java.lang.Integer","class java.lang.Byte","class java.lang.Byte"],"image":["BGR_3BYTE","ARGB_1INT","ABGR_4BYTE","ABGR_PRE_4BYTE"],"shape":["[3, 5, 3]","[7, 5, 1]","[7, 5, 4]","[7, 5, 4]"]}}
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","Byte","Byte"],"image":["Tsr.ImageType.BGR_3BYTE","Tsr.ImageType.ARGB_1INT","Tsr.ImageType.ABGR_4BYTE","Tsr.ImageType.ABGR_PRE_4BYTE"],"shape":["[3, 5, 3]","[7, 5, 1]","[7, 5, 4]","[7, 5, 4]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -44,7 +44,7 @@
 
         {"kind":"and","text":"The exception message has a plausible size.","code":["exception.message.length() > 13"]},
 
-        {"kind":"where","text":"","code":{"type":["class java.lang.Byte","class java.lang.Integer","class java.lang.String","class java.lang.Byte"],"image":["BGR_3BYTE","ARGB_1INT","ARGB_1INT","ABGR_4BYTE"],"shape":["[3, 5]","[7, 5, 3]","[7, 5, 1]","[2, 9, 3]"]}}
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","String","Byte"],"image":["Tsr.ImageType.BGR_3BYTE","Tsr.ImageType.ARGB_1INT","Tsr.ImageType.ARGB_1INT","Tsr.ImageType.ABGR_4BYTE"],"shape":["[3, 5]","[7, 5, 3]","[7, 5, 1]","[2, 9, 3]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

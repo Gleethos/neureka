@@ -4,9 +4,12 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.opencl.KernelCode;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.dtype.DataType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ParsedCLImplementation extends CLImplementation
 {
@@ -33,7 +36,7 @@ public class ParsedCLImplementation extends CLImplementation
                             .replace("//-=<ARGUMENT>=-//", "")
                             .replace("//-=<CONFIGURATION>=-//", "");
 
-    private KernelCode _kernel;
+    private final KernelCode[] _kernels;
 
     public ParsedCLImplementation(
         ImplementationFor<OpenCLDevice> lambda,
@@ -41,19 +44,23 @@ public class ParsedCLImplementation extends CLImplementation
         String kernelSource,
         String activationSource,
         String differentiationSource,
-        String postfix
+        String postfix,
+        Function<KernelCode, KernelCode[]> dataTypeAdapter
     ) {
         super( lambda, arity );
-        boolean templateFound;
-        if ( activationSource == null && differentiationSource == null )
-            _kernel = new KernelCode( postfix, kernelSource );
-        else if (kernelSource.contains("__kernel")) {
+        String parsedCode = null;
+        String parsedName = null;
+        if ( activationSource == null && differentiationSource == null ) {
+            parsedCode = kernelSource;
+            parsedName = postfix;
+        } else if (kernelSource.contains("__kernel")) {
+            boolean templateFound;
             String[] parts = kernelSource.split("__kernel")[ 1 ].split("\\(")[ 0 ].split(" ");
 
             templateFound = parts[parts.length - 1].contains("template");
-            if (!templateFound) {
+            if (!templateFound)
                 throw new IllegalStateException("Invalid source code passed to AbstractCLExecution!");
-            } else {
+            else {
                 Map<String, String> map = _getParsedKernelsFromTemplate(
                         parts[parts.length - 1],
                         kernelSource,
@@ -61,11 +68,11 @@ public class ParsedCLImplementation extends CLImplementation
                         differentiationSource,
                         postfix
                 );
-                String name = map.keySet().toArray(new String[ 0 ])[ 0 ];
-                String source = map.values().toArray(new String[ 0 ])[ 0 ];
-                _kernel = new KernelCode( name, source );
+                parsedName = map.keySet().toArray(new String[ 0 ])[ 0 ];
+                parsedCode = map.values().toArray(new String[ 0 ])[ 0 ];
             }
         }
+        _kernels = dataTypeAdapter.apply( new KernelCode( parsedName, parsedCode ) );
     }
 
     private Map<String, String> _getParsedKernelsFromTemplate(
@@ -107,8 +114,17 @@ public class ParsedCLImplementation extends CLImplementation
     }
 
     @Override
-    public KernelCode getKernelFor(ExecutionCall<OpenCLDevice> call) {
-        return _kernel;
+    public KernelCode getKernelFor( ExecutionCall<OpenCLDevice> call ) {
+        DataType<?> callType = call.input(0 ).getDataType();
+        return Arrays.stream(_kernels)
+                        .filter( k -> k.getDataType().equals( callType ) )
+                        .findFirst()
+                        .orElse(_kernels[0]);
+    }
+
+    @Override
+    public KernelCode[] getKernelCode() {
+        return _kernels;
     }
 
     private interface Parser

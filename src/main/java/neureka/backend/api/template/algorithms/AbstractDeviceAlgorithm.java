@@ -4,15 +4,13 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
-import neureka.backend.main.algorithms.Activation;
-import neureka.backend.main.internal.CallExecutor;
-import neureka.backend.main.internal.RecursiveExecutor;
+import neureka.backend.main.algorithms.ElementwiseAlgorithm;
+import neureka.backend.main.internal.FinalExecutor;
 import neureka.backend.main.memory.MemUtil;
-import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
-import neureka.calculus.implementations.FunctionConstant;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
+import neureka.math.implementations.FunctionConstant;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import org.slf4j.Logger;
@@ -46,11 +44,10 @@ implements DeviceAlgorithm<C>
     public <D extends Device<?>, E extends ImplementationFor<D>> C setImplementationFor(
             Class<D> deviceClass, E implementation
     ) {
-        if ( _implementations.containsKey( deviceClass ) ) {
+        if ( _implementations.containsKey( deviceClass ) )
             _LOG.info(
                 "Implementation for device '" + deviceClass.getSimpleName() + "' already defined!"
             );
-        }
 
         _implementations.put(
             (Class<Device<?>>) deviceClass,
@@ -80,11 +77,10 @@ implements DeviceAlgorithm<C>
     }
 
 
-    
     public static Tsr<?> executeFor(
             final Function caller,
             final ExecutionCall<? extends Device<?>> call,
-            final RecursiveExecutor executor
+            final FinalExecutor executor
     ) {
         Function[] nodes = caller.getSubFunctions().toArray(new Function[0]);
         Operation operation = caller.getOperation();
@@ -97,13 +93,21 @@ implements DeviceAlgorithm<C>
             return _deepDerivative( call, nodes,  executor );
     }
 
-    public static Tsr<?> prepareAndExecuteRecursively(
+    public static Tsr<?> prepareAndExecute(
             ExecutionCall<? extends Device<?>> executionCall,
-            RecursiveExecutor executor
+            FinalExecutor executor
     ) {
-        executionCall = _prepareForExecution(executionCall);
-        return
-                _recursiveReductiveExecutionOf( executionCall, executor );
+        ExecutionCall<? extends Device<?>> call = _prepareForExecution(executionCall);
+        return executeOnCommonDevice(call, ()->{
+             /*
+                Below is the core lambda of recursive preprocessing
+                which is defined for each Algorithm individually :
+             */
+            Tsr<?> result = null;
+            if ( executor != null )
+                result = executor.execute(call);
+            return result;
+        });
     }
 
     public static ExecutionCall<? extends Device<?>> _prepareForExecution(ExecutionCall<? extends Device<?>> executionCall) {
@@ -113,17 +117,15 @@ implements DeviceAlgorithm<C>
 
         for ( Tsr<?> t : executionCall.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
-                    "Device arguments may not be null!\n" +
-                    "One or more tensor arguments within the given ExecutionCall instance is null."
-            );
+                                "Device arguments may not be null!\n" +
+                                "One or more tensor arguments within the given ExecutionCall instance is null."
+                            );
         return executionCall;
     }
 
     public static Tsr<?> executeDeviceAlgorithm(
-            ExecutionCall<? extends Device<?>> call,
-            CallExecutor executor // Ignored! Only for compatibility!
+            ExecutionCall<? extends Device<?>> call
     ) {
-
         for ( Tsr<?> t : call.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
@@ -155,15 +157,26 @@ implements DeviceAlgorithm<C>
     public static <D extends Device<?>> ExecutionCall<D> flatten(
             Function caller, ExecutionCall<D> call
     ) {
-        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]) );
+        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]), true );
     }
 
+    public static <D extends Device<?>> ExecutionCall<D> flattenForIndexer(
+            Function caller, ExecutionCall<D> call
+    ) {
+        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]), false );
+    }
 
-    
     private static <D extends Device<?>> ExecutionCall<D> _flatten(
             ExecutionCall<D> call, Function[] src
     ) {
-        ExecutionCall<D> innerCall = call.withArgs( Arg.DerivIdx.of(-1) );
+        return _flatten( call, src, true );
+    }
+
+    
+    private static <D extends Device<?>> ExecutionCall<D> _flatten(
+            ExecutionCall<D> call, Function[] src, boolean ignoreJs
+    ) {
+        ExecutionCall<D> innerCall = !ignoreJs ? call : call.withArgs( Arg.DerivIdx.of(-1) );
         Tsr<?>[] inputs = innerCall.inputs();
         return MemUtil.keep( inputs, () ->
         {
@@ -195,62 +208,55 @@ implements DeviceAlgorithm<C>
             final Function[] nodes,
             final boolean isFlat,
             final boolean isDoingAD,
-            final RecursiveExecutor executor
+            final FinalExecutor executor
     ) {
         int j = call.getValOf( Arg.VarIdx.class );
         assert call.getValOf( Arg.DerivIdx.class ) == -1;
 
-        Tsr<?>[] tensors =
-                call.getOperation().isIndexer()
-                        ? new Tsr[ 1 + call.arity() ]
-                        : new Tsr[ 1 + nodes.length  ];
+        ExecutionCall<?> flattenedCall = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes );
 
-        if ( call.getOperation().isIndexer() )
-            for ( int i = 1; i < tensors.length; i++ )
-                tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 );
-        else
-        {
-            ExecutionCall<?> flattenedCall = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes );
-            if (
-                    !isFlat && j < 0 && (
-                            call.getOperation().isOperator()
-                                    ||
-                            call.getOperation().supportsAlgorithm(Activation.class)
-                    )
-            ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-                String asStr = call.getOperation().stringify(
-                                            IntStream.range(0, nodes.length)
-                                                .mapToObj(i -> "I[" + i + "]")
-                                                .toArray(String[]::new)
-                                        );
-                Tsr<?>[] finalTensors = flattenedCall.inputs();
-                Tsr<?> result = MemUtil.keep(finalTensors, () -> new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));
-                for ( int i = 1; i < finalTensors.length; i++ )
-                    _deleteIfNotIn(call.inputs(), finalTensors[i]);
+        if (
+                !isFlat && j < 0 && (
+                        call.getOperation().isOperator()
+                                ||
+                        call.getOperation().supportsAlgorithm(ElementwiseAlgorithm.class)
+                )
+        ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
+            String asStr = call.getOperation().stringify(
+                                        IntStream.range(0, nodes.length)
+                                            .mapToObj(i -> "I[" + i + "]")
+                                            .toArray(String[]::new)
+                                    );
+            Tsr<?>[] finalTensors = flattenedCall.inputs();
+            Tsr<?> result = MemUtil.keep(finalTensors, () -> new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));
+            for ( int i = 1; i < finalTensors.length; i++ )
+                _deleteIfNotIn(call.inputs(), finalTensors[i]);
 
-                return result;
-            } else {
-                int numberOfInputs = flattenedCall.arity();
-                boolean anyNumberOfInputs = flattenedCall.getOperation().getArity() < 0;
-                int operationArity = flattenedCall.getOperation().getArity();
-                if (numberOfInputs < operationArity)
-                    throw new IllegalArgumentException(
-                            "The number of inputs to the operation " + flattenedCall.getOperation() + " is " + numberOfInputs +
-                            " but the operation requires " + operationArity + " inputs."
-                        );
+            return result;
+        } else {
+            int numberOfInputs = flattenedCall.arity();
+            boolean anyNumberOfInputs = flattenedCall.getOperation().getArity() < 0;
+            int operationArity = flattenedCall.getOperation().getArity();
+            if (numberOfInputs < operationArity)
+                throw new IllegalArgumentException(
+                        "The number of inputs to the operation " + flattenedCall.getOperation() + " is " + numberOfInputs +
+                        " but the operation requires " + operationArity + " inputs."
+                    );
 
-                boolean tooManyArgs = numberOfInputs > operationArity + 1;
+            boolean tooManyArgs = numberOfInputs > operationArity + 1;
 
-                if ( !tooManyArgs || anyNumberOfInputs )
-                    tensors = flattenedCall.withAddedInputAt(0, null).inputs();
-                else
-                    tensors = flattenedCall.inputs();
-            }
+            Tsr<?>[] tensors;
+
+            if ( !tooManyArgs || anyNumberOfInputs )
+                tensors = flattenedCall.withAddedInputAt(0, null).inputs();
+            else
+                tensors = flattenedCall.inputs();
+
+            return prepareAndExecute(
+                        call.withInputs( tensors ).withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
+                        executor
+                    );
         }
-        return prepareAndExecuteRecursively(
-                                call.withInputs( tensors ).withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),
-                                executor
-                            );
     }
 
     /**
@@ -289,7 +295,7 @@ implements DeviceAlgorithm<C>
     private static Tsr<?> _deepDerivative(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
-            final RecursiveExecutor executor
+            final FinalExecutor executor
     ) {
         Supplier<Tsr<?>> actor = () ->
                 MemUtil.keep( call.inputs(), () -> {
@@ -322,13 +328,13 @@ implements DeviceAlgorithm<C>
                         if ( index >= 0 ) inner = tensors[ index ];
                         else {
                             // Optimization above did not apply, so we accumulate all the derivatives!
-                            tensors[0] = prepareAndExecuteRecursively(
-                                    ExecutionCall.of( tensors )
-                                            .andArgs( Arg.DerivIdx.of( -1 ) )
-                                            .running( Neureka.get().backend().getOperation("+") )
-                                            .on( call.getDevice() ),
-                                    ElemWiseUtil::forAdditions
-                            );
+                            tensors[0] = prepareAndExecute(
+                                                ExecutionCall.of( tensors )
+                                                        .andArgs( Arg.DerivIdx.of( -1 ) )
+                                                        .running( Neureka.get().backend().getOperation("+") )
+                                                        .on( call.getDevice() ),
+                                                innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
+                                        );
                             inner = tensors[ 0 ];//-> this is now the inner derivative!
                         }
                     }
@@ -354,7 +360,7 @@ implements DeviceAlgorithm<C>
                         }
 
                     // Use those tensors for the outer derivative:
-                    tensors[0] = prepareAndExecuteRecursively(
+                    tensors[0] = prepareAndExecute(
                                         ExecutionCall.of( tensors )
                                                 .andArgs( Arg.DerivIdx.of( d ) )
                                                 .running( call.getOperation() )
@@ -389,7 +395,7 @@ implements DeviceAlgorithm<C>
     {
         if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {
             tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
-            tensors[0] = prepareAndExecuteRecursively(
+            tensors[0] = prepareAndExecute(
                     ExecutionCall.of( tensors )
                             .andArgs( Arg.DerivIdx.of( -1 ) )
                             .running( Neureka.get().backend().getOperation("*") )
@@ -415,44 +421,6 @@ implements DeviceAlgorithm<C>
         Neureka.Settings.Debug debug = Neureka.get().settings().debug();
         if (  !tensor.isDeleted() && debug.isDeletingIntermediateTensors() )
             tensor.mut().delete();
-    }
-
-    /**
-     *  The following method can be used to split one big execution call into many
-     *  grouped execution calls which will be executed recursively.
-     *  This method receives a call which ought to be broken down as well as two lambdas
-     *  which contain implementations to perform this task.
-     *  The first lambda, namely {@param finalExecution}, will be called at the end of the
-     *  recursion dive, whereas the second lambda {@param executor} will be called for
-     *  every recursive call in order to perform the grouping.
-     *  The {@param executor} will actually receive the recursive call as lambda, which
-     *  then may or may not be called by implementations of the lambda...
-     *
-     * @param call The {@link ExecutionCall} whose arguments ought to be executed in groups.
-     * @param executor The traversing algorithm, which decides how to group arguments and when
-     *                 the {@param finalExecution} ought to be called.
-     *
-     * @return The execution result of the provided {@param call}.
-     */
-    
-    private static Tsr<?> _recursiveReductiveExecutionOf(
-            final ExecutionCall<? extends Device<?>> call,
-            final RecursiveExecutor executor
-    ) {
-        return executeOnCommonDevice(call, ()->{
-             /*
-                Below is the core lambda of recursive preprocessing
-                which is defined for each Algorithm individually :
-             */
-            Tsr<?> result = null;
-            if ( executor != null )
-                result = executor.execute( // This is where the recursion occurs:
-                        call,
-                        innerCall -> // This lambda performs the recursive call, implementations decide if they want to dive deeper.
-                                _recursiveReductiveExecutionOf( innerCall, executor )
-                );
-            return result;
-        });
     }
 
     public static <R> R executeOnCommonDevice( ExecutionCall<?> call, Supplier<R> execution ) {

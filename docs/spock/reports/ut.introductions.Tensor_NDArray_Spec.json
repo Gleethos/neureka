@@ -9,21 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.005 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor is a subtype of NdArray.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A tensor of floats and an nd-array of strings:","code":["Tsr<Float> t = Tsr.ofFloats().withShape(2, 3).andFill(1f, 4f, -2f)","Nda<String> s = Nda.of(String.class).withShape(2, 3).andFill(\"a\", \"b\", \"c\")"]},
 
-        {"kind":"when","text":"Tensors are ND-arrays (but NdArrays are not Tensors):","code":["Nda<Float> f = t"]},
+        {"kind":"when","text":"Tensors are ND-arrays (but NdArrays are not Tensors):","code":["Nda<Float> f = t // The other way around is not possible."]},
 
         {"kind":"then","text":"We can confirm that all of them are ultimately just nd-arrays:","code":["t instanceof Nda","f instanceof Nda","s instanceof Nda"]}
       ],
@@ -33,14 +33,14 @@
     {
       "id":"We can use tensors for numeric calculations (but not nd-arrays).",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A tensor of floats and an nd-array of strings:","code":["Tsr<Float>  a = Tsr.of(42f, -7f, 90f)","Nda<String> b = Nda.of(\"a\", \"b\", \"c\")"]},
 
-        {"kind":"when","text":"We perform some numeric operations on the tensor:","code":["Tsr<Float> c = a + 1f"]},
+        {"kind":"when","text":"We perform some numeric operations on the tensor:","code":["Tsr<Float> c = a + 1f // This does not work with nd-arrays."]},
 
         {"kind":"then","text":"The involved variables consist of the following items:","code":["a.items == [42f, -7f, 90f]","b.items == [\"a\", \"b\", \"c\"]","c.items == [43f, -6f, 91f]"]}
       ],

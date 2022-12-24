@@ -3,8 +3,8 @@ package st.tests;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
-import neureka.calculus.Function;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.math.Function;
+import neureka.math.parsing.FunctionParser;
 import testutility.UnitTester_Tensor;
 
 public class BroadSystemTest
@@ -61,10 +61,10 @@ public class BroadSystemTest
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
             z.backward(Tsr.of(new int[]{1}, 1d));
             tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0066)"});
-            tester.testTensor(z, new String[]{"[1]:(9.9668); ->ddeleted"});
+            tester.testTensor(z, new String[]{"[1]:(9.9668); ->d[1]:(99.0066)"});
             tester.testContains(
                     z.toString("dgc"),
-                    new String[]{"[1]:(9.9668); ->ddelete"},
+                    new String[]{"[1]:(9.9668); ->d[1]:(99.0066)"},
                     "test double formatting"
             );
             tester.testContains(
@@ -626,7 +626,7 @@ public class BroadSystemTest
                         //"deleted",
                         //"(I[0] * -1.0) => deleted, type='BRANCH'"
                         "(I[0] * -1.0) =>",
-                        "type='LEAVE'",
+                        "type='LEAVE DELETED'",
                         "[1]:(2.0), type='LEAVE RQS GRADIENT'"
                 },
                 "Testing 'toString' of GraphNode");

@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  *
  * @param <V> The value type parameter of the thing wrapped by this.
  */
-final class LazyRef<V>
+public final class LazyRef<V>
 {
     public static <V> LazyRef<V> of( Supplier<V> source ) { return new LazyRef<>(source); }
 

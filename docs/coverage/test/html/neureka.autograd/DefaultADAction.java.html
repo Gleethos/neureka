@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultADAction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">DefaultADAction.java</span></div><h1>DefaultADAction.java</h1><pre class="source lang-java linenums">package neureka.autograd;
+
+
+import neureka.Tsr;
+
+import java.util.Optional;
+
+
+/**
+ *  {@link ADAction} stands for &quot;Auto-Differentiation-Agent&quot;, meaning
+ *  that implementations of this class are responsible for managing
+ *  forward- and reverse- mode differentiation actions.
+ *  These differentiation actions are performed through the &quot;{@link ADAction#act(ADTarget)}&quot;
+ *  method which are being called
+ *  by instances of the {@link GraphNode} class during propagation.
+ *  An {@link ADAction} may also wrap and expose a partial derivative
+ *  which may or may not be present for certain operations.
+ *  &lt;br&gt;
+ *  This class stores implementations for the propagation method
+ *  inside the agent as a lambda instance. &lt;br&gt;
+ *
+ *  So in essence this class is a container for a lambda as well as an optional derivative.
+ */
+final class DefaultADAction implements ADAction
+{
+    /**
+     *  This lambda ought to perform the forward or backward propagation
+     *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
+     */
+    private final ADAction _action;
+    private final Tsr&lt;?&gt; _partialDerivative;
+
+<span class="fc" id="L33">    DefaultADAction( ADAction action, Tsr&lt;?&gt; derivative ) { _action = action; _partialDerivative = derivative; }</span>
+
+    @Override
+    public Tsr&lt;?&gt; act( ADTarget&lt;?&gt; target ) {
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if ( _action == null )</span>
+<span class="nc" id="L38">            throw new IllegalStateException(</span>
+<span class="nc" id="L39">                &quot;Cannot perform propagation because this &quot;+ADAction.class.getSimpleName()+&quot; does have an auto-diff implementation.&quot;</span>
+            );
+<span class="fc" id="L41">        return _action.act( target );</span>
+    }
+
+    @Override
+    public Optional&lt;Tsr&lt;?&gt;&gt; partialDerivative() {
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if ( _partialDerivative != null )</span>
+<span class="nc" id="L47">            return Optional.of( _partialDerivative );</span>
+
+<span class="fc" id="L49">        Tsr&lt;?&gt;[] captured = _action.findCaptured();</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if ( captured.length &gt; 0 )</span>
+<span class="fc" id="L51">            return Optional.of(captured[captured.length - 1]);</span>
+
+<span class="fc" id="L53">        return Optional.empty();</span>
+    }
+
+    /**
+     *  An {@link ADAction} also contains a context of variables which have been
+     *  passed to it by an {@link neureka.backend.api.ExecutionCall}.
+     *  A given {@link neureka.backend.api.ExecutionCall} will itself have gathered the context
+     *  variables within a given backend implementation, more specifically an {@link neureka.backend.api.Operation}.
+     *  These variables are used by an implementation of the {@link neureka.backend.api.Operation} to perform auto differentiation
+     *  or to facilitate further configuration of an {@link neureka.backend.api.ExecutionCall}.
+     *  This method lets us view the current state of these variables for this agent in the form of
+     *  a nice {@link String}...
+     *
+     * @return A String view of this {@link ADAction}.
+     */
+    @Override
+    public String toString() {
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if ( this.partialDerivative().isPresent() ) return partialDerivative().get().toString();</span>
+<span class="fc" id="L71">        return &quot;&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

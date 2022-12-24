@@ -28,8 +28,7 @@ import java.util.function.Function
 class Cross_Device_Spec extends Specification
 {
     def setup() {
-        if ( Neureka.get().backend().has(CLBackend) )
-            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = false
+        Neureka.get().backend().find(CLBackend).ifPresent{it.getSettings().autoConvertToFloat = false }
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
@@ -49,8 +48,7 @@ class Cross_Device_Spec extends Specification
     }
 
     def cleanup() {
-        if ( Neureka.get().backend().has(CLBackend) )
-            Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+        Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
     }
 
     @IgnoreIf({ data.deviceType == "GPU" && !Neureka.get().canAccessOpenCLDevice() })
@@ -99,9 +97,9 @@ class Cross_Device_Spec extends Specification
             )
 
         cleanup:
-            product.getMut().delete()
-            tensor1.getMut().delete()
-            //tensor2.delete() // TODO: FIX EXCEPTION!
+            product.mut.delete()
+            tensor1.mut.delete()
+            tensor2.mut.delete()
 
         where : 'The following settings are being used: '
             deviceType << ['CPU',  'GPU']
@@ -116,15 +114,13 @@ class Cross_Device_Spec extends Specification
             Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.get('first')
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            if ( Neureka.get().backend().has(CLBackend) )
-                Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
 
         expect : 'The integration test runs successful.'
             CrossDeviceSystemTest.on(device)
 
         cleanup:
-            if ( Neureka.get().backend().has(CLBackend) )
-                Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
 
         where : 'The following settings are being used: '
             deviceType << ['CPU', 'GPU']
@@ -136,8 +132,7 @@ class Cross_Device_Spec extends Specification
     {
         given:
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            if ( Neureka.get().backend().has(CLBackend) )
-                Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = true
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
 
         expect:
             device != null
@@ -148,8 +143,7 @@ class Cross_Device_Spec extends Specification
                 new SimpleNNSystemTest(SimpleNNSystemTest.Mode.MAT_MUL).on(device)
 
         cleanup:
-            if ( Neureka.get().backend().has(CLBackend) )
-                Neureka.get().backend().get(CLBackend).getSettings().autoConvertToFloat = false
+            Neureka.get().backend().find(CLBackend).ifPresent{ it.getSettings().autoConvertToFloat = false }
 
         where :
             device << [CPU.get(), Device.get('first gpu')]
@@ -167,7 +161,7 @@ class Cross_Device_Spec extends Specification
         when : 'We now call the backward method on the tensor directly without having done any operations...'
             t.backward(1)
         and : 'Then we take the gradient to see what happened.'
-            Tsr g = t.getGradient()
+            Tsr g = t.gradient.get()
 
         then : 'We expect this gradient to be all ones with the shape of our matrix!'
             g.toString().contains("[2x2]:(1.0, 1.0, 1.0, 1.0)")
@@ -256,12 +250,12 @@ class Cross_Device_Spec extends Specification
             Tsr.ofFloats().scalar(0.9f)| CPU.get()            | Byte.class     | {it*2}   || '(1):[1]'
             Tsr.ofFloats().scalar(3.8f)| CPU.get()            | Short.class    | {it/2}   || '(1):[1]'
 
-            //Tsr.ofInts().scalar( 3 )   | Device.get('first') | Double.class   | {it*it} || '(1):[9.0]' // TODO: Allow for ints on the GPU
-            //Tsr.ofInts().scalar(-1 )   | Device.get('first') | Float.class    | {it/2}  || '(1):[-0.5]'
-            //Tsr.ofInts().scalar( 5 )   | Device.get('first') | Integer.class  | {it*10} || '(1):[50]'
-            //Tsr.ofInts().scalar( 70)   | Device.get('first') | Long.class     | {it*5}  || '(1):[350]'
-            //Tsr.ofInts().scalar( 90)   | Device.get('first') | Byte.class     | {it*2}  || '(1):[180]'
-            //Tsr.ofInts().scalar( 37)   | Device.get('first') | Short.class    | {it/2}  || '(1):[18]'
+            Tsr.ofInts().scalar( 3 )   | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]'
+            Tsr.ofInts().scalar(-1 )   | Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
+            Tsr.ofInts().scalar( 5 )   | Device.get('first')  | Integer.class  | {it*10}  || '(1):[50]'
+            Tsr.ofInts().scalar( 70)   | Device.get('first')  | Long.class     | {it*5}   || '(1):[350]'
+            Tsr.ofInts().scalar( 90)   | Device.get('first')  | Byte.class     | {it*2}   || '(1):[-76]'
+            Tsr.ofInts().scalar( 37)   | Device.get('first')  | Short.class    | {it/2}   || '(1):[18]'
             Tsr.ofInts().scalar( 3 )   | CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
             Tsr.ofInts().scalar(-1 )   | CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
             Tsr.ofInts().scalar( 5 )   | CPU.get()            | Integer.class  | {it*10}  || '(1):[50]'
@@ -294,7 +288,6 @@ class Cross_Device_Spec extends Specification
             Tsr.ofBytes().scalar( 70)  | CPU.get()           | Long.class     | {it*5}   || '(1):[350]'
             Tsr.ofBytes().scalar( 90)  | CPU.get()           | Byte.class     | {it*2}   || '(1):[-76]'
             Tsr.ofBytes().scalar( 37)  | CPU.get()           | Short.class    | {it/2}   || '(1):[18]'
-
     }
 
 

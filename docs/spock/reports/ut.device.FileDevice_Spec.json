@@ -9,21 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.032 seconds"
+    "duration":"0.130 seconds"
   },
   "headers":["\n                    This specification covers the behavior of the `FileDevice`\n                    class, which enables the persistence of tensor data.      \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A file device stores tensors in idx files by default.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new tensor is being created for testing.","code":["Tsr a = Tsr.of([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])"]},
+        {"kind":"given","text":"A new tensor is being created for testing.","code":["var a = Tsr.of([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])"]},
 
-        {"kind":"and","text":"A file device instance is being accessed for a given path.","code":["def device = FileDevice.at( path )"]},
+        {"kind":"and","text":"A file device instance is being accessed for a given path.","code":["var device = FileDevice.at( path )"]},
 
         {"kind":"expect","text":"Initially the device does not store our newly created tensor.","code":["!device.contains(a)"]},
 
@@ -31,13 +31,13 @@
 
         {"kind":"then","text":"The expected file is being created at the given path.","code":["new File( path + '/' + filename + '.idx' ).exists()"]},
 
-        {"kind":"and","text":"Tensor \"a\" does no longer have a value (stored in RAM).","code":["a.mut.data == null"]},
+        {"kind":"and","text":"Tensor \"a\" does no longer have a value (stored in RAM).","code":["a.mut.data.ref == null"]},
 
         {"kind":"when","text":"Freeing the tensor...","code":["device.free( a )"]},
 
         {"kind":"then","text":"The file will have been deleted!","code":["!new File( path + '/' + filename + '.idx' ).exists()"]},
 
-        {"kind":"where","text":"The following parameters have been used:","code":{"path":["build/test-can"],"filename":["tensor_2x4_"]}}
+        {"kind":"where","text":"The following parameters have been used:","code":{"path":["\"build/test-can\""],"filename":["\"tensor_2x4_\""]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -45,16 +45,16 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.014 seconds",
+      "duration":"0.081 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new tensor is being created for testing.","code":["Tsr a = Tsr.of( shape, -8d..8d )"]},
+        {"kind":"given","text":"A new tensor is being created for testing.","code":["var a = Tsr.of( shape, -8d..8d )"]},
 
-        {"kind":"and","text":"A String representation of the shape.","code":["def shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})"]},
+        {"kind":"and","text":"A String representation of the shape.","code":["var shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})"]},
 
-        {"kind":"and","text":"A file device instance is being accessed for a given path.","code":["def device = FileDevice.at( path )"]},
+        {"kind":"and","text":"A file device instance is being accessed for a given path.","code":["var device = FileDevice.at( path )"]},
 
         {"kind":"expect","text":"Initially the device does not store our newly created tensor.","code":["!device.contains(a)"]},
 
@@ -62,7 +62,7 @@
 
         {"kind":"then","text":"The expected file is being created at the given path.","code":["new File( path + '/' + filename ).exists()","        ||","new File( path ).listFiles().any {","    it.name.startsWith('tensor_' + shapeStr + '_f64_') && it.name.endsWith('.idx')","}"]},
 
-        {"kind":"and","text":"Tensor \"a\" does no longer have a value (stored in RAM).","code":["a.mut.data == null"]},
+        {"kind":"and","text":"Tensor \"a\" does no longer have a value (stored in RAM).","code":["a.mut.data.ref == null"]},
 
         {"kind":"and","text":"The tensor is now of the expected data-type.","code":["a.dataType == DataType.of( dataTypeClass )"]},
 
@@ -72,7 +72,7 @@
 
         {"kind":"then","text":"The file will be deleted!","code":["!new File( path + '/' + filename ).exists()","!new File( path ).listFiles().any {it.name.startsWith('tensor_' + shapeStr + '_f64_') }"]},
 
-        {"kind":"where","text":"The following parameters are being used:","code":{"path":["build/test-can","build/test-can","build/test-can","build/test-can","build/test-can"],"filename":["tensor_2x4x3_.idx","tensor_2x4x3_.jpg","tensor_5x3x4_.png","null","tensor_4x3_.csv"],"shape":["[2, 4, 3]","[2, 4, 3]","[5, 3, 4]","[2, 4, 3]","[4, 3]"],"fileHandleClass":["class neureka.devices.file.IDXHandle","class neureka.devices.file.JPEGHandle","class neureka.devices.file.PNGHandle","class neureka.devices.file.IDXHandle","class neureka.devices.file.CSVHandle"],"dataTypeClass":["class neureka.dtype.custom.F64","class neureka.dtype.custom.I16","class neureka.dtype.custom.I16","class neureka.dtype.custom.F64","class java.lang.String"]}}
+        {"kind":"where","text":"The following parameters are being used:","code":{"path":["\"build/test-can\"","\"build/test-can\"","\"build/test-can\"","\"build/test-can\"","\"build/test-can\""],"filename":["\"tensor_2x4x3_.idx\"","\"tensor_2x4x3_.jpg\"","\"tensor_5x3x4_.png\"","null","\"tensor_4x3_.csv\""],"shape":["[2,4,3]","[2,4,3]","[5,3,4]","[2,4,3]","[4,3]"],"fileHandleClass":["IDXHandle.class","JPEGHandle.class","PNGHandle.class","IDXHandle.class","CSVHandle.class"],"dataTypeClass":["F64.class","UI8.class","UI8.class","F64.class","String.class"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -80,14 +80,14 @@
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.016 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A file device instance is being accessed for a simple test path.","code":["def device = FileDevice.at( 'build/resources/test/csv' )"]},
 
-        {"kind":"expect","text":"The device contains the expected number of files and it tells as how many files could be loaded.","code":["device.loadable.toSet() == ['biostats-without-head.csv', 'biostats.csv'].toSet()","device.loaded == []"]},
+        {"kind":"expect","text":"The device contains the expected number of files and it tells as how many files could be loaded.","code":["device.loadable.toSet() == ['biostats-without-head.csv', 'biostats.csv'].toSet() // If this fails: consider deleting the build folder!!","device.loaded == []"]},
 
         {"kind":"when","text":"We load a file...","code":["def t = device.load('biostats-without-head.csv')"]},
 
@@ -95,7 +95,7 @@
 
         {"kind":"when","text":"","code":["t = device.load('biostats.csv', [firstRowIsLabels:true])"]},
 
-        {"kind":"then","text":"","code":["device.loadable == []","device.loaded == ['biostats-without-head.csv', 'biostats.csv']","t.toString({ NDPrintSettings it ->","    it.setHasSlimNumbers(false)","            .setIsScientific(true)","            .setIsCellBound(false)","            .setIsMultiline(true)","            .setCellSize(15)","}) == '(18x5):[\\n' +","'   (      \"Name\"    )(        \"Sex\"  )(      \"Age\"    )(  \"Height (in)\")( \"Weight (lbs)\" ):( biostats )\\n' +","'   [      \"Alex\"    ,           \"M\"  ,         41     ,           74   ,          170    ]:( 0 ),\\n' +","'   [      \"Bert\"    ,           \"M\"  ,         42     ,           68   ,          166    ]:( 1 ),\\n' +","'   [      \"Carl\"    ,           \"M\"  ,         32     ,           70   ,          155    ]:( 2 ),\\n' +","'   [      \"Dave\"    ,           \"M\"  ,         39     ,           72   ,          167    ]:( 3 ),\\n' +","'   [      \"Elly\"    ,           \"F\"  ,         30     ,           66   ,          124    ]:( 4 ),\\n' +","'   [      \"Fran\"    ,           \"F\"  ,         33     ,           66   ,          115    ]:( 5 ),\\n' +","'   [      \"Gwen\"    ,           \"F\"  ,         26     ,           64   ,          121    ]:( 6 ),\\n' +","'   [      \"Hank\"    ,           \"M\"  ,         30     ,           71   ,          158    ]:( 7 ),\\n' +","'   [      \"Ivan\"    ,           \"M\"  ,         53     ,           72   ,          175    ]:( 8 ),\\n' +","'   [      \"Jake\"    ,           \"M\"  ,         32     ,           69   ,          143    ]:( 9 ),\\n' +","'   [      \"Kate\"    ,           \"F\"  ,         47     ,           69   ,          139    ]:( 10 ),\\n' +","'   [      \"Luke\"    ,           \"M\"  ,         34     ,           72   ,          163    ]:( 11 ),\\n' +","'   [      \"Myra\"    ,           \"F\"  ,         23     ,           62   ,           98    ]:( 12 ),\\n' +","'   [      \"Neil\"    ,           \"M\"  ,         36     ,           75   ,          160    ]:( 13 ),\\n' +","'   [      \"Omar\"    ,           \"M\"  ,         38     ,           70   ,          145    ]:( 14 ),\\n' +","'   [      \"Page\"    ,           \"F\"  ,         31     ,           67   ,          135    ]:( 15 ),\\n' +","'   [      \"Quin\"    ,           \"M\"  ,         29     ,           71   ,          176    ]:( 16 ),\\n' +","'   [      \"Ruth\"    ,           \"F\"  ,         28     ,           65   ,          131    ]:( 17 )\\n' +","']'"]}
+        {"kind":"then","text":"","code":["device.loadable == []","device.loaded == ['biostats-without-head.csv', 'biostats.csv']","t.toString({ NDPrintSettings it ->","            it.setHasSlimNumbers(false)","                    .setIsScientific(true)","                    .setIsCellBound(false)","                    .setIsMultiline(true)","                    .setCellSize(15)","        }) == '(18x5):[\\n' +","        '   (      \"Name\"    )(        \"Sex\"  )(      \"Age\"    )(  \"Height (in)\")( \"Weight (lbs)\" ):( biostats )\\n' +","        '   [      \"Alex\"    ,           \"M\"  ,         41     ,           74   ,          170    ]:( 0 ),\\n' +","        '   [      \"Bert\"    ,           \"M\"  ,         42     ,           68   ,          166    ]:( 1 ),\\n' +","        '   [      \"Carl\"    ,           \"M\"  ,         32     ,           70   ,          155    ]:( 2 ),\\n' +","        '   [      \"Dave\"    ,           \"M\"  ,         39     ,           72   ,          167    ]:( 3 ),\\n' +","        '   [      \"Elly\"    ,           \"F\"  ,         30     ,           66   ,          124    ]:( 4 ),\\n' +","        '   [      \"Fran\"    ,           \"F\"  ,         33     ,           66   ,          115    ]:( 5 ),\\n' +","        '   [      \"Gwen\"    ,           \"F\"  ,         26     ,           64   ,          121    ]:( 6 ),\\n' +","        '   [      \"Hank\"    ,           \"M\"  ,         30     ,           71   ,          158    ]:( 7 ),\\n' +","        '   [      \"Ivan\"    ,           \"M\"  ,         53     ,           72   ,          175    ]:( 8 ),\\n' +","        '   [      \"Jake\"    ,           \"M\"  ,         32     ,           69   ,          143    ]:( 9 ),\\n' +","        '   [      \"Kate\"    ,           \"F\"  ,         47     ,           69   ,          139    ]:( 10 ),\\n' +","        '   [      \"Luke\"    ,           \"M\"  ,         34     ,           72   ,          163    ]:( 11 ),\\n' +","        '   [      \"Myra\"    ,           \"F\"  ,         23     ,           62   ,           98    ]:( 12 ),\\n' +","        '   [      \"Neil\"    ,           \"M\"  ,         36     ,           75   ,          160    ]:( 13 ),\\n' +","        '   [      \"Omar\"    ,           \"M\"  ,         38     ,           70   ,          145    ]:( 14 ),\\n' +","        '   [      \"Page\"    ,           \"F\"  ,         31     ,           67   ,          135    ]:( 15 ),\\n' +","        '   [      \"Quin\"    ,           \"M\"  ,         29     ,           71   ,          176    ]:( 16 ),\\n' +","        '   [      \"Ruth\"    ,           \"F\"  ,         28     ,           65   ,          131    ]:( 17 )\\n' +","        ']'"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

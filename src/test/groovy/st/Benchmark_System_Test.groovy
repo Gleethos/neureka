@@ -2,6 +2,7 @@ package st
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.backend.ocl.CLBackend
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.common.utility.SettingsLoader
@@ -63,6 +64,8 @@ class Benchmark_System_Test extends Specification
     def 'Test benchmark script and simple tensor constructor.'()
     {
         given :
+            Neureka.get().backend().find(CLBackend).ifPresent({it.settings.autoConvertToFloat = true})
+        and :
             var configuration = [ "iterations":1, "sample_size":20, "difficulty":15, "intensifier":0 ]
             var strSettings = (Consumer<NDPrintSettings>) { NDPrintSettings it ->
                                     it.cellSize = 7; it.isCellBound = true; // We use this to cap decimals to avoid rounding errors.
@@ -102,14 +105,14 @@ class Benchmark_System_Test extends Specification
             hash = ""
             var i = 0
             session(
-                    configuration, null,
-                    Device.get("first"),
-                        tsr -> {
-                            var str = tsr.toString(strSettings)
-                            if ( rec[i] != str ) println "Mismatch at index $i:\n${rec[i]}\n$str\n"
-                            hash = ( hash + str ).md5()
-                            i++
-                        }
+                configuration, null,
+                Device.get("first"),
+                    tsr -> {
+                        var str = tsr.toString(strSettings)
+                        if ( rec[i] != str ) println "Mismatch at index $i:\n${rec[i]}\n$str\n"
+                        hash = ( hash + str ).md5()
+                        i++
+                    }
             )
 
         then : 'The calculated hash is as expected.'

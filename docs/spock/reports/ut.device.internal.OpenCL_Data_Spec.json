@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.022 seconds"
+    "duration":"0.050 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice specific Data class represents JVM data for OpenCL.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We make sure that any data will not automatically be converted to floats!","code":["if ( Neureka.get().backend.has(CLBackend) )","Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = false"]},
+        {"kind":"given","text":"We make sure that any data will not automatically be converted to floats!","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }"]},
 
         {"kind":"and","text":"We create 2 different data objects, a full and a partial/sliced array.","code":["var full = JVMData.of(data)","var slice = JVMData.of(data, size, start)"]},
 
@@ -35,9 +35,9 @@
 
         {"kind":"and","text":"They produce OpenCL specific pointer objects.","code":["full.pointer != null","slice.pointer != null"]},
 
-        {"kind":"cleanup","text":"","code":["if ( Neureka.get().backend.has(CLBackend) )","Neureka.get().backend.get(CLBackend).settings.autoConvertToFloat = true"]},
+        {"kind":"cleanup","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }"]},
 
-        {"kind":"where","text":"","code":{"data":["[2.0, 3.0, 6.0]","[8.0, -2.0, 5.0, -1.0]","4.0","[2.0, 3.0, 6.0]","[8.0, -2.0, 5.0, -1.0]","4.0","[2, 3, 6]","[8, -2, 5, -1]","4","[2, 3, 6]","[8, -2, 5, -1]","4","[2, 3, 6]","[8, -2, 5, -1]","4","[2, 3, 6]","[8, -2, 5, -1]","4"],"start":["1","1","0","1","1","0","1","1","0","1","1","0","1","1","0","1","1","0"],"size":["2","3","1","2","3","1","2","3","1","2","3","1","2","3","1","2","3","1"],"expectedType":["class [F","class [F","class [F","class [D","class [D","class [D","class [I","class [I","class [I","class [S","class [S","class [S","class [J","class [J","class [J","class [B","class [B","class [B"],"expected":["[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]","[2, 3, 6]","[8, -2, 5, -1]","[4]"]}}
+        {"kind":"where","text":"","code":{"data":["[2, 3, 6] as float[]","[8,-2,5,-1] as float[]","4 as Float","[2, 3, 6] as double[]","[8,-2,5,-1] as double[]","4 as Double","[2, 3, 6] as int[]","[8,-2,5,-1] as int[]","4 as Integer","[2, 3, 6] as short[]","[8,-2,5,-1] as short[]","4 as Short","[2, 3, 6] as long[]","[8,-2,5,-1] as long[]","4 as Long","[2, 3, 6] as byte[]","[8,-2,5,-1] as byte[]","4 as Byte"],"start":["1","1","0","1","1","0","1","1","0","1","1","0","1","1","0","1","1","0"],"size":["2","3","1","2","3","1","2","3","1","2","3","1","2","3","1","2","3","1"],"expectedType":["float[]","float[]","float[]","double[]","double[]","double[]","int[]","int[]","int[]","short[]","short[]","short[]","long[]","long[]","long[]","byte[]","byte[]","byte[]"],"expected":["[2, 3, 6]","[8,-2,5,-1]","[4]","[2, 3, 6]","[8,-2,5,-1]","[4]","[2, 3, 6]","[8,-2,5,-1]","[4]","[2, 3, 6]","[8,-2,5,-1]","[4]","[2, 3, 6]","[8,-2,5,-1]","[4]","[2, 3, 6]","[8,-2,5,-1]","[4]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -45,7 +45,7 @@
     {
       "id":"The \"Data\" class can represent various OpenCL data types.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -64,7 +64,7 @@
 
         {"kind":"and","text":"","code":["data1.array == (0..<data1.length).collect({it->data1.getElementAt((int)it)})","data2.array == (0..<data2.length).collect({it->data2.getElementAt((int)it)})","data3.array == (0..<data3.length).collect({it->data3.getElementAt((int)it)})"]},
 
-        {"kind":"where","text":"","code":{"array":["[1, 2]","[8, 5, 2]","[42]","[1, 2, 3, 4, 5]","[1, 2]","[8, 5, 2]","[42]","[1, 2, 3, 4, 5]","[1, 2]","[8, 5, 2]","[42]","[1, 2, 3, 4, 5]","[1, 2]","[8, 5, 2]","[42]","[1, 2, 3, 4, 5]","[0.3, -0.9]","[2, 0.5, 8]","[0.3, -0.9]","[2, 0.5, 8]","[0.6, 3, 0.2]"],"arrayType":["class [I","class [I","class [I","class [I","class [B","class [B","class [B","class [B","class [J","class [J","class [J","class [J","class [S","class [S","class [S","class [S","class [F","class [F","class [D","class [D","class [D"],"type":["class java.lang.Integer","class java.lang.Integer","class java.lang.Integer","class java.lang.Integer","class java.lang.Byte","class java.lang.Byte","class java.lang.Byte","class java.lang.Byte","class java.lang.Long","class java.lang.Long","class java.lang.Long","class java.lang.Long","class java.lang.Short","class java.lang.Short","class java.lang.Short","class java.lang.Short","class java.lang.Float","class java.lang.Float","class java.lang.Double","class java.lang.Double","class java.lang.Double"],"itemSize":["4","4","4","4","1","1","1","1","8","8","8","8","2","2","2","2","4","4","8","8","8"],"size":["1","2","1","3","1","2","1","3","1","2","1","3","1","2","1","3","2","2","2","2","1"],"offset":["1","0","0","2","1","0","0","2","1","0","0","2","1","0","0","2","0","0","0","0","1"],"targetType":["I32","I32","I32","I32","I8","I8","I8","I8","I64","I64","I64","I64","I16","I16","I16","I16","F32","F32","F64","F64","F64"]}}
+        {"kind":"where","text":"","code":{"array":["[1, 2]","[8, 5, 2]","[42]","[1,2,3,4,5]","[1, 2]","[8, 5, 2]","[42]","[1,2,3,4,5]","[1, 2]","[8, 5, 2]","[42]","[1,2,3,4,5]","[1, 2]","[8, 5, 2]","[42]","[1,2,3,4,5]","[0.3, -0.9]","[2, 0.5, 8]","[0.3, -0.9]","[2, 0.5, 8]","[0.6, 3, 0.2]"],"arrayType":["int[]","int[]","int[]","int[]","byte[]","byte[]","byte[]","byte[]","long[]","long[]","long[]","long[]","short[]","short[]","short[]","short[]","float[]","float[]","double[]","double[]","double[]"],"type":["Integer","Integer","Integer","Integer","Byte","Byte","Byte","Byte","Long","Long","Long","Long","Short","Short","Short","Short","Float","Float","Double","Double","Double"],"itemSize":["4","4","4","4","1","1","1","1","8","8","8","8","2","2","2","2","4","4","8","8","8"],"size":["1","2","1","3","1","2","1","3","1","2","1","3","1","2","1","3","2","2","2","2","1"],"offset":["1","0","0","2","1","0","0","2","1","0","0","2","1","0","0","2","0","0","0","0","1"],"targetType":["'I32'","'I32'","'I32'","'I32'","'I8'","'I8'","'I8'","'I8'","'I64'","'I64'","'I64'","'I64'","'I16'","'I16'","'I16'","'I16'","'F32'","'F32'","'F64'","'F64'","'F64'"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -2,9 +2,10 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
-import neureka.calculus.args.Arg
-import neureka.calculus.assembly.FunctionParser
+import neureka.backend.ocl.CLBackend
+import neureka.math.Function
+import neureka.math.args.Arg
+import neureka.math.parsing.FunctionParser
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -254,7 +255,9 @@ class Tensor_Operation_Spec extends Specification
     def 'Simple slice addition produces expected result.'(
             Device device
     ) {
-        given :
+        given : 'We set the experimental "autoConvertToFloat" flag to true.'
+            Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
+        and :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
             Tsr a = Tsr.of([11, 11], 3d..19d).to( device )
             Tsr x = a[1..-2,0..-1]
@@ -282,6 +285,7 @@ class Tensor_Operation_Spec extends Specification
             BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient, String device
     ) {
         given :
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and :
             String wValue = whichGrad
@@ -300,8 +304,8 @@ class Tensor_Operation_Spec extends Specification
             Tsr    w      = ( whichGrad ? b      : a      )
 
         expect :
-            a.itemType == type
-            b.itemType == type
+            a.itemType == type || device == 'GPU' // The gpu backend will only be floats!
+            b.itemType == type || device == 'GPU' // This is because kernels only work on floats...
 
         when :
             Tsr c = operation.apply(a, b)
@@ -318,6 +322,9 @@ class Tensor_Operation_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
         then :
             c.toString({it.hasSlimNumbers = true}) == "(2x2):[$cValue]"
+
+        cleanup :
+            Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }
 
         where:
             device | type   | whichGrad | bShape |    operation      ||     cValue      | wGradient
@@ -373,6 +380,39 @@ class Tensor_Operation_Spec extends Specification
             'GPU'  | Float  | true      | [2]    | { x, y -> y - x } || "7, 7, 5, 5"    | "12, 1"
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' })
+    def 'Scalar broadcasting works across devices.'(
+            String device,
+            Class<Object> type,
+            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation,
+            String cValue
+    ) {
+        given :
+            var a = Tsr.of(type).withShape(3, 2).andFill(-4..4).to(Device.get(device))
+            var b = Tsr.of(type).withShape(1, 1).andFill(3).to(Device.get(device))
+
+        expect :
+            a.itemType == type
+            b.itemType == type
+
+        when :
+            Tsr c = operation.apply(a, b)
+        then :
+            c.toString() == "(3x2):[$cValue]"
+
+        where:
+            device | type    |    operation      ||     cValue
+            'CPU'  | Double  | { x, y -> x + y } || "-1.0, 0.0, 1.0, 2.0, 3.0, 4.0"
+            //'GPU'  | Double  | { x, y -> x + y } || "-1.0, 0.0, 1.0, 2.0, 3.0, 4.0"
+            'CPU'  | Float   | { x, y -> x + y } || "-1.0, 0.0, 1.0, 2.0, 3.0, 4.0"
+            'GPU'  | Float   | { x, y -> x + y } || "-1.0, 0.0, 1.0, 2.0, 3.0, 4.0"
+            'CPU'  | Long    | { x, y -> x + y } || "-1, 0, 1, 2, 3, 4"
+            //'GPU'  | Long    | { x, y -> x + y } || "-1, 0, 1, 2, 3, 4"
+            'CPU'  | Integer | { x, y -> x + y } || "-1, 0, 1, 2, 3, 4"
+            //'GPU'  | Integer | { x, y -> x + y } || "-1, 0, 1, 2, 3, 4"
+
+    }
+
     def 'Operators "+,*,**" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'
@@ -401,7 +441,7 @@ class Tensor_Operation_Spec extends Specification
         and :
             t2.toString() == "[1]:(-8.0)"
         and :
-            t2 == x.gradient
+            t2 == x.gradient.get()
 
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
 

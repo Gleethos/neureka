@@ -144,7 +144,7 @@ class Autograd_Explained extends Specification
             x.toString().contains("(2x2):[1.0, 1.0, 1.0, 1.0]:g:[4.5, 4.5, 4.5, 4.5]")
 
         when : 'We now try to access the gradient...'
-            def gradient = x.getGradient()
+            var gradient = x.gradient.get()
 
         then : 'This given gradient is as expected !'
             gradient.toString() == "(2x2):[4.5, 4.5, 4.5, 4.5]"

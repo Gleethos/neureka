@@ -20,7 +20,7 @@ public class AbstractImplementationFor&lt; D extends Device&lt;?&gt; &gt; implem
 <span class="fc bfc" id="L20" title="All 2 branches covered.">        if ( _arity &gt;= 0 ) {</span>
 <span class="fc" id="L21">            int arity1 = call.arity();</span>
 <span class="fc" id="L22">            int arity2 = arity1 - 1; // The first tensor might be the output!</span>
-<span class="pc bpc" id="L23" title="1 of 4 branches missed.">            if (arity1 != _arity &amp;&amp; arity2 != _arity)</span>
+<span class="pc bpc" id="L23" title="3 of 4 branches missed.">            if (arity1 != _arity &amp;&amp; arity2 != _arity)</span>
 <span class="nc" id="L24">                throw new IllegalArgumentException(</span>
                     &quot;Expected arity &quot;+_arity+&quot; or &quot;+(_arity + 1)+&quot;, but encountered arity &quot;+arity1+&quot; for execution call '&quot;+call+&quot;'.&quot;
                 );

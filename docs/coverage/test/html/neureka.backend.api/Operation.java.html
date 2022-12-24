@@ -31,7 +31,7 @@ SOFTWARE.
          | |
          |_|
 
-    The representation for operations on tensors.
+    The representation of operations on tensors.
 
 ------------------------------------------------------------------------------------------------------------------------
 */
@@ -41,12 +41,15 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
+import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.calculus.Function;
+import neureka.calculus.implementations.FunctionConstant;
+import neureka.devices.Device;
 
 /**
  *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.
- *  It represents broad and high level requests for execution which might be executed differently depending
+ *  It represents broad and high level types of algorithms which might be executed differently depending
  *  on the provided {@link ExecutionCall} arguments.
  *  An {@link Operation} implementation ought to consist of a component system
  *  containing multiple {@link Algorithm} instances, which themselves ought to contain device specific implementations
@@ -61,7 +64,7 @@ import neureka.calculus.Function;
  */
 public interface Operation
 {
-<span class="fc" id="L64">    static OperationBuilder builder() { return new OperationBuilder(); }</span>
+<span class="fc" id="L67">    static OperationBuilder builder() { return new OperationBuilder(); }</span>
 
     Algorithm[] getAllAlgorithms();
 
@@ -92,7 +95,7 @@ public interface Operation
     &lt;T extends Algorithm&gt; Operation setAlgorithm( Class&lt;T&gt; type, T instance );
 
     default &lt;T extends Algorithm&gt; Operation setAlgorithm( T instance ) {
-<span class="fc" id="L95">        return setAlgorithm( (Class&lt;T&gt;) instance.getClass(), instance );</span>
+<span class="fc" id="L98">        return setAlgorithm( (Class&lt;T&gt;) instance.getClass(), instance );</span>
     }
 
     /**
@@ -176,7 +179,6 @@ public interface Operation
      */
     boolean isIndexer();
 
-
     @Deprecated
     boolean isDifferentiable();
 
@@ -193,6 +195,43 @@ public interface Operation
 
     &lt;T extends Algorithm&gt; boolean supports( Class&lt;T&gt; implementation );
 
+    default Result execute( Function caller, ExecutionCall&lt;?&gt; call )
+    {
+<span class="fc" id="L200">        LazyRef&lt;Result&gt; ref = LazyRef.of(()-&gt;{</span>
+<span class="fc" id="L201">                                    int d = call.getDerivativeIndex();</span>
+<span class="pc bpc" id="L202" title="1 of 4 branches missed.">                                    if ( d &gt;= 0 &amp;&amp; !caller.dependsOn(d) )</span>
+<span class="nc" id="L203">                                        throw new IllegalArgumentException(&quot;Cannot derive w.r.t. to input index &quot; + d + &quot; in function '&quot; + caller + &quot;', because there is no input with index &quot;+d+&quot;!&quot;);</span>
+
+<span class="fc bfc" id="L205" title="All 2 branches covered.">                                    if ( caller.getSubFunctions().stream().allMatch( f -&gt; f instanceof FunctionConstant) ) {</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">                                        if ( d &lt; 0 ) return Result.of(Tsr.like((Tsr&lt;Number&gt;)call.input(0)).all(caller.call(new double[0])).mut().setIsIntermediate(true));</span>
+<span class="nc" id="L207">                                        else         return Result.of(Tsr.like((Tsr&lt;Number&gt;)call.input(0)).all(0).mut().setIsIntermediate(true));</span>
+                                    }
+<span class="fc" id="L209">                                    Result result = call.getAlgorithm().execute( caller, call );</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">                                    if ( result != null ) return result;</span>
+<span class="nc" id="L211">                                    throw new IllegalStateException(</span>
+<span class="nc" id="L212">                                            &quot;Missing return value of &quot; + Execution.class.getSimpleName() + &quot; in algorithm '&quot; +</span>
+<span class="nc" id="L213">                                            call.getAlgorithm().getClass().getSimpleName() + &quot;' in operation '&quot; +</span>
+<span class="nc" id="L214">                                            call.getOperation().getClass().getName()+&quot;'&quot;</span>
+                                        );
+                                });
+
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.inputs() )</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">            if ( !t.graphNode().isPresent() )</span>
+<span class="fc" id="L220">                new GraphNode&lt;&gt;( caller, null, () -&gt; Result.of(t) );</span>
+
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        if ( caller.isFlat() )</span>
+        {
+<span class="fc" id="L224">            call.checkArity();</span>
+            /*  The following code is reached in flat functions only:
+                Autograd-Graph will be generated below for the new GraphNode:
+                only flat functions can be executed directly                         */
+
+<span class="fc bfc" id="L229" title="All 4 branches covered.">            if ( call.getDerivativeIndex() &lt; 0 &amp;&amp; caller.isDoingAD() )</span>
+<span class="fc" id="L230">                new GraphNode&lt;&gt;(caller, (ExecutionCall&lt;Device&lt;?&gt;&gt;) call, ref::get);</span>
+        }
+<span class="fc" id="L232">        return ref.get();</span>
+    }
+
     /**
      * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
      * as the backend for handling the calculation of scalar inputs passed to a given abstract syntax tree of
@@ -201,7 +240,7 @@ public interface Operation
      * &lt;br&gt;&lt;br&gt;
      * This is also the reason why the last parameter of this method is a list of Function objects :
      * The list stores the child nodes of the Function node that is currently being processed.
-     * Therefore when implementing this method one should first call the child nodes in
+     * Therefore, when implementing this method one should first call the child nodes in
      * order to get the &quot;real inputs&quot; of this current node.
      * &lt;br&gt;&lt;br&gt;
      * One might ask : Why does that not happen automatically?
@@ -220,48 +259,6 @@ public interface Operation
      * @return The result of the calculation.
      */
     double calculate( double[] inputs, int j, int d, Function[] src );
-
-    /**
-     *  This static utility class contains simple methods used for creating slices of plain old
-     *  arrays of tensor objects...
-     *  These slices may be used for many reasons, however mainly when iterating over
-     *  inputs to a Function recursively in order to execute them pairwise for example...
-     */
-<span class="nc" id="L230">    class Utility</span>
-    {
-        public static Tsr&lt;?&gt;[] subset( Tsr&lt;?&gt;[] tsrs, int padding, int index, int offset ) {
-<span class="pc bpc" id="L233" title="1 of 2 branches missed.">            if ( offset &lt; 0 ) {</span>
-<span class="nc" id="L234">                index += offset;</span>
-<span class="nc" id="L235">                offset *= -1;</span>
-            }
-<span class="fc" id="L237">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ offset + padding ];</span>
-<span class="fc" id="L238">            System.arraycopy( tsrs, index, newTsrs, padding, offset );</span>
-<span class="fc" id="L239">            return newTsrs;</span>
-        }
-
-        public static Tsr&lt;?&gt;[] without( Tsr&lt;?&gt;[] tsrs, int index ) {
-<span class="fc" id="L243">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ tsrs.length - 1 ];</span>
-<span class="fc bfc" id="L244" title="All 4 branches covered.">            for ( int i = 0; i &lt; newTsrs.length; i++ ) newTsrs[ i ] = tsrs[ i + ( ( i &lt; index ) ? 0 : 1 ) ];</span>
-<span class="fc" id="L245">            return newTsrs;</span>
-        }
-
-        public static Tsr&lt;?&gt;[] offsetted( Tsr&lt;?&gt;[] tensors, int offset ) {
-<span class="fc" id="L249">            Tsr&lt;?&gt;[] newTensors = new Tsr[ tensors.length - offset ];</span>
-<span class="fc" id="L250">            newTensors[ 0 ] = tensors[ 1 ].deepCopy().getUnsafe().setIsIntermediate( true );</span>
-<span class="fc bfc" id="L251" title="All 4 branches covered.">            if ( !tensors[ 1 ].has( GraphNode.class ) &amp;&amp; tensors[ 1 ] != tensors[ 0 ] ) {//Deleting intermediate results!</span>
-<span class="fc" id="L252">                tensors[ 1 ].getUnsafe().delete();</span>
-<span class="fc" id="L253">                tensors[ 1 ] = null;</span>
-            }
-<span class="pc bpc" id="L255" title="1 of 4 branches missed.">            if (!tensors[ 2 ].has( GraphNode.class ) &amp;&amp; tensors[ 2 ] != tensors[ 0 ]) {//Deleting intermediate results!</span>
-<span class="fc" id="L256">                tensors[ 2 ].getUnsafe().delete();</span>
-<span class="fc" id="L257">                tensors[ 2 ] = null;</span>
-            }
-<span class="fc" id="L259">            System.arraycopy( tensors, 1 + offset, newTensors, 1, tensors.length - 1 - offset );</span>
-<span class="fc" id="L260">            newTensors[ 1 ] = tensors[ 0 ];</span>
-<span class="fc" id="L261">            return newTensors;</span>
-        }
-
-    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

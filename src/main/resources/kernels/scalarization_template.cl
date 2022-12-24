@@ -24,9 +24,9 @@
 //======================================================================================================================
 
     __kernel void scalarization_template (
-        __global float *drn, __global int *drn_conf,
-        __global float *src1, __global int *src1_conf,
-        float value,
+        __global #DATA_TYPE# *drn, __global int *drn_conf,
+        __global #DATA_TYPE# *src1, __global int *src1_conf,
+        #DATA_TYPE# value,
         int rank,
         int d
     ) {

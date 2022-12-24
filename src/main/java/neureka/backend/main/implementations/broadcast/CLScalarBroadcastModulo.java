@@ -2,7 +2,7 @@ package neureka.backend.main.implementations.broadcast;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.devices.opencl.OpenCLDevice;
 
 public class CLScalarBroadcastModulo extends CLScalarBroadcast
@@ -10,11 +10,11 @@ public class CLScalarBroadcastModulo extends CLScalarBroadcast
     public CLScalarBroadcastModulo(String id ) {
         super(
             id,
-            "output = ((int)input1) % ((int)value);     \n",
-                "   if ( d == 0 ) {                                 \n" +
-                "       output = 1/value;                           \n" +
-                "   } else {                                        \n" +
-                "       output = -value /(float)pow(input1, 2.0f);  \n" +
+                "output = ("+TYPE+")(((int)input1) % ((int)value));                 \n",
+                "   if ( d == 0 ) {                                           \n" +
+                "       output = ("+TYPE+")(1/value);                                  \n" +
+                "   } else {                                                           \n" +
+                "       output = ("+TYPE+")(-value /(float)pow((float)input1, 2.0f));  \n" +
                 "   }"
         );
     }

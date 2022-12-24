@@ -48,8 +48,8 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
         when : 'We try to delete the tensor...'
             t.mut.delete()
 
-        then : 'The graph node object will return true for "isUsedAsDerivative()" inside the tensor...'
-            1 * node.isUsedAsDerivative() >> true
+        then : 'The graph node will not allow deletion...'
+            1 * node.canBeDeleted() >> false // If it has ancestors it must not be deleted!
         and : '...an exception is being thrown.'
             def exception = thrown(IllegalStateException)
             exception.message == "Cannot delete a tensor which is used as derivative by the AD computation graph!"

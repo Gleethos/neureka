@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScalarSumAlgorithm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.algorithms</a> &gt; <span class="el_source">ScalarSumAlgorithm.java</span></div><h1>ScalarSumAlgorithm.java</h1><pre class="source lang-java linenums">package neureka.backend.main.algorithms;
+
+import neureka.Tsr;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.AbstractFunAlgorithm;
+
+<span class="pc bpc" id="L9" title="1 of 2 branches missed.">public class ScalarSumAlgorithm extends AbstractFunAlgorithm</span>
+{
+    public ScalarSumAlgorithm() {
+<span class="fc" id="L12">        super(&quot;scalar_sum_algorithm&quot;);</span>
+<span class="fc" id="L13">        setIsSuitableFor(</span>
+            call -&gt;
+<span class="fc" id="L15">                call.validate()</span>
+<span class="fc" id="L16">                .allNotNull( t -&gt; Number.class.isAssignableFrom(t.getItemType()) )</span>
+<span class="fc bfc" id="L17" title="All 4 branches covered.">                .allNotNull( t -&gt; t.size() == 1 || t.isVirtual() )</span>
+<span class="fc" id="L18">                .suitabilityIfValid( PERFECT ) // You cannot come up with something faster than this! ;D</span>
+        )
+<span class="fc" id="L20">        .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
+<span class="fc" id="L21">        .setExecution( (caller, call) -&gt; {</span>
+<span class="fc" id="L22">            Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();</span>
+<span class="fc" id="L23">            call = call.withInputs(inputs);</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">            if ( call.input( 0 ) == null )</span>
+<span class="nc" id="L25">                call = call.withInputAt( 0, call.input( 1 ) );</span>
+
+<span class="fc" id="L27">            Tsr&lt;?&gt; in = call.input(0);</span>
+<span class="fc" id="L28">            int[] originalShape = in.getNDConf().shape();</span>
+<span class="fc" id="L29">            Number item = (Number) in.item();</span>
+<span class="fc" id="L30">            double sum = item.doubleValue() * in.size();</span>
+<span class="fc" id="L31">            Tsr&lt;?&gt; result = Tsr.of( in.itemType(), new int[]{1}, sum ).to( in.getDevice() );</span>
+<span class="fc" id="L32">            return Result.of( result.mut().setIsIntermediate(true) )</span>
+<span class="fc" id="L33">                    .withADAction( target -&gt; {</span>
+<span class="nc" id="L34">                        Tsr&lt;Object&gt; error = (Tsr&lt;Object&gt;) target.error();</span>
+<span class="nc bnc" id="L35" title="All 4 branches missed.">                        assert error.size() == 1;</span>
+<span class="nc" id="L36">                        return Tsr.of(error.itemType(), originalShape, error.item()).to(error.getDevice());</span>
+                    });
+        })
+<span class="fc" id="L39">        .buildFunAlgorithm();</span>
+<span class="fc" id="L40">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

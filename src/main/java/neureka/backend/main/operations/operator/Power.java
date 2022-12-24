@@ -5,18 +5,17 @@ import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.BiElementwise;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.internal.RecursiveExecutor;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
+import neureka.math.Function;
+import neureka.math.args.Arg;
 import neureka.devices.Device;
 
 import java.util.stream.Collectors;
@@ -40,87 +39,16 @@ public class Power extends AbstractOperation
         //_____________________
         // DEFAULT OPERATION :
 
-        RecursiveExecutor rja = (call, traverse)->
-        {
-            call = call.withInputs(call.inputs().clone()); // Let's make a copy of the inputs to avoid side effects.
-            Device<Number> device = call.getDeviceFor(Number.class);
-            int d = call.getValOf( Arg.DerivIdx.class );
-            Operation type = call.getOperation();
 
-            Tsr<?> result = null;
-            if ( call.arity() > 3 )
-            {
-                if ( d < 0 ) {
-                    Tsr<?>[] reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), call.input( 2 )};
-                    call = call.withInputAt( 0, traverse.execute( call.withInputs( reduction ) ) );
-                    reduction = Utility.offsetted( call.inputs(), 1 );
-                    result = traverse.execute( call.withInputs( reduction ) );
-                    call = call.withInputAt( 0, result );
-                } else {
-
-                    Tsr<?>[] reduction = Utility.subset(call.inputs(), 1,  2, call.arity()-2);
-                    reduction[ 0 ] = call.input( 1 ).deepCopy().mut().setIsIntermediate( true );
-
-                    if ( d==0 ) {
-                        Tsr<?> exp = traverse.execute(
-                                                ExecutionCall.of( reduction )
-                                                            .andArgs(Arg.DerivIdx.of( -1 ))
-                                                            .running(Neureka.get().backend().getOperation("*"))
-                                                            .on(device)
-                                            );
-
-                        reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), exp};
-                        call = call.withInputAt( 0, traverse.execute(
-                                                    ExecutionCall.of( reduction )
-                                                                    .andArgs( Arg.DerivIdx.of(0) )
-                                                                    .running(type)
-                                                                    .on( device )
-                                                ));
-                        exp.mut().delete();
-                    } else {
-                        Tsr<?> inner = traverse.execute(
-                                                ExecutionCall.of( reduction )
-                                                                .andArgs(Arg.DerivIdx.of(d-1))
-                                                                .running(Neureka.get().backend().getOperation("*"))
-                                                                .on(device)
-                                        );
-
-                        reduction = new Tsr[]{ call.input( 1 ).deepCopy().mut().setIsIntermediate( true ), inner, call.input( d ) };
-                        Tsr<?> exp = traverse.execute(
-                                                ExecutionCall.of( reduction )
-                                                                .andArgs( Arg.DerivIdx.of(-1) )
-                                                                .running( Neureka.get().backend().getOperation("*") )
-                                                                .on( device )
-                                      );
-
-                        reduction = new Tsr[]{call.input( 0 ), call.input( 1 ), exp};
-                        result = traverse.execute(
-                                                ExecutionCall.of( reduction )
-                                                            .andArgs(Arg.DerivIdx.of(1))
-                                                            .running(type)
-                                                            .on(device)
-                                            );
-
-                        call = call.withInputAt( 0, result );
-
-                        inner.mut().delete();
-                        exp.mut().delete();
-                    }
-                }
-            }
-            if ( result == null ) return AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
-            return result;
-        };
-
-        setAlgorithm(BiElementWise.class,
-            new BiElementWise( rja )
+        setAlgorithm(BiElementwise.class,
+            new BiElementwise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
             Broadcast.class,
-            new Broadcast(rja)
+            new Broadcast()
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
             .setSupplyADActionFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -141,11 +69,15 @@ public class Power extends AbstractOperation
         );
 
         setAlgorithm(
-            Scalarization.class,
-            new Scalarization()
+            BiScalarBroadcast.class,
+            new BiScalarBroadcast()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-            .setDeviceExecution( (call, callback) -> rja.execute(call, callback) )
+            .setExecution(
+                (caller, call) ->
+                    Result.of(AbstractDeviceAlgorithm.executeDeviceAlgorithm( call ))
+                            .withAutoDiff( FallbackAlgorithm::ADAction )
+            )
             .buildFunAlgorithm()
         );
 

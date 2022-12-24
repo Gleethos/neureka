@@ -1,18 +1,20 @@
 package ut.backend.core
 
 import neureka.backend.api.Algorithm
+import neureka.backend.api.Result
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm
 import neureka.backend.api.AutoDiffMode
 import neureka.backend.api.fun.Execution
 import neureka.backend.api.fun.ExecutionPreparation
 import neureka.backend.api.fun.SuitabilityPredicate
+import neureka.backend.api.template.algorithms.FallbackAlgorithm
 import spock.lang.Specification
 
 import java.util.function.Consumer
 
 class Backend_Functional_Algorithm_Spec extends Specification
 {
-
     def 'A functional algorithm cannot be used if it was not built properly!'(
             Consumer<Algorithm> caller
     ) {
@@ -33,7 +35,6 @@ class Backend_Functional_Algorithm_Spec extends Specification
                     { Algorithm it -> it.autoDiffModeFrom(null) },
                     { Algorithm it -> it.execute(null, null) },
                     { Algorithm it -> it.prepare(null) },
-                    { Algorithm it -> it.supplyADActionFor(null, null) }
             ]
 
     }
@@ -114,7 +115,7 @@ class Backend_Functional_Algorithm_Spec extends Specification
             type                        | setter
             ExecutionPreparation.class  | { TestAlgorithm it -> it.setCallPreparation( call -> null ) }
             SuitabilityPredicate.class  | { TestAlgorithm it -> it.setIsSuitableFor( call -> SuitabilityPredicate.NOT_GOOD ) }
-            Execution.class             | { TestAlgorithm it -> it.setDeviceExecution((call, callback ) -> null ) }
+            Execution.class             | { TestAlgorithm it -> it.setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, c->null)).withAutoDiff( FallbackAlgorithm::ADAction )) }
     }
 
 

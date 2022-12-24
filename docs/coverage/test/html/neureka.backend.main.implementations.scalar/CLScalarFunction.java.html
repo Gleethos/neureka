@@ -18,12 +18,12 @@ public class CLScalarFunction implements ImplementationFor&lt;OpenCLDevice&gt;
 
     @Override
     public Tsr&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
-<span class="fc" id="L21">        int d = call.getValOf(Arg.DerivIdx.class);</span>
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        CPUFun f = d &lt; 0 ? _fun.getActivation() : _fun.getDerivative();</span>
-<span class="fc" id="L23">        Number value =  f.invoke(call.input( Number.class, 1 ).item(0).doubleValue());</span>
-<span class="fc" id="L24">        Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
-<span class="fc" id="L25">        out.getUnsafe().setDataAt(0, value);</span>
-<span class="fc" id="L26">        return call.input(0);</span>
+<span class="nc" id="L21">        int d = call.getValOf(Arg.DerivIdx.class);</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        CPUFun f = d &lt; 0 ? _fun.getActivation() : _fun.getDerivative();</span>
+<span class="nc" id="L23">        Number value =  f.invoke(call.input( Number.class, 1 ).item(0).doubleValue());</span>
+<span class="nc" id="L24">        Tsr&lt;Number&gt; out = call.input( Number.class, 0 );</span>
+<span class="nc" id="L25">        out.mut().setDataAt(0, value);</span>
+<span class="nc" id="L26">        return call.input(0);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

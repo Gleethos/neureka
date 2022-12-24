@@ -7,15 +7,16 @@ import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.BiElementwise;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 import neureka.devices.Device;
 import neureka.ndim.NDimensional;
 
@@ -39,13 +40,20 @@ public class Addition extends AbstractOperation {
         );
 
         setAlgorithm(
-            new BiElementWise(ElemWiseUtil::forAdditions)
+            new BiElementwise()
+            .setExecution(
+                (outerCaller, outerCall) ->
+                    Result.of(AbstractDeviceAlgorithm.prepareAndExecute(
+                        outerCall,
+                        innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
+                    ))
+            )
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
-            new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
+            new Broadcast()
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
             .setSupplyADActionFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -54,35 +62,51 @@ public class Addition extends AbstractOperation {
                         throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                     Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                     assert ctxDerivative == null;
-                    int d = call.getDerivativeIndex();
-                    Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
-                    Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
-                    Device device = call.getDeviceFor(Number.class);
-                    return ADAction.of(
-                                target ->
-                                    this.getAlgorithm( Broadcast.class )
-                                         .getImplementationFor( device )
-                                         .run(
-                                             ExecutionCall.of(
-                                                 toBeDerived.mut().setIsVirtual(false),
-                                                 derivative,
-                                                 target.error()
-                                             )
-                                             .andArgs( Arg.DerivIdx.of(d) )
-                                             .running( this )
-                                             .on( device )
-                                         )
-                            );
+                    return _autogradBroadcast( call );
                 }
             )
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
-            new Scalarization()
-            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forAdditions(call, callback) )
+            new BiScalarBroadcast()
+            .setExecution(
+                (iniCaller, iniCall) ->
+                    Result.of(AbstractDeviceAlgorithm.prepareAndExecute( iniCall, AbstractDeviceAlgorithm::executeDeviceAlgorithm))
+                        .withAutoDiff( (caller, call) -> {
+                            if ( call.getDerivativeIndex() >= 0 && call.arity() >= 2 ) {
+                                int offset = call.input(0) == null ? 1 : 0;
+                                boolean thisIsBroadcasting = !call.input(offset).shape().equals(call.input(offset + 1).shape());
+                                if ( thisIsBroadcasting )
+                                    return _autogradBroadcast( call );
+                            }
+                            return FallbackAlgorithm.ADAction(caller, call);
+                        } )
+            )
             .buildFunAlgorithm()
         );
+    }
+
+    private ADAction _autogradBroadcast(ExecutionCall<? extends Device<?>> call) {
+        int d = call.getDerivativeIndex();
+        Tsr<?> derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);
+        Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);
+        Device device = call.getDeviceFor(Number.class);
+        return ADAction.of(
+                target ->
+                        this.getAlgorithm( Broadcast.class )
+                                .getImplementationFor( device )
+                                .run(
+                                        ExecutionCall.of(
+                                                        toBeDerived.mut().setIsVirtual(false),
+                                                        derivative,
+                                                        target.error()
+                                                )
+                                                .andArgs( Arg.DerivIdx.of(d) )
+                                                .running( this )
+                                                .on( device )
+                                )
+                );
     }
 
     @Override
@@ -90,12 +114,19 @@ public class Addition extends AbstractOperation {
     {
         int d = call.getDerivativeIndex();
         if ( caller.isFlat() ) {
-            if ( d >= 0 ) {
-                if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
-                    throw new IllegalArgumentException("The shapes of the operands of the addition operation must be equal! (when deriving nested functions)");
-
+            if ( d >= 0 && call.arity() >= 2 ) {
+                int offset = call.input( 0 ) == null ? 1 : 0;
+                boolean thisIsBroadcasting = !call.input( offset ).shape().equals( call.input( offset + 1 ).shape() );
+                if ( thisIsBroadcasting ) {
+                    /*
+                        In autograd broadcasting is similar to matrix multiplication.
+                        If the derivative index is 0 then the second operand is used for backward broadcasting.
+                        If the derivative index is 1 then the first operand is used for backward broadcasting.
+                     */
+                    return Result.of( call.input( d == 0 ? 1 : 0 ) );
+                }
                 int j = call.getValOf(Arg.VarIdx.class);
-                Tsr<?> template = call.input(0) == null ? call.input(1) : call.input(0);
+                Tsr<?> template = call.input( offset + d );
                 long dependencies = caller.getSubFunctions()
                                             .stream()
                                             .filter( f -> f.dependsOn(d) && j < 0 || (j == d && f.dependsOn(d)))
@@ -129,7 +160,13 @@ public class Addition extends AbstractOperation {
                 return addAll.getOperation().execute(addAll, call.withInputs(results).withArgs(Arg.DerivIdx.of(-1)));
             }
         }
-        return super.execute( reducePairwise(caller), call );
+        Function reducedCaller = reducePairwise(caller);
+        ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
+        Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
+        Result r = super.execute( flat, flatCall );
+        //for ( int i = 0; i < flatCall.inputs().length; i++ )
+        //    _deleteIfNotIn(call.inputs(), flatCall.input(i)); // TODO: Make it possible to delete more stuff
+        return r;
     }
 
     private Function reducePairwise( final Function fun ) {

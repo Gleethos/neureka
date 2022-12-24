@@ -1,5 +1,110 @@
 <%
 
+def innerParseWhereCodeLines = { List<String> lines ->
+    String code = lines.join("\n")
+    boolean isSimpleTable = (~/^\s*([a-zA-Z0-9_]+)\s*<<\s*/).matcher(code).find()
+    Map<String, List<String>> table = [:]
+    int roundDepth  = 0
+    int squareDepth = 0
+    int curlyDepth  = 0
+    boolean isInsideRegularString = false
+    boolean isInsideOtherString = false
+    boolean previousCharWasEscape = false
+    boolean previousWasSlash = false
+    boolean previousWasPipe = false
+    boolean isComment = false
+    var currentExpression = ""
+    var singleKey = "" // This is only used if the table is simple.
+    int currentColumn = 0 // This is only used if the table is not simple.
+    var columnNames = [] // This is only used if the table is not simple.
+    boolean columnNamesRead = false // This is only used if the table is not simple.
+    for ( int i = 0; i < code.length(); i++ ) {
+        String c = String.valueOf(code.charAt(i))
+        isInsideRegularString = c == "\"" && !previousCharWasEscape ? !isInsideRegularString : isInsideRegularString
+        isInsideOtherString = c == "'" && !previousCharWasEscape && !isInsideRegularString ? !isInsideOtherString : isInsideOtherString
+        var wasComment = isComment
+        isComment = c != "\n" && (c == "/" && previousWasSlash || isComment )
+        if ( isComment && !wasComment ) {
+            if ( !currentExpression.isEmpty() ) // We remove the last slash character if it is not part of a comment.
+                currentExpression = currentExpression.substring(0, currentExpression.length()-1)
+        }
+        var isInsideString = isInsideRegularString || isInsideOtherString
+        boolean escaped = isInsideString || isComment
+        if ( !escaped ) {
+            roundDepth  += c == "(" ? 1 : c == ")" ? -1 : 0
+            curlyDepth  += c == "{" ? 1 : c == "}" ? -1 : 0
+            squareDepth += c == "[" ? 1 : c == "]" ? -1 : 0
+        }
+        boolean outsideOfAll = roundDepth == 0 && squareDepth == 0 && curlyDepth == 0
+        if ( isSimpleTable ) {
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            if ( outsideOfAll ) {
+                if ( c == "<" && !currentExpression.isEmpty() ) {
+                    singleKey = currentExpression.trim()
+                    table[singleKey] = []
+                    currentExpression = ""
+                }
+                else if ( table.isEmpty() ) currentExpression += c
+            }
+            else if ( squareDepth == 1 && c == "," && !escaped && roundDepth == 0 && curlyDepth == 0 ) {
+                table[singleKey]?.add(currentExpression.trim())
+                currentExpression = ""
+            }
+            else if ( squareDepth > 0 && c != "[" && !isComment )
+                currentExpression += c
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        } else {
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            if ( !columnNamesRead && outsideOfAll ) {
+                if ( (c == "|" && !escaped || c == "\n" && !escaped) && !currentExpression.isEmpty() ) {
+                    var foundColumnName = currentExpression.trim()
+                    columnNames.add(foundColumnName)
+                    table[foundColumnName] = []
+                    currentExpression = ""
+                    if ( c == "\n" )
+                        columnNamesRead = true
+                }
+                else if ( c != "|" && !isComment )
+                    currentExpression += c
+            }
+            else if ( columnNamesRead && outsideOfAll ) {
+                if ( c == "|" && !escaped ) {
+                    if ( !previousWasPipe && !currentExpression.isEmpty() ) {
+                        table[columnNames[currentColumn]]?.add(currentExpression.trim())
+                        currentExpression = ""
+                        currentColumn = (currentColumn + 1) % columnNames.size()
+                    }
+                }
+                else if ( c == "\n" && !escaped ) {
+                    table[columnNames[currentColumn]]?.add(currentExpression.trim())
+                    currentExpression = ""
+                    currentColumn = 0
+                }
+                else if ( c != "|" && !isComment )
+                    currentExpression += c
+            }
+            else if ( !isComment )
+                currentExpression += c
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        }
+        previousCharWasEscape = c == "\\"
+        previousWasSlash = c == "/"
+        previousWasPipe = c == "|"
+    }
+    if ( isSimpleTable && !currentExpression.isEmpty() )
+        table[singleKey]?.add(currentExpression.trim())
+    else if ( !currentExpression.isEmpty() )
+        table[columnNames[currentColumn]]?.add(currentExpression.trim())
+    return table
+}
+def parseWhereCodeLines = {
+    try { return innerParseWhereCodeLines(it) }
+    catch ( Exception e ) {
+        println "Error parsing where code lines: $e"
+        return [:]
+    }
+}
+
 def noSingleBreaks = { String s ->
     return s.replaceAll("\\n+\\s+\\n+", "\n\n").replaceAll("(\\n\\n)\\n*", "\n\n")
 }
@@ -30,7 +135,6 @@ def simpleEsc = { text ->
 def esc = { simpleEsc(noSingleBreaks(it)) }
 def strCode = { it == null || it.isEmpty() ? "" : (it.size() == 1 ? ('"'+simpleEsc(it[0])+'"') : ('"'+it.collect({simpleEsc(it)}).join('","'))+'"')}
 
-//----
 
 println("Generating json for '"+utils.getSpecClassName( data )+"' now!")
 
@@ -118,8 +222,16 @@ def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
             var kind = esc(b.kind.replace(':', '').toLowerCase())
             var code = '['+strCode(b.sourceCode)+']'
             if ( kind == 'where' ) {
+                var table = dataTable
+                if ( !dataTable.isEmpty() ) {
+                  var newTable = parseWhereCodeLines(b.sourceCode)
+                  if ( newTable.size() == dataTable.size() )
+                    table = newTable // If they are not the same size then parsing went wrong, so we keep the original table
+                  else
+                    println("WARNING: Parsing of where block failed, using original table instead! Failed parsing: "+'['+strCode(b.sourceCode)+']')
+                }
                 // We turn the data table into a json object:
-                code = '{'+dataTable.collect({ k, v -> '"'+k+'":['+strCode(v)+']' }).join(",")+'}'
+                code = '{'+table.collect({ k, v -> '"'+k+'":['+strCode(v)+']' }).join(",")+'}'
             }
             return '\n        {' +
                   '"kind":"'  +  kind  + '",' +

@@ -90,7 +90,7 @@ class Neureka_Spec extends Specification
             !Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()
 
         and : 'The version number is as expected!'
-            Neureka.version()=="0.18.0"//version
+            Neureka.version()=="0.19.0"//version
     }
 
     def 'Neureka settings class can be locked causing its properties to be immutable.'(
@@ -169,7 +169,7 @@ class Neureka_Spec extends Specification
             neurekaObject << [
                     CPU.get(),
                     DataType.of(String),
-                    new Relation<>(),
+                    Relation.newParentToChildren(),
                     new JITProp<>([] as Set),
                     Neureka.get(),
                     Neureka.get().settings(),
@@ -184,7 +184,7 @@ class Neureka_Spec extends Specification
                     Neureka.get().backend().getFunctionCache(),
                     ExecutionCall.of(Tsr.of(3d)).running(Neureka.get().backend().getOperation("+")).on(CPU.get()),
                     new CustomDeviceCleaner(),
-                    (Tsr.of(2d).setRqsGradient(true)*Tsr.of(-2d)).graphNode,
+                    (Tsr.of(2d).setRqsGradient(true)*Tsr.of(-2d)).graphNode.get(),
                     FileDevice.at('.'),
                     NDConfiguration.of((int[])[2,3,8,4],(int[])[96, 32, 4, 1],(int[])[96, 32, 4, 1],(int[])[1,1,1,1],(int[])[0,0,0,0]),
                     NDConfiguration.of((int[])[2,3,8,4],(int[])[96, 200, 8, 1],(int[])[96, 32, 4, 1],(int[])[1,1,1,1],(int[])[0,0,0,0]),
@@ -202,10 +202,10 @@ class Neureka_Spec extends Specification
 
         where : 'The following objects are being used..'
             neurekaCLObject << [
-                    Neureka.get().backend.get(CLBackend),
-                    Neureka.get().backend.get(CLBackend).platforms[0],
-                    Neureka.get().backend.get(CLBackend).platforms[0].devices[0]
-            ]
+                    Neureka.get().backend.find(CLBackend).get(),
+                    Neureka.get().backend.find(CLBackend).get().platforms[0],
+                    Neureka.get().backend.find(CLBackend).get().platforms[0].devices[0]
+                ]
     }
     
     def 'Backend related library objects adhere to the same toString formatting convention!'(

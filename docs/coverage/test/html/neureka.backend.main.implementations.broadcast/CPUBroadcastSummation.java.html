@@ -4,12 +4,12 @@ import neureka.backend.main.implementations.fun.api.CPUBiFun;
 
 public class CPUBroadcastSummation extends CPUBroadcast
 {
-<span class="fc" id="L7">    public CPUBroadcastSummation() {}</span>
+<span class="nc" id="L7">    public CPUBroadcastSummation() {}</span>
 
     @Override
     protected CPUBiFun _getFun() {
-<span class="fc" id="L11">        return new CPUBiFun() {</span>
-<span class="fc" id="L12">            @Override public double invoke(double a, double b) { return a + b; }</span>
+<span class="nc" id="L11">        return new CPUBiFun() {</span>
+<span class="nc" id="L12">            @Override public double invoke(double a, double b) { return a + b; }</span>
 <span class="nc" id="L13">            @Override public float  invoke(float a, float b) { return a + b; }</span>
 <span class="nc" id="L14">            @Override public int    invoke(int a, int b) { return a + b; }</span>
 <span class="nc" id="L15">            @Override public long   invoke(long a, long b) { return a + b; }</span>
@@ -32,8 +32,8 @@ public class CPUBroadcastSummation extends CPUBroadcast
 
     @Override
     protected CPUBiFun _getDeriveAt1() {
-<span class="fc" id="L35">        return new CPUBiFun() {</span>
-<span class="fc" id="L36">            @Override public double invoke(double a, double b) { return 1; }</span>
+<span class="nc" id="L35">        return new CPUBiFun() {</span>
+<span class="nc" id="L36">            @Override public double invoke(double a, double b) { return 1; }</span>
 <span class="nc" id="L37">            @Override public float  invoke(float a, float b) { return 1; }</span>
 <span class="nc" id="L38">            @Override public int    invoke(int a, int b) { return 1; }</span>
 <span class="nc" id="L39">            @Override public long   invoke(long a, long b) { return 1; }</span>

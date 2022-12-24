@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.009 seconds"
+    "duration":"0.013 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"","code":["result.class == expectedType"]},
 
-        {"kind":"where","text":"","code":{"input":["[1.0, 2.0, 3.0]","[1.0, 2.0, 3.0]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[1, 2, 3]","[true, true, true]","[\u0001, \u0002, \u0003]"],"code":["ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure1@4b905642","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure2@18c6689a","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure3@200a1509","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure4@b584ccf","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure5@33d60a12","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure6@2ef015a6","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure7@59507345","ut.utility.Utility_Spec$__spock_feature_0_0prov1_closure8@32d36923"],"expectedType":["class [F","class [D","class [I","class [J","class [S","class [B","class [Z","class [C"]}}
+        {"kind":"where","text":"","code":{"input":["[1, 2, 3] as Float[]","[1, 2, 3] as Double[]","[1, 2, 3] as Integer[]","[1, 2, 3] as Long[]","[1, 2, 3] as Short[]","[1, 2, 3] as Byte[]","[1, 2, 3] as Boolean[]","[1, 2, 3] as Character[]"],"code":["{DataConverter.Utility.objFloatsToPrimFloats(it)}","{DataConverter.Utility.objDoublesToPrimDoubles(it)}","{DataConverter.Utility.objIntsToPrimInts(it)}","{DataConverter.Utility.objLongsToPrimLongs(it)}","{DataConverter.Utility.objShortsToPrimShorts(it)}","{DataConverter.Utility.objBytesToPrimBytes(it)}","{DataConverter.Utility.objBooleansToPrimBooleans(it)}","{DataConverter.Utility.objCharsToPrimChars(it)}"],"expectedType":["float[]","double[]","int[]","long[]","short[]","byte[]","boolean[]","char[]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

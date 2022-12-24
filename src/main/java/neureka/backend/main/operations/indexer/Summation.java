@@ -2,20 +2,15 @@ package neureka.backend.main.operations.indexer;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Operation;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.backend.main.implementations.broadcast.CLBroadcastAddition;
-import neureka.backend.main.implementations.broadcast.CPUBroadcastSummation;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.devices.Device;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 
 /**
  *  This type of operation belongs to the same species as the
@@ -30,51 +25,34 @@ public final class Summation extends AbstractOperation
     public Summation()
     {
         super (
-                new OperationBuilder()
-                        .identifier(        "sumJs"    )
-                        .operator(          "sumJs"    )
-                        .arity(            1           )
-                        .isOperator(       false       )
-                        .isIndexer(        true        )
-                        .isDifferentiable( true        )
-                        .isInline(         false       )
+            new OperationBuilder()
+            .identifier(       "sumJs" )
+            .operator(         "sumJs" )
+            .arity(            1       )
+            .isOperator(       false   )
+            .isIndexer(        true    )
+            .isDifferentiable( true    )
+            .isInline(         false   )
         );
+        /*
+            The summation operation does not have algorithms because it is
+            a special derivative case of the "addition" operation.
+         */
+    }
 
-        //________________
-        // BROADCASTING :
+    @Override
+    public Result execute( final Function caller, final ExecutionCall<?> call )
+    {
+        Tsr<?>[] inputs = new Tsr[ call.arity() ];
+        for ( int i = 0; i < inputs.length; i++ ) {
+            ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flattenForIndexer( caller, call.withArgs(Arg.VarIdx.of(i)) );
+            inputs[ i ] = flatCall.input( 0 );
+        }
+        Operation plusOp = Neureka.get().backend().getOperation("+");
+        Function plus = new FunctionParser(Neureka.get().backend())
+                                .parse( plusOp, inputs.length, caller.isDoingAD() );
 
-        Broadcast operationAlgorithm = new Broadcast(ElemWiseUtil::forAdditions)
-                .setAutogradModeFor( call -> AutoDiffMode.FORWARD_AND_BACKWARD )
-                .setSupplyADActionFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call ) ->
-                    {
-                        if ( call.autogradMode().allowsForward() )
-                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        Function mul = Neureka.get().backend().getFunction().mul();
-                        if ( ctxDerivative != null ) {
-                            return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
-                        }
-                        int d = call.getValOf( Arg.DerivIdx.class );
-                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
-                        return ADAction.of( target -> mul.execute( target.error(), derivative ) );
-                    }
-                )
-                .buildFunAlgorithm();
-
-
-        setAlgorithm(
-                Broadcast.class,
-                operationAlgorithm.setImplementationFor(
-                    CPU.class,
-                    new CPUBroadcastSummation()
-                )
-                .setImplementationFor(
-                    OpenCLDevice.class,
-                    new CLBroadcastAddition( this.getIdentifier() )
-                )
-        );
-
+        return plusOp.execute( plus, call.withInputs(inputs).withOperation(plusOp).withArgs(Arg.DerivIdx.of(-1)) );
     }
 
     @Override

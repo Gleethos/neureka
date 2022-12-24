@@ -2,8 +2,8 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.backend.api.fun.SuitabilityPredicate;
-import neureka.calculus.args.Arg;
-import neureka.calculus.args.Args;
+import neureka.math.args.Arg;
+import neureka.math.args.Args;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  *  Instances of this class model simple execution calls to the backend.
- *  They can be passed to {@link neureka.calculus.Function} instances in order to get full
+ *  They can be passed to {@link neureka.math.Function} instances in order to get full
  *  control over the execution via the use of call {@link Args}.
  *  This class is the precursor class of {@link ExecutionCall} which is a more complete
  *  execution state bundle used inside the backend.

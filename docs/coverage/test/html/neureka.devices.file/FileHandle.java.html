@@ -3,14 +3,13 @@
 
 import neureka.Tsr;
 import neureka.devices.Storage;
-import neureka.devices.file.handles.util.HandleFactory;
 import neureka.dtype.DataType;
 
 import java.io.IOException;
 
 public interface FileHandle&lt;FinalType, ValType&gt; extends Storage&lt;ValType&gt;
 {
-<span class="fc" id="L13">    HandleFactory FACTORY = new HandleFactory();</span>
+<span class="fc" id="L12">    HandleFactory FACTORY = new HandleFactory();</span>
 
     /**
      *  An implementation of this method ought

@@ -191,7 +191,11 @@ public interface Function
      * @param &lt;D&gt; The type parameter of the device targeted by the provided call.
      */
     default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; call( Call.Builder&lt;T, D&gt; call ) {
-<span class="fc" id="L194">        return (Tsr&lt;T&gt;) execute( call.get() ).getUnsafe().setIsIntermediate(false);</span>
+<span class="fc" id="L194">        return call( call.get() );</span>
+    }
+
+    default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; call( Call&lt;D&gt; call ) {
+<span class="fc" id="L198">        return (Tsr&lt;T&gt;) execute( call ).getMut().setIsIntermediate(false);</span>
     }
 
     /**
@@ -205,7 +209,7 @@ public interface Function
      * @param &lt;T&gt; The type parameter of the tensors wrapped by the provided call.
      * @param &lt;D&gt; The type parameter of the device targeted by the provided call.
      */
-<span class="fc" id="L208">    default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; invoke( Call.Builder&lt;T, D&gt; call ) { return this.call( call ); }</span>
+<span class="fc" id="L212">    default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; invoke( Call.Builder&lt;T, D&gt; call ) { return this.call( call ); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
@@ -216,11 +220,11 @@ public interface Function
             convert the call to a format compatible with the backend!
             For that we simply need a list of arguments and tensors.
          */
-<span class="fc" id="L219">        List&lt;Arg&gt; args = call.allMetaArgs();</span>
-<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device&lt;?&gt;) call.getDevice()));</span>
-<span class="fc" id="L221">        Arg&lt;?&gt;[] argArray = new Arg[args.size()];</span>
-<span class="fc bfc" id="L222" title="All 2 branches covered.">        for ( int i = 0; i &lt; argArray.length; i++ ) argArray[i] = args.get(i);</span>
-<span class="fc" id="L223">        return with(argArray).execute(call.inputs());</span>
+<span class="fc" id="L223">        List&lt;Arg&gt; args = call.allMetaArgs();</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">        if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device&lt;?&gt;) call.getDevice()));</span>
+<span class="fc" id="L225">        Arg&lt;?&gt;[] argArray = new Arg[args.size()];</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        for ( int i = 0; i &lt; argArray.length; i++ ) argArray[i] = args.get(i);</span>
+<span class="fc" id="L227">        return with(argArray).execute(call.inputs());</span>
     }
 
     /**
@@ -232,7 +236,7 @@ public interface Function
      *
      * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
      */
-<span class="fc" id="L235">    default Callable with( Arg&lt;?&gt;... arguments ) { return with( Args.of( arguments ) ); }</span>
+<span class="fc" id="L239">    default Callable with( Arg&lt;?&gt;... arguments ) { return with( Args.of( arguments ) ); }</span>
 
     /**
      *  Use this to call this {@link Function} alongside with some additional meta-arguments
@@ -244,30 +248,30 @@ public interface Function
      * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
      */
     default Callable with(Args arguments ) {
-<span class="fc" id="L247">       return</span>
+<span class="fc" id="L251">       return</span>
        tensors -&gt; {
-<span class="fc" id="L249">           MemValidator validation = MemValidator.forInputs( tensors, ()-&gt; Result.of(Function.this.execute( arguments, tensors )));</span>
-<span class="fc bfc" id="L250" title="All 2 branches covered.">           if ( validation.isWronglyIntermediate() ) {</span>
-<span class="fc" id="L251">               throw new IllegalStateException(</span>
+<span class="fc" id="L253">           MemValidator validation = MemValidator.forInputs( tensors, ()-&gt; Result.of(Function.this.execute( arguments, tensors )));</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">           if ( validation.isWronglyIntermediate() ) {</span>
+<span class="fc" id="L255">               throw new IllegalStateException(</span>
                        &quot;Output of function '&quot; + Function.this + &quot;' &quot; +
-<span class="pc bpc" id="L253" title="1 of 2 branches missed.">                       (Function.this.getOperation() != null ? &quot;(&quot; + Function.this.getOperation().getIdentifier() + &quot;) &quot; : &quot;&quot;) +</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">                       (Function.this.getOperation() != null ? &quot;(&quot; + Function.this.getOperation().getIdentifier() + &quot;) &quot; : &quot;&quot;) +</span>
                        &quot;is marked as intermediate result, despite the fact &quot; +
                        &quot;that it is a member of the input array. &quot; +
                        &quot;Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged &quot; +
                        &quot;as 'intermediate', because they are not eligible for deletion!&quot;
                );
            }
-<span class="fc bfc" id="L260" title="All 2 branches covered.">           if ( validation.isWronglyNonIntermediate() ) {</span>
-<span class="fc" id="L261">               throw new IllegalStateException(</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">           if ( validation.isWronglyNonIntermediate() ) {</span>
+<span class="fc" id="L265">               throw new IllegalStateException(</span>
                        &quot;Output of function '&quot; + Function.this + &quot;' &quot; +
-<span class="pc bpc" id="L263" title="1 of 2 branches missed.">                       (Function.this.getOperation() != null ? &quot;(&quot; + Function.this.getOperation().getIdentifier() + &quot;) &quot; : &quot;&quot;) +</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">                       (Function.this.getOperation() != null ? &quot;(&quot; + Function.this.getOperation().getIdentifier() + &quot;) &quot; : &quot;&quot;) +</span>
                        &quot;is neither marked as intermediate result nor a member of the input array. &quot; +
                        &quot;Tensors instantiated by operations in the backend are expected to be flagged &quot; +
                        &quot;as 'intermediate' in order to be eligible for deletion!&quot;
                );
            }
-<span class="fc" id="L269">           MemUtil.autoDelete( tensors );</span>
-<span class="fc" id="L270">           return validation.getResult().get();</span>
+<span class="fc" id="L273">           MemUtil.autoDelete( tensors );</span>
+<span class="fc" id="L274">           return validation.getResult().get();</span>
        };
     }
 
@@ -282,7 +286,7 @@ public interface Function
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
     default &lt;T&gt; Tsr&lt;T&gt; call( Args arguments, Tsr&lt;T&gt;... tensors ) {
-<span class="nc" id="L285">        return with( arguments ).call( tensors ).getUnsafe().setIsIntermediate(false);</span>
+<span class="nc" id="L289">        return with( arguments ).call( tensors ).getMut().setIsIntermediate(false);</span>
     }
 
     /**
@@ -295,7 +299,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="nc" id="L298">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Args arguments, Tsr&lt;T&gt;... inputs ) { return this.call( arguments, inputs ); }</span>
+<span class="nc" id="L302">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Args arguments, Tsr&lt;T&gt;... inputs ) { return this.call( arguments, inputs ); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
@@ -316,7 +320,7 @@ public interface Function
      * @param inputs The tensors which should be sent through this function.
      * @return The resulting tensor produced by this function.
      */
-<span class="fc" id="L319">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... inputs ) { return execute( inputs, -1 ); }</span>
+<span class="fc" id="L323">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... inputs ) { return execute( inputs, -1 ); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
@@ -325,24 +329,24 @@ public interface Function
      * @param j The input index used by indexer operations to target a particular input.              
      * @return The resulting tensor produced by this function.
      */
-<span class="fc" id="L328">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;[] inputs, int j ) { return with(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }</span>
+<span class="fc" id="L332">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;[] inputs, int j ) { return with(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
      */
-<span class="fc" id="L333">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index, int j ) { return with(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }</span>
+<span class="fc" id="L337">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index, int j ) { return with(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
      */
-<span class="fc" id="L338">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }</span>
+<span class="fc" id="L342">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }</span>
 
     /**
      * @param input The tensor which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensor passed to and returned by this function.
      */
-<span class="fc" id="L345">    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt; input )   { return call( new Tsr[]{ input } ); }</span>
+<span class="fc" id="L349">    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt; input )   { return call( new Tsr[]{ input } ); }</span>
 
     /**
      *  This method is functionally identically to {@link #call(Tsr)}, however it is best used
@@ -352,14 +356,14 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensor passed to and returned by this function.
      */
-<span class="fc" id="L355">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt; input ) { return call( input ); }</span>
+<span class="fc" id="L359">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt; input ) { return call( input ); }</span>
     
     /**
      * @param inputs The list tensors which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="fc" id="L362">    default &lt;T&gt; Tsr&lt;T&gt; call( List&lt;Tsr&lt;T&gt;&gt; inputs ) { return call( inputs.toArray(new Tsr[ 0 ]) ); }</span>
+<span class="fc" id="L366">    default &lt;T&gt; Tsr&lt;T&gt; call( List&lt;Tsr&lt;T&gt;&gt; inputs ) { return call( inputs.toArray(new Tsr[ 0 ]) ); }</span>
 
     /**
      *  This method is functionally identically to {@link #call(List)}, however it is best used
@@ -369,7 +373,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensor passed to and returned by this function.
      */
-<span class="nc" id="L372">    default &lt;T&gt; Tsr&lt;T&gt; invoke( List&lt;Tsr&lt;T&gt;&gt; input ) { return call( input ); }</span>
+<span class="nc" id="L376">    default &lt;T&gt; Tsr&lt;T&gt; invoke( List&lt;Tsr&lt;T&gt;&gt; input ) { return call( input ); }</span>
 
     /**
      * @param inputs The tensors which should be sent through this function.
@@ -378,7 +382,7 @@ public interface Function
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
     default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;[] inputs, int j )   {
-<span class="nc" id="L381">        return (Tsr&lt;T&gt;) execute( inputs, j ).getUnsafe().setIsIntermediate(false);</span>
+<span class="nc" id="L385">        return (Tsr&lt;T&gt;) execute( inputs, j ).getMut().setIsIntermediate(false);</span>
     }
 
     /**
@@ -390,7 +394,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="nc" id="L393">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs, int j ) { return call( inputs, j ); }</span>
+<span class="nc" id="L397">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs, int j ) { return call( inputs, j ); }</span>
 
     /**
      * @param inputs The tensors which should be sent through this function.
@@ -398,7 +402,7 @@ public interface Function
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
     default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... inputs )   {
-<span class="fc" id="L401">        return (Tsr&lt;T&gt;) execute( inputs ).getUnsafe().setIsIntermediate(false);</span>
+<span class="fc" id="L405">        return (Tsr&lt;T&gt;) execute( inputs ).getMut().setIsIntermediate(false);</span>
     }
 
     /**
@@ -409,7 +413,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="fc" id="L412">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) { return call( inputs );             }</span>
+<span class="fc" id="L416">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) { return call( inputs );             }</span>
 
     /**
      * @param inputs The tensors which should be sent through this function.
@@ -419,8 +423,8 @@ public interface Function
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
     default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int index, int j ) {
-<span class="nc" id="L422">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, index, j );</span>
-<span class="nc" id="L423">        return result.getUnsafe().setIsIntermediate(false);</span>
+<span class="nc" id="L426">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, index, j );</span>
+<span class="nc" id="L427">        return result.getMut().setIsIntermediate(false);</span>
     }
 
     /**
@@ -430,8 +434,8 @@ public interface Function
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
     default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int index ) {
-<span class="fc" id="L433">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, index );</span>
-<span class="fc" id="L434">        return result.getUnsafe().setIsIntermediate(false);</span>
+<span class="fc" id="L437">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, index );</span>
+<span class="fc" id="L438">        return result.getMut().setIsIntermediate(false);</span>
     }
     
     /**
@@ -441,7 +445,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="nc" id="L444">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index, int j ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index, j ); }</span>
+<span class="nc" id="L448">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index, int j ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index, j ); }</span>
     
     /**
      * @param inputs The list of tensors which should be sent through this function.
@@ -449,7 +453,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="fc" id="L452">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index ); }</span>
+<span class="fc" id="L456">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index ); }</span>
     
     String toString();
 
@@ -468,7 +472,7 @@ public interface Function
          * @return The resulting tensor produced by this function.
          * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
          */
-<span class="fc" id="L471">        default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) { return this.call( inputs ); }</span>
+<span class="fc" id="L475">        default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) { return this.call( inputs ); }</span>
 
         /**
          * @param inputs The tensors which should be sent through the owner function of this {@link Callable}.
@@ -476,7 +480,7 @@ public interface Function
          * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
          */
         default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... inputs ) {
-<span class="fc" id="L479">            return (Tsr&lt;T&gt;) this.execute( inputs ).getUnsafe().setIsIntermediate(false);</span>
+<span class="fc" id="L483">            return (Tsr&lt;T&gt;) this.execute( inputs ).getMut().setIsIntermediate(false);</span>
         }
 
         /**

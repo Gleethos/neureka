@@ -4,12 +4,13 @@ package neureka.devices.file;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.common.utility.Cache;
 import neureka.dtype.DataType;
+import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,11 +199,13 @@ public final class FileDevice extends AbstractBaseDevice<Object>
             fullFileName = filename;
         }
         if ( FileHandle.FACTORY.hasSaver( extension ) ) {
-            _stored.put(
-                    (Tsr<Object>) tensor,
-                    FileHandle.FACTORY.getSaver(extension).save( _directory + "/" + fullFileName, tensor, configurations )
-            );
-            tensor.getMut().setData(null);
+            FileHandle handle =
+                    FileHandle.FACTORY
+                    .getSaver(extension)
+                    .save( _directory + "/" + fullFileName, tensor, configurations );
+
+            _stored.put((Tsr<Object>) tensor, handle);
+            tensor.getMut().setData( new DeviceData( this, null, handle.getDataType() ){} );
         }
         return this;
     }
@@ -246,17 +249,17 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     public Collection<Tsr<Object>> getTensors() { return _stored.keySet(); }
 
     @Override
-    public neureka.Data allocate(DataType<?> dataType, int size) {
+    public <V> neureka.Data<V> allocate( DataType<V> dataType, NDConfiguration ndc ) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 
     @Override
-    public <V> neureka.Data allocate(DataType<V> dataType, int size, V initialValue) {
+    public <V> neureka.Data<V> allocateFromOne(DataType<V> dataType, NDConfiguration ndc, V initialValue ) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 
     @Override
-    public neureka.Data allocate(Object jvmData, int desiredSize) {
+    public <T> neureka.Data<T> allocateFromAll(DataType<T> dataType, NDConfiguration ndc, Object jvmData ) {
         throw new IllegalStateException("FileDevice instances do not support allocation of memory.");
     }
 

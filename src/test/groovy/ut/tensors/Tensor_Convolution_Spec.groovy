@@ -2,6 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.backend.ocl.CLBackend
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -256,7 +257,9 @@ class Tensor_Convolution_Spec extends Specification
     def 'Very simple manual convolution produces expected result.'(
             Device device
     ) {
-        given :
+        given : 'We set the experimental "autoConvertToFloat" flag to true.'
+            Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
+        and :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
             Tsr a = Tsr.of([4, 4], 0d..16d).to( device )
 

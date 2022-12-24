@@ -2,7 +2,7 @@
 
 import neureka.backend.api.BackendContext;
 import neureka.common.utility.LogUtil;
-import neureka.devices.opencl.CLContext;
+import neureka.backend.ocl.CLBackend;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public final class Messages
     public static String clContextCreationFailed() {
 <span class="nc" id="L18">        return LogUtil.format(</span>
                 &quot;OpenCL not available!\n&quot; +
-<span class="nc" id="L20">                        &quot;Skipped creating and adding a new '&quot;+ CLContext.class.getSimpleName()+&quot;' &quot; +</span>
+<span class="nc" id="L20">                        &quot;Skipped creating and adding a new '&quot;+ CLBackend.class.getSimpleName()+&quot;' &quot; +</span>
 <span class="nc" id="L21">                        &quot;to the current '&quot;+ BackendContext.class.getSimpleName()+&quot;'...\n&quot; +</span>
 <span class="nc" id="L22">                        findTip().bootstrapTip()</span>
         );
@@ -25,17 +25,17 @@ public final class Messages
 
     public static String clContextCouldNotFindAnyDevices() {
 <span class="nc" id="L27">        return LogUtil.format(</span>
-                &quot;OpenCL could not detect any devices in the current '{}'.\n{}&quot;,
-<span class="nc" id="L29">                CLContext.class.getSimpleName(),</span>
+                &quot;OpenCL could not detect any devices in the current {}.\n{}&quot;,
+<span class="nc" id="L29">                CLBackend.class.getSimpleName(),</span>
 <span class="nc" id="L30">                findTip().HOW_TO_INSTALL_OPENCL_DRIVERS</span>
             );
     }
 
     public static Tips findTip()
     {
-<span class="nc" id="L36">        Properties properties = new Properties();</span>
-<span class="nc" id="L37">        String osName = System.getProperty(&quot;os.name&quot;);</span>
-<span class="nc bnc" id="L38" title="All 2 branches missed.">        if ( osName.toLowerCase().contains(&quot;linux&quot;) ) {</span>
+<span class="fc" id="L36">        Properties properties = new Properties();</span>
+<span class="fc" id="L37">        String osName = System.getProperty(&quot;os.name&quot;);</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if ( osName.toLowerCase().contains(&quot;linux&quot;) ) {</span>
 <span class="nc" id="L39">            String[] cmd = {&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;cat /etc/*-release&quot;};</span>
             try {
 <span class="nc" id="L41">                Process p = Runtime.getRuntime().exec(cmd);</span>
@@ -55,55 +55,55 @@ public final class Messages
         else // We just assume windows for now.
         {
             try {
-<span class="nc" id="L58">                properties.load(new StringReader(&quot;NAME=\&quot;Windows\&quot;&quot;));</span>
+<span class="fc" id="L58">                properties.load(new StringReader(&quot;NAME=\&quot;Windows\&quot;&quot;));</span>
 <span class="nc" id="L59">            } catch (IOException e) {</span>
 <span class="nc" id="L60">                e.printStackTrace();</span>
-<span class="nc" id="L61">            }</span>
+<span class="fc" id="L61">            }</span>
         }
         //---
-<span class="nc" id="L64">        String foundOS = properties.getProperty(&quot;NAME&quot;);</span>
-<span class="nc bnc" id="L65" title="All 4 branches missed.">        if ( foundOS == null || foundOS.isEmpty() )</span>
+<span class="fc" id="L64">        String foundOS = properties.getProperty(&quot;NAME&quot;);</span>
+<span class="pc bpc" id="L65" title="2 of 4 branches missed.">        if ( foundOS == null || foundOS.isEmpty() )</span>
 <span class="nc" id="L66">            return Tips.UNKNOWN;</span>
 
-<span class="nc" id="L68">        foundOS = foundOS.toLowerCase().replace(&quot;\&quot;&quot;, &quot;&quot;).trim();</span>
-<span class="nc bnc" id="L69" title="All 4 branches missed.">        switch ( foundOS ) {</span>
+<span class="fc" id="L68">        foundOS = foundOS.toLowerCase().replace(&quot;\&quot;&quot;, &quot;&quot;).trim();</span>
+<span class="pc bpc" id="L69" title="3 of 4 branches missed.">        switch ( foundOS ) {</span>
 <span class="nc" id="L70">            case &quot;ubuntu&quot;:  return Tips.UBUNTU;</span>
 <span class="nc" id="L71">            case &quot;fedora&quot;:  return Tips.FEDORA;</span>
-<span class="nc" id="L72">            case &quot;windows&quot;: return Tips.WINDOWS;</span>
+<span class="fc" id="L72">            case &quot;windows&quot;: return Tips.WINDOWS;</span>
         }
 <span class="nc" id="L74">        return Tips.UNKNOWN;</span>
     }
 
-<span class="nc" id="L77">    public enum Tips</span>
+<span class="fc" id="L77">    public enum Tips</span>
     {
-<span class="nc" id="L79">        UBUNTU(</span>
-                &quot;Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n&quot;,
-                &quot;In order to allow OpenCL to find your GPUs, consider executing 'sudo ubuntu-drivers autoinstall'!\n&quot;
+<span class="fc" id="L79">        UBUNTU(</span>
+            &quot;Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n&quot;,
+            &quot;If the OpenCL runtime cannot find your GPUs, consider executing 'sudo ubuntu-drivers autoinstall'!\n&quot;
         ),
-<span class="nc" id="L83">        FEDORA(</span>
-                &quot;Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n&quot;,
-                &quot;In order to allow OpenCL to find your GPUs, consider installing or updating your device drivers!\n&quot;
+<span class="fc" id="L83">        FEDORA(</span>
+            &quot;Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n&quot;,
+            &quot;If OpenCL runtime cannot find your GPUs, consider installing or updating your device drivers!\n&quot;
         ),
-<span class="nc" id="L87">        WINDOWS(</span>
-                &quot;&quot;, // Should already work
-                &quot;Try to install the latest drivers of your GPU (Or other SIMD devices).\n&quot;
+<span class="fc" id="L87">        WINDOWS(</span>
+            &quot;&quot;, // Should already work
+            &quot;Try to install the latest drivers of your GPU (Or other SIMD devices).\n&quot;
         ),
-<span class="nc" id="L91">        UNKNOWN(</span>
-                &quot;Try to install the latest OpenCL runtime for your system.\n&quot;,
-                &quot;If you already have an OpenCL runtime installed consider installing the latest drivers for your GPU (Or other SIMD devices).\n&quot;
+<span class="fc" id="L91">        UNKNOWN(</span>
+            &quot;Try to install the latest OpenCL runtime for your system.\n&quot;,
+            &quot;If you already have an OpenCL runtime installed consider installing the latest drivers for your GPU (Or other SIMD devices).\n&quot;
         );
 
         public final String HOW_TO_INSTALL_OPENCL, HOW_TO_INSTALL_OPENCL_DRIVERS;
 
-<span class="nc" id="L98">        Tips( String howToInstallOpenCL, String howToInstallDrivers ) {</span>
-<span class="nc" id="L99">            HOW_TO_INSTALL_OPENCL = howToInstallOpenCL;</span>
-<span class="nc" id="L100">            HOW_TO_INSTALL_OPENCL_DRIVERS = howToInstallDrivers;</span>
-<span class="nc" id="L101">        }</span>
+<span class="fc" id="L98">        Tips( String howToInstallOpenCL, String howToInstallDrivers ) {</span>
+<span class="fc" id="L99">            HOW_TO_INSTALL_OPENCL = howToInstallOpenCL;</span>
+<span class="fc" id="L100">            HOW_TO_INSTALL_OPENCL_DRIVERS = howToInstallDrivers;</span>
+<span class="fc" id="L101">        }</span>
 
         public String bootstrapTip() {
-<span class="nc bnc" id="L104" title="All 2 branches missed.">            return !HOW_TO_INSTALL_OPENCL.isEmpty()</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            return !HOW_TO_INSTALL_OPENCL.isEmpty()</span>
 <span class="nc" id="L105">                    ? (HOW_TO_INSTALL_OPENCL +&quot;&quot;+ HOW_TO_INSTALL_OPENCL_DRIVERS)</span>
-<span class="nc" id="L106">                    : (&quot;&quot;);</span>
+<span class="fc" id="L106">                    : (&quot;Make sure you have an OpenCL runtime as well as device drivers installed.\n&quot;);</span>
         }
     }
 

@@ -22,7 +22,7 @@ import spock.lang.Subject
 class Momentum_Spec extends Specification
 {
     @Shared Tsr<Double> w = Tsr.of(0d)
-    @Shared Optimizer<Double> o = new Momentum<>(w)
+    @Shared Optimizer<Double> o = Optimizer.Momentum.create(w)
 
     def setupSpec()
     {
@@ -32,7 +32,7 @@ class Momentum_Spec extends Specification
                 throughout every data table iteration:
                 ```
                     Tsr<?> w = Tsr.of(0d)
-                    Optimizer<?> o = new Momentum<>(w)            
+                    Optimizer<?> o = Optimizer.Momentum.create(w)        
                     w.set(o)        
                 ```
             """

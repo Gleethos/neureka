@@ -58,8 +58,10 @@ package neureka;
 
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
-import neureka.calculus.Function;
-import neureka.calculus.Functions;
+import neureka.backend.api.LazyRef;
+import neureka.math.Function;
+import neureka.math.Functions;
+import neureka.math.args.Arg;
 import neureka.common.composition.Component;
 import neureka.common.composition.ComponentOwner;
 import neureka.common.utility.DataConverter;
@@ -84,12 +86,17 @@ import neureka.ndim.NDConstructor;
 import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
 import neureka.optimization.Optimizer;
+import neureka.optimization.OptimizerFactory;
 import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *  {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
@@ -212,7 +219,21 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param args The arguments which ought to be interpreted.
      * @return The result of the interpretation in the form of a {@link Tsr} instance of typ {@link Object}.
      */
-    static <T> Tsr<T> of( Object... args ) { return TsrImpl._of( args ); }
+    static <T> Tsr<T> of( Object... args ) {
+        LogUtil.nullArgCheck( args, "args", Object[].class );
+        return TsrImpl._of( args );
+    }
+
+    /**
+     * Constructs a vector of objects based on the provided iterable.
+     *
+     * @param iterable The iterable of objects from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D tensor of objects.
+     */
+    static <T> Tsr<T> of( Iterable<T> iterable ) {
+        LogUtil.nullArgCheck( iterable, "iterable", Iterable.class );
+        return TsrImpl._of( iterable );
+    }
 
     /**
      *  This is a convenient factory method for creating {@link Tsr} instances for
@@ -300,7 +321,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
     static <T> Tsr<T> of( Class<T> type, List<Object> conf ) {
-        ListReader.Result result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
+        ListReader.Result result = null;
+        try {
+            result = ListReader.read( conf, o -> o );
+        } catch (Exception e) {
+            // We don't care about the first attempt...
+        }
+        if ( result == null )
+            result = ListReader.read( conf, o -> ( o instanceof Number ? ((Number)o).doubleValue() : o ) );
         Class<T> resultType;
         Object[] resultData;
         int[] shape = result.getShape().stream().mapToInt(i -> i).toArray();
@@ -739,7 +767,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  very instance.                                                                      <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", 12f, -6.34f )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", 12f, -6.34f )'</i></li>
      * </ul>
      *
      * @param expression A String which will be used for parsing a Function AST.
@@ -763,7 +791,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  very instance.                                                                      <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
      * </ul>
      *
      * @param expression A String which will be used for parsing a Function AST.
@@ -782,7 +810,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", true, List.of(b, c) )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", true, List.of(b, c) )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  element-wise to produce a new tensor 'a'!
@@ -806,7 +834,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  namely : "I[0]" <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) * 2", b )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) * 2", b )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and applies the function "f(x) = sin(x) * 2"
@@ -827,7 +855,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ... <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", b, c )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", b, c )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
@@ -850,7 +878,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = of( "sin( I[0] ) / I[1]", true, b, c )'</i></li>
+     *      <li><i> 'var a = Tsr.of( "sin( I[0] ) / I[1]", true, b, c )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  element-wise to produce a new tensor 'a'!
@@ -899,6 +927,29 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return of( template.getDataType().getItemTypeClass() )
                 .on( template.getDevice() )
                 .withShape( template.getNDConf().shape() );
+    }
+
+    /**
+     * Returns a {@code Collector} that accumulates the input elements into a
+     * new {@link Tsr} with the specified shape. <br>
+     * Usage example : <br>
+     * <pre>{@code
+     *    var tensor = Stream.of( 1, 2, 3, 4, 5, 6 )
+     *                      .collect( Tsr.shaped( 2, 3 ) );
+     * }</pre>
+     *
+     * @param shape The shape of the tensor to be returned.
+     * @param <T> the type of the input elements
+     * @return a {@code Collector} which collects all the input elements into a
+     *          {@link Tsr}, in encounter order.
+     */
+    static <T> Collector<T, ?, Tsr<T>> shaped( int... shape ) {
+        return Collector.of(
+                (Supplier<List<T>>) ArrayList::new,
+                List::add,
+                (left, right) -> { left.addAll(right); return left; },
+                list -> Tsr.of( shape, list )
+            );
     }
 
     /*==================================================================================================================
@@ -981,7 +1032,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *
      * @return The truth value determining if this tensor has no {@link Data}.
      */
-    default boolean isEmpty() { return getMut().getData() == null; }
+    default boolean isEmpty() { return getMut().getData() == null || getMut().getData().getRef() == null; }
 
     /**
      *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
@@ -995,58 +1046,57 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override
     default boolean isSlice() {
-        Relation<V> child = get( Relation.class );
-        return ( child != null && child.hasParent() );
+        return this.find(Relation.class).map(Relation::hasParent).orElse(false);
     }
 
     /** {@inheritDoc} */
     @Override
     default boolean isShallowCopy() {
-        Relation<V> child = get( Relation.class );
-        boolean isSlice = child != null && child.hasParent();
-        if ( isSlice ) {
-            Tsr<V> parent = child.getParent();
-            return parent != null && parent.getNDConf().equals(this.getNDConf());
-            /*
-                Note:
-                A shallow copy is conceptually always a "full slice" of the parent tensor.
-                This means that the parent tensor and the shallow copy
-                share the same nd-configurations (shape and data access pattern).
-             */
-        }
-        return false;
+        return this
+                .find( Relation.class )
+                .map( r -> (Relation<V>) r )
+                .map( child ->
+                        child.getParent()
+                                .map( p -> p.getNDConf().equals(this.getNDConf()) )
+                                .orElse(false)
+                    /*
+                        Note:
+                        A shallow copy is conceptually always a "full slice" of the parent tensor.
+                        This means that the parent tensor and the shallow copy
+                        share the same nd-configurations (shape and data access pattern).
+                     */
+                )
+                .orElse(false);
     }
 
     /** {@inheritDoc} */
     @Override
     default boolean isPartialSlice() {
-        Relation<V> child = get( Relation.class );
-        boolean isSlice = child != null && child.hasParent();
-        if ( isSlice ) {
-            Tsr<V> parent = child.getParent();
-            if ( parent == null ) return false;
-            return parent.size() > this.size();
-            /*
-                Note:
-                A partial slice is a slice which does not have the same size as the parent tensor
-                but still sharing the same underlying data as the parent tensor.
-             */
-        }
-        return false;
+        return this
+                .find( Relation.class )
+                .map( r -> (Relation<V>) r )
+                .map( child -> child.getParent()
+                                    .map( p -> p.size() > this.size() )
+                                    .orElse(false)
+                    /*
+                        Note:
+                        A partial slice is a slice which does not have the same size as the parent tensor
+                        but still sharing the same underlying data as the parent tensor.
+                     */
+                )
+                .orElse(false);
     }
 
     /** {@inheritDoc} */
     @Override
     default int sliceCount() {
-        Relation<V> child = this.get( Relation.class );
-        return ( child != null ) ? child.childCount() : 0;
+        return this.find(Relation.class).map(Relation::childCount).orElse(0);
     }
 
     /** {@inheritDoc} */
     @Override
     default boolean isSliceParent() {
-        Relation<V> parent = this.get( Relation.class );
-        return ( parent != null && parent.hasChildren() );
+        return this.find( Relation.class ).map(Relation::hasChildren).orElse(false);
     }
 
     /**
@@ -1059,7 +1109,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *
      * @return The truth value determining if this tensor belongs to a recorded computation graph.
      */
-    default boolean belongsToGraph() { return this.has( GraphNode.class ); }
+    default boolean belongsToGraph() { return this.graphNode().isPresent(); }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1071,7 +1121,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *
      * @return The truth value determining if this tensor is attached to a computation graph as leave node.
      */
-    default boolean isLeave() { return (!this.belongsToGraph() || getGraphNode().isLeave()); }
+    default boolean isLeave() { return (!this.belongsToGraph() || this.graphNode().map(GraphNode::isLeave).orElse(false) ); }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1213,8 +1263,23 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     @Override default MutateTsr<V> mut() { return getMut(); }
 
     /** {@inheritDoc} */
-    @Override default Tsr<V> withShape( int... shape ) {
-        return Tsr.of( this.itemType(), shape, getItems() ).to( this.getDevice() );
+    @Override default Tsr<V> withShape( int... shape )
+    {
+        Tsr<V> subset = Tsr.of(
+                            this.getDataType(),
+                            NDConstructor.of( shape ),
+                            this.mut().getData()
+                        );
+
+        subset.set( Relation.newChildToParent( this ) );
+        Relation<V> parent = this.find( Relation.class ).orElseGet(Relation::newParentToChildren);
+        parent.addChild( subset );
+        this.set( parent );
+
+        if ( this.isOutsourced() )
+            this.getDevice().store( subset );
+
+        return subset;
     }
 
     /*==================================================================================================================
@@ -1246,6 +1311,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
 
+    default Tsr<V> set(OptimizerFactory optimizerFactory) {
+        this.set( optimizerFactory.create( (Tsr) this ) );
+        return this;
+    }
+
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
      *  This is because autograd requires recording a computation graph for back-prop traversal.
@@ -1258,20 +1328,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> backward( Tsr<V> error ) {
         LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
-        if ( this.isOutsourced() )
-            error = error.deepCopy().to(this.getDevice());
-
-        Tsr<V> finalError = error;
-        Optional<GraphNode> node = find( GraphNode.class );
-        if ( node.isPresent() )
-            node.get().backward(finalError);
-
-        if ( !node.isPresent() && this.rqsGradient() )
-            getMut().addToGradient( error );
-
+        ((TsrImpl<V>)this)._backward( LazyRef.of( () -> error ) );
         return this;
     }
-
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1289,7 +1348,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return The tensor, to allow for method chaining.
      */
     default Tsr<V> backward( double value ) {
-        backward( Tsr.of( this.getItemType(), getNDConf().shape(), value ) );
+        ((TsrImpl<V>)this)._backward( LazyRef.of( () -> Tsr.of( this.getItemType(), getNDConf().shape(), value )) );
         return this;
     }
 
@@ -1316,7 +1375,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /**
      * @return The gradient of this tensor which is internally stored as component.
      */
-    default Tsr<V> getGradient() { return this.get( Tsr.class ); }
+    default Optional<Tsr<V>> getGradient() { return this.find( Tsr.class ).map( t -> (Tsr<V>) t ); }
+
+    /**
+     *  This is a functionally identical alternative to the {@link #getGradient()} method.
+     *
+     * @return The gradient of this tensor which is internally stored as component.
+     */
+    default Optional<Tsr<V>> gradient() { return getGradient(); }
 
     /**
      *  If this tensor owns a gradient tensor as component, then it can be applied by this method. <br>
@@ -1362,14 +1428,30 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
+     * @return The graph node optional of the computation graph to which this tensor belongs
+     *         or an empty optional if not part of a graph.
      */
-    default GraphNode<V> getGraphNode() { return get( GraphNode.class ); }
+    default Optional<GraphNode<V>> getGraphNode() { return find( GraphNode.class ).map( g-> (GraphNode<V>) g ); }
+
+    /**
+     *  This is a functionally identical alternative to {@link #getGraphNode()}.
+     *
+     * @return The graph node optional of the computation graph to which this tensor belongs
+     *         or an empty optional if not part of a graph.
+     */
+    default Optional<GraphNode<V>> graphNode() { return getGraphNode(); }
 
     /**
      * @return An instance of the {@link NDFrame} component if present.
      */
-    default NDFrame<V> frame() { return get( NDFrame.class ); }
+    default Optional<NDFrame<V>> getFrame() { return (Optional<NDFrame<V>>) ((Optional)find( NDFrame.class )); }
+
+    /**
+     *  This is a functionally identical alternative to {@link #getFrame()}.
+     *
+     * @return An instance of the {@link NDFrame} component if present.
+     */
+    default Optional<NDFrame<V>> frame() { return getFrame(); }
 
     /**
      *  <b>This method returns a new tensor detached from any underlying computation-graph
@@ -1399,11 +1481,12 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     /** {@inheritDoc} */
     @Override Tsr<V> withLabels( Map<Object, List<Object>> labels );
 
+
     /*==================================================================================================================
     |
     |       §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
     |   -----------------------------------------------------
-    |       ...for more context see package 'calculus'...
+    |       ...for more context see package 'math'...
     |*/
 
     /**
@@ -1504,6 +1587,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
         return Function.of( operation.toString(), true ).call( this );
     }
+
+    /**
+     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.<br>
+     *  This is an alternative to the functionally identical {@link #T()} method.
+     *
+     * @return A new transposed tensor with the same underlying {@link Data} as this tensor.
+     */
+    default Tsr<V> getT() { return this.T(); } // Transposed
 
     /**
      *  Calculate the mean value of all values
@@ -1663,14 +1754,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }
 
     /**
-     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.<br>
-     *  This is an alternative to the functionally identical {@link #T()} method.
-     *
-     * @return A new transposed tensor with the same underlying {@link Data} as this tensor.
-     */
-    default Tsr<V> getT() { return this.T(); } // Transposed
-
-    /**
      *  This method name translates to the "in" keyword in Groovy!
      *  The same is true for the "contains" method in Kotlin.
      *  Both methods do the exact same thing, however they exist
@@ -1719,7 +1802,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /**
      * @param other The value which should be broadcast to all elements of a clone of this tensor.
-     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     * @return A new tensor where all elements are multiplied by the provided value.
      */
     default Tsr<V> multiply( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getItemType(), "Cannot multiply 'null' with a tensor!");
@@ -1754,7 +1837,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /**
      * @param other The value which should be broadcast to all elements of a clone of this tensor.
-     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     * @return A new tensor where all elements are multiplied by the provided value.
      */
     default Tsr<V> times( V other ) {
         LogUtil.nullArgCheck(other, "other", getItemType(), "Cannot multiply 'null' with a tensor!");
@@ -1763,7 +1846,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /**
      * @param value The value which should be broadcast to all elements of a clone of this tensor.
-     * @return A new clone of this tensor where all elements are multiplied by the provided value.
+     * @return A new tensor where all elements are multiplied by the provided value.
      */
     default Tsr<V> multiply( double value ) { return multiply( of( getItemType(), getNDConf().shape(), value ) ); }
 
@@ -1810,6 +1893,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return Neureka.get().backend().getAutogradFunction().mod().call( this, other );
     }
 
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new tensor where the modulo operation is applied to all
+     *          elements using the provided int as right operand.
+     */
     default Tsr<V> mod( int other ) { return mod(of(getItemType(), getNDConf().shape(), other)); }
 
     /**
@@ -1843,7 +1931,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  The returned tensor is a new instance which will have the same shape as this tensor.
      * 
      * @param value The value which should be used to raise all items of this tensor to the power of.
-     * @return A new clone of this tensor where all items are raised to the power of the provided value.
+     * @return A new tensor where all items are raised to the power of the provided value.
      */
     default Tsr<V> power( V value ) {
         LogUtil.nullArgCheck(value, "value", getItemType(), "Cannot raise a tensor to the power of 'null'!");
@@ -1863,30 +1951,188 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> xor( double value ) { return xor( of( this.itemType(), this.shape(), value ) ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().sigmoid().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("sig(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>sigmoid function</b> applied to the items of this tensor.
+     */
     default Tsr<V> sig() { return Neureka.get().backend().getAutogradFunction().sigmoid().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().tanh().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("tanh(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>tanh function</b> applied to the items of this tensor.
+     */
     default Tsr<V> tanh() { return Neureka.get().backend().getAutogradFunction().tanh().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().relu().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("relu(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>relu function</b> applied to the items of this tensor.
+     */
     default Tsr<V> relu() { return Neureka.get().backend().getAutogradFunction().relu().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().sin().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("sin(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>sin function</b> applied to the items of this tensor.
+     */
     default Tsr<V> sin() { return Neureka.get().backend().getAutogradFunction().sin().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().cos().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("cos(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>cos function</b> applied to the items of this tensor.
+     */
     default Tsr<V> cos() { return Neureka.get().backend().getAutogradFunction().cos().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().ln().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("ln(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>ln function</b> applied to the items of this tensor.
+     */
     default Tsr<V> ln() { return Neureka.get().backend().getAutogradFunction().ln().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().softplus().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("softplus(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>softplus function</b> applied to the items of this tensor.
+     */
     default Tsr<V> softplus() { return Neureka.get().backend().getAutogradFunction().softplus().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().exp().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("exp(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>exp function</b> applied to the items of this tensor.
+     */
     default Tsr<V> exp() { return Neureka.get().backend().getAutogradFunction().exp().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().sqrt().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("sqrt(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>sqrt function</b> applied to the items of this tensor.
+     */
     default Tsr<V> sqrt() { return Neureka.get().backend().getAutogradFunction().sqrt().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().log10().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("log10(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>log10 function</b> applied to the items of this tensor.
+     */
     default Tsr<V> log10() { return Neureka.get().backend().getAutogradFunction().log10().call( this ); }
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().cbrt().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("cbrt(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>cbrt function</b> applied to the items of this tensor.
+     */
     default Tsr<V> cbrt() { return Neureka.get().backend().getAutogradFunction().cbrt().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().abs().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("abs(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>abs function</b> applied to the items of this tensor.
+     */
     default Tsr<V> abs() { return Neureka.get().backend().getAutogradFunction().abs().call( this ); }
 
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  <pre>{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().neg().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of("neg(I[0])").call(myTensor);
+     *  }</pre>
+     *
+     * @return A new tensor whose items are the result of the <b>neg function</b> applied to the items of this tensor.
+     */
     default Tsr<V> neg() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }
+
+    /**
+     * @return A new tensor whose items are the result of the <b>softmax function</b> applied to the items of this tensor.
+     */
+    default Tsr<V> softmax() { 
+        // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
+        return exp().div( exp().sum() );
+    }
+
+    /**
+     * @return A new tensor whose items are the result of the <b>sigmoid function</b> applied to the items of this tensor.
+     */
+    default Tsr<V> sigmoid() { return Neureka.get().backend().getAutogradFunction().sigmoid().call( this ); }
+
 
     /*==================================================================================================================
     |
@@ -1897,6 +2143,28 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /** {@inheritDoc} */
     @Override AxisOrGetTsr<V> slice();
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> concatAt( int axis, Nda<V> other, Nda<V>... ndArrays ) {
+        String args = IntStream.range(0,ndArrays.length+2).mapToObj(i->"I["+ i +"]").collect(Collectors.joining(", "));
+        Function concat = Function.of( "concat("+ args +")" );
+        Tsr<V>[] allArgs = new Tsr[ndArrays.length+2];
+        allArgs[0] = this;
+        allArgs[1] = (Tsr<V>) other;
+        System.arraycopy( ndArrays, 0, allArgs, 2, ndArrays.length );
+        return concat.with(Arg.Axis.of(axis)).call( allArgs );
+    }
+
+    /** {@inheritDoc} */
+    @Override default Tsr<V> concatAt( int axis, Nda<V> other ) {
+        return Neureka.get()
+                .backend()
+                .getAutogradFunction()
+                .concat()
+                .with(Arg.Axis.of(axis))
+                .call( this, (Tsr<V>) other );
+    }
+
 
     /** {@inheritDoc} */
     @Override
@@ -2094,6 +2362,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return slice().get();
     }
 
+    /**
+     * Use this enum as argument for the {@link Tsr#asImage(Tsr.ImageType)} method to
+     * specify the type of image that should be returned.
+     */
     enum ImageType
     {
         RGB_1INT(1, UI32.class, 1),

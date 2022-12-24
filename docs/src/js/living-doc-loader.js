@@ -262,7 +262,7 @@ function createLoaderDropDownFor(specName, expandableFeature) {
 function buildFeatureListFor(expandableFeature, data, content) {
     let nothingHappened = true;
     data['features'].forEach((feature)=>{
-        if ( feature['id'] === expandableFeature ) {
+        if ( feature['id'].toString() == expandableFeature.toString() ) {
             content.append(createUIForFeature(feature));
             nothingHappened = false;
         }
@@ -440,8 +440,9 @@ function dictionaryOfHeaderNamesToColumnArraysToTable(dataTable) {
             else if ( size > 20 ) cell.css('font-size', '85%');
             else if ( size > 15 ) cell.css('font-size', '90%');
             else if ( size > 10 ) cell.css('font-size', '95%');
-
-            cell.text(text);
+            let code = $('<code class="hljs language-java"></code>');
+            code.text(text);
+            cell.append(code);
             row.append(cell);
         }
         table.append(row);

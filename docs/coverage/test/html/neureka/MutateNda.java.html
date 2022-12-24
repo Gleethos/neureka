@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MutateNda.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka</a> &gt; <span class="el_source">MutateNda.java</span></div><h1>MutateNda.java</h1><pre class="source lang-java linenums">package neureka;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Nd-arrays should be used as immutable data structures mostly, however sometimes it
+ * is important to mutate their state for performance reasons.
+ * This interface exposes several methods for mutating the state of this nd-array.
+ * The usage of methods exposed by this API is generally discouraged
+ * because the exposed state can easily lead to broken nd-arrays and exceptions...&lt;br&gt;
+ * &lt;br&gt;
+ */
+public interface MutateNda&lt;T&gt;
+{
+    /**
+     *  This method enables assigning a provided nd-array to be a subset/slice of this nd-array!
+     *  It takes a key which is used to configure a slice
+     *  sharing the same underlying data as the original nd-array.
+     *  This slice is then used to assign the second argument {@code value} to it.
+     *  The usage of this method is especially powerful when used in Groovy. &lt;br&gt;
+     *  The following code illustrates this very well:
+     *  &lt;pre&gt;{@code
+     *      a[[[0..0]:1, [0..0]:1, [0..3]:2]] = b
+     *  }&lt;/pre&gt;
+     *  Here a single argument with the format '[i..j]:k' is equivalent
+     *  to pythons 'i:j:k' syntax for indexing! (numpy)                            &lt;br&gt;
+     *  i... start indexAlias.                                                      &lt;br&gt;
+     *  j... end indexAlias. (inclusive!)                                           &lt;br&gt;
+     *  k... step size.                                                             &lt;br&gt;
+     *
+     * @param key This object is a map defining a stride and a targeted index or range of indices...
+     * @param value The nd-array which ought to be assigned into a slice of this nd-array.
+     * @return A slice nd-array or scalar value.
+     */
+    Nda&lt;T&gt; putAt( Map&lt;?,Integer&gt; key, Nda&lt;T&gt; value );
+
+    /**
+     *  Use this to put a single item at a particular
+     *  position within this nd-array.
+     *
+     * @param indices The indices of the nd-position where the provided item should be placed.
+     * @param value The item which should be placed at the position defined by the provided indices.
+     * @return This nd-array itself.
+     */
+    Nda&lt;T&gt; putAt( int[] indices, T value );
+
+
+    /**
+     *  Use this to place a single item at a particular position within this nd-array!
+     *
+     * @param indices An array of indices targeting a particular position in this nd-array...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;T&gt; set( int[] indices, T value );
+
+<span class="nc" id="L58">    default Nda&lt;T&gt; set( int i0, int i1, T value ) { return putAt( new int[]{i0, i1}, value ); }</span>
+
+
+<span class="nc" id="L61">    default Nda&lt;T&gt; set( int i0, int i1, int i2, T value ) { return putAt( new int[]{i0, i1, i2}, value ); }</span>
+
+    /**
+     *  Individual entries for value items in this nd-array can be set
+     *  via this method.
+     *
+     * @param index The scalar index targeting a specific value position within this nd-array
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param value The item which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;T&gt; putAt( int index, T value );
+
+    /**
+     *  Individual entries for value items in this nd-array can be set
+     *  via this method.
+     *
+     * @param index The scalar index targeting a specific value position within this nd-array
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param value The item which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;T&gt; set( int index, T value );
+
+    /**
+     *  This method enables injecting slices of nd-array to be assigned into this nd-array!
+     *  It takes a key of various types which is used to configure a slice
+     *  nd-array sharing the same underlying data as the original nd-array.
+     *  This slice is then used to assign the second argument to it, namely
+     *  the &quot;value&quot; argument.
+     *
+     * @param key This object is a list defining a targeted index or range of indices...
+     * @param value the nd-array which ought to be assigned to a slice of this nd-array.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;T&gt; putAt( List&lt;?&gt; key, Nda&lt;T&gt; value );
+
+    /**
+     *  Use this to place a single item at a particular position within this nd-array!
+     *
+     * @param indices A list of indices targeting a particular position in this nd-array...
+     * @param value the value which ought to be placed at the targeted position.
+     * @return This very nd-array in order to enable method chaining...
+     */
+    Nda&lt;T&gt; putAt( List&lt;?&gt; indices, T value );
+
+    /**
+     *  An NDArray implementation ought to have some way to selectively modify its underlying value.
+     *  This method simply overrides an element within this data array sitting at position &quot;i&quot;.
+     * @param i The index of the value array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very nd-array in order to enable method chaining.
+     */
+    Nda&lt;T&gt; setItemAt( int i, T o );
+
+    /**
+     *  This method will receive an object an try to interpret
+     *  it or its contents to be set as value for this nd-array.
+     *  It will not necessarily replace the underlying data array object of this
+     *  nd-array itself, but also try to convert and copy the provided value
+     *  into the data array of this nd-array.
+     *
+     * @param value The value which may be a scalar or array and will be used to populate this nd-array.
+     * @return This very nd-array to enable method chaining.
+     */
+    Nda&lt;T&gt; setItems( Object value );
+
+
+
+    /**
+     * This method is an inline operation which changes the underlying data of this tensor.
+     * It converts the data types of the elements of this tensor to the specified type!&lt;br&gt;
+     * &lt;br&gt;
+     * &lt;b&gt;WARNING : The usage of this method is discouraged for the following reasons: &lt;/b&gt;&lt;br&gt;
+     * &lt;br&gt;
+     * 1. Inline operations are inherently error-prone for most use cases. &lt;br&gt;
+     * 2. This inline operation in particular has no safety net,
+     * meaning that there is no implementation of version mismatch detection
+     * like there is for those operations present in the standard operation backend...
+     * No exceptions will be thrown during backpropagation! &lt;br&gt;
+     * 3. This method has not yet been implemented to also handle instances which
+     * are slices of parent tensors!
+     * Therefore, there might be unexpected performance penalties or side effects
+     * associated with this method.&lt;br&gt;
+     * &lt;br&gt;
+     *
+     * @param typeClass The target type class for elements of this tensor.
+     * @param &lt;V&gt;       The type parameter for the returned tensor.
+     * @return The same tensor instance whose data has been converted to hold a different type.
+     */
+    &lt;V&gt; Nda&lt;V&gt; toType(Class&lt;V&gt; typeClass);
+
+    Data&lt;T&gt; getData();
+
+    &lt;A&gt; A getDataAs(Class&lt;A&gt; arrayTypeClass);
+
+    Nda&lt;T&gt; assign( T other );
+
+    Nda&lt;T&gt; assign( Nda&lt;T&gt; other );
+
+    Nda&lt;T&gt; label( String label );
+
+    /**
+     * This method receives a nested {@link String} array which
+     * ought to contain a label for the index of this tensor.
+     * The index for a single element of this tensor would be an array
+     * of numbers as long as the rank where every number is
+     * in the range of the corresponding shape dimension...
+     * Labeling an index means that for every dimension there
+     * must be a label for elements in this range array! &lt;br&gt;
+     * For example the shape (2,3) could be labeled as follows:    &lt;br&gt;
+     * &lt;br&gt;
+     * dim 0 : [&quot;A&quot;, &quot;B&quot;]                                      &lt;br&gt;
+     * dim 1 : [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]                                 &lt;br&gt;
+     * &lt;br&gt;
+     *
+     * @param labels A nested String array containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
+    Nda&lt;T&gt; labelAxes( String[]... labels );
+
+    /**
+     * This method receives a nested {@link String} list which
+     * ought to contain a label for the index of this tensor.
+     * The index for a single element of this tensor would be an array
+     * of numbers as long as the rank where every number is
+     * in the range of the corresponding shape dimension...
+     * Labeling an index means that for every dimension there
+     * must be a label for elements in this range array! &lt;br&gt;
+     * For example the shape (2,3) could be labeled as follows: &lt;br&gt;
+     * &lt;br&gt;
+     * dim 0 : [&quot;A&quot;, &quot;B&quot;]                                   &lt;br&gt;
+     * dim 1 : [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]                              &lt;br&gt;
+     * &lt;br&gt;
+     *
+     * @param labels A nested String list containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
+    Nda&lt;T&gt; labelAxes( List&lt;List&lt;Object&gt;&gt; labels );
+
+    /**
+     * This method provides the ability to
+     * label not only the indices of the shape of this tensor, but also
+     * the dimension of the shape.
+     * The first and only argument of the method expects a map instance
+     * where keys are the objects which ought to act as dimension labels
+     * and the values are lists of labels for the indices of said dimensions.
+     * For example the shape (2,3) could be labeled as follows:            &lt;br&gt;
+     * [                                                                   &lt;br&gt;
+     * &quot;dim 0&quot; : [&quot;A&quot;, &quot;B&quot;],                                           &lt;br&gt;
+     * &quot;dim 1&quot; : [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]                                       &lt;br&gt;
+     * ]                                                                   &lt;br&gt;
+     * &lt;br&gt;
+     *
+     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
+     * @return This tensor (method chaining).
+     */
+    Nda&lt;T&gt; labelAxes( Map&lt;Object, List&lt;Object&gt;&gt; labels );
+
+    Item&lt;T&gt; at( int... indices );
+
+    /**
+     *  Instances of this are being returned by the {@link #at(int...)} method,
+     *  and they allow you to get or set individual nd-array items
+     * @param &lt;V&gt; The type of the items of this nd-array.
+     */
+    interface Item&lt;V&gt; extends Nda.Item&lt;V&gt;
+    {
+        /**
+         *  Set the value at the targeted position.
+         * @param value The value to be set at the targeted position.
+         */
+        void set( V value );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.functions;
 
 import neureka.backend.main.implementations.fun.api.ScalarFun;
-import neureka.calculus.Function;
+import neureka.math.Function;
 
 public final class Logarithm extends AbstractActivationOperation
 {

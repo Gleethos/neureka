@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.022 seconds"
+    "duration":"0.042 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the access device API to read from a tensor.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
 
         {"kind":"and","text":"This is also true for when reading at a particular index.","code":["device.access(t).readArray(arrayType, 1, 1) == [expected[1]]","device.access(s).readArray(arrayType, 1, 1) == [expected[1]]","device.access(t).readArray(arrayType, 2, 1) == [expected[2]]","device.access(s).readArray(arrayType, 2, 1) == [expected[2]]"]},
 
-        {"kind":"where","text":"The parameters in the above code can have the following states:","code":{"deviceType":["CPU","CPU","CPU","CPU","CPU","CPU","GPU","CPU"],"type":["class java.lang.Integer","class java.lang.Short","class java.lang.Long","class java.lang.Byte","class java.lang.Double","class java.lang.Float","class java.lang.Float","class java.lang.Character"],"fill":["[2, 1]","[2, 7, 8]","[6, 2, 6]","[6, 2, 7]","[3.4, 3.0]","[5.7, -1.0]","[5.7, -1.0]","[6, a]"],"expected":["[2, 1, 2, 1]","[2, 7, 8, 2]","[6, 2, 6, 6]","[6, 2, 7, 6]","[3.4, 3.0, 3.4, 3.0]","[5.7, -1.0, 5.7, -1.0]","[5.7, -1.0, 5.7, -1.0]","[6, a, 6, a]"]}}
+        {"kind":"where","text":"The parameters in the above code can have the following states:","code":{"deviceType":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'CPU'"],"type":["Integer","Short","Long","Byte","Double","Float","Float","Character"],"fill":["[2, 1]","[2,7,8]","[6,2,6]","[6,2,7]","[3.4, 3]","[5.7,-1]","[5.7,-1]","['6','a']"],"expected":["[2, 1, 2, 1]","[2,7,8,2]","[6,2,6,6]","[6,2,7,6]","[3.4d, 3.0d, 3.4d, 3.0d]","[5.7f, -1.0f, 5.7f, -1.0f]","[5.7f, -1.0f, 5.7f, -1.0f]","['6','a','6','a']"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -43,7 +43,7 @@
     {
       "id":"We can use the access device API to write to a tensor",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
 
         {"kind":"then","text":"Reading the previously written data should yield the expected result.","code":["device.access(t).readArray(arrayType, 0, 2) == [expected[0],expected[1]]","device.access(s).readArray(arrayType, 2, 2) == [expected[2],expected[3]]"]},
 
-        {"kind":"where","text":"The parameters in the above code can have the following states:","code":{"deviceType":["CPU","CPU","CPU","CPU","CPU","CPU","GPU"],"type":["class java.lang.Integer","class java.lang.Short","class java.lang.Long","class java.lang.Byte","class java.lang.Double","class java.lang.Float","class java.lang.Float"],"fill":["[2, 1]","[2, 7, 8]","[6, 2, 6]","[6, 2, 7]","[3.4, 3.0]","[5.7, -1.0]","[5.7, -1.0]"],"write":["[5]","[7]","[1]","[8]","[3]","[4]","[8]"],"expected":["[5, 1, 5, 1]","[7, 7, 7, 2]","[1, 2, 1, 6]","[8, 2, 8, 6]","[3.0, 3.0, 3.0, 3.0]","[4.0, -1.0, 4.0, -1.0]","[8.0, -1.0, 8.0, -1.0]"]}}
+        {"kind":"where","text":"The parameters in the above code can have the following states:","code":{"deviceType":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'"],"type":["Integer","Short","Long","Byte","Double","Float","Float"],"fill":["[2, 1]","[2,7,8]","[6,2,6]","[6,2,7]","[3.4, 3]","[5.7,-1]","[5.7,-1]"],"write":["[5]","[7]","[1]","[8]","[3]","[4]","[8]"],"expected":["[5, 1, 5, 1]","[7,7,7,2]","[1,2,1,6]","[8,2,8,6]","[3d, 3.0d, 3d, 3.0d]","[4f, -1.0f, 4f, -1.0f]","[8f, -1.0f, 8f, -1.0f]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -53,7 +53,7 @@
 
         {"kind":"then","text":"\n                The tensor which requires gradients, namely \"x\" now has the expected gradients :\n        ","code":["x.toString().contains(\"(2x2):[1.0, 1.0, 1.0, 1.0]:g:[4.5, 4.5, 4.5, 4.5]\")"]},
 
-        {"kind":"when","text":"We now try to access the gradient...","code":["def gradient = x.getGradient()"]},
+        {"kind":"when","text":"We now try to access the gradient...","code":["var gradient = x.gradient.get()"]},
 
         {"kind":"then","text":"This given gradient is as expected !","code":["gradient.toString() == \"(2x2):[4.5, 4.5, 4.5, 4.5]\""]},
 

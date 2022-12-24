@@ -24,4 +24,8 @@ public class SimpleCLImplementation extends CLImplementation
         return _kernel;
     }
 
+    @Override
+    public KernelCode[] getKernelCode() {
+        return new KernelCode[]{ _kernel };
+    }
 }

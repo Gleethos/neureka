@@ -72,7 +72,7 @@ class OpenCLDevice_Exception_Spec extends Specification
     def 'Ad hoc compilation produces expected exceptions.'()
     {
         given :
-            def device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]
+            def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]
 
         expect : 'Initially there is no ad hoc kernel with the following name.'
             !device.hasAdHocKernel( 'right_dummy_kernel_name' )
@@ -104,7 +104,7 @@ class OpenCLDevice_Exception_Spec extends Specification
     def 'Ad hoc compilation produces expected exceptions when duplication is found.'()
     {
         given :
-            def device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]
             def code = """
                         __kernel void right_dummy_kernel_name (
                                 __global float* output,
@@ -145,7 +145,7 @@ class OpenCLDevice_Exception_Spec extends Specification
     def 'Trying to restore a tensor which is not on a device raises exception.'()
     {
         given :
-            def device = Neureka.get().backend().get(CLBackend.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]
 
         when : 'We pass a new tensor to the restore method of the device, even though the tensor is not stored on it...'
             device.restore( Tsr.newInstance() )

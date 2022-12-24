@@ -6,14 +6,15 @@ import neureka.autograd.ADAction;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.NDConvolution;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.implementations.broadcast.CPUBroadcast;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
+import neureka.math.Function;
+import neureka.math.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -87,7 +88,10 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensorAutoGrad(Tsr[] source, String operation, String[] expected, Tsr error, double[][] expectedGradient){
+    public int testTensorAutoGrad(
+            Tsr[] source, String operation, String[] expected,
+            Tsr error, double[][] expectedGradient
+    ){
         printSessionStart("Testing Tsr: autograd!");
         println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
@@ -100,12 +104,12 @@ public class UnitTester_Tensor extends UnitTester
         for(int i=0; i<source.length; i++){
             double[] gradient;
             if ( source[ i ].hasGradient() && source[ i ].is(Float.class) ) {
-                float[] data = (float[]) source[i].getGradient().getRawItems();
+                float[] data = (float[]) ((Tsr)source[i].get(Tsr.class)).getRawItems();
                 gradient = new double[data.length];
                 for ( int ii = 0; ii < data.length; ii++ ) gradient[ii] = data[ii];
             } else
                 gradient = source[ i ].hasGradient()
-                                ? (double[])source[ i ].getGradient().getRawItems()
+                                ? (double[])((Tsr)source[ i ].get(Tsr.class)).getRawItems()
                                 : null;
             this.assertIsEqual(
                     stringified(gradient),
@@ -223,16 +227,20 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
 
-        Broadcast right = new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
-                                .setAutogradModeFor(
-                                        call -> call
-                                                .validate().allNotNullHaveSame(NDimensional::shape)
-                                                .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
-                                                .orElse(AutoDiffMode.BACKWARD_ONLY)
-                                )
-                                .setDeviceExecution(
-                                    (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback),
-                                    ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+        Broadcast right = new Broadcast()
+                            .setAutogradModeFor(
+                                    call -> call
+                                            .validate().allNotNullHaveSame(NDimensional::shape)
+                                            .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                                            .orElse(AutoDiffMode.BACKWARD_ONLY)
+                            )
+                            .setExecution(
+                                (outerCaller, outerCall) ->
+                                    Result.of(AbstractDeviceAlgorithm.executeFor(
+                                        outerCaller, outerCall,
+                                        call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call )
+                                    ))
+                                    .withAutoDiff( ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                     {
                                         Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
                                         Function mul = Neureka.get().backend().getFunction().mul();
@@ -242,63 +250,65 @@ public class UnitTester_Tensor extends UnitTester
                                         int d = adCall.getDerivativeIndex();
                                         Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
                                         return ADAction.of( target -> mul.execute( target.error(), derivative ) );
-                                    }
-                                )
-                                .setCallPreparation(
-                                        call -> {
-                                            int offset = ( call.input( 0 ) == null ) ? 1 : 0;
-                                            return
-                                                ExecutionCall.of(call.input( offset ), call.input( 1+offset )).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
-                                        }
-                                )
-                                .buildFunAlgorithm()
-                                .setImplementationFor(
-                                        CPU.class,
-                                        CPUImplementation
-                                                .withArity(3)
-                                                .andImplementation(
-                                                        new TestBroadcast()
-                                                )
-                                );
+                                    })
+                            )
+                            .setCallPreparation(
+                                call -> {
+                                    int offset = ( call.input( 0 ) == null ) ? 1 : 0;
+                                    return
+                                        ExecutionCall.of(call.input( offset ), call.input( 1+offset )).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
+                                }
+                            )
+                            .buildFunAlgorithm()
+                            .setImplementationFor(
+                                CPU.class,
+                                CPUImplementation
+                                .withArity(3)
+                                .andImplementation(new TestBroadcast())
+                            );
 
-        Broadcast left = new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
-                                    .setAutogradModeFor(
-                                        call -> call
-                                                .validate().allNotNullHaveSame(NDimensional::shape)
-                                                .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
-                                                .orElse(AutoDiffMode.BACKWARD_ONLY)
-                                    )
-                                    .setDeviceExecution(
-                                        (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback),
-                                        ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
-                                        {
-                                            Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
-                                            Function mul = Neureka.get().backend().getFunction().mul();
-                                            if ( ctxDerivative != null ) {
-                                                return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
-                                            }
-                                            Tsr<?>[] inputs = adCall.inputs();
-                                            int d = adCall.getDerivativeIndex();
-                                            Tsr<?> derivative = f.executeDerive( inputs, d );
-                                            return ADAction.of( target -> mul.execute( target.error(), derivative ) );
-                                        }
-                                    )
-                                    .setCallPreparation(
-                                        call -> {
-                                            Tsr<?>[] tsrs = call.inputs();
-                                            int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                                            return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
-                                        }
-                                    )
-                                    .buildFunAlgorithm()
-                                    .setImplementationFor(
-                                            CPU.class,
-                                            CPUImplementation
-                                                    .withArity(3)
-                                                    .andImplementation(
-                                                            new TestBroadcast()
-                                                    )
-                                    );
+        Broadcast left = new Broadcast()
+        .setAutogradModeFor(
+            call -> call
+                    .validate().allNotNullHaveSame(NDimensional::shape)
+                    .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
+                    .orElse(AutoDiffMode.BACKWARD_ONLY)
+        )
+        .setExecution(
+            (outerCaller, outerCall) ->
+                Result.of(AbstractDeviceAlgorithm.executeFor(
+                    outerCaller, outerCall,
+                    innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
+                ))
+                .withAutoDiff( ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
+                {
+                    Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
+                    Function mul = Neureka.get().backend().getFunction().mul();
+                    if ( ctxDerivative != null ) {
+                        return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
+                    }
+                    Tsr<?>[] inputs = adCall.inputs();
+                    int d = adCall.getDerivativeIndex();
+                    Tsr<?> derivative = f.executeDerive( inputs, d );
+                    return ADAction.of( target -> mul.execute( target.error(), derivative ) );
+                })
+        )
+        .setCallPreparation(
+            call -> {
+                Tsr<?>[] tsrs = call.inputs();
+                int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
+                return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
+            }
+        )
+        .buildFunAlgorithm()
+        .setImplementationFor(
+                CPU.class,
+                CPUImplementation
+                        .withArity(3)
+                        .andImplementation(
+                                new TestBroadcast()
+                        )
+        );
 
         left.getImplementationFor( CPU.class )
                 .run(

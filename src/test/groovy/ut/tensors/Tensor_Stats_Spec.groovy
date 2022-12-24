@@ -2,7 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.math.Function
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -110,7 +110,7 @@ class Tensor_Stats_Spec extends Specification
             (x+y).backward()
 
         then : 'The gradient is correct:'
-            a.gradient.items == [0f, 0f, 0f, 1.5f, 0f, 0.75f, 0f]
+            a.gradient.get().items == [0f, 0f, 0f, 1.5f, 0f, 0.75f, 0f]
     }
 
     def 'We can use the "sum" method to sum the items of a tensor.'()
@@ -141,7 +141,7 @@ class Tensor_Stats_Spec extends Specification
             x.backward()
 
         then : 'The gradient is correct:'
-            a.gradient.items == [3f, 3f, 3f, 3f]
+            a.gradient.get().items == [3f, 3f, 3f, 3f]
     }
 
 }

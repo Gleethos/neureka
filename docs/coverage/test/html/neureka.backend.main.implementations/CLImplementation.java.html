@@ -3,7 +3,6 @@
 
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.template.implementations.AbstractImplementationFor;
-import neureka.devices.opencl.KernelSource;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.StaticKernelSource;
 
@@ -19,58 +18,7 @@ public abstract class CLImplementation extends AbstractImplementationFor&lt;Open
             ImplementationFor&lt;OpenCLDevice&gt; execution,
             int arity
     ) {
-<span class="fc" id="L22">        super( execution, arity );</span>
-<span class="fc" id="L23">    }</span>
-
-    public static SourceBuilder fromSource() {
-<span class="fc" id="L26">        return new SourceBuilder();</span>
-    }
-
-    public static ParsedCLImplementation.Builder compiler() {
-<span class="fc" id="L30">        return new ParsedCLImplementation.Builder();</span>
-    }
-
-    public static AdHocCompiler adHoc( KernelSource kernelProvider ) {
-<span class="nc" id="L34">        return new AdHocCompiler( kernelProvider );</span>
-    }
-
-    /**
-     *  This builder builds the most basic type of {@link CLImplementation} which
-     *  is in essence merely a wrapper for a lambda and the arity of this implementation.
-     */
-    public static class SourceBuilder
-    {
-        private ImplementationFor&lt;OpenCLDevice&gt; lambda;
-        private int arity;
-        private String kernelName;
-        private String kernelSource;
-
-        private SourceBuilder() { }
-
-        /**
-         * @param lambda The code which passes the call data to OpenCL and calls the kernel.
-         * @return This builder instance to allow for method chaining.
-         */
-<span class="fc" id="L54">        public SourceBuilder lambda(ImplementationFor&lt;OpenCLDevice&gt; lambda) { this.lambda = lambda;return this; }</span>
-<span class="fc" id="L55">        public SourceBuilder arity(int arity) { this.arity = arity; return this; }</span>
-<span class="fc" id="L56">        public SourceBuilder kernelName(String kernelName) { this.kernelName = kernelName;return this; }</span>
-<span class="fc" id="L57">        public SourceBuilder kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }</span>
-<span class="fc" id="L58">        public CLImplementation build() { return new SimpleCLImplementation(lambda, arity, kernelName, kernelSource); }</span>
-    }
-
-    public static class AdHocCompiler {
-
-        private final KernelSource _source;
-        private int _arity;
-
-<span class="nc" id="L66">        AdHocCompiler( KernelSource source ) { _source = source; }</span>
-
-<span class="nc" id="L68">        public AdHocCompiler arity( int arity ) { _arity = arity; return this; }</span>
-
-        public CLImplementation caller( ImplementationFor&lt;OpenCLDevice&gt; lambda) {
-<span class="nc" id="L71">            return new AdHocClImplementation( lambda, _arity, _source );</span>
-        }
-
-    }
+<span class="fc" id="L21">        super( execution, arity );</span>
+<span class="fc" id="L22">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

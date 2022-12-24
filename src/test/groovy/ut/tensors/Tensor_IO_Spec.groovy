@@ -2,7 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.devices.host.CPU
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
@@ -173,7 +173,7 @@ class Tensor_IO_Spec extends Specification
 
 
     @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
-    def 'We can manipulate the underlying data array of a tensor through the unsafe API.'(
+    def 'We can manipulate the underlying data array of a tensor through the mut API.'(
             String device, Class<?> type
     ) {
         given : 'A tensor of 3 numbers:'
@@ -205,9 +205,14 @@ class Tensor_IO_Spec extends Specification
             'CPU'  | Float
             'CPU'  | Byte
             'CPU'  | Short
-            //'CPU'  | Integer
-            //'CPU'  | Long
-            //'GPU'  | Float
+            'CPU'  | Integer
+            'CPU'  | Long
+            'GPU'  | Double
+            'GPU'  | Float
+            'GPU'  | Byte
+            'GPU'  | Short
+            'GPU'  | Integer
+            'GPU'  | Long
     }
 
     @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!

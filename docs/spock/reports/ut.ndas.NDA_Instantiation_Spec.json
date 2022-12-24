@@ -4,12 +4,12 @@
   "narrative":"In this specification we cover how ND-arrays can be instantiated.",
   "subjects":["neureka.Nda"],
   "statistics":{
-    "runs":"2",
+    "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"0.011 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -39,12 +39,12 @@
     {
       "id":"ND-arrays can be created fluently.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new homogeneously filled Nda instance using a fluent builder API.","code":["Nda<?> t = Nda.of( type )",".withShape( 3, 2 )",".all( value )"]},
+        {"kind":"given","text":"We create a new homogeneously filled Nda instance using a fluent builder API.","code":["Nda<?> t = Nda.of( type )","                     .withShape( 3, 2 )","                     .all( value )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type!","code":["t.itemType() == type"]},
 
@@ -54,7 +54,20 @@
 
         {"kind":"and","text":"The size of the tensor will be the product of all shape entries: 2 * 3 = 6.","code":["t.size == 6"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["class java.lang.Integer","class java.lang.Double","class java.lang.Float","class java.lang.Long","class java.lang.Boolean","class java.lang.Character"],"value":["42","4.0","4.0","42","false","°"],"data":["[42]","[4.0]","[4.0]","[42]","[false]","°"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer","Double","Float","Long","Boolean","Character"],"value":["42  as int","4.0 as double","4f  as float","42L as Long","false","'Â°' as char"],"data":["new int[]   { 42  }","new double[]{ 4.0 }","new float[] { 4f  }","new long[]  { 42L }","new boolean[] { false }","new char[] { 'Â°' as char }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Common types of nd-arrays are best instantiated using type specific convenience methods.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The operands of the following expressions are invariant to another:","code":["Nda.ofStrings().scalar(\"Hi\").item  == Nda.of(String).scalar(\"Hi\").item","Nda.ofInts().scalar(3).item        == Nda.of(Integer).scalar(3).item","Nda.ofDoubles().scalar(3.0).item   == Nda.of(Double).scalar(3.0).item","Nda.ofFloats().scalar(3f).item     == Nda.of(Float).scalar(3f).item","Nda.ofLongs().scalar(3L).item      == Nda.of(Long).scalar(3L).item","Nda.ofBooleans().scalar(true).item == Nda.of(Boolean).scalar(true).item","Nda.ofChars().scalar((char)'Â°').item    == Nda.of(Character).scalar((char)'Â°').item","Nda.ofBytes().scalar((byte)3).item      == Nda.of(Byte).scalar((byte)3).item","Nda.ofShorts().scalar((short)3).item    == Nda.of(Short).scalar((short)3).item","Nda.ofObjects().scalar([]).item         == Nda.of(Object).scalar([]).item","Nda.ofNumbers().scalar(3).item     == Nda.of(Number).scalar(3).item","Nda.ofBigDecimals().scalar(3).item == Nda.of(BigDecimal).scalar(3).item"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

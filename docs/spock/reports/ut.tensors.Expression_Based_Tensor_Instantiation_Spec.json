@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"0.007 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -23,7 +23,7 @@
       "blocks":[
         {"kind":"given","text":"A simple scalar tensor containing the number \"4\".","code":["Tsr x = Tsr.of(4d)"]},
 
-        {"kind":"when","text":"","code":["Tsr y = Tsr.of(\"th(I[0])\", x)"]},
+        {"kind":"when","text":"","code":["when: Tsr y = Tsr.of(\"th(I[0])\", x)"]},
 
         {"kind":"then","text":"","code":["y.toString() == \"(1):[0.99932]\"","y.isBranch()","!y.isLeave()","y.belongsToGraph()","x.belongsToGraph()"]}
       ],
@@ -33,40 +33,40 @@
     {
       "id":"We can instantiate tensors from various simple string expressions.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Three scalar tensors.","code":["Tsr<Double> a = Tsr.of(3d)","Tsr<Double> b = Tsr.of(2d)","Tsr<Double> c = Tsr.of(-1d)"]},
 
-        {"kind":"when","text":"","code":["var t = Tsr.of(\"1+\", a, \"*\", b)"]},
+        {"kind":"when","text":"","code":["when : var t = Tsr.of(\"1+\", a, \"*\", b)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"7.0\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"7.0\")"]},
 
-        {"kind":"when","text":"","code":["t = Tsr.of(\"1\", \"+\", a, \"*\", b)"]},
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"1\", \"+\", a, \"*\", b)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"7.0\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"7.0\")"]},
 
-        {"kind":"when","text":"","code":["t = Tsr.of(\"(\",\"1+\", a,\")\", \"*\", b)"]},
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\",\"1+\", a,\")\", \"*\", b)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"8.0\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"8.0\")"]},
 
-        {"kind":"when","text":"","code":["t = Tsr.of(\"(\",\"1\", \"+\", a,\")\", \"*\", b)"]},
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\",\"1\", \"+\", a,\")\", \"*\", b)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"8.0\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"8.0\")"]},
 
-        {"kind":"when","text":"","code":["t = Tsr.of(\"(\", c, \"*3)+\", \"(\",\"1+\", a,\")\", \"*\", b)"]},
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\", c, \"*3)+\", \"(\",\"1+\", a,\")\", \"*\", b)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"5.0\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"5.0\")"]},
 
-        {"kind":"when","text":"","code":["t = Tsr.of(\"(\", c, \"*\",\"3)+\", \"(\",\"1+\", a,\")\", \"*\", b)"]},
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\", c, \"*\",\"3)+\", \"(\",\"1+\", a,\")\", \"*\", b)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"5.0\")"]},
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"5.0\")"]},
 
-        {"kind":"when","text":"","code":["t = Tsr.of(\"(\", c, \"*\",\"3\", \")+\", \"(\",\"1+\", a,\")\", \"*\", b)"]},
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\", c, \"*\",\"3\", \")+\", \"(\",\"1+\", a,\")\", \"*\", b)"]},
 
-        {"kind":"then","text":"","code":["t.toString().contains(\"5.0\")"]}
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"5.0\")"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

@@ -189,7 +189,7 @@ to perform said procedures.
 
 ```java
     ADAction supplyADActionFor(
-        neureka.calculus.Function f,
+        neureka.math.Function f,
         ExecutionCall<? extends Device<?>> call,
         boolean forward
     );

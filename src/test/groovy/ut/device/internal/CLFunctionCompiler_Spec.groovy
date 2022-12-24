@@ -6,8 +6,8 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
-import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionParser
+import neureka.math.Function
+import neureka.math.parsing.FunctionParser
 import neureka.backend.ocl.CLBackend
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
@@ -59,10 +59,10 @@ class CLFunctionCompiler_Spec extends Specification
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
-    def 'The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).'()
+    def 'The OpenCLDevice produces a working optimized Function for doubles.'()
     {
         given : 'We get the first available OpenCLDevice we can find in the CLContext!'
-            def device = Neureka.get().backend().get(CLBackend.class).platforms[0].devices[0]
+            def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]
         and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
             Tsr<Double> t1 = Tsr.of(-2d).to(device)
             Tsr<Double> t2 = Tsr.of(5d).to(device)
@@ -75,7 +75,7 @@ class CLFunctionCompiler_Spec extends Specification
             Function optimized = device.optimizedFunctionOf(funToBeOptimized, "my_test_fun")
 
         then : 'Initially we expect that the device does not contain the "ad hoc" kernel with the following signature...'
-            !device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
+            !device.hasAdHocKernel("my_test_fun_F64\$1_F64\$1_F64\$1_F64\$1")
 
         when : 'We test the optimized function by calling it with three arguments...'
             Tsr result = optimized( t1, t2, t3 )
@@ -84,7 +84,36 @@ class CLFunctionCompiler_Spec extends Specification
             result.toString() == "(1):[1.6]"
 
         and : 'We expect that the device has an underlying kernel with the following name:'
-            device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
+            device.hasAdHocKernel("my_test_fun_F64\$1_F64\$1_F64\$1_F64\$1")
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
+    def 'The OpenCLDevice produces a working optimized Function for floats.'()
+    {
+        given : 'We get the first available OpenCLDevice we can find in the CLContext!'
+            def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]
+        and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
+            Tsr<Float> t1 = Tsr.of(-3f).to(device)
+            Tsr<Float> t2 = Tsr.of(6f).to(device)
+            Tsr<Float> t3 = Tsr.of(2f).to(device)
+
+        and : 'A test function which will be the optimization target for this test.'
+            def funToBeOptimized = Function.of("i0 * (i1 / i2)") // -3 * (6 / 2)
+
+        when : 'We instruct the device to produce an optimized Function based on the provided test function...'
+            Function optimized = device.optimizedFunctionOf(funToBeOptimized, "my_fun")
+
+        then : 'Initially we expect that the device does not contain the "ad hoc" kernel with the following signature...'
+            !device.hasAdHocKernel("my_fun_F32\$1_F32\$1_F32\$1_F32\$1")
+
+        when : 'We test the optimized function by calling it with three arguments...'
+            Tsr result = optimized( t1, t2, t3 )
+
+        then : '...the result should look as follows:'
+            result.toString() == "(1):[-9.0]"
+
+        and : 'We expect that the device has an underlying kernel with the following name:'
+            device.hasAdHocKernel("my_fun_F32\$1_F32\$1_F32\$1_F32\$1")
     }
 
     /* // WIP
@@ -211,7 +240,7 @@ class CLFunctionCompiler_Spec extends Specification
 
         then : """
                 We will register that the Operation created by the CLFunctionCompiler managed to 
-                integrate well with the Function backend (calculus package) and eventually
+                integrate well with the Function backend (math package) and eventually
                 dispatch an execution call to our mocked OpenCLDevice.
         """
             1 * mockDevice.approve({ ExecutionCall<OpenCLDevice> call ->

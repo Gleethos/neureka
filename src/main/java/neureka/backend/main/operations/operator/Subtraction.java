@@ -8,15 +8,16 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.BiElementwise;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 import neureka.devices.Device;
 import neureka.ndim.NDimensional;
 
@@ -40,22 +41,22 @@ public class Subtraction extends AbstractOperation
         );
 
         setAlgorithm(
-            new BiElementWise(ElemWiseUtil::forSubtractions)
+            new BiElementwise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
-            Scalarization.class,
-            new Scalarization()
+            BiScalarBroadcast.class,
+            new BiScalarBroadcast()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
-            .setDeviceExecution( (call, callback) -> ElemWiseUtil.forSubtractions(call, callback) )
+            .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
             Broadcast.class,
-            new Broadcast(ElemWiseUtil::forSubtractions)
+            new Broadcast()
                 .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
                 .setSupplyADActionFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call ) ->
@@ -65,7 +66,7 @@ public class Subtraction extends AbstractOperation
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         assert ctxDerivative == null;
                         int d = call.getDerivativeIndex();
-                        Tsr<?> derivative = ElemWiseUtil.newTsrLike( call.input( d==0?1:0 ), 0 );
+                        Tsr<?> derivative = ElemWiseUtil.newTsrLike( call.input( d == 0 ? 1 : 0 ), 0 );
                         Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike( call.input( d ), 0 );
                         Device device = call.getDevice();
                         return

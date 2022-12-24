@@ -13,6 +13,7 @@ import neureka.backend.main.operations.functions.*;
 import neureka.backend.main.operations.linear.*;
 import neureka.backend.main.operations.operator.*;
 import neureka.backend.main.operations.other.AssignLeft;
+import neureka.backend.main.operations.other.Randomization;
 import neureka.backend.main.operations.other.Sum;
 import neureka.backend.main.operations.other.internal.CPUSum;
 import neureka.devices.host.CPU;
@@ -38,38 +39,38 @@ public class CPUBackend implements BackendExtension
     private void _load( ReceiveForDevice<CPU> receive )
     {
         receive.forOperation( Power.class )
-                .set( Scalarization.class, context -> new CPUScalaBroadcastPower() )
+                .set( BiScalarBroadcast.class, context -> new CPUScalaBroadcastPower() )
                 .set( Broadcast.class,     context -> new CPUBroadcastPower() )
-                .set( BiElementWise.class, context -> new CPUBiElementWisePower() );
+                .set( BiElementwise.class, context -> new CPUBiElementWisePower() );
 
         receive.forOperation( Addition.class )
-                .set( Scalarization.class, context -> new CPUScalarBroadcastAddition() )
+                .set( BiScalarBroadcast.class, context -> new CPUScalarBroadcastAddition() )
                 .set( Broadcast.class,     context -> new CPUBroadcastAddition() )
-                .set( BiElementWise.class, context -> new CPUBiElementWiseAddition() );
+                .set( BiElementwise.class, context -> new CPUBiElementWiseAddition() );
 
         receive.forOperation( Subtraction.class )
-                .set( Scalarization.class, context -> new CPUScalarBroadcastSubtraction() )
+                .set( BiScalarBroadcast.class, context -> new CPUScalarBroadcastSubtraction() )
                 .set( Broadcast.class,     context -> new CPUBroadcastSubtraction() )
-                .set( BiElementWise.class, context -> new CPUBiElementWiseSubtraction() );
+                .set( BiElementwise.class, context -> new CPUBiElementWiseSubtraction() );
 
         receive.forOperation( Multiplication.class )
-                .set( Scalarization.class, context -> new CPUScalarBroadcastMultiplication() )
+                .set( BiScalarBroadcast.class, context -> new CPUScalarBroadcastMultiplication() )
                 .set( Broadcast.class,     context -> new CPUBroadcastMultiplication() )
-                .set( BiElementWise.class, context -> new CPUBiElementWiseMultiplication() );
+                .set( BiElementwise.class, context -> new CPUBiElementWiseMultiplication() );
 
         receive.forOperation( Division.class )
-                .set( Scalarization.class, context -> new CPUScalarBroadcastDivision() )
+                .set( BiScalarBroadcast.class, context -> new CPUScalarBroadcastDivision() )
                 .set( Broadcast.class,     context -> new CPUBroadcastDivision() )
-                .set( BiElementWise.class, context -> new CPUBiElementWiseDivision() );
+                .set( BiElementwise.class, context -> new CPUBiElementWiseDivision() );
 
         receive.forOperation( Modulo.class )
-                .set( Scalarization.class, context -> new CPUScalarBroadcastModulo() )
+                .set( BiScalarBroadcast.class, context -> new CPUScalarBroadcastModulo() )
                 .set( Broadcast.class,     context -> new CPUBroadcastModulo() )
-                .set( BiElementWise.class, context -> new CPUBiElementWiseModulo() );
+                .set( BiElementwise.class, context -> new CPUBiElementWiseModulo() );
 
         receive.forOperation( AssignLeft.class )
-                .set( Scalarization.class, context -> new CPUScalarBroadcastIdentity() )
-                .set( Activation.class, context -> new CPUElementwiseAssignFun() );
+                .set( BiScalarBroadcast.class, context -> new CPUScalarBroadcastIdentity() )
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseAssignFun() );
 
         receive.forOperation( Convolution.class )
                .set( NDConvolution.class, context -> new CPUConvolution() );
@@ -84,75 +85,78 @@ public class CPUBackend implements BackendExtension
         receive.forOperation( Sum.class )
                 .set( SumAlgorithm.class, context -> new CPUSum() );
 
+        receive.forOperation( Randomization.class )
+                .set( ElementwiseAlgorithm.class, context -> new CPURandomization() );
+
         receive.forOperation( Absolute.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.ABSOLUTE) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.ABSOLUTE) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.ABSOLUTE) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.ABSOLUTE) );
         receive.forOperation( Cosinus.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.COSINUS) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.COSINUS) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.COSINUS) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.COSINUS) );
         receive.forOperation( GaSU.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.GASU) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.GASU) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.GASU) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.GASU) );
         receive.forOperation( GaTU.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.GATU) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.GATU) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.GATU) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.GATU) );
         receive.forOperation( Gaussian.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.GAUSSIAN) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.GAUSSIAN) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.GAUSSIAN) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.GAUSSIAN) );
         receive.forOperation( GaussianFast.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.GAUSSIAN_FAST) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.GAUSSIAN_FAST) );
         receive.forOperation( GeLU.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.GELU) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.GELU) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.GELU) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.GELU) );
         receive.forOperation( Identity.class )
-                .set( Activation.class, context -> new CPUElementwiseAssignFun() )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.IDENTITY) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseAssignFun() )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.IDENTITY) );
         receive.forOperation( Logarithm.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.LOGARITHM) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.LOGARITHM) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.LOGARITHM) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.LOGARITHM) );
         receive.forOperation( Quadratic.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.QUADRATIC) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.QUADRATIC) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.QUADRATIC) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.QUADRATIC) );
         receive.forOperation( ReLU.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.RELU) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.RELU) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.RELU) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.RELU) );
         receive.forOperation( SeLU.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.SELU) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.SELU) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.SELU) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.SELU) );
         receive.forOperation( Sigmoid.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.SIGMOID) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.SIGMOID) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.SIGMOID) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.SIGMOID) );
         receive.forOperation( SiLU.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.SILU) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.SILU) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.SILU) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.SILU) );
         receive.forOperation( Sinus.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.SINUS) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.SINUS) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.SINUS) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.SINUS) );
         receive.forOperation( Softplus.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.SOFTPLUS) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.SOFTPLUS) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.SOFTPLUS) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.SOFTPLUS) );
         receive.forOperation( Softsign.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.SOFTSIGN) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.SOFTSIGN) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.SOFTSIGN) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.SOFTSIGN) );
         receive.forOperation( Tanh.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.TANH) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.TANH) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.TANH) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.TANH) );
         receive.forOperation( TanhFast.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.TANH_FAST) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.TANH_FAST) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.TANH_FAST) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.TANH_FAST) );
         receive.forOperation( Exp.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.EXP) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.EXP) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.EXP) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.EXP) );
         receive.forOperation( Cbrt.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.CBRT) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.CBRT) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.CBRT) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.CBRT) );
         receive.forOperation( Log10.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.LOG10) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.LOG10) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.LOG10) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.LOG10) );
         receive.forOperation( Sqrt.class )
-                .set( Activation.class, context -> new CPUElementwiseFunction( ScalarFun.SQRT) )
-                .set( ScalarActivation.class, context -> new CPUScalarFunction(ScalarFun.SQRT) );
+                .set( ElementwiseAlgorithm.class, context -> new CPUElementwiseFunction( ScalarFun.SQRT) )
+                .set( ScalarAlgorithm.class, context -> new CPUScalarFunction(ScalarFun.SQRT) );
     }
 
 }

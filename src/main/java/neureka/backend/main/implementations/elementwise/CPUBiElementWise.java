@@ -15,6 +15,8 @@ public abstract class CPUBiElementWise implements ImplementationFor<CPU>
 
     @Override
     public Tsr<?> run(ExecutionCall<CPU> call) {
+        if ( call.arity() < 3 )
+            throw new IllegalArgumentException("The element-wise operation requires at least two arguments and one output!");
         call.getDevice()
                 .getExecutor()
                 .threaded(

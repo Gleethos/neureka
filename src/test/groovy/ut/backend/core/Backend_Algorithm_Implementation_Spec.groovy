@@ -9,8 +9,8 @@ import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
-import neureka.backend.main.algorithms.Activation
-import neureka.backend.main.algorithms.BiElementWise
+import neureka.backend.main.algorithms.ElementwiseAlgorithm
+import neureka.backend.main.algorithms.BiElementwise
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
@@ -46,8 +46,8 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                         e ->
                                     e.isOperator() &&
                                     e.getOperator().length() == 1 &&
-                                    e.supports( BiElementWise.class )
-                    ).map( e -> e.getAlgorithm( BiElementWise.class ) )
+                                    e.supports( BiElementwise.class )
+                    ).map( e -> e.getAlgorithm( BiElementwise.class ) )
 
     }
 
@@ -69,8 +69,8 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                     .backend()
                     .getOperations()
                     .stream()
-                    .filter( e -> e.supports( Activation.class ) )
-                    .map( e -> e.getAlgorithm( Activation.class ) )
+                    .filter( e -> e.supports( ElementwiseAlgorithm.class ) )
+                    .map( e -> e.getAlgorithm( ElementwiseAlgorithm.class ) )
     }
 
 
@@ -91,6 +91,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             hostExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
+            (1.._) * call.arity() >> 3
             (0.._) * tensor.getMut() >> mutate
             (0.._) * tensor.mut() >> mutate
             (1.._) * call.getDevice() >> device
@@ -119,9 +120,9 @@ class Backend_Algorithm_Implementation_Spec extends Specification
                                 e ->
                                             e.isOperator() &&
                                             e.getOperator().length() == 1 &&
-                                            e.supports( BiElementWise.class )
+                                            e.supports( BiElementwise.class )
                             )
-                            .map( e -> e.getAlgorithm( BiElementWise.class ) )
+                            .map( e -> e.getAlgorithm( BiElementwise.class ) )
 
     }
 

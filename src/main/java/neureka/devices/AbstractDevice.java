@@ -38,8 +38,10 @@ import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.common.composition.Component;
+import neureka.common.utility.DataConverter;
+import neureka.dtype.DataType;
 import neureka.framing.Relation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,16 +49,9 @@ import org.slf4j.LoggerFactory;
 /**
  *  This is the abstract precursor class providing
  *  some useful implementations for core concepts which are most likely
- *  applicable to most concrete implementations of the Device interface.
- *  These class provides the following features :
+ *  applicable to most concrete implementations of the {@link Device} interface.
  *
- *  - A Cleaner instance used for freeing resources of the device.
- *
- *  - A component update implementation which simply calls the swap method of the device.
- *
- *  - An implementation for the execution method which calls the underlying calculus backend.
- *
- * @param <V> The most common super type for all tensors storable on this device.
+ * @param <V> The common super type for the types of tensors storable on this device.
  */
 public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 {
@@ -90,7 +85,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             if ( newOwner.has( Relation.class ) ) {
                 Relation<V> relation = newOwner.get(Relation.class);
                 if ( relation.hasParent() ) { // Root needs to be found ! :
-                    Tsr<V> root = relation.findRootTensor();
+                    Tsr<V> root = relation.findRootTensor().orElseThrow(IllegalStateException::new);
                     if (!this.has(root) || !root.isOutsourced())
                         throw new IllegalStateException("Data parent is not outsourced!");
                 }
@@ -149,14 +144,14 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         return new Access<T>() {
             @Override public Writer write(T item) {
                 return new Writer() {
-                    @Override public void intoRange(int start, int limit) { _writeItem( tensor, item, start, limit-start ); }
-                    @Override public void fully() { _writeItem( tensor, item, 0, tensor.size() ); }
+                    @Override public void intoRange(int start, int limit) { _writeItemInternal( tensor, item, start, limit-start ); }
+                    @Override public void fully() { _writeItemInternal( tensor, item, 0, tensor.size() ); }
                 };
             }
             @Override public Writer writeFrom( Object array, int offset ) {
                 return new Writer() {
-                    @Override public void intoRange( int start, int limit ) { _writeArray( tensor, array, offset, start, limit-start ); }
-                    @Override public void fully() { _writeArray( tensor, array, offset, 0, tensor.size() ); }
+                    @Override public void intoRange( int start, int limit ) { _writeArrayInternal( tensor, array, offset, start, limit-start ); }
+                    @Override public void fully() { _writeArrayInternal( tensor, array, offset, 0, tensor.size() ); }
                 };
             }
             @Override public T readAt( int index ) { return _readItem( tensor, index ); }
@@ -167,6 +162,26 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
             @Override public neureka.Data<V> actualize() { return _actualize( tensor ); }
         };
+    }
+
+    private  <T extends V> void _writeItemInternal( Tsr<T> tensor, T item, int start, int size ) {
+        Class<T> itemType = tensor.itemType();
+        if ( !itemType.isAssignableFrom( item.getClass() ) )
+            item = DataConverter.get().convert( item, itemType );
+        _writeItem( tensor, item, start, size );
+    }
+
+    private <T extends V> void _writeArrayInternal(
+            Tsr<T> tensor, Object array,
+            int offset, int start, int size
+    ) {
+        DataType<?> dataType = tensor.getDataType();
+        if ( dataType == null )
+            dataType = _dataTypeOf( array );
+        Class<?> arrayType = dataType.dataArrayType();
+        if ( !arrayType.isAssignableFrom( array.getClass() ) )
+            array = DataConverter.get().convert( array, arrayType );
+        _writeArray( tensor, array, offset, start, size );
     }
 
     /**
@@ -192,14 +207,13 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
 
-    protected abstract neureka.Data<V> _actualize(Tsr<?> tensor );
+    protected abstract neureka.Data<V> _actualize( Tsr<?> tensor );
 
-    protected <T extends V> neureka.Data<T> _dataArrayOf( Object data ) {
+    protected abstract DataType<?> _dataTypeOf( Object rawData );
+
+    protected <T extends V> neureka.Data<T> _dataArrayOf( Object data, DataType<T> dataType ) {
         assert !(data instanceof neureka.Data);
-        return new neureka.Data<T>() {
-            @Override public Device<T> owner() { return (Device<T>) AbstractDevice.this; }
-            @Override public Object getRef() { return data; }
-        };
+        return new DeviceData<T>( this, data, dataType ) {};
     }
 
 }

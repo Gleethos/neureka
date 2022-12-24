@@ -46,9 +46,12 @@ public final class NDFrame<V> implements Component<Tsr<V>>
      */
     private final String _mainLabel;
 
-    public NDFrame( List<List<Object>> labels, String mainLabel ) {
-        _mainLabel = mainLabel;
-        _mapping = new LinkedHashMap<>(labels.size());
+    public NDFrame( List<List<Object>> labels, Tsr<V> host, String mainLabel ) {
+        this(Collections.emptyMap(), host, mainLabel);
+        _label(labels);
+    }
+
+    private NDFrame<V> _label( List<List<Object>> labels ) {
         for ( int i = 0; i < labels.size(); i++ ) _mapping.put( i, new LinkedHashMap<>() );
         for ( int i = 0; i < labels.size(); i++ ) {
             if ( labels.get( i ) != null ) {
@@ -58,33 +61,41 @@ public final class NDFrame<V> implements Component<Tsr<V>>
                 }
             }
         }
+        return this;
     }
 
-    public NDFrame( int size, String tensorName ) {
-        _mainLabel = tensorName;
-        _mapping = new LinkedHashMap<>( size );
-        for ( int i = 0; i < size; i++ ) _mapping.put( i, new LinkedHashMap<>() );
+    public NDFrame( Tsr<V> host, String tensorName ) {
+        this(Collections.emptyMap(), host, tensorName);
     }
 
-    public NDFrame(Map<Object, List<Object>> labels, Tsr<V> host, String tensorName ) {
-        _mainLabel = tensorName;
+    public NDFrame(
+            Map<Object, List<Object>> labels,
+            Tsr<V> host,
+            String ndaMainLabel
+    ) {
+        _mainLabel = ndaMainLabel;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
         int[] index = { 0 };
         labels.forEach( ( k, v ) -> {
+            if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
             if ( v != null ) {
                 Map<Object, Integer> indicesMap = new LinkedHashMap<>( v.size() * 3 );
                 for ( int i = 0; i < v.size(); i++ ) indicesMap.put( v.get( i ), i );
-                if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
                 _mapping.put( k, indicesMap );
-                _mapping.put( index[ 0 ], indicesMap ); // default integer index should also always work!
             }
-            else {
-                if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
-                _mapping.put( k, host.getNDConf().shape()[ index[ 0 ] ] );
-                _mapping.put( index[ 0 ], host.getNDConf().shape()[ index[ 0 ] ] );// default integer index should also always work!
-            }
+            else
+                _mapping.put( k, host.getNDConf().shape( index[ 0 ] ) );
+
             index[ 0 ]++;
         });
+        index[0] = 0;
+        labels.forEach( ( k, v ) -> {
+            _mapping.put( index[ 0 ], _mapping.get(k) ); // default integer index should also always work!
+            index[ 0 ]++;
+        });
+        for ( int i = index[0]; i < host.rank(); i++ )
+            if ( !_mapping.containsKey( i ) )
+                _mapping.put(i, new LinkedHashMap<>());
     }
 
     private NDFrame( List<Object> hiddenKeys, Map<Object, Object> mapping, String tensorName ) {
@@ -98,7 +109,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
     }
 
     public NDFrame<V> withAxesLabels( List<List<Object>> labels ) {
-        return new NDFrame<>( labels, _mainLabel);
+        return new NDFrame<V>( _hiddenKeys, _mapping, _mainLabel )._label(labels);
     }
 
     public int[] get( List<Object> keys ) {
@@ -151,14 +162,14 @@ public final class NDFrame<V> implements Component<Tsr<V>>
                 .setter(
                         atKey -> (int setValue) ->
                         {
-                            Map<Object, Integer> am = _initializeIdxmap( axisAlias, atKey, setValue );
+                            Map<Object, Integer> am = _initializeIndexMap( axisAlias, atKey, setValue );
                             am.put( atKey, setValue );
                             return this;
                         }
                 )
                 .replacer(
                         ( currentIndexKey ) -> (newIndexKey ) -> {
-                            Map<Object, Integer> am = _initializeIdxmap( axisAlias, currentIndexKey, (Integer) currentIndexKey );
+                            Map<Object, Integer> am = _initializeIndexMap( axisAlias, currentIndexKey, (Integer) currentIndexKey );
                             if (am.containsKey( currentIndexKey ) )
                                 am.put( newIndexKey, am.remove( currentIndexKey ) ); // This...
                             return this;
@@ -186,7 +197,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
                 .build();
     }
 
-    private Map<Object, Integer> _initializeIdxmap( Object axis, Object key, int index ) {
+    private Map<Object, Integer> _initializeIndexMap(Object axis, Object key, int index ) {
         Object am =  _mapping.get( axis );
         if ( am instanceof Map )
             return (Map<Object, Integer>) _mapping.get( axis );
@@ -300,8 +311,22 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         return true;
     }
 
-    public Map<Object, Object> getMapping() {
-        return _mapping;
+    private Map<Object, Object> _mapping() { return Collections.unmodifiableMap(_mapping); }
+
+    public Map<Object, List<Object>> getState() {
+        Map<Object, Object> internalState = _mapping();
+        Map<Object, List<Object>> simpleState = new LinkedHashMap<>();
+        for ( Object k : internalState.keySet() ) {
+            Object al = internalState.get(k);
+            if ( al instanceof Integer ) simpleState.put( k, null ); // newShape[i]
+            else {
+                List<Object> map = new ArrayList<>();
+                List<Map.Entry<Object,Object>> entries = new ArrayList<>(((Map<Object,Object>)al).entrySet());
+                for ( Map.Entry<Object, Object> entry : entries ) map.add(entry.getKey());
+                simpleState.put( k, map );
+            }
+        }
+        return simpleState;
     }
 
     public String getLabel() {

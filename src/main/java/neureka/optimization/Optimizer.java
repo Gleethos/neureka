@@ -37,6 +37,7 @@ package neureka.optimization;
 
 import neureka.common.composition.Component;
 import neureka.Tsr;
+import neureka.optimization.implementations.*;
 
 /**
  *  {@link Optimizer}s are tensor components which implement the {@link Optimization} (functional)
@@ -68,6 +69,12 @@ import neureka.Tsr;
  */
 public interface Optimizer<V> extends Component<Tsr<V>>, Optimization<V>
 {
+    ADAMFactory ADAM     = new ADAMFactory();
+    AdaGradFactory AdaGrad  = new AdaGradFactory();
+    MomentumFactory Momentum = new MomentumFactory();
+    RMSPropFactory RMSProp  = new RMSPropFactory();
+    SGDFactory SGD      = new SGDFactory();
+
     /**
      * @param o The {@link Optimization} lambda which receives a tensor for optimization.
      * @return An {@link Optimizer} which will process any passed tensor directly (see {@link #ofGradient(Optimization)} which processes gradients).
@@ -88,7 +95,7 @@ public interface Optimizer<V> extends Component<Tsr<V>>, Optimization<V>
     static <T> Optimizer<T> ofGradient( Optimization<T> o ) {
         return new Optimizer<T>() {
             @Override public boolean update( OwnerChangeRequest<Tsr<T>> changeRequest ) { return true; }
-            @Override public Tsr<T> optimize( Tsr<T> w ) { return o.optimize(w.getGradient()); }
+            @Override public Tsr<T> optimize( Tsr<T> w ) { return o.optimize(w.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!"))); }
         };
     }
 

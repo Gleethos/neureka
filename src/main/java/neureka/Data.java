@@ -1,6 +1,7 @@
 package neureka;
 
 import neureka.devices.Device;
+import neureka.dtype.DataType;
 
 /**
  *  A wrapper type for the raw data array of a tensor/nd-array,
@@ -41,5 +42,7 @@ public interface Data<V> {
             throw new IllegalArgumentException("Provided data type '"+dataType+"' is not assignable from '"+data.getClass()+"'.");
         return (D) data;
     }
+
+    DataType<V> dataType();
 
 }

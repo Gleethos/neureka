@@ -2,7 +2,7 @@ package ut.ndim
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -45,11 +45,11 @@ class Tensor_Slice_Reshape_Spec extends Specification
     {
         given : 'A parent tensor.'
             Tsr A = Tsr.of([
-                    [  1,  5,  3, -6, -3,  8, -9,  4  ],
-                    [  0, -2,  2,  1, -1,  0,  5,  4  ],
-                    [ -6,  7,  7, -2,  9,  0,  1, -1  ],
-                    [  4,  4, -1,  8,  4, -3,  2, -9  ],
-                    [  7,  5, -2, -3,  7, -8,  5,  0  ]
+                    [  1d,  5d,  3d, -6d, -3d,  8d, -9d,  4d  ],
+                    [  0d, -2d,  2d,  1d, -1d,  0d,  5d,  4d  ],
+                    [ -6d,  7d,  7d, -2d,  9d,  0d,  1d, -1d  ],
+                    [  4d,  4d, -1d,  8d,  4d, -3d,  2d, -9d  ],
+                    [  7d,  5d, -2d, -3d,  7d, -8d,  5d,  0d  ]
             ])
 
         when : 'A slice of this tensor is being created...'
@@ -82,17 +82,17 @@ class Tensor_Slice_Reshape_Spec extends Specification
     def 'Two slices of one big tensor perform matrix multiplication flawless.'()
     {
         given : 'A parent tensor.'
-            Tsr X = Tsr.of([
-                    [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
-                    [1000,   -2,    2, 1000, 1000, 1000, 1000, 1000],
-                    [1000,    7,    7, 1000, 1000, 1000, 1000, 1000],
-                    [1000, 1000, 1000,    8,    4, 1000, 1000, 1000],
-                    [1000, 1000, 1000,   -3,    7, 1000, 1000, 1000]
-            ])
+            var X = Tsr.of([
+                        [1000d, 1000d, 1000d, 1000d, 1000d, 1000d, 1000d, 1000d],
+                        [1000d,   -2d,    2d, 1000d, 1000d, 1000d, 1000d, 1000d],
+                        [1000d,    7d,    7d, 1000d, 1000d, 1000d, 1000d, 1000d],
+                        [1000d, 1000d, 1000d,    8d,    4d, 1000d, 1000d, 1000d],
+                        [1000d, 1000d, 1000d,   -3d,    7d, 1000d, 1000d, 1000d]
+                    ])
 
         when : 'Extracting and transposing two distinct slices from the tensor above...'
-            Tsr a = X[1..2, 1..2].T()
-            Tsr b = X[3..4, 3..4].T()
+            var a = X[1..2, 1..2].T()
+            var b = X[3..4, 3..4].T()
 
         then : 'These matrices as String instances look as follows.'
             a.toString() ==
@@ -107,7 +107,7 @@ class Tensor_Slice_Reshape_Spec extends Specification
                  "]"
 
         when : 'Both 2D matrices are being multiplied via the dot operation...'
-            Tsr c = a.convDot(b)
+            var c = a.convDot(b)
 
         then : 'This produces the following matrix: '
             c.toString() == "(2x1x2):[12.0, 55.0, 44.0, 43.0]"
@@ -118,37 +118,36 @@ class Tensor_Slice_Reshape_Spec extends Specification
     def 'Reshaping a slice works as expected.'()
     {
         given : 'A parent tensor from which we want to create slices.'
-            Tsr X = Tsr.of([
-                    [1000, 1000, 1000, 1000, ],
-                    [1000,   -1,    4, 1000, ],
-                    [1000,    2,    7, 1000, ],
-                    [1000,    5,   -9, 1000, ],
-                    [1000, 1000, 1000, 1000, ]
-                ])
+            var X = Tsr.of([
+                        [1000d, 1000d, 1000d, 1000d, ],
+                        [1000d,   -1d,    4d, 1000d, ],
+                        [1000d,    2d,    7d, 1000d, ],
+                        [1000d,    5d,   -9d, 1000d, ],
+                        [1000d, 1000d, 1000d, 1000d, ]
+                    ])
 
         when : 'We extract a slice from the tensor above...'
-            Tsr a = X[1..3, 1..2].T()
+            var a = X[1..3, 1..2].T()
 
         then :
             a.toString() ==
                     "(2x3):[" +
-                    "-1.0, 2.0, 5.0, " +
-                    "4.0, 7.0, -9.0" +
+                        "-1.0, 2.0, 5.0, " +
+                        "4.0, 7.0, -9.0" +
                     "]"
 
         when :
-            Tsr b = Function.of("[-1, 0, 1]:(I[0])")(a)
+            var b = Function.of("[-1, 0, 1]:(I[0])")(a)
 
         then :
             a.toString() == "(2x3):[" +
-                    "-1.0, 2.0, 5.0, " +
-                    "4.0, 7.0, -9.0" +
-                    "]"
+                                "-1.0, 2.0, 5.0, " +
+                                "4.0, 7.0, -9.0" +
+                            "]"
             b.toString() == "(1x2x3):[" +
-                    "-1.0, 2.0, 5.0, " +
-                    "4.0, 7.0, -9.0" +
-                    "]"
-
+                                "-1.0, 2.0, 5.0, " +
+                                "4.0, 7.0, -9.0" +
+                            "]"
     }
 
 }

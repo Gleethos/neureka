@@ -3,8 +3,9 @@ package neureka.fluent.building;
 import neureka.Nda;
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
@@ -177,8 +178,17 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     public Tsr<V> scalar( V value ) {
         if ( value != null ) {
             value = _checked( value );
-            if ( value.getClass() != _dataType.getItemTypeClass() )
-                throw new IllegalArgumentException("Provided value is of the wrong type!");
+            if ( !_dataType.getItemTypeClass().isAssignableFrom(value.getClass()) ) {
+                try {
+                    value = DataConverter.get().convert( value, _dataType.getItemTypeClass() );
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(
+                        "Provided value is incompatible with the specified data-type!" +
+                        "Expected type "+_dataType.getItemTypeClass().getSimpleName()+"\n" +
+                        "but encountered "+value.getClass().getSimpleName() + " instead!"
+                    );
+                }
+            }
         }
         _shape = new int[]{ 1 };
         return _get( value );

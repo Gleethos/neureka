@@ -42,14 +42,17 @@ public class MemUtil {
 <span class="fc bfc" id="L42" title="All 2 branches covered.">        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {</span>
 <span class="fc bfc" id="L43" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : tensors ) {</span>
                 // Tensors flagged as 'intermediate' will automatically be deleted!
-<span class="fc bfc" id="L45" title="All 4 branches covered.">                if ( !t.isDeleted() &amp;&amp; t.isIntermediate() ) {</span>
-<span class="fc" id="L46">                    GraphNode&lt;?&gt; node = t.getGraphNode();</span>
-<span class="pc bpc" id="L47" title="1 of 4 branches missed.">                    if ( node == null || !node.isUsedAsDerivative() )</span>
-<span class="fc" id="L48">                        t.getUnsafe().delete();</span>
+<span class="pc bpc" id="L45" title="1 of 4 branches missed.">                if ( !t.isDeleted() &amp;&amp; t.isIntermediate() ) {</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">                    if (</span>
+<span class="fc" id="L47">                        t.getGraphNode()</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                        .map(n-&gt;!n.isUsedAsDerivative())</span>
+<span class="fc" id="L49">                        .orElse(true) // No graph, we can delete it!</span>
+                    )
+<span class="fc" id="L51">                        t.mut().delete();</span>
                 }
             }
         }
-<span class="fc" id="L52">    }</span>
+<span class="fc" id="L55">    }</span>
 
     /**
      *  This method makes sure that the provided tensors do not get deleted
@@ -66,12 +69,12 @@ public class MemUtil {
      * @return The result produced by the provided lambda.
      */
     public static &lt;T&gt; T keep( Tsr&lt;?&gt;[] tensors, Supplier&lt;T&gt; during ) {
-<span class="fc" id="L69">        List&lt;Tsr&lt;?&gt;&gt; doNotDelete = Arrays.stream(tensors).filter(Tsr::isIntermediate).collect(Collectors.toList());</span>
-<span class="fc" id="L70">        doNotDelete.forEach( t -&gt; t.getUnsafe().setIsIntermediate( false ) );</span>
-<span class="fc" id="L71">        T result = during.get();</span>
+<span class="fc" id="L72">        List&lt;Tsr&lt;?&gt;&gt; doNotDelete = Arrays.stream(tensors).filter(Tsr::isIntermediate).collect(Collectors.toList());</span>
+<span class="fc" id="L73">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( false ) );</span>
+<span class="fc" id="L74">        T result = during.get();</span>
         // After having calculated the result we allow deletion of the provided tensors again:
-<span class="fc" id="L73">        doNotDelete.forEach( t -&gt; t.getUnsafe().setIsIntermediate( true ) );</span>
-<span class="fc" id="L74">        return result;</span>
+<span class="fc" id="L76">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( true ) );</span>
+<span class="fc" id="L77">        return result;</span>
     }
 
     /**
@@ -90,12 +93,12 @@ public class MemUtil {
      * @return The result produced by the provided lambda.
      */
     public static &lt;T&gt; T keep( Tsr&lt;?&gt; a, Tsr&lt;?&gt; b, Supplier&lt;T&gt; during ) {
-<span class="fc" id="L93">        List&lt;Tsr&lt;?&gt;&gt; doNotDelete = Stream.of(a, b).filter(Tsr::isIntermediate).collect(Collectors.toList());</span>
-<span class="fc" id="L94">        doNotDelete.forEach( t -&gt; t.getUnsafe().setIsIntermediate( false ) );</span>
-<span class="fc" id="L95">        T result = during.get();</span>
+<span class="fc" id="L96">        List&lt;Tsr&lt;?&gt;&gt; doNotDelete = Stream.of(a, b).filter(Tsr::isIntermediate).collect(Collectors.toList());</span>
+<span class="fc" id="L97">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( false ) );</span>
+<span class="fc" id="L98">        T result = during.get();</span>
         // After having calculated the result we allow deletion of the provided tensors again:
-<span class="fc" id="L97">        doNotDelete.forEach( t -&gt; t.getUnsafe().setIsIntermediate( true ) );</span>
-<span class="fc" id="L98">        return result;</span>
+<span class="fc" id="L100">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( true ) );</span>
+<span class="fc" id="L101">        return result;</span>
     }
 
 }

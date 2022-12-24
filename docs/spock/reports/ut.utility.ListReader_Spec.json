@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.005 seconds"
+    "duration":"0.007 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -40,7 +40,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["def data = [","    [","            [1, 2, 3, 0],","            [4, 5, 6, -1]","    ], [","            [1, 2, 3, -2],","            [4, 5, 6, -3]","    ]","]"]},
+        {"kind":"given","text":"We have a nested list whose structure resembles a matrix!","code":["def data = [","                [","                        [1, 2, 3, 0],","                        [4, 5, 6, -1]","                ], [","                        [1, 2, 3, -2],","                        [4, 5, 6, -3]","                ]","            ]"]},
 
         {"kind":"when","text":"We use the reader to internally fill 2 lists representing shape and data...","code":["var result = ListReader.read(data, (o)->o)"]},
 
@@ -65,7 +65,7 @@
 
         {"kind":"and","text":"The flattened data is as expected!","code":["result.data == expectedData"]},
 
-        {"kind":"where","text":"","code":{"data":["[42]","[[43]]","[[-1], [1]]","[[24, 42]]","[[24, 42]]","[[true], [false]]"],"expectedShape":["[1]","[1, 1]","[2, 1]","[1, 2]","[1, 2]","[2, 1]"],"expectedData":["[42]","[43]","[-1, 1]","[24, 42]","[24, 42]","[true, false]"]}}
+        {"kind":"where","text":"","code":{"data":["[42]","[[43]]","[[-1],[+1]]","[[24, 42]]","[[\"24\", \"42\"]]","[[true],[false]]"],"expectedShape":["[1]","[1, 1]","[2, 1]","[1, 2]","[1, 2]","[2, 1]"],"expectedData":["[42]","[43]","[-1, 1]","[24, 42]","[\"24\", \"42\"]","[true, false]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

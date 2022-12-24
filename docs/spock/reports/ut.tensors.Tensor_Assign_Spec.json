@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.004 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -52,7 +52,7 @@
     {
       "id":"We can assign one slice into another one.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note that using the 'assign' operation on slices should be handled with care,\n            since the operation has side effects on the underlying data array\n            which is shared by both the slice and its parent.\n            Use the 'copy' operation on slices if you want to avoid this.\n        "]
       },

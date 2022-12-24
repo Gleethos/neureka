@@ -8,8 +8,8 @@ import neureka.backend.api.fun.ADActionSupplier
 import neureka.backend.api.fun.SuitabilityPredicate
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm
 import neureka.backend.main.implementations.CPUImplementation
-import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionParser
+import neureka.math.Function
+import neureka.math.parsing.FunctionParser
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import spock.lang.Specification
@@ -68,12 +68,16 @@ class Backend_MatMul_Extension_Spec extends Specification
                                         DeviceAlgorithm.withName("my_algorithm")
                                             .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
                                             .setAutogradModeFor(call -> AutoDiffMode.BACKWARD_ONLY )
-                                            .setDeviceExecution(
-                                                (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback),
-                                                (ADActionSupplier){ Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ->
+                                            .setExecution(
+                                                (outerCaller, outerCall) ->
+                                                Result.of(AbstractDeviceAlgorithm.executeFor(
+                                                    outerCaller, outerCall,
+                                                    call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call )
+                                                ))
+                                                .withAutoDiff((ADActionSupplier){ Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ->
                                                     if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                                                     return ADAction.of((t, error) -> new FunctionParser( Neureka.get().backend() ).parse(f.toString(), false).derive(new Tsr[]{error}, 0));
-                                                }
+                                                })
                                             )
                                             .setCallPreparation(
                                                     call -> {

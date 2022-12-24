@@ -53,9 +53,10 @@ import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.ocl.CLBackend;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
+import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
@@ -293,7 +294,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @param source The source of the kernel which ought to be compiled.
      * @return This very instance in order to enable the factory pattern.
      */
-    public synchronized OpenCLDevice compileAdHocKernel(String name, String source) {
+    public synchronized OpenCLDevice compileAdHocKernel( String name, String source ) {
         if (this.hasAdHocKernel(name)) {
             cl_ad_hoc adHoc = _kernelCache.get(name);
             String message =
@@ -372,7 +373,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Operation optimizedOperationOf(Function function, String name) {
+    public Operation optimizedOperationOf( Function function, String name ) {
         return new CLFunctionCompiler( this, function, name ).optimize();
     }
 
@@ -426,11 +427,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
      *
      * @param tensor The tensor whose data ought to be stored.
      */
-    private <T extends Number> void _store(Tsr<T> tensor, Tsr<T> parent ) {
+    private <T extends Number> void _store( Tsr<T> tensor, Tsr<T> parent ) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add(
             tensor.getMut().upcast(Number.class),
-            parent.getMut().getData().getRef( cl_tsr.class),
+            parent.getMut().getData().getRef( cl_tsr.class ),
             () -> tensor.set((Component) this)
         );
     }
@@ -457,21 +458,24 @@ public class OpenCLDevice extends AbstractDevice<Number>
             }
         }
 
+        boolean convertToFloat = Neureka.get()
+                                        .backend()
+                                        .find(CLBackend.class)
+                                        .map( it -> it.getSettings().isAutoConvertToFloat() )
+                                        .orElse(false);
         JVMData jvmData = null;
 
         if ( parent == null )
-            jvmData = JVMData.of( tensor.getMut().getData().getRef() );
+            jvmData = JVMData.of( tensor.getMut().getData().getRef(), convertToFloat );
 
-        cl_tsr.cl_config config = _writeNDConfig(tensor.getNDConf());
-
+        cl_tsr.cl_config config = _writeNDConfig( tensor.getNDConf() );
         cl_tsr.cl_value newVal = ( parent != null ? parent.value : new cl_tsr.cl_value((int) jvmData.getLength()) );
         cl_tsr<Number, Number> newClt = ( parent != null ? new cl_tsr<>(newVal, parent.dtype, config) : new cl_tsr<>(newVal, jvmData.getType(), config) );
 
-        //VALUE TRANSFER:
         if ( parent == null ) {
-            _store(jvmData, newClt);
-            if ( tensor.rqsGradient() && tensor.has(Tsr.class) )
-                this.store(tensor.getGradient());
+            _store( jvmData, newClt );
+            if ( tensor.rqsGradient() && tensor.hasGradient() )
+                this.store(tensor.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!")));
         }
 
         cl_mem[] memos;
@@ -488,20 +492,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 0,
                 null,
                 null
-        );
+            );
 
         _tensors.add( tensor );
 
-        tensor.getMut().setData( _dataArrayOf(newClt) );
-        migration.run(); // TODO: REMOVE
+        tensor.getMut().setData( _dataArrayOf(newClt, (DataType<Number>) _dataTypeOf(newClt)) );
+        migration.run();
 
         // When tensors get stored on this device,
         // they are implicitly converted to a float tensor:
-        if ( Neureka.get().backend().get(CLBackend.class).getSettings().isAutoConvertToFloat() )
+        if ( convertToFloat )
             tensor.getMut().toType(F32.class);
     }
 
-    private cl_tsr.cl_config _writeNDConfig(NDConfiguration ndc) {
+    private cl_tsr.cl_config _writeNDConfig( NDConfiguration ndc ) {
 
         cl_tsr.cl_config clf = new cl_tsr.cl_config();
 
@@ -612,17 +616,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public neureka.Data<Number> allocate(DataType<?> dataType, int size ) {
+    public <T extends Number>  neureka.Data<T> allocate(DataType<T> dataType, NDConfiguration ndc ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    public <V> neureka.Data<Number> allocate(DataType<V> dataType, int size, V initialValue) {
+    public <T extends Number>  neureka.Data<T> allocateFromOne(DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
     @Override
-    public neureka.Data<Number> allocate( Object jvmData, int desiredSize ) {
+    public <T extends Number> neureka.Data<T> allocateFromAll(DataType<T> dataType, NDConfiguration ndc, Object jvmData) {
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
@@ -631,13 +635,34 @@ public class OpenCLDevice extends AbstractDevice<Number>
         throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
     }
 
+    @Override
+    protected final DataType<?> _dataTypeOf( Object rawData ) {
+        LogUtil.nullArgCheck( rawData, "rawData", Object.class );
+        if ( rawData instanceof cl_tsr ) {
+            cl_dtype type = ((cl_tsr) rawData).dtype;
+            switch ( type ) {
+                case F32: return DataType.of( Float.class );
+                case F64: return DataType.of( Double.class );
+                case I32: case U32:
+                    return DataType.of( Integer.class );
+                case I64: return DataType.of( Long.class );
+                case I16: case U16:
+                    return DataType.of( Short.class );
+                case I8: case U8:
+                    return DataType.of( Byte.class );
+                default: throw new IllegalStateException("Unknown OpenCL data type!");
+            }
+        }
+        throw new IllegalStateException("Unknown data type "+rawData.getClass()+"!");
+    }
+
     private void _overwrite(
             Tsr<?> tensor, long offset, JVMData jvmData
     ) {
         if ( jvmData.getLength() == 0 ) return;
         cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
 
-        if (clt.value.event != null) clWaitForEvents(1, new cl_event[]{clt.value.event});
+        if ( clt.value.event != null ) clWaitForEvents(1, new cl_event[]{clt.value.event});
         clt.value.event = new cl_event();
         long start = offset * jvmData.getItemSize();
         long size  = jvmData.getItemSize() * jvmData.getLength();
@@ -646,14 +671,14 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 start, size,
                 jvmData.getPointer(), 0, null,
                 clt.value.event
-        );
+            );
     }
 
     @Override
     protected final <T extends Number> void _swap(Tsr<T> former, Tsr<T> replacement) {
         cl_tsr<Number, T> clTsr = former.getMut().getData().getRef( cl_tsr.class);
         former.getMut().setData(null);
-        replacement.getMut().setData( _dataArrayOf(clTsr) );
+        replacement.getMut().setData( _dataArrayOf(clTsr, (DataType<T>) _dataTypeOf(clTsr)) );
         _tensors.remove(former);
         _tensors.add( replacement.getMut().upcast(Number.class) );
     }
@@ -708,12 +733,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
         Tsr<Number> root = null;
         Relation<Number> relation = newOwner.get(Relation.class);
         if ( relation != null )
-            root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor();
+            root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor().orElse(null);
 
         return root;
     }
 
-    private JVMData _read(JVMData jvmData, Tsr<Number> tensor, int offset ) {
+    private JVMData _read( JVMData jvmData, Tsr<Number> tensor, int offset ) {
         cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
         clEnqueueReadBuffer(
                 _queue,

@@ -94,7 +94,7 @@ device.store( a, 'tensor-name.idx' ) // 'device.store( a )' if the name should b
 assert new File( 'my/relative/path/to/directory/' + 'tensor-name.idx' ).exists()
 
 // ... and the RAM will be freed ...
-assert a.unsafe.data == null
+assert a.mut.data.ref == null
 
 // If we want to delete the tensor from the device then we call the following :
 device.free( a )
@@ -123,7 +123,7 @@ device.store( a, "tensor-name.idx" ); // 'device.store( a )' if the name should 
 assert new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
 
 // ... and the RAM will be freed ...
-assert a.getUnsafe().getData() == null;
+assert a.mut().getData().getRef() == null;
 
 // If we want to delete the tensor from the device then we call the following :
 device.free( a );
@@ -152,7 +152,7 @@ device.store( a, "tensor-name.idx" ) // 'device.store( a )' if the name should b
 assert( File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists() )
 
 // ... and the RAM will be freed ...
-assert( a.unsafe.data == null )
+assert( a.mut.data.ref == null )
 
 // If we want to delete the tensor from the device then we call the following :
 device.free( a )

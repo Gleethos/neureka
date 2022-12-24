@@ -12,10 +12,10 @@ import neureka.backend.api.Result;
 import neureka.backend.main.implementations.CPUImplementation;
 import neureka.backend.main.memory.MemUtil;
 import neureka.backend.main.operations.linear.MatMul;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
-import neureka.calculus.assembly.ParseUtil;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
+import neureka.math.parsing.ParseUtil;
 import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
@@ -41,14 +41,8 @@ implements ExecutionPreparation, ADActionSupplier
                     .withArity( arity )
                     .andImplementation(
                         call -> {
-                            Function f = new FunctionParser(
-                                                    Neureka.get().backend()
-                                                )
-                                                .parse(
-                                                        type,
-                                                        call.arity() - 1,
-                                                        false
-                                                );
+                            Function f = new FunctionParser( Neureka.get().backend() )
+                                                .parse( type, call.arity() - 1, false );
 
                             boolean allNumeric = call.validate()
                                                         .all( t -> t.getDataType().typeClassImplements(NumericType.class) )
@@ -120,13 +114,13 @@ implements ExecutionPreparation, ADActionSupplier
         return ADAction( function, call );
     }
 
-    public static ADAction ADAction(Function function, ExecutionCall<? extends Device<?>> call )
+    public static ADAction ADAction( Function function, ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().backend().getFunction().mul();
-        if ( derivative != null ) {
+        if ( derivative != null )
             return ADAction.of( target -> mul.execute( target.error(), derivative ) );
-        }
+
         Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
         localDerivative.mut().setIsIntermediate( false );
         return ADAction.of( target -> mul.execute( target.error(), localDerivative ) );
@@ -182,16 +176,16 @@ implements ExecutionPreparation, ADActionSupplier
             .getDevice()
             .getExecutor()
             .threaded(
-                    call.input( Object.class, 0 ).size(),
-                    ( start, end ) -> {
-                        Object[] inputs = new Object[ call.arity() - 1 ];
-                        for ( int i = start; i < end; i++ ) {
-                            for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                inputs[ ii ] = call.input( Object.class, 1 + ii ).item(i);
-                            }
-                            setAt( call.input( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));
+                call.input( Object.class, 0 ).size(),
+                ( start, end ) -> {
+                    Object[] inputs = new Object[ call.arity() - 1 ];
+                    for ( int i = start; i < end; i++ ) {
+                        for ( int ii = 0; ii < inputs.length; ii++ ) {
+                            inputs[ ii ] = call.input( Object.class, 1 + ii ).item(i);
                         }
+                        setAt( call.input( Object.class, 0 ), i, _tryExecute(finalMethod, inputs, 0));
                     }
+                }
             );
     }
 

@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def data = Tsr.of([8, 4], [ // a-b*c","      1d,  2d,  2d, -3d,","      3d, -1d, -1d,  4d,","     -1d, -2d, -3d, -7d,","     -2d, -3d,  4d,  10d,","      4d,  5d, -1d,  9d,","      6d,  2d,  3d,  0d,","      7d,  3d,  2d,  1d,","     -4d, -4d,  2d,  4d","])","var X = data[0..-1, 0..2].T()"]},
+        {"kind":"given","text":"","code":["def data = Tsr.of([8, 4], [ // a-b*c","                              1d,  2d,  2d, -3d,","                              3d, -1d, -1d,  4d,","                             -1d, -2d, -3d, -7d,","                             -2d, -3d,  4d,  10d,","                              4d,  5d, -1d,  9d,","                              6d,  2d,  3d,  0d,","                              7d,  3d,  2d,  1d,","                             -4d, -4d,  2d,  4d","                        ])","var X = data[0..-1, 0..2].T()"]},
 
         {"kind":"and","text":"","code":["var w1 = Tsr.of([8, 3], \":-)\").setRqsGradient(true)","var w2 = Tsr.of([7, 8], \"O.o\").setRqsGradient(true)","var w3 = Tsr.of([1, 7], \":P\").setRqsGradient(true)"]},
 
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"","code":["w1.items.collect({it.round(2)}) == [-0.22, 0.12, -0.65, -0.16, 0.96, -1.5, -0.33, 0.16, -0.62, -0.18, -1.24, 0.48, -0.41, 0.19, -0.58, -0.19, 0.41, 0.7, -0.47, 0.2, -0.54, -0.2, -0.65, -1.23]","w2.items.collect({it.round(2)}) == [-0.5, -0.36, 0.7, 0.35, 0.83, -0.32, 1.81, 0.36, 0.75, 0.34, 0.78, -0.33, -0.47, 0.77, 0.79, 0.33, 0.73, -0.34, -0.23, 0.59, 0.83, 0.31, 0.68, -0.35, -2.29, -1.63, 0.87, 0.28, 0.62, -0.34, -0.84, 0.5, 0.91, 0.25, 0.55, -0.33, 0.16, -0.7, 0.94, 0.22, 0.49, -0.31, -1.14, -0.43, 0.96, 0.18, 0.41, -0.28, 1.1, 0.79, 0.98, 0.14, 0.32, -0.24, -0.72, 0.91]","w3.items.collect({it.round(2)}) == [0.43, 0.38, 1.21, -0.12, 0.83, 1.86, 0.5]"]},
 
-        {"kind":"and","text":"","code":["w1.set(new ADAM<>(w1))","w2.set(new SGD<>(0.01))"]},
+        {"kind":"and","text":"","code":["w1.set(Optimizer.ADAM)","w2.set(Optimizer.SGD.withLearningRate(0.01))"]},
 
         {"kind":"when","text":"","code":["var f = Function.of(\"softplus(I[0])\")"]},
 
@@ -41,11 +41,11 @@
 
         {"kind":"when","text":"","code":["y.backward(-4)","w1.applyGradient()","w2.applyGradient()","w3.applyGradient()"]},
 
-        {"kind":"then","text":"","code":["w1.gradient.items.collect({it.round(2)}) == []","w2.gradient.items.collect({it.round(2)})== []","w3.gradient.items.collect({it.round(2)}) == []"]},
+        {"kind":"then","text":"","code":["w1.gradient.get().items.collect({it.round(2)}) == []","w2.gradient.get().items.collect({it.round(2)})== []","w3.gradient.get().items.collect({it.round(2)}) == []"]},
 
         {"kind":"when","text":"","code":["y.backward(-2)","w1.applyGradient()","w2.applyGradient()","w3.applyGradient()"]},
 
-        {"kind":"then","text":"","code":["w1.gradient.items.collect({it.round(2)}) == []","w2.gradient.items.collect({it.round(2)}) == []","w3.gradient.items.collect({it.round(2)}) == []"]}
+        {"kind":"then","text":"","code":["w1.gradient.get().items.collect({it.round(2)}) == []","w2.gradient.get().items.collect({it.round(2)}) == []","w3.gradient.get().items.collect({it.round(2)}) == []"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

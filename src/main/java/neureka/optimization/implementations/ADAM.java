@@ -39,8 +39,6 @@ import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
-import java.util.List;
-
 /**
  *  ADAM (short for Adaptive Moment Estimation) is an adaptive learning rate optimization algorithm that utilises both
  *  momentum and scaling, combining the benefits of RMSProp and SGD with respect to Momentum.
@@ -49,7 +47,7 @@ import java.util.List;
  *
  * @param <V> The value type parameter of the tensor whose gradients are being optimized.
  */
-public class ADAM<V extends Number> implements Optimizer<V>
+public final class ADAM<V extends Number> implements Optimizer<V>
 {
     // Constants:
     private static final double B1 = 0.9;
@@ -62,21 +60,29 @@ public class ADAM<V extends Number> implements Optimizer<V>
     // Variables:
     private Tsr<V> m; // momentum
     private Tsr<V> v; // velocity
-    private long t = 0; // time
+    private long t; // time
 
-    public ADAM(Tsr<V> target) {
-        LogUtil.nullArgCheck( target, "target", Tsr.class );
-        List<Integer> shape = target.shape();
-        m  = Tsr.of(target.getItemType(), shape, 0);
-        v  = Tsr.of(target.getItemType(), shape, 0);
-        lr = 0.01; // Step size/learning rate is 0.01 by default!
+    ADAM( long t, double lr, Tsr<V> target ) {
+        this(t, lr, // Step size/learning rate is 0.01 by default!
+            Tsr.of(target.getItemType(), target.shape(), 0), // momentum
+            Tsr.of(target.getItemType(), target.shape(), 0)  // velocity
+        );
+    }
+
+    ADAM(long t, double lr, Tsr<V> m, Tsr<V> v ) {
+        LogUtil.nullArgCheck( m, "m", Tsr.class );
+        LogUtil.nullArgCheck( v, "v", Tsr.class );
+        this.m = m;
+        this.v = v;
+        this.t = t;
+        this.lr = lr;
     }
 
     @Override
     public Tsr<V> optimize( Tsr<V> w ) {
         LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
         t++;
-        Tsr<V> g = w.getGradient();
+        Tsr<V> g = w.gradient().orElseThrow( () -> new IllegalStateException("Gradient missing! Cannot perform optimization.") );
         double b1Inverse = ( 1 - B1 );
         double b2Inverse = ( 1 - B2 );
         double b1hat = ( 1 - Math.pow( B1, t ) );
@@ -90,5 +96,13 @@ public class ADAM<V extends Number> implements Optimizer<V>
         vh.getMut().delete();
         return newg;
     }
+
+    public final Tsr<V> getMomentum() { return m; }
+
+    public final Tsr<V> getVelocity() { return v; }
+
+    public final long getTime() { return t; }
+
+    public final double getLearningRate() { return lr; }
 
 }

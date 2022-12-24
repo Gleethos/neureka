@@ -2,7 +2,7 @@ package neureka.devices.host;
 
 import neureka.Tsr;
 import neureka.backend.api.Operation;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractDevice;
@@ -12,6 +12,9 @@ import neureka.devices.host.concurrent.WorkScheduler;
 import neureka.devices.host.machine.ConcreteMachine;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
+import neureka.ndim.NDConstructor;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -242,7 +245,8 @@ public class CPU extends AbstractDevice<Object>
     ) {
         Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getRef();
         if ( data == null ) {
-            tensor.getMut().setData( _dataArrayOf(array) );
+            DataType<?> dataType = tensor.getDataType() != null ? tensor.getDataType() : _dataTypeOf(array);
+            tensor.getMut().setData( _dataArrayOf( array, (DataType<T>) dataType) );
             return;
         }
         Class<?> arrayType = data.getClass();
@@ -287,49 +291,28 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public final neureka.Data allocate( DataType<?> dataType, int size ) {
-        Class<?> typeClass = dataType.getRepresentativeType();
-        if ( typeClass == F64.class )
-            return _dataArrayOf(new double[ size ]);
-        else if ( typeClass == F32.class )
-            return _dataArrayOf(new float[ size ]);
-        else if ( typeClass == I32.class || typeClass == UI32.class )
-            return _dataArrayOf(new int[ size ]);
-        else if ( typeClass == I16.class || typeClass == UI16.class )
-            return _dataArrayOf(new short[ size ]);
-        else if ( typeClass == I8.class || typeClass == UI8.class )
-            return _dataArrayOf(new byte[ size ]);
-        else if ( typeClass == I64.class || typeClass == UI64.class )
-            return _dataArrayOf(new long[ size ]);
-        else if ( dataType.getItemTypeClass() == Boolean.class )
-            return _dataArrayOf(new boolean[ size ]);
-        else if ( dataType.getItemTypeClass() == Character.class )
-            return _dataArrayOf(new char[ size ]);
-        else
-            return _dataArrayOf(new Object[ size ]);
-    }
-
-    @Override
-    public <V> neureka.Data allocate( DataType<V> dataType, int size, V initialValue ) {
+    public <T> neureka.Data<T> allocateFromOne(DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
+        int size = ndc instanceof VirtualNDConfiguration ? 1 : ndc.size();
         Class<?> type = dataType.getItemTypeClass();
-        neureka.Data array = allocate( dataType, size );
+        neureka.Data<T> array = allocate( dataType, size );
         Object data = array.getRef();
-        if      ( type == Double   .class ) { Arrays.fill((double[])  data, (Double)   initialValue); }
-        else if ( type == Float    .class ) { Arrays.fill((float[])   data, (Float)    initialValue); }
-        else if ( type == Integer  .class ) { Arrays.fill((int[])     data, (Integer)  initialValue); }
-        else if ( type == Short    .class ) { Arrays.fill((short[])   data, (Short)    initialValue); }
-        else if ( type == Byte     .class ) { Arrays.fill((byte[])    data, (Byte)     initialValue); }
-        else if ( type == Long     .class ) { Arrays.fill((long[])    data, (Long)     initialValue); }
-        else if ( type == Boolean  .class ) { Arrays.fill((boolean[]) data, (Boolean)  initialValue); }
-        else if ( type == Character.class ) { Arrays.fill((char[])    data, (Character)initialValue); }
-        else { Arrays.fill((Object[])  data, initialValue); }
+        if      ( type == Double   .class ) Arrays.fill((double[])  data, (Double)   initialValue);
+        else if ( type == Float    .class ) Arrays.fill((float[])   data, (Float)    initialValue);
+        else if ( type == Integer  .class ) Arrays.fill((int[])     data, (Integer)  initialValue);
+        else if ( type == Short    .class ) Arrays.fill((short[])   data, (Short)    initialValue);
+        else if ( type == Byte     .class ) Arrays.fill((byte[])    data, (Byte)     initialValue);
+        else if ( type == Long     .class ) Arrays.fill((long[])    data, (Long)     initialValue);
+        else if ( type == Boolean  .class ) Arrays.fill((boolean[]) data, (Boolean)  initialValue);
+        else if ( type == Character.class ) Arrays.fill((char[])    data, (Character)initialValue);
+        else Arrays.fill((Object[])  data, initialValue);
         return array;
     }
 
     @Override
-    public neureka.Data allocate(Object jvmData, int desiredSize )
+    public <T> neureka.Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object jvmData )
     {
-        neureka.Data data = _dataArrayOf(jvmData);
+        int desiredSize = ndc.size();
+        neureka.Data data = _dataArrayOf(jvmData, (DataType<Object>) (dataType != null ? dataType : _dataTypeOf(jvmData)));
         if ( jvmData instanceof int[] ) {
             int[] array = (int[]) jvmData;
             if ( desiredSize != array.length ) {
@@ -398,7 +381,7 @@ public class CPU extends AbstractDevice<Object>
             throw new IllegalArgumentException("Array type '"+jvmData.getClass().getSimpleName()+"' not supported!");
     }
 
-    public neureka.Data allocate( Object data ) {
+    public neureka.Data<Object> allocate( Object data ) {
         int size;
         if ( data instanceof Object[] ) {
             size = ( (Object[]) data ).length;
@@ -422,7 +405,7 @@ public class CPU extends AbstractDevice<Object>
         else
             throw new IllegalArgumentException( "Unsupported data type: " + data.getClass() );
 
-        neureka.Data dataArray = CPU.get().allocate( data, size );
+        neureka.Data dataArray = CPU.get().allocateFromAll( _dataTypeOf(data), NDConstructor.of(size).produceNDC(false), data );
         if ( dataArray.getRef() != data )
             throw new IllegalStateException( "CPU seems to have reallocated some already valid data unnecessarily! This is most likely a bug." );
 
@@ -430,7 +413,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final neureka.Data<Object> _actualize(Tsr<?> tensor ) {
+    protected final neureka.Data<Object> _actualize( Tsr<?> tensor ) {
         neureka.Data<Object> data = (neureka.Data<Object>) tensor.getMut().getData();
         Object value = data.getRef();
         DataType<?> dataType = tensor.getDataType();
@@ -474,7 +457,22 @@ public class CPU extends AbstractDevice<Object>
             newValue = new Object[ size ];
             if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
         }
-        return _dataArrayOf(newValue);
+        return _dataArrayOf(newValue, (DataType<Object>) dataType);
+    }
+
+    @Override
+    protected final DataType<?> _dataTypeOf(Object rawData) {
+        LogUtil.nullArgCheck( rawData, "rawData", Object.class );
+        if ( rawData instanceof double[] ) return DataType.of( F64.class );
+        if ( rawData instanceof float[] ) return DataType.of( F32.class );
+        if ( rawData instanceof int[] ) return DataType.of( I32.class );
+        if ( rawData instanceof short[] ) return DataType.of( I16.class );
+        if ( rawData instanceof byte[] ) return DataType.of( I8.class );
+        if ( rawData instanceof long[] ) return DataType.of( I64.class );
+        if ( rawData instanceof boolean[] ) return DataType.of( Boolean.class );
+        if ( rawData instanceof char[] ) return DataType.of( Character.class );
+        if ( rawData instanceof Object[] ) return DataType.of( Object.class );
+        throw new IllegalArgumentException( "Unsupported data type: " + rawData.getClass() );
     }
 
     @Override
@@ -489,6 +487,35 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return _tensors; }
+
+    @Override
+    public <T> neureka.Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
+        int size;
+        if ( ndc instanceof VirtualNDConfiguration )
+            size = 1;
+        else
+            size = ndc.size();
+
+        Class<?> typeClass = dataType.getRepresentativeType();
+        if ( typeClass == F64.class )
+            return _dataArrayOf(new double[ size ], dataType);
+        else if ( typeClass == F32.class )
+            return _dataArrayOf(new float[ size ], dataType);
+        else if ( typeClass == I32.class || typeClass == UI32.class )
+            return _dataArrayOf(new int[ size ], dataType);
+        else if ( typeClass == I16.class || typeClass == UI16.class )
+            return _dataArrayOf(new short[ size ], dataType);
+        else if ( typeClass == I8.class || typeClass == UI8.class )
+            return _dataArrayOf(new byte[ size ], dataType);
+        else if ( typeClass == I64.class || typeClass == UI64.class )
+            return _dataArrayOf(new long[ size ], dataType);
+        else if ( dataType.getItemTypeClass() == Boolean.class )
+            return _dataArrayOf(new boolean[ size ], dataType);
+        else if ( dataType.getItemTypeClass() == Character.class )
+            return _dataArrayOf(new char[ size ], dataType);
+        else
+            return _dataArrayOf(new Object[ size ], dataType);
+    }
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }

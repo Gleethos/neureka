@@ -88,7 +88,7 @@ public interface Optimizer&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Optim
     static &lt;T&gt; Optimizer&lt;T&gt; ofGradient( Optimization&lt;T&gt; o ) {
 <span class="fc" id="L89">        return new Optimizer&lt;T&gt;() {</span>
 <span class="fc" id="L90">            @Override public boolean update( OwnerChangeRequest&lt;Tsr&lt;T&gt;&gt; changeRequest ) { return true; }</span>
-<span class="fc" id="L91">            @Override public Tsr&lt;T&gt; optimize( Tsr&lt;T&gt; w ) { return o.optimize(w.getGradient()); }</span>
+<span class="pc" id="L91">            @Override public Tsr&lt;T&gt; optimize( Tsr&lt;T&gt; w ) { return o.optimize(w.gradient().orElseThrow(()-&gt;new IllegalStateException(&quot;Gradient missing!&quot;))); }</span>
         };
     }
 

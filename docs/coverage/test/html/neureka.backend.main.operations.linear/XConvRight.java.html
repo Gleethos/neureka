@@ -1,80 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XConvRight.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear</a> &gt; <span class="el_source">XConvRight.java</span></div><h1>XConvRight.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.linear;
 
-import neureka.Neureka;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Convolution;
-import neureka.backend.main.implementations.CLImplementation;
+import neureka.backend.main.algorithms.NDConvolution;
+import neureka.backend.main.implementations.convolution.CLConvolution;
+import neureka.backend.main.implementations.convolution.CPUConvolution;
 import neureka.backend.main.operations.ConvUtil;
-import neureka.backend.main.implementations.convolution.CPUXConv;
 import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 public class XConvRight extends AbstractOperation {
 
     public XConvRight() {
-<span class="fc" id="L18">        super(</span>
+<span class="fc" id="L16">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L20">                    .identifier(         &quot;inv_convolve_mul_right&quot;    )</span>
-<span class="fc" id="L21">                    .operator(         &quot;x&quot; + ((char) 187)         )</span>
-<span class="fc" id="L22">                    .arity(            3                         )</span>
-<span class="fc" id="L23">                    .isOperator(       true        )</span>
-<span class="fc" id="L24">                    .isIndexer(        false       )</span>
-<span class="fc" id="L25">                    .isDifferentiable( false       )</span>
-<span class="fc" id="L26">                    .isInline(         false       )</span>
+<span class="fc" id="L18">                    .identifier(         &quot;inv_convolve_mul_right&quot;    )</span>
+<span class="fc" id="L19">                    .operator(         &quot;x&quot; + ((char) 187)         )</span>
+<span class="fc" id="L20">                    .arity(            3                         )</span>
+<span class="fc" id="L21">                    .isOperator(       true        )</span>
+<span class="fc" id="L22">                    .isIndexer(        false       )</span>
+<span class="fc" id="L23">                    .isDifferentiable( false       )</span>
+<span class="fc" id="L24">                    .isInline(         false       )</span>
         );
-<span class="fc" id="L28">        setAlgorithm( Convolution.class,</span>
-<span class="fc" id="L29">            ConvUtil.createDeconvolutionFor(&quot;x&quot; + ((char) 187))</span>
-<span class="fc" id="L30">            .setImplementationFor(</span>
-                CPU.class,
-                new CPUXConv()
-            )
-<span class="fc" id="L34">            .setImplementationFor(</span>
-                OpenCLDevice.class,
-<span class="fc" id="L36">                CLImplementation.compiler()</span>
-<span class="fc" id="L37">                    .arity( 3 )</span>
-<span class="fc" id="L38">                    .kernelSource( Neureka.get().utility().readResource(&quot;kernels/convolution_template.cl&quot;) )</span>
-<span class="fc" id="L39">                    .activationSource( &quot;value = src1 * src2;\n&quot; )</span>
-<span class="fc" id="L40">                    .differentiationSource( &quot;value += handle * drain;\n&quot; )</span>
-<span class="fc" id="L41">                    .kernelPostfix( this.getIdentifier() )</span>
-<span class="fc" id="L42">                    .execution(</span>
-                        call -&gt; {
-<span class="nc bnc" id="L44" title="All 2 branches missed.">                            int offset = ( call.input( Number.class, 0 ) != null ) ? 0 : 1;</span>
-<span class="nc bnc" id="L45" title="All 2 branches missed.">                            int gwz = ( call.input( Number.class, 0 ) != null ) ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();</span>
-<span class="nc" id="L46">                            call.getDevice()</span>
-<span class="nc" id="L47">                                .getKernel(call)</span>
-<span class="nc" id="L48">                                .passAllOf( call.input( Number.class, offset ) )</span>
-<span class="nc" id="L49">                                .passAllOf( call.input( Number.class, offset + 1 ) )</span>
-<span class="nc" id="L50">                                .passAllOf( call.input( Number.class, offset + 2 ) )</span>
-<span class="nc" id="L51">                                .pass( call.input( Number.class, 0 ).rank() )</span>
-<span class="nc" id="L52">                                .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
-<span class="nc" id="L53">                                .call( gwz );</span>
-
-<span class="nc" id="L55">                            return call.input( 0 );</span>
-                        }
-                    )
-<span class="fc" id="L58">                    .build()</span>
-            )
+<span class="fc" id="L26">        setAlgorithm( NDConvolution.class,</span>
+<span class="fc" id="L27">            ConvUtil.createDeconvolutionFor(&quot;x&quot; + ((char) 187))</span>
         );
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L29">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L65">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
-<span class="fc" id="L67">            reconstructed.append( children[ i ] );</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
-<span class="fc" id="L69">                reconstructed.append(&quot; x&quot; + ((char) 187)+&quot; &quot;);</span>
+<span class="fc" id="L33">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L35">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
+<span class="fc" id="L37">                reconstructed.append(&quot; x&quot; + ((char) 187)+&quot; &quot;);</span>
             }
         }
-<span class="fc" id="L72">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+<span class="fc" id="L40">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L77">        return 0;</span>
+<span class="nc" id="L45">        return 0;</span>
     }
 
 }

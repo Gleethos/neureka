@@ -9,11 +9,11 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Activation;
-import neureka.backend.main.algorithms.Scalarization;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.backend.main.algorithms.ElementwiseAlgorithm;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 
 public class AssignLeft extends AbstractOperation
 {
@@ -30,8 +30,8 @@ public class AssignLeft extends AbstractOperation
         );
 
         setAlgorithm(
-            Scalarization.class,
-            new Scalarization()
+            BiScalarBroadcast.class,
+            new BiScalarBroadcast()
             .setIsSuitableFor(
                call -> {
                    if ( call.arity() > 3 )
@@ -52,7 +52,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution( (caller, call) -> {
-                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
+                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );
                 t.mut().incrementVersion(call);
                 return Result.of(t);
             })
@@ -71,7 +71,7 @@ public class AssignLeft extends AbstractOperation
         );
 
         setAlgorithm(
-            new Activation()
+            new ElementwiseAlgorithm()
             .setIsSuitableFor(
                 call -> call.validate()
                         .allNotNull( t -> t.getDataType().typeClassImplements(Object.class) )
@@ -81,7 +81,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution( (caller, call) -> {
-                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, null );
+                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );
                 t.mut().incrementVersion(call);
                 return Result.of(t);
             })

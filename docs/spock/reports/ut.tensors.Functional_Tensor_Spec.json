@@ -4,24 +4,24 @@
   "narrative":"Tensors expose a powerful API for performing operations on them\n    in a functional style.",
   "subjects":[],
   "statistics":{
-    "runs":"5",
+    "runs":"7",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.577 seconds"
+    "duration":"1.269 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can initialize a tensor using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.076 seconds",
+      "duration":"0.067 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"We instantiate a tensor using an initializer lambda...","code":["Tsr<Integer> t = Tsr.of(","    DataType.of( Integer.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { i - 2 }",")"]},
+        {"kind":"when","text":"We instantiate a tensor using an initializer lambda...","code":["Tsr<Integer> t = Tsr.of(","                        DataType.of( Integer.class ),","                        [ 2, 3 ],","                        ( int i, int[] indices ) -> { i - 2 }","                    )"]},
 
         {"kind":"then","text":"It is initialized with the expected values:","code":["t.toString() == \"(2x3):[-2, -1, 0, 1, 2, 3]\""]}
       ],
@@ -31,7 +31,7 @@
     {
       "id":"We can analyse the values of a tensor using various predicate receiving methods",
       "result":"PASS",
-      "duration":"0.185 seconds",
+      "duration":"0.142 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -44,9 +44,39 @@
 
         {"kind":"and","text":"","code":["a.count((Predicate<Integer>){it == 0}) == 1","a.count((Predicate<Integer>){it == 1}) == 2","b.count((Predicate<Integer>){it == 1}) == 2","b.count((Predicate<Integer>){it == 3}) == 0"]},
 
-        {"kind":"and","text":"We can also easily turn a tensor into a stream!","code":["a.stream()",".filter({it < 3})",".map({(it-4)*2})",".collect(Collectors.toList()) == [-4, -8, -6, -6]"]},
+        {"kind":"and","text":"We can also easily turn a tensor into a stream!","code":["a.stream()","        .filter({it < 3})","        .map({(it-4)*2})","        .collect(Collectors.toList()) == [-4, -8, -6, -6]"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU","GPU"]}}
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use the \"filter\" method as a shortcut for \"stream().filter(..)\".",
+      "result":"PASS",
+      "duration":"0.066 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We create a tensor...","code":["Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)"]},
+
+        {"kind":"then","text":"The filter method returns a filtered stream which we can collect!","code":["t.filter({it < 3})","        .collect(Collectors.toList()) == [1, 0, 1, -4]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use the \"flatMap\" method as a shortcut for \"stream().flatMap(..)\".",
+      "result":"PASS",
+      "duration":"0.068 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We create a tensor...","code":["Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)"]},
+
+        {"kind":"then","text":"We can use the \"flatMap\" method as a shortcut for \"stream().flatMap(..)\"","code":["t.flatMap({it < 3 ? [it, it] : []})","        .collect(Collectors.toList()) == [1, 1, 0, 0, 1, 1, -4, -4]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -54,12 +84,12 @@
     {
       "id":"Tensor mapping lambdas produce expected tensors.",
       "result":"PASS",
-      "duration":"0.126 seconds",
+      "duration":"0.710 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","DataType.of( Double.class ),","    [ 2, 3 ],","    ( int i, int[] indices ) -> { (i - 2) as Double }",")",".to(device)"]},
+        {"kind":"when","text":"Instantiating a tensor using an initializer lambda...","code":["Tsr t = Tsr.of(","        DataType.of( Double.class ),","            [ 2, 3 ],","            ( int i, int[] indices ) -> { (i - 2) as Double }","        )","        .to(device)"]},
 
         {"kind":"then","text":"The tensor has been initialized with the expected values:","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]},
 
@@ -69,7 +99,7 @@
 
         {"kind":"and","text":"The original tensor should not have changed because no inline operation occurred.","code":["t.toString() == \"(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]\""]},
 
-        {"kind":"where","text":"","code":{"device":["CPU","GPU"]}}
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -77,12 +107,12 @@
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
       "result":"PASS",
-      "duration":"0.122 seconds",
+      "duration":"0.137 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a tensor with a single element.","code":["var t = Tsr.of(","    DataType.of( Integer.class ),","    [ 1 ],","    ( int i, int[] indices ) -> { 1 }",")",".to(device)"]},
+        {"kind":"given","text":"We create a tensor with a single element.","code":["var t = Tsr.of(","                        DataType.of( Integer.class ),","                        [ 1 ],","                        ( int i, int[] indices ) -> { 1 }","                    )","                    .to(device)"]},
 
         {"kind":"when","text":"We map the tensor to a new tensor of the same type.","code":["var b = t.map( it -> it + 1 )"]},
 
@@ -90,7 +120,7 @@
 
         {"kind":"and","text":"The original tensor should not have changed because no inline operation occurred.","code":["t.toString() == \"(1):[1]\""]},
 
-        {"kind":"where","text":"","code":{"device":["CPU","GPU"]}}
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -98,12 +128,12 @@
     {
       "id":"We can find both min and max items in a tensor by providing a comparator.",
       "result":"PASS",
-      "duration":"0.061 seconds",
+      "duration":"0.070 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a tensor of chars for which we want to find a min and max values:","code":["var t = Tsr.of(Character)",".withShape(2, 13)",".andWhere(( int i, int[] indices ) -> { (i+65) as char } )"]},
+        {"kind":"given","text":"We create a tensor of chars for which we want to find a min and max values:","code":["var t = Tsr.of(Character)","                    .withShape(2, 13)","                    .andWhere(( int i, int[] indices ) -> { (i+65) as char } )"]},
 
         {"kind":"when","text":"We find the min value by passing a comparator (which takes 2 values and returns an int):","code":["var min = t.minItem( ( Character a, Character b ) -> a.compareTo( b ) )"]},
 

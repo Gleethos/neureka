@@ -17,8 +17,8 @@ import neureka.backend.main.implementations.fun.api.CPUBiFun;
     @Override
     protected CPUBiFun _getDeriveAt0() {
 <span class="fc" id="L19">        return new CPUBiFun() {</span>
-<span class="fc" id="L20">            @Override public double invoke(double a, double b) { return 1d / b; }</span>
-<span class="fc" id="L21">            @Override public float invoke(float a, float b) { return 1f / b; }</span>
+<span class="nc" id="L20">            @Override public double invoke(double a, double b) { return 1d / b; }</span>
+<span class="nc" id="L21">            @Override public float invoke(float a, float b) { return 1f / b; }</span>
 <span class="nc" id="L22">            @Override public int invoke(int a, int b) { return (int) Math.round(1d / b); }</span>
 <span class="nc" id="L23">            @Override public long invoke(long a, long b) { return Math.round(1d / b); }</span>
         };
@@ -26,8 +26,8 @@ import neureka.backend.main.implementations.fun.api.CPUBiFun;
 
     @Override
     protected CPUBiFun _getDeriveAt1() {
-<span class="fc" id="L29">        return new CPUBiFun() {</span>
-<span class="fc" id="L30">            @Override public double invoke(double a, double b) { return -a / Math.pow( b, 2 ); }</span>
+<span class="nc" id="L29">        return new CPUBiFun() {</span>
+<span class="nc" id="L30">            @Override public double invoke(double a, double b) { return -a / Math.pow( b, 2 ); }</span>
 <span class="nc" id="L31">            @Override public float invoke(float a, float b) { return (float) -( a / Math.pow( b, 2 ) ); }</span>
 <span class="nc" id="L32">            @Override public int invoke(int a, int b) { return (int) Math.round( -a / Math.pow( b, 2 ) ); }</span>
 <span class="nc" id="L33">            @Override public long invoke(long a, long b) { return Math.round( -a / Math.pow( b, 2 ) ); }</span>

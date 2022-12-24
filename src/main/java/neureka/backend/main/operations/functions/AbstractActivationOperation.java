@@ -2,23 +2,19 @@ package neureka.backend.main.operations.functions;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.Activation;
-import neureka.backend.main.algorithms.ScalarActivation;
+import neureka.backend.main.algorithms.ElementwiseAlgorithm;
+import neureka.backend.main.algorithms.ScalarAlgorithm;
 import neureka.backend.main.algorithms.ScalarBroadcast;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
-import neureka.backend.main.implementations.scalar.CPUScalarBroadcastFunction;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
-import neureka.devices.host.CPU;
-import neureka.ndim.NDimensional;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 
 abstract class AbstractActivationOperation extends AbstractOperation
 {
@@ -36,36 +32,21 @@ abstract class AbstractActivationOperation extends AbstractOperation
                 .isDifferentiable( true          )
                 .isInline(         false         )
         );
+
         _fun = fun;
+
         setAlgorithm(
-            new Activation()
+            new ElementwiseAlgorithm()
                 .setSupplyADActionFor( getDefaultAlgorithm() )
                 .buildFunAlgorithm()
         );
 
         setAlgorithm(
-            new ScalarBroadcast(fun)
-            .setAutogradModeFor(
-                    call -> call
-                            .validate().allNotNullHaveSame(NDimensional::shape)
-                            .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
-                            .orElse(AutoDiffMode.BACKWARD_ONLY)
-            )
-            .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
-            .buildFunAlgorithm()
-            .setImplementationFor( CPU.class, new CPUScalarBroadcastFunction( fun ) )
+            new ScalarBroadcast(fun).buildFunAlgorithm()
         );
 
         setAlgorithm(
-            new ScalarActivation()
-            .setAutogradModeFor(
-                call -> call
-                        .validate().allNotNullHaveSame(NDimensional::shape)
-                        .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
-                        .orElse(AutoDiffMode.BACKWARD_ONLY)
-            )
-            .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
-            .buildFunAlgorithm()
+            new ScalarAlgorithm().buildFunAlgorithm()
         );
     }
 

@@ -61,7 +61,7 @@ class Tensor_Framing_Spec extends Specification
                     ["a", "b", "c"],
                     [1, 2]
             ])
-            String asString = t.frame().toString()
+            String asString = t.frame().get().toString()
 
         expect : 'The string representation of the tensor should include these labels.'
             asString.contains("a")
@@ -79,7 +79,7 @@ class Tensor_Framing_Spec extends Specification
                     "Axis Two" : ["a", "b", "c"],
                     "Axis Three" : [1, 2]
             ])
-            asString = t.frame().toString()
+            asString = t.frame().get().toString()
 
         then : 'Once again, the string will mention all labels'
             asString.contains("a")
@@ -99,13 +99,17 @@ class Tensor_Framing_Spec extends Specification
                     "Axis Two" : null,
                     "Axis Three" : ["tim", "tina"]
             ])
-            asString = t.frame().toString()
+            asString = t.frame().get().toString()
 
         then :
-            t.frame().atAxis("Axis Three").getAllAliasesForIndex(0) == ["tim"]
-            t.frame().atAxis("Axis Three").getAllAliasesForIndex(1) == ["tina"]
-            t.frame().atAxis("Axis One").getAllAliases().contains("x")
-            t.frame().atAxis("Axis One").getAllAliases().contains("y")
+            t.frame().get().atAxis("Axis Three").getAllAliasesForIndex(0) == ["tim"]
+            t.frame().get().atAxis("Axis Three").getAllAliasesForIndex(1) == ["tina"]
+            t.frame().get().atAxis("Axis One").getAllAliases().contains("x")
+            t.frame().get().atAxis("Axis One").getAllAliases().contains("y")
+            t.frame().get().atAxis(2).getAllAliasesForIndex(0) == ["tim"]
+            t.frame().get().atAxis(2).getAllAliasesForIndex(1) == ["tina"]
+            t.frame().get().atAxis(0).getAllAliases().contains("x")
+            t.frame().get().atAxis(0).getAllAliases().contains("y")
             !asString.contains(" a ")
             !asString.contains(" b ")
             !asString.contains(" c ")
@@ -123,8 +127,8 @@ class Tensor_Framing_Spec extends Specification
             asString.contains("|     Axis One     |     Axis Two     |    Axis Three    |")
 
         when :
-            t.frame().atAxis("Axis Two").replace(1).with("Hello")
-            asString = t.frame().toString()
+            t.frame().get().atAxis("Axis Two").replace(1).with("Hello")
+            asString = t.frame().get().toString()
 
         then :
             !asString.contains(" a ")
@@ -288,9 +292,10 @@ class Tensor_Framing_Spec extends Specification
                 it.prefix = ""
                 it.hasSlimNumbers = false
             }) == "[1x2x2]:(\n" +
-                  "   (\n" +
-                  "      (  -6.0 ,  -4.0  ),\n" +
-                  "      (  -2.0 ,   0.0  )\n" +
+                  "   [ 2 ]:(\n" +
+                  "      [   tim ][ tina  ]:[ My Tensor:slice ]\n" +
+                  "      (  -6.0 ,  -4.0  ):[ b ],\n" +
+                  "      (  -2.0 ,   0.0  ):[ y ]\n" +
                   "   )\n" +
                   ")"
         and: 'The tensor "x" is of course a slice:'
@@ -321,11 +326,12 @@ class Tensor_Framing_Spec extends Specification
                 it.prefix = ""
                 it.hasSlimNumbers = false
             }) == "[1x2x2]:(\n" +
-                  "   (\n" +
-                  "      (  -6.0 ,  -4.0  ),\n" +
-                  "      (  -2.0 ,   0.0  )\n" +
-                  "   )\n" +
-                  ")"
+                    "   [ 2 ]:(\n" +
+                    "      [   tim ][ tina  ]:[ My Tensor:slice ]\n" +
+                    "      (  -6.0 ,  -4.0  ):[ b ],\n" +
+                    "      (  -2.0 ,   0.0  ):[ y ]\n" +
+                    "   )\n" +
+                    ")"
             !s.isVirtual() // This might change if possible (technically difficult)
             s.isSlice()
             t.isSliceParent()
@@ -351,11 +357,12 @@ class Tensor_Framing_Spec extends Specification
                 it.prefix = ""
                 it.hasSlimNumbers = false
             }) == "[1x2x2]:(\n" +
-                  "   (\n" +
-                  "      (  -6.0 ,  -4.0  ),\n" +
-                  "      (  -2.0 ,   0.0  )\n" +
-                  "   )\n" +
-                  ")"
+                    "   [ 2 ]:(\n" +
+                    "      [   tim ][ tina  ]:[ My Tensor:slice ]\n" +
+                    "      (  -6.0 ,  -4.0  ):[ b ],\n" +
+                    "      (  -2.0 ,   0.0  ):[ y ]\n" +
+                    "   )\n" +
+                    ")"
             !s.isVirtual() // This might change if possible (technically difficult)
             s.isSlice()
             t.isSliceParent()
@@ -389,13 +396,15 @@ class Tensor_Framing_Spec extends Specification
                         it.prefix = ""
                         it.hasSlimNumbers = false
                     }) == "[2x2x2]:(\n" +
-                          "   (\n" +
-                          "      (  -3.0 ,  -1.0  ),\n" +
-                          "      (   1.0 ,   3.0  )\n" +
+                          "   [ 1 ]:(\n" +
+                          "      [   tim ][ tina  ]:[ My Tensor:slice ]\n" +
+                          "      (  -3.0 ,  -1.0  ):[ b ],\n" +
+                          "      (   1.0 ,   3.0  ):[ y ]\n" +
                           "   ),\n" +
-                          "   (\n" +
-                          "      (  -6.0 ,  -4.0  ),\n" +
-                          "      (  -2.0 ,   0.0  )\n" +
+                          "   [ 2 ]:(\n" +
+                          "      [   tim ][ tina  ]:[ My Tensor:slice ]\n" +
+                          "      (  -6.0 ,  -4.0  ):[ b ],\n" +
+                          "      (  -2.0 ,   0.0  ):[ y ]\n" +
                           "   )\n" +
                           ")"
             !s.isVirtual() // This might change if possible (technically difficult)

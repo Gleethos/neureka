@@ -6,11 +6,11 @@ import neureka.backend.api.ini.BackendLoader;
 import neureka.backend.api.ini.BackendRegistry;
 import neureka.backend.api.ini.ImplementationReceiver;
 import neureka.backend.api.ini.LoadingContext;
-import neureka.calculus.Function;
-import neureka.calculus.FunctionCache;
-import neureka.calculus.Functions;
-import neureka.calculus.assembly.FunctionParser;
-import neureka.calculus.assembly.ParseUtil;
+import neureka.math.Function;
+import neureka.math.FunctionCache;
+import neureka.math.Functions;
+import neureka.math.parsing.FunctionParser;
+import neureka.math.parsing.ParseUtil;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public final class BackendContext implements Cloneable
 {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(BackendContext.class);
 
-    private final Extensions extensions = new Extensions();
+    private final Extensions _extensions = new Extensions();
 
     /**
      *  A mapping between OperationType identifiers and their corresponding instances.
@@ -75,6 +75,29 @@ public final class BackendContext implements Cloneable
      */
     private final LazyRef<Functions> _getFunction;
 
+
+    /**
+     *  This creates a new context which is completely void of any {@link Operation} implementation instances.
+     *  Use this constructor to test, debug, build and populate custom execution contexts.
+     */
+    public BackendContext()
+    {
+        _getAutogradFunction = LazyRef.of( () -> new Functions( true ) );
+        _getFunction = LazyRef.of( () -> new Functions( false ) );
+        _lookup = new HashMap<>();
+        _operations = new ArrayList<>();
+        _size = 0;
+    }
+
+    public void reset() {
+        for ( BackendExtension e : _extensions.getAll(BackendExtension.class) ) {
+            try {
+                e.reset();
+            } catch (Exception ex) {
+                log.error("Error while resetting backend extension: " + e.getClass().getName(), ex);
+            }
+        }
+    }
 
     /**
      *  A {@link Runner} wraps both the called context as well as the context of the caller in order
@@ -135,19 +158,6 @@ public final class BackendContext implements Cloneable
      * @return A container object which exposes various types of functions with autograd support.
      */
     public Functions getAutogradFunction() { return _getAutogradFunction.get(); }
-
-    /**
-     *  This creates a new context which is completely void of any {@link Operation} implementation instances.
-     *  Use this constructor to test, debug, build and populate custom execution contexts.
-     */
-    public BackendContext()
-    {
-        _getAutogradFunction = LazyRef.of( () -> new Functions( true ) );
-        _getFunction = LazyRef.of( () -> new Functions( false ) );
-        _lookup = new HashMap<>();
-        _operations = new ArrayList<>();
-        _size = 0;
-    }
 
     /**
      *  This method registers {@link Operation} implementation instances in this {@link BackendContext}
@@ -234,22 +244,22 @@ public final class BackendContext implements Cloneable
      * @return The truth value determining if the provided type is present.
      */
     public <E extends BackendExtension> boolean has( Class<E> extensionClass ) {
-        return extensions.has( extensionClass );
+        return _extensions.has( extensionClass );
     }
 
     /**
-     *  Returns an instance of the provided {@link BackendExtension} type
-     *  or null if no extension of that type was found.
+     *  Returns an {@link Optional} instance of the provided {@link BackendExtension} type
+     *  or an empty {@link Optional} if no extension of that type was found.
      */
-    public <E extends BackendExtension> E get( Class<E> componentClass ) {
-        return extensions.get( componentClass );
+    public <E extends BackendExtension> Optional<E> find( Class<E> componentClass ) {
+        return _extensions.find( componentClass );
     }
 
     /**
      * @return A list of all {@link BackendExtension} instances.
      */
     public List<BackendExtension> getExtensions() {
-        return extensions.getAll( BackendExtension.class );
+        return _extensions.getAll( BackendExtension.class );
     }
 
 
@@ -270,7 +280,7 @@ public final class BackendContext implements Cloneable
 
     /**
      *  Registers the provided {@link BackendExtension} instance
-     *  which can then be accessed via {@link #get(Class)}.
+     *  which can then be accessed via {@link #find(Class)}.
      *
      * @param extension The backend extension component which ought to be stored by this.
      * @return This very {@link BackendContext} instance to allow for method chaining.
@@ -306,7 +316,7 @@ public final class BackendContext implements Cloneable
                 "Failed to register "+count+" implementations for extension of type '"+extension.getClass().getSimpleName()+"'."
             );
 
-        extensions.set( extension );
+        _extensions.set( extension );
         return this;
     }
 

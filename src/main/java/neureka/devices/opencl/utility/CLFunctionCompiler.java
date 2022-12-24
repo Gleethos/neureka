@@ -3,16 +3,13 @@ package neureka.devices.opencl.utility;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
-import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.DeviceAlgorithm;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Operation;
+import neureka.backend.api.*;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.implementations.FunctionInput;
-import neureka.calculus.implementations.FunctionVariable;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.implementations.FunctionInput;
+import neureka.math.implementations.FunctionVariable;
 import neureka.devices.opencl.KernelCaller;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
@@ -75,17 +72,21 @@ public final class CLFunctionCompiler
                         .withName( "generic_algorithm_for_"+ _functionName )
                         .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                        .setDeviceExecution(
-                            (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback),
-                            (caller, call) -> ADAction.of( target -> Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )
+                        .setExecution(
+                            (outerCaller, outerCall) ->
+                                Result.of(AbstractDeviceAlgorithm.executeFor(
+                                    outerCaller, outerCall,
+                                    call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call )
+                                ))
+                                .withAutoDiff((caller, call) -> ADAction.of( target -> Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) ))
                         )
                         .setCallPreparation(
                             call -> {
                                 if ( call.input( 0 ) == null ) // Creating a new tensor:
                                 {
-                                    Tsr<Double> output = Tsr.of(call.input(1).getNDConf().shape(), 0.0);
+                                    Tsr<Number> output = Tsr.like( (Tsr<Number>) call.input( 1 ) ).all(0);
                                     output.getMut().setIsVirtual( false );
-                                    call.getDeviceFor(Double.class).store(output);
+                                    call.getDeviceFor(Number.class).store(output);
                                     call = call.withInputAt( 0, output );
                                 }
                                 return call;

@@ -10,12 +10,12 @@ public class CLScalarBroadcastDivision extends CLScalarBroadcast
     public CLScalarBroadcastDivision( String id ) {
 <span class="fc" id="L11">        super(</span>
                 id,
-                &quot;output = input1 / value;\n&quot;,
-                &quot;if (d==0) {                                       \n&quot; +
-                &quot;    output = 1/value;                             \n&quot; +
-                &quot;} else {                                          \n&quot; +
-                &quot;    output = -value /(float)pow(input1, 2.0f);    \n&quot; +
-                &quot;}                                                 \n&quot;
+                &quot;output = (&quot;+TYPE+&quot;)(((float)input1) / ((float)value));\n&quot;,
+                &quot;if ( d == 0 ) {                                                        \n&quot; +
+                &quot;    output = (&quot;+TYPE+&quot;)( 1 / (float)value );                                    \n&quot; +
+                &quot;} else {                                                                        \n&quot; +
+                &quot;    output = -((&quot;+TYPE+&quot;)(((float)value) /(float)pow((float)input1, 2.0f)));    \n&quot; +
+                &quot;}                                                                               \n&quot;
         );
 <span class="fc" id="L20">    }</span>
 

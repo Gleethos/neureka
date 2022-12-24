@@ -3,10 +3,7 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
-import neureka.backend.api.AutoDiffMode;
-import neureka.backend.api.DeviceAlgorithm;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Operation;
+import neureka.backend.api.*;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.calculus.Function;
@@ -35,181 +32,185 @@ public final class CLFunctionCompiler
     private final int[] _argPointer;
 
     public CLFunctionCompiler( OpenCLDevice device, Function toBeOptimized, String functionName )
-<span class="fc" id="L38">    {</span>
-<span class="fc" id="L39">        _device = device;</span>
-<span class="fc" id="L40">        _functionToBeOptimized = toBeOptimized;</span>
-<span class="fc" id="L41">        _functionName = functionName;</span>
-<span class="fc" id="L42">        _argPointer = toBeOptimized.getAllFunctions()</span>
-<span class="fc" id="L43">                                    .stream()</span>
-<span class="fc" id="L44">                                    .filter( fun -&gt; fun instanceof FunctionInput )</span>
-<span class="fc" id="L45">                                    .mapToInt( fun -&gt; ( (FunctionInput) fun ).index() )</span>
-<span class="fc" id="L46">                                    .distinct()</span>
-<span class="fc" id="L47">                                    .toArray();</span>
-<span class="fc" id="L48">    }</span>
+<span class="fc" id="L35">    {</span>
+<span class="fc" id="L36">        _device = device;</span>
+<span class="fc" id="L37">        _functionToBeOptimized = toBeOptimized;</span>
+<span class="fc" id="L38">        _functionName = functionName;</span>
+<span class="fc" id="L39">        _argPointer = toBeOptimized.getAllFunctions()</span>
+<span class="fc" id="L40">                                    .stream()</span>
+<span class="fc" id="L41">                                    .filter( fun -&gt; fun instanceof FunctionInput )</span>
+<span class="fc" id="L42">                                    .mapToInt( fun -&gt; ( (FunctionInput) fun ).index() )</span>
+<span class="fc" id="L43">                                    .distinct()</span>
+<span class="fc" id="L44">                                    .toArray();</span>
+<span class="fc" id="L45">    }</span>
 
 
     public Operation optimize() {
-<span class="fc" id="L52">        int numberOfArgs = _functionToBeOptimized.numberOfArgs();</span>
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if ( _functionToBeOptimized.getSubFunctions().stream().anyMatch(fun -&gt; fun instanceof FunctionVariable ) )</span>
-<span class="nc" id="L54">            numberOfArgs = -1; // The function is an indexer which means that it can have any number of arguments...</span>
-<span class="fc" id="L55">        return Operation</span>
-<span class="fc" id="L56">                .builder()</span>
-<span class="fc" id="L57">                .identifier( _functionName )</span>
-<span class="fc" id="L58">                .operator( _functionName )</span>
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">                .arity( numberOfArgs )</span>
-<span class="fc" id="L60">                .isIndexer( numberOfArgs &lt; 0 )</span>
-<span class="fc" id="L61">                .isOperator( false )</span>
-<span class="fc" id="L62">                .isDifferentiable( true )</span>
-<span class="fc" id="L63">                .isInline( false )</span>
-<span class="fc" id="L64">                .stringifier(</span>
+<span class="fc" id="L49">        int numberOfArgs = _functionToBeOptimized.numberOfArgs();</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if ( _functionToBeOptimized.getSubFunctions().stream().anyMatch(fun -&gt; fun instanceof FunctionVariable ) )</span>
+<span class="nc" id="L51">            numberOfArgs = -1; // The function is an indexer which means that it can have any number of arguments...</span>
+<span class="fc" id="L52">        return Operation</span>
+<span class="fc" id="L53">                .builder()</span>
+<span class="fc" id="L54">                .identifier( _functionName )</span>
+<span class="fc" id="L55">                .operator( _functionName )</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">                .arity( numberOfArgs )</span>
+<span class="fc" id="L57">                .isIndexer( numberOfArgs &lt; 0 )</span>
+<span class="fc" id="L58">                .isOperator( false )</span>
+<span class="fc" id="L59">                .isDifferentiable( true )</span>
+<span class="fc" id="L60">                .isInline( false )</span>
+<span class="fc" id="L61">                .stringifier(</span>
                     children -&gt; {
-<span class="fc" id="L66">                        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L67" title="3 of 4 branches missed.">                        if ( expression.charAt(0) == '(' &amp;&amp; expression.charAt(expression.length() - 1) == ')' )</span>
-<span class="nc" id="L68">                            return _functionName + expression;</span>
-<span class="fc" id="L69">                        return _functionName + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L63">                        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L64" title="3 of 4 branches missed.">                        if ( expression.charAt(0) == '(' &amp;&amp; expression.charAt(expression.length() - 1) == ')' )</span>
+<span class="nc" id="L65">                            return _functionName + expression;</span>
+<span class="fc" id="L66">                        return _functionName + &quot;(&quot; + expression + &quot;)&quot;;</span>
                     }
                 )
-<span class="fc" id="L72">                .build()</span>
-<span class="fc" id="L73">                .setAlgorithm(</span>
+<span class="fc" id="L69">                .build()</span>
+<span class="fc" id="L70">                .setAlgorithm(</span>
                     DeviceAlgorithm
-<span class="fc" id="L75">                        .withName( &quot;generic_algorithm_for_&quot;+ _functionName )</span>
-<span class="fc" id="L76">                        .setIsSuitableFor( call -&gt; SuitabilityPredicate.GOOD )</span>
-<span class="fc" id="L77">                        .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
-<span class="fc" id="L78">                        .setDeviceExecution(</span>
-<span class="fc" id="L79">                            (call, callback) -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm(call, callback),</span>
-<span class="nc" id="L80">                            (caller, call) -&gt; ADAction.of( target -&gt; Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) )</span>
+<span class="fc" id="L72">                        .withName( &quot;generic_algorithm_for_&quot;+ _functionName )</span>
+<span class="fc" id="L73">                        .setIsSuitableFor( call -&gt; SuitabilityPredicate.GOOD )</span>
+<span class="fc" id="L74">                        .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
+<span class="fc" id="L75">                        .setExecution(</span>
+                            (outerCaller, outerCall) -&gt;
+<span class="fc" id="L77">                                Result.of(AbstractDeviceAlgorithm.executeFor(</span>
+                                    outerCaller, outerCall,
+<span class="fc" id="L79">                                    call -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( call )</span>
+                                ))
+<span class="pc" id="L81">                                .withAutoDiff((caller, call) -&gt; ADAction.of( target -&gt; Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) ))</span>
                         )
-<span class="fc" id="L82">                        .setCallPreparation(</span>
+<span class="fc" id="L83">                        .setCallPreparation(</span>
                             call -&gt; {
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">                                if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                                if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
                                 {
-<span class="fc" id="L86">                                    Tsr&lt;Double&gt; output = Tsr.of(call.input(1).getNDConf().shape(), 0.0);</span>
-<span class="fc" id="L87">                                    output.setIsVirtual( false );</span>
-<span class="fc" id="L88">                                    call.getDeviceFor(Double.class).store(output);</span>
-<span class="fc" id="L89">                                    call = call.withInputAt( 0, output );</span>
+<span class="fc" id="L87">                                    Tsr&lt;Number&gt; output = Tsr.like( (Tsr&lt;Number&gt;) call.input( 1 ) ).all(0);</span>
+<span class="fc" id="L88">                                    output.getMut().setIsVirtual( false );</span>
+<span class="fc" id="L89">                                    call.getDeviceFor(Number.class).store(output);</span>
+<span class="fc" id="L90">                                    call = call.withInputAt( 0, output );</span>
                                 }
-<span class="fc" id="L91">                                return call;</span>
+<span class="fc" id="L92">                                return call;</span>
                             }
                         )
-<span class="fc" id="L94">                        .buildFunAlgorithm()</span>
-<span class="fc" id="L95">                        .setImplementationFor( OpenCLDevice.class, this::_adHocKernelFor )</span>
+<span class="fc" id="L95">                        .buildFunAlgorithm()</span>
+<span class="fc" id="L96">                        .setImplementationFor( OpenCLDevice.class, this::_adHocKernelFor )</span>
                 );
     }
 
 
     private Tsr&lt;?&gt; _adHocKernelFor( ExecutionCall&lt;?&gt; call ) {
 
-<span class="fc" id="L102">        List&lt;Tsr&lt;Number&gt;&gt; args = Arrays.stream( _argPointer )</span>
-<span class="fc" id="L103">                                    .mapToObj( p -&gt; call.input( p + 1 ).getUnsafe().upcast(Number.class) )</span>
-<span class="fc" id="L104">                                    .collect(Collectors.toList());</span>
+<span class="fc" id="L103">        List&lt;Tsr&lt;Number&gt;&gt; args = Arrays.stream( _argPointer )</span>
+<span class="fc" id="L104">                                    .mapToObj( p -&gt; call.input( p + 1 ).getMut().upcast(Number.class) )</span>
+<span class="fc" id="L105">                                    .collect(Collectors.toList());</span>
 
-<span class="fc" id="L106">        args.add(0, call.input(Number.class, 0));</span>
+<span class="fc" id="L107">        args.add(0, call.input(Number.class, 0));</span>
 
-<span class="fc" id="L108">        List&lt;String&gt; types = args.stream()</span>
-<span class="fc" id="L109">                                    .map( CLFunctionCompiler::_clTypeOf )</span>
-<span class="fc" id="L110">                                    .collect(Collectors.toList());</span>
+<span class="fc" id="L109">        List&lt;String&gt; types = args.stream()</span>
+<span class="fc" id="L110">                                    .map( CLFunctionCompiler::_clTypeOf )</span>
+<span class="fc" id="L111">                                    .collect(Collectors.toList());</span>
 
-<span class="fc" id="L112">        String kernelSignature =</span>
-<span class="pc bpc" id="L113" title="1 of 2 branches missed.">                                _functionName + ( call.getValOf( Arg.DerivIdx.class ) &gt;= 0 ? &quot;_derivative&quot; : &quot;&quot; ) +</span>
+<span class="fc" id="L113">        String kernelSignature =</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">                                _functionName + ( call.getValOf( Arg.DerivIdx.class ) &gt;= 0 ? &quot;_derivative&quot; : &quot;&quot; ) +</span>
                                 &quot;_&quot; +
-<span class="fc" id="L115">                                        args.stream()</span>
-<span class="fc" id="L116">                                                .map( arg -&gt;</span>
-<span class="fc" id="L117">                                                        arg.getDataType().getRepresentativeType().getSimpleName() +</span>
+<span class="fc" id="L116">                                        args.stream()</span>
+<span class="fc" id="L117">                                                .map( arg -&gt;</span>
+<span class="fc" id="L118">                                                        arg.getDataType().getRepresentativeType().getSimpleName() +</span>
                                                         &quot;$&quot; +
                                                         (
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">                                                            arg.getNDConf().isSimple()</span>
-<span class="fc" id="L121">                                                            ? Arrays.stream( arg.getNDConf().shape() )</span>
-<span class="pc" id="L122">                                                            : Arrays.stream( arg.getNDConf().asInlineArray() )</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">                                                            arg.getNDConf().isSimple()</span>
+<span class="fc" id="L122">                                                            ? Arrays.stream( arg.getNDConf().shape() )</span>
+<span class="pc" id="L123">                                                            : Arrays.stream( arg.getNDConf().asInlineArray() )</span>
                                                         )
-<span class="fc" id="L124">                                                        .mapToObj( String::valueOf )</span>
-<span class="fc" id="L125">                                                        .collect( Collectors.joining(&quot;x&quot;) )</span>
+<span class="fc" id="L125">                                                        .mapToObj( String::valueOf )</span>
+<span class="fc" id="L126">                                                        .collect( Collectors.joining(&quot;x&quot;) )</span>
                                                 )
-<span class="fc" id="L127">                                    .collect( Collectors.joining( &quot;_&quot; ) );</span>
+<span class="fc" id="L128">                                    .collect( Collectors.joining( &quot;_&quot; ) );</span>
 
-<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if ( _device.hasAdHocKernel( kernelSignature ) ) {</span>
-<span class="nc" id="L130">            KernelCaller caller = _device.getAdHocKernel( kernelSignature );</span>
-<span class="nc" id="L131">            args.forEach( caller::passAllOf);</span>
-<span class="nc" id="L132">            caller.call( args.get(0).size() );</span>
-<span class="nc" id="L133">            return call.input(0);</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if ( _device.hasAdHocKernel( kernelSignature ) ) {</span>
+<span class="nc" id="L131">            KernelCaller caller = _device.getAdHocKernel( kernelSignature );</span>
+<span class="nc" id="L132">            args.forEach( caller::passAllOf);</span>
+<span class="nc" id="L133">            caller.call( args.get(0).size() );</span>
+<span class="nc" id="L134">            return call.input(0);</span>
         }
         // So no kernel with this signature was found...
         // Therefore we compile a new kernel specific to the provided call contents (shapes and types)!
 
-<span class="fc" id="L138">        int rank = args.get(0).rank();</span>
+<span class="fc" id="L139">        int rank = args.get(0).rank();</span>
 
-<span class="fc" id="L140">        List&lt;List&lt;String&gt;&gt; configs = args.stream()</span>
-<span class="fc" id="L141">                                            .map( arg -&gt; arg.getNDConf().asInlineArray() )</span>
-<span class="fc" id="L142">                                            .map(</span>
+<span class="fc" id="L141">        List&lt;List&lt;String&gt;&gt; configs = args.stream()</span>
+<span class="fc" id="L142">                                            .map( arg -&gt; arg.getNDConf().asInlineArray() )</span>
+<span class="fc" id="L143">                                            .map(</span>
                                                     array -&gt;
-<span class="fc" id="L144">                                                            Arrays.stream(array)</span>
-<span class="fc" id="L145">                                                                    .mapToObj( String::valueOf )</span>
-<span class="fc" id="L146">                                                                    .collect(Collectors.toList())</span>
+<span class="fc" id="L145">                                                            Arrays.stream(array)</span>
+<span class="fc" id="L146">                                                                    .mapToObj( String::valueOf )</span>
+<span class="fc" id="L147">                                                                    .collect(Collectors.toList())</span>
                                             )
-<span class="fc" id="L148">                                            .collect(Collectors.toList());</span>
+<span class="fc" id="L149">                                            .collect(Collectors.toList());</span>
 
-<span class="fc" id="L150">        String argString = IntStream.range( 0, args.size() )</span>
-<span class="fc" id="L151">                                    .mapToObj( i -&gt; &quot;__global &quot;+types.get(i)+&quot;* arg&quot; + i )</span>
-<span class="fc" id="L152">                                    .collect(Collectors.joining(&quot;, &quot;));</span>
+<span class="fc" id="L151">        String argString = IntStream.range( 0, args.size() )</span>
+<span class="fc" id="L152">                                    .mapToObj( i -&gt; &quot;__global &quot;+types.get(i)+&quot;* arg&quot; + i )</span>
+<span class="fc" id="L153">                                    .collect(Collectors.joining(&quot;, &quot;));</span>
 
-<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        Function toBeCompiled = call.getValOf( Arg.DerivIdx.class ) &lt; 0</span>
-<span class="fc" id="L155">                                    ? _functionToBeOptimized</span>
-<span class="pc" id="L156">                                    : _functionToBeOptimized.getDerivative( call.getValOf( Arg.DerivIdx.class ) );</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        Function toBeCompiled = call.getValOf( Arg.DerivIdx.class ) &lt; 0</span>
+<span class="fc" id="L156">                                    ? _functionToBeOptimized</span>
+<span class="pc" id="L157">                                    : _functionToBeOptimized.getDerivative( call.getValOf( Arg.DerivIdx.class ) );</span>
 
-<span class="fc" id="L158">        String compilableFun = IntStream.range( 0, _argPointer.length )</span>
-<span class="fc" id="L159">                                        .mapToObj( String::valueOf )</span>
-<span class="fc" id="L160">                                        .reduce(</span>
-<span class="fc" id="L161">                                            toBeCompiled.toString(),</span>
+<span class="fc" id="L159">        String compilableFun = IntStream.range( 0, _argPointer.length )</span>
+<span class="fc" id="L160">                                        .mapToObj( String::valueOf )</span>
+<span class="fc" id="L161">                                        .reduce(</span>
+<span class="fc" id="L162">                                            toBeCompiled.toString(),</span>
                                              (source, index) -&gt;
-<span class="fc" id="L163">                                                     source.replace(</span>
-<span class="fc" id="L164">                                                             &quot;I[&quot;+_argPointer[Integer.parseInt(index)]+&quot;]&quot;,</span>
-<span class="fc" id="L165">                                                             &quot;v&quot; + (Integer.parseInt(index) + 1)</span>
+<span class="fc" id="L164">                                                     source.replace(</span>
+<span class="fc" id="L165">                                                             &quot;I[&quot;+_argPointer[Integer.parseInt(index)]+&quot;]&quot;,</span>
+<span class="fc" id="L166">                                                             &quot;v&quot; + (Integer.parseInt(index) + 1)</span>
                                                      )
                                         );
 
-<span class="fc" id="L169">        String kernelCode =</span>
+<span class="fc" id="L170">        String kernelCode =</span>
                 &quot;\n&quot; +
-<span class="fc" id="L171">                    _readAndGetIndexMapper() +</span>
+<span class="fc" id="L172">                    _readAndGetIndexMapper() +</span>
                 &quot;\n&quot; +
                 &quot;    __kernel void &quot; + kernelSignature + &quot;(\n&quot; +
                 &quot;        &quot; + argString + &quot;\n&quot; +
                 &quot;    ) {                                                                                     \n&quot; +
                 &quot;        &quot; + IntStream
-<span class="fc" id="L177">                                .range(0, configs.size())</span>
-<span class="fc" id="L178">                                .mapToObj(</span>
-<span class="fc" id="L179">                                    i -&gt; &quot;int cfg&quot;+i+&quot;[] = {&quot; + String.join( &quot;,&quot;, configs.get(i) ) + &quot;};&quot;</span>
+<span class="fc" id="L178">                                .range(0, configs.size())</span>
+<span class="fc" id="L179">                                .mapToObj(</span>
+<span class="fc" id="L180">                                    i -&gt; &quot;int cfg&quot;+i+&quot;[] = {&quot; + String.join( &quot;,&quot;, configs.get(i) ) + &quot;};&quot;</span>
                                 )
-<span class="fc" id="L181">                                .collect(Collectors.joining(&quot;\n        &quot;)) +</span>
+<span class="fc" id="L182">                                .collect(Collectors.joining(&quot;\n        &quot;)) +</span>
                 &quot;                                                                                          \n&quot; +
                 &quot;        unsigned int i = get_global_id( 0 );                                              \n&quot; +
                 &quot;        &quot; + IntStream
-<span class="fc" id="L185">                                .range(1, args.size()) // We start at 1 because 0 is the output!</span>
-<span class="fc" id="L186">                                .mapToObj(</span>
-<span class="fc" id="L187">                                        i -&gt; types.get(i) + &quot; v&quot; + i + &quot; = arg&quot; + i + &quot;[_i_of_i(i, cfg&quot;+i+&quot;, &quot;+rank+&quot;)];&quot;</span>
+<span class="fc" id="L186">                                .range(1, args.size()) // We start at 1 because 0 is the output!</span>
+<span class="fc" id="L187">                                .mapToObj(</span>
+<span class="fc" id="L188">                                        i -&gt; types.get(i) + &quot; v&quot; + i + &quot; = arg&quot; + i + &quot;[_i_of_i(i, cfg&quot;+i+&quot;, &quot;+rank+&quot;)];&quot;</span>
                                 )
-<span class="fc" id="L189">                                .collect(Collectors.joining(&quot;\n        &quot;)) +</span>
+<span class="fc" id="L190">                                .collect(Collectors.joining(&quot;\n        &quot;)) +</span>
                 &quot;                                                                                          \n&quot; +
                 &quot;        arg0[_i_of_i(i, cfg0, &quot;+rank+&quot;)] = &quot; + compilableFun + &quot;;                         \n&quot; +
                 &quot;    }                                                                                     \n\n&quot;;
 
-<span class="fc" id="L194">        KernelCaller caller = _device.compileAndGetAdHocKernel( kernelSignature, kernelCode );</span>
-<span class="fc" id="L195">        args.forEach( caller::pass );</span>
-<span class="fc" id="L196">        caller.call( args.get(0).size() );</span>
-<span class="fc" id="L197">        return call.input(0);</span>
+<span class="fc" id="L195">        KernelCaller caller = _device.compileAndGetAdHocKernel( kernelSignature, kernelCode );</span>
+<span class="fc" id="L196">        args.forEach( caller::pass );</span>
+<span class="fc" id="L197">        caller.call( args.get(0).size() );</span>
+<span class="fc" id="L198">        return call.input(0);</span>
     }
 
     private static String _clTypeOf( Tsr&lt;?&gt; tensor ) {
-<span class="fc" id="L201">        DataType&lt;?&gt; dtype = tensor.getDataType();</span>
-<span class="fc" id="L202">        java.util.function.Function&lt;Class&lt;?&gt;, String&gt; formatter = type -&gt; type.getSimpleName()</span>
-<span class="fc" id="L203">                                                                                 .toLowerCase()</span>
-<span class="fc" id="L204">                                                                                 .replace(&quot;integer&quot;, &quot;int&quot;);</span>
-<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        if ( dtype.typeClassImplements(NumericType.class) ) {</span>
-<span class="fc" id="L206">            NumericType&lt;?,?,?,?&gt; instance = (NumericType&lt;?,?,?,?&gt;) dtype.getTypeClassInstance(NumericType.class);</span>
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            if ( instance.holderType() == instance.targetType() )</span>
-<span class="fc" id="L208">                return formatter.apply(instance.holderType()); // Float, Double, Long, Short...</span>
+<span class="fc" id="L202">        DataType&lt;?&gt; dtype = tensor.getDataType();</span>
+<span class="fc" id="L203">        java.util.function.Function&lt;Class&lt;?&gt;, String&gt; formatter = type -&gt; type.getSimpleName()</span>
+<span class="fc" id="L204">                                                                                 .toLowerCase()</span>
+<span class="fc" id="L205">                                                                                 .replace(&quot;integer&quot;, &quot;int&quot;);</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        if ( dtype.typeClassImplements(NumericType.class) ) {</span>
+<span class="fc" id="L207">            NumericType&lt;?,?,?,?&gt; instance = (NumericType&lt;?,?,?,?&gt;) dtype.getTypeClassInstance(NumericType.class);</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            if ( instance.holderType() == instance.targetType() )</span>
+<span class="fc" id="L209">                return formatter.apply(instance.holderType()); // Float, Double, Long, Short...</span>
             else // Unsigned types:
-<span class="nc" id="L210">                return &quot;u&quot; + formatter.apply(instance.holderType());</span>
+<span class="nc" id="L211">                return &quot;u&quot; + formatter.apply(instance.holderType());</span>
         }
-<span class="nc" id="L212">        return formatter.apply(dtype.getRepresentativeType());</span>
+<span class="nc" id="L213">        return formatter.apply(dtype.getRepresentativeType());</span>
     }
 
     /**
@@ -219,19 +220,19 @@ public final class CLFunctionCompiler
      * @return The &quot;_i_of_i&quot; method from the &quot;utility.cl&quot; file.
      */
     private static String _readAndGetIndexMapper() {
-<span class="fc" id="L222">        String resource = Neureka.get()</span>
-<span class="fc" id="L223">                                    .utility()</span>
-<span class="fc" id="L224">                                    .readResource(&quot;kernels/utility.cl&quot;);</span>
-<span class="fc" id="L225">        return</span>
+<span class="fc" id="L223">        String resource = Neureka.get()</span>
+<span class="fc" id="L224">                                    .utility()</span>
+<span class="fc" id="L225">                                    .readResource(&quot;kernels/utility.cl&quot;);</span>
+<span class="fc" id="L226">        return</span>
                 &quot;    int _i_of_idx_on_tln&quot; +
                         resource
-<span class="fc" id="L228">                                .split(&quot;int _i_of_idx_on_tln&quot;)[1]</span>
-<span class="fc" id="L229">                                .split(&quot;// _i_of_idx_on_tln end!&quot;)[0] +</span>
+<span class="fc" id="L229">                                .split(&quot;int _i_of_idx_on_tln&quot;)[1]</span>
+<span class="fc" id="L230">                                .split(&quot;// _i_of_idx_on_tln end!&quot;)[0] +</span>
                &quot;\n&quot; +
                &quot;    int _i_of_i&quot; +
                         resource
-<span class="fc" id="L233">                                .split(&quot;int _i_of_i&quot;)[1]</span>
-<span class="fc" id="L234">                                .split(&quot;// _i_of_i end!&quot;)[0];</span>
+<span class="fc" id="L234">                                .split(&quot;int _i_of_i&quot;)[1]</span>
+<span class="fc" id="L235">                                .split(&quot;// _i_of_i end!&quot;)[0];</span>
     }
 
 }

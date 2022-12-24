@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLBroadcast.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.broadcast</a> &gt; <span class="el_source">CLBroadcast.java</span></div><h1>CLBroadcast.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.broadcast;
 
 import neureka.Neureka;
-import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.calculus.args.Arg;
+import neureka.devices.opencl.KernelCode;
 
 public class CLBroadcast extends ParsedCLImplementation
 {
     protected CLBroadcast(String postfix, String forward, String backward) {
 <span class="fc" id="L11">        super(</span>
-<span class="fc" id="L12">            CLImplementation.compiler()</span>
-<span class="fc" id="L13">            .arity( 3 )</span>
-<span class="fc" id="L14">            .kernelSource( Neureka.get().utility().readResource(&quot;kernels/broadcast_template.cl&quot;) )</span>
-<span class="fc" id="L15">            .activationSource( forward )</span>
-<span class="fc" id="L16">            .differentiationSource( backward )</span>
-<span class="fc" id="L17">            .kernelPostfix( postfix )</span>
-<span class="fc" id="L18">            .execution(</span>
-                call -&gt; {
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">                    int offset = ( call.input( Number.class, 0 ) != null ) ? 0 : 1;</span>
-<span class="pc bpc" id="L21" title="1 of 2 branches missed.">                    int gwz = ( call.input( Number.class, 0 ) != null ) ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();</span>
-<span class="fc" id="L22">                    call.getDevice()</span>
-<span class="fc" id="L23">                        .getKernel(call)</span>
-<span class="fc" id="L24">                        .passAllOf( call.input( Number.class, offset ) )</span>
-<span class="fc" id="L25">                        .passAllOf( call.input( Number.class, offset + 1 ) )</span>
-<span class="fc" id="L26">                        .passAllOf( call.input( Number.class, offset + 2 ) )</span>
-<span class="fc" id="L27">                        .pass( call.input( Number.class, 0 ).rank() )</span>
-<span class="fc" id="L28">                        .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
-<span class="fc" id="L29">                        .call( gwz );</span>
+            call -&gt; {
+<span class="pc bpc" id="L13" title="1 of 2 branches missed.">                int offset = ( call.input( Number.class, 0 ) != null ? 0 : 1 );</span>
+<span class="pc bpc" id="L14" title="1 of 2 branches missed.">                int gwz    = ( call.input( Number.class, 0 ) != null ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size() );</span>
+<span class="fc" id="L15">                call.getDevice()</span>
+<span class="fc" id="L16">                    .getKernel(call)</span>
+<span class="fc" id="L17">                    .passAllOf( call.input( Number.class, offset ) )</span>
+<span class="fc" id="L18">                    .passAllOf( call.input( Number.class, offset + 1 ) )</span>
+<span class="fc" id="L19">                    .passAllOf( call.input( Number.class, offset + 2 ) )</span>
+<span class="fc" id="L20">                    .pass( call.input( Number.class, 0 ).rank() )</span>
+<span class="fc" id="L21">                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
+<span class="fc" id="L22">                    .call( gwz );</span>
 
-<span class="fc" id="L31">                    return call.input( 0 );</span>
-                }
-            )
+<span class="fc" id="L24">                return call.input( 0 );</span>
+            },
+            3,
+<span class="fc" id="L27">            Neureka.get().utility().readResource(&quot;kernels/broadcast_template.cl&quot;),</span>
+            forward,
+            backward,
+            postfix,
+<span class="fc" id="L31">            kernelCode -&gt; new KernelCode[]{kernelCode}</span>
         );
-<span class="fc" id="L35">    }</span>
+<span class="fc" id="L33">    }</span>
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

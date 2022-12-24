@@ -158,12 +158,12 @@ public class OpenCLPlatform
                     Map<String, String> code = new HashMap<>();
                     ImplementationFor<OpenCLDevice> impl = null;
                     for ( Operation type : Neureka.get().backend().getOperations() ) {
-                        if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) )
-                            impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
-                        else if ( preName.contains("elementwise") && type.supportsAlgorithm(BiElementWise.class) )
-                            impl = type.getAlgorithm(BiElementWise.class).getImplementationFor( OpenCLDevice.class );
-                        else if ( preName.contains("scalarization") && type.supportsAlgorithm(Scalarization.class) )
-                            impl = type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );
+                        if ( preName.contains("activation") && type.supportsAlgorithm(ElementwiseAlgorithm.class) )
+                            impl = type.getAlgorithm(ElementwiseAlgorithm.class).getImplementationFor( OpenCLDevice.class );
+                        else if ( preName.contains("elementwise") && type.supportsAlgorithm(BiElementwise.class) )
+                            impl = type.getAlgorithm(BiElementwise.class).getImplementationFor( OpenCLDevice.class );
+                        else if ( preName.contains("scalarization") && type.supportsAlgorithm(BiScalarBroadcast.class) )
+                            impl = type.getAlgorithm(BiScalarBroadcast.class).getImplementationFor( OpenCLDevice.class );
                         else if ( preName.contains("broadcast") && type.supportsAlgorithm(Broadcast.class) )
                             impl = type.getAlgorithm(Broadcast.class).getImplementationFor( OpenCLDevice.class );
                         else if ( preName.contains("convolution") && type.supportsAlgorithm(NDConvolution.class) )
@@ -176,9 +176,10 @@ public class OpenCLPlatform
                             impl = type.getAlgorithm(DeviceAlgorithm.class).getImplementationFor( OpenCLDevice.class );
                         }
                         if ( impl instanceof CLImplementation ) {
-                            KernelCode kernelCode = ((CLImplementation) impl).getKernelCode();
-                            if ( kernelCode.getCode() != null )
-                                code.put( kernelCode.getName(), kernelCode.getCode() );
+                            for ( KernelCode kernelCode : ((CLImplementation) impl).getKernelCode() ) {
+                                if (kernelCode.getCode() != null)
+                                    code.put(kernelCode.getName(), kernelCode.getCode());
+                            }
                         }
                     }
                     code.forEach( ( n, s ) -> { names.add( n ); sources.add( s ); } );
@@ -194,8 +195,10 @@ public class OpenCLPlatform
                 if ( impl instanceof CLImplementation ) {
                     CLImplementation cli = ((CLImplementation) impl);
                     if ( cli instanceof SimpleCLImplementation ) {
-                        names.add(cli.getKernelCode().getName());
-                        sources.add(cli.getKernelCode().getCode());
+                        for ( KernelCode kernelCode : cli.getKernelCode() ) {
+                            names.add( kernelCode.getName() );
+                            sources.add( kernelCode.getCode() );
+                        }
                     }
                 }
             }

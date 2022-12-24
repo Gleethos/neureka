@@ -158,7 +158,7 @@ public class CrossDeviceSystemTest
             listOfTensors.add(b);
             listOfTensors.add(w);
             y = Tsr.of("(2**i0**i1**i2**2", x, b, w);
-            tester.testTensor(y, new String[]{"[1]:(9.24238);", " ->d[1]:(28.4928)", " ->d[1]:(4.32078)"});
+            tester.testTensor(y, new String[]{"[1]:(9.24238);", " ->d[1]:(28.4928)", " ->d[1]:(4.3207"});
             tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
 
             //====

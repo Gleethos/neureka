@@ -3,7 +3,7 @@ package ut.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
-import neureka.calculus.Function
+import neureka.math.Function
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
 import testutility.Sleep
@@ -31,8 +31,8 @@ class AD_And_Computation_Graph_Spec extends Specification
         })
     }
 
-    def "Reshaping produces expected computation graph and also works with reverse mode AD."(){
-
+    def "Reshaping produces expected computation graph and also works with reverse mode AD."()
+    {
         given :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             Tsr<Double> a = Tsr.of([2, 3], [
@@ -58,17 +58,16 @@ class AD_And_Computation_Graph_Spec extends Specification
             a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)")
             b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
             na.isLeave()
-            na.function==null
+            !na.function.isPresent()
+            na.parents == []
+            !na.pendingError.isPresent()
             na.getMode() == 1
         and : 'We expect the partial derivative to be cleaned up! (size == 0)'
             na.size()==0
-            na.getNodeID()==1
-
             !nb.isLeave()
-            nb.function != null
+            nb.function.isPresent()
             nb.getMode() == -1
             nb.size()==0
-            nb.getNodeID()!=1
     }
 
     def "Payloads and derivatives are null after garbage collection."()
@@ -80,18 +79,17 @@ class AD_And_Computation_Graph_Spec extends Specification
             Tsr<Double> d = b ** c
             Tsr<Double> e = d * c
             GraphNode n = e.get( GraphNode.class )
-            var strongRefs = n.parents.collect { it.payload }
+            var strongRefs = n.parents.collect { it.payload.get() }
 
         expect :
-            n.parents[0].isCacheable()
             !n.parents[0].isLeave()
             n.parents[0].isGraphLeave()
             n.parents[1].isLeave()
             n.parents[1].isGraphLeave()
 
         and :
-            for ( int i = 0; i < n.parents.length; i++ ) {
-                assert n.parents[ i ].payload != null
+            for ( int i = 0; i < n.parents.size(); i++ ) {
+                assert n.parents[ i ].payload.isPresent()
                 boolean[] exists = {false}
                 n.parents[ i ].forEachTarget({ t -> exists[0] = true })
                 assert exists[0]
@@ -106,16 +104,16 @@ class AD_And_Computation_Graph_Spec extends Specification
             e = null
             System.gc()
             Sleep.until(220, {
-                n.parents.every {it.payload == null && !it.hasDerivatives()}
+                n.parents.every {!it.payload.isPresent() && !it.hasDerivatives()}
             })
             System.gc()
             Sleep.until(220, {
-                n.parents.every {it.payload == null && !it.hasDerivatives()}
+                n.parents.every {!it.payload.isPresent() && !it.hasDerivatives()}
             })
 
         then :
             for ( GraphNode p : n.parents ) {
-                assert p.payload == null
+                assert !p.payload.isPresent()
                 assert !p.hasDerivatives()
             }
     }

@@ -1,128 +1,235 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Addition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.operator</a> &gt; <span class="el_source">Addition.java</span></div><h1>Addition.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.operator;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.BiElementwise;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
 import neureka.backend.main.operations.ElemWiseUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.Device;
+import neureka.ndim.NDimensional;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-<span class="pc bpc" id="L21" title="1 of 2 branches missed.">public class Addition extends AbstractOperation {</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">public class Addition extends AbstractOperation {</span>
 
     public Addition()
     {
-<span class="fc" id="L25">        super (</span>
+<span class="fc" id="L31">        super (</span>
             new OperationBuilder()
-<span class="fc" id="L27">            .identifier(       &quot;add&quot;      )</span>
-<span class="fc" id="L28">            .operator(         &quot;+&quot;        )</span>
-<span class="fc" id="L29">            .arity(            -1         )</span>
-<span class="fc" id="L30">            .isOperator(       true       )</span>
-<span class="fc" id="L31">            .isIndexer(        false      )</span>
-<span class="fc" id="L32">            .isDifferentiable( true       )</span>
-<span class="fc" id="L33">            .isInline(         false      )</span>
-        );
-
-<span class="fc" id="L36">        setAlgorithm(</span>
-            new BiElementWise(ElemWiseUtil::forAdditions)
-<span class="fc" id="L38">            .setSupplyADActionFor( getDefaultAlgorithm() )</span>
-<span class="fc" id="L39">            .buildFunAlgorithm()</span>
+<span class="fc" id="L33">            .identifier(       &quot;add&quot;      )</span>
+<span class="fc" id="L34">            .operator(         &quot;+&quot;        )</span>
+<span class="fc" id="L35">            .arity(            -1         )</span>
+<span class="fc" id="L36">            .isOperator(       true       )</span>
+<span class="fc" id="L37">            .isIndexer(        false      )</span>
+<span class="fc" id="L38">            .isDifferentiable( true       )</span>
+<span class="fc" id="L39">            .isInline(         false      )</span>
         );
 
 <span class="fc" id="L42">        setAlgorithm(</span>
-            new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
-<span class="fc" id="L44">            .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
-<span class="fc" id="L45">            .setSupplyADActionFor(</span>
-                ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) -&gt;
-                {
-<span class="fc bfc" id="L48" title="All 2 branches covered.">                    if ( call.autogradMode().allowsForward() )</span>
-<span class="fc" id="L49">                        throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
-<span class="fc" id="L50">                    Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
-<span class="pc bpc" id="L51" title="2 of 4 branches missed.">                    assert ctxDerivative == null;</span>
-<span class="fc" id="L52">                    int d = call.getDerivativeIndex();</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">                    Tsr&lt;?&gt; derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);</span>
-<span class="fc" id="L54">                    Tsr&lt;?&gt; toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);</span>
-<span class="fc" id="L55">                    Device device = call.getDeviceFor(Number.class);</span>
-<span class="fc" id="L56">                    return ADAction.of(</span>
-                                target -&gt;
-<span class="fc" id="L58">                                    this.getAlgorithm( Broadcast.class )</span>
-<span class="fc" id="L59">                                         .getImplementationFor( device )</span>
-<span class="fc" id="L60">                                         .run(</span>
-<span class="fc" id="L61">                                             ExecutionCall.of(</span>
-<span class="fc" id="L62">                                                 toBeDerived.setIsVirtual(false),</span>
-                                                 derivative,
-<span class="fc" id="L64">                                                 target.error()</span>
-                                             )
-<span class="fc" id="L66">                                             .andArgs( Arg.DerivIdx.of(d) )</span>
-<span class="fc" id="L67">                                             .running( this )</span>
-<span class="fc" id="L68">                                             .on( device )</span>
-                                         )
-                            );
-                }
+            new BiElementwise()
+<span class="fc" id="L44">            .setExecution(</span>
+                (outerCaller, outerCall) -&gt;
+<span class="fc" id="L46">                    Result.of(AbstractDeviceAlgorithm.prepareAndExecute(</span>
+                        outerCall,
+<span class="fc" id="L48">                        innerCall -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )</span>
+                    ))
             )
-<span class="fc" id="L73">            .buildFunAlgorithm()</span>
+<span class="fc" id="L51">            .setSupplyADActionFor( getDefaultAlgorithm() )</span>
+<span class="fc" id="L52">            .buildFunAlgorithm()</span>
         );
 
-<span class="fc" id="L76">        setAlgorithm(</span>
-            new Scalarization()
-<span class="fc" id="L78">            .setDeviceExecution( (call, callback) -&gt; ElemWiseUtil.forAdditions(call, callback) )</span>
-<span class="fc" id="L79">            .buildFunAlgorithm()</span>
+<span class="fc" id="L55">        setAlgorithm(</span>
+            new Broadcast()
+<span class="fc" id="L57">            .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
+<span class="fc" id="L58">            .setSupplyADActionFor(</span>
+                ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) -&gt;
+                {
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                    if ( call.autogradMode().allowsForward() )</span>
+<span class="nc" id="L62">                        throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
+<span class="fc" id="L63">                    Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="pc bpc" id="L64" title="2 of 4 branches missed.">                    assert ctxDerivative == null;</span>
+<span class="fc" id="L65">                    return _autogradBroadcast( call );</span>
+                }
+            )
+<span class="fc" id="L68">            .buildFunAlgorithm()</span>
         );
-<span class="fc" id="L81">    }</span>
+
+<span class="fc" id="L71">        setAlgorithm(</span>
+            new BiScalarBroadcast()
+<span class="fc" id="L73">            .setExecution(</span>
+                (iniCaller, iniCall) -&gt;
+<span class="fc" id="L75">                    Result.of(AbstractDeviceAlgorithm.prepareAndExecute( iniCall, AbstractDeviceAlgorithm::executeDeviceAlgorithm))</span>
+<span class="fc" id="L76">                        .withAutoDiff( (caller, call) -&gt; {</span>
+<span class="pc bpc" id="L77" title="2 of 4 branches missed.">                            if ( call.getDerivativeIndex() &gt;= 0 &amp;&amp; call.arity() &gt;= 2 ) {</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">                                int offset = call.input(0) == null ? 1 : 0;</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                                boolean thisIsBroadcasting = !call.input(offset).shape().equals(call.input(offset + 1).shape());</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">                                if ( thisIsBroadcasting )</span>
+<span class="fc" id="L81">                                    return _autogradBroadcast( call );</span>
+                            }
+<span class="fc" id="L83">                            return FallbackAlgorithm.ADAction(caller, call);</span>
+                        } )
+            )
+<span class="fc" id="L86">            .buildFunAlgorithm()</span>
+        );
+<span class="fc" id="L88">    }</span>
+
+    private ADAction _autogradBroadcast(ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call) {
+<span class="fc" id="L91">        int d = call.getDerivativeIndex();</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        Tsr&lt;?&gt; derivative = ElemWiseUtil.newTsrLike(call.input( d==0?1:0 ), 0);</span>
+<span class="fc" id="L93">        Tsr&lt;?&gt; toBeDerived = ElemWiseUtil.newTsrLike(call.input( d ), 0);</span>
+<span class="fc" id="L94">        Device device = call.getDeviceFor(Number.class);</span>
+<span class="fc" id="L95">        return ADAction.of(</span>
+                target -&gt;
+<span class="fc" id="L97">                        this.getAlgorithm( Broadcast.class )</span>
+<span class="fc" id="L98">                                .getImplementationFor( device )</span>
+<span class="fc" id="L99">                                .run(</span>
+<span class="fc" id="L100">                                        ExecutionCall.of(</span>
+<span class="fc" id="L101">                                                        toBeDerived.mut().setIsVirtual(false),</span>
+                                                        derivative,
+<span class="fc" id="L103">                                                        target.error()</span>
+                                                )
+<span class="fc" id="L105">                                                .andArgs( Arg.DerivIdx.of(d) )</span>
+<span class="fc" id="L106">                                                .running( this )</span>
+<span class="fc" id="L107">                                                .on( device )</span>
+                                )
+                );
+    }
+
+    @Override
+    public Result execute( final Function caller, final ExecutionCall&lt;?&gt; call )
+    {
+<span class="fc" id="L115">        int d = call.getDerivativeIndex();</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if ( caller.isFlat() ) {</span>
+<span class="pc bpc" id="L117" title="1 of 4 branches missed.">            if ( d &gt;= 0 &amp;&amp; call.arity() &gt;= 2 ) {</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">                int offset = call.input( 0 ) == null ? 1 : 0;</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">                boolean thisIsBroadcasting = !call.input( offset ).shape().equals( call.input( offset + 1 ).shape() );</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">                if ( thisIsBroadcasting ) {</span>
+                    /*
+                        In autograd broadcasting is similar to matrix multiplication.
+                        If the derivative index is 0 then the second operand is used for backward broadcasting.
+                        If the derivative index is 1 then the first operand is used for backward broadcasting.
+                     */
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                    return Result.of( call.input( d == 0 ? 1 : 0 ) );</span>
+                }
+<span class="fc" id="L128">                int j = call.getValOf(Arg.VarIdx.class);</span>
+<span class="fc" id="L129">                Tsr&lt;?&gt; template = call.input( offset + d );</span>
+<span class="fc" id="L130">                long dependencies = caller.getSubFunctions()</span>
+<span class="fc" id="L131">                                            .stream()</span>
+<span class="fc bfc" id="L132" title="All 8 branches covered.">                                            .filter( f -&gt; f.dependsOn(d) &amp;&amp; j &lt; 0 || (j == d &amp;&amp; f.dependsOn(d)))</span>
+<span class="fc" id="L133">                                            .count();</span>
+
+<span class="fc" id="L135">                Tsr&lt;?&gt; derivative = Tsr.like((Tsr&lt;Number&gt;) template).all(dependencies);</span>
+<span class="fc" id="L136">                return Result.of(derivative.mut().setIsIntermediate(true));</span>
+            }
+        } else {
+<span class="fc bfc" id="L139" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L140">                Function reducedCaller = reducePairwise(caller);</span>
+<span class="fc" id="L141">                ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
+<span class="fc" id="L142">                Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );</span>
+<span class="fc" id="L143">                return super.execute( flat, flatCall );</span>
+            } else {
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )</span>
+<span class="nc" id="L146">                    throw new IllegalArgumentException(&quot;The shapes of the operands of the addition operation must be equal! (when deriving nested functions)&quot;);</span>
+
+<span class="fc" id="L148">                int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())</span>
+<span class="fc" id="L149">                                            .filter( i -&gt; caller.getSubFunctions().get(i).dependsOn(d) )</span>
+<span class="fc" id="L150">                                            .toArray();</span>
+
+<span class="fc" id="L152">                Tsr[] results = new Tsr[ toBeDerived.length ];</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                for ( int i = 0; i &lt; results.length; i++ ) {</span>
+<span class="fc" id="L154">                    Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">                    Tsr&lt;?&gt; deriv = noAD.execute( noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation()) );</span>
+<span class="fc" id="L156">                    results[ i ] = deriv;</span>
+                }
+<span class="fc bfc" id="L158" title="All 2 branches covered.">                if ( results.length == 1 ) return Result.of( results[0] );</span>
+<span class="fc" id="L159">                Function addAll = new FunctionParser(Neureka.get().backend()).parse(Neureka.get().backend().getOperation(&quot;+&quot;), results.length, false);</span>
+<span class="fc" id="L160">                return addAll.getOperation().execute(addAll, call.withInputs(results).withArgs(Arg.DerivIdx.of(-1)));</span>
+            }
+        }
+<span class="fc" id="L163">        Function reducedCaller = reducePairwise(caller);</span>
+<span class="fc" id="L164">        ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
+<span class="fc" id="L165">        Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );</span>
+<span class="fc" id="L166">        Result r = super.execute( flat, flatCall );</span>
+        //for ( int i = 0; i &lt; flatCall.inputs().length; i++ )
+        //    _deleteIfNotIn(call.inputs(), flatCall.input(i)); // TODO: Make it possible to delete more stuff
+<span class="fc" id="L169">        return r;</span>
+    }
+
+    private Function reducePairwise( final Function fun ) {
+<span class="fc" id="L173">        Function reduced = fun;</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        if ( reduced.getSubFunctions().size() &gt; 2 ) {</span>
+            /*
+                So currently we have something like this: a+b+c+d...
+                However, this is how it is really executed:  ((((a+b)+c)+d)..)
+                ...so let's create a function that is nested like the above:
+            */
+<span class="fc" id="L180">            Function nested = reduced.getSubFunctions().get(0);</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            for ( int i = 1; i &lt; reduced.getSubFunctions().size(); i++ )</span>
+<span class="fc" id="L182">                nested = Function.of( nested + &quot; + &quot; + reduced.getSubFunctions().get(i), true );</span>
+
+<span class="fc" id="L184">            reduced = nested;</span>
+        }
+<span class="fc" id="L186">        return reduced;</span>
+    }
+
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="fc" id="L85">        return Arrays.stream( children )</span>
-<span class="fc" id="L86">                    .filter( child -&gt; child.dependsOn(derivationIndex) )</span>
-<span class="fc" id="L87">                    .map( child -&gt; child.getDerivative(derivationIndex) )</span>
-<span class="fc" id="L88">                    .map( Object::toString )</span>
-<span class="fc" id="L89">                    .collect( Collectors.joining( &quot; &quot;+getOperator()+&quot; &quot; ) );</span>
+<span class="fc" id="L192">        return Arrays.stream( children )</span>
+<span class="fc" id="L193">                    .filter( child -&gt; child.dependsOn(derivationIndex) )</span>
+<span class="fc" id="L194">                    .map( child -&gt; child.getDerivative(derivationIndex) )</span>
+<span class="fc" id="L195">                    .map( Object::toString )</span>
+<span class="fc" id="L196">                    .collect( Collectors.joining( &quot; &quot;+getOperator()+&quot; &quot; ) );</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="fc bfc" id="L94" title="All 2 branches covered.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
-<span class="fc" id="L96">            double result = src[ 0 ].call( inputs, j );</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
-<span class="fc" id="L98">                final double current = src[ i ].call( inputs, j );</span>
-<span class="fc" id="L99">                result += current;</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
+<span class="fc" id="L203">            double result = src[ 0 ].call( inputs, j );</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
+<span class="fc" id="L205">                final double current = src[ i ].call( inputs, j );</span>
+<span class="fc" id="L206">                result += current;</span>
             }
-<span class="fc" id="L101">            return result;</span>
+<span class="fc" id="L208">            return result;</span>
         } else {
-<span class="fc" id="L103">            double derivative = 0;</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">            for ( Function function : src )</span>
-<span class="fc" id="L105">                derivative += function.derive(inputs, d, j);</span>
+<span class="fc" id="L210">            double derivative = 0;</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            for ( Function function : src )</span>
+<span class="fc" id="L212">                derivative += function.derive(inputs, d, j);</span>
 
-<span class="fc" id="L107">            return derivative;</span>
+<span class="fc" id="L214">            return derivative;</span>
         }
     }
 
     
     public static double calculate( double[] inputs, int d, Function[] src ) {
-<span class="fc bfc" id="L113" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
-<span class="fc" id="L114">            double result = src[ 0 ].call( inputs );</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
-<span class="fc" id="L116">                final double current = src[ i ].call( inputs );</span>
-<span class="fc" id="L117">                result += current;</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
+<span class="fc" id="L221">            double result = src[ 0 ].call( inputs );</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
+<span class="fc" id="L223">                final double current = src[ i ].call( inputs );</span>
+<span class="fc" id="L224">                result += current;</span>
             }
-<span class="fc" id="L119">            return result;</span>
+<span class="fc" id="L226">            return result;</span>
         } else {
-<span class="fc" id="L121">            double derivative = 0;</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">            for ( Function function : src )</span>
-<span class="fc" id="L123">                derivative += function.derive( inputs, d );</span>
+<span class="fc" id="L228">            double derivative = 0;</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">            for ( Function function : src )</span>
+<span class="fc" id="L230">                derivative += function.derive( inputs, d );</span>
 
-<span class="fc" id="L125">            return derivative;</span>
+<span class="fc" id="L232">            return derivative;</span>
         }
     }
 

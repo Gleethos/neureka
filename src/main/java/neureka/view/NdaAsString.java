@@ -75,11 +75,15 @@ public final class NdaAsString
     private final String  _postfix;
     private final String  _indent;
 
+    private final int _hardSidePadding = 1;
+    private final int _labelSidePadding = 1;
+    private final boolean _preferLeftPadding = true;
+
     private final int[]   _shape;
     private final Tsr<?>  _tensor;
     private final boolean _legacy;
 
-    NDPrintSettings _config;
+    private final NDPrintSettings _config;
     private StringBuilder _asStr;
 
     /**
@@ -161,7 +165,7 @@ public final class NdaAsString
      * @param toBeAppended The int which ought to be appended to this builder.
      * @return This very instance in order to enable method-chaining.
      */
-    private NdaAsString _$(int toBeAppended ) { _asStr.append( toBeAppended ); return this; }
+    private NdaAsString _$( int toBeAppended ) { _asStr.append( toBeAppended ); return this; }
 
     /**
      *  This method takes the data of a tensor and converts it into
@@ -178,13 +182,18 @@ public final class NdaAsString
         final ValStringifier function = _createBasicStringifierFor( data, _isCompact );
         int cellSize = _cellSize;
         final ValStringifier postProcessing;
-        if ( cellSize >= 3 ) postProcessing = i -> {
-            String s = function.stringify( i );
-            int margin = cellSize - s.length();
-            int right = ( margin % 2 == 0 ) ? margin / 2 : ( margin-1 ) / 2;
-            if ( margin > 0 ) s = Util.pad( margin - right, Util.pad( s, right ) );
-            return s;
-        };
+        if ( cellSize >= 3 )
+            postProcessing = i -> {
+                String s = function.stringify( i );
+                int margin = cellSize - s.length();
+                int left = margin / 2;
+                int right = margin - left; // When the margin is uneven then the right margin is bigger than the left one!
+                if ( _preferLeftPadding ) // We swap the padding sides if we want to pad right less!
+                    right = right^left^(left = right); // This is a fast XOR based swap!
+
+                if ( margin > 0 ) s = Util.pad( left, Util.pad( s, right ) );
+                return s;
+            };
         else postProcessing = function;
 
         final ValStringifier finalProcessing;
@@ -204,8 +213,8 @@ public final class NdaAsString
     private Function<String, String> _createStringItemFilter() {
         if ( _haveSlimNumbers )
             return vStr -> {
-                        if ( vStr.endsWith("E0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
-                        if ( vStr.endsWith(".0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
+                        if ( vStr.endsWith("E0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
+                        if ( vStr.endsWith(".0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
                         return vStr.startsWith("0.") ? vStr.substring( 1 ) : vStr;
                     };
         if ( Number.class.isAssignableFrom(_tensor.itemType()) ) {
@@ -287,7 +296,7 @@ public final class NdaAsString
 
         if ( _hasGradient && ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {
             _$( ":g" );
-            Tsr<?> gradient = _tensor.getGradient();
+            Tsr<?> gradient = _tensor.gradient().orElse(null);
             if ( gradient != null )
                 _$(
                     gradient.toString(
@@ -310,7 +319,7 @@ public final class NdaAsString
                         base + delimiter + agent.partialDerivative().get().toString( _config.clone().setPrefix("").setPostfix("") ) + " " +
                         base + half + "]|:t{ " +
                         base + delimiter + (
-                            ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix("").setPostfix("") ) : t.toString()
+                            t.getPayload().map( p -> p.toString( _config.clone().setPrefix("").setPostfix("") ) ).orElse( t.toString() )
                         ) +
                         " " + base + half + "}, "
                     );
@@ -396,6 +405,7 @@ public final class NdaAsString
      */
     private void _recursiveFormatting( int[] indices, int dim )
     {
+
         dim = Math.max( dim, 0 );
         int trimSize = ( _shape[ dim ] - _rowLimit );
         trimSize = Math.max( trimSize, 0 );
@@ -406,15 +416,18 @@ public final class NdaAsString
             throw new IllegalStateException("Failed to print tensor!");
         NDFrame<?> alias = _tensor.get( NDFrame.class );
         if ( dim == indices.length - 1 ) {
+            int lastBreakLength = 0;
             if (
                 alias != null &&
                 indices[ indices.length - 1 ] == 0 &&
                 indices[ Math.max( indices.length - 2, 0 ) ] == 0
             ) {
+                int lastBreak = _asStr.lastIndexOf("\n");
+                lastBreakLength = ( lastBreak == -1 ? _asStr.length() : _asStr.length() - lastBreak - 1 );
                 List<Object> aliases = alias.atAxis( indices.length - 1 ).getAllAliases();
                 if ( aliases != null ) {
                     _$( Util.indent( dim ) );
-                    _$( _legacy ? "[ " : "( " ); // The following assert has prevented many String miscarriages!
+                    _$( _legacy ? "[" : "(" )._$( Util.spaces(_hardSidePadding) );
                     int missing = _shape[ indices.length - 1 ] - aliases.size();
                     if ( missing > 0 ) { // This is a basic requirement for the label size...
                         aliases = new ArrayList<>(aliases);
@@ -427,21 +440,23 @@ public final class NdaAsString
                         iarr -> getter.stringify( iarr[ iarr.length -1 ] ),
                         _legacy ? "][" : ")("
                     );
-                    _$( _legacy ? " ]" : " )" );
+                    _$( Util.spaces(_hardSidePadding) )._$( _legacy ? "]" : ")" );
                     if ( alias.getLabel() != null )
-                        _$( (_legacy) ? ":[ " : ":( " )._$( alias.getLabel() )._$( (_legacy) ? " ]" : " )" );
+                        _$( (_legacy) ? ":[" : ":(" )
+                        ._$( Util.spaces(_labelSidePadding) )._$( alias.getLabel() )._$( Util.spaces(_labelSidePadding) )
+                        ._$( (_legacy) ? "]" : ")" );
                     _$( _breakAndIndent() );
                 }
             }
-            _$( Util.indent( dim ) );
-            _$( _legacy ? "( " : "[ " );
+            _$( Util.indent( dim ) )._$( Util.spaces( lastBreakLength ) );
+            _$( _legacy ? "(" : "[" )._$( Util.spaces(_hardSidePadding) );
             ValStringifier getter = _createValStringifierAndFormatter( _tensor.getRawData() );
             NDValStringifier fun = _tensor.isVirtual()
                                         ? iarr -> getter.stringify( 0 )
                                         : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );
 
             _buildRow( trimStart, trimEnd, trimSize, indices, fun, ", " );
-            _$( _legacy ? " )" : " ]" );
+            _$( Util.spaces(_hardSidePadding) )._$( _legacy ? ")" : "]" );
 
             if ( alias != null && alias.hasLabelsForAxis( dim - 1 ) )
                 _$( ":" )._buildSingleLabel( alias, dim, indices );
@@ -472,12 +487,12 @@ public final class NdaAsString
         int pos = dim - 1;
         List<Object> key = alias.atAxis( pos ).getAllAliases();
         if ( pos >= 0 && key != null ) {
-            _$( _legacy ? "[ " : "( " );
+            _$( _legacy ? "[" : "(" )._$( Util.spaces(_labelSidePadding) );
             int i = ( dim == indices.length - 1 )
                     ? ( _shape[ pos ] + indices[ pos ] - 1 ) % _shape[ pos ]
                     : indices[ pos ];
             _$( i >= key.size() ? "" : key.get( i ).toString() );
-            _$( _legacy ? " ]" : " )" );
+            _$( Util.spaces(_labelSidePadding) )._$( _legacy ? "]" : ")" );
         }
         return this;
     }
@@ -576,7 +591,10 @@ public final class NdaAsString
         
         public static String indent( int n ) { return String.join("", Collections.nCopies( n, "   " )); }
 
-        
+        public static String spaces( int n ) { return String.join("", Collections.nCopies( n, " " )); }
+
+
+
         public static String pad( int left, String s ) {
             return String.join("", Collections.nCopies( left, " " )) + s;
         }

@@ -9,15 +9,15 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.backend.main.algorithms.BiElementWise;
+import neureka.backend.main.algorithms.BiElementwise;
 import neureka.backend.main.algorithms.Broadcast;
-import neureka.backend.main.algorithms.Scalarization;
-import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.backend.main.algorithms.BiScalarBroadcast;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 import neureka.devices.Device;
 import neureka.ndim.NDimensional;
 
@@ -39,15 +39,15 @@ public class Modulo extends AbstractOperation
         );
 
         setAlgorithm(
-            BiElementWise.class,
-            new BiElementWise(ElemWiseUtil::forDivisionsOrModuli)
+            BiElementwise.class,
+            new BiElementwise()
             .setSupplyADActionFor( getDefaultAlgorithm() )
             .buildFunAlgorithm()
         );
 
         setAlgorithm(
             Broadcast.class,
-            new Broadcast( AbstractDeviceAlgorithm::executeDeviceAlgorithm )
+            new Broadcast()
             .setAutogradModeFor(
                 call -> call.validate()
                         .allNotNullHaveSame(NDimensional::shape)
@@ -73,8 +73,8 @@ public class Modulo extends AbstractOperation
         );
 
         setAlgorithm(
-            Scalarization.class,
-            new Scalarization()
+            BiScalarBroadcast.class,
+            new BiScalarBroadcast()
             .setIsSuitableFor( call -> SuitabilityPredicate.BAD )
             .setAutogradModeFor(
                 call -> call.validate()
@@ -82,7 +82,7 @@ public class Modulo extends AbstractOperation
                         .ifValid(AutoDiffMode.FORWARD_AND_BACKWARD)
                         .orElse(AutoDiffMode.BACKWARD_ONLY)
             )
-            .setDeviceExecution( (call, callback) -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call, callback ) )
+            .setExecution( (caller, call) -> Result.of(AbstractDeviceAlgorithm.executeFor(caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))
             .buildFunAlgorithm()
         );
     }

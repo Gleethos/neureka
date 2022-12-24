@@ -112,8 +112,8 @@ class Tensor_Delete_Exception_Spec extends Specification
         expect : 'This tensor should then know that it is deleted.'
             t.isDeleted()
 
-        when : 'Trying to access the DataType instance...'
-            t.mut.setDataType(DataType.of(Float.class))
+        when : 'Trying to modify the data type...'
+            t.mut.toType( Float.class )
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)

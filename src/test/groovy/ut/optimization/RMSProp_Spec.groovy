@@ -22,7 +22,7 @@ import spock.lang.Subject
 class RMSProp_Spec extends Specification
 {
     @Shared Tsr<?> w = Tsr.of(0d)
-    @Shared Optimizer<?> o = new RMSProp<>(w)
+    @Shared Optimizer<?> o = Optimizer.RMSProp.create(w)
 
     def setupSpec()
     {
@@ -32,7 +32,7 @@ class RMSProp_Spec extends Specification
                 throughout every data table iteration:
                 ```
                     Tsr<?> w = Tsr.of(0d)
-                    Optimizer<?> o = new RMSProp<>(w)                 
+                    Optimizer<?> o = Optimizer.RMSProp.create(w)            
                     w.set(o)                   
                 ```
             """

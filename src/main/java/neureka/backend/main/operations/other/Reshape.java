@@ -8,9 +8,9 @@ import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.framing.Relation;
 import neureka.ndim.NDUtil;
@@ -162,12 +162,12 @@ public class Reshape extends AbstractOperation
         if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {
             throw new IllegalArgumentException(
                     "New shape does not match tensor size!" +
-                            " (" +
-                            NDUtil.shapeString( newShp ) +
-                            ((NDConfiguration.Utility.sizeOfShape( newShp ) < t.size()) ? "<" : ">") +
-                            NDUtil.shapeString(t.getNDConf().shape()) + "" +
-                            ")"
-            );
+                    " (" +
+                        NDUtil.shapeString( newShp ) +
+                        ((NDConfiguration.Utility.sizeOfShape( newShp ) < t.size()) ? "<" : ">") +
+                        NDUtil.shapeString(t.getNDConf().shape()) + "" +
+                    ")"
+                );
         }
     }
     

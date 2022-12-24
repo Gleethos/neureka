@@ -54,15 +54,15 @@ public class SGD<V> implements Optimizer<V>
 {
     private final double _lr; // learning rate
 
-    public SGD( double learningRate ) {
+    SGD( double learningRate ) {
         _lr = learningRate; // Step size/learning rate is 0.01 by default!
     }
 
     @Override
     public Tsr<V> optimize( Tsr<V> w ) {
         LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
-        Tsr<V> g = w.getGradient();
-        return Tsr.of("-" + _lr + " * ", g);
+        Tsr<V> g = w.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!"));
+        return Tsr.of("-" + _lr + " * i0", g);
     }
 
     public double learningRate() { return _lr; }

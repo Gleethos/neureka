@@ -9,12 +9,14 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
+import neureka.math.Function;
+import neureka.math.args.Arg;
 import neureka.devices.Device;
 import neureka.framing.Relation;
 import neureka.ndim.NDConstructor;
 import org.slf4j.Logger;
+
+import java.util.*;
 
 public class Slice extends AbstractOperation
 {
@@ -48,7 +50,8 @@ public class Slice extends AbstractOperation
                     int[]          shape = input.getNDConf().shape();
                     boolean        isOutsourced = input.isOutsourced();
                     Device<Object> device = input.getDevice();
-
+                    //---
+                    _sliceFrame( input, subset, newShape, newOffset, newSpread );
                     return
                         Result.of(subset.mut().setIsIntermediate(true))
                             .withADAction( t -> {
@@ -86,21 +89,14 @@ public class Slice extends AbstractOperation
         for ( int i = 0; i < newOffset.length; i++ )
             newOffset[ i ] = newOffset[ i ] + input.getNDConf().offset( i ); // Offset is being inherited!
 
-        Tsr<?> rootTensor   = ( input.isSlice() ? input.get( Relation.class ).findRootTensor() : input );
-        Tsr<?> parentTensor = ( input.isSlice() ? input.get( Relation.class ).getParent()      : input );
+        Relation<?> inputRelation = input.get( Relation.class );
+        Tsr<?> rootTensor   = ( input.isSlice() ? inputRelation.findRootTensor().orElseThrow(IllegalStateException::new) : input );
+        Tsr<?> parentTensor = ( input.isSlice() ? inputRelation.getParent().orElseThrow(IllegalStateException::new)      : input );
         /*
             The following code check the validity of the slice shape ranges with
             respect to the 'parentTensor' of this new slice.
          */
-        if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
-            // TODO! This requires some more thought about how to check this!
-            // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
-            _LOG.warn(
-                    "Exceptional slice request detected. " +
-                            "This type of tensor cannot yet be sliced. " +
-                            "Please copy this tensor before slicing."
-            );
-        } else {
+        if ( parentTensor.rank() == newShape.length && rootTensor == parentTensor ) {
             /*
                 1. We know that inside this else branch 'this' tensor is a first order slice!
                 (So it is not a slice of a slice... reason : 'rootTensor == parentTensor' )
@@ -121,7 +117,7 @@ public class Slice extends AbstractOperation
                 via the 'getAt(...)' method leads us to a situation where
                 the following variable is NOT NULL! :
              */
-            int[] reshaped = ( input.isSlice() ) ? parentTensor.get( Relation.class ).getReshapeRelationFor( input ) : null;
+            int[] reshaped = ( input.isSlice() ? parentTensor.get( Relation.class ).getReshapeRelationFor( input ) : null );
             reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;
             for ( int i = 0; i < parentTensor.rank(); i++ ) {
                 int ii = ( reshaped != null ) ? reshaped[ i ] : i;
@@ -129,13 +125,21 @@ public class Slice extends AbstractOperation
                 if ( top > parentTensor.shape( ii ) ) {
                     String message =
                             "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                                    "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
-                                    "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
+                            "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
+                            "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
                     Exception exception = new IllegalArgumentException( message );
                     _LOG.error( message, exception );
                     throw new IllegalArgumentException( exception );
                 }
             }
+        }
+        else if ( rootTensor != parentTensor ) {
+            // TODO! This requires some more thought about how handle slices of slices!
+            _LOG.warn(
+                "Exceptional higher order slice request detected. " +
+                "This type of tensor cannot yet be sliced. " +
+                "Please copy this tensor before slicing."
+            );
         }
 
         Tsr<Object> subset =
@@ -145,19 +149,47 @@ public class Slice extends AbstractOperation
                             input.mut().getData()
                         );
 
-        subset.set( new Relation().addParent( input ) );
-        Relation<Object> parent = input.get( Relation.class );
-        parent = ( parent != null ) ? parent : new Relation<>();
+        subset.set( Relation.newChildToParent( input ) );
+        Relation<Object> parent = input.find( Relation.class ).map(r->(Relation<Object>)r).orElseGet(Relation::newParentToChildren);
         parent.addChild( subset );
         input.set( parent );
 
-        if ( input.isOutsourced() ) {
-            Device<Object> device = input.getDevice();
-            device.store( subset );
-        }
+        if ( input.isOutsourced() )
+            input.getDevice().store( subset );
+
         if ( input.isVirtual() ) subset.mut().setIsVirtual( true );
 
         return subset;
+    }
+
+    private void _sliceFrame(
+        Tsr<?> input, Tsr<?> subset, int[] newShape, int[] newOffset, int[] newSpread
+    ) {
+        // Now if the parent tensor has a name and or axes labels we carry them over to the subset:
+        String label = input.label();
+        if ( !label.isEmpty() ) subset.mut().label( label + ":slice" );
+        input.frame().ifPresent( frame -> {
+            Map<Object, List<Object>> state = frame.getState();
+            Map<Object, List<Object>> sliceState = new LinkedHashMap<>();
+            int i = 0;
+            for ( Object k : state.keySet() ) {
+                List<Object> axesLabels = state.get(k);
+                if ( axesLabels == null )
+                    sliceState.put( k, null ); // newShape[i]
+                else {
+                    List<Object> slicedLabels = new ArrayList<>();
+                    for ( int j = 0; j < newShape[i]; j++ ) {
+                        int index = newOffset[i] + j * newSpread[i];
+                        slicedLabels.add( axesLabels.get(index) );
+                    }
+                    sliceState.put( k, slicedLabels );
+                }
+                i++;
+                if ( i == newShape.length ) break;
+            }
+            subset.mut().labelAxes( sliceState );
+        });
+
     }
 
     @Override

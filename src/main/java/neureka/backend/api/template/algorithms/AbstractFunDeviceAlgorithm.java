@@ -5,9 +5,8 @@ import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.*;
-import neureka.backend.main.internal.CallExecutor;
 import neureka.backend.main.memory.MemValidator;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     private boolean _isFullyBuilt = false;
 
 
-    public AbstractFunDeviceAlgorithm(String name ) { super(name); }
+    public AbstractFunDeviceAlgorithm( String name ) { super(name); }
 
     /**
      *  The {@link SuitabilityPredicate} checks if a given instance of an {@link ExecutionCall} is
@@ -66,21 +65,6 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     public final float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         return _isSuitableFor.isSuitableFor(call);
-    }
-
-    /**
-     *  This method returns a new instance
-     *  of the {@link ADAction} class responsible for performing automatic differentiation
-     *  both for forward and backward mode differentiation. <br>
-     *  Therefore an {@link ADAction} exposes 2 different procedures. <br>
-     *  One is the forward mode differentiation, and the other one <br>
-     *  is the backward mode differentiation which is more commonly known as back-propagation... <br>
-     *  Besides that it may also contain context information used <br>
-     *  to perform said procedures.
-     */
-    public final ADAction supplyADActionFor(Function function, ExecutionCall<? extends Device<?>> call ) {
-        _checkReadiness();
-        return _supplyADActionFor.supplyADActionFor( function, call );
     }
 
     /**
@@ -235,40 +219,9 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         return _autogradModeFor.autoDiffModeFrom( call );
     }
 
-    public AbstractFunDeviceAlgorithm<C> setExecution(Execution execution) {
+    public AbstractFunDeviceAlgorithm<C> setExecution( Execution execution ) {
         _execution = _checked(execution, _execution, Execution.class);
         return this;
-    }
-
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution(
-            Execute exec, ADActionSupplier adActionSupplier
-    ) {
-        return
-            adActionSupplier == null
-                ? setExecution( (outerCaller, outerCall) ->
-                    Result.of(AbstractDeviceAlgorithm.executeFor(
-                        outerCaller, outerCall,
-                        (innerCall, callback) -> exec.execute( innerCall, callback)
-                    ))
-                )
-                : setExecution( (outerCaller, outerCall) ->
-                    Result.of(AbstractDeviceAlgorithm.executeFor(
-                        outerCaller, outerCall,
-                        (innerCall, callback) -> exec.execute( innerCall, callback)
-                    ))
-                    .withAutoDiff( adActionSupplier )
-                );
-    }
-
-
-
-    public final AbstractFunDeviceAlgorithm<C> setDeviceExecution( Execute executor ) {
-        return setDeviceExecution( executor, FallbackAlgorithm::ADAction );
-    }
-    public interface Execute {
-
-        Tsr<?> execute( ExecutionCall<?> context, CallExecutor goDeeperWith );
-
     }
 
     @Override
@@ -289,19 +242,19 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
         if ( checker.isWronglyIntermediate() ) {
             throw new IllegalStateException(
                     "Output of algorithm '" + this.getName() + "' " +
-                            "is marked as intermediate result, despite the fact " +
-                            "that it is a member of the input array. " +
-                            "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
-                            "as 'intermediate', because they are not eligible for deletion!"
-            );
+                    "is marked as intermediate result, despite the fact " +
+                    "that it is a member of the input array. " +
+                    "Tensors instantiated by library users instead of operations in the backend are not supposed to be flagged " +
+                    "as 'intermediate', because they are not eligible for deletion!"
+                );
         }
         if ( checker.isWronglyNonIntermediate() ) {
             throw new IllegalStateException(
                     "Output of algorithm '" + this.getName() + "' " +
-                            "is neither marked as intermediate result nor a member of the input array. " +
-                            "Tensors instantiated by operations in the backend are expected to be flagged " +
-                            "as 'intermediate' in order to be eligible for deletion!"
-            );
+                    "is neither marked as intermediate result nor a member of the input array. " +
+                    "Tensors instantiated by operations in the backend are expected to be flagged " +
+                    "as 'intermediate' in order to be eligible for deletion!"
+                );
         }
         return checker.getResult();
     }
