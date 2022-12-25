@@ -220,8 +220,9 @@ input {
 }
 
 button:hover {
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
-    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+  box-shadow:
+    rgba(255, 255, 255, 1) 0px 30px 60px -12px inset,
+    rgba(0, 255, 255, 0.3) 0px 18px 36px -18px inset;
   transition: 0.35s;
 }
 
@@ -365,7 +366,7 @@ input {
 #navbar_list {
   border-radius: 0.5em;
   display: flex;
-  gap: 1.2rem;
+  gap: 1rem;
   flex-wrap: wrap;
   width: 100%;
 }
@@ -378,7 +379,6 @@ input {
   border-radius: 8px;
   width: 3rem;
   flex-grow: 1;
-  background-color: #e6e6e6;
   box-shadow: 4px 4px 8px #c9c9c9, -3px -3px 10px #ffffff;
   padding: 0.5rem 0.7rem;
   text-decoration: none;
@@ -386,12 +386,14 @@ input {
   transition: all 0.6s;
 }
 
-
-#navbar_list li { display: ruby; }
+/* now on hover we want a neomorphic press effect: */
 
 #navbar_list a:hover:not(.active) {
   box-shadow: 4px 4px 6px #ffffff, -4px -4px 6px #c9c9c9;
 }
+
+
+#navbar_list li { display: ruby; }
 
 #navi {
   float: left;
@@ -464,7 +466,7 @@ header p {
   background-color: #00e6ff;
   transition: 0.3s;
   border-radius: 0.33em 0.33em 0 0;
-  padding: 0.35em 0.55em 0.7em 0.55em;
+  padding: 0.35em 0.55em 0.703em 0.55em;
   margin: 0.35em 0.15em 0 0.15em;
 }
 
@@ -480,6 +482,58 @@ header p {
 }
 
 /*---*/
+
+.OptionsPanel {
+    background-color:#e1ecff;
+    margin:-1.35rem 0.1rem 0.5rem 0.1rem;
+    padding:0.75rem 0.5rem 1.25rem 0.5rem;
+    border-radius:1.1em;
+    border: 3px solid #00e6ff;
+}
+
+/*  We make buttons, text fields and other controls neumorphic:   */
+
+.OptionsPanel button {
+  border-radius: 0.75em;
+  background: linear-gradient(145deg, #f1fdff, #cbd4e6);
+  box-shadow: 4px 4px 8px #bfc9d9, -3px -3px 10px #ffffff;
+  padding: 0.2rem 0.1rem;
+  transition: all 0.6s;
+  width:100%;
+  border:none;
+}
+
+.OptionsPanel button:active {
+  background: linear-gradient(145deg, #cbd4e6, #f1fdff);
+}
+
+.OptionsPanel button:hover {
+  box-shadow: 4px 4px 4px #bfc9d9, -3px -3px 5px #ffffff;
+}
+
+.OptionsPanel input {
+  border-radius: 0.75em;
+  border-radius: 5px;
+  background: #e1ecff;
+  box-shadow: inset 5px 5px 14px #bdc6d6,
+              inset -5px -5px 14px #ffffff;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.6s;
+  width:100%;
+  border:none;
+}
+
+.OptionsPanel input:focus {
+    outline: none;
+    box-shadow: inset 5px 5px 8px #bdc6d6,
+              inset -5px -5px 8px #ffffff;
+}
+
+.OptionsPanel input:hover {
+    outline: none;
+    box-shadow: inset 5px 5px 10px #bdc6d6,
+              inset -5px -5px 10px #ffffff;
+}
 
 /*Bootstrap correction:*/
 
@@ -1028,7 +1082,7 @@ footer ul {
 ::-webkit-scrollbar-thumb {
   background: lightgrey;
   border-radius: 10px;
-  border: 1px solid cyan;
+  border: 1px solid #00bfbf;
 }
 
 /* Handle on hover */

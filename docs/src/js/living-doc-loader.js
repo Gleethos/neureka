@@ -3,6 +3,8 @@ let SPEC_CACHE = {};
 
 function clearLivingDocs(div) {
     $(div).find("#living_doc_content").html("")
+    // We clear the search field:
+    $('#spec_search').val("");
 }
 
 function loadReportUI(target, search) {

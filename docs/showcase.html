@@ -141,7 +141,7 @@
                     <div class="TabWrapper">
                         <div class="TabHead FancyLivingDocHeader">
                             <button onclick="switchTab(event, '.introDocTab')">Introductions</button>
-                            <button onclick="switchTab(event, '.specDocTab');loadContent('../TOC');" class="selected">Living Documentation</button>
+                            <button onclick="switchTab(event, '.specDocTab')" class="selected">Living Documentation</button>
                         </div>
                         <div class="TabBody">
                             <div class="introDocTab" style="display:none">
@@ -162,20 +162,23 @@
                                     <div class=container-fluid>
                                         <div class="row g-2">
                                             <div class="col-sm-12 col-md-12 col-lg-12">
-                                                <p><b>
-                                                    Use the search bar below to query the test suite of Neureka.
-                                                </b></p>
-                                            </div>
+                                                <div class="row g-2 OptionsPanel">
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                        <p>
+                                                            Use the search bar below to query the test suite of Neureka.
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
-                                            <div class="col-9 col-sm-7 col-md-6 col-lg-5">
-                                                <input id="spec_search" style="width:100%;" placeholder="how to instantiate a tensor?">
+                                                    <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
+                                                    <div class="col-9 col-sm-7 col-md-6 col-lg-5">
+                                                        <input id="spec_search" style="width:100%;" placeholder="how to instantiate a tensor?">
+                                                    </div>
+                                                    <div class="col-3 col-sm-3 col-md-2 col-lg-1">
+                                                        <button onclick="clearLivingDocs('#living-doc-browser-content')">clear</button>
+                                                    </div>
+                                                    <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
+                                                </div>
                                             </div>
-                                            <div class="col-3 col-sm-3 col-md-2 col-lg-1">
-                                                <button style="width:100%;border:none; border-radius:0.1em;height:100%;margin-left: -0.9em;" onclick="clearLivingDocs('#living-doc-browser-content')">clear</button>
-                                            </div>
-                                            <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
-
                                             <div class="col-sm-12 col-md-12 col-lg-12">
                                                 <div class="ContentBox" id="living-doc-browser-content"></div>
                                                 <script>
