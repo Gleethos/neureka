@@ -138,21 +138,16 @@
                                                 ">
                         <img id="ArrowIcon">
                     </div>
-                    <div class="MainContentWrapper">
-                        <div class=container-fluid>
-                            <h1 id="ContentTitle"></h1>
-                        </div>
-                    </div>
-
                     <div class="TabWrapper">
                         <div class="TabHead FancyLivingDocHeader">
-                            <button onclick="switchTab(event, '.introDocTab')" class="selected">Introductions</button>
-                            <button onclick="switchTab(event, '.specDocTab')">Living Documentation</button>
+                            <button onclick="switchTab(event, '.introDocTab')">Introductions</button>
+                            <button onclick="switchTab(event, '.specDocTab');loadContent('../TOC');" class="selected">Living Documentation</button>
                         </div>
                         <div class="TabBody">
-                            <div class="introDocTab">
+                            <div class="introDocTab" style="display:none">
                                 <div class="MainContentWrapper">
                                     <div class=container-fluid>
+                                        <h1 id="ContentTitle"></h1>
                                         <script src="src/js/marked.min.js"></script>
                                         <!--------------------------------------------------------------------->
                                         <div id="DynamicContent" class="row g-2">
@@ -162,7 +157,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="specDocTab" style="display:none">
+                            <div class="specDocTab">
                                 <div class="MainContentWrapper">
                                     <div class=container-fluid>
                                         <div class="row g-2">
