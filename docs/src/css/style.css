@@ -380,7 +380,7 @@ input {
   flex-grow: 1;
   background-color: #e6e6e6;
   box-shadow: 4px 4px 8px #c9c9c9, -3px -3px 10px #ffffff;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.7rem;
   text-decoration: none;
   color: #000000;
   transition: all 0.6s;
