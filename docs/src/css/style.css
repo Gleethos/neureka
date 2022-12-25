@@ -75,7 +75,7 @@
   }
 
   .LinkLabel {
-    /* display: none; */
+    display: none;
   }
 }
 
@@ -380,6 +380,9 @@ input {
   color: #000000;
   transition: all 0.6s;
 }
+
+
+#navbar_list li { display: ruby; }
 
 #navbar_list a:hover:not(.active) {
   box-shadow: 4px 4px 6px #ffffff, -4px -4px 6px #c9c9c9;
