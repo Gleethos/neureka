@@ -14,6 +14,11 @@
     width: 230%;
   }
 }
+@media (max-width: 600px) {
+  .ImportantLinkLabel {
+    display: none;
+  }
+}
 /*---*/
 @media (min-width: 840px) {
   .InverseDynamicWidth {
@@ -581,17 +586,6 @@ header p {
   letter-spacing: 2px;
 }
 
-/* ?? is this needed? */
-/* .NightBox {
-  background-color: black;
-  box-shadow: 0 0 40px 3px black;
-  border-radius: 1em;
-  border-left: 0.095em solid cyan;
-  border-bottom: 0.075em solid cyan;
-  border-top: 0px;
-  padding-left: 0.2em;
-} */
-
 video {
   width: 100%;
   height: auto;
@@ -854,7 +848,7 @@ footer ul {
   content: 'NEUREKA';
   font-size: 30px;
   font-weight: 400;
-  padding-left: 30px;
+  padding-left: 44px;
   left: -20px;
 }
 
