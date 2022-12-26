@@ -652,28 +652,28 @@ video {
   position: relative;
   padding-left: 0em;
   padding-bottom: 0.5em;
-  background: #000000; /* Old browsers */
+  background: #ffffff69; /* Old browsers */
   background: -moz-linear-gradient(
     top,
     #ffffff69 0%,
     #d5d5d55c 92%,
-    #b0fff8 100%
+    #e1ecff 100%
   ); /* FF3.6-15 */
   background: -webkit-linear-gradient(
     top,
     #ffffff69 0%,
     #d5d5d55c 92%,
-    #b0fff8 100%
+    #e1ecff 100%
   ); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(
     to bottom,
     #ffffff69 0%,
     #d5d5d55c 92%,
-    #b0fff8 100%
+    #e1ecff 100%
   ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#74820a', GradientType=0); /* IE6-9 */
   text-align: center;
-  border-radius: 0em 0em 0em 2.5em;
+  border-radius: 0em 0em 0em 10em;
   float: right;
 }
 
@@ -788,7 +788,7 @@ footer ul {
 .gaadiexp {
   position: relative;
   cursor: pointer;
-  height: 4.75em;
+  height: 4.55em;
   margin-bottom: 0;
   margin-left: 0;
   width: 4.5em;
@@ -893,7 +893,7 @@ footer ul {
 
 .gaadiexp-check:checked + .gaadiexp {
   width: 100%;
-  border-radius: 0px 0px 6em 0em;
+  border-radius: 0px 0px 2em 0em;
 }
 
 .gaadiexp-check:checked + .gaadiexp:after {

@@ -98,7 +98,7 @@
                                     <p>
                                         <b>
                                             A lightweight open source <br> platform independent
-                                            tensor library <br>for the JVM
+                                            nd-array library <br>for the JVM
                                         </b>
                                     </p>
                                 </div>
@@ -146,6 +146,9 @@
                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="ContentBox">
                                         <p>
+                                            Not only is it a flexible nd-array library for general purpose
+                                            use, but also a tensor library for doing deep learning.
+                                            <p>
                                             Neureka trains your neural network using a computation graph recorder. <br>
 
                                             This is contrary to the approaches found in other frameworks such as TensorFlow, Theano, Caffe, and CNTK
@@ -159,13 +162,16 @@
                                 <div class="col-sm-12 col-md-8 col-lg-10">
                                     <div class="ContentBox">
                                         <p>
-                                            This means a developer has to build a neural network structure which
+                                            In that case a developer has to build a neural network structure which
                                             cannot change during runtime.<br>
-                                            Neureka, uses the recorded computation graph in order to apply a technique called reverse-mode auto-differentiation.
+                                            Neureka on the other hand uses the recorded
+                                            computation graph in order to apply a technique called
+                                            reverse-mode auto-differentiation.
                                             <br><br>
-                                            This technique allows your network structure to change during runtime arbitrarily with zero lag or overhead.
+                                            This technique allows your network structure to change during
+                                            runtime arbitrarily with zero lag or overhead.
                                             <br><br>
-                                            This powerful feature has been inspired by PyTorch
+                                            This powerful feature was inspired by PyTorch
                                             which also uses a dynamic computation graph to achieve such a high degree
                                             of flexibility.
                                         </p>
@@ -187,7 +193,7 @@
                                             is often times considered to be too verbose and explicit for
                                             simple prototyping or more explorative workloads...
                                             Therefore popular machine learning and tensor / deep learning libraries
-                                            rely on python, which offers a very concise and simplistic syntax. <br>
+                                            rely on python, which in many cases offers a more concise syntax. <br>
                                             So one might come to wonder, why would anybody ever build
                                             a deep learning library for Java?<br>
                                             The answer is simple!
@@ -307,23 +313,29 @@ to allow for rapid prototyping and highly readable math heavy code...
                                 <div class="col-sm-12 col-md-12">
                                     <div class="ContentBox">
                                         <p>
-                                            Neureka is a lightweight and highly modular library
-                                            designed to allow for the support of any backend, if required.
-                                            The operations within the default backend are implemented as
-                                            generalized, modular and concise as possible, meaning that
-                                            performance wise Neureka still needs to mature
-                                            and would greatly appreciate improvement
-                                            proposals. Its backend has a consistent API which can be
-                                            extended easily by anyone willing to go the extra mile for
-                                            more specialized operation kernels...</br></br>
-                                            Besides that Neureka is also greatly held back
-                                            by JVM's lack of allowing for more memory localized types and
+                                            Not only are the operations within the default backend implemented as
+                                            generalized, modular and concise as possible, they are also optimized
+                                            for multi-threading
+                                            and specifically designed to be auto-vectorizable by
+                                            the JVM into SIMD machine code instructions.
+                                            </p>
+                                            However performance wise Neureka still has lots of
+                                            room for improvement, but because it is a lightweight
+                                            and highly extensible library with a consistent API
+                                            designed to allow for the support of any backend,
+                                            you can easily go the extra mile to improve performance
+                                            for your specific use case.
+                                            like for example implementing a
+                                            more specialized kind of OpenCL kernel for convolution...</br></br>
+
+                                            Currently Neureka is mostly held back
+                                            by the JVM's lack of allowing for more memory localized types and
                                             also a lack of an API for consistent SIMD vectorization.<br>
                                             (<a href="https://openjdk.java.net/jeps/338">...take a look at the upcoming vector API...</a>)
                                             <br><br>
-                                            This vector API alongside the introduction of inline/value types
-                                            from Project-Valhalla will greatly boost the development availability
-                                            for ML on the JVM.
+                                            This upcoming vector API alongside the introduction of inline/value types
+                                            from Project-Valhalla will greatly benefit the performance of
+                                            Neureka as well as improve Machine Learning on the JVM in general.
                                         </p>
                                     </div>
                                 </div>
@@ -343,20 +355,6 @@ to allow for rapid prototyping and highly readable math heavy code...
                 </div>
             </div>
         </main>
-        <footer id="Foot" style="display: none;">
-            <section>
-                <ul>
-                    <h4>
-                        Contact:
-                    </h4>
-                    <li>
-                        <a>
-                            gleethos@gmx.at
-                        </a>
-                    </li>
-                </ul>
-            </section>
-        </footer>
     </div>
 </div>
 <script src="src/js/marked.min.js"></script>
@@ -391,23 +389,11 @@ to allow for rapid prototyping and highly readable math heavy code...
 <script src="src/js/three.min.js"></script>
 <script src="src/js/vanta.birds.min.js"></script>
 <script>
-    //VANTA.BIRDS({
-    //    el: "#BirdBox",
-    //    color1: 0xd00ff,
-    //    colorMode: "lerp",
-    //    birdSize: 0.70,
-    //    wingSpan: 17.00,
-    //    speedLimit: 4.00,
-    //    separation: 21.00,
-    //    alignment: 16.00,
-    //    cohesion: 25.00,
-    //    backgroundAlpha: 0.00
-    //})
     VANTA.BIRDS({
         el: "#BirdBox",
         backgroundColor: 0x0,
-        color1: 0xfcea82,// 0x59cc65
-        color2: 0x3c0085,// 0xa6fc
+        color1: 0xfcea82,
+        color2: 0x3c0085,
         colorMode: "lerp",
         birdSize: 0.70,
         wingSpan: 17.00,
