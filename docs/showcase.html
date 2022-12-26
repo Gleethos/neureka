@@ -83,7 +83,7 @@
                                 <li></li>
                                 <li>
                                     <a target="_blank" Style="cursor: pointer; color: cyan;"
-                                       onclick="loadContent('../TOC')">Table Of Content
+                                       onclick="loadContent('../TOC');switchTab('#intro-tab-btn', '.introDocTab')">Table Of Content
                                     </a>
                                 </li>
                                 <li>
@@ -105,7 +105,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a target="" href="coverage/test/html/index.html">Latest Code Coverage</a>
+                                    <a target="" href="coverage/test/html/index.html">Code Coverage</a>
                                 <li>
                                 <li>
                                     <a target="" href="coverage/test/html/jacoco-sessions.html">Latest Test Run</a>
@@ -138,9 +138,9 @@
                                                 ">
                         <img id="ArrowIcon">
                     </div>
-                    <div class="TabWrapper">
+                    <div class="TabWrapper" id="main-content-tabs">
                         <div class="TabHead FancyLivingDocHeader">
-                            <button onclick="switchTab(event, '.introDocTab')">Introductions</button>
+                            <button id="intro-tab-btn" onclick="switchTab(event, '.introDocTab')">Introductions</button>
                             <button onclick="switchTab(event, '.specDocTab')" class="selected">Living Documentation</button>
                         </div>
                         <div class="TabBody">

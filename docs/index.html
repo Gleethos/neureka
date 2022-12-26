@@ -318,7 +318,8 @@ to allow for rapid prototyping and highly readable math heavy code...
                                             for multi-threading
                                             and specifically designed to be auto-vectorizable by
                                             the JVM into SIMD machine code instructions.
-                                            </p>
+                                        </p>
+                                        <p>
                                             However performance wise Neureka still has lots of
                                             room for improvement, but because it is a lightweight
                                             and highly extensible library with a consistent API
@@ -326,13 +327,15 @@ to allow for rapid prototyping and highly readable math heavy code...
                                             you can easily go the extra mile to improve performance
                                             for your specific use case.
                                             like for example implementing a
-                                            more specialized kind of OpenCL kernel for convolution...</br></br>
-
+                                            more specialized kind of OpenCL kernel for convolution...
+                                        </p>
+                                        <p>
                                             Currently Neureka is mostly held back
                                             by the JVM's lack of allowing for more memory localized types and
                                             also a lack of an API for consistent SIMD vectorization.<br>
                                             (<a href="https://openjdk.java.net/jeps/338">...take a look at the upcoming vector API...</a>)
-                                            <br><br>
+                                        </p>
+                                        <p>
                                             This upcoming vector API alongside the introduction of inline/value types
                                             from Project-Valhalla will greatly benefit the performance of
                                             Neureka as well as improve Machine Learning on the JVM in general.
