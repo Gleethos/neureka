@@ -9,6 +9,11 @@
     width: 280%;
   }
 }
+@media (max-width: 420px) {
+  .DynamicWidth {
+    width: 97%;
+  }
+}
 @media (min-width: 600px) {
   .InverseDynamicWidth {
     width: 230%;
@@ -17,6 +22,9 @@
 @media (max-width: 600px) {
   .ImportantLinkLabel {
     display: none;
+  }
+  .DynamicWidth {
+    width: 95%;
   }
 }
 /*---*/
@@ -45,7 +53,7 @@
   }
 
   .DynamicWidth {
-    width: 100%;
+    width: 90%;
   }
 
   .DynamicPillarWidth {
@@ -105,7 +113,7 @@
   }
 
   .DynamicWidth {
-    width: 90%;
+    width: 87%;
   }
 
   .DynamicPillarWidth {
@@ -138,7 +146,7 @@
   }
 
   .DynamicWidth {
-    width: 80%;
+    width: 82%;
   }
 
   .DynamicPillarWidth {
@@ -171,7 +179,7 @@
   }
 
   .DynamicWidth {
-    width: 69%;
+    width: 73%;
   }
 
   .DynamicPillarWidth {
@@ -191,7 +199,7 @@
   }
 
   .DynamicWidth {
-    width: 50%;
+    width: 65%;
   }
 
   .InverseDynamicWidth {
@@ -651,7 +659,6 @@ video {
 }
 
 .TopBarGradient {
-  max-width: 90%;
   background-color: blue;
   z-index: 0;
   position: relative;
