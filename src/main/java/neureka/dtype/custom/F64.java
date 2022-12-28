@@ -108,11 +108,7 @@ public final class F64 extends AbstractNumericType<Double, double[], Double, dou
 
     private double[] _readFrom( DataInput stream, int size ) throws IOException {
         double[] data = new double[ size ];
-        byte[] bytes = new byte[ this.numberOfBytes() ];
-        for ( int i=0; i<size; i++ ) {
-            stream.readFully( bytes );
-            data[ i ] = foreignHolderBytesToTarget( bytes );
-        }
+        for ( int i = 0; i < size; i++ ) data[ i ] = stream.readDouble();
         return data;
     }
 

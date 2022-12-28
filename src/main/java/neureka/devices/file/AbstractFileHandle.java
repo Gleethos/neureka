@@ -32,7 +32,7 @@ abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
             throw new IllegalArgumentException( message );
         }
         if ( !_fileName.contains( "." ) ) {
-            String message = "Loading tensor from location '" + _fileName + "' failed because the file does not have an ending." +
+            String message = "Loading tensor from location '" + _fileName + "' failed because the file does not have an ending. " +
                     "Expected file extension of type '" + extension() + "'!\n";
             _LOG.error( message );
             throw new IllegalArgumentException( message );

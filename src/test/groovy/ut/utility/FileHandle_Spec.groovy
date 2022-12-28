@@ -2,13 +2,17 @@ package ut.utility
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.devices.file.FileHandle
 import neureka.devices.file.CSVHandle
+import neureka.devices.file.FileHandle
 import neureka.devices.file.IDXHandle
 import neureka.dtype.DataType
 import neureka.dtype.NumericType
+import neureka.dtype.custom.F32
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
+import neureka.dtype.custom.I32
+import neureka.dtype.custom.I64
+import neureka.dtype.custom.I8
 import neureka.dtype.custom.UI8
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
@@ -70,9 +74,18 @@ class FileHandle_Spec extends Specification
             loaded.getDataType().getRepresentativeType() == type
 
         where : 'The following paths and file names are being used for testing : '
-            tensor                  | type      | filename          || expected
-            Tsr.of([2, 4], -2d..4d) | F64.class | "test.idx3-ubyte" || "(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]"
-            Tsr.of([2, 4], 2d)      | F64.class | "test2.idx"       || "(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
+            tensor                      | type      | filename          || expected
+            Tsr.of([2, 4], -2d..4d)     | F64.class | "test.idx3-ubyte" || "(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]"
+            Tsr.of([2, 4], 2d)          | F64.class | "test2.idx"       || "(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
+            Tsr.of(Float, [8], -2f..4f) | F32.class | "test_f32_1.idx"  || "(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]"
+            Tsr.of([4, 2], 2f)          | F32.class | "test_f32_2.idx"  || "(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
+            Tsr.of(Integer, [3], 2..4)  | I32.class | "test_i32_1.idx"  || "(3):[2, 3, 4]"
+            Tsr.of([2, 2], 2)           | I32.class | "test_i32_2.idx"  || "(2x2):[2, 2, 2, 2]"
+            Tsr.of(Short, [2], 2..4)    | I16.class | "test_i16_1.idx"  || "(2):[2, 3]"
+            Tsr.of([2, 2], 2 as short)  | I16.class | "test_i16_2.idx"  || "(2x2):[2, 2, 2, 2]"
+            Tsr.of(Byte, [2], 2..4)     | I8.class  | "test_i8_1.idx"   || "(2):[2, 3]"
+            Tsr.of([1, 2], 2 as byte)   | I8.class  | "test_i8_2.idx"   || "(1x2):[2, 2]"
+            Tsr.of(Long, [6], -3..4)    | I64.class | "test_i64_1.idx"  || "(6):[-3, -2, -1, 0, 1, 2]"
     }
 
 

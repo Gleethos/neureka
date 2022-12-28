@@ -42,6 +42,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
         TYPE_MAP.put( 0x0C, I32.class );  // int (4 bytes)
         TYPE_MAP.put( 0x0D, F32.class );  // float (4 bytes)
         TYPE_MAP.put( 0x0E, F64.class );  // double (8 bytes)
+        TYPE_MAP.put( 0x0F, I64.class );  //-> !! This is speculation !!
     }
 
     private final static Map<Class<?>, Integer> CODE_MAP = TYPE_MAP.entrySet()

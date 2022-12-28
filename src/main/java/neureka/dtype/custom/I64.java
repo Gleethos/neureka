@@ -47,7 +47,7 @@ public final class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 
     @Override
     public long[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        return readForeignDataFrom( stream, size );
     }
 
     @Override
@@ -59,7 +59,9 @@ public final class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 
     @Override
     public long[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        long[] data = new long[size];
+        for ( int i = 0; i < size; i++ ) data[ i ] = stream.readLong();
+        return data;
     }
 
     @Override

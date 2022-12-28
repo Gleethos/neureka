@@ -104,11 +104,7 @@ public final class I16 extends AbstractNumericType<Short, short[], Short, short[
 
     private short[] _readData( DataInput stream, int size ) throws IOException {
         short[] data = new short[size];
-        byte[] bytes = new byte[ this.numberOfBytes() ];
-        for ( int i=0; i<size; i++ ) {
-            stream.readFully( bytes );
-            data[ i ] = foreignHolderBytesToTarget( bytes );
-        }
+        for ( int i = 0; i < size; i++ ) data[ i ] = stream.readShort();
         return data;
     }
 

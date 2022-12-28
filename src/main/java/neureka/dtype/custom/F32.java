@@ -48,20 +48,22 @@ public final class F32 extends AbstractNumericType<Float, float[], Float, float[
 
     @Override
     public float[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        return readForeignDataFrom( stream, size );
     }
 
     @Override
     public <T> float[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
         float[] data = new float[size];
-        for ( int i=0; i<size; i++ ) data[ i ] = convertToHolder( iterator.next() );
+        for ( int i = 0; i < size; i++ ) data[ i ] = convertToHolder( iterator.next() );
         return data;
     }
 
 
     @Override
     public float[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        float[] data = new float[size];
+        for ( int i = 0; i < size; i++ ) data[ i ] = stream.readFloat();
+        return data;
     }
 
     @Override
