@@ -95,14 +95,23 @@ $(document).ready(function () {
 });
 
 function switchTab(src, target) {
-    const tabsWrapper = $(src.target).parent().parent();
+    // We check if src has a target property (which means it is a button event):
+    let tabsWrapper = null;
+    let source = null;
+    if ( src.target ) {
+        source = $(src.target);
+        tabsWrapper = $(src.target).parent().parent();
+    } else {
+        source = $(src);
+        tabsWrapper = source.parent().parent();
+    }
+
     // Now we need to find the '.TabBody' element:
     // (but only the first child! because we don't want to traverse the whole tree
     // in order to avoid messing up nested tabs)
     const tabBody = tabsWrapper.children('.TabBody').first();
     tabBody.children().css("display", "none");
-    $(src.target).siblings().removeClass("selected");
-    $(src.target).parent().parent().find(target).css("display", "");
-    $(src.target).addClass("selected");
-    console.log($(src.target).html());
+    source.siblings().removeClass("selected");
+    tabsWrapper.find(target).css("display", "");
+    source.addClass("selected");
 }

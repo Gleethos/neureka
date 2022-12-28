@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#fff">
     <meta charset="utf-8">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -35,36 +35,39 @@
         <nav class="FloatsUp">
             <div id="top_most_nav_bar">
                 <div id="navigation_container" class="">
-                    <div style="" class="TopBarGradient DynamicSideMargin">
-                        <h1 id="neureka_title">NEUREKA</h1>
-                    </div>
-                    <div class="pull-right NightBox" id="navbar_menu">
-                        <ul class="nav navbar-right" id="navbar_list">
-                            <li>
-                                <a href="index.html">
-                                    <span title="About Neureka">
-                                        <img src="src/img/icons/house.png">
-                                    </span>
-                                    <span class="LinkLabel">Home</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/Gleethos/neureka">
-                                    <span title="Github Repository">
-                                        <img src="src/img/icons/github-logo.png">
-                                    </span>
-                                    <span class="LinkLabel">Github</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="jdocs/index.html">
-                                    <span title="Java Documentation">
-                                        <img src="src/img/icons/cogwheel.png">
-                                    </span>
-                                    <span class="LinkLabel">Java Docs</span>
-                                </a>
-                            </li>
-                        </ul>
+                    <div style="" class="TopBarGradient DynamicWidth">
+                        <div style="" class="TopBarGradient DynamicWidth">
+                            <div style="" class="TopBarGradient DynamicWidth">
+                                <div class="DynamicWidth" id="navbar_menu">
+                                    <ul class="nav navbar-right" id="navbar_list">
+                                        <li>
+                                            <a href="index.html">
+                                                <span title="About Neureka">
+                                                    <img src="src/img/icons/house.png">
+                                                </span>
+                                                <span class="LinkLabel">Home</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://github.com/Gleethos/neureka">
+                                                <span title="Github Repository">
+                                                    <img src="src/img/icons/github-logo.png">
+                                                </span>
+                                                <span class="LinkLabel">Github</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="jdocs/index.html">
+                                                <span title="Java Documentation">
+                                                    <img src="src/img/icons/cogwheel.png">
+                                                </span>
+                                                <span class="LinkLabel">Java Docs</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -80,7 +83,7 @@
                                 <li></li>
                                 <li>
                                     <a target="_blank" Style="cursor: pointer; color: cyan;"
-                                       onclick="loadContent('../TOC')">Table Of Content
+                                       onclick="loadContent('../TOC');switchTab('#intro-tab-btn', '.introDocTab')">Table Of Content
                                     </a>
                                 </li>
                                 <li>
@@ -102,7 +105,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a target="" href="coverage/test/html/index.html">Latest Code Coverage</a>
+                                    <a target="" href="coverage/test/html/index.html">Code Coverage</a>
                                 <li>
                                 <li>
                                     <a target="" href="coverage/test/html/jacoco-sessions.html">Latest Test Run</a>
@@ -135,21 +138,16 @@
                                                 ">
                         <img id="ArrowIcon">
                     </div>
-                    <div class="MainContentWrapper">
-                        <div class=container-fluid>
-                            <h1 id="ContentTitle"></h1>
-                        </div>
-                    </div>
-
-                    <div class="TabWrapper">
+                    <div class="TabWrapper" id="main-content-tabs">
                         <div class="TabHead FancyLivingDocHeader">
-                            <button onclick="switchTab(event, '.introDocTab')" class="selected">Introductions</button>
-                            <button onclick="switchTab(event, '.specDocTab')">Living Documentation</button>
+                            <button id="intro-tab-btn" onclick="switchTab(event, '.introDocTab')">Introductions</button>
+                            <button onclick="switchTab(event, '.specDocTab')" class="selected">Living Documentation</button>
                         </div>
                         <div class="TabBody">
-                            <div class="introDocTab">
+                            <div class="introDocTab" style="display:none">
                                 <div class="MainContentWrapper">
                                     <div class=container-fluid>
+                                        <h1 id="ContentTitle"></h1>
                                         <script src="src/js/marked.min.js"></script>
                                         <!--------------------------------------------------------------------->
                                         <div id="DynamicContent" class="row g-2">
@@ -159,25 +157,28 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="specDocTab" style="display:none">
+                            <div class="specDocTab">
                                 <div class="MainContentWrapper">
                                     <div class=container-fluid>
                                         <div class="row g-2">
                                             <div class="col-sm-12 col-md-12 col-lg-12">
-                                                <p><b>
-                                                    Use the search bar below to query the test suite of Neureka.
-                                                </b></p>
-                                            </div>
+                                                <div class="row g-2 OptionsPanel">
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                        <p>
+                                                            Use the search bar below to query the test suite of Neureka.
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
-                                            <div class="col-9 col-sm-7 col-md-6 col-lg-5">
-                                                <input id="spec_search" style="width:100%;" placeholder="how to instantiate a tensor?">
+                                                    <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
+                                                    <div class="col-9 col-sm-7 col-md-6 col-lg-5">
+                                                        <input id="spec_search" style="width:100%;" placeholder="how to instantiate a tensor?">
+                                                    </div>
+                                                    <div class="col-3 col-sm-3 col-md-2 col-lg-1">
+                                                        <button onclick="clearLivingDocs('#living-doc-browser-content')">clear</button>
+                                                    </div>
+                                                    <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
+                                                </div>
                                             </div>
-                                            <div class="col-3 col-sm-3 col-md-2 col-lg-1">
-                                                <button style="width:100%;border:none; border-radius:0.1em;height:100%;margin-left: -0.9em;" onclick="clearLivingDocs('#living-doc-browser-content')">clear</button>
-                                            </div>
-                                            <div class="col-0 col-sm-1 col-md-2 col-lg-3"></div>
-
                                             <div class="col-sm-12 col-md-12 col-lg-12">
                                                 <div class="ContentBox" id="living-doc-browser-content"></div>
                                                 <script>
