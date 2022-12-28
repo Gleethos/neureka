@@ -4,12 +4,12 @@ package neureka.devices.file;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.math.Function;
+import neureka.common.utility.Cache;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
-import neureka.common.utility.Cache;
 import neureka.dtype.DataType;
+import neureka.math.Function;
 import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     private final String _directory;
     private final List<String> _loadable = new ArrayList<>();
-    private final List<String> _loaded = new ArrayList<>();
+    private final Map<String, Tsr<Object>> _loaded = new LinkedHashMap<>();
     private final Map<Tsr<Object>, FileHandle<?, Object>> _stored = new HashMap<>();
 
 
@@ -94,8 +94,8 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                 _loadable.addAll( found ); // TODO! -> Update so that new files will be detected...
             }
         }
-        _loadable.removeAll(_loaded);
-        _loaded.forEach( fileName -> {
+        _loadable.removeAll(_loaded.keySet());
+        _loaded.keySet().forEach( fileName -> {
               if ( !_loadable.contains(fileName) ) {
                   String message = "Missing file detected! File with name '"+fileName+"' no longer present in directory '"+_directory+"'.";
                   _LOG.warn(message);
@@ -103,12 +103,12 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         });
     }
 
-    public <V> Tsr<V> load( String filename ) throws IOException { return load( filename, null ); }
+    public <V> Optional<Tsr<V>> load( String filename ) throws IOException { return load( filename, null ); }
 
-    public <V> Tsr<V> load( String filename, Map<String, Object> conf ) throws IOException {
+    public <V> Optional<Tsr<V>> load( String filename, Map<String, Object> conf ) throws IOException {
         LogUtil.nullArgCheck(filename, "filename", String.class);
         _updateFolderView();
-        if ( _loadable.contains( filename ) ) {
+        if ( _loadable.contains( filename ) || _loaded.containsKey( filename ) ) {
             String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
             String filePath = _directory + "/" + filename;
             HandleFactory.Loader handleLoader = FileHandle.FACTORY.getLoader( extension );
@@ -124,12 +124,17 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                 );
 
             Tsr<Object> tensor = handle.load();
+            if ( tensor == null )
+                throw new IllegalStateException(
+                    "Failed to load tensor from file handle for file path '" + filePath + " and loading conf '" + conf + "'."
+                );
+
             _stored.put( tensor, handle );
             _loadable.remove( filename );
-            _loaded.add( filename );
-            return (Tsr<V>) tensor;
+            _loaded.put( filename, tensor );
+            return Optional.of( (Tsr<V>) tensor );
         }
-        return null;
+        return Optional.empty();
     }
 
     public FileHandle<?, ?> fileHandleOf( Tsr<?> tensor ) {
@@ -292,6 +297,6 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     public List<String> getLoadable() { return new ArrayList<>(_loadable); }
 
-    public List<String> getLoaded() { return new ArrayList<>(_loaded); }
+    public List<String> getLoaded() { return new ArrayList<>(_loaded.keySet()); }
 
 }

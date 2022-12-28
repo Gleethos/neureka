@@ -146,7 +146,7 @@ class FileDevice_Spec extends Specification
             device.loaded == []
 
         when : 'We load a file...'
-            def t = device.load('biostats-without-head.csv')
+            def t = device.load('biostats-without-head.csv').get()
 
         then : 'The device reports said file as loaded.'
             device.loadable == ['biostats.csv']
@@ -181,7 +181,7 @@ class FileDevice_Spec extends Specification
                  ']'
 
         when :
-            t = device.load('biostats.csv', [firstRowIsLabels:true])
+            t = device.load('biostats.csv', [firstRowIsLabels:true]).get()
 
         then :
             device.loadable == []
