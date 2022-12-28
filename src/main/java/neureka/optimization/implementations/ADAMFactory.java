@@ -11,7 +11,7 @@ public class ADAMFactory implements OptimizerFactory
     public ADAMFactory() { this(0.01, 0); }
 
     // The copy constructor should be private, use withers instead!
-    private ADAMFactory(double learningRate, long time) {
+    private ADAMFactory( double learningRate, long time ) {
         if ( time < 0 ) throw new IllegalArgumentException("The time must be a positive number!");
         _learningRate = learningRate;
         _time = time;
@@ -19,21 +19,17 @@ public class ADAMFactory implements OptimizerFactory
     
     // Withers:
 
-    public ADAMFactory withLearningRate(double learningRate) {
-        return new ADAMFactory(learningRate, _time);
-    }
+    public ADAMFactory withLearningRate(double learningRate) { return new ADAMFactory(learningRate, _time); }
 
-    public ADAMFactory withTime(long time) {
-        return new ADAMFactory(_learningRate, time);
-    }
+    public ADAMFactory withTime(long time) { return new ADAMFactory(_learningRate, time); }
 
     @Override
     public <V extends Number> ADAM<V> create(Tsr<V> target) {
-        return new ADAM<>(0, _learningRate, target);
+        return new ADAM<>(_time, _learningRate, target);
     }
 
     public <V extends Number> ADAM<V> create(Tsr<V> momentum, Tsr<V> velocity) {
-        return new ADAM<>(0, _learningRate, momentum, velocity);
+        return new ADAM<>(_time, _learningRate, momentum, velocity);
     }
 
 }
