@@ -15,7 +15,7 @@ public class ADAMFactory implements OptimizerFactory
     }
     
     // Withers:
-    
+
     public ADAMFactory withLearningRate(double learningRate) {
         return new ADAMFactory(learningRate);
     }
@@ -25,5 +25,9 @@ public class ADAMFactory implements OptimizerFactory
     public <V extends Number> ADAM<V> create(Tsr<V> target) {
         return new ADAM<>(0, _learningRate, target);
     }
-    
+
+    public <V extends Number> ADAM<V> create(Tsr<V> momentum, Tsr<V> velocity) {
+        return new ADAM<>(0, _learningRate, momentum, velocity);
+    }
+
 }
