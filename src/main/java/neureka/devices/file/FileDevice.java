@@ -108,7 +108,12 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     public <V> Optional<Tsr<V>> load( String filename, Map<String, Object> conf ) throws IOException {
         LogUtil.nullArgCheck(filename, "filename", String.class);
         _updateFolderView();
-        if ( _loadable.contains( filename ) || _loaded.containsKey( filename ) ) {
+        if ( _loaded.containsKey( filename ) ) {
+            Tsr<Object> tensor = _loaded.get( filename );
+            this.restore( tensor );
+            return Optional.of( (Tsr<V>) tensor );
+        }
+        if ( _loadable.contains( filename ) ) {
             String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
             String filePath = _directory + "/" + filename;
             HandleFactory.Loader handleLoader = FileHandle.FACTORY.getLoader( extension );
@@ -161,7 +166,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-        return null;
+        return this;
     }
 
     @Override
