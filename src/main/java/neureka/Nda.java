@@ -962,8 +962,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
      *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
-     *  <br><b>
-     * <p>
+     *  <br>
+     *  <p><b>
      *  Only use this if you know what you are doing and
      *  performance is critical! <br>
      *  </b>
@@ -977,8 +977,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
      *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
-     *  <br><b>
-     * <p>
+     *  <br>
+     *  <p><b>
      *  Only use this if you know what you are doing and
      *  performance is critical! <br>
      *  </b>
