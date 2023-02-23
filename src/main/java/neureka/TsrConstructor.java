@@ -5,6 +5,7 @@ import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.dtype.DataType;
+import neureka.math.args.Arg;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 
@@ -147,11 +148,11 @@ final class TsrConstructor
         return _targetDevice.allocateFromOne( dataType, ndc, singleItem );
     }
 
-    public <V> void newSeeded( Class<V> valueType, Object seed )
+    public <V> void newSeeded( Class<V> valueType, Arg.Seed seed )
     {
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
         Data<?> data = _targetDevice.allocate( DataType.of( valueType ), ndc );
-        Object out = CPURandomization.fillRandomly( data.getRef(), seed.toString() );
+        Object out = CPURandomization.fillRandomly( data.getRef(), seed );
         assert out == data.getRef();
         _API.setIsVirtual( false );
         _API.setConf( ndc );

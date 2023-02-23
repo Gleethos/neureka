@@ -462,7 +462,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
                 (Supplier<List<T>>) ArrayList::new,
                 List::add,
                 (left, right) -> { left.addAll(right); return left; },
-                list -> Tsr.of( shape, list )
+                list -> Tsr.of( Shape.of(shape), list )
             );
     }
 

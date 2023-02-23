@@ -147,7 +147,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
             else if (type == Float.class && seedType == Long.class)
                 return random.with( Arg.Seed.of((Long) seed) ).call( _get( 0f ) );
             else
-                return Tsr.of( type, _shape, seed.toString() ).to( _device );
+                return Tsr.of( type, _shape, Arg.Seed.of(seed.toString()) ).to( _device );
         } catch ( Exception e ) {
             IllegalArgumentException exception =
                     new IllegalArgumentException(

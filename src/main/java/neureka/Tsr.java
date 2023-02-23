@@ -257,6 +257,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  instantiates tensors based on a {@link Shape} tuple of integers
      *  defining axes sizes, and a scalar item of type {@link T}
      *  which will fill out the data array spanned by the provided shape information.
+     *  A simple usage example would be:
+     *  <pre>{@code
+     *     Tsr.of(Shape.of( 4, 3, 6 ), 42);
+     *  }</pre>
      *
      * @param shape An immutable tuple of integers whose values ought to define the size of the axes of the shape of the new {@link Tsr}.
      * @param value An object of type {@link T} which will populate the data array of the new instance.
@@ -281,7 +285,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Double> of( List<? extends Number> shape, String seed ) {
         int[] shapeArray = new int[ shape.size() ];
         for ( int i = 0; i < shapeArray.length; i++ ) shapeArray[ i ] = shape.get( i ).intValue();
-        return of( Double.class, shapeArray, seed );
+        return of( Double.class, Shape.of(shapeArray), Arg.Seed.of(seed) );
     }
 
     /**
@@ -595,9 +599,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created and seeded tensor of the provided type and shape.
      */
-    static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new TsrImpl<>( valueType, NDConstructor.of(shape), seed ); }
-
-    static <V> Tsr<V> of( Class<V> valueType, Shape shape, String seed ) { return new TsrImpl<>( valueType, NDConstructor.of(shape), seed ); }
+    static <V> Tsr<V> of( Class<V> valueType, Shape shape, Arg.Seed seed ) { return new TsrImpl<>( valueType, NDConstructor.of(shape), seed ); }
 
     /**
      *  Use this to construct and return a homogeneously populated double tensor of the specified shape.
@@ -609,6 +611,15 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Double> of( int[] shape, double value ) { return of( Double.class, shape, value ); }
 
     /**
+     *  Use this to construct and return a homogeneously populated double tensor of the specified shape.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param value The value which ought to be used to populate the tensor homogeneously.
+     * @return A new tensor instance with the provided shape and initial value.
+     */
+    static Tsr<Double> of( Shape shape, double value ) { return of( Double.class, shape, value ); }
+
+    /**
      *  Use this to construct and return a double tensor of the specified shape and initial values.
      *  The length of the provided array does not have to match the number of elements
      *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
@@ -618,6 +629,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param values The values which ought to be used to populate the tensor.
      */
     static Tsr<Double> of( int[] shape, double[] values ) { return of( Double.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a double tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided double array.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Tsr<Double> of( Shape shape, double[] values ) { return of( Double.class, shape, values ); }
 
     /**
      *  Use this to construct and return an int tensor of the specified shape and initial values.

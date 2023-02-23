@@ -72,6 +72,7 @@ import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
+import neureka.math.args.Arg;
 import neureka.ndim.Filler;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
@@ -268,7 +269,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     /**
      *  See {@link Tsr#of(Class, int[], String)} and {@link #of(List, String)}
      */
-    TsrImpl( Class<V> valueType, NDConstructor ndConstructor, String seed ) {
+    TsrImpl( Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
         constructFor(CPU.get(), ndConstructor).newSeeded( valueType, seed );
     }
 

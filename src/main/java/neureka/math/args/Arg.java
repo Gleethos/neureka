@@ -87,8 +87,19 @@ public abstract class Arg<T> implements Component<Args> {
     }
 
     public static class Seed extends Arg<Long> {
+        public static Seed of( String arg ) { return new Seed( _longStringHash( arg ) ); }
         public static Seed of( long arg ) { return new Seed( arg ); }
         private Seed( long arg ) { super(arg); }
+
+
+        private static long _longStringHash( String string )
+        {
+            long h = 1125899906842597L; // prime
+            int len = string.length();
+            for ( int i = 0; i < len; i++ ) h = 31 * h + string.charAt( i );
+            return h;
+        }
+
     }
 
     public static class Shape extends Arg<int[]> {

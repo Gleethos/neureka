@@ -1,6 +1,7 @@
 package neureka.backend.main.operations.linear;
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
@@ -65,7 +66,7 @@ public class Convolution extends AbstractOperation
                         assert deConv != null;
                         assert adCall.arity() >= 2 && adCall.arity() <= 3;
                         // Now we need to remember the shape of the input which is targeted for back prop.
-                        int[] shape = adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape();
+                        Shape shape = Shape.of(adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape());
                         // This is because it will be the shape of the output to the de-convolution!
                         return ADAction.of( target ->
                                 deConv.execute(

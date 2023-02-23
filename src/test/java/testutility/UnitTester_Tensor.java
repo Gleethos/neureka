@@ -1,6 +1,7 @@
 package testutility;
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.autograd.GraphNode;
@@ -154,8 +155,8 @@ public class UnitTester_Tensor extends UnitTester
             int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd
     ){
         printSessionStart("Test tensor indexing: tensMul_mxd");
-        int[] drnMxd  = _shpOfCon(frstShp, scndShp);
-        double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd)];
+        Shape drnMxd  = _shpOfCon(frstShp, scndShp);
+        double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd.toIntArray())];
         Neureka.get().backend().getOperation("x")
                 .getAlgorithm(NDConvolution.class)
                 .getImplementationFor( CPU.class )
@@ -179,7 +180,7 @@ public class UnitTester_Tensor extends UnitTester
             double[] expctd, boolean first
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
-        int[] drnMxd  = _shpOfCon(frstShp, scndShp);
+        Shape drnMxd  = _shpOfCon(frstShp, scndShp);
         Neureka.get().backend().getOperation(((char) 171)+"x")
                 .getAlgorithm(NDConvolution.class)
                 .getImplementationFor( CPU.class )
@@ -377,11 +378,11 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     
-    private static int[] _shpOfCon( int[] shp1, int[] shp2 ) {
-        int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
+    private static Shape _shpOfCon(int[] shp1, int[] shp2 ) {
+        int[] shapeArray = new int[ ( shp1.length + shp2.length ) / 2 ];
         for ( int i = 0; i < shp1.length && i < shp2.length; i++ )
-            shape[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
-        return shape;
+            shapeArray[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
+        return Shape.of(shapeArray);
     }
 
     private static class TestBroadcast extends CPUBroadcast {

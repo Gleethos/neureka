@@ -1,6 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.backend.ocl.CLBackend
 import neureka.common.utility.SettingsLoader
@@ -180,7 +181,7 @@ class Tensor_Convolution_Spec extends Specification
         and: 'Tensor legacy view is set to true.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
-            var x = Tsr.of(new int[]{2, 3, 1},
+            var x = Tsr.of(Shape.of(2, 3, 1),
                                     new double[]{
                                         3,  2, -1,
                                         -2,  2,  4
@@ -188,7 +189,7 @@ class Tensor_Convolution_Spec extends Specification
                                 )
                                 .mut.toType(type)
 
-            var y = Tsr.of(new int[]{1, 3, 2},
+            var y = Tsr.of(Shape.of(1, 3, 2),
                     new double[]{
                         4, -1,
                         3,  2,

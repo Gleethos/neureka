@@ -1,6 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
@@ -152,11 +153,11 @@ class Tensor_Instantiation_Spec extends Specification
     def 'Tensors can be instantiated based on arrays for both shapes and values.'()
     {
         given :
-            Tsr<Double> t = Tsr.of(new int[]{2, 2}, new double[]{2, 4, 4})
+            Tsr<Double> t = Tsr.of(Shape.of(2, 2), new double[]{2, 4, 4})
         expect :
             t.toString() == "(2x2):[2.0, 4.0, 4.0, 2.0]"
         when :
-            t = Tsr.of(new int[]{2}, new double[]{3, 5, 7})
+            t = Tsr.of(Shape.of(2), new double[]{3, 5, 7})
         then :
             t.toString() == "(2):[3.0, 5.0]"
             t.getItemsAs( double[].class ).length == 2

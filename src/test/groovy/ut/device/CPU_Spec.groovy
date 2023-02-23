@@ -1,6 +1,7 @@
 package ut.device
 
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -61,8 +62,8 @@ class CPU_Spec extends Specification
         """
 
         given : 'Two 4 dimensional tensor instances.'
-            Tsr a = Tsr.of(new int[]{100, 60, 1, 2},  4)
-            Tsr b = Tsr.of(new int[]{100, 1, 60, 2}, -2)
+            Tsr a = Tsr.of(Shape.of(100, 60, 1, 2),  4)
+            Tsr b = Tsr.of(Shape.of(100, 1, 60, 2), -2)
 
         and : 'The default device returned by the first tensor:'
             Device cpu = a.getDevice()
