@@ -1,5 +1,6 @@
 package neureka.optimization.implementations;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
@@ -22,7 +23,7 @@ public class AdaGrad<V extends Number> implements Optimizer<V>
 
     AdaGrad( Tsr<V> target, double learningRate ) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
-        List<Integer> shape = target.shape();
+        Shape shape = target.shape();
         h = Tsr.of(target.getItemType(), shape, 0).getMut().upcast(Number.class);
         lr = learningRate; // Step size/learning rate is 0.01 by default!
     }

@@ -252,6 +252,23 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
+     *  This is a convenient factory method for creating {@link Tsr} instances for
+     *  representing items of type {@link T}. The factory method
+     *  instantiates tensors based on a {@link Shape} tuple of integers
+     *  defining axes sizes, and a scalar item of type {@link T}
+     *  which will fill out the data array spanned by the provided shape information.
+     *
+     * @param shape An immutable tuple of integers whose values ought to define the size of the axes of the shape of the new {@link Tsr}.
+     * @param value An object of type {@link T} which will populate the data array of the new instance.
+     * @return A new {@link Tsr} instance for the generic type {@link T}.
+     */
+    static <T> Tsr<T> of( Shape shape, T value ) {
+        LogUtil.nullArgCheck( shape, "shape", List.class );
+        LogUtil.nullArgCheck( value, "value", Object.class );
+        return of( (Class<T>) value.getClass(), shape, value );
+    }
+
+    /**
      *  This factory method will create and return a {@link Tsr} instance
      *  based on a list of {@link Number} instances whose rounded values will be interpreted as
      *  the shape of this new {@link Tsr} instance and a seed which will serve
@@ -284,6 +301,29 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                 shape.stream().mapToInt(Number::intValue).toArray(),
                 value
         );
+    }
+
+    /**
+     *  Creates a new {@link Tsr} instance based on a shape tuple of numbers representing the nd-array shape,
+     *  and a list of items representing the value of the resulting tensor. <br>
+     *  A simple usage example would be:
+     *  <pre>{@code
+     *     Tsr.of(Shape.of( 2, 3, 4 ), myListOfItems);
+     *  }</pre>
+     *
+     * @param shape A shape tuple of numbers whose integer values will be used to form the shape of the resulting {@link Tsr}.
+     * @param value A list of values which will be used to populate the data array of the resulting {@link Tsr}.
+     * @param <V> The type parameter of the value list and returned tensor.
+     * @return A new {@link Tsr} instance constructed based on the provided shape and value list.
+     */
+    static <V> Tsr<V> of( Shape shape, List<V> value ) {
+        Class<V> typeClass = (Class<V>) Object.class;
+        if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
+        return of(
+                DataType.of(typeClass),
+                shape.stream().mapToInt(Number::intValue).toArray(),
+                value
+            );
     }
 
     /**
@@ -679,11 +719,23 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return of( DataType.of(type), shape.stream().mapToInt(i -> i).toArray(), data );
     }
 
+    static <V> Tsr<V> of( Class<V> type, Shape shape, Object data ) {
+        return of( DataType.of(type), shape.stream().mapToInt(i -> i).toArray(), data );
+    }
+
     static <V> Tsr<V> of( Class<V> type, List<Integer> shape, List<V> data ) {
         return of( DataType.of( type ), shape.stream().mapToInt( e -> e ).toArray(), data );
     }
 
+    static <V> Tsr<V> of( Class<V> type, Shape shape, List<V> data ) {
+        return of( DataType.of( type ), shape.stream().mapToInt( e -> e ).toArray(), data );
+    }
+
     static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
+        return of( dataType, shape.stream().mapToInt( i -> i ).toArray(), data.toArray() );
+    }
+
+    static <V> Tsr<V> of( DataType<V> dataType, Shape shape,  List<V> data ) {
         return of( dataType, shape.stream().mapToInt( i -> i ).toArray(), data.toArray() );
     }
 
@@ -732,6 +784,11 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     static <T> Tsr<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler) {
         LogUtil.nullArgCheck( shape, "shape", List.class );
+        return of( type, shape.stream().mapToInt( e -> e ).toArray(), filler );
+    }
+
+    static <T> Tsr<T> of( DataType<T> type, Shape shape, Filler<T> filler) {
+        LogUtil.nullArgCheck( shape, "shape", Shape.class );
         return of( type, shape.stream().mapToInt( e -> e ).toArray(), filler );
     }
 

@@ -1,5 +1,6 @@
 package neureka.optimization.implementations;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
@@ -14,7 +15,7 @@ public class Momentum<V extends Number> implements Optimizer<V>
 
     Momentum( Tsr<V> target, double learningRate, double decay ) {
         LogUtil.nullArgCheck( target, "target", Tsr.class );
-        List<Integer> shape = target.shape();
+        Shape shape = target.shape();
         v = Tsr.of(target.getItemType(), shape, 0).getMut().upcast(Number.class);
         lr = learningRate; // Step size/learning rate is 0.01 by default!
         this.decay = decay; // Decay rate is 0.9 by default!

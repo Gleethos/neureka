@@ -1,5 +1,6 @@
 package neureka.ndim;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.ndim.config.NDConfiguration;
 
@@ -32,12 +33,12 @@ public interface NDimensional
     /**
      * @return A list of the dimensions of this tensor / array.
      */
-    default List<Integer> shape() { return Util.asList(getNDConf().shape()); }
+    default Shape shape() { return Shape.of(getNDConf().shape()); }
 
     /**
      * @return A list of the dimensions of this tensor / array.
      */
-    default List<Integer> getShape() { return shape(); }
+    default Shape getShape() { return shape(); }
 
     default List<Integer> indicesMap() { return Util.asList(getNDConf().indicesMap()); }
 
