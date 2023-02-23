@@ -653,6 +653,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Integer> of( int[] shape, int[] values ) { return of( Integer.class, shape, values ); }
 
     /**
+     *  Use this to construct and return an int tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided int array.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Tsr<Integer> of( Shape shape, int[] values ) { return of( Integer.class, shape, values ); }
+
+    /**
      *  Use this to construct and return a byte tensor of the specified shape and initial values.
      *  The length of the provided array does not have to match the number of elements
      *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
@@ -662,6 +673,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param values The values which ought to be used to populate the tensor.
      */
     static Tsr<Byte> of( int[] shape, byte[] values ) { return of( Byte.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a byte tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided byte array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Tsr<Byte> of( Shape shape, byte[] values ) { return of( Byte.class, shape, values ); }
 
     /**
      *  Use this to construct and return a long tensor of the specified shape and initial values.
@@ -675,6 +697,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Long> of( int[] shape, long[] values ) { return of( Long.class, shape, values ); }
 
     /**
+     *  Use this to construct and return a long tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided long array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Tsr<Long> of( Shape shape, long[] values ) { return of( Long.class, shape, values ); }
+
+    /**
      *  Use this to construct and return a short tensor of the specified shape and initial values.
      *  The length of the provided array does not have to match the number of elements
      *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
@@ -684,6 +717,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param values The values which ought to be used to populate the tensor.
      */
     static Tsr<Short> of( int[] shape, short[] values ) { return of( Short.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a short tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided short array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Tsr<Short> of( Shape shape, short[] values ) { return of( Short.class, shape, values ); }
 
     /**
      *  Use this to construct and return a float tensor of the specified shape and initial values.
@@ -697,6 +741,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Float> of( int[] shape, float[] values ) { return of( Float.class, shape, values ); }
 
     /**
+     *  Use this to construct and return a float tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided float array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Tsr<Float> of( Shape shape, float[] values ) { return of( Float.class, shape, values ); }
+
+    /**
      *  Use this to construct and return a boolean tensor of the specified shape and initial values.
      *  The length of the provided array does not have to match the number of elements
      *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
@@ -708,6 +763,17 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Boolean> of( int[] shape, boolean[] values ) { return of( Boolean.class, shape, values ); }
 
     /**
+     *  Use this to construct and return a boolean tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided boolean array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Tsr<Boolean> of( Shape shape, boolean[] values ) { return of( Boolean.class, shape, values ); }
+
+    /**
      *  Use this to construct and return a tensor of the specified type and shape.
      *
      * @param type The type of the items stored by the resulting tensor.
@@ -715,7 +781,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type and shape.
      */
-    static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new TsrImpl<>( NDConstructor.of(shape), type ); }
+    static <V> Tsr<V> of( DataType<V> type, Shape shape ) { return new TsrImpl<>( NDConstructor.of(shape), type ); }
 
     /**
      *  Use this to construct and return a tensor of the specified type, shape and data object.
