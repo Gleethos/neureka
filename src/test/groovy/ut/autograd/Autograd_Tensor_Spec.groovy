@@ -1,6 +1,7 @@
 package ut.autograd
 
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
@@ -48,9 +49,9 @@ class Autograd_Tensor_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         and: 'Three scalar tensors "x", "b", "w" are being instantiated, and "x" requires gradients.'
-            Tsr x = Tsr.of(new int[]{1}, 3).setRqsGradient(true)
-            Tsr b = Tsr.of(new int[]{1}, -4)
-            Tsr w = Tsr.of(new int[]{1}, 2)
+            Tsr x = Tsr.of(Shape.of(1), 3).setRqsGradient(true)
+            Tsr b = Tsr.of(Shape.of(1), -4)
+            Tsr w = Tsr.of(Shape.of(1), 2)
         /**
          *      ((3-4)*2)**2 = 4
          *  dx:   8*3 - 32  = -8
@@ -101,7 +102,7 @@ class Autograd_Tensor_Spec extends Specification
                                     -2.0, 3.0, 4.0,
                             )
             def y = Tsr.of(
-                    new int[]{2, 2},
+                    Shape.of(2, 2),
                     new double[]{
                             -1, 3,
                             2, 3,
@@ -114,21 +115,19 @@ class Autograd_Tensor_Spec extends Specification
         when : z = Tsr.of(new Object[]{x, "x", y})
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)")
 
-        when : z.backward(Tsr.of(new int[]{2, 2}, 1))
+        when : z.backward(Tsr.of(Shape.of(2, 2), 1))
         then : y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)")
 
         when :
             // again but now reverse: (outcome should not change...)
-            x = Tsr.of(
-                        new int[]{3, 3},
+            x = Tsr.of(Shape.of(3, 3),
                         new double[]{
                                 1, 2, 5,
                                 -1, 4, -2,
                                 -2, 3, 4,
                         }
                 ).mut.toType(type)
-            y = Tsr.of(
-                    new int[]{2, 2},
+            y = Tsr.of(Shape.of(2, 2),
                     new double[]{
                             -1, 3,
                             2, 3,
@@ -143,21 +142,21 @@ class Autograd_Tensor_Spec extends Specification
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)")
         and : z.itemType == type
 
-        when : z.backward(Tsr.of(new int[]{2, 2}, 1))
+        when : z.backward(Tsr.of(Shape.of(2, 2), 1d))
         then : y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)")
         //====
         when :
-            x = Tsr.of(new int[]{1}, 3).mut.toType(type)
-            Tsr b = Tsr.of(new int[]{1}, -5).mut.toType(type)
-            Tsr w = Tsr.of(new int[]{1}, -2).mut.toType(type)
+            x = Tsr.of(Shape.of(1), 3d).mut.toType(type)
+            Tsr b = Tsr.of(Shape.of(1), -5d).mut.toType(type)
+            Tsr w = Tsr.of(Shape.of(1), -2d).mut.toType(type)
             z = Tsr.of("I0*i1*i2", x, b, w)
         then : z.toString().contains("[1]:(30.0)")
         and : z.itemType == type
 
         when :
-            x = Tsr.of(new int[]{1}, 4).setRqsGradient(true).mut.toType(type)
-            b = Tsr.of(new int[]{1}, 0.5).mut.toType(type)
-            w = Tsr.of(new int[]{1}, 0.5).mut.toType(type)
+            x = Tsr.of(Shape.of(1), 4d).setRqsGradient(true).mut.toType(type)
+            b = Tsr.of(Shape.of(1), 0.5).mut.toType(type)
+            w = Tsr.of(Shape.of(1), 0.5).mut.toType(type)
             y = Tsr.of("(2**i0**i1**i2**2", x, b, w)
         then :
             y.toString().contains("[1]:(9.24238);")

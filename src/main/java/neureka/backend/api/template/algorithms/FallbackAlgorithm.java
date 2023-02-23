@@ -1,6 +1,7 @@
 package neureka.backend.api.template.algorithms;
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
@@ -137,7 +138,7 @@ implements ExecutionPreparation, ADActionSupplier
         Device<Object> device = call.getDeviceFor(Object.class);
         if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
-            int[] shp = call.input( 1 ).getNDConf().shape();
+            Shape shp = call.input( 1 ).shape();
             Tsr<Object> output;
 
             if ( call.getOperation().isInline() )

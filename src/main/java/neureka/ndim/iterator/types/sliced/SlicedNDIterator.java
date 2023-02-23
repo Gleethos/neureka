@@ -9,7 +9,7 @@ public final class SlicedNDIterator implements NDIterator
     private final int[] _shape;
     private final NDConfiguration _conf;
 
-    public SlicedNDIterator(NDConfiguration ndc ) {
+    public SlicedNDIterator( NDConfiguration ndc ) {
         _shape = ndc.shape();
         _indices = new int[ _shape.length ];
         _conf = ndc;

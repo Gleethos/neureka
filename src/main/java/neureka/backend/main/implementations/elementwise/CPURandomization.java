@@ -28,11 +28,15 @@ public strictfp class CPURandomization implements ImplementationFor<CPU>
     }
 
 
-    public static <T> T fillRandomly(T data, String seed) {
-        return fillRandomly(data, _longStringHash(seed));
+    public static <T> T fillRandomly( T data, Arg.Seed seed ) {
+        return fillRandomly(data, seed.get());
     }
 
-    public static <T> T fillRandomly(T data, long seed)
+    public static <T> T fillRandomly( T data, String seed ) {
+        return fillRandomly(data, Arg.Seed.of(seed).get());
+    }
+
+    public static <T> T fillRandomly( T data, long seed )
     {
         int size = 0;
         Class<?> type = null;
@@ -59,18 +63,6 @@ public strictfp class CPURandomization implements ImplementationFor<CPU>
         CPU.get().getExecutor().threaded( size, workload );
         return data;
     }
-
-
-
-
-    private static long _longStringHash( String string )
-    {
-        long h = 1125899906842597L; // prime
-        int len = string.length();
-        for ( int i = 0; i < len; i++ ) h = 31 * h + string.charAt( i );
-        return h;
-    }
-
 
     private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call ) {
         Tsr<?> tensor = call.input( 0 );

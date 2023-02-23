@@ -224,6 +224,95 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     static <T> Nda<T> of( T... values ) { return Tsr.of(values); }
 
     /**
+     *  Use this to construct and return a double based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided double array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Double> of( Shape shape, double... values ) { return Tsr.ofAny( Double.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a float based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided float array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Float> of( Shape shape, float... values ) { return Tsr.ofAny( Float.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a byte based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided byte array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Byte> of( Shape shape, byte... values ) { return Tsr.ofAny( Byte.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a int based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided int array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Integer> of( Shape shape, int... values ) { return Tsr.ofAny( Integer.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a long based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided long array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Long> of( Shape shape, long... values ) { return Tsr.ofAny( Long.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a short based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided short array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Short> of( Shape shape, short... values ) { return Tsr.ofAny( Short.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a boolean based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided boolean array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Boolean> of( Shape shape, boolean... values ) { return Tsr.ofAny( Boolean.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return an object based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided object array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    @SafeVarargs
+    static <T> Nda<T> of( Shape shape, T... values ) { return (Nda<T>) Tsr.of( values ).withShape( shape.toIntArray() ); }
+
+    /**
      * Constructs a vector of objects based on the provided iterable.
      *
      * @param values The iterable of objects from which a 1D nd-array ought to be constructed.
@@ -245,9 +334,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  will be taken from the cell where the header row and the first column intersect.
      *  @return The label/name of the nd-array.
      */
-    default String getLabel() {
-        return ((TsrImpl<?>) this).find(NDFrame.class).map(NDFrame::getLabel).orElse("");
-    }
+    default String getLabel() { return ((TsrImpl<?>) this).find(NDFrame.class).map(NDFrame::getLabel).orElse(""); }
 
     /**
      *  A nd-array can have a label. This label is used for example when printing the nd-array.
@@ -421,9 +508,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param predicate The predicate to filter the items of this {@link Nda}.
      * @return A {@link Stream} of the items in this {@link Nda} which match the predicate.
      */
-    default Stream<V> filter( Predicate<V> predicate ) {
-        return stream().filter( predicate );
-    }
+    default Stream<V> filter( Predicate<V> predicate ) { return stream().filter( predicate ); }
 
     /**
      *  A convenience method for {@code stream().flatMap( mapper )}.
@@ -462,7 +547,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
                 (Supplier<List<T>>) ArrayList::new,
                 List::add,
                 (left, right) -> { left.addAll(right); return left; },
-                list -> Tsr.of( shape, list )
+                list -> Tsr.of( Shape.of(shape), list )
             );
     }
 
@@ -877,8 +962,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
      *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
-     *  <br><b>
-     *
+     *  <br>
+     *  <p><b>
      *  Only use this if you know what you are doing and
      *  performance is critical! <br>
      *  </b>
@@ -892,8 +977,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
      *  because the exposed state can easily lead to broken tensors and exceptional situations!<br>
-     *  <br><b>
-     *
+     *  <br>
+     *  <p><b>
      *  Only use this if you know what you are doing and
      *  performance is critical! <br>
      *  </b>
@@ -935,7 +1020,17 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  This allows you to provide a lambda which configures how this nd-array should be
      *  converted to {@link String} instances.
      *  The provided {@link Consumer} will receive a {@link NDPrintSettings} instance
-     *  which allows you to change various settings with the help of method chaining.
+     *  which allows you to change various settings with the help of method chaining.<br>
+     *  Here is an example:
+     *  <pre>{@code
+     *       t.toString(it ->
+     *           it.setHasSlimNumbers(false)
+     *             .setIsScientific(true)
+     *             .setIsCellBound(true)
+     *             .setIsMultiline(true)
+     *             .setCellSize(15)
+     *          );
+     *  }</pre>
      *
      * @param config A consumer of the {@link NDPrintSettings} ready to be configured.
      * @return The {@link String} representation of this nd-array.
@@ -946,7 +1041,11 @@ public interface Nda<V> extends NDimensional, Iterable<V>
         return NdaAsString.representing( this ).withConfig( defaults ).toString();
     }
 
+    /**
+     *  This method returns a {@link String} representation of this nd-array.
+     *  The default settings are used for the conversion.
+     * @return The {@link String} representation of this nd-array.
+     */
     String toString();
-
 
 }

@@ -1,6 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.dtype.DataType
 import neureka.dtype.custom.I8
@@ -214,7 +215,7 @@ class Tensor_State_Spec extends Specification
     def 'Tensor created from shape and datatype has expected state.'()
     {
         given : 'A new vector tensor is being instantiated.'
-            Tsr<Byte> t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )
+            Tsr<Byte> t = Tsr.of( DataType.of(I8.class ), Shape.of( 2 ) )
         expect : 'The vector is initialized with zeros.'
             t.items == [0, 0] as List<Byte>
         and : 'We can access and verify this through the following ways as well:'

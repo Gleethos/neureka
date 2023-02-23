@@ -1,6 +1,7 @@
 package ut.backend
 
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.autograd.ADAction
 import neureka.backend.api.*
@@ -84,7 +85,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                          Device<?> device = call.getDevice();
                                                         if ( call.input( 0 ) == null ) // Creating a new tensor:
                                                         {
-                                                            int[] shp = new int[]{call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1)}
+                                                            Shape shp = Shape.of(call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1))
                                                             Tsr output = Tsr.of(shp, 0.0);
                                                             output.mut.setIsVirtual(false);
                                                             device.store( output );

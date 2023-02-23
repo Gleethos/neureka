@@ -72,6 +72,7 @@ import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
+import neureka.math.args.Arg;
 import neureka.ndim.Filler;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
@@ -254,21 +255,27 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data );
     }
 
-    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Data data ) {
-        constructFor(CPU.get(), ndConstructor).constructTrusted(data );
+    <V> TsrImpl( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
+        // We check if the type of the data is compatible with the type of the tensor:
+        if ( !dataType.getItemTypeClass().isAssignableFrom( data.dataType().getItemTypeClass() ) )
+            throw new IllegalArgumentException(
+                    "The data type of the data is not compatible with the data type of the tensor!"
+                );
+
+        constructFor(CPU.get(), ndConstructor).constructTrusted( data );
     }
 
     /**
-     *  see {@link Tsr#of(DataType, int[], Filler)}
+     *  see {@link Tsr#of(DataType, Shape, Filler)}
      */
     <T> TsrImpl( NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
         _constructFromInitializer(ndConstructor, type, filler);
     }
 
     /**
-     *  See {@link Tsr#of(Class, int[], String)} and {@link #of(List, String)}
+     *  See {@link Tsr#of(Class, Shape, neureka.math.args.Arg.Seed)} and {@link #of(List, String)}
      */
-    TsrImpl( Class<V> valueType, NDConstructor ndConstructor, String seed ) {
+    TsrImpl( Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
         constructFor(CPU.get(), ndConstructor).newSeeded( valueType, seed );
     }
 
@@ -1218,7 +1225,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         if ( indices.stream().allMatch( i -> i instanceof Number ) )
             return setItemAt( indexOfIndices(indices.stream().mapToInt( i -> ((Number)i).intValue() ).toArray()), value );
         else
-            return this.putAt( indices, Tsr.of( this.getItemType(), shape(), value ) );
+            return this.putAt( indices, Tsr.ofAny( this.getItemType(), shape(), value ) );
     }
 
     /** {@inheritDoc} */

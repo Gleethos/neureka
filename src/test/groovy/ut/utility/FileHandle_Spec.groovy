@@ -179,7 +179,7 @@ class FileHandle_Spec extends Specification
             hash == expected
 
         and :
-            handle.shape == shape as int[]
+            handle.shape == shape
             handle.valueSize == shape.inject( 1, {prod, value -> prod * value} )
             handle.totalSize == shape.inject( 1, {prod, value -> prod * value} ) //28 * 28 * 1 + 16
             handle.location.endsWith( filename )
@@ -210,7 +210,7 @@ class FileHandle_Spec extends Specification
             hash == expected
 
         and :
-            csv.shape == shape as int[]
+            csv.shape == shape
             csv.valueSize == shape.inject( 1, {prod, value -> prod * value} )
             csv.totalSize == byteSize
             csv.dataSize == byteSize

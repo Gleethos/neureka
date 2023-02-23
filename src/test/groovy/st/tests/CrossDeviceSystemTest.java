@@ -1,5 +1,6 @@
 package st.tests;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.opencl.OpenCLDevice;
@@ -23,11 +24,11 @@ public class CrossDeviceSystemTest
         {
             Tsr<Double> tensor1, tensor2;
             //=====================================================================
-            tensor1 = Tsr.of(new int[]{2, 2}, new double[]{
+            tensor1 = Tsr.of(Shape.of(2, 2), new double[]{
                     -1, 7,
                     -2, 3,
             }).setRqsGradient(true);
-            tensor2 = Tsr.of(new int[]{2, 2}, new double[]{
+            tensor2 = Tsr.of(Shape.of(2, 2), new double[]{
                     -1, 7,
                     -2, 3,
             });
@@ -47,7 +48,7 @@ public class CrossDeviceSystemTest
                             "[2x2]:(-1.0, 7.0, -2.0, 3.0) ]|:t{ [2x2]:(-1.0, 7.0, -2.0, 3.0) }"
                     });
             //=====================================================================
-            tensor1 = Tsr.of(new int[]{3, 5}, new double[]{
+            tensor1 = Tsr.of(Shape.of(3, 5), new double[]{
                     2, 3, 5,
                     -4, 6, 2,
                     -5, -2, -1,
@@ -62,8 +63,8 @@ public class CrossDeviceSystemTest
                             "[3x5]:(2.12693, 3.04859, 5.00672, 0.01814, 6.00248, 2.12693, 0.00671, 0.12692, 0.31326, 2.12693, 4.01815, 0.31326, 1.31326, 2.12693, 7.00091)"
                     });
             //===================
-            tensor1 = Tsr.of(new int[]{2}, 3);
-            tensor2 = Tsr.of(new int[]{2}, 4);
+            tensor1 = Tsr.of(Shape.of(2), 3);
+            tensor2 = Tsr.of(Shape.of(2), 4);
             gpu.store(tensor1).store(tensor2);
             listOfTensors.add(tensor1);
             listOfTensors.add(tensor2);
@@ -72,16 +73,14 @@ public class CrossDeviceSystemTest
                     new Tsr[]{tensor1, tensor2}, "i0*i1",
                     new String[]{"[2]:(12.0, 12.0)"});
             //===========================================
-            tensor1 = Tsr.of(
-                    new int[]{2, 3, 1},
+            tensor1 = Tsr.of(Shape.of(2, 3, 1),
                     new double[]{
                             3, 2,
                             -1, -2,
                             2, 4
                     }
             );
-            tensor2 = Tsr.of(
-                    new int[]{1, 3, 2},
+            tensor2 = Tsr.of(Shape.of(1, 3, 2),
                     new double[]{
                             4, -1, 3,
                             2, 3, -1
@@ -94,13 +93,8 @@ public class CrossDeviceSystemTest
                     new Tsr[]{tensor1, tensor2}, "I0 x i1",
                     new String[]{"[2x1x2]:(15.0, 2.0, 10.0, 2.0)"});
             //=======================
-            tensor1 = Tsr.of(
-                    new int[]{200, 300, 1},
-                    2
-            );
-            tensor2 = Tsr.of(
-                    new int[]{1, 300, 200},
-                    3);
+            tensor1 = Tsr.of(Shape.of(200, 300, 1),  2);
+            tensor2 = Tsr.of(Shape.of(1, 300, 200), 3);
             gpu.store(tensor1);
             gpu.store(tensor2);
             listOfTensors.add(tensor1);
@@ -109,11 +103,11 @@ public class CrossDeviceSystemTest
                     new Tsr[]{tensor1, tensor2}, "I0xi1",
                     new String[]{"[200x1x200]:(1800.0, 1800.0, 1800.0, 1800.0, 1800.0, 1800.0,"});
             //---
-            tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
+            tensor1 = Tsr.of(Shape.of(2, 2, 1), new double[]{
                     1, 2, //  3, 1,
                     2, -3, // -2, -1,
             }).setRqsGradient(true);
-            tensor2 = Tsr.of(new int[]{1, 2, 2}, new double[]{
+            tensor2 = Tsr.of(Shape.of(1, 2, 2), new double[]{
                     -2, 3, //  0  7
                     1, 2,  // -7  0
             });
@@ -128,14 +122,14 @@ public class CrossDeviceSystemTest
                                     "0.0, 7.0, -7.0, 0.0" +
                                     "); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
                     },
-                    Tsr.of(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
+                    Tsr.of(Shape.of(2, 1, 2), new double[]{1, 1, 1, 1}),
                     new double[][]{new double[]{1.0, 3.0, 1.0, 3.0}, null}
             );
 
             // ---
-            Tsr<Double> x = Tsr.of(new int[]{1}, 3d).setRqsGradient(true);
-            Tsr<Double> b = Tsr.of(new int[]{1}, -4d);
-            Tsr<Double> w = Tsr.of(new int[]{1}, 2d);
+            Tsr<Double> x = Tsr.of(Shape.of(1), 3d).setRqsGradient(true);
+            Tsr<Double> b = Tsr.of(Shape.of(1), -4d);
+            Tsr<Double> w = Tsr.of(Shape.of(1), 2d);
             gpu.store(x).store(b).store(w);
             listOfTensors.add(x);
             listOfTensors.add(b);
@@ -150,9 +144,9 @@ public class CrossDeviceSystemTest
             tester.testTensor(x, new String[]{"-16.0"});
             tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
             //---
-            x = Tsr.of(new int[]{1}, 4).setRqsGradient(true);
-            b = Tsr.of(new int[]{1}, 0.5);
-            w = Tsr.of(new int[]{1}, 0.5);
+            x = Tsr.of(Shape.of(1), 4).setRqsGradient(true);
+            b = Tsr.of(Shape.of(1), 0.5);
+            w = Tsr.of(Shape.of(1), 0.5);
             gpu.store(x).store(b).store(w);
             listOfTensors.add(x);
             listOfTensors.add(b);
@@ -162,9 +156,9 @@ public class CrossDeviceSystemTest
             tester.testShareDevice(gpu, new Tsr[]{y, x, b, w});
 
             //====
-            x = Tsr.of(new int[]{1}, 3);
-            b = Tsr.of(new int[]{1}, -5);
-            w = Tsr.of(new int[]{1}, -2);
+            x = Tsr.of(Shape.of(1), 3);
+            b = Tsr.of(Shape.of(1), -5);
+            w = Tsr.of(Shape.of(1), -2);
             gpu.store(x).store(b).store(w);
             listOfTensors.add(x);
             listOfTensors.add(b);
@@ -174,9 +168,9 @@ public class CrossDeviceSystemTest
             tester.testShareDevice(gpu, new Tsr[]{z, x, b, w});
 
             //---
-            x = Tsr.of(new int[]{1}, 3).setRqsGradient(true);
-            b = Tsr.of(new int[]{1}, 0.5);
-            w = Tsr.of(new int[]{1}, 4);
+            x = Tsr.of(Shape.of(1), 3).setRqsGradient(true);
+            b = Tsr.of(Shape.of(1), 0.5);
+            w = Tsr.of(Shape.of(1), 4);
             gpu.store(x).store(b).store(w);
             listOfTensors.add(x);
             listOfTensors.add(b);

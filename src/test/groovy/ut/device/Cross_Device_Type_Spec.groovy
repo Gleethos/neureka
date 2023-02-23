@@ -1,6 +1,7 @@
 package ut.device
 
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
@@ -158,7 +159,7 @@ class Cross_Device_Type_Spec extends Specification
         """
 
         given : 'A 2D tensor which we transfer to a device using the "to" method...'
-            Tsr t = Tsr.of(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).to(device)
+            Tsr t = Tsr.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)
 
         when : 'A numeric array is passed to said tensor...'
             t.mut.setItems(data1)
