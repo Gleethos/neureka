@@ -1,5 +1,6 @@
 package neureka.ndim;
 
+import neureka.Shape;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
 
@@ -45,6 +46,11 @@ public interface NDConstructor
                 return _constructedNDC;
             }
         };
+    }
+
+
+    static NDConstructor of( Shape newShape ) {
+        return of(newShape.toIntArray());
     }
 
     static NDConstructor of( int... newShape )

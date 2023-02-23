@@ -3,6 +3,7 @@ package neureka.devices.file;
 
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
@@ -30,7 +31,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
     private DataType<?> _dataType;
     private int _dataOffset;
     private int _valueSize;
-    private int[] _shape;
+    private Shape _shape;
 
     private static final Map<Integer, Class<?>> TYPE_MAP;
     static {
@@ -67,7 +68,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
 
     public IDXHandle(Tsr<Number> t, String filename ) {
         super( filename, new IDXType() );
-        _shape = t.getNDConf().shape();
+        _shape = t.shape();
         _dataType = t.getDataType();
         t.getMut().setIsVirtual( false );
         store( t );
@@ -95,7 +96,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
             size *= shape[ i ];
         }
 
-        _shape = shape;
+        _shape = Shape.of(shape);
         _valueSize = size;
         _dataOffset = numre.bytesRead();
     }
@@ -129,15 +130,15 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
             offset += 2;
             f.write( CODE_MAP.get( _dataType.getRepresentativeType() ).byteValue() );
             offset += 1;
-            byte rank = (byte) _shape.length;
+            byte rank = (byte) _shape.size();
             f.write( rank );
             offset += 1;
             int bodySize = 1;
             for ( int i = 0; i < rank; i++ ) {
-                byte[] integer = ByteBuffer.allocate( 4 ).putInt( _shape[ i ] ).array();
+                byte[] integer = ByteBuffer.allocate( 4 ).putInt( _shape.get( i ) ).array();
                 assert integer.length == 4;
                 f.write(integer);
-                bodySize *= _shape[ i ];
+                bodySize *= _shape.get( i );
                 offset += 4;
             }
             _dataOffset = offset;
@@ -201,7 +202,8 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
         return _valueSize;
     }
 
-    public int[] getShape() {
+    @Override
+    public Shape getShape() {
         return _shape;
     }
 

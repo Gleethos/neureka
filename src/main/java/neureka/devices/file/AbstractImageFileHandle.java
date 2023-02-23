@@ -1,5 +1,6 @@
 package neureka.devices.file;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Storage;
@@ -128,7 +129,7 @@ abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, Number>
     @Override public DataType<?> getDataType() { return DataType.of( UI8.class ); }
 
     /** {@inheritDoc} */
-    @Override public int[] getShape() { return new int[]{ _height, _width, _type.numberOfChannels() }; }
+    @Override public Shape getShape() { return Shape.of( _height, _width, _type.numberOfChannels() ); }
 
     /** {@inheritDoc} */
     @Override

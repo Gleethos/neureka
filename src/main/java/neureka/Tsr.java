@@ -753,6 +753,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data ); }
 
+    static <V> Tsr<V> of( DataType<V> dataType, Shape shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data ); }
+
+
     /**
      *  This factory method a raw tensor constructor which will not perform any type checking
      *  or data conversion on the data provided to it.

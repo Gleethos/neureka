@@ -1,6 +1,7 @@
 package neureka.devices.file;
 
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
@@ -188,11 +189,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
     @Override
     public Tsr<String> load() throws IOException {
         String[] data = _lazyLoad();
-        Tsr<String> loaded = Tsr.of(
-                                    DataType.of( String.class ),
-                                    getShape(),
-                                    data
-                                );
+        Tsr<String> loaded = Tsr.of(DataType.of( String.class ), getShape(), data);
         String[] index;
         String[] labels;
 
@@ -244,8 +241,8 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
     }
 
     @Override
-    public int[] getShape() {
-        return new int[]{ _numberOfRows, _numberOfColumns };
+    public Shape getShape() {
+        return Shape.of( _numberOfRows, _numberOfColumns );
     }
 
     public String getDelimiter() {

@@ -1,6 +1,7 @@
 package neureka.devices.file;
 
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
@@ -84,7 +85,7 @@ public interface FileHandle<FinalType, ValType> extends Storage<ValType>
     /**
      * @return The shape of the tensor stored in the file which is managed by a {@link FileHandle}.
      */
-    int[] getShape();
+    Shape getShape();
 
     /**
      *  The file ending which comes after the '.' character...
