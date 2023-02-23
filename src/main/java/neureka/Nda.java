@@ -224,6 +224,95 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     static <T> Nda<T> of( T... values ) { return Tsr.of(values); }
 
     /**
+     *  Use this to construct and return a double based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided double array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Double> of( Shape shape, double... values ) { return Tsr.of( Double.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a float based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided float array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Float> of( Shape shape, float... values ) { return Tsr.of( Float.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a byte based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided byte array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Byte> of( Shape shape, byte... values ) { return Tsr.of( Byte.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a int based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided int array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Integer> of( Shape shape, int... values ) { return Tsr.of( Integer.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a long based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided long array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Long> of( Shape shape, long... values ) { return Tsr.of( Long.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a short based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided short array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Short> of( Shape shape, short... values ) { return Tsr.of( Short.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return a boolean based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided boolean array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    static Nda<Boolean> of( Shape shape, boolean... values ) { return Tsr.of( Boolean.class, shape, values ); }
+
+    /**
+     *  Use this to construct and return an object based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided object array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    @SafeVarargs
+    static <T> Nda<T> of( Shape shape, T... values ) { return (Nda<T>) Tsr.of( values ).withShape( shape.toIntArray() ); }
+
+    /**
      * Constructs a vector of objects based on the provided iterable.
      *
      * @param values The iterable of objects from which a 1D nd-array ought to be constructed.

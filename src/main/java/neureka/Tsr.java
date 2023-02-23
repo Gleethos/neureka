@@ -818,15 +818,15 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     static <V> Tsr<V> of( Class<V> type, Shape shape, List<V> data ) {
-        return of( DataType.of( type ), shape.stream().mapToInt( e -> e ).toArray(), data );
+        return of( DataType.of( type ), shape, data );
     }
 
     static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
-        return of( dataType, shape.stream().mapToInt( i -> i ).toArray(), data.toArray() );
+        return of( dataType, Shape.of(shape.stream().mapToInt( i -> i ).toArray()), data.toArray() );
     }
 
     static <V> Tsr<V> of( DataType<V> dataType, Shape shape,  List<V> data ) {
-        return of( dataType, shape.stream().mapToInt( i -> i ).toArray(), data.toArray() );
+        return of( dataType, shape, data.toArray() );
     }
 
     /**
@@ -843,8 +843,19 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data ); }
 
+    /**
+     *  This factory method is among the most flexible and forgiving ways to create a {@link Tsr} instance.
+     *  It receives a {@link DataType} for type safety and to ensure that the produced {@link Tsr} instance
+     *  will contain elements of the correct type, and a {@link Shape} tuple which stores the sizes of the axes that the
+     *  instance ought to possess, and finally it receives a data {@link Object} which can be anything ranging from
+     *  a {@link List} to an array or simply a single value which ought to fill out the entire {@link Tsr}.
+     *
+     * @param dataType The data type of the data represented by {@link Tsr} instance created by this method.
+     * @param shape An immutable tuple of axis sizes describing the dimensionality of the {@link Tsr} created by this method.
+     * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
+     * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
+     */
     static <V> Tsr<V> of( DataType<V> dataType, Shape shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data ); }
-
 
     /**
      *  This factory method a raw tensor constructor which will not perform any type checking
