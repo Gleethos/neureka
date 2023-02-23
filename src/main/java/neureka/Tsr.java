@@ -597,6 +597,8 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     static <V> Tsr<V> of( Class<V> valueType, int[] shape, String seed ) { return new TsrImpl<>( valueType, NDConstructor.of(shape), seed ); }
 
+    static <V> Tsr<V> of( Class<V> valueType, Shape shape, String seed ) { return new TsrImpl<>( valueType, NDConstructor.of(shape), seed ); }
+
     /**
      *  Use this to construct and return a homogeneously populated double tensor of the specified shape.
      *
@@ -792,7 +794,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     static <T> Tsr<T> of( DataType<T> type, Shape shape, Filler<T> filler) {
         LogUtil.nullArgCheck( shape, "shape", Shape.class );
-        return of( type, shape.stream().mapToInt( e -> e ).toArray(), filler );
+        return new TsrImpl<>( NDConstructor.of(shape), type, filler );
     }
 
     /**
@@ -810,7 +812,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler) {
+    static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler ) {
         return new TsrImpl<>( NDConstructor.of(shape), type, filler );
     }
 

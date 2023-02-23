@@ -2,6 +2,7 @@ package neureka.fluent.building;
 
 import neureka.Nda;
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.math.Function;
 import neureka.math.args.Arg;
@@ -68,7 +69,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     private static final Logger _LOG = LoggerFactory.getLogger(NdaBuilder.class);
 
     private final DataType<V> _dataType;
-    private int[] _shape;
+    private Shape _shape;
     private V _from;
     private V _to;
     private Device<V> _device = (Device<V>) CPU.get();
@@ -162,14 +163,14 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
         LogUtil.nullArgCheck(shape, "shape", int[].class, "Cannot create a tensor without shape!");
         if ( shape.length == 0 )
             throw new IllegalArgumentException("Cannot instantiate a tensor without shape arguments.");
-        _shape = shape;
+        _shape = Shape.of(shape);
         return this;
     }
 
     @Override
     public Tsr<V> vector( Object[] values ) {
         LogUtil.nullArgCheck(values, "values", Object[].class, "Cannot create a vector without data array!");
-        _shape = new int[]{ values.length };
+        _shape = Shape.of( values.length );
         if ( _isAllOne(values) ) return _get( values[0] );
         return _get( values );
     }
@@ -190,7 +191,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
                 }
             }
         }
-        _shape = new int[]{ 1 };
+        _shape = Shape.of( 1 );
         return _get( value );
     }
 

@@ -20,10 +20,11 @@ public interface Shape extends Iterable<Integer>
      *  @return A {@link Shape} instance which is created from the given array of integers.
      */
     static Shape of( int... shape ) {
+        int[] data = shape.clone();
         return new Shape() {
-            @Override public int size() { return shape.length; }
-            @Override public int get( int i ) { return shape[i]; }
-            @Override public String toString() { return java.util.Arrays.toString( shape ); }
+            @Override public int size() { return data.length; }
+            @Override public int get( int i ) { return data[i]; }
+            @Override public String toString() { return java.util.Arrays.toString( data ); }
             @Override public boolean equals( Object o ) {
                 if ( o instanceof Shape ) {
                     Shape s = (Shape) o;
