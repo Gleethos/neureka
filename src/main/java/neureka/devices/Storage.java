@@ -87,5 +87,4 @@ public interface Storage<V>
      */
     boolean contains( Tsr<V> o );
 
-
 }

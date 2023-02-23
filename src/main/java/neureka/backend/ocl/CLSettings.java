@@ -1,7 +1,7 @@
 package neureka.backend.ocl;
 
 /**
- *  OpenCL related settings for the {@link CLBackend} backend extension.
+ *  OpenCL related settings for the {@link CLBackend} extension.
  */
 public class CLSettings {
 

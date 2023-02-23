@@ -78,7 +78,7 @@ public final class Neureka
     /**
      *  The current semantic version of this library build.
      */
-    private static String _VERSION = "0.19.0";
+    private static String _VERSION = "0.20.0";
 
     /**
      *  The truth value determining if OpenCL is available or not.
@@ -139,9 +139,9 @@ public final class Neureka
             _backend.set( new CPUBackend() ); // CPU (JVM) is always available!
 
             if ( _OPENCL_AVAILABLE )
-                _backend.set( new CLBackend() );
+                _backend.set( new CLBackend() ); // OpenCL is available if the jocl dependency can find OpenCL drivers!
             else
-                _LOG.info( Messages.clContextCreationFailed() );
+                _LOG.debug( Messages.clContextCreationFailed() );
         }
         return _backend;
     }
@@ -194,7 +194,7 @@ public final class Neureka
         if ( Thread.currentThread().getName().startsWith(CPU.THREAD_PREFIX) )
             throw new IllegalAccessError(
                     "Thread pool thread named '"+Thread.currentThread().getName()+"' may not " +
-                       "access thread local library instance directly!" +
+                       "access thread local library instance directly! \n" +
                        "This is because this settings instance is not representative of the main thread library context."
                     );
         _INSTANCES.set(instance);

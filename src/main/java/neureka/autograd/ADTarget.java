@@ -8,7 +8,7 @@ import neureka.Tsr;
  *  The class exposes the targeted index and graph node of the input towards
  *  a provided error should be propagated.
  *
- * @param <V>
+ * @param <V> The data type of the tensor.
  */
 public final class ADTarget<V>
 {

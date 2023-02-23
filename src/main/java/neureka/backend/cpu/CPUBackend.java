@@ -18,6 +18,9 @@ import neureka.backend.main.operations.other.Sum;
 import neureka.backend.main.operations.other.internal.CPUSum;
 import neureka.devices.host.CPU;
 
+/**
+ *  This class loads the CPU operations into the Neureka library context.
+ */
 public class CPUBackend implements BackendExtension
 {
     @Override
@@ -32,9 +35,7 @@ public class CPUBackend implements BackendExtension
     public void dispose() { CPU.get().dispose(); }
 
     @Override
-    public BackendLoader getLoader() {
-        return registry -> _load( registry.forDevice(CPU.class) );
-    }
+    public BackendLoader getLoader() { return registry -> _load( registry.forDevice(CPU.class) ); }
 
     private void _load( ReceiveForDevice<CPU> receive )
     {
