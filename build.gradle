@@ -235,23 +235,23 @@ pitest {
 //----------------------------------------------------------------------------------------------------------------------
 // 10. CUSTOM DEPLOYMENT TASKS :
 
-task releaseJDocs(type: Copy) {
+tasks.register('releaseJDocs', Copy) {
     from "$rootDir/build/docs/javadoc"
     into "$rootDir/docs/jdocs"
 }
 
 // 1:
-task cleanForDeployment(type: Delete) {
+tasks.register('cleanForDeployment', Delete) {
     delete "$rootDir/build"
-    if ( new File("$rootDir/docs/jdocs").listFiles() != null )
+    if (new File("$rootDir/docs/jdocs").listFiles() != null)
         delete new File("$rootDir/docs/jdocs").listFiles()
-    if ( new File("$rootDir/docs/spock/reports") != null )
+    if (new File("$rootDir/docs/spock/reports") != null)
         delete new File("$rootDir/docs/spock/reports").listFiles()
-    if ( new File("$rootDir/docs/spock/aggregated") != null )
+    if (new File("$rootDir/docs/spock/aggregated") != null)
         delete new File("$rootDir/docs/spock/aggregated").listFiles()
 }
 // 2:
-task deploy() {
+tasks.register('deploy') {
 
     // Expected before : dependsOn 'cleanForDeployment'
 
@@ -278,12 +278,12 @@ jar {
     }
 }
 
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar) {
     classifier "sources"
     from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar) {
+tasks.register('javadocJar', Jar) {
     classifier "javadoc"
     from javadoc
 }
@@ -291,9 +291,9 @@ task javadocJar(type: Jar) {
 //----------------------------------------------------------------------------------------------------------------------
 // 12. JDOC CREATION:
 
-task createJDocs(type: Javadoc){
+tasks.register('createJDocs', Javadoc) {
     destinationDir = new File("$projectDir/docs/jdocs")
-    if(JavaVersion.current().isJava9Compatible()) {
+    if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
 }
@@ -312,7 +312,7 @@ java {
 
 ext.genOutputDir = file("$buildDir/generated-resources")
 
-task generateVersionTxt()  {
+tasks.register('generateVersionTxt') {
     ext.outputFile = file("$genOutputDir/version.txt")
     outputs.file(outputFile)
     doLast {
