@@ -13,6 +13,17 @@ import java.util.stream.Stream;
 public interface Shape extends Iterable<Integer>
 {
     /**
+     *  This method is used to create a {@link Shape} instance from a list of integers.
+     *  The list is used to describe the shape of a nd-array.
+     *  The shape of an array is the number of elements in each dimension.
+     *  @param shape The list of integers which is used to describe the shape of an array.
+     *  @return A {@link Shape} instance which is created from the given array of integers.
+     */
+    static Shape of( List<? extends Number> shape ) {
+        return Shape.of(shape.stream().mapToInt(Number::intValue).toArray());
+    }
+
+    /**
      *  This method is used to create a {@link Shape} instance from an array of integers.
      *  The array of integers is used to describe the shape of an array.
      *  The shape of an array is the number of elements in each dimension.

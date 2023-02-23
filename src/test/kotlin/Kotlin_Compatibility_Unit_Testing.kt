@@ -1,6 +1,7 @@
 
 import neureka.Nda
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.autograd.GraphNode
 import neureka.backend.api.Call
@@ -81,12 +82,12 @@ Kotlin_Compatibility_Unit_Testing {
         // Given :
         val a : Tsr<ComplexNumber> = Tsr.of(
                                         DataType.of(ComplexNumber::class.java),
-                                        intArrayOf(3, 2),
+                                        Shape.of(3, 2),
                                         { _ : Int, indices : IntArray -> ComplexNumber( indices[0].toDouble(), indices[1].toDouble() ) }
                                     )
         val b : Tsr<ComplexNumber> = Tsr.of(
                                         DataType.of(ComplexNumber::class.java),
-                                        intArrayOf(3, 2),
+                                        Shape.of(3, 2),
                                         { _ : Int, indices : IntArray -> ComplexNumber( indices[1].toDouble(), indices[0].toDouble() ) }
                                     )
 
@@ -138,7 +139,7 @@ Kotlin_Compatibility_Unit_Testing {
         // Given :
         val t : Tsr<ComplexNumber> = Tsr.of(
                         DataType.of(ComplexNumber::class.java),
-                        intArrayOf(2, 3, 4),
+                        Shape.of(2, 3, 4),
                         { _, i -> ComplexNumber( i[0].toDouble(), i[1].toDouble() + i[2].toDouble()/10 ) }
                     )
 

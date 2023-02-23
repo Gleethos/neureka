@@ -56,22 +56,23 @@ import java.util.Objects;
  *  This is because the Multiton implementation utilizes a hash map where classes are the
  *  keys and their corresponding values are DataType instances.
  *
- * @param <Type> The type parameter of the type class whose instances ought to be represented.
+ * @param <T> The type parameter of the type class whose instances ought to be represented.
 */
-public final class DataType<Type>
+public final class DataType<T>
 {
-    private final static int CAPACITY = 128;
+
+    private final static int _CAPACITY = 128;
 
     private static final Map<Class<?>, DataType> _instances = new LinkedHashMap<Class<?>, DataType>() {
         @Override
         protected boolean removeEldestEntry(final Map.Entry eldest) {
-            return size() > CAPACITY;
+            return size() > _CAPACITY;
         }
     };
 
     private final Logger _log;
 
-    private final Class<Type> _typeClass;
+    private final Class<T> _typeClass;
 
 
     /**
@@ -105,7 +106,7 @@ public final class DataType<Type>
         return dt;
     }
 
-    private DataType( Class<Type> type ) {
+    private DataType( Class<T> type ) {
         _typeClass = type;
         _log = LoggerFactory.getLogger(
                     DataType.class.getSimpleName() + ".of(" + _typeClass.getSimpleName() + ")"
@@ -193,7 +194,7 @@ public final class DataType<Type>
 
     public Class<?> getRepresentativeType() { return _typeClass; }
 
-    public Class<Type> getItemTypeClass() {
+    public Class<T> getItemTypeClass() {
         if ( this.typeClassImplements(NumericType.class) )
             return (this.getTypeClassInstance(NumericType.class)).holderType();
         else
