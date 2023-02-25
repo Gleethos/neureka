@@ -514,7 +514,14 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     default Stream<V> filter( Predicate<V> predicate ) { return stream().filter( predicate ); }
 
     /**
-     *  A convenience method for {@code stream().flatMap( mapper )}.
+     *  A convenience method for {@code nda.stream().flatMap( mapper )},
+     *  which turns this {@link Nda} into a {@link Stream} of its items. <br>
+     *  Here an example of how to use this method : <br>
+     *  <pre>{@code
+     *    var nda = Nda.of( -2, -1, 0, 1, 2 );
+     *    var list = nda.flatMap( i -> Stream.of( i * 2, i * 3 ) ).toList();
+     *    // list = [-4, -6, -2, -3, 0, 0, 2, 3, 4, 6, 6, 9]
+     *  }</pre>
      *
      * @param mapper The mapper to map the items of this {@link Nda}.
      * @return A {@link Stream} of the items in this {@link Nda} which match the predicate.
@@ -590,6 +597,16 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     /**
      *  Iterates over every element of this nd-array, and counts the number of
      *  times the provided lambda matches the items of this array.
+     *  <p>
+     *  Here is an example of counting the number of items in the array that are
+     *  greater than 5 :
+     *  <pre>{@code
+     *    var nda = Nda.of( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+     *    var count = nda.count( i -> i > 5 );
+     *    System.out.println( count ); // prints 5
+     *  }</pre>
+     *
+     *
      * @param predicate The lambda to check each element against.
      * @return The number of items in the nd-array that match the predicate.
      */
@@ -1019,10 +1036,76 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     interface Item<V>
     {
         /**
-         *  Get the value at the targeted position.
+         *  Get the value at the targeted position or throw an exception if the item does not exist.
+         *
          * @return The value at the targeted position.
          */
-        V get();
+        default V get() {
+            V item = orElseNull();
+            if ( item == null )
+                throw new IllegalArgumentException("No item at the targeted position!");
+            return item;
+        }
+
+        /**
+         *  Get the value at the targeted position or return the provided default value if the item does not exist.
+         *
+         * @param defaultValue The default value to return if the item does not exist.
+         * @return The value at the targeted position or the provided default value.
+         * @throws IllegalArgumentException If the provided default value is {@code null}.
+         */
+        default V orElse( V defaultValue ) {
+            if ( defaultValue == null )
+                throw new IllegalArgumentException("The provided default value must not be null! (Use orElseNull() instead)");
+            V item = orElseNull();
+            return item == null ? defaultValue : item;
+        }
+
+        /**
+         *  Get the value at the targeted position or return {@code null} if the item does not exist.
+         *
+         * @return The value at the targeted position or {@code null}.
+         */
+        V orElseNull();
+
+        /**
+         *  Converts this item into an optional value.
+         *  If the item exists, the resulting optional will contain the value.
+         *  Otherwise, the resulting optional will be empty.
+         * @return An optional value.
+         */
+        default Optional<V> toOptional() {
+            V item = orElseNull();
+            return item == null ? Optional.empty() : Optional.of( item );
+        }
+
+        /**
+         *  Maps this item to an optional value based on the provided lambda.
+         *  The lambda will be executed if the item exists.
+         *  If the lambda returns {@code null} the resulting optional will be empty.
+         *  Otherwise, the resulting optional will contain the value returned by the lambda.
+         *
+         *  @param mapper The lambda which maps the item to an optional value.
+         *  @return An optional value based on the provided lambda.
+         */
+        default Optional<V> map( java.util.function.Function<V,V> mapper ) {
+            V item = orElseNull();
+            return item == null ? Optional.empty() : Optional.ofNullable( mapper.apply( item ) );
+        }
+
+        /**
+         * @return {@code true} if the item exists, {@code false} otherwise.
+         */
+        default boolean exists() {
+            return orElseNull() != null;
+        }
+
+        /**
+         * @return {@code true} if the item does not exist, {@code false} otherwise.
+         */
+        default boolean doesNotExist() {
+            return orElseNull() == null;
+        }
     }
 
     /**

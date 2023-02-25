@@ -12,14 +12,13 @@ import java.util.Map;
 /**
  * Tensors should be considered immutable, however sometimes it
  * is important to mutate their state for performance reasons.
- * This interface exposes several methods for mutating the state of this tensor.
+ * This interface exposes several methods for mutating the state of a tensor.
  * The usage of methods exposed by this API is generally discouraged
  * because the exposed state can easily lead to broken tensors and exceptions...<br>
  * <br>
  */
 public interface MutateTsr<T> extends MutateNda<T>
 {
-
     /** {@inheritDoc} */
     @Override Tsr<T> putAt( Map<?,Integer> key, Nda<T> value );
 
@@ -146,7 +145,20 @@ public interface MutateTsr<T> extends MutateNda<T>
      */
     Tsr<T> setDataAt(int i, T o);
 
-    Tsr<T> setData(Data<T> data);
+    /**
+     *  At the heart of every tensor is the {@link Data} object, which holds the actual data array,
+     *  a sequence of values of the same type.
+     *  This method allows you to set the data of this tensor to a new data object.
+     *  Changing the data object of a tensor will not change the shape of the tensor and how
+     *  nd-indices are mapped to the data array.
+     *  <p>
+     *  <b>Warning!</b> This method should not be used unless absolutely necessary.
+     *  This is because it can cause unpredictable side effects especially for certain
+     *  operations expecting a particular data layout (like for example matrix multiplication).
+     * @param data The new data object which ought to be set.
+     * @return The tensor in question, to allow for method chaining.
+     */
+    Tsr<T> setData( Data<T> data );
 
     /**
      * Use this to access the underlying writable data of this tensor if

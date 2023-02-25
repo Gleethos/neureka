@@ -210,10 +210,12 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      */
     private static Class<?> _extractCommonType( Object... args ) {
         Class<?> commonType = null;
-        for ( Object o : args ) {
-            if ( commonType == null ) commonType = o.getClass();
-            else if ( !commonType.equals( o.getClass() ) ) return null;
-        }
+        for ( Object o : args )
+            if ( o != null ) {
+                if ( commonType == null ) commonType = o.getClass();
+                else if ( !commonType.equals(o.getClass()) ) return null;
+            }
+
         return commonType;
     }
 
@@ -712,7 +714,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     /** {@inheritDoc} */
     @Override public MutateNda.Item<V> at(int... indices ) {
         return new MutateNda.Item<V>() {
-            @Override public V    get()          { return item( indices ); }
+            @Override public V orElseNull() { return item( indices ); }
             @Override public void set( V value ) { getMut().putAt( indices, value ); }
             @Override public boolean equals( Object o ) {
                 if ( o == null ) return false;
