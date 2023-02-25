@@ -1,0 +1,31 @@
+{
+  "className":"st.Broad_System_Test",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.039 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The long broad integration test runs successfully.",
+      "result":"PASS",
+      "duration":"0.034 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The integration test runs without exceptions or assertion errors.","code":["BroadSystemTest.on() // This is the actual test."]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

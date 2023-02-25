@@ -1,0 +1,68 @@
+{
+  "className":"ut.ndim.Tensor_NDConfiguration_Spec",
+  "title":"What it means to be N-Dimensional",
+  "narrative":"This specification covers how implementations\n    of the `NDConfiguration` interface manage to define\n    what it means to be a n-dimensional tensor/nd-array.",
+  "subjects":[],
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.007 seconds"
+  },
+  "headers":["\n                For certain situations the \"Tsr\" class should use the correct \n                implementations of said interface as configuration for internal index mapping...\n\n        "],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"NDConfiguration instances of tensors have expected state.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Two scalar tensors \"a\" and \"b\" storing values \"1\" and \"2\".","code":["Tsr a = Tsr.of(1d)","Tsr b = Tsr.of(2d)"]},
+
+        {"kind":"expect","text":"Tensor \"a\" contains an instance of the \"SimpleScalarConfiguration\".","code":["a.NDConf instanceof Simple0DConfiguration"]},
+
+        {"kind":"and","text":"Both tensors \"a\" and \"b\" share the same (cached) \"NDConfiguration\" instance because they are both scalars.","code":["a.NDConf == b.NDConf"]},
+
+        {"kind":"and","text":"This ND-Configuration has the expected state.","code":["a.NDConf.shape(0) == 1","a.NDConf.translation(0) == 1","a.NDConf.indicesMap(0) == 1","a.NDConf.offset(0) == 0","a.NDConf.spread(0) == 1"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"NDConfiguration instances of tensors have expected state and behaviour.",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Three vector tensors containing different numeric values.","code":["Tsr<Object> x = Tsr.of([1.0, 2.0, 3.1])","Tsr<Object> y = Tsr.of([3, 4.5, 2])","Tsr<Object> z = Tsr.of([1.4, 2, 4])"]},
+
+        {"kind":"expect","text":"All of them possess \"SimpleD1Configuration\" NDConfiguration implementations.","code":["x.NDConf instanceof Simple1DConfiguration","y.NDConf instanceof Simple1DConfiguration","z.NDConf instanceof Simple1DConfiguration"]},
+
+        {"kind":"and","text":"They all share the same (cached) SimpleD1Configuration instance because they do not require otherwise.","code":["x.NDConf == y.NDConf","y.NDConf == z.NDConf"]},
+
+        {"kind":"and","text":"The configuration behaves as expected.","code":["x.NDConf.shape(0) == 3","x.NDConf.translation(0) == 1","x.NDConf.indicesMap(0) == 1","x.NDConf.offset(0) == 0","x.NDConf.spread(0) == 1"]},
+
+        {"kind":"and","text":"Also, scalar slices have the expected configs","code":["x[2].NDConf instanceof Sliced0DConfiguration","y[1.1].NDConf instanceof Sliced0DConfiguration","y[1.1].NDConf != x[2].NDConf","y[1.1].NDConf == z[1].NDConf"]},
+
+        {"kind":"when","text":"We try to extract a slice by using a BigDecimal instance...","code":["x = x[new BigDecimal(2)]"]},
+
+        {"kind":"then","text":"This also produces a valid slice with the expected properties :","code":["x.NDConf.shape(0) == 1","x.NDConf.translation(0) == 1","x.NDConf.indicesMap(0) == 1","x.NDConf.offset(0) == 2","x.NDConf.spread(0) == 1"]},
+
+        {"kind":"when","text":"We try using a Range instance to extract a slice...","code":["y = y[1..2]"]},
+
+        {"kind":"then","text":"This produces the expected slice.","code":["y.toString().contains(\"(2):[4.5, 2.0]\")"]},
+
+        {"kind":"and","text":"The NDConfiguration of this slice has the expected state.","code":["y.NDConf instanceof Sliced1DConfiguration","y.NDConf.shape(0) == 2","y.NDConf.translation(0) == 1","y.NDConf.indicesMap(0) == 1","y.NDConf.offset(0) == 1","y.NDConf.spread(0) == 1"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

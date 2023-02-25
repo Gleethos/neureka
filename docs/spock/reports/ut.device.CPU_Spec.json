@@ -1,0 +1,69 @@
+{
+  "className":"ut.device.CPU_Spec",
+  "title":"The CPU device, an API for CPU based execution",
+  "narrative":"The CPU class, one of many implementations of the Device interface, \n    is simply supposed to be an API for dispatching threaded workloads onto the CPU.\n    Contrary to other types of device, the CPU will host tensor data by default, simply\n    because the tensors will be stored in RAM if no device was specified.",
+  "subjects":["neureka.devices.host.CPU","neureka.devices.Device"],
+  "statistics":{
+    "runs":"3",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.355 seconds"
+  },
+  "headers":[" \n                <p>\n                    The thread pool of the class neureka.devices.host.CPU executor becomes\n                    more active when receiving larger workloads which\n                    benefit from parallelization.           \n                </p>\n            "],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Thread pool executes given workload in parallel",
+      "result":"PASS",
+      "duration":"0.350 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! This test is flaky simply because it relies on the behaviour of threads\n            which may or may not behave as expected. \n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"Two 4 dimensional tensor instances.","code":["Tsr a = Tsr.of(Shape.of(100, 60, 1, 2),  4)","Tsr b = Tsr.of(Shape.of(100, 1, 60, 2), -2)"]},
+
+        {"kind":"and","text":"The default device returned by the first tensor:","code":["Device cpu = a.getDevice()"]},
+
+        {"kind":"expect","text":"This device should not be null but be an instance of the CPU representative device type.","code":["cpu != null","cpu instanceof CPU"]},
+
+        {"kind":"when","text":"Accessing the executor of the cpu device...","code":["CPU.JVMExecutor exec = ( (CPU) cpu ).getExecutor()"]},
+
+        {"kind":"then","text":"The executor is not null as well as its internal thread pool!","code":["exec != null"]},
+
+        {"kind":"expect","text":"","code":["if ( exec.getCorePoolSize() <= 2 ) true","else {","    int[] min = new int[]{ exec.getCorePoolSize() }","    assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()","    Thread t = new Thread(() -> {","        while ( min[0] > 0 ) {","            int current = exec.getCorePoolSize() - exec.getActiveThreadCount()","            if ( current < min[0] ) min[0] = current","        }","    })","    t.start()","    Tsr c = ( a / b ) * 3","    assert c.shape() == [100,60,60,2]","    int result = min[0]","    try {","        min[0] = 0","        t.join()","    } catch (InterruptedException e) {","        e.printStackTrace()","    }","    assert result <= (exec.getCorePoolSize() / 2)","}"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"CPU knows the current number of available processor cores!",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"","code":["CPU.get().coreCount == Runtime.getRuntime().availableProcessors()"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The CPU exposes a non null API for executing workloads in parallel.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"","code":["CPU.get().executor != null"]},
+
+        {"kind":"and","text":"","code":["CPU.get().executor.activeThreadCount >= 0","CPU.get().executor.corePoolSize >= 0","CPU.get().executor.completedTaskCount >= 0"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

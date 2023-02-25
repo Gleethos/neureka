@@ -1,0 +1,68 @@
+{
+  "className":"ut.tensors.Tensor_Layout_Spec",
+  "title":"Row or Column Major. Why not both?",
+  "narrative":"Although Neureka exposes tensors as row major tensors from \n    a users point of view, it does in fact support both row major and column major \n    based tensor layout under the hood.\n    Here we cover how the layout of tensors can be modified\n    and we ensure the different tensor types still work as expected...\n    (The features in this specification involve mutating tensors, be careful when playing around with this yourself)",
+  "subjects":[],
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.329 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"A new transposed version of a given tensor will be returned by the \"T()\" method.",
+      "result":"PASS",
+      "duration":"0.066 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We want to view tensors in the \"[shape]:(value)\" format so we set the corresponding flag.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+
+        {"kind":"and","text":"We instantiate a test tensor:","code":["var t = Tsr.of([2, 3], [","        1d, 2d, 3d,","        4d, 5d, 6d","])"]},
+
+        {"kind":"when","text":"A two by three matrix is being transposed...","code":["var t2 = t.T()"]},
+
+        {"kind":"then","text":"The resulting tensor should look like this:","code":["t2.toString().contains(\"[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)\")"]},
+
+        {"kind":"when","text":"We try the same operation with a column major tensor...","code":["t2 = t.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR).T"]},
+
+        {"kind":"then","text":"Once again, the resulting tensor should look like this:","code":["t2.toString().contains(\"[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)\")"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Matrix multiplication works for both column and row major matrices across devices.",
+      "result":"PASS",
+      "duration":"0.259 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We want to view tensors in the \"(shape:[value]\" format so we set the corresponding flag.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)"]},
+
+        {"kind":"and","text":"","code":["var a = Tsr.ofFloats().withShape(2, 3).andWhere({it, idx->((7**it)%11-5).floatValue()})","var b = Tsr.ofFloats().withShape(3, 4).andWhere({it, idx->((5**it)%11-5).floatValue()})","Device.get(device).store(a).store(b)"]},
+
+        {"kind":"expect","text":"","code":["a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString"]},
+
+        {"kind":"when","text":"","code":["a.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","b.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)"]},
+
+        {"kind":"then","text":"","code":["a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString"]},
+
+        {"kind":"when","text":"","code":["a.mut.toLayout(NDConfiguration.Layout.ROW_MAJOR)","b.mut.toLayout(NDConfiguration.Layout.ROW_MAJOR)"]},
+
+        {"kind":"then","text":"","code":["a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"],"expectedString":["'(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'","'(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

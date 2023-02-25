@@ -1,0 +1,120 @@
+{
+  "className":"ut.ndas.Nda_Mutation_Spec",
+  "title":"Mutating ND-Arrays",
+  "narrative":"ND-Arrays should be considered immutable, so we should prefer creating new \n    ND-Arrays from existing ones using wither methods.\n    However this is not always a good idea as it can be expensive to create new\n    ND-Arrays, especially if the ND-Array is very large.\n    The ability to mutate ND-Arrays is therefore provided, but only\n    accessible via the mutation API exposed by the `getMut()` method.",
+  "subjects":[],
+  "statistics":{
+    "runs":"6",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.006 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"A simple vector ND-Array can be mutated using the \"setItemAt\" method.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple nd-array with 5 values.","code":["var nda = Nda.of('i', 't', 'e', 'm', 's')"]},
+
+        {"kind":"when","text":"We mutate the nd-array by setting the value at index 2 to \"E\".","code":["nda.mut.setItemAt(2, 'E')"]},
+
+        {"kind":"then","text":"The list of items now reflects the change.","code":["nda.items == ['i', 't', 'E', 'm', 's']"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A ND-Array can be mutated simply using the \"set\" method.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            This method of mutation is best used in Kotlin where it translates\n            to the \"set\" operator.\n            So it is possible to write code like this: `nda[2, 3] = 42.0`\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A rank 2 nd-array with 4 values.","code":["var nda = Nda.of(Byte).withShape(2, 2).andFill(1,2,3,4)"]},
+
+        {"kind":"when","text":"We mutate the nd-array by setting the value at index 1 to 5.","code":["nda.mut.set(1, 0, 5 as byte)"]},
+
+        {"kind":"then","text":"The list of items now reflects the change.","code":["nda.items == [1, 2, 5, 4]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A simple vector ND-Array can be mutated using the \"at(..).set(..)\" methods.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple nd-array with 5 values.","code":["var nda = Nda.of('i', 't', 'e', 'm', 's')"]},
+
+        {"kind":"when","text":"We mutate the nd-array by setting the value at index 2 to \"E\".","code":["nda.mut.at(2).set('E')"]},
+
+        {"kind":"then","text":"The list of items now reflects the change.","code":["nda.items == ['i', 't', 'E', 'm', 's']"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A ND-Array can be mutated using the \"at(..).set(..)\" methods.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A rank 2 nd-array with 4 values.","code":["var nda = Nda.of(Byte).withShape(2, 2).andFill(1,2,3,4)"]},
+
+        {"kind":"when","text":"We mutate the nd-array by setting the value at index 1 to 5.","code":["nda.mut.at(1, 0).set(5 as byte)"]},
+
+        {"kind":"then","text":"The list of items now reflects the change.","code":["nda.items == [1, 2, 5, 4]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use the subscription operator to mutate a simple vector ND-Array.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple nd-array with 5 values.","code":["var nda = Nda.of('i', 't', 'e', 'm', 's')"]},
+
+        {"kind":"when","text":"We mutate the nd-array by setting the value at index 2 to \"E\".","code":["nda.mut[2] = 'E'"]},
+
+        {"kind":"then","text":"The list of items now reflects the change.","code":["nda.items == ['i', 't', 'E', 'm', 's']"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use the subscription operator to mutate an ND-Array.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A rank 2 nd-array with 4 values.","code":["var nda = Nda.of(Byte).withShape(2, 2).andFill(1,2,3,4)"]},
+
+        {"kind":"when","text":"We mutate the nd-array by setting the value at index 1 to 5.","code":["nda.mut[1, 0] = 5 as byte"]},
+
+        {"kind":"then","text":"The list of items now reflects the change.","code":["nda.items == [1, 2, 5, 4]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

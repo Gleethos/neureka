@@ -1,0 +1,78 @@
+{
+  "className":"ut.tensors.Expression_Based_Tensor_Instantiation_Spec",
+  "title":"Expression based Tensor Instantiation",
+  "narrative":"This specification defines how a tensor can be instantiated\n    using string expressions, which define operations to be executed.\n    This form of tensor instantiation is very useful to avoid boilerplate code.",
+  "subjects":["neureka.Tsr"],
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.006 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"A tensor can be created from a function as expression.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            The `Tsr.of` method can be used to instantiate a tensor\n            using a string expression which defines a function \n            followed by an arbitrary number of tensor arguments\n            which are used as input for the function.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple scalar tensor containing the number \"4\".","code":["Tsr<Double> x = Tsr.of(4d)"]},
+
+        {"kind":"when","text":"We instantiate a tensor using a function expression and the scalar tensor as argument...","code":["Tsr<Double> y = Tsr.of(\"tanh(I[0])\", x)"]},
+
+        {"kind":"then","text":"The resulting tensor should be the result of the \"tanh\" function applied to the scalar tensor.","code":["y.toString() == \"(1):[0.99932]\""]},
+
+        {"kind":"and","text":"We also expect the following lines to be true:","code":["y.isBranch()","!y.isLeave()","y.belongsToGraph()","x.belongsToGraph() // <- This is true because the tensor x is used as argument for the function."]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can instantiate tensors from various simple string expressions.",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Three scalar tensors.","code":["Tsr<Double> a = Tsr.of(3d)","Tsr<Double> b = Tsr.of(2d)","Tsr<Double> c = Tsr.of(-1d)"]},
+
+        {"kind":"when","text":"","code":["when : var t = Tsr.of(\"1+\", a, \"*\", b)"]},
+
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"7.0\")"]},
+
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"1\", \"+\", a, \"*\", b)"]},
+
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"7.0\")"]},
+
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\",\"1+\", a,\")\", \"*\", b)"]},
+
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"8.0\")"]},
+
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\",\"1\", \"+\", a,\")\", \"*\", b)"]},
+
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"8.0\")"]},
+
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\", c, \"*3)+\", \"(\",\"1+\", a,\")\", \"*\", b)"]},
+
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"5.0\")"]},
+
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\", c, \"*\",\"3)+\", \"(\",\"1+\", a,\")\", \"*\", b)"]},
+
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"5.0\")"]},
+
+        {"kind":"when","text":"","code":["when : t = Tsr.of(\"(\", c, \"*\",\"3\", \")+\", \"(\",\"1+\", a,\")\", \"*\", b)"]},
+
+        {"kind":"then","text":"","code":["then : t.toString().contains(\"5.0\")"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -1,0 +1,332 @@
+{
+  "className":"ut.tensors.Tensor_Operation_Spec",
+  "title":"Running Tensors through operations",
+  "narrative":"This specification covers the interaction \n    between tensors and operations, more specifically it\n    runs tensors through operations and validates that the results are valid.",
+  "subjects":[],
+  "statistics":{
+    "runs":"12",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"8.001 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The \"dot\" operation reshapes and produces valid \"x\" operation result.",
+      "result":"PASS",
+      "duration":"0.132 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Two multi-dimensional tensors.","code":["var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).mut.toType(type)","var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).mut.toType(type)"]},
+
+        {"kind":"when","text":"The \"dot\" method is being called on \"a\" receiving \"b\"...","code":["var c = a.convDot(b)"]},
+
+        {"kind":"then","text":"The result tensor contains the expected shape.","code":["c.toString().contains(\"(4x2x5x2)\")"]},
+
+        {"kind":"and","text":"","code":["c.itemType == type"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Float"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The \"matMul\" operation produces the expected result.",
+      "result":"PASS",
+      "duration":"0.734 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)","var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)"]},
+
+        {"kind":"when","text":"The \"matMul\" method is being called on \"a\" receiving \"b\"...","code":["var c = a.matMul(b)"]},
+
+        {"kind":"then","text":"The result tensor contains the expected shape and values.","code":["c.shape == [M, N]","c.items == expectedC as List"]},
+
+        {"kind":"and","text":"","code":["c.itemType == type"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"type":["Double","Double","Double","Float","Float","Float","Long","Long","Long","Integer","Integer","Integer"],"A":["[4, 3, 2, 1]","[-2, 1]","[-2, 1]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]"],"B":["[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]"],"M":["2","1","2","2","1","2","2","1","2","2","1","2"],"K":["2","2","1","2","2","1","2","2","1","2","2","1"],"N":["2","1","2","2","1","2","2","1","2","2","1","2"],"expectedC":["[ 1, 0, 0, 1 ]","[ 0.5 ]","[ 2.0, 3.0, -1.0, -1.5 ]","[ 1, 0, 0, 1 ]","[ 0.5 ]","[ 2.0, 3.0, -1.0, -1.5 ]","[ 3, -2, 1, 0 ]","[ 1 ]","[ 2, 2, -1, -1 ]","[ 3, -2, 1, 0 ]","[ 1 ]","[ 2, 2, -1, -1 ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The \"random\" function/operation populates tensors randomly.",
+      "result":"PASS",
+      "duration":"0.114 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var t = Tsr.of(type).withShape(2,4).all(-42)"]},
+
+        {"kind":"and","text":"","code":["var f = Function.of('random(I[0])')"]},
+
+        {"kind":"expect","text":"","code":["t.itemType == type"]},
+
+        {"kind":"when","text":"","code":["var r = f(t)"]},
+
+        {"kind":"then","text":"","code":["r === t"]},
+
+        {"kind":"and","text":"","code":["( r.mut.data.ref as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]"]},
+
+        {"kind":"when","text":"","code":["r = f.with(Arg.Seed.of(42)).call(t)"]},
+
+        {"kind":"then","text":"","code":["r === t"]},
+
+        {"kind":"and","text":"","code":["( r.mut.data.ref as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Float"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The values of a randomly populated tensor seems to adhere to a gaussian distribution.",
+      "result":"PASS",
+      "duration":"0.122 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var t = Tsr.of(type).withShape(20, 40, 20).all(0)"]},
+
+        {"kind":"and","text":"","code":["var f = Function.of('random(I[0])')"]},
+
+        {"kind":"when","text":"","code":["f.with(Arg.Seed.of(-73L)).call(t)","var stats = new Statistics( t.mut.data.ref as double[] )"]},
+
+        {"kind":"then","text":"","code":["-0.05d < stats.mean && stats.mean < 0.05d"]},
+
+        {"kind":"and","text":"","code":["0.875d < stats.variance && stats.variance < 1.125d"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Float"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"New method \"asFunction\" of String added at runtime is callable by groovy and also works.",
+      "result":"PASS",
+      "duration":"0.525 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create two tensors and convert them to a desired type.","code":["var a = Tsr.of([1,2], [3d, 2d]).mut.toType(type)","var b = Tsr.of([2,1], [-1f, 4f]).mut.toType(type)"]},
+
+        {"kind":"and","text":"We prepare bindings for the Groovy shell.","code":["Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+
+        {"kind":"expect","text":"The tensors have the type...","code":["a.itemType == type","b.itemType == type"]},
+
+        {"kind":"when","text":"The groovy code is being evaluated.","code":["var c = new GroovyShell(binding).evaluate((code)) as Tsr"]},
+
+        {"kind":"then","text":"The resulting tensor (toString) will contain the expected String.","code":["c.toString().contains(expected)"]},
+
+        {"kind":"and","text":"","code":["c.itemType == type"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Double","Double","Double","Float","Float","Float","Float"],"code":["'\"I[0]xI[1]\".asFunction()([a, b])'","'\"I[0]xI[1]\"[a, b]'","'\"i0 x i1\"%[a, b]'","'\"i0\"%a'","'\"I[0]xI[1]\".asFunction()([a, b])'","'\"I[0]xI[1]\"[a, b]'","'\"i0 x i1\"%[a, b]'","'\"i0\"%a'"],"expected":["\"(2x2):[-3.0, -2.0, 12.0, 8.0]\"","\"(2x2):[-3.0, -2.0, 12.0, 8.0]\"","\"(2x2):[-3.0, -2.0, 12.0, 8.0]\"","\"(1x2):[3.0, 2.0]\"","\"(2x2):[-3.0, -2.0, 12.0, 8.0]\"","\"(2x2):[-3.0, -2.0, 12.0, 8.0]\"","\"(2x2):[-3.0, -2.0, 12.0, 8.0]\"","\"(1x2):[3.0, 2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"New operator methods added to \"SDK-types\" at runtime are callable by groovy and also work.",
+      "result":"PASS",
+      "duration":"1.276 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({it.hasSlimNumbers=true})","Tsr a = Tsr.of(5d).mut.toType(type)","Tsr b = Tsr.of(3f).mut.toType(type)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+
+        {"kind":"when","text":"...calling methods on types like Double and Integer that receive Tsr instances...","code":["Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr"]},
+
+        {"kind":"then","text":"The resulting tensor (toString) will contain the expected String.","code":["c.toString().endsWith(\"[$expected]\")"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Double","Double","Double","Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Float","Float","Float","Float"],"code":["'(2+a)'","'(2*b)'","'(6/b)'","'(2**b)'","'(4-a)'","'(2.0+a)'","'(2.0*b)'","'(6.0/b)'","'(2.0**b)'","'(4.0-a)'","'(2+a)'","'(2*b)'","'(6/b)'","'(2**b)'","'(4-a)'","'(2.0+a)'","'(2.0*b)'","'(6.0/b)'","'(2.0**b)'","'(4.0-a)'"],"expected":["\"7\"","\"6\"","\"2\"","\"8\"","\"-1\"","\"7\"","\"6\"","\"2\"","\"8\"","\"-1\"","\"7\"","\"6\"","\"2\"","\"8\"","\"-1\"","\"7\"","\"6\"","\"2\"","\"8\"","\"-1\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Overloaded operation methods on tensors produce expected results when called.",
+      "result":"PASS",
+      "duration":"0.074 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tsr a = Tsr.of(2d).setRqsGradient(true)","Tsr b = Tsr.of(-4d)","Tsr c = Tsr.of(3d).setRqsGradient(true)"]},
+
+        {"kind":"expect","text":"","code":["( a / a                      ).toString().contains(\"[1]:(1.0)\")","( c % a                      ).toString().contains(\"[1]:(1.0)\")","( ( ( b / b ) ** c % a ) * 3 ).toString().contains(\"[1]:(3.0)\")","( a *= b                     ).toString().contains(\"(-8.0)\")","( a += -c                    ).toString().contains(\"(-11.0)\")","( a -= c                     ).toString().contains(\"(-14.0)\")","( a /= Tsr.of(2d)      ).toString().contains(\"(-7.0)\")","( a %= c                     ).toString().contains(\"(-1.0)\")"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Simple slice addition produces expected result.",
+      "result":"PASS",
+      "duration":"0.127 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We set the experimental \"autoConvertToFloat\" flag to true.","code":["Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })"]},
+
+        {"kind":"and","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)","Tsr a = Tsr.of([11, 11], 3d..19d).to( device )","Tsr x = a[1..-2,0..-1]","Tsr y = a[0..-3,0..-1]"]},
+
+        {"kind":"when","text":"","code":["Tsr t = x + y","String tAsStr = t.toString({it.setRowLimit(50)})"]},
+
+        {"kind":"then","text":"","code":["tAsStr.contains(\"(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, \" +","        \"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, \" +","        \"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more]\")"]},
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["CPU.get()","Device.get(\"openCL\")"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Auto reshaping and broadcasting works and the result can be back propagated.",
+      "result":"PASS",
+      "duration":"2.481 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+
+        {"kind":"and","text":"","code":["String wValue = whichGrad","                    ? \"8\" + ( bShape.inject(1, {x,y->x*y}) > 1 ? \", 9\" : \"\" )","                    : \"1, 2, 3, 4\""]},
+
+        {"kind":"and","text":"","code":["def aShape = [2, 2]"]},
+
+        {"kind":"and","text":"","code":["Tsr<Double> a = Tsr.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.get(device))","Tsr<Double> b = Tsr.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.get(device))"]},
+
+        {"kind":"and","text":"","code":["a.mut.toType(type)","b.mut.toType(type)"]},
+
+        {"kind":"and","text":"","code":["String wShape = ( whichGrad ? bShape : aShape ).join(\"x\")","Tsr    w      = ( whichGrad ? b      : a      )"]},
+
+        {"kind":"expect","text":"","code":["a.itemType == type || device == 'GPU' // The gpu backend will only be floats!","b.itemType == type || device == 'GPU' // This is because kernels only work on floats..."]},
+
+        {"kind":"when","text":"","code":["Tsr c = operation.apply(a, b)"]},
+
+        {"kind":"then","text":"","code":["c.toString({it.hasSlimNumbers = true}).startsWith(\"[2x2]:($cValue)\")","w.toString({it.hasSlimNumbers = true}) == \"[$wShape]:($wValue):g:(null)\""]},
+
+        {"kind":"when","text":"","code":["c.backward(Tsr.of([2, 2], [5, -2, 7, 3]).mut.toType(type))"]},
+
+        {"kind":"then","text":"","code":["w.toString({it.hasSlimNumbers = true}) == \"[$wShape]:($wValue):g:($wGradient)\""]},
+
+        {"kind":"when","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)"]},
+
+        {"kind":"then","text":"","code":["c.toString({it.hasSlimNumbers = true}) == \"(2x2):[$cValue]\""]},
+
+        {"kind":"cleanup","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'CPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'","'CPU'","'GPU'"],"type":["Double","Double","Float","Float","Double","Double","Float","Float","Double","Float","Double","Double","Float","Float","Double","Double","Float","Float","Double","Double","Float","Float","Double","Double","Float","Float","Double","Double","Float","Float","Double","Double","Float","Float","Double","Double","Float","Float"],"whichGrad":["false","false","false","false","false","false","false","false","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true","true"],"bShape":["[1]","[1]","[1]","[1]","[1]","[1]","[1]","[1]","[2,1]","[2,1]","[1]","[1]","[1]","[1]","[1,2]","[1,2]","[1,2]","[1,2]","[2]","[2]","[2]","[2]","[1,2]","[1,2]","[1,2]","[1,2]","[2]","[2]","[2]","[2]","[1,2]","[1,2]","[1,2]","[1,2]","[2]","[2]","[2]","[2]"],"operation":["{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x * y }","{ x, y -> x * y }","{ x, y -> x * y }","{ x, y -> x * y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x - y }","{ x, y -> x - y }","{ x, y -> x - y }","{ x, y -> x - y }","{ x, y -> x - y }","{ x, y -> x - y }","{ x, y -> x - y }","{ x, y -> x - y }","{ x, y -> y - x }","{ x, y -> y - x }","{ x, y -> y - x }","{ x, y -> y - x }","{ x, y -> y - x }","{ x, y -> y - x }","{ x, y -> y - x }","{ x, y -> y - x }"],"cValue":["\"9, 10, 11, 12\"","\"9, 10, 11, 12\"","\"9, 10, 11, 12\"","\"9, 10, 11, 12\"","\"8, 16, 24, 32\"","\"8, 16, 24, 32\"","\"8, 16, 24, 32\"","\"8, 16, 24, 32\"","\"9, 10, 12, 13\"","\"9, 10, 12, 13\"","\"9, 10, 11, 12\"","\"9, 10, 11, 12\"","\"9, 10, 11, 12\"","\"9, 10, 11, 12\"","\"9, 11, 11, 13\"","\"9, 11, 11, 13\"","\"9, 11, 11, 13\"","\"9, 11, 11, 13\"","\"9, 11, 11, 13\"","\"9, 11, 11, 13\"","\"9, 11, 11, 13\"","\"9, 11, 11, 13\"","\"-7, -7, -5, -5\"","\"-7, -7, -5, -5\"","\"-7, -7, -5, -5\"","\"-7, -7, -5, -5\"","\"-7, -7, -5, -5\"","\"-7, -7, -5, -5\"","\"-7, -7, -5, -5\"","\"-7, -7, -5, -5\"","\"7, 7, 5, 5\"","\"7, 7, 5, 5\"","\"7, 7, 5, 5\"","\"7, 7, 5, 5\"","\"7, 7, 5, 5\"","\"7, 7, 5, 5\"","\"7, 7, 5, 5\"","\"7, 7, 5, 5\""],"wGradient":["\"5, -2, 7, 3\"","\"5, -2, 7, 3\"","\"5, -2, 7, 3\"","\"5, -2, 7, 3\"","\"40, -16, 56, 24\"","\"40, -16, 56, 24\"","\"40, -16, 56, 24\"","\"40, -16, 56, 24\"","\"3, 10\"","\"3, 10\"","\"13\"","\"13\"","\"13\"","\"13\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"-12, -1\"","\"-12, -1\"","\"-12, -1\"","\"-12, -1\"","\"-12, -1\"","\"-12, -1\"","\"-12, -1\"","\"-12, -1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\"","\"12, 1\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar broadcasting works across devices.",
+      "result":"PASS",
+      "duration":"0.296 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var a = Tsr.of(type).withShape(3, 2).andFill(-4..4).to(Device.get(device))","var b = Tsr.of(type).withShape(1, 1).andFill(3).to(Device.get(device))"]},
+
+        {"kind":"expect","text":"","code":["a.itemType == type","b.itemType == type"]},
+
+        {"kind":"when","text":"","code":["Tsr c = operation.apply(a, b)"]},
+
+        {"kind":"then","text":"","code":["c.toString() == \"(3x2):[$cValue]\""]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'GPU'","'CPU'","'CPU'"],"type":["Double","Float","Float","Long","Integer"],"operation":["{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }","{ x, y -> x + y }"],"cValue":["\"-1.0, 0.0, 1.0, 2.0, 3.0, 4.0\"","\"-1.0, 0.0, 1.0, 2.0, 3.0, 4.0\"","\"-1.0, 0.0, 1.0, 2.0, 3.0, 4.0\"","\"-1, 0, 1, 2, 3, 4\"","\"-1, 0, 1, 2, 3, 4\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Operators \"+,*,**\" produce expected results with gradients which can be accessed via a \"Ig[0]\" Function instance",
+      "result":"PASS",
+      "duration":"0.086 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Neurekas view is set to legacy and three tensors of which one requires gradients.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tsr x = Tsr.of(3d).setRqsGradient(true)","Tsr b = Tsr.of(-4d)","Tsr w = Tsr.of(2d)"]},
+
+        {"kind":"when","text":"","code":["when : Tsr y = ( (x+b)*w )**2"]},
+
+        {"kind":"then","text":"","code":["then : y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
+
+        {"kind":"when","text":"","code":["when : y = ((x+b)*w)**2"]},
+
+        {"kind":"then","text":"","code":["then : y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
+
+        {"kind":"and","text":"","code":["and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)"]},
+
+        {"kind":"when","text":"","code":["y.backward(Tsr.of(1d))"]},
+
+        {"kind":"and","text":"","code":["Tsr t2 = Tsr.of( \"Ig[0]\", [x] )","Tsr t1 = Tsr.of( \"Ig[0]\", [y] ) // The input does not have a gradient!"]},
+
+        {"kind":"then","text":"","code":["thrown(IllegalArgumentException)"]},
+
+        {"kind":"and","text":"","code":["t2.toString() == \"[1]:(-8.0)\""]},
+
+        {"kind":"and","text":"","code":["t2 == x.gradient.get()"]},
+
+        {"kind":"and","text":"","code":["and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)"]},
+
+        {"kind":"when","text":"","code":["Tsr[] trs = new Tsr[]{x}"]},
+
+        {"kind":"and","text":"","code":["def fun = new FunctionParser( Neureka.get().backend() ).parse(\"Ig[0]\", false)"]},
+
+        {"kind":"then","text":"","code":["fun(trs).toString() == \"[1]:(-8.0)\""]},
+
+        {"kind":"when","text":"","code":["trs[0] = y"]},
+
+        {"kind":"and","text":"","code":["fun = new FunctionParser( Neureka.get().backend() ).parse(\"Ig[0]\", false)"]},
+
+        {"kind":"and","text":"","code":["fun(trs)"]},
+
+        {"kind":"then","text":"","code":["thrown(IllegalArgumentException)"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Activation functions work across types on slices and non sliced tensors.",
+      "result":"PASS",
+      "duration":"1.924 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a function based on the provided expression.","code":["var func = Function.of(funExpression)"]},
+
+        {"kind":"and","text":"We create 2 tensors storing the same values, one sliced and the other a normal tensor.","code":["var t1 = Tsr.of(type).withShape(2, 3).andSeed(\"Tempeh\")","var t2 = Tsr.of(type).withShape(4, 5).all(0)[1..2, 1..3]","t2.mut[0..1, 0..2] = t1"]},
+
+        {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType == DataType.of(type)","t1.itemType == type","t2.dataType == DataType.of(type)","t2.itemType == type"]},
+
+        {"kind":"when","text":"We apply the function to both tensors...","code":["var result1 = func(t1)","var result2 = func(t2)"]},
+
+        {"kind":"then","text":"","code":["result1.itemType == type","result2.itemType == type"]},
+
+        {"kind":"and","text":"The data of the first (non slice) tensor should be as expected.","code":["result1.mut.data.ref == expected instanceof Map ? expected['r1'] : expected"]},
+
+        {"kind":"and","text":"As well the value of the slice tensor (Its data would be a sparse array).","code":["result2.items == expected instanceof Map ? expected['r2'] : expected"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Float","Integer","Double","Float","Integer","Double","Float","Integer","Double","Float","Integer","Double","Float","Integer","Double","Float","Integer","Double","Float","Integer","Double","Float","Integer","Double","Float","Integer","Double","Float","Integer","Double","Float"],"funExpression":["'tanh(i0)'","'tanh(i0)'","'tanh(i0)'","'relu(i0)'","'relu(i0)'","'relu(i0)'","'relu(i0*i0)'","'relu(i0*i0)'","'relu(i0*i0)'","'relu(i0-i0)'","'relu(i0-i0)'","'relu(i0-i0)'","'relu(i0)-i0'","'relu(i0)-i0'","'relu(i0)-i0'","'relu(-i0)+i0'","'relu(-i0)+i0'","'relu(-i0)+i0'","'relu(-i0)/i0'","'relu(-i0)/i0'","'relu(-i0)/i0'","'relu(-i0-5)+i0*3'","'relu(-i0-5)+i0*3'","'relu(-i0-5)+i0*3'","'abs(i0*10)%3'","'abs(i0*10)%3'","'abs(i0*10)%3'","'gaus(i0)*100%i0'","'gaus(i0)*100%i0'","'gaus(i0)*100%i0'","'random(i0)'","'random(i0)'"],"expected":["[-0.2608431635405718, -0.6400224689534015, -0.15255723053856546, 0.1566537867655921, 0.5489211983894932, -0.17031712209680225] as double[]","[-0.26084316, -0.64002246, -0.15255724, 0.15665378, 0.54892117, -0.17031713] as float[]","[-1, -1, 1, -1, 1, -1] as int[]","[-0.0027019706408068795, -0.008329762613111082, -0.001543641184315801, 0.15861207834235577, 0.6567031992927272, -0.001728424711189524] as double[]","[-0.0027019705, -0.008329763, -0.0015436412, 0.15861207, 0.6567032, -0.0017284247] as float[]","[-7156386, -18495716, 248181051, -13634228, 919305478, -15169971] as int[]","[0.07300645343782339, 0.6938494519078316, 0.023828281059158886, 0.025157791396081604, 0.43125909196130346, 0.029874519822505895] as double[]","[0.07300645, 0.6938495, 0.023828283, 0.025157789, 0.43125907, 0.02987452] as float[]","[988699588, -17870520, 141304729, 1260971300, 210951204, 1018550276] as int[]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as double[]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as float[]","[0, 0, 0, 0, 0, 0] as int[]","[0.26749509343988104, 0.8246464986979971, 0.1528204772472643, 0.0, 0.0, 0.17111404640776287] as double[]","[0.2674951, 0.82464653, 0.15282048, 0.0, 0.0, 0.17111404] as float[]","[708482220, 1831075919, 0, 1349788550, 0, 1501827147] as int[]","[0.0, 0.0, 0.0, 0.15702595755893223, 0.6501361672998, 0.0] as double[]","[0.0, 0.0, 0.0, 0.15702595174312592, 0.650136142373085, 0.0] as float[]","[0, 0, 245699240, 0, 910112423, 0] as int[]","[-1.0, -1.0, -1.0, -0.01, -0.01, -1.0] as double[]","[-1.0, -1.0, -1.0, -0.01, -0.01, -1.0] as float[]","[-1, -1, 0, -1, 0, -1] as int[]","[-0.857889221601257, -2.540599021320214, -0.5115487141104245, 0.42425011424364373, 1.9135425658852545, -0.5667989886456676] as double[]","[-0.85788924, -2.540599, -0.51154876, 0.4242501, 1.9135424, -0.566799] as float[]","[-1431277217, 595824021, 742061342, 1568121735, -1546243917, 1260973055] as int[]","[2.7019706408068793, 2.3297626131110825, 1.5436411843158009, 1.5861207834235578, 0.5670319929272729, 1.7284247111895241] as double[]","[2.7019706, 2.3297625, 1.5436412, 1.5861207, 0.56703186, 1.7284248] as float[]","[2, 0, 1, 1, 2, 1] as int[]","[0.011693048642643422, 0.8192993419907051, 0.08721424132459399, 0.1277867634692304, 0.6121424058303924, 0.09210498892686086] as double[]","[0.011690378, 0.81929654, 0.087213635, 0.12778962, 0.6121441, 0.09210494] as float[]","[0, 0, 0, 0, 0, 0] as int[]","['r2':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.242396559265774, 0.23980663860290638, 0.4667980401594514, 0.0, 0.0, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as double[], 'r1':[2.242396559265774, 0.23980663860290638, 0.4667980401594514, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283] as double[]]","['r2':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2423966, 0.23980664, 0.46679804, 0.0, 0.0, -1.0840396, 0.43090823, 1.0381081, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as float[], 'r1':[2.2423966, 0.23980664, 0.46679804, -1.0840396, 0.43090823, 1.0381081] as float[]]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

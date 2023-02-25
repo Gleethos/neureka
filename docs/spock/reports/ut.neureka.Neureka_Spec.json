@@ -1,0 +1,136 @@
+{
+  "className":"ut.neureka.Neureka_Spec",
+  "title":"The Neureka context can be used and configured as expected.",
+  "narrative":"This specification covers the behavior of the Neureka class which\n    exposes a global API for configuring thread local contexts and library settings.\n    The purpose of this is to assert that the API exposed by the Neureka class \n    is both thread local and configurable.\n    This specification also exists to cover standards for the Neureka library in general.",
+  "subjects":["neureka.Neureka"],
+  "statistics":{
+    "runs":"6",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"12.815 seconds"
+  },
+  "headers":["\n                    This specification defines what types of settings are exposed by\n                    Neureka as well as more general things like how string representations\n                    of various library types should look like... \n            "],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Neureka class instance has expected behaviour.",
+      "result":"PASS",
+      "duration":"0.087 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Important settings have their expected states.","code":["!Neureka.get().settings().isLocked()","!Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()","!Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()"]},
+
+        {"kind":"when","text":"Once something is changes to false...","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = true"]},
+
+        {"kind":"then","text":"This setting change applies!","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()","!Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()"]},
+
+        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"0.20.0\"//version"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable.",
+      "result":"PASS",
+      "duration":"0.678 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Every Thread instance has their own Neureka instance.",
+      "result":"PASS",
+      "duration":"7.327 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A map containing entries for Neureka instances.","code":["def map = ['instance 1':null, 'instance 2':null]"]},
+
+        {"kind":"when","text":"Two newly instantiated tensors store their Neureka instances in the map.","code":["def t1 = new Thread({ map['instance 1'] = Neureka.get() })","def t2 = new Thread({ map['instance 2'] = Neureka.get() })"]},
+
+        {"kind":"and","text":"The tensors are being started and joined.","code":["t1.start()","t2.start()","t1.join()","t2.join()"]},
+
+        {"kind":"then","text":"The map entries will no longer be filled with null.","code":["map['instance 1'] != null","map['instance 2'] != null"]},
+
+        {"kind":"and","text":"The Neureka instances stored in the map will be different objects.","code":["map['instance 1'] != map['instance 2']"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention!",
+      "result":"PASS",
+      "duration":"1.476 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tsr.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tsr.of(2d).setRqsGradient(true)*Tsr.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"OpenCL related library objects adhere to the same toString formatting convention!",
+      "result":"PASS",
+      "duration":"0.193 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaCLObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaCLObject":["Neureka.get().backend.find(CLBackend).get()","Neureka.get().backend.find(CLBackend).get().platforms0]","Neureka.get().backend.find(CLBackend).get().platforms0].devices0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention!",
+      "result":"PASS",
+      "duration":"2.973 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

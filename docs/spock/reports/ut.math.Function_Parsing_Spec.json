@@ -1,0 +1,65 @@
+{
+  "className":"ut.math.Function_Parsing_Spec",
+  "title":"Parsing Expressions into Functions",
+  "narrative":"Neureka uses the 'Function' interface as a representation of a\n    nested structure of operations.\n    This means that a 'Function' is simply an abstract syntax trees made up of other 'Function' implementations\n    which are assembled together by a parser receiving a string expression.\n    In this specification we ensure that function expressions will be properly parsed into\n    'Function' implementations.",
+  "subjects":["neureka.math.Function","neureka.math.parsing.FunctionParser"],
+  "statistics":{
+    "runs":"3",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.019 seconds"
+  },
+  "headers":["\n            This specification ensures that functions can be created from String expressions\n            using factory methods on the interface neureka.math.Function interface.\n            The implementation details as to how exactly this leads to an abstract syntax tree\n            will not be covered here.\n            This is because the parsing procedure is rather complex and the only thing we care about \n            is the result.   \n            <br>\n            Within a given expression String passed to the parser, function inputs are\n            recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.\n            Functions accept arrays as their inputs,\n            which is why variables must be targeted in such a way.\n            There are also many mathematical function like 'sig(..)', 'tanh(..)', 'sin(..)', 'cos(..)' \n            and many more which are recognised by the parser. \n            Other than that the syntax is rather mundane with respect to traditional\n            operations like for example plus '+', minus '-', times '*', ... etc.      <br>\n        "],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Test parsed equations when building Function instances.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"A Function created from a given expression will be parsed as expected.","code":["Function.of(equation).toString() == expected"]},
+
+        {"kind":"where","text":"The following expressions and expected exception messages are being used :","code":{"equation":["\"fast_tanh(i0*i1)\"","\"ig0*(igj)xI[g1]\"","\"sumJs(ij)\"","\"sumJs(1*(4-2/ij))\"","\"quadratic(sftpls(Ij))\"","\"softplus(I[3]**(3/i1)/sumJs(Ij**2)-23+I0/i1)\"","\"1+3+5-23+I0*45/(345-651**I3-6)\"","\"sin(23*i1)-cos(i0**0.3)+tanh(23)\"","\"4 *-2\"","\"fast_gaus(i0*i1)\"","\"2*3/1-2\"","\"3x5xI[4]xI[3]\"","\"[1,0, 5,3, 4]:(tanh(i0xi1))\"","\"[0,2, 1,3, -1](sig(I0))\"","\"I[0]<-I[1]\"","\"quadratic(I[0]) <- (I[1] <- I[2])\"","\"((tanh(i0)\"","'($$(gaus(i0*()'","\"rrlu(i0)\"","\"th(i0)*gaaus(i0+I1)\"","\"dimtrim(I[0])\"","\"add(I[0], 3, 3/I[1])\"","\"multiply(1, 4, -2, I[1])\"","\"divide(I[0], 3*I[1], I[3]-6)\"","\"i0@i1\""],"expected":["\"fast_tanh(I[0] * I[1])\"","\"((Ig[0] * Ig[j]) x Ig[1])\"","\"sumJs(I[j])\"","\"sumJs(1.0 * (4.0 - (2.0 / I[j])))\"","\"quad(softplus(I[j]))\"","\"softplus((((I[3] ** (3.0 / I[1])) / sumJs(I[j] ** 2.0)) - 23.0) + (I[0] / I[1]))\"","\"(1.0 + 3.0 + (5.0 - 23.0) + (I[0] * (45.0 / (345.0 - (651.0 ** I[3]) - 6.0))))\"","\"((sin(23.0 * I[1]) - cos(I[0] ** 0.3)) + tanh(23.0))\"","\"(4.0 * -2.0)\"","\"fast_gaus(I[0] * I[1])\"","\"((2.0 * (3.0 / 1.0)) - 2.0)\"","\"(((3.0 x 5.0) x I[4]) x I[3])\"","\"([1,0,5,3,4]:(tanh(I[0] x I[1])))\"","\"([0,2,1,3,-1]:(sig(I[0])))\"","\"(I[0] <- I[1])\"","\"(quad(I[0]) <- (I[1] <- I[2]))\"","\"tanh(I[0])\"","\"gaus(I[0] * 0.0)\"","\"relu(I[0])\"","\"(tanh(I[0]) * gaus(I[0] + I[1]))\"","\"dimtrim(I[0])\"","\"(I[0] + 3.0 + (3.0 / I[1]))\"","\"(1.0 * 4.0 * -2.0 * I[1])\"","\"(I[0] / (3.0 * I[1]) / (I[3] - 6.0))\"","\"(I[0] @ I[1])\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Parsed equations throw expected error messages.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We try to instantiate a Function by passing an expression String...","code":["Function.of(equation)"]},
+
+        {"kind":"then","text":"An exception is being thrown that contains the expected message!","code":["def error = thrown(IllegalArgumentException)","assert error.message==expected"]},
+
+        {"kind":"where","text":"The following expressions and expected exception messages are being used :","code":{"equation":["\"softplus(I[0],I[1],I[2])\"","\"sig(I[0],I[1],I[2])\"","\"sumjs(I[0],I[1],I[2])\"","\"prodjs(I[0],I[1],I[2])\""],"expected":["\"The function/operation 'softplus' expects 1 parameters, however 3 where given!\"","\"The function/operation 'sig' expects 1 parameters, however 3 where given!\"","\"The function/operation 'sumJs' expects 1 parameters, however 3 where given!\\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration.\"","\"The function/operation 'prodJs' expects 1 parameters, however 3 where given!\\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration.\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Functions can derive themselves according to the provided index of the input which ought to be derived.",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"A Function created from a given expression will produce the expected derivative String.","code":["Function.of(equation).getDerivative( index ).toString() == expected"]},
+
+        {"kind":"where","text":"The following expressions and derivation indices are being used :","code":{"equation":["\"1 - I[0] * 3\"","\"i0 / 6\"","\"ln( 4 * i0 )\"","\"4**I[0]\"","\"i0 ** 3\"","\"(I[0] * I[1] * I[0]) + 3\"","\"3 ** (i0 / 2)\"","\"(2 * I[0]) / (1 - I[0] * 3)\""],"index":["0","0","0","0","0","0","0","0"],"expected":["\"-3.0\"","\"(1.0 / 6.0)\"","\"(4.0 / (4.0 * I[0]))\"","\"(ln(4.0) * (4.0 ** I[0]))\"","\"(3.0 * (I[0] ** (3.0 - 1.0)))\"","\"((I[1] * I[0]) + (I[0] * I[1]))\"","\"((1.0 / 2.0) * (ln(3.0) * (3.0 ** (I[0] / 2.0))))\"","\"((2.0 / (1.0 - (I[0] * 3.0))) - (((2.0 * I[0]) * -3.0) / ((1.0 - (I[0] * 3.0)) ** 2.0)))\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

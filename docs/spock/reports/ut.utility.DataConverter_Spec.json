@@ -1,0 +1,48 @@
+{
+  "className":"ut.utility.DataConverter_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.004 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The DataConverter can convert the given array data.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["def converter = DataConverter.get()"]},
+
+        {"kind":"expect","text":"","code":["converter.convert( [-50, 2, 190] as byte[], BigInteger[].class ) == [-50, 2, -66] as BigInteger[]","converter.convert( [-50, 2, 190] as byte[], short[].class ) == [-50, 2, -66] as short[]","converter.convert( [-50, 2, 190] as byte[], int[].class ) == [-50, 2, -66] as int[]","converter.convert( [-50, 2, 190] as byte[], long[].class ) == [-50, 2, -66] as long[]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"An array of any type of object may be converted to a array of primitives.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"","code":["DataConverter.Utility.objectsToFloats([1, 2, 3].toArray(), 2) == [1, 2] as float[]","DataConverter.Utility.objectsToDoubles([1, 2, 3].toArray(), 2) == [1, 2] as double[]","DataConverter.Utility.objectsToBytes([1, 2, 3].toArray(), 2) == [1, 2] as byte[]","DataConverter.Utility.objectsToInts([1, 2, 3].toArray(), 2) == [1, 2] as int[]","DataConverter.Utility.objectsToLongs([1, 2, 3].toArray(), 2) == [1, 2] as long[]","DataConverter.Utility.objectsToShorts([1, 2, 3].toArray(), 2) == [1, 2] as short[]"]},
+
+        {"kind":"and","text":"","code":["DataConverter.Utility.objectsToFloats([2.2, 3.9].toArray(), 2) == [2.2,3.9] as float[]","DataConverter.Utility.objectsToDoubles([2.2, 3.9].toArray(), 2) == [2.2, 3.9] as double[]","DataConverter.Utility.objectsToBytes([2.2, 3.9].toArray(), 2) == [2, 3] as byte[]","DataConverter.Utility.objectsToInts([2.2, 3.9].toArray(), 2) == [2, 3] as int[]","DataConverter.Utility.objectsToLongs([2.2, 3.9].toArray(), 2) == [2, 3] as long[]","DataConverter.Utility.objectsToShorts([2.2, 3.9].toArray(), 2) == [2, 3] as short[]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

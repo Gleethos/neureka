@@ -1,0 +1,145 @@
+{
+  "className":"ut.autograd.Autograd_Tensor_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
+  "statistics":{
+    "runs":"3",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.020 seconds"
+  },
+  "headers":["\n            <h2> Autograd Tensor Behavior </h2>\n            <p>\n                Specified below is the behavior of the autograd system.\n            </p>\n        "],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Test basic autograd behaviour. (Not on device)",
+      "result":"PASS",
+      "duration":"0.005 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Gradient auto apply for tensors in ue is set to false.","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
+
+        {"kind":"and","text":"Tensor legacy view is set to true.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+
+        {"kind":"and","text":"Three scalar tensors \"x\", \"b\", \"w\" are being instantiated, and \"x\" requires gradients.","code":["Tsr x = Tsr.of(Shape.of(1), 3).setRqsGradient(true)","Tsr b = Tsr.of(Shape.of(1), -4)","Tsr w = Tsr.of(Shape.of(1), 2)"]},
+
+        {"kind":"when","text":"A new tensor is being calculated by the equation \"((i0+i1)*i2)**2\".","code":["Tsr y = Tsr.of(\"((i0+i1)*i2)**2\", x, b, w)"]},
+
+        {"kind":"then","text":"The resulting tensor should contain \"[1]:(4.0); ->d[1]:(-8.0), \" where the last part is a derivative.","code":["y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
+
+        {"kind":"when","text":"We call the \"backward\" method on this tensor...","code":["y.backward(Tsr.of(2d))"]},
+
+        {"kind":"then","text":"The source tensor which requires gradients will have the gradient \"-16\".","code":["x.toString().contains(\"-16.0\")"]},
+
+        {"kind":"when","text":"We create a new tensor via the same equation but applied in a different way...","code":["y = Tsr.of(\"(\",\"(\",x,\"+\",b,\")\",\"*\",w,\")**2\")"]},
+
+        {"kind":"then","text":"The will produce the same result once again.","code":["y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
+
+        {"kind":"when","text":"We also call the \"backward\" method again...","code":["y.backward(Tsr.of(1d))"]},
+
+        {"kind":"then","text":"The accumulated gradient in the source tensor which requires gradients will be as expected.","code":["x.toString().contains(\"-24.0\")"]},
+
+        {"kind":"when","text":"We execute the same equation once more...","code":["y = Tsr.of(\"((\",x,\"+\",b,\")*\",w,\")**2\")"]},
+
+        {"kind":"then","text":"The result will be as expected.","code":["y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
+
+        {"kind":"when","text":"We call \"backward\" with -1 as error...","code":["y.backward(Tsr.of(-1d))"]},
+
+        {"kind":"then","text":"This will change the gradient of \"x\" accordingly.","code":["x.toString().contains(\"-16.0\")"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Second-Test \"x-mul\" autograd behaviour. (Not on device)",
+      "result":"PASS",
+      "duration":"0.009 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Gradient auto apply for tensors in ue is set to false.","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)"]},
+
+        {"kind":"and","text":"Tensor legacy view is set to true.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
+
+        {"kind":"when","text":"","code":["def x = Tsr.ofDoubles()","                .withShape(3, 3)","                .andFill(","                        1.0, 2.0, 5.0,","                        -1.0, 4.0, -2.0,","                        -2.0, 3.0, 4.0,","                )","def y = Tsr.of(","        Shape.of(2, 2),","        new double[]{","                -1, 3,","                2, 3,","        }).setRqsGradient(true)"]},
+
+        {"kind":"then","text":"","code":["then : y.toString().contains(\":g:(null)\")"]},
+
+        {"kind":"when","text":"","code":["when : def z = Tsr.of(\"I0xi1\", x, y)"]},
+
+        {"kind":"then","text":"","code":["then : z.toString().contains(\"[2x2]:(15.0, 15.0, 18.0, 8.0)\")"]},
+
+        {"kind":"when","text":"","code":["when : z = Tsr.of(new Object[]{x, \"x\", y})"]},
+
+        {"kind":"then","text":"","code":["then : z.toString().contains(\"[2x2]:(15.0, 15.0, 18.0, 8.0)\")"]},
+
+        {"kind":"when","text":"","code":["when : z.backward(Tsr.of(Shape.of(2, 2), 1))"]},
+
+        {"kind":"then","text":"","code":["then : y.toString().contains(\"[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)\")"]},
+
+        {"kind":"when","text":"","code":["x = Tsr.of(Shape.of(3, 3),","            new double[]{","                    1, 2, 5,","                    -1, 4, -2,","                    -2, 3, 4,","            }","    ).mut.toType(type)","y = Tsr.of(Shape.of(2, 2),","        new double[]{","                -1, 3,","                2, 3,","        }).setRqsGradient(true).mut.toType(type)"]},
+
+        {"kind":"then","text":"","code":["then : y.toString().contains(\":g:(null)\")"]},
+
+        {"kind":"when","text":"","code":["when : z = Tsr.of(\"I0xi1\", y, x)"]},
+
+        {"kind":"then","text":"","code":["then : z.toString().contains(\"[2x2]:(15.0, 15.0, 18.0, 8.0)\")"]},
+
+        {"kind":"and","text":"","code":["and : z.itemType == type"]},
+
+        {"kind":"when","text":"","code":["when : z = Tsr.of(y, \"x\", x)"]},
+
+        {"kind":"then","text":"","code":["then : z.toString().contains(\"[2x2]:(15.0, 15.0, 18.0, 8.0)\")"]},
+
+        {"kind":"and","text":"","code":["and : z.itemType == type"]},
+
+        {"kind":"when","text":"","code":["when : z.backward(Tsr.of(Shape.of(2, 2), 1d))"]},
+
+        {"kind":"then","text":"","code":["then : y.toString().contains(\"[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)\")"]},
+
+        {"kind":"when","text":"","code":["x = Tsr.of(Shape.of(1), 3d).mut.toType(type)","Tsr b = Tsr.of(Shape.of(1), -5d).mut.toType(type)","Tsr w = Tsr.of(Shape.of(1), -2d).mut.toType(type)","z = Tsr.of(\"I0*i1*i2\", x, b, w)"]},
+
+        {"kind":"then","text":"","code":["then : z.toString().contains(\"[1]:(30.0)\")"]},
+
+        {"kind":"and","text":"","code":["and : z.itemType == type"]},
+
+        {"kind":"when","text":"","code":["x = Tsr.of(Shape.of(1), 4d).setRqsGradient(true).mut.toType(type)","b = Tsr.of(Shape.of(1), 0.5).mut.toType(type)","w = Tsr.of(Shape.of(1), 0.5).mut.toType(type)","y = Tsr.of(\"(2**i0**i1**i2**2\", x, b, w)"]},
+
+        {"kind":"then","text":"","code":["y.toString().contains(\"[1]:(9.24238);\")","y.toString().contains(\" ->d[1]:(4.32078)\")"]},
+
+        {"kind":"and","text":"","code":["y.itemType == type"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Float"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A tensor used as derivative within a computation graph will throw exception when trying to deleting it.",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new tensor \"a\" requiring autograd.","code":["Tsr a = Tsr.of(1d).setRqsGradient(true)"]},
+
+        {"kind":"and","text":"A second tensor \"b\".","code":["Tsr b = Tsr.of(2d)"]},
+
+        {"kind":"when","text":"Both tensors are being multiplied via the \"dot\" method.","code":["Tsr c = a.convDot(b)"]},
+
+        {"kind":"and","text":"One tries to delete tensor \"b\"...","code":["b.getMut().delete()"]},
+
+        {"kind":"then","text":"An exception is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message == \"Cannot delete a tensor which is used as derivative by the AD computation graph!\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -1,0 +1,39 @@
+{
+  "className":"ut.utility.Utility_Spec",
+  "title":"",
+  "narrative":"",
+  "subjects":[],
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.010 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Object arrays can be converted to primitive arrays.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["def result = code(input)"]},
+
+        {"kind":"then","text":"","code":["result == input"]},
+
+        {"kind":"and","text":"","code":["result.class != input.class"]},
+
+        {"kind":"and","text":"","code":["result.class == expectedType"]},
+
+        {"kind":"where","text":"","code":{"input":["[1, 2, 3] as Float[]","[1, 2, 3] as Double[]","[1, 2, 3] as Integer[]","[1, 2, 3] as Long[]","[1, 2, 3] as Short[]","[1, 2, 3] as Byte[]","[1, 2, 3] as Boolean[]","[1, 2, 3] as Character[]"],"code":["{DataConverter.Utility.objFloatsToPrimFloats(it)}","{DataConverter.Utility.objDoublesToPrimDoubles(it)}","{DataConverter.Utility.objIntsToPrimInts(it)}","{DataConverter.Utility.objLongsToPrimLongs(it)}","{DataConverter.Utility.objShortsToPrimShorts(it)}","{DataConverter.Utility.objBytesToPrimBytes(it)}","{DataConverter.Utility.objBooleansToPrimBooleans(it)}","{DataConverter.Utility.objCharsToPrimChars(it)}"],"expectedType":["float[]","double[]","int[]","long[]","short[]","byte[]","boolean[]","char[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

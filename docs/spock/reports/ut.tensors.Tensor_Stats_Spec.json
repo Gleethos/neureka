@@ -1,0 +1,142 @@
+{
+  "className":"ut.tensors.Tensor_Stats_Spec",
+  "title":"Reducing Tensors",
+  "narrative":"Various kinds of operations reduce tensors to scalars,\n    the most common ones being the min and max operations \n    which find the smallest as well as largest number among all \n    items of a tensor.\n    Neureka exposes various different ways to achieve this,\n    all of which are also differential (autograd support).",
+  "subjects":["neureka.Tsr"],
+  "statistics":{
+    "runs":"6",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.392 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"We can use the max operation as a function",
+      "result":"PASS",
+      "duration":"0.217 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a min/max function:","code":["var fun = Function.of(reduceType.toLowerCase() + \"(I[0])\")"]},
+
+        {"kind":"and","text":"A seed, for some variability:","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.hashCode()"]},
+
+        {"kind":"and","text":"","code":["var a = Tsr.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})"]},
+
+        {"kind":"and","text":"Before applying the function, we copy the tensor to the device:","code":["a.to(device)"]},
+
+        {"kind":"when","text":"We apply the function to the tensor:","code":["var result = fun(a)"]},
+
+        {"kind":"then","text":"The result is correct:","code":["result.items[0] == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'","'MIN'","'MAX'"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte","Float","Float"],"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124","-148.0","141.0"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can get pre-instantiated min and max functions from the library context.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We access the pre-instantiated max function:","code":["var min = Neureka.get().backend.autogradFunction.min"]},
+
+        {"kind":"and","text":"We access the pre-instantiated min function:","code":["var max = Neureka.get().backend.autogradFunction.max"]},
+
+        {"kind":"expect","text":"The 2 functions are indeed min and max","code":["min.toString() == \"min(I[0])\"","max.toString() == \"max(I[0])\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.",
+      "result":"PASS",
+      "duration":"0.005 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor:","code":["var a = Tsr.of(Float)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((31**(i+42))%301)-151})"]},
+
+        {"kind":"and","text":"Before applying the function, we copy the tensor to the device:","code":["a.to(device)"]},
+
+        {"kind":"and","text":"We access the min and max methods:","code":["var min = a.min()","var max = a.max()"]},
+
+        {"kind":"expect","text":"The results are correct:","code":["min.item(0) == -150.0","max.item(0) == 147.0"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Both the min and max operation support autograd (back-propagation).",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a simple tensor of floats which requires gradients:","code":["var a = Tsr.of(-3f, 6.42f, 2.065f, -8f, 0.2, 7.666f, 3.39f).setRqsGradient(true)"]},
+
+        {"kind":"and","text":"We first do a simple operation to get another tensor:","code":["var b = a * 3"]},
+
+        {"kind":"and","text":"We then do min and max operations as well as 2 divisions:","code":["var x = b.min() / 2","var y = b.max() / 4"]},
+
+        {"kind":"when","text":"We back-propagate both paths by adding them and calling backward:","code":["(x+y).backward()"]},
+
+        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.get().items == [0f, 0f, 0f, 1.5f, 0f, 0.75f, 0f]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use the \"sum\" method to sum the items of a tensor.",
+      "result":"PASS",
+      "duration":"0.154 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a tensor:","code":["var a = Tsr.of(Float)","                    .withShape(13, 73, 11)","                    .andWhere({ i, _ -> ((7**i) % 11)-5})"]},
+
+        {"kind":"and","text":"We sum the items of the tensor:","code":["var sum = a.sum()"]},
+
+        {"kind":"expect","text":"The result is correct:","code":["sum.item() == 5217.0"]},
+
+        {"kind":"and","text":"The result can be verified using other methods:","code":["sum.item() == sum.items.stream().reduce(0,(x,y)->x+y)","sum.item() == a.mut.data.ref.sum()"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The sum operation support autograd (back-propagation).",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a simple tensor of floats which requires gradients:","code":["var a = Tsr.of(1f, 2f, 3f, 4f).setRqsGradient(true)"]},
+
+        {"kind":"and","text":"We first do a simple operation to get another tensor:","code":["var b = a * 3"]},
+
+        {"kind":"and","text":"We then do a sum operation:","code":["var x = b.sum()"]},
+
+        {"kind":"when","text":"We back-propagate the path by calling backward:","code":["x.backward()"]},
+
+        {"kind":"then","text":"The gradient is correct:","code":["a.gradient.get().items == [3f, 3f, 3f, 3f]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

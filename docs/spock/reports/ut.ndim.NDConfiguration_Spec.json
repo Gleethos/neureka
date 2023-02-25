@@ -1,0 +1,47 @@
+{
+  "className":"ut.ndim.NDConfiguration_Spec",
+  "title":"Making Arrays N-Dimensional",
+  "narrative":"Under the hood Neureka implements powerful indexing \n    abstractions through the `NDConfiguration` interface and its various implementations.\n    This allows for the creation of tensors/nd-arrays with arbitrary dimensions, \n    the ability to slice them into smaller tensors/nd-arrays with the same underlying data,\n    and finally the ability to reshape their axes (like transposing them for example).\n\n    This specification however only focuses on the behaviour of the `NDConfiguration` interface\n    which translates various types of indices.",
+  "subjects":["neureka.ndim.config.NDConfiguration"],
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.045 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"Various NDConfigurations behaviour exactly as their general purpose implementation.",
+      "result":"PASS",
+      "duration":"0.021 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A general purpose NDConfiguration implementation as well as a specialized one (provided by the factory method).","code":["var ndc1 = SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset)","var ndc2 = NDConfiguration.of(shape, translation, indicesMap, spread, offset)"]},
+
+        {"kind":"and","text":"2 corresponding iterators:","code":["var i1 = NDIterator.of(ndc1, NDIterator.NonVirtual.FALSE)","var i2 = NDIterator.of(ndc2, NDIterator.NonVirtual.FALSE)"]},
+
+        {"kind":"expect","text":"","code":["ndc2.getClass()    == expected","ndc1.rank()        == ndc2.rank()","ndc1.size()        == ndc2.size()","ndc1.shape()       == ndc2.shape()","ndc1.translation() == ndc2.translation()","ndc1.indicesMap()  == ndc2.indicesMap()","ndc1.spread()      == ndc2.spread()","ndc1.offset()      == ndc2.offset()"]},
+
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    ndc1.indicesOfIndex(it) == ndc2.indicesOfIndex(it)","})",".every()"]},
+
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    ndc1.indexOfIndices(ndc1.indicesOfIndex(it)) == ndc2.indexOfIndices(ndc2.indicesOfIndex(it))","})",".every()"]},
+
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    ndc1.indexOfIndex(it) == ndc2.indexOfIndex(it)","})",".every()"]},
+
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    boolean matches = i1.get() == i2.get()","    if ( it < ndc1.size()-1 ) { i1.increment(); i2.increment() }","    return matches","})",".every()"]},
+
+        {"kind":"and","text":"","code":["(0..ndc1.size()-1).collect({","    boolean matches = i1.get() == i2.get()","    i1.decrement(); i2.decrement()","    return matches","})",".every()"]},
+
+        {"kind":"where","text":"","code":{"shape":["[2,3,8,4]","[2,3,8,4]","[2,3,8,4]","[2,3,8]","[2,3,8]","[2,3,8]","[2,3]","[2,3]","[2,3]","[2,3]","[2,3]","[2,3]","[2,3]","[3]","[42]","[3]","[30]","[2]"],"translation":["[96, 32, 4, 1]","[96, 200, 8, 1]","[96, 32, 4, 1]","[24,8,1]","[8,24,7]","[8,24,7]","[3,1]","[1,2]","[1,2]","[81,42]","[1,2]","[3,1]","[3,1]","[1]","[1]","[1]","[8]","[1]"],"indicesMap":["[96, 32, 4, 1]","[96, 32, 4, 1]","[96, 92, 4, 1]","[24,8,1]","[1,2,3]","[1,2,3]","[3,1]","[1,2]","[3,1]","[3,99]","[2,1]","[3,1]","[3,1]","[1]","[1]","[2]","[2]","[1]"],"spread":["[1,1,1,1]","[1,1,1,1]","[1,4,1,1]","[1, 1, 1]","[1, 1, 1]","[1, 7, 1]","[1, 1]","[1, 1]","[1, 1]","[1, 1]","[7, 2]","[1, 1]","[1, 2]","[1]","[1]","[1]","[1]","[1]"],"offset":["[0,0,0,0]","[0,0,0,0]","[0,0,0,0]","[0,0,0]","[0,0,0]","[0,0,0]","[0,0]","[0,0]","[0,0]","[0,0]","[1,8]","[6,0]","[0,0]","[0]","[0]","[0]","[0]","[5]"],"expected":["SimpleNDConfiguration","ReshapedNDConfiguration","SlicedNDConfiguration","Simple3DConfiguration","Reshaped3DConfiguration","Sliced3DConfiguration","Simple2DConfiguration","Reshaped2DConfiguration","Reshaped2DConfiguration","Reshaped2DConfiguration","Sliced2DConfiguration","Sliced2DConfiguration","Sliced2DConfiguration","Simple1DConfiguration","Simple1DConfiguration","Reshaped1DConfiguration","Reshaped1DConfiguration","Sliced1DConfiguration"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}
