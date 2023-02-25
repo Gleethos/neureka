@@ -409,6 +409,9 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     default Class<V> itemType() { return getItemType(); }
 
+    /**
+     * @return A new nd-array which is a shallow copy of this nd-array but with a different label.
+     */
     Nda<V> withLabel( String label );
 
     /**
@@ -718,7 +721,6 @@ public interface Nda<V> extends NDimensional, Iterable<V>
         return DataConverter.get().convert( getRawItems(), arrayTypeClass );
     }
 
-
     /**
      * Use this to get the items of the underlying {@link Data} buffer
      * of this nd-array as a primitive array
@@ -733,8 +735,6 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     default  <A> A getDataAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getRawData(), arrayTypeClass );
     }
-
-    // Slicing:
 
     /**
      *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
@@ -896,8 +896,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 
     /**
      * <p>
-     *     This method is a convenience method for mapping a nd-array to a new type
-     *     based on a provided lambda expression.
+     *     This is a convenience method for mapping a nd-array to a nd-array of new type
+     *     based on a provided target item type and mapping lambda.
      *     Here a simple example:
      * </p>
      * <pre>{@code
@@ -907,9 +907,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * <p>
      *     Note: <br>
      *     The provided lambda cannot be executed anywhere else but the CPU.
-     *     This is a problem if this nd-array here lives somewhere other than the JVM.
+     *     This is a problem if this nd-array lives somewhere other than the JVM.
      *     So, therefore, this method will temporally transfer this nd-array from
-     *     where ever it may reside back to the JVM!
+     *     where ever it may reside back to the JVM, execute the mapping lambda, and
+     *     then transfer the result back to the original location.
      * </p>
      * @param typeClass The class of the item type to which the items of this nd-array should be mapped.
      * @param mapper The lambda which maps the items of this nd-array to a new one.
@@ -924,8 +925,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     /**
      * <p>
      *     This method is a convenience method for mapping the items of this nd-array to another
-     *     nd-array of the same type based on a provided lambda expression which will be applies
-     *     to all items individually.
+     *     nd-array of the same type based on the provided lambda function, which will be applied
+     *     to all items of this nd-array individually (element-wise).
      * </p>
      *  Here a simple example:
      *  <pre>{@code
@@ -934,6 +935,9 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  }</pre>
      *  Note: <br>
      *  The provided lambda cannot be executed anywhere else but the CPU.
+     *  This is a problem if this nd-array lives somewhere other than the JVM.
+     *  So, therefore, this method will temporally transfer this nd-array from where ever it may reside
+     *  back to the JVM, execute the mapping lambda, and then transfer the result back to the original location.
      *
      * @param mapper The lambda which maps the items of this nd-array to a new one.
      * @return A new nd-array of type {@code V}.
@@ -967,7 +971,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  Only use this if you know what you are doing and
      *  performance is critical! <br>
      *  </b>
-     *  (Like custom backend extensions for example)
+     *  (Like in custom backend extensions for example)
      *
      * @return The unsafe API exposes methods for mutating the state of the tensor.
      */
@@ -988,6 +992,15 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     default MutateNda<V> mut() { return getMut(); }
 
+    /**
+     *  A wither method which creates a new nd-array instance with the same underlying data
+     *  but with a different shape.
+     *  The new shape must have the same number of elements as the original shape. <br>
+     *  (Note: the underlying nd-array will not be attached to any kind of computation graph)
+     *  <br>
+     * @param shape The new shape of the returned nd-array.
+     * @return A new nd-array instance with the same underlying data (~shallow copy) but with a different shape.
+     */
     Nda<V> withShape( int... shape );
 
     /**
@@ -1012,6 +1025,11 @@ public interface Nda<V> extends NDimensional, Iterable<V>
         V get();
     }
 
+    /**
+     *  Use this to turn this nd-array into a {@link String} instance based on the provided
+     *  {@link NDPrintSettings} instance, which allows you to configure things
+     *  like the number of chars per entry, delimiters, the number of items per line, etc.
+     */
     default String toString( NDPrintSettings config ) {
         return NdaAsString.representing( this ).withConfig( config ).toString();
     }

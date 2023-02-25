@@ -23,6 +23,7 @@ public interface MutateTsr<T> extends MutateNda<T>
     /** {@inheritDoc} */
     @Override Tsr<T> putAt( Map<?,Integer> key, Nda<T> value );
 
+    /** {@inheritDoc} */
     @Override Tsr<T> putAt( int[] indices, T value );
 
     /** {@inheritDoc} */

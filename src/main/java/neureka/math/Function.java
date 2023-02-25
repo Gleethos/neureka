@@ -58,7 +58,7 @@ import java.util.List;
  *  represents the second most important feature of this library.
  *  Instances of {@link Function} implementations form an abstract syntax tree which is being built
  *  from a provided expression {@link String} containing function syntax.
- *
+ *  <p>
  *  Just like functions in the mathematical sense, implementations of this
  *  interface receive a fixed number of inputs.
  *  Within the expression String needed for instantiation, these inputs are

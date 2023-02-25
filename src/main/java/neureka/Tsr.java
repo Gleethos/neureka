@@ -1558,6 +1558,24 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
 
+    /**
+     *  Configures an {@link Optimizer} for this tensor based on the given {@link OptimizerFactory}
+     *  which will be used to create a new {@link Optimizer} instance specific to this tensor.
+     *  The {@link Optimizer} instance will be attached to this tensor as a component
+     *  and then called to perform the actual optimization when the {@link #applyGradient()} method is called.
+     *  <p>
+     *  Here a simple example of how to use this method:
+     *  <pre>{@code
+     *  var t = Tsr.of( 1.0, 2.0, 3.0 ).set( Optimizer.ADAM );
+     *  }</pre>
+     *  <p>
+     *  As you can see, the {@link Optimizer} interface exposes various types of popular
+     *  optimization algorithm factories which can be used to quickly and conveniently create
+     *  an {@link Optimizer} instance for a particular tensor.
+     *
+     * @param optimizerFactory The {@link OptimizerFactory} which will be used to create a new {@link Optimizer} instance.
+     * @return This tensor instance to allow for method chaining.
+     */
     default Tsr<V> set(OptimizerFactory optimizerFactory) {
         this.set( optimizerFactory.create( (Tsr) this ) );
         return this;
@@ -1800,6 +1818,16 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return Neureka.get().backend().getAutogradFunction().minus().call( this, other );
     }
 
+    /**
+     *  This method will create a new {@link Tsr}
+     *  with the provided item subtracted from all elements of this {@link Tsr}.
+     *
+     *  The shapes of this tensor is irrelevant as the provided item will
+     *  simply be broadcast to all items od this tensor, irrespective of any shape.
+     *
+     * @param other The right operand of the subtraction, which is an item of the same type as this tensor.
+     * @return The difference between this instance as the left and the passed item as right operand.
+     */
     default Tsr<V> minus( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getItemType(), "Cannot subtract 'null' from a tensor!");
         return minus(
