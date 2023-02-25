@@ -1,5 +1,5 @@
 
-def VERSION = "0.19.0" // This is changed by gradle.build automatically
+def VERSION = "0.20.0" // This is changed by gradle.build automatically
 def PROJECT = "Neureka"
 
 spockReports {

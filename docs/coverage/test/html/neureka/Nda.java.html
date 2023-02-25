@@ -12,6 +12,7 @@ import neureka.ndim.NDimensional;
 import neureka.view.NDPrintSettings;
 import neureka.view.NdaAsString;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -65,13 +66,97 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param type The type class of the items stored by the nd-array built by the exposed builder API.
      * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
      */
-<span class="fc" id="L68">    static &lt;V&gt; WithShapeOrScalarOrVector&lt;V&gt; of( Class&lt;V&gt; type ) { return new NdaBuilder&lt;&gt;( type ); }</span>
+<span class="fc" id="L69">    static &lt;V&gt; WithShapeOrScalarOrVector&lt;V&gt; of( Class&lt;V&gt; type ) { return new NdaBuilder&lt;&gt;( type ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(String.class)}
+     * used to build {@link Nda}s storing {@link String}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L76">    static WithShapeOrScalarOrVector&lt;String&gt; ofStrings() { return of( String.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Integer.class)}
+     * used to build {@link Nda}s storing {@link Integer}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L83">    static WithShapeOrScalarOrVector&lt;Integer&gt; ofInts() { return of( Integer.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Double.class)}
+     * used to build {@link Nda}s storing {@link Double}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L90">    static WithShapeOrScalarOrVector&lt;Double&gt; ofDoubles() { return of( Double.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Float.class)}
+     * used to build {@link Nda}s storing {@link Float}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L97">    static WithShapeOrScalarOrVector&lt;Float&gt; ofFloats() { return of( Float.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Long.class)}
+     * used to build {@link Nda}s storing {@link Long}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L104">    static WithShapeOrScalarOrVector&lt;Long&gt; ofLongs() { return of( Long.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Boolean.class)}
+     * used to build {@link Nda}s storing {@link Boolean}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L111">    static WithShapeOrScalarOrVector&lt;Boolean&gt; ofBooleans() { return of( Boolean.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Character.class)}
+     * used to build {@link Nda}s storing {@link Character}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L118">    static WithShapeOrScalarOrVector&lt;Character&gt; ofChars() { return of( Character.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Byte.class)}
+     * used to build {@link Nda}s storing {@link Byte}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L125">    static WithShapeOrScalarOrVector&lt;Byte&gt; ofBytes() { return of( Byte.class ); }</span>
+
+    /**
+     * This is a &lt;b&gt;short&lt;/b&gt;cut method for {@code Nda.of(Short.class)}
+     * used to build {@link Nda}s storing {@link Short}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L132">    static WithShapeOrScalarOrVector&lt;Short&gt; ofShorts() { return of( Short.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Object.class)}
+     * used to build {@link Nda}s storing {@link Object}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L139">    static WithShapeOrScalarOrVector&lt;Object&gt; ofObjects() { return of( Object.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(Number.class)}
+     * used to build {@link Nda}s storing {@link Number}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L146">    static WithShapeOrScalarOrVector&lt;Number&gt; ofNumbers() { return of( Number.class ); }</span>
+
+    /**
+     * This is a shortcut method for {@code Nda.of(BigDecimal.class)}
+     * used to build {@link Nda}s storing {@link BigDecimal}s.
+     * @return The next step of the {@link Nda} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L153">    static WithShapeOrScalarOrVector&lt;BigDecimal&gt; ofBigDecimals() { return of( BigDecimal.class ); }</span>
 
     /**
      * @param value The scalar value which ought to be represented as nd-array.
      * @return A scalar double nd-array.
      */
-<span class="fc" id="L74">    static Nda&lt;Double&gt; of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }</span>
+<span class="fc" id="L159">    static Nda&lt;Double&gt; of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }</span>
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -79,7 +164,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of floats from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of floats.
      */
-<span class="nc" id="L82">    static Nda&lt;Float&gt; of( float... value ) { return Tsr.of( Float.class, new int[]{ value.length }, value ); }</span>
+<span class="nc" id="L167">    static Nda&lt;Float&gt; of( float... value ) { return Tsr.of( Float.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of doubles based on the provided array.
@@ -87,7 +172,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of doubles from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of doubles.
      */
-<span class="fc" id="L90">    static Nda&lt;Double&gt; of( double... value ) { return Tsr.of( Double.class, new int[]{ value.length }, value ); }</span>
+<span class="fc" id="L175">    static Nda&lt;Double&gt; of( double... value ) { return Tsr.of( Double.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of bytes based on the provided array.
@@ -95,7 +180,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of bytes from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of bytes.
      */
-<span class="nc" id="L98">    static Nda&lt;Byte&gt; of( byte... value ) { return Tsr.of( Byte.class, new int[]{ value.length }, value ); }</span>
+<span class="nc" id="L183">    static Nda&lt;Byte&gt; of( byte... value ) { return Tsr.of( Byte.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -103,7 +188,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of ints from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of ints.
      */
-<span class="fc" id="L106">    static Nda&lt;Integer&gt; of( int... value ) { return Tsr.of( Integer.class, new int[]{ value.length }, value ); }</span>
+<span class="fc" id="L191">    static Nda&lt;Integer&gt; of( int... value ) { return Tsr.of( Integer.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of longs based on the provided array.
@@ -111,7 +196,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of longs from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of longs.
      */
-<span class="nc" id="L114">    static Nda&lt;Long&gt; of( long... value ) { return Tsr.of( Long.class, new int[]{ value.length }, value ); }</span>
+<span class="nc" id="L199">    static Nda&lt;Long&gt; of( long... value ) { return Tsr.of( Long.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of shorts based on the provided array.
@@ -119,7 +204,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of shorts from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of shorts.
      */
-<span class="nc" id="L122">    static Nda&lt;Short&gt; of( short... value ) { return Tsr.of( Short.class, new int[]{ value.length }, value ); }</span>
+<span class="nc" id="L207">    static Nda&lt;Short&gt; of( short... value ) { return Tsr.of( Short.class, new int[]{ value.length }, value ); }</span>
 
     /**
      *  Constructs a vector of booleans based on the provided array.
@@ -127,7 +212,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param value The array of booleans from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of shorts.
      */
-<span class="fc" id="L130">    static Nda&lt;Boolean&gt; of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }</span>
+<span class="fc" id="L215">    static Nda&lt;Boolean&gt; of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }</span>
 
     /**
      * Constructs a vector of objects based on the provided array.
@@ -136,7 +221,96 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return A vector / 1D nd-array of objects.
      */
     @SafeVarargs
-<span class="fc" id="L139">    static &lt;T&gt; Nda&lt;T&gt; of( T... values ) { return Tsr.of(values); }</span>
+<span class="fc" id="L224">    static &lt;T&gt; Nda&lt;T&gt; of( T... values ) { return Tsr.of(values); }</span>
+
+    /**
+     *  Use this to construct and return a double based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided double array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="nc" id="L235">    static Nda&lt;Double&gt; of( Shape shape, double... values ) { return Tsr.ofAny( Double.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a float based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided float array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="nc" id="L246">    static Nda&lt;Float&gt; of( Shape shape, float... values ) { return Tsr.ofAny( Float.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a byte based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided byte array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="nc" id="L257">    static Nda&lt;Byte&gt; of( Shape shape, byte... values ) { return Tsr.ofAny( Byte.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a int based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided int array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="nc" id="L268">    static Nda&lt;Integer&gt; of( Shape shape, int... values ) { return Tsr.ofAny( Integer.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a long based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided long array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="nc" id="L279">    static Nda&lt;Long&gt; of( Shape shape, long... values ) { return Tsr.ofAny( Long.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a short based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided short array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="nc" id="L290">    static Nda&lt;Short&gt; of( Shape shape, short... values ) { return Tsr.ofAny( Short.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a boolean based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided boolean array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="nc" id="L301">    static Nda&lt;Boolean&gt; of( Shape shape, boolean... values ) { return Tsr.ofAny( Boolean.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return an object based nd-array of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the nd-array will be populated based on repeated iteration over the
+     *  provided object array.
+     *
+     * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+    @SafeVarargs
+<span class="nc" id="L313">    static &lt;T&gt; Nda&lt;T&gt; of( Shape shape, T... values ) { return (Nda&lt;T&gt;) Tsr.of( values ).withShape( shape.toIntArray() ); }</span>
 
     /**
      * Constructs a vector of objects based on the provided iterable.
@@ -144,7 +318,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param values The iterable of objects from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of objects.
      */
-<span class="nc" id="L147">    static &lt;T&gt; Nda&lt;T&gt; of( Iterable&lt;T&gt; values ) { return Tsr.of(values); }</span>
+<span class="nc" id="L321">    static &lt;T&gt; Nda&lt;T&gt; of( Iterable&lt;T&gt; values ) { return Tsr.of(values); }</span>
 
     /**
      * Constructs a vector of objects based on the provided list.
@@ -152,7 +326,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param values The list of objects from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of objects.
      */
-<span class="fc" id="L155">    static &lt;T&gt; Nda&lt;T&gt; of( List&lt;T&gt; values ) { return TsrImpl._of(values); }</span>
+<span class="fc" id="L329">    static &lt;T&gt; Nda&lt;T&gt; of( List&lt;T&gt; values ) { return TsrImpl._of(values); }</span>
 
     /**
      *  A nd-array can have a label. This label is used for example when printing the nd-array.
@@ -160,9 +334,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  will be taken from the cell where the header row and the first column intersect.
      *  @return The label/name of the nd-array.
      */
-    default String getLabel() {
-<span class="fc" id="L164">        return ((TsrImpl&lt;?&gt;) this).find(NDFrame.class).map(NDFrame::getLabel).orElse(&quot;&quot;);</span>
-    }
+<span class="fc" id="L337">    default String getLabel() { return ((TsrImpl&lt;?&gt;) this).find(NDFrame.class).map(NDFrame::getLabel).orElse(&quot;&quot;); }</span>
 
     /**
      *  A nd-array can have a label. This label is used for example when printing the nd-array.
@@ -171,7 +343,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  This is a shorter version of {@link #getLabel()}.
      *  @return The label/name of the nd-array.
      */
-<span class="fc" id="L174">    default String label() { return this.getLabel(); }</span>
+<span class="fc" id="L346">    default String label() { return this.getLabel(); }</span>
 
     /**
      *  If this nd-array is a slice of a parent nd-array then this method will yield true.
@@ -207,7 +379,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  This is the inverse of {@link Nda#isPartialSlice()}.
      * @return The truth value determining if this nd-array is a full slice of another nd-array.
      */
-<span class="pc bpc" id="L210" title="2 of 4 branches missed.">    default boolean isFullSlice() { return isSlice() &amp;&amp; !isPartialSlice(); }</span>
+<span class="pc bpc" id="L382" title="2 of 4 branches missed.">    default boolean isFullSlice() { return isSlice() &amp;&amp; !isPartialSlice(); }</span>
 
     /**
      *  This method returns the number of slices which have been
@@ -235,8 +407,11 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     /**
      * @return The type class of individual value items within this nd-array.
      */
-<span class="fc" id="L238">    default Class&lt;V&gt; itemType() { return getItemType(); }</span>
+<span class="fc" id="L410">    default Class&lt;V&gt; itemType() { return getItemType(); }</span>
 
+    /**
+     * @return A new nd-array which is a shallow copy of this nd-array but with a different label.
+     */
     Nda&lt;V&gt; withLabel( String label );
 
     /**
@@ -305,29 +480,29 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  @return A {@link Stream} of the items in this {@link Nda}.
      */
     default Stream&lt;V&gt; stream() {
-<span class="fc" id="L308">        Object rawItems = getRawItems();</span>
+<span class="fc" id="L483">        Object rawItems = getRawItems();</span>
         Stream&lt;V&gt; stream;
-<span class="fc bfc" id="L310" title="All 2 branches covered.">        if ( rawItems instanceof double[] )</span>
-<span class="fc" id="L311">            stream = (Stream&lt;V&gt;) DoubleStream.of( (double[]) rawItems ).boxed();</span>
-<span class="fc bfc" id="L312" title="All 2 branches covered.">        else if ( rawItems instanceof int[] )</span>
-<span class="fc" id="L313">            stream = (Stream&lt;V&gt;) IntStream.of( (int[]) rawItems ).boxed();</span>
-<span class="fc bfc" id="L314" title="All 2 branches covered.">        else if ( rawItems instanceof long[] )</span>
-<span class="fc" id="L315">            stream = (Stream&lt;V&gt;) LongStream.of( (long[]) rawItems ).boxed();</span>
-<span class="fc bfc" id="L316" title="All 2 branches covered.">        else if ( rawItems instanceof float[] )</span>
-<span class="fc" id="L317">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Float.valueOf( ((float[]) rawItems)[i] ) );</span>
-<span class="fc bfc" id="L318" title="All 2 branches covered.">        else if ( rawItems instanceof byte[] )</span>
-<span class="fc" id="L319">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Byte.valueOf( ((byte[]) rawItems)[i] ) );</span>
-<span class="fc bfc" id="L320" title="All 2 branches covered.">        else if ( rawItems instanceof short[] )</span>
-<span class="fc" id="L321">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Short.valueOf( ((short[]) rawItems)[i] ) );</span>
-<span class="fc bfc" id="L322" title="All 2 branches covered.">        else if ( rawItems instanceof boolean[] )</span>
-<span class="fc" id="L323">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Boolean.valueOf( ((boolean[]) rawItems)[i] ) );</span>
-<span class="fc bfc" id="L324" title="All 2 branches covered.">        else if ( rawItems instanceof char[] )</span>
-<span class="fc" id="L325">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Character.valueOf( ((char[]) rawItems)[i] ) );</span>
+<span class="fc bfc" id="L485" title="All 2 branches covered.">        if ( rawItems instanceof double[] )</span>
+<span class="fc" id="L486">            stream = (Stream&lt;V&gt;) DoubleStream.of( (double[]) rawItems ).boxed();</span>
+<span class="fc bfc" id="L487" title="All 2 branches covered.">        else if ( rawItems instanceof int[] )</span>
+<span class="fc" id="L488">            stream = (Stream&lt;V&gt;) IntStream.of( (int[]) rawItems ).boxed();</span>
+<span class="fc bfc" id="L489" title="All 2 branches covered.">        else if ( rawItems instanceof long[] )</span>
+<span class="fc" id="L490">            stream = (Stream&lt;V&gt;) LongStream.of( (long[]) rawItems ).boxed();</span>
+<span class="fc bfc" id="L491" title="All 2 branches covered.">        else if ( rawItems instanceof float[] )</span>
+<span class="fc" id="L492">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Float.valueOf( ((float[]) rawItems)[i] ) );</span>
+<span class="fc bfc" id="L493" title="All 2 branches covered.">        else if ( rawItems instanceof byte[] )</span>
+<span class="fc" id="L494">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Byte.valueOf( ((byte[]) rawItems)[i] ) );</span>
+<span class="fc bfc" id="L495" title="All 2 branches covered.">        else if ( rawItems instanceof short[] )</span>
+<span class="fc" id="L496">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Short.valueOf( ((short[]) rawItems)[i] ) );</span>
+<span class="fc bfc" id="L497" title="All 2 branches covered.">        else if ( rawItems instanceof boolean[] )</span>
+<span class="fc" id="L498">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Boolean.valueOf( ((boolean[]) rawItems)[i] ) );</span>
+<span class="fc bfc" id="L499" title="All 2 branches covered.">        else if ( rawItems instanceof char[] )</span>
+<span class="fc" id="L500">            stream = IntStream.range(0,size()).mapToObj(i -&gt; (V) Character.valueOf( ((char[]) rawItems)[i] ) );</span>
         else
-<span class="fc" id="L327">            stream = (Stream&lt;V&gt;) Arrays.stream( (Object[]) rawItems );</span>
+<span class="fc" id="L502">            stream = (Stream&lt;V&gt;) Arrays.stream( (Object[]) rawItems );</span>
 
-<span class="fc bfc" id="L329" title="All 2 branches covered.">        boolean executeInParallel = ( this.size() &gt; 1_000 );</span>
-<span class="fc bfc" id="L330" title="All 2 branches covered.">        return executeInParallel ? stream.parallel() : stream;</span>
+<span class="fc bfc" id="L504" title="All 2 branches covered.">        boolean executeInParallel = ( this.size() &gt; 1_000 );</span>
+<span class="fc bfc" id="L505" title="All 2 branches covered.">        return executeInParallel ? stream.parallel() : stream;</span>
     }
 
     /**
@@ -336,25 +511,30 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param predicate The predicate to filter the items of this {@link Nda}.
      * @return A {@link Stream} of the items in this {@link Nda} which match the predicate.
      */
-    default Stream&lt;V&gt; filter( Predicate&lt;V&gt; predicate ) {
-<span class="fc" id="L340">        return stream().filter( predicate );</span>
-    }
+<span class="fc" id="L514">    default Stream&lt;V&gt; filter( Predicate&lt;V&gt; predicate ) { return stream().filter( predicate ); }</span>
 
     /**
-     *  A convenience method for {@code stream().flatMap( mapper )}.
+     *  A convenience method for {@code nda.stream().flatMap( mapper )},
+     *  which turns this {@link Nda} into a {@link Stream} of its items. &lt;br&gt;
+     *  Here an example of how to use this method : &lt;br&gt;
+     *  &lt;pre&gt;{@code
+     *    var nda = Nda.of( -2, -1, 0, 1, 2 );
+     *    var list = nda.flatMap( i -&gt; Stream.of( i * 2, i * 3 ) ).toList();
+     *    // list = [-4, -6, -2, -3, 0, 0, 2, 3, 4, 6, 6, 9]
+     *  }&lt;/pre&gt;
      *
      * @param mapper The mapper to map the items of this {@link Nda}.
      * @return A {@link Stream} of the items in this {@link Nda} which match the predicate.
      */
     default &lt;R&gt; Stream&lt;R&gt; flatMap( Function&lt;V, Stream&lt;R&gt;&gt; mapper ) {
-<span class="fc" id="L350">        return stream().flatMap( v -&gt; {</span>
-<span class="fc" id="L351">            Object o = mapper.apply( v );</span>
-<span class="pc bpc" id="L352" title="1 of 2 branches missed.">            if ( o instanceof Iterable )</span>
-<span class="fc" id="L353">                return (Stream&lt;R&gt;) StreamSupport.stream( ((Iterable) o).spliterator(), false );</span>
-<span class="nc bnc" id="L354" title="All 2 branches missed.">            else if ( o instanceof Stream )</span>
-<span class="nc" id="L355">                return (Stream&lt;R&gt;) o;</span>
+<span class="fc" id="L530">        return stream().flatMap( v -&gt; {</span>
+<span class="fc" id="L531">            Object o = mapper.apply( v );</span>
+<span class="pc bpc" id="L532" title="1 of 2 branches missed.">            if ( o instanceof Iterable )</span>
+<span class="fc" id="L533">                return (Stream&lt;R&gt;) StreamSupport.stream( ((Iterable) o).spliterator(), false );</span>
+<span class="nc bnc" id="L534" title="All 2 branches missed.">            else if ( o instanceof Stream )</span>
+<span class="nc" id="L535">                return (Stream&lt;R&gt;) o;</span>
             else
-<span class="nc" id="L357">                return Stream.of( (R) o );</span>
+<span class="nc" id="L537">                return Stream.of( (R) o );</span>
         });
     }
 
@@ -373,11 +553,11 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *          {@link Nda}, in encounter order.
      */
     static &lt;T&gt; Collector&lt;T, ?, Nda&lt;T&gt;&gt; shaped( int... shape ) {
-<span class="fc" id="L376">        return Collector.of(</span>
+<span class="fc" id="L556">        return Collector.of(</span>
                 (Supplier&lt;List&lt;T&gt;&gt;) ArrayList::new,
                 List::add,
-<span class="nc" id="L379">                (left, right) -&gt; { left.addAll(right); return left; },</span>
-<span class="fc" id="L380">                list -&gt; Tsr.of( shape, list )</span>
+<span class="nc" id="L559">                (left, right) -&gt; { left.addAll(right); return left; },</span>
+<span class="fc" id="L560">                list -&gt; Tsr.of( Shape.of(shape), list )</span>
             );
     }
 
@@ -388,8 +568,8 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return true if every item in the nd-array matches the predicate, false otherwise.
      */
     default boolean every( Predicate&lt;V&gt; predicate ) {
-<span class="fc bfc" id="L391" title="All 2 branches covered.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return predicate.test( this.item() );</span>
-<span class="fc" id="L392">        return stream().allMatch(predicate);</span>
+<span class="fc bfc" id="L571" title="All 2 branches covered.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return predicate.test( this.item() );</span>
+<span class="fc" id="L572">        return stream().allMatch(predicate);</span>
     }
 
     /**
@@ -399,8 +579,8 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return true if any item in the nd-array matches the predicate, false otherwise.
      */
     default boolean any( Predicate&lt;V&gt; predicate ) {
-<span class="pc bpc" id="L402" title="1 of 2 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return predicate.test( this.item() );</span>
-<span class="fc" id="L403">        return stream().anyMatch(predicate);</span>
+<span class="pc bpc" id="L582" title="1 of 2 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return predicate.test( this.item() );</span>
+<span class="fc" id="L583">        return stream().anyMatch(predicate);</span>
     }
 
     /**
@@ -410,19 +590,29 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return true if none of the items in the nd-array match the predicate, false otherwise.
      */
     default boolean none( Predicate&lt;V&gt; predicate ) {
-<span class="pc bpc" id="L413" title="3 of 4 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return !predicate.test( this.item() );</span>
-<span class="fc" id="L414">        return stream().noneMatch(predicate);</span>
+<span class="pc bpc" id="L593" title="3 of 4 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return !predicate.test( this.item() );</span>
+<span class="fc" id="L594">        return stream().noneMatch(predicate);</span>
     }
 
     /**
      *  Iterates over every element of this nd-array, and counts the number of
      *  times the provided lambda matches the items of this array.
+     *  &lt;p&gt;
+     *  Here is an example of counting the number of items in the array that are
+     *  greater than 5 :
+     *  &lt;pre&gt;{@code
+     *    var nda = Nda.of( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+     *    var count = nda.count( i -&gt; i &gt; 5 );
+     *    System.out.println( count ); // prints 5
+     *  }&lt;/pre&gt;
+     *
+     *
      * @param predicate The lambda to check each element against.
      * @return The number of items in the nd-array that match the predicate.
      */
     default int count( Predicate&lt;V&gt; predicate ) {
-<span class="pc bpc" id="L424" title="3 of 4 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return predicate.test( this.item() ) ? this.size() : 0;</span>
-<span class="fc" id="L425">        return (int) stream().filter(predicate).count();</span>
+<span class="pc bpc" id="L614" title="3 of 4 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return predicate.test( this.item() ) ? this.size() : 0;</span>
+<span class="fc" id="L615">        return (int) stream().filter(predicate).count();</span>
     }
 
     /**
@@ -433,8 +623,8 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return The minimum value in the nd-array.
      */
     default V minItem( Comparator&lt;V&gt; comparator ) {
-<span class="pc bpc" id="L436" title="1 of 2 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return this.item();</span>
-<span class="fc" id="L437">        return stream().min( comparator ).orElse(null);</span>
+<span class="pc bpc" id="L626" title="1 of 2 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return this.item();</span>
+<span class="fc" id="L627">        return stream().min( comparator ).orElse(null);</span>
     }
 
     /**
@@ -445,8 +635,8 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return The maximum value in the nd-array.
      */
     default V maxItem( Comparator&lt;V&gt; comparator ) {
-<span class="pc bpc" id="L448" title="1 of 2 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return this.item();</span>
-<span class="fc" id="L449">        return stream().max( comparator ).orElse(null);</span>
+<span class="pc bpc" id="L638" title="1 of 2 branches missed.">        if ( ((Tsr&lt;V&gt;)this).isVirtual() ) return this.item();</span>
+<span class="fc" id="L639">        return stream().max( comparator ).orElse(null);</span>
     }
 
     /**
@@ -477,13 +667,13 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  A more verbose version of the {@link #items()} method (best used by JVM languages with property support).
      * @return A list of the items in this nd-array.
      */
-<span class="fc" id="L480">    default List&lt;V&gt; getItems() { return stream().collect( Collectors.toList() ); }</span>
+<span class="fc" id="L670">    default List&lt;V&gt; getItems() { return stream().collect( Collectors.toList() ); }</span>
 
     /**
      *  A more concise version of the {@link #getItems()} method.
      * @return A list of the items in this nd-array.
      */
-<span class="fc" id="L486">    default List&lt;V&gt; items() { return getItems(); }</span>
+<span class="fc" id="L676">    default List&lt;V&gt; items() { return getItems(); }</span>
 
     /**
      * @return The items of this nd-array as a (if possible) primitive array.
@@ -497,7 +687,7 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @param i The scalar index of the item which should be returned by the method.
      * @return The item found at the targeted index.
      */
-<span class="fc" id="L500">    default V item( int i ) { return getDataAt( indexOfIndex( i ) ); }</span>
+<span class="fc" id="L690">    default V item( int i ) { return getDataAt( indexOfIndex( i ) ); }</span>
 
     /**
      *  This method returns a raw value item within this nd-array
@@ -510,35 +700,58 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * @return The found raw value item targeted by the provided index array.
      */
     default V item( int... indices ) {
-<span class="fc" id="L513">        LogUtil.nullArgCheck( indices, &quot;indices&quot;, int[].class, &quot;Cannot find nd-array value without indices!&quot; );</span>
-<span class="pc bpc" id="L514" title="1 of 2 branches missed.">        if ( indices.length == 0 ) throw new IllegalArgumentException(&quot;Index array may not be empty!&quot;);</span>
-<span class="fc bfc" id="L515" title="All 2 branches covered.">        if ( indices.length &lt; this.rank() ) {</span>
-<span class="fc bfc" id="L516" title="All 2 branches covered.">            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );</span>
+<span class="fc" id="L703">        LogUtil.nullArgCheck( indices, &quot;indices&quot;, int[].class, &quot;Cannot find nd-array value without indices!&quot; );</span>
+<span class="pc bpc" id="L704" title="1 of 2 branches missed.">        if ( indices.length == 0 ) throw new IllegalArgumentException(&quot;Index array may not be empty!&quot;);</span>
+<span class="fc bfc" id="L705" title="All 2 branches covered.">        if ( indices.length &lt; this.rank() ) {</span>
+<span class="fc bfc" id="L706" title="All 2 branches covered.">            if ( indices.length == 1 ) return getDataAt( getNDConf().indexOfIndex( indices[0] ) );</span>
             else {
-<span class="fc" id="L518">                int[] allIndices = new int[this.rank()]; // We do some 0 padding to make sure we have the correct number of indices.</span>
-<span class="fc" id="L519">                System.arraycopy( indices, 0, allIndices, 0, indices.length );</span>
-<span class="fc" id="L520">                return getDataAt( getNDConf().indexOfIndices( allIndices ) );</span>
+<span class="fc" id="L708">                int[] allIndices = new int[this.rank()]; // We do some 0 padding to make sure we have the correct number of indices.</span>
+<span class="fc" id="L709">                System.arraycopy( indices, 0, allIndices, 0, indices.length );</span>
+<span class="fc" id="L710">                return getDataAt( getNDConf().indexOfIndices( allIndices ) );</span>
             }
         }
-<span class="fc" id="L523">        return getDataAt( getNDConf().indexOfIndices( indices ) );</span>
+<span class="fc" id="L713">        return getDataAt( getNDConf().indexOfIndices( indices ) );</span>
     }
 
     /**
-     *  Equivalent to the {@code #item(0)}.
+     *  Equivalent to the {@code #item(0)} and {@link #getItem()}.
      *
      * @return The first item of this nd-array.
      */
-<span class="fc" id="L531">    default V item() { return item( 0 ); }</span>
+<span class="fc" id="L721">    default V item() { return item( 0 ); }</span>
 
+    /**
+     *  Equivalent to the {@code #item(0)} and {@link #item()}.
+     *
+     * @return The first item of this nd-array.
+     */
+<span class="fc" id="L728">    default V getItem() { return item(); }</span>
+
+    /**
+     * Use this to get the items of this nd-array as a primitive array
+     * of the specified type.
+     * @param arrayTypeClass The class of the array type to return.
+     * @param &lt;A&gt; The type of the array to return.
+     * @return The items of this nd-array as a primitive array of the specified type.
+     */
     default &lt;A&gt; A getItemsAs( Class&lt;A&gt; arrayTypeClass ) {
-<span class="fc" id="L534">        return DataConverter.get().convert( getRawItems(), arrayTypeClass );</span>
+<span class="fc" id="L738">        return DataConverter.get().convert( getRawItems(), arrayTypeClass );</span>
     }
 
+    /**
+     * Use this to get the items of the underlying {@link Data} buffer
+     * of this nd-array as a primitive array
+     * of the specified type.
+     * Note that the length of the returned array may be different from the
+     * size of this nd-array. This is the case if this nd-array is a slice
+     * of another larger nd-array.
+     * @param arrayTypeClass The class of the array type to return.
+     * @param &lt;A&gt; The type of the array to return.
+     * @return The items of this nd-array as a primitive array of the specified type.
+     */
     default  &lt;A&gt; A getDataAs( Class&lt;A&gt; arrayTypeClass ) {
-<span class="nc" id="L538">        return DataConverter.get().convert( getRawData(), arrayTypeClass );</span>
+<span class="nc" id="L753">        return DataConverter.get().convert( getRawData(), arrayTypeClass );</span>
     }
-
-    // Slicing:
 
     /**
      *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
@@ -700,8 +913,8 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
 
     /**
      * &lt;p&gt;
-     *     This method is a convenience method for mapping a nd-array to a new type
-     *     based on a provided lambda expression.
+     *     This is a convenience method for mapping a nd-array to a nd-array of new type
+     *     based on a provided target item type and mapping lambda.
      *     Here a simple example:
      * &lt;/p&gt;
      * &lt;pre&gt;{@code
@@ -711,9 +924,10 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      * &lt;p&gt;
      *     Note: &lt;br&gt;
      *     The provided lambda cannot be executed anywhere else but the CPU.
-     *     This is a problem if this nd-array here lives somewhere other than the JVM.
+     *     This is a problem if this nd-array lives somewhere other than the JVM.
      *     So, therefore, this method will temporally transfer this nd-array from
-     *     where ever it may reside back to the JVM!
+     *     where ever it may reside back to the JVM, execute the mapping lambda, and
+     *     then transfer the result back to the original location.
      * &lt;/p&gt;
      * @param typeClass The class of the item type to which the items of this nd-array should be mapped.
      * @param mapper The lambda which maps the items of this nd-array to a new one.
@@ -728,8 +942,8 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     /**
      * &lt;p&gt;
      *     This method is a convenience method for mapping the items of this nd-array to another
-     *     nd-array of the same type based on a provided lambda expression which will be applies
-     *     to all items individually.
+     *     nd-array of the same type based on the provided lambda function, which will be applied
+     *     to all items of this nd-array individually (element-wise).
      * &lt;/p&gt;
      *  Here a simple example:
      *  &lt;pre&gt;{@code
@@ -738,6 +952,9 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  }&lt;/pre&gt;
      *  Note: &lt;br&gt;
      *  The provided lambda cannot be executed anywhere else but the CPU.
+     *  This is a problem if this nd-array lives somewhere other than the JVM.
+     *  So, therefore, this method will temporally transfer this nd-array from where ever it may reside
+     *  back to the JVM, execute the mapping lambda, and then transfer the result back to the original location.
      *
      * @param mapper The lambda which maps the items of this nd-array to a new one.
      * @return A new nd-array of type {@code V}.
@@ -766,12 +983,12 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
      *  because the exposed state can easily lead to broken tensors and exceptional situations!&lt;br&gt;
-     *  &lt;br&gt;&lt;b&gt;
-     *
+     *  &lt;br&gt;
+     *  &lt;p&gt;&lt;b&gt;
      *  Only use this if you know what you are doing and
      *  performance is critical! &lt;br&gt;
      *  &lt;/b&gt;
-     *  (Like custom backend extensions for example)
+     *  (Like in custom backend extensions for example)
      *
      * @return The unsafe API exposes methods for mutating the state of the tensor.
      */
@@ -781,8 +998,8 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *  This method exposes an API for mutating the state of this tensor.
      *  The usage of methods exposed by this API is generally discouraged
      *  because the exposed state can easily lead to broken tensors and exceptional situations!&lt;br&gt;
-     *  &lt;br&gt;&lt;b&gt;
-     *
+     *  &lt;br&gt;
+     *  &lt;p&gt;&lt;b&gt;
      *  Only use this if you know what you are doing and
      *  performance is critical! &lt;br&gt;
      *  &lt;/b&gt;
@@ -790,8 +1007,17 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
      *
      * @return The unsafe API exposes methods for mutating the state of the tensor.
      */
-<span class="nc" id="L793">    default MutateNda&lt;V&gt; mut() { return getMut(); }</span>
+<span class="nc" id="L1010">    default MutateNda&lt;V&gt; mut() { return getMut(); }</span>
 
+    /**
+     *  A wither method which creates a new nd-array instance with the same underlying data
+     *  but with a different shape.
+     *  The new shape must have the same number of elements as the original shape. &lt;br&gt;
+     *  (Note: the underlying nd-array will not be attached to any kind of computation graph)
+     *  &lt;br&gt;
+     * @param shape The new shape of the returned nd-array.
+     * @return A new nd-array instance with the same underlying data (~shallow copy) but with a different shape.
+     */
     Nda&lt;V&gt; withShape( int... shape );
 
     /**
@@ -810,33 +1036,118 @@ public interface Nda&lt;V&gt; extends NDimensional, Iterable&lt;V&gt;
     interface Item&lt;V&gt;
     {
         /**
-         *  Get the value at the targeted position.
+         *  Get the value at the targeted position or throw an exception if the item does not exist.
+         *
          * @return The value at the targeted position.
          */
-        V get();
+        default V get() {
+<span class="fc" id="L1044">            V item = orElseNull();</span>
+<span class="fc bfc" id="L1045" title="All 2 branches covered.">            if ( item == null )</span>
+<span class="fc" id="L1046">                throw new IllegalArgumentException(&quot;No item at the targeted position!&quot;);</span>
+<span class="fc" id="L1047">            return item;</span>
+        }
+
+        /**
+         *  Get the value at the targeted position or return the provided default value if the item does not exist.
+         *
+         * @param defaultValue The default value to return if the item does not exist.
+         * @return The value at the targeted position or the provided default value.
+         * @throws IllegalArgumentException If the provided default value is {@code null}.
+         */
+        default V orElse( V defaultValue ) {
+<span class="fc bfc" id="L1058" title="All 2 branches covered.">            if ( defaultValue == null )</span>
+<span class="fc" id="L1059">                throw new IllegalArgumentException(&quot;The provided default value must not be null! (Use orElseNull() instead)&quot;);</span>
+<span class="fc" id="L1060">            V item = orElseNull();</span>
+<span class="fc bfc" id="L1061" title="All 2 branches covered.">            return item == null ? defaultValue : item;</span>
+        }
+
+        /**
+         *  Get the value at the targeted position or return {@code null} if the item does not exist.
+         *
+         * @return The value at the targeted position or {@code null}.
+         */
+        V orElseNull();
+
+        /**
+         *  Converts this item into an optional value.
+         *  If the item exists, the resulting optional will contain the value.
+         *  Otherwise, the resulting optional will be empty.
+         * @return An optional value.
+         */
+        default Optional&lt;V&gt; toOptional() {
+<span class="fc" id="L1078">            V item = orElseNull();</span>
+<span class="fc bfc" id="L1079" title="All 2 branches covered.">            return item == null ? Optional.empty() : Optional.of( item );</span>
+        }
+
+        /**
+         *  Maps this item to an optional value based on the provided lambda.
+         *  The lambda will be executed if the item exists.
+         *  If the lambda returns {@code null} the resulting optional will be empty.
+         *  Otherwise, the resulting optional will contain the value returned by the lambda.
+         *
+         *  @param mapper The lambda which maps the item to an optional value.
+         *  @return An optional value based on the provided lambda.
+         */
+        default Optional&lt;V&gt; map( java.util.function.Function&lt;V,V&gt; mapper ) {
+<span class="nc" id="L1092">            V item = orElseNull();</span>
+<span class="nc bnc" id="L1093" title="All 2 branches missed.">            return item == null ? Optional.empty() : Optional.ofNullable( mapper.apply( item ) );</span>
+        }
+
+        /**
+         * @return {@code true} if the item exists, {@code false} otherwise.
+         */
+        default boolean exists() {
+<span class="pc bpc" id="L1100" title="1 of 2 branches missed.">            return orElseNull() != null;</span>
+        }
+
+        /**
+         * @return {@code true} if the item does not exist, {@code false} otherwise.
+         */
+        default boolean doesNotExist() {
+<span class="pc bpc" id="L1107" title="1 of 2 branches missed.">            return orElseNull() == null;</span>
+        }
     }
 
+    /**
+     *  Use this to turn this nd-array into a {@link String} instance based on the provided
+     *  {@link NDPrintSettings} instance, which allows you to configure things
+     *  like the number of chars per entry, delimiters, the number of items per line, etc.
+     */
     default String toString( NDPrintSettings config ) {
-<span class="fc" id="L820">        return NdaAsString.representing( this ).withConfig( config ).toString();</span>
+<span class="fc" id="L1117">        return NdaAsString.representing( this ).withConfig( config ).toString();</span>
     }
 
     /**
      *  This allows you to provide a lambda which configures how this nd-array should be
      *  converted to {@link String} instances.
      *  The provided {@link Consumer} will receive a {@link NDPrintSettings} instance
-     *  which allows you to change various settings with the help of method chaining.
+     *  which allows you to change various settings with the help of method chaining.&lt;br&gt;
+     *  Here is an example:
+     *  &lt;pre&gt;{@code
+     *       t.toString(it -&gt;
+     *           it.setHasSlimNumbers(false)
+     *             .setIsScientific(true)
+     *             .setIsCellBound(true)
+     *             .setIsMultiline(true)
+     *             .setCellSize(15)
+     *          );
+     *  }&lt;/pre&gt;
      *
      * @param config A consumer of the {@link NDPrintSettings} ready to be configured.
      * @return The {@link String} representation of this nd-array.
      */
     default String toString( Consumer&lt;NDPrintSettings&gt; config ) {
-<span class="fc" id="L833">        NDPrintSettings defaults = Neureka.get().settings().view().getNDPrintSettings().clone();</span>
-<span class="fc" id="L834">        config.accept(defaults);</span>
-<span class="fc" id="L835">        return NdaAsString.representing( this ).withConfig( defaults ).toString();</span>
+<span class="fc" id="L1140">        NDPrintSettings defaults = Neureka.get().settings().view().getNDPrintSettings().clone();</span>
+<span class="fc" id="L1141">        config.accept(defaults);</span>
+<span class="fc" id="L1142">        return NdaAsString.representing( this ).withConfig( defaults ).toString();</span>
     }
 
+    /**
+     *  This method returns a {@link String} representation of this nd-array.
+     *  The default settings are used for the conversion.
+     * @return The {@link String} representation of this nd-array.
+     */
     String toString();
-
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

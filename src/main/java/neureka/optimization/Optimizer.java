@@ -35,8 +35,8 @@ SOFTWARE.
 
 package neureka.optimization;
 
-import neureka.common.composition.Component;
 import neureka.Tsr;
+import neureka.common.composition.Component;
 import neureka.optimization.implementations.*;
 
 /**

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdaGrad.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.optimization.implementations</a> &gt; <span class="el_source">AdaGrad.java</span></div><h1>AdaGrad.java</h1><pre class="source lang-java linenums">package neureka.optimization.implementations;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
@@ -20,12 +21,11 @@ public class AdaGrad&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
     private final double lr; // learning rate
     private final Tsr&lt;Number&gt; h; // sum of squared gradients:
 
-
-<span class="fc" id="L24">    public AdaGrad( Tsr&lt;V&gt; target ) {</span>
+<span class="fc" id="L24">    AdaGrad( Tsr&lt;V&gt; target, double learningRate ) {</span>
 <span class="fc" id="L25">        LogUtil.nullArgCheck( target, &quot;target&quot;, Tsr.class );</span>
-<span class="fc" id="L26">        List&lt;Integer&gt; shape = target.shape();</span>
+<span class="fc" id="L26">        Shape shape = target.shape();</span>
 <span class="fc" id="L27">        h = Tsr.of(target.getItemType(), shape, 0).getMut().upcast(Number.class);</span>
-<span class="fc" id="L28">        lr = 0.01; // Step size/learning rate is 0.01 by default!</span>
+<span class="fc" id="L28">        lr = learningRate; // Step size/learning rate is 0.01 by default!</span>
 <span class="fc" id="L29">    }</span>
 
     @Override

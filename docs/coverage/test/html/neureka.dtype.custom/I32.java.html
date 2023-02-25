@@ -49,7 +49,7 @@ public final class I32 extends AbstractNumericType&lt;Integer, int[], Integer, i
 
     @Override
     public int[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L52">        return _readData( stream, size );</span>
+<span class="fc" id="L52">        return _readData( stream, size );</span>
     }
 
     @Override
@@ -103,13 +103,13 @@ public final class I32 extends AbstractNumericType&lt;Integer, int[], Integer, i
     }
 
     private int[] _readData( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L106">        int[] data = new int[size];</span>
-<span class="nc" id="L107">        byte[] bytes = new byte[ this.numberOfBytes() ];</span>
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        for ( int i=0; i&lt;size; i++ ) {</span>
-<span class="nc" id="L109">            stream.readFully( bytes );</span>
-<span class="nc" id="L110">            data[ i ] = foreignHolderBytesToTarget( bytes );</span>
+<span class="fc" id="L106">        int[] data = new int[size];</span>
+<span class="fc" id="L107">        byte[] bytes = new byte[ this.numberOfBytes() ];</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for ( int i=0; i&lt;size; i++ ) {</span>
+<span class="fc" id="L109">            stream.readFully( bytes );</span>
+<span class="fc" id="L110">            data[ i ] = foreignHolderBytesToTarget( bytes );</span>
         }
-<span class="nc" id="L112">        return data;</span>
+<span class="fc" id="L112">        return data;</span>
     }
 
 }

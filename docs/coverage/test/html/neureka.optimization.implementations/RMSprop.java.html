@@ -20,11 +20,11 @@ public class RMSProp&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
     private final double decay; // decay rate
     private final Tsr&lt;Number&gt; h; // sum of squared gradients:
 
-<span class="fc" id="L23">    public RMSProp(Tsr&lt;Number&gt; target ) {</span>
+<span class="fc" id="L23">    RMSProp( Tsr&lt;Number&gt; target, double learningRate, double decay ) {</span>
 <span class="fc" id="L24">        LogUtil.nullArgCheck( target, &quot;target&quot;, Tsr.class );</span>
 <span class="fc" id="L25">        h = Tsr.of(target.getItemType(), target.shape(), 0);</span>
-<span class="fc" id="L26">        lr = 0.001; // Step size/learning rate is 0.001 by default!</span>
-<span class="fc" id="L27">        decay = 0.9; // Decay rate is 0.9 by default!</span>
+<span class="fc" id="L26">        lr = learningRate; // Step size/learning rate is 0.001 by default!</span>
+<span class="fc" id="L27">        this.decay = decay; // Decay rate is 0.9 by default!</span>
 <span class="fc" id="L28">    }</span>
 
     @Override

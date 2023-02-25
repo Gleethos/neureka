@@ -2,35 +2,37 @@
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.devices.opencl.OpenCLDevice;
 
-<span class="pc bpc" id="L8" title="1 of 2 branches missed.">public class CLScalarBroadcastAddition extends CLScalarBroadcast</span>
+import java.util.List;
+
+<span class="pc bpc" id="L10" title="1 of 2 branches missed.">public class CLScalarBroadcastAddition extends CLScalarBroadcast</span>
 {
     public CLScalarBroadcastAddition(String id) {
-<span class="fc" id="L11">        super( id,  &quot;output = input1 + value;\n&quot;, &quot;output = 1;\n&quot; );</span>
-<span class="fc" id="L12">    }</span>
+<span class="fc" id="L13">        super( id,  &quot;output = input1 + value;\n&quot;, &quot;output = 1;\n&quot; );</span>
+<span class="fc" id="L14">    }</span>
 
     @Override
     public Tsr&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
-<span class="pc bpc" id="L16" title="2 of 4 branches missed.">        assert call.arity() == 3;</span>
-<span class="pc bpc" id="L17" title="1 of 2 branches missed.">        if ( call.getDerivativeIndex() == 0 )</span>
-<span class="nc" id="L18">            return Tsr.of( call.input(1).shape(), 1d ).mut().setIsIntermediate( true );</span>
-<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        else if ( call.getDerivativeIndex() == 1 )</span>
-<span class="nc" id="L20">            return Tsr.of( call.input( 2 ).shape(), 1d ).mut().setIsIntermediate( true );</span>
+<span class="pc bpc" id="L18" title="2 of 4 branches missed.">        assert call.arity() == 3;</span>
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        if ( call.getDerivativeIndex() == 0 )</span>
+<span class="nc" id="L20">            return Tsr.of( call.input(1).shape(), 1d ).mut().setIsIntermediate( true );</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        else if ( call.getDerivativeIndex() == 1 )</span>
+<span class="nc" id="L22">            return Tsr.of( call.input( 2 ).shape(), 1d ).mut().setIsIntermediate( true );</span>
         else {
-<span class="fc" id="L22">            int gwz = call.input(Number.class, 0).size();</span>
-<span class="fc" id="L23">            float value = call.input(Number.class, 2).item(0).floatValue();</span>
-<span class="fc" id="L24">            call.getDevice()</span>
-<span class="fc" id="L25">                    .getKernel(call)</span>
-<span class="fc" id="L26">                    .passAllOf(call.input(Number.class, 0))</span>
-<span class="fc" id="L27">                    .passAllOf(call.input(Number.class, 1))</span>
-<span class="fc" id="L28">                    .pass(value)</span>
-<span class="fc" id="L29">                    .pass(call.input(Number.class, 0).rank())</span>
-<span class="fc" id="L30">                    .pass(call.getValOf(Arg.DerivIdx.class))</span>
-<span class="fc" id="L31">                    .call(gwz);</span>
+<span class="fc" id="L24">            int gwz = call.input(Number.class, 0).size();</span>
+<span class="fc" id="L25">            float value = call.input(Number.class, 2).item(0).floatValue();</span>
+<span class="fc" id="L26">            call.getDevice()</span>
+<span class="fc" id="L27">                    .getKernel(call)</span>
+<span class="fc" id="L28">                    .passAllOf(call.input(Number.class, 0))</span>
+<span class="fc" id="L29">                    .passAllOf(call.input(Number.class, 1))</span>
+<span class="fc" id="L30">                    .pass(value)</span>
+<span class="fc" id="L31">                    .pass(call.input(Number.class, 0).rank())</span>
+<span class="fc" id="L32">                    .pass(call.getValOf(Arg.DerivIdx.class))</span>
+<span class="fc" id="L33">                    .call(gwz);</span>
         }
-<span class="fc" id="L33">        return call.input( 0 );</span>
+<span class="fc" id="L35">        return call.input( 0 );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

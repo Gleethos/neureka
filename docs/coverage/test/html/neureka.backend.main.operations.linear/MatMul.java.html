@@ -3,31 +3,29 @@
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.MatMulAlgorithm;
-import neureka.calculus.Function;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import neureka.math.Function;
 
 public class MatMul extends AbstractOperation
 {
     public MatMul()
     {
-<span class="fc" id="L14">        super(</span>
+<span class="fc" id="L12">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L16">                .identifier(       &quot;matMul&quot;    )</span>
-<span class="fc" id="L17">                .operator(         &quot;@&quot;         )</span>
-<span class="fc" id="L18">                .arity(            2           )</span>
-<span class="fc" id="L19">                .isOperator(       true        )</span>
-<span class="fc" id="L20">                .isIndexer(        false       )</span>
-<span class="fc" id="L21">                .isDifferentiable( true        )</span>
-<span class="fc" id="L22">                .isInline(         false       )</span>
+<span class="fc" id="L14">                .identifier(       &quot;matMul&quot;    )</span>
+<span class="fc" id="L15">                .operator(         &quot;@&quot;         )</span>
+<span class="fc" id="L16">                .arity(            2           )</span>
+<span class="fc" id="L17">                .isOperator(       true        )</span>
+<span class="fc" id="L18">                .isIndexer(        false       )</span>
+<span class="fc" id="L19">                .isDifferentiable( true        )</span>
+<span class="fc" id="L20">                .isInline(         false       )</span>
         );
 
-<span class="fc" id="L25">        setAlgorithm(</span>
-<span class="fc" id="L26">            new MatMulAlgorithm().buildFunAlgorithm()</span>
+<span class="fc" id="L23">        setAlgorithm(</span>
+<span class="fc" id="L24">            new MatMulAlgorithm().buildFunAlgorithm()</span>
         );
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L26">    }</span>
 
     @Override
-<span class="nc" id="L31">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
+<span class="nc" id="L29">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

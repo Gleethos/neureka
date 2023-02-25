@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SliceBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.fluent.slicing</a> &gt; <span class="el_source">SliceBuilder.java</span></div><h1>SliceBuilder.java</h1><pre class="source lang-java linenums">package neureka.fluent.slicing;
 
 import neureka.Tsr;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.fluent.slicing.states.FromOrAt;
 import neureka.fluent.slicing.states.FromOrAtTsr;
@@ -45,7 +45,7 @@ public class SliceBuilder&lt;V&gt; implements AxisOrGetTsr&lt;V&gt;
         {
 <span class="fc" id="L46">            boolean isIntermediate = toBeSliced.isIntermediate();</span>
 <span class="fc" id="L47">            toBeSliced.getMut().setIsIntermediate(false); // To avoid deletion!</span>
-<span class="fc" id="L48">            Tsr&lt;V&gt; slice = neureka.calculus.Function.of(&quot;slice(I[0])&quot;, allowAutograd)</span>
+<span class="fc" id="L48">            Tsr&lt;V&gt; slice = neureka.math.Function.of(&quot;slice(I[0])&quot;, allowAutograd)</span>
 <span class="fc" id="L49">                                .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))</span>
 <span class="fc" id="L50">                                .call(toBeSliced);</span>
 

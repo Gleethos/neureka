@@ -59,9 +59,6 @@ package neureka;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.LazyRef;
-import neureka.math.Function;
-import neureka.math.Functions;
-import neureka.math.args.Arg;
 import neureka.common.composition.Component;
 import neureka.common.composition.ComponentOwner;
 import neureka.common.utility.DataConverter;
@@ -81,6 +78,9 @@ import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
 import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
+import neureka.math.Function;
+import neureka.math.Functions;
+import neureka.math.args.Arg;
 import neureka.ndim.Filler;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.NDUtil;
@@ -207,8 +207,15 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return The result of the calculation defined by the provided expressions and arguments.
      */
     static <T> Tsr<T> of(
-            String e1, Tsr<T> a, String e2, Tsr<T> b, String e3, Tsr<T> c, String e4
+        String e1, Tsr<T> a, String e2, Tsr<T> b, String e3, Tsr<T> c, String e4
     ) {
+        LogUtil.nullArgCheck( e1, "e1", String.class, "The first expression must not be null." );
+        LogUtil.nullArgCheck( a, "a", Tsr.class, "The first tensor must not be null." );
+        LogUtil.nullArgCheck( e2, "e2", String.class, "The second expression part must not be null." );
+        LogUtil.nullArgCheck( b, "b", Tsr.class, "The second tensor must not be null." );
+        LogUtil.nullArgCheck( e3, "e3", String.class, "The third expression part must not be null." );
+        LogUtil.nullArgCheck( c, "c", Tsr.class, "The third tensor must not be null." );
+        LogUtil.nullArgCheck( e4, "e4", String.class, "The fourth expression part must not be null." );
         return TsrImpl._of( e1, a, e2, b, e3, c, e4 );
     }
 
@@ -242,13 +249,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  which will fill out the data array spanned by the provided shape information.
      *
      * @param shape A list of integers whose values ought to define the size of the axes of the shape of the new {@link Tsr}.
-     * @param value An object of type {@link T} which will populate the data array of the new instance.
+     * @param item An object of type {@link T} which will populate the data array of the new instance.
      * @return A new {@link Tsr} instance for the generic type {@link T}.
      */
-    static <T> Tsr<T> of( List<Integer> shape, T value ) {
+    static <T> Tsr<T> of( List<Integer> shape, T item ) {
         LogUtil.nullArgCheck( shape, "shape", List.class );
-        LogUtil.nullArgCheck( value, "value", Object.class );
-        return of( (Class<T>) value.getClass(), shape, value );
+        LogUtil.nullArgCheck( item, "value", Object.class );
+        return of( (Class<T>) item.getClass(), shape, item );
     }
 
     /**
@@ -293,18 +300,20 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  and a list of values representing the value of the resulting tensor.
      *
      * @param shape A list of numbers whose integer values will be used to form the shape of the resulting {@link Tsr}.
-     * @param value A list of values which will be used to populate the data array of the resulting {@link Tsr}.
+     * @param items A list of values which will be used to populate the data array of the resulting {@link Tsr}.
      * @param <V> The type parameter of the value list and returned tensor.
      * @return A new {@link Tsr} instance constructed based on the provided shape and value list.
      */
-    static <V> Tsr<V> of( List<? extends Number> shape, List<V> value ) {
+    static <V> Tsr<V> of( List<? extends Number> shape, List<V> items ) {
+        LogUtil.nullArgCheck( shape, "shape", List.class, "Null is not a valid shape!" );
+        LogUtil.nullArgCheck( items, "value", List.class, "Null is not a valid value list!" );
         Class<V> typeClass = (Class<V>) Object.class;
-        if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
+        if ( items.size() > 0 ) typeClass = (Class<V>) items.get(0).getClass();
         return of(
-                DataType.of(typeClass),
-                Shape.of(shape),
-                value
-            );
+                    DataType.of(typeClass),
+                    Shape.of(shape),
+                    items
+                );
     }
 
     /**
@@ -316,18 +325,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  }</pre>
      *
      * @param shape A shape tuple of numbers whose integer values will be used to form the shape of the resulting {@link Tsr}.
-     * @param value A list of values which will be used to populate the data array of the resulting {@link Tsr}.
+     * @param items A list of values which will be used to populate the data array of the resulting {@link Tsr}.
      * @param <V> The type parameter of the value list and returned tensor.
      * @return A new {@link Tsr} instance constructed based on the provided shape and value list.
      */
-    static <V> Tsr<V> of( Shape shape, List<V> value ) {
+    static <V> Tsr<V> of( Shape shape, List<V> items ) {
         Class<V> typeClass = (Class<V>) Object.class;
-        if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
-        return of(
-                DataType.of(typeClass),
-                shape.stream().mapToInt(Number::intValue).toArray(),
-                value
-            );
+        if ( items.size() > 0 ) typeClass = (Class<V>) items.get(0).getClass();
+        return of( DataType.of(typeClass), shape, items );
     }
 
     /**
@@ -335,14 +340,14 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  and a list of values representing the value of the resulting tensor.
      *
      * @param shape An array of integers will be used to form the shape of the resulting {@link Tsr}.
-     * @param value A list of values which will be used to populate the data array of the resulting {@link Tsr}.
+     * @param items A list of values which will be used to populate the data array of the resulting {@link Tsr}.
      * @param <V> The type parameter of the value list and returned tensor.
      * @return A new {@link Tsr} instance constructed based on the provided shape and value list.
      */
-    static <V> Tsr<V> of( int[] shape, List<V> value ) {
+    static <V> Tsr<V> of( int[] shape, List<V> items ) {
         Class<V> typeClass = (Class<V>) Object.class;
-        if ( value.size() > 0 ) typeClass = (Class<V>) value.get(0).getClass();
-        return of( DataType.of(typeClass), shape, value );
+        if ( items.size() > 0 ) typeClass = (Class<V>) items.get(0).getClass();
+        return of( DataType.of(typeClass), shape, items );
     }
 
     /**
@@ -892,6 +897,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A newly created tensor of the provided type, shape and data.
      */
     static <V> Tsr<V> of( DataType<V> dataType, Shape shape, List<V> data ) {
+        LogUtil.nullArgCheck( dataType, "dataType", DataType.class, "Null is not a valid data type!" );
+        LogUtil.nullArgCheck( shape, "shape", Shape.class, "Null is not a valid shape!" );
+        LogUtil.nullArgCheck( data, "data", List.class, "Null is not a valid data object!" );
         return of( dataType, shape, data.toArray() );
     }
 
@@ -1254,7 +1262,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *  {@code Tsr.ofInts().withShape(x,y).all(n)}                           <br><br>
      *  The reasons for this feature is that it greatly improves performance in certain cases.
      *  In essence this feature is a form of lazy loading.
-     *
+     *  <p>
      *  Use {@link MutateTsr#setIsVirtual(boolean)} to "actualize" a "virtual" tensor, and vise versa.
      *
      * @return The truth value determining if this tensor is "virtual" or "actual".
@@ -1550,6 +1558,24 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
 
+    /**
+     *  Configures an {@link Optimizer} for this tensor based on the given {@link OptimizerFactory}
+     *  which will be used to create a new {@link Optimizer} instance specific to this tensor.
+     *  The {@link Optimizer} instance will be attached to this tensor as a component
+     *  and then called to perform the actual optimization when the {@link #applyGradient()} method is called.
+     *  <p>
+     *  Here a simple example of how to use this method:
+     *  <pre>{@code
+     *  var t = Tsr.of( 1.0, 2.0, 3.0 ).set( Optimizer.ADAM );
+     *  }</pre>
+     *  <p>
+     *  As you can see, the {@link Optimizer} interface exposes various types of popular
+     *  optimization algorithm factories which can be used to quickly and conveniently create
+     *  an {@link Optimizer} instance for a particular tensor.
+     *
+     * @param optimizerFactory The {@link OptimizerFactory} which will be used to create a new {@link Optimizer} instance.
+     * @return This tensor instance to allow for method chaining.
+     */
     default Tsr<V> set(OptimizerFactory optimizerFactory) {
         this.set( optimizerFactory.create( (Tsr) this ) );
         return this;
@@ -1636,7 +1662,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
          */
         this.find( JITProp.class ).ifPresent( JITProp::execute );
         // Afterwards the JITProp component is not needed anymore! So we remove it.
-        remove( JITProp.class );
+        this.remove( JITProp.class );
         // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class as key).
         this.find( Tsr.class ).ifPresent( g -> {
                 // If an optimizer is present then we also optimize the gradient first!
@@ -1792,6 +1818,16 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return Neureka.get().backend().getAutogradFunction().minus().call( this, other );
     }
 
+    /**
+     *  This method will create a new {@link Tsr}
+     *  with the provided item subtracted from all elements of this {@link Tsr}.
+     *
+     *  The shapes of this tensor is irrelevant as the provided item will
+     *  simply be broadcast to all items od this tensor, irrespective of any shape.
+     *
+     * @param other The right operand of the subtraction, which is an item of the same type as this tensor.
+     * @return The difference between this instance as the left and the passed item as right operand.
+     */
     default Tsr<V> minus( V other ) {
         LogUtil.nullArgCheck(other, "other", this.getItemType(), "Cannot subtract 'null' from a tensor!");
         return minus(

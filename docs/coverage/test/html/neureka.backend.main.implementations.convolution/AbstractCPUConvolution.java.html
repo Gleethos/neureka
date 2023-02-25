@@ -4,7 +4,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 

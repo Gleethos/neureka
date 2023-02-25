@@ -48,59 +48,61 @@ public final class F32 extends AbstractNumericType&lt;Float, float[], Float, flo
 
     @Override
     public float[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L51">        throw new UnsupportedOperationException(&quot;Not implemented yet!&quot;);</span>
+<span class="fc" id="L51">        return readForeignDataFrom( stream, size );</span>
     }
 
     @Override
     public &lt;T&gt; float[] readAndConvertForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
 <span class="fc" id="L56">        float[] data = new float[size];</span>
-<span class="fc bfc" id="L57" title="All 2 branches covered.">        for ( int i=0; i&lt;size; i++ ) data[ i ] = convertToHolder( iterator.next() );</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) data[ i ] = convertToHolder( iterator.next() );</span>
 <span class="fc" id="L58">        return data;</span>
     }
 
 
     @Override
     public float[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L64">        throw new UnsupportedOperationException(&quot;Not implemented yet!&quot;);</span>
+<span class="fc" id="L64">        float[] data = new float[size];</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) data[ i ] = stream.readFloat();</span>
+<span class="fc" id="L66">        return data;</span>
     }
 
     @Override
     public &lt;T&gt; float[] readForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
-<span class="fc" id="L69">        return readAndConvertForeignDataFrom( iterator, size );</span>
+<span class="fc" id="L71">        return readAndConvertForeignDataFrom( iterator, size );</span>
     }
 
     @Override
     public Float convertToHolder( Object from )
     {
-<span class="fc bfc" id="L75" title="All 2 branches covered.">        if ( Byte.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L76">            return ( (Byte) from ).floatValue();</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L78">            return ( (Integer) from ).floatValue();</span>
-<span class="fc bfc" id="L79" title="All 2 branches covered.">        else if ( Double.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L80">            return ( (Double) from ).floatValue();</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        else if ( Short.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L82">            return ( (Short) from ).floatValue();</span>
-<span class="fc bfc" id="L83" title="All 2 branches covered.">        else if ( Long.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L84">            return ( (Long) from ).floatValue();</span>
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
-<span class="fc" id="L86">            return ( (Float) from );</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if ( Byte.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L78">            return ( (Byte) from ).floatValue();</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L80">            return ( (Integer) from ).floatValue();</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        else if ( Double.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L82">            return ( (Double) from ).floatValue();</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        else if ( Short.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L84">            return ( (Short) from ).floatValue();</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        else if ( Long.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L86">            return ( (Long) from ).floatValue();</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L88">            return ( (Float) from );</span>
         else
-<span class="nc" id="L88">            return null;</span>
+<span class="nc" id="L90">            return null;</span>
     }
 
     @Override
     public float[] convertToHolderArray( Object from ) {
-<span class="nc" id="L93">        throw new UnsupportedOperationException(&quot;Not implemented yet!&quot;);</span>
+<span class="nc" id="L95">        throw new UnsupportedOperationException(&quot;Not implemented yet!&quot;);</span>
     }
 
     @Override
     public Float convertToTarget( Object from ) {
-<span class="nc" id="L98">        return convertToHolder( from );</span>
+<span class="nc" id="L100">        return convertToHolder( from );</span>
     }
 
     @Override
     public float[] convertToTargetArray( Object from ) {
-<span class="fc" id="L103">        return DataConverter.get().convert( from, float[].class );</span>
+<span class="fc" id="L105">        return DataConverter.get().convert( from, float[].class );</span>
     }
 
 

@@ -154,14 +154,54 @@ public interface MutateNda<T>
      */
     <V> Nda<V> toType(Class<V> typeClass);
 
+    /**
+     *  At the heart of every tensor is the {@link Data} object, which holds the actual data array,
+     *  a sequence of values of the same type.
+     *  This method returns the data object of this nd-array.
+     *  <p>
+     *  <b>Warning:</b> This method is not intended to be used for modifying the data array of this nd-array.
+     *  It should be used for reading the data array of this nd-array.
+     *  Modifying the data array of this nd-array can have side effects on other tensors
+     *  because they might share the same data array (the might be slices).
+     *
+     * @return The data object of this nd-array.
+     */
     Data<T> getData();
 
+    /**
+     *  This method returns the data of this nd-array as a Java array of the specified type.
+     *  <p>
+     *
+     *  <b>Warning:</b> This method is not intended to be used for modifying the data array of this nd-array!
+     *
+     * @return The data of this nd-array as a Java array of the specified type.
+     */
     <A> A getDataAs(Class<A> arrayTypeClass);
 
+    /**
+     *  Use this to assign the provided item to all elements of this nd-array!
+     *  This method is an inline operation which changes the underlying data of the nd-array.
+     * @param other The item which ought to be assigned to all elements of this nd-array.
+     * @return This very nd-array to enable method chaining.
+     */
     Nda<T> assign( T other );
 
+    /**
+     *  Use this to assign the provided nd-array to this nd-array!
+     *  This method is an inline operation which changes the underlying data of the nd-array.
+     * @param other The nd-array which ought to be assigned to this nd-array.
+     * @return This very nd-array to enable method chaining.
+     */
     Nda<T> assign( Nda<T> other );
 
+    /**
+     *  Sets the label of this nd-array.
+     *  The label is a human-readable string which can be used to identify this nd-array
+     *  for example in a pretty-printed output.
+     *
+     * @param label The label of this nd-array.
+     * @return This very nd-array to enable method chaining.
+     */
     Nda<T> label( String label );
 
     /**
@@ -221,6 +261,12 @@ public interface MutateNda<T>
      */
     Nda<T> labelAxes( Map<Object, List<Object>> labels );
 
+    /**
+     *  Exposes the {@link Item} interface which allows you to get or set individual nd-array items.
+     *
+     * @param indices The indices of the item to be returned.
+     * @return The item at the specified indices.
+     */
     Item<T> at( int... indices );
 
     /**

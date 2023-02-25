@@ -48,7 +48,7 @@ import java.util.Iterator;
  *  used for handling various numeric types.
  *  Implementations of this interface are utility classes which represent the numeric data types
  *  specified by the class level type parameters, and offer an extensive set of conversion methods for them.
- *
+ * v<p>
  *  Instances of concrete sub-types do not embody data types themselves,
  *  they simply provide standardized methods which handle the type represented by the class.
  *

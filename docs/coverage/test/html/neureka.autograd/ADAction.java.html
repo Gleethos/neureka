@@ -17,7 +17,7 @@ import java.util.Optional;
  *  which may or may not be present for certain operations.
  *  Said derivative must be tracked and flagged as derivative by a {@link GraphNode}
  *  to make sure that it will not be deleted after a forward pass.
- *
+ *  &lt;p&gt;
  * Note: Do not access the {@link GraphNode#getPayload()} of the {@link GraphNode}
  *       passed to implementation of this.
  *       The payload is weakly referenced, meaning that this method can return null!

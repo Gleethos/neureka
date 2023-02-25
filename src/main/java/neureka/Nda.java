@@ -14,7 +14,10 @@ import neureka.view.NdaAsString;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.*;
 
 /**
@@ -409,6 +412,9 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     default Class<V> itemType() { return getItemType(); }
 
+    /**
+     * @return A new nd-array which is a shallow copy of this nd-array but with a different label.
+     */
     Nda<V> withLabel( String label );
 
     /**
@@ -511,7 +517,14 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     default Stream<V> filter( Predicate<V> predicate ) { return stream().filter( predicate ); }
 
     /**
-     *  A convenience method for {@code stream().flatMap( mapper )}.
+     *  A convenience method for {@code nda.stream().flatMap( mapper )},
+     *  which turns this {@link Nda} into a {@link Stream} of its items. <br>
+     *  Here an example of how to use this method : <br>
+     *  <pre>{@code
+     *    var nda = Nda.of( -2, -1, 0, 1, 2 );
+     *    var list = nda.flatMap( i -> Stream.of( i * 2, i * 3 ) ).toList();
+     *    // list = [-4, -6, -2, -3, 0, 0, 2, 3, 4, 6, 6, 9]
+     *  }</pre>
      *
      * @param mapper The mapper to map the items of this {@link Nda}.
      * @return A {@link Stream} of the items in this {@link Nda} which match the predicate.
@@ -587,6 +600,16 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     /**
      *  Iterates over every element of this nd-array, and counts the number of
      *  times the provided lambda matches the items of this array.
+     *  <p>
+     *  Here is an example of counting the number of items in the array that are
+     *  greater than 5 :
+     *  <pre>{@code
+     *    var nda = Nda.of( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+     *    var count = nda.count( i -> i > 5 );
+     *    System.out.println( count ); // prints 5
+     *  }</pre>
+     *
+     *
      * @param predicate The lambda to check each element against.
      * @return The number of items in the nd-array that match the predicate.
      */
@@ -718,7 +741,6 @@ public interface Nda<V> extends NDimensional, Iterable<V>
         return DataConverter.get().convert( getRawItems(), arrayTypeClass );
     }
 
-
     /**
      * Use this to get the items of the underlying {@link Data} buffer
      * of this nd-array as a primitive array
@@ -733,8 +755,6 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     default  <A> A getDataAs( Class<A> arrayTypeClass ) {
         return DataConverter.get().convert( getRawData(), arrayTypeClass );
     }
-
-    // Slicing:
 
     /**
      *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
@@ -896,8 +916,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
 
     /**
      * <p>
-     *     This method is a convenience method for mapping a nd-array to a new type
-     *     based on a provided lambda expression.
+     *     This is a convenience method for mapping a nd-array to a nd-array of new type
+     *     based on a provided target item type and mapping lambda.
      *     Here a simple example:
      * </p>
      * <pre>{@code
@@ -907,9 +927,10 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * <p>
      *     Note: <br>
      *     The provided lambda cannot be executed anywhere else but the CPU.
-     *     This is a problem if this nd-array here lives somewhere other than the JVM.
+     *     This is a problem if this nd-array lives somewhere other than the JVM.
      *     So, therefore, this method will temporally transfer this nd-array from
-     *     where ever it may reside back to the JVM!
+     *     where ever it may reside back to the JVM, execute the mapping lambda, and
+     *     then transfer the result back to the original location.
      * </p>
      * @param typeClass The class of the item type to which the items of this nd-array should be mapped.
      * @param mapper The lambda which maps the items of this nd-array to a new one.
@@ -924,8 +945,8 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     /**
      * <p>
      *     This method is a convenience method for mapping the items of this nd-array to another
-     *     nd-array of the same type based on a provided lambda expression which will be applies
-     *     to all items individually.
+     *     nd-array of the same type based on the provided lambda function, which will be applied
+     *     to all items of this nd-array individually (element-wise).
      * </p>
      *  Here a simple example:
      *  <pre>{@code
@@ -934,6 +955,9 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  }</pre>
      *  Note: <br>
      *  The provided lambda cannot be executed anywhere else but the CPU.
+     *  This is a problem if this nd-array lives somewhere other than the JVM.
+     *  So, therefore, this method will temporally transfer this nd-array from where ever it may reside
+     *  back to the JVM, execute the mapping lambda, and then transfer the result back to the original location.
      *
      * @param mapper The lambda which maps the items of this nd-array to a new one.
      * @return A new nd-array of type {@code V}.
@@ -967,7 +991,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  Only use this if you know what you are doing and
      *  performance is critical! <br>
      *  </b>
-     *  (Like custom backend extensions for example)
+     *  (Like in custom backend extensions for example)
      *
      * @return The unsafe API exposes methods for mutating the state of the tensor.
      */
@@ -988,6 +1012,15 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      */
     default MutateNda<V> mut() { return getMut(); }
 
+    /**
+     *  A wither method which creates a new nd-array instance with the same underlying data
+     *  but with a different shape.
+     *  The new shape must have the same number of elements as the original shape. <br>
+     *  (Note: the underlying nd-array will not be attached to any kind of computation graph)
+     *  <br>
+     * @param shape The new shape of the returned nd-array.
+     * @return A new nd-array instance with the same underlying data (~shallow copy) but with a different shape.
+     */
     Nda<V> withShape( int... shape );
 
     /**
@@ -1006,12 +1039,83 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     interface Item<V>
     {
         /**
-         *  Get the value at the targeted position.
+         *  Get the value at the targeted position or throw an exception if the item does not exist.
+         *
          * @return The value at the targeted position.
          */
-        V get();
+        default V get() {
+            V item = orElseNull();
+            if ( item == null )
+                throw new IllegalArgumentException("No item at the targeted position!");
+            return item;
+        }
+
+        /**
+         *  Get the value at the targeted position or return the provided default value if the item does not exist.
+         *
+         * @param defaultValue The default value to return if the item does not exist.
+         * @return The value at the targeted position or the provided default value.
+         * @throws IllegalArgumentException If the provided default value is {@code null}.
+         */
+        default V orElse( V defaultValue ) {
+            if ( defaultValue == null )
+                throw new IllegalArgumentException("The provided default value must not be null! (Use orElseNull() instead)");
+            V item = orElseNull();
+            return item == null ? defaultValue : item;
+        }
+
+        /**
+         *  Get the value at the targeted position or return {@code null} if the item does not exist.
+         *
+         * @return The value at the targeted position or {@code null}.
+         */
+        V orElseNull();
+
+        /**
+         *  Converts this item into an optional value.
+         *  If the item exists, the resulting optional will contain the value.
+         *  Otherwise, the resulting optional will be empty.
+         * @return An optional value.
+         */
+        default Optional<V> toOptional() {
+            V item = orElseNull();
+            return item == null ? Optional.empty() : Optional.of( item );
+        }
+
+        /**
+         *  Maps this item to an optional value based on the provided lambda.
+         *  The lambda will be executed if the item exists.
+         *  If the lambda returns {@code null} the resulting optional will be empty.
+         *  Otherwise, the resulting optional will contain the value returned by the lambda.
+         *
+         *  @param mapper The lambda which maps the item to an optional value.
+         *  @return An optional value based on the provided lambda.
+         */
+        default Optional<V> map( Function<V,V> mapper ) {
+            V item = orElseNull();
+            return item == null ? Optional.empty() : Optional.ofNullable( mapper.apply( item ) );
+        }
+
+        /**
+         * @return {@code true} if the item exists, {@code false} otherwise.
+         */
+        default boolean exists() {
+            return orElseNull() != null;
+        }
+
+        /**
+         * @return {@code true} if the item does not exist, {@code false} otherwise.
+         */
+        default boolean doesNotExist() {
+            return orElseNull() == null;
+        }
     }
 
+    /**
+     *  Use this to turn this nd-array into a {@link String} instance based on the provided
+     *  {@link NDPrintSettings} instance, which allows you to configure things
+     *  like the number of chars per entry, delimiters, the number of items per line, etc.
+     */
     default String toString( NDPrintSettings config ) {
         return NdaAsString.representing( this ).withConfig( config ).toString();
     }

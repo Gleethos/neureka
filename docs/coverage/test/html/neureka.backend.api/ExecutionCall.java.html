@@ -37,7 +37,7 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.calculus.args.Arg;
+import neureka.math.args.Arg;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ import java.util.stream.Stream;
 /**
  *  This class is a simple container holding references to a targeted
  *  {@link Device}, {@link Operation} and maybe some case specific
- *  meta {@link neureka.calculus.args.Args} needed to execute
+ *  meta {@link neureka.math.args.Args} needed to execute
  *  an array of input tensors which are also wrapped by this. &lt;br&gt;
  *  &lt;br&gt;
  *  This class is technically immutable, however the contents

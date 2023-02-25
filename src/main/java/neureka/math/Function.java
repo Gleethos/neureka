@@ -58,7 +58,7 @@ import java.util.List;
  *  represents the second most important feature of this library.
  *  Instances of {@link Function} implementations form an abstract syntax tree which is being built
  *  from a provided expression {@link String} containing function syntax.
- *
+ *  <p>
  *  Just like functions in the mathematical sense, implementations of this
  *  interface receive a fixed number of inputs.
  *  Within the expression String needed for instantiation, these inputs are
@@ -165,25 +165,89 @@ public interface Function
                         .count();
     }
 
+    /**
+     *  Invokes this {@link Function} with the provided scalar as a single input and returns the scalar result.
+     *  This method is functionally equivalent to {@link #invoke(double)} or
+     *  calling {@link #call(double...)} or {@link #invoke(double...)} with a single element array.
+     *
+     * @param input The scalar input, a single double value.
+     * @return The scalar result, a single double value.
+     */
     default double call( double input )   { return call( new double[]{input} ); }
 
+    /**
+     *  Invokes this {@link Function} with the provided scalar as a single input and returns the scalar result.
+     *  This method is functionally equivalent to {@link #call(double)} or
+     *  calling {@link #invoke(double...)} or {@link #call(double...)} with a single element array.
+     *
+     * @param input The scalar input, a single double value.
+     * @return The scalar result, a single double value.
+     */
     default double invoke( double input ) { return call( input ); }
 
+    /**
+     *  Invokes this {@link Function} with the provided array of inputs ad an index for input dependent indexing.
+     *  This method is functionally equivalent to {@link #invoke(double[], int)}.
+     *
+     *  @param inputs The array of inputs.
+     *  @param j The index for input dependent indexing.
+     *  @return The scalar result, a single double value.
+     */
     double call( double[] inputs, int j );
 
+    /**
+     *  Invokes this {@link Function} with the provided array of inputs ad an index for input dependent indexing.
+     *  This method is functionally equivalent to {@link #call(double[], int)}.
+     *
+     *  @param inputs The array of inputs.
+     *  @param j The index for input dependent indexing.
+     *  @return The scalar result, a single double value.
+     */
     default double invoke( double[] inputs, int j ) { return call( inputs, j ); }
 
+    /**
+     *  Invokes this {@link Function} with the provided array of inputs.
+     *  This method is functionally equivalent to {@link #invoke(double[])}.
+     *
+     *  @param inputs A double array of inputs.
+     *  @return The scalar result, a single double value.
+     */
     default double call( double... inputs )   { return call( inputs, -1 ); }
 
+    /**
+     *  Invokes this {@link Function} with the provided array of inputs.
+     *  This method is functionally equivalent to {@link #call(double[])}.
+     *
+     *  @param inputs The double array of inputs.
+     *  @return The scalar double result, a single double value.
+     */
     default double invoke( double... inputs ) { return call( inputs ); }
 
+    /**
+     *  Calculates the derivative of a particular input with respect to the output of this {@link Function}
+     *  based on the provided array of inputs, an index targeting the input to be derived
+     *  and an index for input dependent indexing.
+     *
+     *  @param inputs The double array of inputs.
+     *  @param index The index of the input to be derived.
+     *  @param j The index for input dependent indexing.
+     *  @return The scalar double result, a single double value.
+     */
     double derive( double[] inputs, int index, int j );
 
+    /**
+     *  Calculates the derivative of a particular input with respect to the output of this {@link Function}
+     *  based on the provided array of inputs and an index targeting the input to be derived.
+     *
+     *  @param inputs The double array of inputs.
+     *  @param index The index of the input to be derived.
+     *  @return The scalar double result, a single double value.
+     */
     double derive( double[] inputs, int index );
 
     /**
-     *  Use this for more control over the execution, which is often
-     *  needed when interfacing with more complex types of operations, requiring more context information.
+     *  Use this for more control over the execution, which is especially useful
+     *  when interfacing with more complex types of operations, requiring more context information.
      *
      * @param call A wrapper for input tensors, a target device and additional meta-arguments.
      * @return The resulting tensor produced by this function executing the provided call.
@@ -194,13 +258,23 @@ public interface Function
         return call( call.get() );
     }
 
+    /**
+     *  Use this for more control over the execution, which is very helpful
+     *  when interfacing with more complex types of operations, requiring more context information.
+     *
+     * @param call A wrapper for input tensors, a target device and additional meta-arguments.
+     * @return The resulting tensor produced by this function executing the provided call.
+     * @param <T> The type parameter of the tensors wrapped by the provided call.
+     * @param <D> The type parameter of the device targeted by the provided call.
+     */
     default <T, D extends Device<T>> Tsr<T> call( Call<D> call ) {
         return (Tsr<T>) execute( call ).getMut().setIsIntermediate(false);
     }
 
     /**
-     *  Use this for more control over the execution, which is often
-     *  needed when interfacing with more complex types of operations, requiring more context information.
+     *  Use this to pass more context information for execution of input tensors. This is
+     *  important when interfacing with more complex types of operations, requiring more fine-grained control
+     *  over the execution.
      *  This method is functionally identically to {@link #call(Call.Builder)}, however it is best used
      *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
      *
@@ -213,6 +287,8 @@ public interface Function
 
     /**
      *  <b>Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.</b>
+     *  Use this to pass more context information for execution of input tensors. This is important when
+     *  interfacing with more complex types of operations, requiring more fine-grained control over the execution.
      */
     default Tsr<?> execute( Call<?> call ) {
         /*
@@ -454,7 +530,13 @@ public interface Function
      * @param <T> The type parameter of the tensors passed to and returned by this function.
      */
     default <T> Tsr<T> derive( List<Tsr<T>> inputs, int index ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index ); }
-    
+
+    /**
+     *  Turns this function into a string representation which can be used to
+     *  reconstruct this function or combine it with other function strings to parse entirely new functions...
+     *
+     * @return The string representation of this function.
+     */
     String toString();
 
     /**

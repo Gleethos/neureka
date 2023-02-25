@@ -4,7 +4,7 @@ import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.ScalarSumAlgorithm;
 import neureka.backend.main.algorithms.SumAlgorithm;
-import neureka.calculus.Function;
+import neureka.math.Function;
 
 public class Sum extends AbstractOperation
 {

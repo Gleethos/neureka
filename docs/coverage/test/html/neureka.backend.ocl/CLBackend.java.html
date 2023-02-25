@@ -22,7 +22,7 @@ import neureka.backend.main.operations.operator.*;
 import neureka.backend.main.operations.other.AssignLeft;
 import neureka.backend.main.operations.other.Randomization;
 import neureka.backend.main.operations.other.Sum;
-import neureka.calculus.assembly.ParseUtil;
+import neureka.math.parsing.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
 import neureka.devices.opencl.OpenCLDevice;
@@ -45,7 +45,7 @@ import static org.jocl.CL.clGetPlatformIDs;
  *  extends a given backend context instance for additional functionality, which in
  *  this case is the OpenCL backend storing platform and device information.
  *  {@link BackendContext}s are thread local states
- *  used for managing {@link neureka.backend.api.Operation}, {@link neureka.calculus.Function}
+ *  used for managing {@link neureka.backend.api.Operation}, {@link neureka.math.Function}
  *  as well as {@link Component} implementation instances like this one.
  *  A given state might not be compatible with the concepts introduced in other contexts
  *  which is why it makes sense to have separate &quot;worlds&quot; with potential different operations...
@@ -164,7 +164,7 @@ public final class CLBackend implements BackendExtension
 <span class="fc" id="L164">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
 <span class="fc" id="L165">                                            .max()</span>
 <span class="fc" id="L166">                                            .orElse(0);</span>
-<span class="fc bfc" id="L167" title="All 2 branches covered.">                if ( similarity &gt; score ) {</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">                if ( similarity &gt; score ) {</span>
 <span class="fc" id="L168">                    result = d;</span>
 <span class="fc" id="L169">                    score = similarity;</span>
 <span class="fc bfc" id="L170" title="All 2 branches covered.">                    if ( score == 1 )</span>

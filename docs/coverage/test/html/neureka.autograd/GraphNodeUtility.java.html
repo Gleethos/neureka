@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GraphNodeUtility.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">GraphNodeUtility.java</span></div><h1>GraphNodeUtility.java</h1><pre class="source lang-java linenums">package neureka.autograd;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.AutoDiffMode;
+import neureka.devices.Device;
+
+/**
+ *  This class exists in order to allow for {@link GraphNode}s to be instantiated
+ *  with final field variables by collecting them when defined
+ *  within constructor methods...
+ */
+final class GraphNodeUtility {
+
+    private GraphNodeUtility() {}
+
+    /**
+     *  Evaluates and sets the auto-grad/auto-differentiation mode:
+     *  A positive value means that the AD-procedure will be forward mode AD,
+     *  whereas a negative value is backward mode AD.
+     *  If the resulting mode equals 0 then this means that no auto differentiation is needed.
+     *  This class tries to optimize the calculation of partial derivatives by forward propagating them
+     *  for as long as only a single input for every computation graph node requires gradients,
+     *  and they all are differentiable!
+     *
+     */
+    public static &lt;V&gt; int modeOf( AutoDiffMode adMode, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
+    {
+<span class="fc" id="L29">        Tsr&lt;V&gt;[] inputs = (Tsr&lt;V&gt;[]) call.inputs();</span>
+<span class="fc" id="L30">        int resultMode = 0;</span>
+<span class="fc" id="L31">        int[] modes = new int[ inputs.length ];</span>
+<span class="fc" id="L32">        int inputMode = 0;</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
+<span class="fc" id="L34">            GraphNode&lt;V&gt; node = inputs[ i ].getGraphNode().orElseThrow(IllegalStateException::new); // Not null checked in constructor!</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            inputMode += ( modes[ i ] != 0) ? 1 : 0;</span>
+        }
+<span class="fc bfc" id="L38" title="All 4 branches covered.">        if ( inputMode == 1 &amp;&amp; adMode.allowsForward() ) { // Convolution and reshaping prohibit forward AutoDiff</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
+<span class="fc" id="L40">                resultMode +=</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">                        ( modes[ i ] == 0 )</span>
+<span class="fc" id="L42">                                ? 0</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                                : ( modes[ i ] &lt; 0 ) ? 1 : modes[ i ] + 1;</span>
+            }
+        } // Reverse mode auto-differentiation :
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        else if ( adMode.allowsBackward() ) resultMode = -inputMode;</span>
+
+<span class="fc" id="L48">        return resultMode;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

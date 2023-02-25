@@ -53,7 +53,7 @@ import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.ocl.CLBackend;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
@@ -294,7 +294,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      * @param source The source of the kernel which ought to be compiled.
      * @return This very instance in order to enable the factory pattern.
      */
-    public synchronized OpenCLDevice compileAdHocKernel(String name, String source) {
+    public synchronized OpenCLDevice compileAdHocKernel( String name, String source ) {
 <span class="fc bfc" id="L298" title="All 2 branches covered.">        if (this.hasAdHocKernel(name)) {</span>
 <span class="fc" id="L299">            cl_ad_hoc adHoc = _kernelCache.get(name);</span>
 <span class="fc" id="L300">            String message =</span>
@@ -373,7 +373,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     }
 
     @Override
-    public Operation optimizedOperationOf(Function function, String name) {
+    public Operation optimizedOperationOf( Function function, String name ) {
 <span class="fc" id="L377">        return new CLFunctionCompiler( this, function, name ).optimize();</span>
     }
 
@@ -427,7 +427,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      *
      * @param tensor The tensor whose data ought to be stored.
      */
-    private &lt;T extends Number&gt; void _store(Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent ) {
+    private &lt;T extends Number&gt; void _store( Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent ) {
 <span class="fc bfc" id="L431" title="All 2 branches covered.">        if (!parent.isOutsourced()) throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
 <span class="fc" id="L432">        _add(</span>
 <span class="fc" id="L433">            tensor.getMut().upcast(Number.class),</span>
@@ -496,7 +496,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 
 <span class="fc" id="L497">        _tensors.add( tensor );</span>
 
-<span class="fc" id="L499">        tensor.getMut().setData( _dataArrayOf(newClt) );</span>
+<span class="fc" id="L499">        tensor.getMut().setData( _dataArrayOf(newClt, (DataType&lt;Number&gt;) _dataTypeOf(newClt)) );</span>
 <span class="fc" id="L500">        migration.run();</span>
 
         // When tensors get stored on this device,
@@ -505,7 +505,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 <span class="fc" id="L505">            tensor.getMut().toType(F32.class);</span>
 <span class="fc" id="L506">    }</span>
 
-    private cl_tsr.cl_config _writeNDConfig(NDConfiguration ndc) {
+    private cl_tsr.cl_config _writeNDConfig( NDConfiguration ndc ) {
 
 <span class="fc" id="L510">        cl_tsr.cl_config clf = new cl_tsr.cl_config();</span>
 
@@ -616,17 +616,17 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 <span class="fc" id="L616">    }</span>
 
     @Override
-    public neureka.Data&lt;Number&gt; allocate( DataType&lt;?&gt; dataType, int size ) {
+    public &lt;T extends Number&gt;  neureka.Data&lt;T&gt; allocate(DataType&lt;T&gt; dataType, NDConfiguration ndc ) {
 <span class="nc" id="L620">        throw new IllegalStateException(&quot;Not implemented yet!&quot;); // Currently, tensors can only be initialized on the heap.</span>
     }
 
     @Override
-    public &lt;V&gt; neureka.Data&lt;Number&gt; allocate( DataType&lt;V&gt; dataType, int size, V initialValue ) {
+    public &lt;T extends Number&gt;  neureka.Data&lt;T&gt; allocateFromOne(DataType&lt;T&gt; dataType, NDConfiguration ndc, T initialValue ) {
 <span class="nc" id="L625">        throw new IllegalStateException(&quot;Not implemented yet!&quot;); // Currently, tensors can only be initialized on the heap.</span>
     }
 
     @Override
-    public neureka.Data&lt;Number&gt; allocate( Object jvmData, int desiredSize ) {
+    public &lt;T extends Number&gt; neureka.Data&lt;T&gt; allocateFromAll(DataType&lt;T&gt; dataType, NDConfiguration ndc, Object jvmData) {
 <span class="nc" id="L630">        throw new IllegalStateException(&quot;Not implemented yet!&quot;); // Currently, tensors can only be initialized on the heap.</span>
     }
 
@@ -640,16 +640,16 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 <span class="fc" id="L640">        LogUtil.nullArgCheck( rawData, &quot;rawData&quot;, Object.class );</span>
 <span class="pc bpc" id="L641" title="1 of 2 branches missed.">        if ( rawData instanceof cl_tsr ) {</span>
 <span class="fc" id="L642">            cl_dtype type = ((cl_tsr) rawData).dtype;</span>
-<span class="pc bpc" id="L643" title="6 of 7 branches missed.">            switch ( type ) {</span>
+<span class="pc bpc" id="L643" title="1 of 7 branches missed.">            switch ( type ) {</span>
 <span class="fc" id="L644">                case F32: return DataType.of( Float.class );</span>
-<span class="nc" id="L645">                case F64: return DataType.of( Double.class );</span>
+<span class="fc" id="L645">                case F64: return DataType.of( Double.class );</span>
                 case I32: case U32:
-<span class="nc" id="L647">                    return DataType.of( Integer.class );</span>
-<span class="nc" id="L648">                case I64: return DataType.of( Long.class );</span>
+<span class="fc" id="L647">                    return DataType.of( Integer.class );</span>
+<span class="fc" id="L648">                case I64: return DataType.of( Long.class );</span>
                 case I16: case U16:
-<span class="nc" id="L650">                    return DataType.of( Short.class );</span>
+<span class="fc" id="L650">                    return DataType.of( Short.class );</span>
                 case I8: case U8:
-<span class="nc" id="L652">                    return DataType.of( Byte.class );</span>
+<span class="fc" id="L652">                    return DataType.of( Byte.class );</span>
 <span class="nc" id="L653">                default: throw new IllegalStateException(&quot;Unknown OpenCL data type!&quot;);</span>
             }
         }
@@ -678,7 +678,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     protected final &lt;T extends Number&gt; void _swap(Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement) {
 <span class="nc" id="L679">        cl_tsr&lt;Number, T&gt; clTsr = former.getMut().getData().getRef( cl_tsr.class);</span>
 <span class="nc" id="L680">        former.getMut().setData(null);</span>
-<span class="nc" id="L681">        replacement.getMut().setData( _dataArrayOf(clTsr) );</span>
+<span class="nc" id="L681">        replacement.getMut().setData( _dataArrayOf(clTsr, (DataType&lt;T&gt;) _dataTypeOf(clTsr)) );</span>
 <span class="nc" id="L682">        _tensors.remove(former);</span>
 <span class="nc" id="L683">        _tensors.add( replacement.getMut().upcast(Number.class) );</span>
 <span class="nc" id="L684">    }</span>

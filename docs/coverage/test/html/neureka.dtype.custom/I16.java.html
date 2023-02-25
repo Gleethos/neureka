@@ -49,7 +49,7 @@ public final class I16 extends AbstractNumericType&lt;Short, short[], Short, sho
 
     @Override
     public short[] readAndConvertForeignDataFrom(DataInput stream, int size ) throws IOException {
-<span class="nc" id="L52">        return _readData( stream, size );</span>
+<span class="fc" id="L52">        return _readData( stream, size );</span>
     }
 
     @Override
@@ -103,13 +103,9 @@ public final class I16 extends AbstractNumericType&lt;Short, short[], Short, sho
     }
 
     private short[] _readData( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L106">        short[] data = new short[size];</span>
-<span class="nc" id="L107">        byte[] bytes = new byte[ this.numberOfBytes() ];</span>
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        for ( int i=0; i&lt;size; i++ ) {</span>
-<span class="nc" id="L109">            stream.readFully( bytes );</span>
-<span class="nc" id="L110">            data[ i ] = foreignHolderBytesToTarget( bytes );</span>
-        }
-<span class="nc" id="L112">        return data;</span>
+<span class="fc" id="L106">        short[] data = new short[size];</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) data[ i ] = stream.readShort();</span>
+<span class="fc" id="L108">        return data;</span>
     }
 
 }

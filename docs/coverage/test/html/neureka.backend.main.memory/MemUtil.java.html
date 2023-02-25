@@ -43,9 +43,9 @@ public class MemUtil {
 <span class="fc bfc" id="L43" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : tensors ) {</span>
                 // Tensors flagged as 'intermediate' will automatically be deleted!
 <span class="pc bpc" id="L45" title="1 of 4 branches missed.">                if ( !t.isDeleted() &amp;&amp; t.isIntermediate() ) {</span>
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">                    if (</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">                    if (</span>
 <span class="fc" id="L47">                        t.getGraphNode()</span>
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                        .map(n-&gt;!n.isUsedAsDerivative())</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                        .map(n-&gt;!n.isUsedAsDerivative())</span>
 <span class="fc" id="L49">                        .orElse(true) // No graph, we can delete it!</span>
                     )
 <span class="fc" id="L51">                        t.mut().delete();</span>

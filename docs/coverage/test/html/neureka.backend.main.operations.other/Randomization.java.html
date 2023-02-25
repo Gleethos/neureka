@@ -7,12 +7,9 @@ import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.ElementwiseAlgorithm;
-import neureka.backend.main.implementations.elementwise.CLRandomization;
 import neureka.backend.main.implementations.elementwise.CPURandomization;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.devices.host.CPU;
-import neureka.devices.opencl.OpenCLDevice;
+import neureka.math.Function;
+import neureka.math.args.Arg;
 import neureka.dtype.NumericType;
 
 import java.util.Arrays;
@@ -30,54 +27,54 @@ public class Randomization extends AbstractOperation
 {
     public Randomization()
     {
-<span class="fc" id="L33">        super(</span>
+<span class="fc" id="L30">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L35">                .identifier(       &quot;random&quot;   )</span>
-<span class="fc" id="L36">                .operator(         &quot;rand&quot;     )</span>
-<span class="fc" id="L37">                .arity(            1          )</span>
-<span class="fc" id="L38">                .isOperator(       true       )</span>
-<span class="fc" id="L39">                .isIndexer(        false      )</span>
-<span class="fc" id="L40">                .isDifferentiable( false      )</span>
-<span class="fc" id="L41">                .isInline(         true       )</span>
+<span class="fc" id="L32">                .identifier(       &quot;random&quot;   )</span>
+<span class="fc" id="L33">                .operator(         &quot;rand&quot;     )</span>
+<span class="fc" id="L34">                .arity(            1          )</span>
+<span class="fc" id="L35">                .isOperator(       true       )</span>
+<span class="fc" id="L36">                .isIndexer(        false      )</span>
+<span class="fc" id="L37">                .isDifferentiable( false      )</span>
+<span class="fc" id="L38">                .isInline(         true       )</span>
         );
 
-<span class="fc" id="L44">        setAlgorithm(</span>
+<span class="fc" id="L41">        setAlgorithm(</span>
             new ElementwiseAlgorithm()
-<span class="fc" id="L46">                .setIsSuitableFor(</span>
-<span class="fc" id="L47">                    call -&gt; call.validate()</span>
-<span class="fc" id="L48">                            .allNotNull( t -&gt;</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">                                t.getDataType().typeClassImplements(NumericType.class)</span>
+<span class="fc" id="L43">                .setIsSuitableFor(</span>
+<span class="fc" id="L44">                    call -&gt; call.validate()</span>
+<span class="fc" id="L45">                            .allNotNull( t -&gt;</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">                                t.getDataType().typeClassImplements(NumericType.class)</span>
                                     ||
-<span class="fc bfc" id="L51" title="All 2 branches covered.">                                t.itemType() == Character.class</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                                t.itemType() == Character.class</span>
                                     ||
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                                t.itemType() == Boolean.class</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                                t.itemType() == Boolean.class</span>
                             )
-<span class="fc" id="L55">                            .basicSuitability()</span>
+<span class="fc" id="L52">                            .basicSuitability()</span>
                 )
-<span class="fc" id="L57">                .setAutogradModeFor( call -&gt; AutoDiffMode.NOT_SUPPORTED)</span>
-<span class="fc" id="L58">                .setExecution( (caller, call) -&gt; Result.of(AbstractDeviceAlgorithm.prepareAndExecute(call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))</span>
-<span class="fc" id="L59">                .setCallPreparation( call -&gt;</span>
+<span class="fc" id="L54">                .setAutogradModeFor( call -&gt; AutoDiffMode.NOT_SUPPORTED)</span>
+<span class="fc" id="L55">                .setExecution( (caller, call) -&gt; Result.of(AbstractDeviceAlgorithm.prepareAndExecute(call, AbstractDeviceAlgorithm::executeDeviceAlgorithm)).withAutoDiff( FallbackAlgorithm::ADAction ))</span>
+<span class="fc" id="L56">                .setCallPreparation( call -&gt;</span>
                 {
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                    if ( call.input( 0 ) == null )</span>
-<span class="nc" id="L62">                        call = call.withInputAt( 0, call.input( 1 ) );</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                    if ( call.input( 0 ) == null )</span>
+<span class="nc" id="L59">                        call = call.withInputAt( 0, call.input( 1 ) );</span>
 
-<span class="fc" id="L64">                    call.input( 0 ).mut().incrementVersion(call);</span>
+<span class="fc" id="L61">                    call.input( 0 ).mut().incrementVersion(call);</span>
 
-<span class="fc" id="L66">                    int hash = Arrays.hashCode( call.input( 0 ).getNDConf().shape() );</span>
-<span class="fc" id="L67">                    Arg.Seed seed = call.get(Arg.Seed.class);</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">                    if ( seed != null ) seed = Arg.Seed.of( CPURandomization.initialScramble(seed.get() + hash) );</span>
-<span class="fc" id="L69">                    else seed = Arg.Seed.of( CPURandomization.initialScramble(hash) );</span>
+<span class="fc" id="L63">                    int hash = Arrays.hashCode( call.input( 0 ).getNDConf().shape() );</span>
+<span class="fc" id="L64">                    Arg.Seed seed = call.get(Arg.Seed.class);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                    if ( seed != null ) seed = Arg.Seed.of( CPURandomization.initialScramble(seed.get() + hash) );</span>
+<span class="fc" id="L66">                    else seed = Arg.Seed.of( CPURandomization.initialScramble(hash) );</span>
 
-<span class="fc" id="L71">                    return call.withArgs(seed);</span>
+<span class="fc" id="L68">                    return call.withArgs(seed);</span>
                 })
-<span class="fc" id="L73">                .buildFunAlgorithm()</span>
+<span class="fc" id="L70">                .buildFunAlgorithm()</span>
         );
 
-<span class="fc" id="L76">    }</span>
+<span class="fc" id="L73">    }</span>
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L80">        return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L77">        return src[ 0 ].call( inputs, j );</span>
     }
 
 }

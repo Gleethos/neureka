@@ -5,11 +5,11 @@ import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.dtype.DataType;
+import neureka.math.args.Arg;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -30,14 +30,13 @@ import java.util.stream.IntStream;
      *  in the making...
      */
     public interface API {
-        void   setType( DataType&lt;?&gt; type );
         void   setConf( NDConfiguration conf );
         void   setData( Data&lt;?&gt; o );
         void   setIsVirtual(  boolean isVirtual );
     }
 
     private final API _API;
-    private final Device&lt;?&gt; _targetDevice;
+    private final Device&lt;Object&gt; _targetDevice;
     private final NDConstructor _ndConstructor;
 
     /**
@@ -46,13 +45,13 @@ import java.util.stream.IntStream;
      * @param ndConstructor A producer of the {@link NDConfiguration} interface implementation.
      * @param API An implementation of the {@link API} interface.
      */
-<span class="fc" id="L49">    public TsrConstructor( Device&lt;?&gt; targetDevice, NDConstructor ndConstructor, API API ) {</span>
-<span class="fc" id="L50">        LogUtil.nullArgCheck( targetDevice, &quot;targetDevice&quot;, Device.class, &quot;Cannot construct a tensor without target device.&quot; );</span>
-<span class="fc" id="L51">        LogUtil.nullArgCheck( ndConstructor, &quot;ndConstructor&quot;, NDConstructor.class, &quot;Cannot construct tensor without shape information.&quot; );</span>
-<span class="fc" id="L52">        _targetDevice = targetDevice;</span>
-<span class="fc" id="L53">        _ndConstructor = ndConstructor;</span>
-<span class="fc" id="L54">        _API = API;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L48">    public TsrConstructor( Device&lt;?&gt; targetDevice, NDConstructor ndConstructor, API API ) {</span>
+<span class="fc" id="L49">        LogUtil.nullArgCheck( targetDevice, &quot;targetDevice&quot;, Device.class, &quot;Cannot construct a tensor without target device.&quot; );</span>
+<span class="fc" id="L50">        LogUtil.nullArgCheck( ndConstructor, &quot;ndConstructor&quot;, NDConstructor.class, &quot;Cannot construct tensor without shape information.&quot; );</span>
+<span class="fc" id="L51">        _targetDevice = (Device&lt;Object&gt;) targetDevice;</span>
+<span class="fc" id="L52">        _ndConstructor = ndConstructor;</span>
+<span class="fc" id="L53">        _API = API;</span>
+<span class="fc" id="L54">    }</span>
 
     /**
      *  Constructs the tensor without any initial {@link Data}.
@@ -60,113 +59,105 @@ import java.util.stream.IntStream;
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
      */
-    public void newUnpopulated(
+    void unpopulated(
             boolean makeVirtual, boolean autoAllocate, DataType&lt;?&gt; type
     ) {
-<span class="fc" id="L66">        _API.setType( type );</span>
-<span class="fc" id="L67">        _API.setIsVirtual( makeVirtual );</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        if ( autoAllocate )</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">            _API.setData( _targetDevice.allocate( type, makeVirtual ? 1 : _ndConstructor.getSize() ) );</span>
-
-<span class="fc" id="L71">        _API.setConf( _ndConstructor.produceNDC( makeVirtual ) );</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L65">        _API.setIsVirtual( makeVirtual );</span>
+<span class="fc" id="L66">        NDConfiguration ndc = _ndConstructor.produceNDC( makeVirtual );</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if ( autoAllocate ) _API.setData( _targetDevice.allocate( type, ndc ) );</span>
+<span class="fc" id="L68">        _API.setConf( ndc );</span>
+<span class="fc" id="L69">    }</span>
 
     public void constructTrusted(
-            DataType&lt;?&gt; dataType,
             Data&lt;?&gt; data
     ) {
-<span class="fc" id="L78">        _API.setType( dataType );</span>
-<span class="fc" id="L79">        _API.setData( data );</span>
-<span class="fc" id="L80">        _API.setConf( _ndConstructor.produceNDC( false ) );</span>
-<span class="fc" id="L81">    }</span>
+<span class="fc" id="L74">        _API.setData( data );</span>
+<span class="fc" id="L75">        _API.setConf( _ndConstructor.produceNDC( false ) );</span>
+<span class="fc" id="L76">    }</span>
 
     public void tryConstructing(
         DataType&lt;?&gt; dataType,
         Object data
     ) {
-<span class="fc" id="L87">        LogUtil.nullArgCheck( _ndConstructor, &quot;ndConstructor&quot;, NDConstructor.class );</span>
-<span class="fc" id="L88">        LogUtil.nullArgCheck( _ndConstructor.getShape(), &quot;shape&quot;, int[].class );</span>
-<span class="fc" id="L89">        LogUtil.nullArgCheck( dataType, &quot;dataType&quot;, DataType.class );</span>
-<span class="fc" id="L90">        LogUtil.nullArgCheck( data, &quot;data&quot;, Object.class );</span>
+<span class="fc" id="L82">        LogUtil.nullArgCheck( _ndConstructor, &quot;ndConstructor&quot;, NDConstructor.class );</span>
+<span class="fc" id="L83">        LogUtil.nullArgCheck( _ndConstructor.getShape(), &quot;shape&quot;, int[].class );</span>
+<span class="fc" id="L84">        LogUtil.nullArgCheck( dataType, &quot;dataType&quot;, DataType.class );</span>
+<span class="fc" id="L85">        LogUtil.nullArgCheck( data, &quot;data&quot;, Object.class );</span>
 
-<span class="fc" id="L92">        int size = _ndConstructor.getSize();</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        if ( data instanceof List&lt;?&gt; ) {</span>
-<span class="fc" id="L94">            List&lt;?&gt; range = (List&lt;?&gt;) data;</span>
-<span class="fc" id="L95">            data = range.toArray();// TODO: This is probably wrong!</span>
-        }
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        if ( data instanceof Object[] )</span>
-<span class="fc" id="L98">            data = _autoConvertAndOptimizeObjectArray( (Object[]) data, dataType, size );</span>
+<span class="fc" id="L87">        int size = _ndConstructor.getSize();</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if ( data instanceof Object[] )</span>
+<span class="fc" id="L89">            data = _autoConvertAndOptimizeObjectArray( (Object[]) data, dataType, size );</span>
 
-<span class="fc bfc" id="L100" title="All 2 branches covered.">        boolean isDefinitelyScalarValue = ( dataType == DataType.of( data.getClass() ) );</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        boolean isDefinitelyScalarValue = ( dataType == DataType.of( data.getClass() ) );</span>
 
-<span class="fc bfc" id="L102" title="All 4 branches covered.">        if ( data instanceof Number &amp;&amp; !isDefinitelyScalarValue ) {</span>
-<span class="fc" id="L103">            data = DataConverter.get().convert( data, dataType.getItemTypeClass() );</span>
-<span class="fc" id="L104">            isDefinitelyScalarValue = true;</span>
+<span class="fc bfc" id="L93" title="All 4 branches covered.">        if ( data instanceof Number &amp;&amp; !isDefinitelyScalarValue ) {</span>
+<span class="fc" id="L94">            data = DataConverter.get().convert( data, dataType.getItemTypeClass() );</span>
+<span class="fc" id="L95">            isDefinitelyScalarValue = true;</span>
         }
 
-<span class="fc bfc" id="L107" title="All 2 branches covered.">        if ( isDefinitelyScalarValue ) // This means that &quot;data&quot; is a single value!</span>
-<span class="pc bpc" id="L108" title="1 of 2 branches missed.">            if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if ( isDefinitelyScalarValue ) // This means that &quot;data&quot; is a single value!</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">            if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;</span>
 
-<span class="fc" id="L110">        Data&lt;?&gt; array = _targetDevice.allocate( data, size );</span>
-<span class="fc" id="L111">        newUnpopulated( false, false, dataType );</span>
-<span class="fc" id="L112">        _API.setData( array );</span>
-<span class="fc" id="L113">    }</span>
+<span class="fc" id="L101">        _API.setIsVirtual( false );</span>
+<span class="fc" id="L102">        NDConfiguration ndc = _ndConstructor.produceNDC( false );</span>
+<span class="fc" id="L103">        _API.setConf( ndc );</span>
+<span class="fc" id="L104">        _API.setData( _targetDevice.allocateFromAll( dataType, ndc, data) );</span>
+<span class="fc" id="L105">    }</span>
 
     private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType&lt;?&gt; dataType, int size ) {
-<span class="fc bfc" id="L116" title="All 4 branches covered.">        if ( Arrays.stream( data ).anyMatch( e -&gt; DataType.of(e.getClass()) != dataType ) )</span>
-<span class="fc bfc" id="L117" title="All 2 branches covered.">            for ( int i = 0; i &lt; ( data ).length; i++ )</span>
-<span class="fc" id="L118">                ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getItemTypeClass() );</span>
+<span class="fc bfc" id="L108" title="All 6 branches covered.">        if ( Arrays.stream( data ).anyMatch( e -&gt; e != null &amp;&amp; DataType.of(e.getClass()) != dataType ) )</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            for ( int i = 0; i &lt; ( data ).length; i++ )</span>
+<span class="fc" id="L110">                ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getItemTypeClass() );</span>
 
-<span class="fc" id="L120">        return _optimizeObjectArray( dataType, data, size );</span>
+<span class="fc" id="L112">        return _optimizeObjectArray( dataType, data, size );</span>
     }
 
 
     public boolean newPopulatedFromOne( Object singleItem, Class&lt;?&gt; type )
     {
-<span class="fc" id="L126">        DataType&lt;Object&gt; dataType = (DataType&lt;Object&gt;) DataType.of( type );</span>
-<span class="fc" id="L127">        int size = _ndConstructor.getSize();</span>
-<span class="fc" id="L128">        _API.setType( dataType );</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">        _API.setIsVirtual( size &gt; 1 );</span>
-<span class="fc" id="L130">        Data&lt;?&gt; array = _constructAllFromOne( singleItem, _ndConstructor.getSize(), type );</span>
-<span class="fc" id="L131">        _API.setData( array );</span>
-<span class="fc" id="L132">        _API.setConf( _ndConstructor.produceNDC() );</span>
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        return singleItem != null;</span>
+<span class="fc" id="L118">        int size = _ndConstructor.getSize();</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        _API.setIsVirtual( size &gt; 1 );</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        NDConfiguration ndc = _ndConstructor.produceNDC(_ndConstructor.getSize() &gt; 1);</span>
+<span class="fc" id="L121">        Data&lt;?&gt; array = _constructAllFromOne( singleItem, ndc, type );</span>
+<span class="fc" id="L122">        _API.setData( array );</span>
+<span class="fc" id="L123">        _API.setConf( ndc );</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        return singleItem != null;</span>
     }
 
-    private Data&lt;?&gt; _constructAllFromOne(Object singleItem, int size, Class&lt;?&gt; type )
+    private Data&lt;?&gt; _constructAllFromOne( Object singleItem, NDConfiguration ndc, Class&lt;?&gt; type )
     {
-<span class="fc bfc" id="L138" title="All 2 branches covered.">        if ( type == Double   .class ) { return _constructAll( size, singleItem, type ); }</span>
-<span class="fc bfc" id="L139" title="All 2 branches covered.">        if ( type == Float    .class ) { return _constructAll( size, singleItem, type ); }</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">        if ( type == Integer  .class ) { return _constructAll( size, singleItem, type ); }</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        if ( type == Short    .class ) { return _constructAll( size, singleItem, type ); }</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">        if ( type == Byte     .class ) { return _constructAll( size, singleItem, type ); }</span>
-<span class="fc bfc" id="L143" title="All 2 branches covered.">        if ( type == Long     .class ) { return _constructAll( size, singleItem, type ); }</span>
-<span class="fc bfc" id="L144" title="All 2 branches covered.">        if ( type == Boolean  .class ) { return _constructAll( size, singleItem, type ); }</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">        if ( type == Character.class ) { return _constructAll( size, singleItem, type ); }</span>
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if ( Number.class.isAssignableFrom( type ) ) {</span>
-<span class="nc" id="L147">            return _constructAll( size, ((Number)singleItem).doubleValue(), Double.class );</span>
-        } else
-<span class="pc bpc" id="L149" title="1 of 2 branches missed.">            if ( !type.isArray() ) {</span>
-<span class="fc" id="L150">            return _constructAll( size, singleItem, type );</span>
-        }
-<span class="nc" id="L152">        return null;</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if ( type == Double   .class ) return _constructAll(singleItem, ndc, type );</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        if ( type == Float    .class ) return _constructAll(singleItem, ndc, type );</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if ( type == Integer  .class ) return _constructAll(singleItem, ndc, type );</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if ( type == Short    .class ) return _constructAll(singleItem, ndc, type );</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if ( type == Byte     .class ) return _constructAll(singleItem, ndc, type );</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        if ( type == Long     .class ) return _constructAll(singleItem, ndc, type );</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if ( type == Boolean  .class ) return _constructAll(singleItem, ndc, type );</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if ( type == Character.class ) return _constructAll(singleItem, ndc, type );</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if ( Number.class.isAssignableFrom( type ) )</span>
+<span class="fc" id="L138">            return _constructAll(((Number)singleItem).doubleValue(), ndc, Double.class );</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        else if ( !type.isArray() )</span>
+<span class="fc" id="L140">            return _constructAll(singleItem, ndc, type );</span>
+        else
+<span class="nc" id="L142">            return null;</span>
     }
 
-    private Data&lt;?&gt; _constructAll(int size, Object singleItem, Class&lt;?&gt; typeClass )
+    private Data&lt;?&gt; _constructAll( Object singleItem, NDConfiguration ndc, Class&lt;?&gt; typeClass )
     {
-<span class="fc" id="L157">        DataType&lt;Object&gt; dataType = (DataType&lt;Object&gt;) DataType.of( typeClass );</span>
-<span class="fc" id="L158">        return _targetDevice.allocate( dataType, Math.min(size, 1), singleItem );</span>
+<span class="fc" id="L147">        DataType&lt;Object&gt; dataType = (DataType&lt;Object&gt;) DataType.of( typeClass );</span>
+<span class="fc" id="L148">        return _targetDevice.allocateFromOne( dataType, ndc, singleItem );</span>
     }
 
-    public &lt;V&gt; void newSeeded( Class&lt;V&gt; valueType, Object seed )
+    public &lt;V&gt; void newSeeded( Class&lt;V&gt; valueType, Arg.Seed seed )
     {
-<span class="fc" id="L163">        int size = _ndConstructor.getSize();</span>
-<span class="fc" id="L164">        Data&lt;?&gt; data = _targetDevice.allocate( DataType.of( valueType ), size );</span>
-<span class="fc" id="L165">        Object out = CPURandomization.fillRandomly( data.getRef(), seed.toString() );</span>
-<span class="pc bpc" id="L166" title="2 of 4 branches missed.">        assert out == data.getRef();</span>
-<span class="fc" id="L167">        newUnpopulated( false, false, DataType.of(valueType) );</span>
-<span class="fc" id="L168">        _API.setData( data );</span>
-<span class="fc" id="L169">    }</span>
+<span class="fc" id="L153">        NDConfiguration ndc = _ndConstructor.produceNDC( false );</span>
+<span class="fc" id="L154">        Data&lt;?&gt; data = _targetDevice.allocate( DataType.of( valueType ), ndc );</span>
+<span class="fc" id="L155">        Object out = CPURandomization.fillRandomly( data.getRef(), seed );</span>
+<span class="pc bpc" id="L156" title="2 of 4 branches missed.">        assert out == data.getRef();</span>
+<span class="fc" id="L157">        _API.setIsVirtual( false );</span>
+<span class="fc" id="L158">        _API.setConf( ndc );</span>
+<span class="fc" id="L159">        _API.setData( data );</span>
+<span class="fc" id="L160">    }</span>
 
     /**
      *  If possible, turns the provided {@code Object} array into a memory compact array of primitive types.
@@ -177,44 +168,44 @@ import java.util.stream.IntStream;
      * @return An optimized flat array of primitives.
      */
     private static Object _optimizeObjectArray( DataType&lt;?&gt; dataType, Object[] values, int size ) {
-<span class="fc" id="L180">        Object data = values;</span>
-<span class="fc" id="L181">        IntStream indices = IntStream.iterate( 0, i -&gt; i + 1 ).limit(size);</span>
-<span class="fc bfc" id="L182" title="All 2 branches covered.">        if ( size &gt; 1_000 ) indices = indices.parallel();</span>
-<span class="fc" id="L183">        indices = indices.map( i -&gt; i % values.length );</span>
-<span class="fc bfc" id="L184" title="All 2 branches covered.">        if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -&gt; (Double) values[i] ).toArray();</span>
-<span class="fc bfc" id="L185" title="All 2 branches covered.">        else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -&gt; (Integer) values[i] ).toArray();</span>
-<span class="fc bfc" id="L186" title="All 2 branches covered.">        else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -&gt; (Long) values[i] ).toArray();</span>
-<span class="fc bfc" id="L187" title="All 2 branches covered.">        else if ( dataType == DataType.of(Float.class)   ) {</span>
-<span class="fc" id="L188">            float[] floats = new float[size];</span>
-<span class="fc bfc" id="L189" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) floats[ i ] = (Float) values[ i % values.length ];</span>
-<span class="fc" id="L190">            data = floats;</span>
-<span class="fc" id="L191">        }</span>
-<span class="fc bfc" id="L192" title="All 2 branches covered.">        else if ( dataType == DataType.of(Byte.class) ) {</span>
-<span class="fc" id="L193">            byte[] bytes = new byte[size];</span>
-<span class="fc bfc" id="L194" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) bytes[ i ] = (Byte) values[ i % values.length ];</span>
-<span class="fc" id="L195">            data = bytes;</span>
-<span class="fc" id="L196">        }</span>
-<span class="fc bfc" id="L197" title="All 2 branches covered.">        else if ( dataType == DataType.of(Short.class) ) {</span>
-<span class="fc" id="L198">            short[] shorts = new short[size];</span>
-<span class="fc bfc" id="L199" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) shorts[ i ] = (Short) values[ i % values.length ];</span>
-<span class="fc" id="L200">            data = shorts;</span>
-<span class="fc" id="L201">        }</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">        else if ( values.length != size ) {</span>
-<span class="fc" id="L203">            Object[] objects = new Object[size];</span>
-<span class="fc bfc" id="L204" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) objects[ i ] = values[ i % values.length ];</span>
-<span class="fc" id="L205">            data = objects;</span>
-<span class="fc" id="L206">        }</span>
-<span class="fc bfc" id="L207" title="All 2 branches covered.">        else if ( dataType == DataType.of(Boolean.class) ) {</span>
-<span class="fc" id="L208">            boolean[] booleans = new boolean[size];</span>
-<span class="fc bfc" id="L209" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) booleans[ i ] = (Boolean) values[ i % values.length ];</span>
-<span class="fc" id="L210">            data = booleans;</span>
-<span class="fc" id="L211">        }</span>
-<span class="fc bfc" id="L212" title="All 2 branches covered.">        else if ( dataType == DataType.of(Character.class) ) {</span>
-<span class="fc" id="L213">            char[] chars = new char[size];</span>
-<span class="fc bfc" id="L214" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) chars[ i ] = (Character) values[ i % values.length ];</span>
-<span class="fc" id="L215">            data = chars;</span>
+<span class="fc" id="L171">        Object data = values;</span>
+<span class="fc" id="L172">        IntStream indices = IntStream.iterate( 0, i -&gt; i + 1 ).limit(size);</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        if ( size &gt; 1_000 ) indices = indices.parallel();</span>
+<span class="fc" id="L174">        indices = indices.map( i -&gt; i % values.length );</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -&gt; (Double) values[i] ).toArray();</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -&gt; (Integer) values[i] ).toArray();</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -&gt; (Long) values[i] ).toArray();</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        else if ( dataType == DataType.of(Float.class)   ) {</span>
+<span class="fc" id="L179">            float[] floats = new float[size];</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) floats[ i ] = (Float) values[ i % values.length ];</span>
+<span class="fc" id="L181">            data = floats;</span>
+<span class="fc" id="L182">        }</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        else if ( dataType == DataType.of(Byte.class) ) {</span>
+<span class="fc" id="L184">            byte[] bytes = new byte[size];</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) bytes[ i ] = (Byte) values[ i % values.length ];</span>
+<span class="fc" id="L186">            data = bytes;</span>
+<span class="fc" id="L187">        }</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        else if ( dataType == DataType.of(Short.class) ) {</span>
+<span class="fc" id="L189">            short[] shorts = new short[size];</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) shorts[ i ] = (Short) values[ i % values.length ];</span>
+<span class="fc" id="L191">            data = shorts;</span>
+<span class="fc" id="L192">        }</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        else if ( values.length != size ) {</span>
+<span class="fc" id="L194">            Object[] objects = new Object[size];</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) objects[ i ] = values[ i % values.length ];</span>
+<span class="fc" id="L196">            data = objects;</span>
+<span class="fc" id="L197">        }</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        else if ( dataType == DataType.of(Boolean.class) ) {</span>
+<span class="fc" id="L199">            boolean[] booleans = new boolean[size];</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) booleans[ i ] = (Boolean) values[ i % values.length ];</span>
+<span class="fc" id="L201">            data = booleans;</span>
+<span class="fc" id="L202">        }</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        else if ( dataType == DataType.of(Character.class) ) {</span>
+<span class="fc" id="L204">            char[] chars = new char[size];</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) chars[ i ] = (Character) values[ i % values.length ];</span>
+<span class="fc" id="L206">            data = chars;</span>
         }
-<span class="fc" id="L217">        return data;</span>
+<span class="fc" id="L208">        return data;</span>
     }
 
 }

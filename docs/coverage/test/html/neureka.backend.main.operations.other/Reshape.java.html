@@ -8,9 +8,9 @@ import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.framing.Relation;
 import neureka.ndim.NDUtil;
@@ -163,9 +163,9 @@ public class Reshape extends AbstractOperation
 <span class="nc" id="L163">            throw new IllegalArgumentException(</span>
                     &quot;New shape does not match tensor size!&quot; +
                     &quot; (&quot; +
-<span class="nc" id="L166">                            NDUtil.shapeString( newShp ) +</span>
-<span class="nc bnc" id="L167" title="All 2 branches missed.">                            ((NDConfiguration.Utility.sizeOfShape( newShp ) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) +</span>
-<span class="nc" id="L168">                            NDUtil.shapeString(t.getNDConf().shape()) + &quot;&quot; +</span>
+<span class="nc" id="L166">                        NDUtil.shapeString( newShp ) +</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                        ((NDConfiguration.Utility.sizeOfShape( newShp ) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) +</span>
+<span class="nc" id="L168">                        NDUtil.shapeString(t.getNDConf().shape()) + &quot;&quot; +</span>
                     &quot;)&quot;
                 );
         }
