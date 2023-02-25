@@ -2,8 +2,8 @@ package neureka;
 
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
-import neureka.math.Function;
 import neureka.common.utility.LogUtil;
+import neureka.math.Function;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.List;

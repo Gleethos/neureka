@@ -14,7 +14,10 @@ import neureka.view.NdaAsString;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.*;
 
 /**
@@ -1088,7 +1091,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
          *  @param mapper The lambda which maps the item to an optional value.
          *  @return An optional value based on the provided lambda.
          */
-        default Optional<V> map( java.util.function.Function<V,V> mapper ) {
+        default Optional<V> map( Function<V,V> mapper ) {
             V item = orElseNull();
             return item == null ? Optional.empty() : Optional.ofNullable( mapper.apply( item ) );
         }
