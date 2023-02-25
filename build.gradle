@@ -238,15 +238,15 @@ tasks.register('cleanForDeployment', Delete) {
     delete "$rootDir/build"
     if (new File("$rootDir/docs/jdocs").listFiles() != null)
         delete new File("$rootDir/docs/jdocs").listFiles()
-    if (new File("$rootDir/docs/spock/reports") != null)
+    if (new File("$rootDir/docs/spock/reports").listFiles() != null)
         delete new File("$rootDir/docs/spock/reports").listFiles()
-    if (new File("$rootDir/docs/spock/aggregated") != null)
+    if (new File("$rootDir/docs/spock/aggregated").listFiles() != null)
         delete new File("$rootDir/docs/spock/aggregated").listFiles()
 }
 // 2:
 tasks.register('deploy') {
 
-    //Expected before : dependsOn 'cleanForDeployment'
+    dependsOn 'cleanForDeployment'
 
     dependsOn 'check'
     dependsOn 'jar'
