@@ -1,0 +1,118 @@
+{
+  "className":"ut.ndas.Nda_Items_Spec",
+  "title":"The Nds Items API",
+  "narrative":"Nd-arrays are collections of items similar to other\n    collection types in Java. \n    One useful way to access the items of an nd-array is\n    to use the items API.\n\n    Using the `at` methods we can access an `Item` object\n    which is a wrapper around the item's value and its\n    index in the nd-array.\n\n    The `Item` object is a simple data class which\n    is very similar to the `Optional` class, meaning\n    that it can either be empty or contain a value.",
+  "subjects":[],
+  "statistics":{
+    "runs":"6",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.006 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"We can check if items of a tensor is present or not.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"An nd-array with some data.","code":["var nda = Nda.of( \"9\", \"42\", null, \"3\" )"]},
+
+        {"kind":"expect","text":"The items are present or not as expected.","code":["nda.at(0).exists()","nda.at(1).exists()","nda.at(2).doesNotExist()","nda.at(3).exists()"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can get the value of an item.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"An nd-array with some data.","code":["var nda = Nda.of( \"73\", null, \"42\", \"3\" )"]},
+
+        {"kind":"expect","text":"The items can be accessed by their index.","code":["nda.at(0).orElseNull() == \"73\"","nda.at(1).orElseNull() == null","nda.at(2).orElseNull() == \"42\"","nda.at(3).orElseNull() == \"3\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The \"get\" method of an Item object will throw an exception if the item is missing.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Similar as the `Optional` class, an `Item` object can be empty.\n            If we try to get the value of an empty item, an exception will be thrown.\n            The reason for this is that we can not be sure that the item is actually\n            empty or if it is just not present in the nd-array.\n            If you want to get an item's value without throwing an exception \n            (but the risk of getting a null value instead) you can use the `orElseNull` method.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"An nd-array with some data.","code":["var nda = Nda.of( \"a\", null, \"c\" )"]},
+
+        {"kind":"expect","text":"The non null items can be accessed by their index.","code":["nda.at(0).get() == \"a\"","nda.at(2).get() == \"c\""]},
+
+        {"kind":"when","text":"We try to get the value of an empty item.","code":["nda.at(1).get()"]},
+
+        {"kind":"then","text":"An exception is thrown.","code":["thrown( Exception )"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use the \"orElse(T)\" method to avoid null values.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"An nd-array with some data.","code":["var nda = Nda.of( \"x\", null, \"z\" )"]},
+
+        {"kind":"expect","text":"The non null items can be accessed by their index, and the provided value is ignored.","code":["nda.at(0).orElse(\"y\") == \"x\"","nda.at(2).orElse(\"y\") == \"z\""]},
+
+        {"kind":"and","text":"When we try to get the value of an empty item we get the provided value instead.","code":["nda.at(1).orElse(\"y\") == \"y\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"An item can be converted to an Optional object.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"An nd-array with some data.","code":["var nda = Nda.of( \"a\", null, \"c\" )"]},
+
+        {"kind":"expect","text":"The items can be converted to Optional objects.","code":["nda.at(0).toOptional().get() == \"a\"","nda.at(1).toOptional().orElse(null) == null","nda.at(2).toOptional().get() == \"c\""]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Other than the \"orElse(T)\" method of the Optional class, the same method of an Item will throw an exception if the provided value is null.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            If you want to get an item's value without throwing an exception \n            (but the risk of getting a null value instead) you can use the `orElseNull` method.\n            The `orElse(T)` method of the `Optional` class will not throw an exception\n            if the provided value is null. This is not the case for the `orElse(T)` method\n            of an `Item` object.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"An nd-array with some data.","code":["var nda = Nda.of( \"a\", null, \"c\" )"]},
+
+        {"kind":"expect","text":"The items can be converted to Optional objects.","code":["nda.at(0).orElse(\"b\") == \"a\"","nda.at(1).orElse(\"b\") == \"b\"","nda.at(2).orElse(\"b\") == \"c\""]},
+
+        {"kind":"when","text":"We try to get the value of an empty item.","code":["nda.at(1).orElse(null)"]},
+
+        {"kind":"then","text":"An exception is thrown.","code":["thrown( Exception )"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -43,8 +43,8 @@ import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
-import neureka.calculus.Function;
-import neureka.calculus.implementations.FunctionConstant;
+import neureka.math.Function;
+import neureka.math.implementations.FunctionConstant;
 import neureka.devices.Device;
 
 /**
@@ -56,7 +56,7 @@ import neureka.devices.Device;
  *  capable of processing {@link ExecutionCall} instances, or rather their state. &lt;br&gt;&lt;br&gt;
  *
  *  Other than the component system, there is also the definition for how It's supposed to integrate into
- *  the {@link neureka.calculus} package in order to serve as part of an {@link Function} AST.
+ *  the {@link neureka.math} package in order to serve as part of an {@link Function} AST.
  *  This means that the operation should have a function name
  *  and optionally also an operator in the form of {@link String} instances.
  *  Alongside there must be an implementation of the {@link Operation#stringify(String[])} method,
@@ -172,7 +172,7 @@ public interface Operation
      *  then execute the function wile also passing the index to the function AST.
      *  The resulting array will then be available to this {@link Operation} as argument list.
      *  This feature works alongside the {@link Function} implementation found in
-     *  {@link neureka.calculus.implementations.FunctionVariable}, which represents an input indexed
+     *  {@link neureka.math.implementations.FunctionVariable}, which represents an input indexed
      *  by the identifier 'j'!
      *
      * @return If this operation is an indexer.
@@ -227,7 +227,7 @@ public interface Operation
                 only flat functions can be executed directly                         */
 
 <span class="fc bfc" id="L229" title="All 4 branches covered.">            if ( call.getDerivativeIndex() &lt; 0 &amp;&amp; caller.isDoingAD() )</span>
-<span class="fc" id="L230">                new GraphNode&lt;&gt;(caller, (ExecutionCall&lt;Device&lt;?&gt;&gt;) call, ref::get);</span>
+<span class="fc" id="L230">                new GraphNode&lt;&gt;( caller, (ExecutionCall&lt;Device&lt;?&gt;&gt;) call, ref::get );</span>
         }
 <span class="fc" id="L232">        return ref.get();</span>
     }

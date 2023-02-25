@@ -2,9 +2,8 @@
 
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.common.utility.LogUtil;
-import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.List;
@@ -13,33 +12,33 @@ import java.util.Map;
 /**
  * Tensors should be considered immutable, however sometimes it
  * is important to mutate their state for performance reasons.
- * This interface exposes several methods for mutating the state of this tensor.
+ * This interface exposes several methods for mutating the state of a tensor.
  * The usage of methods exposed by this API is generally discouraged
  * because the exposed state can easily lead to broken tensors and exceptions...&lt;br&gt;
  * &lt;br&gt;
  */
 public interface MutateTsr&lt;T&gt; extends MutateNda&lt;T&gt;
 {
-
     /** {@inheritDoc} */
     @Override Tsr&lt;T&gt; putAt( Map&lt;?,Integer&gt; key, Nda&lt;T&gt; value );
 
+    /** {@inheritDoc} */
     @Override Tsr&lt;T&gt; putAt( int[] indices, T value );
 
     /** {@inheritDoc} */
-<span class="fc" id="L30">    @Override default Tsr&lt;T&gt; set( int[] indices, T value ) { return putAt( indices, value ); }</span>
+<span class="fc" id="L29">    @Override default Tsr&lt;T&gt; set( int[] indices, T value ) { return putAt( indices, value ); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L33">    @Override default Tsr&lt;T&gt; set( int i0, int i1, T value ) { return putAt( new int[]{i0, i1}, value ); }</span>
+<span class="fc" id="L32">    @Override default Tsr&lt;T&gt; set( int i0, int i1, T value ) { return putAt( new int[]{i0, i1}, value ); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L36">    @Override default Tsr&lt;T&gt; set( int i0, int i1, int i2, T value ) { return putAt( new int[]{i0, i1, i2}, value ); }</span>
+<span class="fc" id="L35">    @Override default Tsr&lt;T&gt; set( int i0, int i1, int i2, T value ) { return putAt( new int[]{i0, i1, i2}, value ); }</span>
 
     /** {@inheritDoc} */
     @Override Tsr&lt;T&gt; putAt( int index, T value );
 
     /** {@inheritDoc} */
-<span class="fc" id="L42">    @Override default Tsr&lt;T&gt; set( int index, T value ) { return putAt( index, value ); }</span>
+<span class="fc" id="L41">    @Override default Tsr&lt;T&gt; set( int index, T value ) { return putAt( index, value ); }</span>
 
     /** {@inheritDoc} */
     @Override Tsr&lt;T&gt; putAt( List&lt;?&gt; key, Nda&lt;T&gt; value );
@@ -87,19 +86,6 @@ public interface MutateTsr&lt;T&gt; extends MutateNda&lt;T&gt;
      * @return A tensor whose type parameter is upcast.
      */
     &lt;U/*super T*/&gt; Tsr&lt;U&gt; upcast(Class&lt;U&gt; superType);
-
-    /**
-     * This method enables modifying the data-type configuration of this {@link AbstractNda}.
-     * Warning! The method should not be used unless absolutely necessary.
-     * This is because it can cause unpredictable inconsistencies between the
-     * underlying {@link DataType} instance of this {@link AbstractNda} and the actual type of the actual
-     * data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).&lt;br&gt;
-     * &lt;br&gt;
-     *
-     * @param dataType The new {@link DataType} which ought to be set.
-     * @return The tensor with the new data type set.
-     */
-    &lt;V&gt; Tsr&lt;V&gt; setDataType(DataType&lt;V&gt; dataType);
 
     /**
      * This method allows you to modify the data-layout of this {@link AbstractNda}.
@@ -159,7 +145,20 @@ public interface MutateTsr&lt;T&gt; extends MutateNda&lt;T&gt;
      */
     Tsr&lt;T&gt; setDataAt(int i, T o);
 
-    Tsr&lt;T&gt; setData(Data&lt;T&gt; data);
+    /**
+     *  At the heart of every tensor is the {@link Data} object, which holds the actual data array,
+     *  a sequence of values of the same type.
+     *  This method allows you to set the data of this tensor to a new data object.
+     *  Changing the data object of a tensor will not change the shape of the tensor and how
+     *  nd-indices are mapped to the data array.
+     *  &lt;p&gt;
+     *  &lt;b&gt;Warning!&lt;/b&gt; This method should not be used unless absolutely necessary.
+     *  This is because it can cause unpredictable side effects especially for certain
+     *  operations expecting a particular data layout (like for example matrix multiplication).
+     * @param data The new data object which ought to be set.
+     * @return The tensor in question, to allow for method chaining.
+     */
+    Tsr&lt;T&gt; setData( Data&lt;T&gt; data );
 
     /**
      * Use this to access the underlying writable data of this tensor if
@@ -173,17 +172,17 @@ public interface MutateTsr&lt;T&gt; extends MutateNda&lt;T&gt;
      * @return The underlying data array of this tensor.
      */
     default &lt;A&gt; A getDataForWriting(Class&lt;A&gt; arrayTypeClass) {
-<span class="fc" id="L176">        LogUtil.nullArgCheck(arrayTypeClass, &quot;arrayTypeClass&quot;, Class.class, &quot;Array type must not be null!&quot;);</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (!arrayTypeClass.isArray())</span>
-<span class="nc" id="L178">            throw new IllegalArgumentException(&quot;Provided type is not an array type.&quot;);</span>
-<span class="fc" id="L179">        Object data = MutateTsr.this.getData().getRef();</span>
-<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (data == null)</span>
-<span class="nc" id="L181">            throw new IllegalStateException(&quot;Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).&quot;);</span>
+<span class="fc" id="L175">        LogUtil.nullArgCheck(arrayTypeClass, &quot;arrayTypeClass&quot;, Class.class, &quot;Array type must not be null!&quot;);</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (!arrayTypeClass.isArray())</span>
+<span class="nc" id="L177">            throw new IllegalArgumentException(&quot;Provided type is not an array type.&quot;);</span>
+<span class="fc" id="L178">        Object data = MutateTsr.this.getData().getRef();</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if (data == null)</span>
+<span class="nc" id="L180">            throw new IllegalStateException(&quot;Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).&quot;);</span>
 
-<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if (!arrayTypeClass.isAssignableFrom(data.getClass()))</span>
-<span class="nc" id="L184">            throw new IllegalStateException(&quot;The data of this tensor does not match the expect type! Expected '&quot; + arrayTypeClass + &quot;' but got '&quot; + data.getClass() + &quot;'.&quot;);</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        if (!arrayTypeClass.isAssignableFrom(data.getClass()))</span>
+<span class="nc" id="L183">            throw new IllegalStateException(&quot;The data of this tensor does not match the expect type! Expected '&quot; + arrayTypeClass + &quot;' but got '&quot; + data.getClass() + &quot;'.&quot;);</span>
 
-<span class="fc" id="L186">        return (A) data;</span>
+<span class="fc" id="L185">        return (A) data;</span>
     }
 
     /**

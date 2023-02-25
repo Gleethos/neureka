@@ -2,24 +2,19 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
-import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.ElementwiseAlgorithm;
 import neureka.backend.main.algorithms.ScalarAlgorithm;
 import neureka.backend.main.algorithms.ScalarBroadcast;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
-import neureka.backend.main.implementations.scalar.CPUScalarBroadcastFunction;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionParser;
-import neureka.devices.host.CPU;
-import neureka.ndim.NDimensional;
+import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 
 abstract class AbstractActivationOperation extends AbstractOperation
 {
@@ -27,77 +22,77 @@ abstract class AbstractActivationOperation extends AbstractOperation
 
     AbstractActivationOperation(ScalarFun fun)
     {
-<span class="fc" id="L30">        super(</span>
+<span class="fc" id="L25">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L32">                .identifier(      fun.id()       )</span>
-<span class="fc" id="L33">                .operator(        fun.id()       )</span>
-<span class="fc" id="L34">                .arity(            1             )</span>
-<span class="fc" id="L35">                .isOperator(       false         )</span>
-<span class="fc" id="L36">                .isIndexer(        false         )</span>
-<span class="fc" id="L37">                .isDifferentiable( true          )</span>
-<span class="fc" id="L38">                .isInline(         false         )</span>
+<span class="fc" id="L27">                .identifier(      fun.id()       )</span>
+<span class="fc" id="L28">                .operator(        fun.id()       )</span>
+<span class="fc" id="L29">                .arity(            1             )</span>
+<span class="fc" id="L30">                .isOperator(       false         )</span>
+<span class="fc" id="L31">                .isIndexer(        false         )</span>
+<span class="fc" id="L32">                .isDifferentiable( true          )</span>
+<span class="fc" id="L33">                .isInline(         false         )</span>
         );
 
-<span class="fc" id="L41">        _fun = fun;</span>
+<span class="fc" id="L36">        _fun = fun;</span>
 
-<span class="fc" id="L43">        setAlgorithm(</span>
+<span class="fc" id="L38">        setAlgorithm(</span>
             new ElementwiseAlgorithm()
-<span class="fc" id="L45">                .setSupplyADActionFor( getDefaultAlgorithm() )</span>
-<span class="fc" id="L46">                .buildFunAlgorithm()</span>
+<span class="fc" id="L40">                .setSupplyADActionFor( getDefaultAlgorithm() )</span>
+<span class="fc" id="L41">                .buildFunAlgorithm()</span>
         );
 
-<span class="fc" id="L49">        setAlgorithm(</span>
-<span class="fc" id="L50">            new ScalarBroadcast(fun).buildFunAlgorithm()</span>
+<span class="fc" id="L44">        setAlgorithm(</span>
+<span class="fc" id="L45">            new ScalarBroadcast(fun).buildFunAlgorithm()</span>
         );
 
-<span class="fc" id="L53">        setAlgorithm(</span>
-<span class="fc" id="L54">            new ScalarAlgorithm().buildFunAlgorithm()</span>
+<span class="fc" id="L48">        setAlgorithm(</span>
+<span class="fc" id="L49">            new ScalarAlgorithm().buildFunAlgorithm()</span>
         );
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L51">    }</span>
 
     @Override
     public Result execute(Function caller, ExecutionCall&lt;?&gt; call )
     {
-<span class="fc bfc" id="L61" title="All 2 branches covered.">        if ( !caller.isFlat() ) {</span>
-<span class="fc" id="L62">            int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L63">            ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
-<span class="fc" id="L65">                Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );</span>
-<span class="fc" id="L66">                return super.execute( flat, flatCall );</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if ( !caller.isFlat() ) {</span>
+<span class="fc" id="L57">            int d = call.getDerivativeIndex();</span>
+<span class="fc" id="L58">            ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flatten( caller, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L60">                Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );</span>
+<span class="fc" id="L61">                return super.execute( flat, flatCall );</span>
             } else {
-<span class="fc" id="L68">                Function noAdFun = Function.of( caller.toString(), false );</span>
-<span class="fc" id="L69">                Function innerFun = noAdFun.getSubFunctions().get(0);</span>
-<span class="fc" id="L70">                Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), false );</span>
+<span class="fc" id="L63">                Function noAdFun = Function.of( caller.toString(), false );</span>
+<span class="fc" id="L64">                Function innerFun = noAdFun.getSubFunctions().get(0);</span>
+<span class="fc" id="L65">                Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), false );</span>
                 // The user wants the derivative! So we need to do inner times outer derivative! (because the function is not flat)
-<span class="fc" id="L72">                ExecutionCall&lt;?&gt; inner = AbstractDeviceAlgorithm.flatten( noAdFun, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
-<span class="fc" id="L73">                Result innerDerivResult = innerFun.getOperation().execute( innerFun, call.withOperation(innerFun.getOperation()) );</span>
-<span class="fc" id="L74">                Tsr&lt;?&gt; innerDeriv = innerDerivResult.get();</span>
-<span class="fc" id="L75">                Tsr&lt;?&gt; outerDeriv = super.execute( flat, inner.withArgs(Arg.DerivIdx.of(0)) ).get();</span>
-<span class="fc" id="L76">                Operation mul = Neureka.get().backend().getOperation(&quot;*&quot;);</span>
-<span class="fc" id="L77">                Function opFun = new FunctionParser(Neureka.get().backend()).parse( mul, 2, false );</span>
-<span class="fc" id="L78">                return mul.execute(</span>
+<span class="fc" id="L67">                ExecutionCall&lt;?&gt; inner = AbstractDeviceAlgorithm.flatten( noAdFun, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
+<span class="fc" id="L68">                Result innerDerivResult = innerFun.getOperation().execute( innerFun, call.withOperation(innerFun.getOperation()) );</span>
+<span class="fc" id="L69">                Tsr&lt;?&gt; innerDeriv = innerDerivResult.get();</span>
+<span class="fc" id="L70">                Tsr&lt;?&gt; outerDeriv = super.execute( flat, inner.withArgs(Arg.DerivIdx.of(0)) ).get();</span>
+<span class="fc" id="L71">                Operation mul = Neureka.get().backend().getOperation(&quot;*&quot;);</span>
+<span class="fc" id="L72">                Function opFun = new FunctionParser(Neureka.get().backend()).parse( mul, 2, false );</span>
+<span class="fc" id="L73">                return mul.execute(</span>
                             opFun,
-<span class="fc" id="L80">                            ExecutionCall.of( innerDeriv, outerDeriv )</span>
-<span class="fc" id="L81">                                            .running(mul)</span>
-<span class="fc" id="L82">                                            .on(call.getDevice())</span>
+<span class="fc" id="L75">                            ExecutionCall.of( innerDeriv, outerDeriv )</span>
+<span class="fc" id="L76">                                            .running(mul)</span>
+<span class="fc" id="L77">                                            .on(call.getDevice())</span>
                         );
             }
         }
-<span class="fc" id="L86">        return super.execute( caller, call );</span>
+<span class="fc" id="L81">        return super.execute( caller, call );</span>
     }
 
     @Override
     public final String stringify( String[] children ) {
-<span class="fc" id="L91">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L92" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return getIdentifier() + expression;</span>
-<span class="fc" id="L93">        return getIdentifier() + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L86">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L87" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return getIdentifier() + expression;</span>
+<span class="fc" id="L88">        return getIdentifier() + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public final double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        boolean derive = d &gt;= 0;</span>
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        double inner = ( !derive ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
-<span class="fc" id="L100">        return _fun.calculate( src[ 0 ].call( inputs, j ),  derive ) * inner;</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        boolean derive = d &gt;= 0;</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        double inner = ( !derive ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
+<span class="fc" id="L95">        return _fun.calculate( src[ 0 ].call( inputs, j ),  derive ) * inner;</span>
     }
 
 }

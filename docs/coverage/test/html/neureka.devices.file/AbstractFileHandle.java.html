@@ -32,7 +32,7 @@ abstract class AbstractFileHandle&lt;C, V&gt; implements FileHandle&lt;C, V&gt;
 <span class="nc" id="L32">            throw new IllegalArgumentException( message );</span>
         }
 <span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if ( !_fileName.contains( &quot;.&quot; ) ) {</span>
-<span class="nc" id="L35">            String message = &quot;Loading tensor from location '&quot; + _fileName + &quot;' failed because the file does not have an ending.&quot; +</span>
+<span class="nc" id="L35">            String message = &quot;Loading tensor from location '&quot; + _fileName + &quot;' failed because the file does not have an ending. &quot; +</span>
 <span class="nc" id="L36">                    &quot;Expected file extension of type '&quot; + extension() + &quot;'!\n&quot;;</span>
 <span class="nc" id="L37">            _LOG.error( message );</span>
 <span class="nc" id="L38">            throw new IllegalArgumentException( message );</span>

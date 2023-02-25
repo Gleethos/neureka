@@ -29,7 +29,7 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
     public CPUFun getDerivative() {
 <span class="fc" id="L30">        return new CPUFun() {</span>
 <span class="fc" id="L31">            @Override public double invoke(double x ) { return  1 - Math.pow( tanh( x ), 2 ); }</span>
-<span class="nc" id="L32">            @Override public float invoke(float x ) { return (float) (1 - Math.pow( tanh( x ), 2 )); }</span>
+<span class="fc" id="L32">            @Override public float invoke(float x ) { return (float) (1 - Math.pow( tanh( x ), 2 )); }</span>
         };
     }
 

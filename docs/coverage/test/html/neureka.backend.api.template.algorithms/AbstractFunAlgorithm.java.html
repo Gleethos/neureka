@@ -5,7 +5,7 @@ import neureka.backend.api.fun.ADSupportPredicate;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.main.memory.MemValidator;
-import neureka.calculus.Function;
+import neureka.math.Function;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

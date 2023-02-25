@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CSVHandle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file</a> &gt; <span class="el_source">CSVHandle.java</span></div><h1>CSVHandle.java</h1><pre class="source lang-java linenums">package neureka.devices.file;
 
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
@@ -21,11 +22,11 @@ import java.util.stream.Collectors;
  *  Like other {@link FileHandle} implementations this class represents a file
  *  of a given type, in this case it represents a CSV file.
 */
-<span class="pc bpc" id="L24" title="1 of 2 branches missed.">public final class CSVHandle extends AbstractFileHandle&lt;CSVHandle, String&gt;</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">public final class CSVHandle extends AbstractFileHandle&lt;CSVHandle, String&gt;</span>
 {
     static {
-<span class="fc" id="L27">        _LOG = LoggerFactory.getLogger( CSVHandle.class );</span>
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L28">        _LOG = LoggerFactory.getLogger( CSVHandle.class );</span>
+<span class="fc" id="L29">    }</span>
 
     private String _label;
     private final String _delimiter;
@@ -34,51 +35,50 @@ import java.util.stream.Collectors;
     private final boolean _firstColIsIndex;
     private String[] _rowLabels;
 
-<span class="fc" id="L37">    private Integer _numberOfRows = null;</span>
-<span class="fc" id="L38">    private Integer _numberOfColumns = null;</span>
-<span class="fc" id="L39">    private Integer _numberOfBytes = null;</span>
-<span class="fc" id="L40">    private WeakReference&lt;String[]&gt; _rawData = null;</span>
+<span class="fc" id="L38">    private Integer _numberOfRows = null;</span>
+<span class="fc" id="L39">    private Integer _numberOfColumns = null;</span>
+<span class="fc" id="L40">    private Integer _numberOfBytes = null;</span>
+<span class="fc" id="L41">    private WeakReference&lt;String[]&gt; _rawData = null;</span>
 
     CSVHandle( Tsr&lt;?&gt; tensor, String filename )
     {
-<span class="fc" id="L44">        super( filename, new CSVType() );</span>
-<span class="pc bpc" id="L45" title="2 of 4 branches missed.">        assert tensor.rank() == 2;</span>
-<span class="fc" id="L46">        _delimiter = &quot;,&quot;;</span>
-<span class="fc" id="L47">        NDFrame&lt;?&gt; alias = tensor.get( NDFrame.class );</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        List&lt;Object&gt; index  = ( alias != null ? alias.atAxis( 0 ).getAllAliases() : null );</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        List&lt;Object&gt; labels = ( alias != null ? alias.atAxis( 1 ).getAllAliases() : null );</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        _label = (alias != null) ? alias.getLabel() : null;</span>
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        _firstRowIsLabels = labels != null;</span>
-<span class="fc bfc" id="L52" title="All 2 branches covered.">        _firstColIsIndex = index != null;</span>
-<span class="fc" id="L53">        StringBuilder asCsv = new StringBuilder();</span>
+<span class="fc" id="L45">        super( filename, new CSVType() );</span>
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">        assert tensor.rank() == 2;</span>
+<span class="fc" id="L47">        _delimiter = &quot;,&quot;;</span>
+<span class="fc" id="L48">        NDFrame&lt;?&gt; alias = tensor.get( NDFrame.class );</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        List&lt;Object&gt; index  = ( alias != null ? alias.atAxis( 0 ).getAllAliases() : null );</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        List&lt;Object&gt; labels = ( alias != null ? alias.atAxis( 1 ).getAllAliases() : null );</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        _label = (alias != null) ? alias.getLabel() : null;</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        _firstRowIsLabels = labels != null;</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        _firstColIsIndex = index != null;</span>
+<span class="fc" id="L54">        StringBuilder asCsv = new StringBuilder();</span>
 
-<span class="fc bfc" id="L55" title="All 2 branches covered.">        if ( _firstRowIsLabels ) {</span>
-<span class="pc bpc" id="L56" title="2 of 4 branches missed.">            if ( _firstColIsIndex ) labels.add( 0, (_label == null) ? &quot;&quot; : _label);</span>
-<span class="fc" id="L57">            asCsv.append(labels.stream().map(Object::toString).collect(Collectors.joining(_delimiter)))</span>
-<span class="fc" id="L58">                 .append(&quot;\n&quot;);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if ( _firstRowIsLabels ) {</span>
+<span class="pc bpc" id="L57" title="2 of 4 branches missed.">            if ( _firstColIsIndex ) labels.add( 0, (_label == null) ? &quot;&quot; : _label);</span>
+<span class="fc" id="L58">            asCsv.append(labels.stream().map(Object::toString).collect(Collectors.joining(_delimiter)))</span>
+<span class="fc" id="L59">                 .append(&quot;\n&quot;);</span>
         }
-<span class="fc" id="L60">        int[] shape = tensor.getNDConf().shape();</span>
-<span class="pc bpc" id="L61" title="2 of 4 branches missed.">        assert shape.length == 2;</span>
-<span class="pc bpc" id="L62" title="2 of 6 branches missed.">        if ( _firstColIsIndex ) assert index.size() == shape[ 0 ];</span>
-<span class="fc" id="L63">        int[] indices = new int[ 2 ];</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">        for ( int i = 0; i &lt; shape[ 0 ]; i++ ) {</span>
-<span class="fc" id="L65">            indices[ 0 ] = i;</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">            if ( _firstColIsIndex ) asCsv.append( index.get(i).toString() ).append( &quot;,&quot; );</span>
-<span class="fc bfc" id="L67" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; shape[ 1 ]; ii++ ) {</span>
-<span class="fc" id="L68">                indices[ 1 ] = ii;</span>
-<span class="fc" id="L69">                asCsv.append( tensor.item( indices ) );</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">                if ( ii &lt; shape[ 1 ] - 1 ) asCsv.append( _delimiter );</span>
+<span class="fc" id="L61">        int[] shape = tensor.getNDConf().shape();</span>
+<span class="pc bpc" id="L62" title="2 of 4 branches missed.">        assert shape.length == 2;</span>
+<span class="pc bpc" id="L63" title="2 of 6 branches missed.">        if ( _firstColIsIndex ) assert index.size() == shape[ 0 ];</span>
+<span class="fc" id="L64">        int[] indices = new int[ 2 ];</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for ( int i = 0; i &lt; shape[ 0 ]; i++ ) {</span>
+<span class="fc" id="L66">            indices[ 0 ] = i;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            if ( _firstColIsIndex ) asCsv.append( index.get(i).toString() ).append( &quot;,&quot; );</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; shape[ 1 ]; ii++ ) {</span>
+<span class="fc" id="L69">                indices[ 1 ] = ii;</span>
+<span class="fc" id="L70">                asCsv.append( tensor.item( indices ) );</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                if ( ii &lt; shape[ 1 ] - 1 ) asCsv.append( _delimiter );</span>
             }
-<span class="fc" id="L72">            asCsv.append( &quot;\n&quot; );</span>
+<span class="fc" id="L73">            asCsv.append( &quot;\n&quot; );</span>
         }
         try {
-<span class="fc" id="L75">            PrintWriter out = new PrintWriter( filename );</span>
-<span class="fc" id="L76">            out.print( asCsv );</span>
-<span class="fc" id="L77">            out.close();</span>
-<span class="nc" id="L78">        } catch ( Exception e ) {</span>
-<span class="nc" id="L79">            e.printStackTrace();</span>
-<span class="fc" id="L80">        }</span>
-<span class="fc" id="L81">        tensor.getMut().setDataType( DataType.of( String.class ) );</span>
+<span class="fc" id="L76">            PrintWriter out = new PrintWriter( filename );</span>
+<span class="fc" id="L77">            out.print( asCsv );</span>
+<span class="fc" id="L78">            out.close();</span>
+<span class="nc" id="L79">        } catch ( Exception e ) {</span>
+<span class="nc" id="L80">            e.printStackTrace();</span>
+<span class="fc" id="L81">        }</span>
 <span class="fc" id="L82">    }</span>
 
     public CSVHandle(
@@ -189,97 +189,93 @@ import java.util.stream.Collectors;
     @Override
     public Tsr&lt;String&gt; load() throws IOException {
 <span class="fc" id="L191">        String[] data = _lazyLoad();</span>
-<span class="fc" id="L192">        Tsr&lt;String&gt; loaded = Tsr.of(</span>
-<span class="fc" id="L193">                                    DataType.of( String.class ),</span>
-<span class="fc" id="L194">                                    getShape(),</span>
-                                    data
-                                );
+<span class="fc" id="L192">        Tsr&lt;String&gt; loaded = Tsr.of(DataType.of( String.class ), getShape(), data);</span>
         String[] index;
         String[] labels;
 
-<span class="fc bfc" id="L200" title="All 2 branches covered.">        if ( !_firstColIsIndex ) {</span>
-<span class="fc" id="L201">            index = new String[ _numberOfRows ];</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">            for ( int i = 0; i &lt; index.length; i++ ) index[ i ] = String.valueOf( i );</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if ( !_firstColIsIndex ) {</span>
+<span class="fc" id="L197">            index = new String[ _numberOfRows ];</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">            for ( int i = 0; i &lt; index.length; i++ ) index[ i ] = String.valueOf( i );</span>
         }
-<span class="fc" id="L204">        else index = _rowLabels;</span>
+<span class="fc" id="L200">        else index = _rowLabels;</span>
 
-<span class="fc bfc" id="L206" title="All 2 branches covered.">        if ( !_firstRowIsLabels ) {</span>
-<span class="fc" id="L207">            labels = new String[ _numberOfColumns ];</span>
-<span class="fc" id="L208">            StringBuilder prefix = new StringBuilder( );</span>
-<span class="fc bfc" id="L209" title="All 2 branches covered.">            for ( int i=0; i &lt; labels.length; i++ ) {</span>
-<span class="fc" id="L210">                int position = i % 26;</span>
-<span class="pc bpc" id="L211" title="1 of 2 branches missed.">                if ( position == 25 ) prefix.append( (char) ( i / 26 ) % 26 );</span>
-<span class="fc" id="L212">                labels[ i ] = String.join( &quot;&quot;, prefix.toString() + ( (char)( 'a' + position )) );</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        if ( !_firstRowIsLabels ) {</span>
+<span class="fc" id="L203">            labels = new String[ _numberOfColumns ];</span>
+<span class="fc" id="L204">            StringBuilder prefix = new StringBuilder( );</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            for ( int i=0; i &lt; labels.length; i++ ) {</span>
+<span class="fc" id="L206">                int position = i % 26;</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                if ( position == 25 ) prefix.append( (char) ( i / 26 ) % 26 );</span>
+<span class="fc" id="L208">                labels[ i ] = String.join( &quot;&quot;, prefix.toString() + ( (char)( 'a' + position )) );</span>
             }
-<span class="fc" id="L214">        }</span>
-<span class="fc" id="L215">        else labels = _colLabels;</span>
-<span class="fc" id="L216">        loaded.getMut().labelAxes( index, labels );</span>
-<span class="fc" id="L217">        loaded.getMut().label( _label );</span>
-<span class="fc" id="L218">        return loaded;</span>
+<span class="fc" id="L210">        }</span>
+<span class="fc" id="L211">        else labels = _colLabels;</span>
+<span class="fc" id="L212">        loaded.getMut().labelAxes( index, labels );</span>
+<span class="fc" id="L213">        loaded.getMut().label( _label );</span>
+<span class="fc" id="L214">        return loaded;</span>
     }
 
     @Override
     public int getValueSize() {
         String[] rawData;
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">        if ( _rawData == null ) rawData = _lazyLoad();</span>
-<span class="fc" id="L225">        else rawData = _rawData.get();</span>
-<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        if ( rawData == null ) return 0;</span>
-<span class="fc" id="L227">        return rawData.length;</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if ( _rawData == null ) rawData = _lazyLoad();</span>
+<span class="fc" id="L221">        else rawData = _rawData.get();</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        if ( rawData == null ) return 0;</span>
+<span class="fc" id="L223">        return rawData.length;</span>
     }
 
     @Override
     public int getDataSize() {
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if ( _numberOfBytes != null ) return _numberOfBytes;</span>
-<span class="nc" id="L233">        else _lazyLoad();</span>
-<span class="nc" id="L234">        return _numberOfBytes;</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        if ( _numberOfBytes != null ) return _numberOfBytes;</span>
+<span class="nc" id="L229">        else _lazyLoad();</span>
+<span class="nc" id="L230">        return _numberOfBytes;</span>
     }
 
     @Override
     public int getTotalSize() {
-<span class="fc" id="L239">        return getDataSize();</span>
+<span class="fc" id="L235">        return getDataSize();</span>
     }
 
     @Override
     public DataType&lt;?&gt; getDataType() {
-<span class="fc" id="L244">        return DataType.of( String.class );</span>
+<span class="fc" id="L240">        return DataType.of( String.class );</span>
     }
 
     @Override
-    public int[] getShape() {
-<span class="fc" id="L249">        return new int[]{ _numberOfRows, _numberOfColumns };</span>
+    public Shape getShape() {
+<span class="fc" id="L245">        return Shape.of( _numberOfRows, _numberOfColumns );</span>
     }
 
     public String getDelimiter() {
-<span class="nc" id="L253">        return _delimiter;</span>
+<span class="nc" id="L249">        return _delimiter;</span>
     }
 
     public boolean isFirstRowIsLabels() {
-<span class="nc" id="L257">        return _firstRowIsLabels;</span>
+<span class="nc" id="L253">        return _firstRowIsLabels;</span>
     }
 
     public String[] getColLabels() {
-<span class="nc" id="L261">        return _colLabels;</span>
+<span class="nc" id="L257">        return _colLabels;</span>
     }
 
     public boolean isFirstColIsIndex() {
-<span class="nc" id="L265">        return _firstColIsIndex;</span>
+<span class="nc" id="L261">        return _firstColIsIndex;</span>
     }
 
     public String[] getRowLabels() {
-<span class="nc" id="L269">        return _rowLabels;</span>
+<span class="nc" id="L265">        return _rowLabels;</span>
     }
 
     public Integer getNumberOfRows() {
-<span class="nc" id="L273">        return _numberOfRows;</span>
+<span class="nc" id="L269">        return _numberOfRows;</span>
     }
 
     public Integer getNumberOfColumns() {
-<span class="nc" id="L277">        return _numberOfColumns;</span>
+<span class="nc" id="L273">        return _numberOfColumns;</span>
     }
 
     private static class CSVType implements FileType
     {
-<span class="fc" id="L282">        @Override public String defaultExtension() { return &quot;csv&quot;; }</span>
+<span class="fc" id="L278">        @Override public String defaultExtension() { return &quot;csv&quot;; }</span>
     }
 
 }

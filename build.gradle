@@ -246,7 +246,7 @@ tasks.register('cleanForDeployment', Delete) {
 // 2:
 tasks.register('deploy') {
 
-    // Expected before : dependsOn 'cleanForDeployment'
+    dependsOn 'cleanForDeployment'
 
     dependsOn 'check'
     dependsOn 'jar'
@@ -254,6 +254,7 @@ tasks.register('deploy') {
     dependsOn 'javadoc'
     dependsOn 'releaseJDocs'
 
+    dependsOn 'publishToSonatype'
 }
 // 3:
 //     execute publishToSonatype

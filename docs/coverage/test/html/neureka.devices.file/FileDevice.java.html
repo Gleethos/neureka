@@ -4,12 +4,13 @@
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.calculus.Function;
+import neureka.common.utility.Cache;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
-import neureka.common.utility.Cache;
 import neureka.dtype.DataType;
+import neureka.math.Function;
+import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,15 +47,15 @@ import java.util.stream.Collectors;
 */
 public final class FileDevice extends AbstractBaseDevice&lt;Object&gt;
 {
-<span class="fc" id="L49">    private static final Logger _LOG = LoggerFactory.getLogger(FileDevice.class);</span>
+<span class="fc" id="L50">    private static final Logger _LOG = LoggerFactory.getLogger(FileDevice.class);</span>
 
-<span class="fc" id="L51">    private static final Cache&lt;Cache.LazyEntry&lt;String, FileDevice&gt;&gt; _CACHE = new Cache&lt;&gt;(64);</span>
+<span class="fc" id="L52">    private static final Cache&lt;Cache.LazyEntry&lt;String, FileDevice&gt;&gt; _CACHE = new Cache&lt;&gt;(64);</span>
 
 
     private final String _directory;
-<span class="fc" id="L55">    private final List&lt;String&gt; _loadable = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L56">    private final List&lt;String&gt; _loaded = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L57">    private final Map&lt;Tsr&lt;Object&gt;, FileHandle&lt;?, Object&gt;&gt; _stored = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L56">    private final List&lt;String&gt; _loadable = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L57">    private final Map&lt;String, Tsr&lt;Object&gt;&gt; _loaded = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L58">    private final Map&lt;Tsr&lt;Object&gt;, FileHandle&lt;?, Object&gt;&gt; _stored = new HashMap&lt;&gt;();</span>
 
 
     /**
@@ -62,234 +63,246 @@ public final class FileDevice extends AbstractBaseDevice&lt;Object&gt;
      * @return A {@link FileDevice} instance representing the provided directory path and all compatible files within it.
      */
     public static FileDevice at( String path ) {
-<span class="fc" id="L65">        LogUtil.nullArgCheck( path, &quot;path&quot;, String.class );</span>
-<span class="fc" id="L66">        return _CACHE.process( new Cache.LazyEntry&lt;&gt;( path, FileDevice::new ) ).getValue();</span>
+<span class="fc" id="L66">        LogUtil.nullArgCheck( path, &quot;path&quot;, String.class );</span>
+<span class="fc" id="L67">        return _CACHE.process( new Cache.LazyEntry&lt;&gt;( path, FileDevice::new ) ).getValue();</span>
     }
 
-<span class="fc" id="L69">    private FileDevice( String directory ) {</span>
-<span class="fc" id="L70">        _directory = directory;</span>
-<span class="fc" id="L71">        _updateFolderView();</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L70">    private FileDevice( String directory ) {</span>
+<span class="fc" id="L71">        _directory = directory;</span>
+<span class="fc" id="L72">        _updateFolderView();</span>
+<span class="fc" id="L73">    }</span>
 
     /**
      *  The underlying folder might change, files might be added or removed.
      *  In order to have an up-to-date view of the folder this method updates the current view state.
      */
     private void _updateFolderView() {
-<span class="fc" id="L79">        _loadable.clear();</span>
-<span class="fc" id="L80">        File dir = new File( _directory );</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        if ( ! dir.exists() ) dir.mkdirs();</span>
+<span class="fc" id="L80">        _loadable.clear();</span>
+<span class="fc" id="L81">        File dir = new File( _directory );</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if ( ! dir.exists() ) dir.mkdirs();</span>
         else {
-<span class="fc" id="L83">            List&lt;String&gt; found = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L84">            File[] files = dir.listFiles();</span>
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">            if ( files != null ) {</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">                for ( File file : files ) {</span>
-<span class="fc" id="L87">                    int i = file.getName().lastIndexOf( '.' );</span>
-<span class="fc bfc" id="L88" title="All 2 branches covered.">                    if ( i &gt; 0 ) {</span>
-<span class="fc" id="L89">                        String extension = file.getName().substring( i + 1 );</span>
-<span class="fc bfc" id="L90" title="All 2 branches covered.">                        if ( FileHandle.FACTORY.hasLoader( extension ) ) found.add( file.getName() );</span>
+<span class="fc" id="L84">            List&lt;String&gt; found = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L85">            File[] files = dir.listFiles();</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">            if ( files != null ) {</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                for ( File file : files ) {</span>
+<span class="fc" id="L88">                    int i = file.getName().lastIndexOf( '.' );</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">                    if ( i &gt; 0 ) {</span>
+<span class="fc" id="L90">                        String extension = file.getName().substring( i + 1 );</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                        if ( FileHandle.FACTORY.hasLoader( extension ) ) found.add( file.getName() );</span>
                     }
                 }
-<span class="fc" id="L93">                _loadable.addAll( found ); // TODO! -&gt; Update so that new files will be detected...</span>
+<span class="fc" id="L94">                _loadable.addAll( found ); // TODO! -&gt; Update so that new files will be detected...</span>
             }
         }
-<span class="fc" id="L96">        _loadable.removeAll(_loaded);</span>
-<span class="fc" id="L97">        _loaded.forEach( fileName -&gt; {</span>
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">              if ( !_loadable.contains(fileName) ) {</span>
-<span class="fc" id="L99">                  String message = &quot;Missing file detected! File with name '&quot;+fileName+&quot;' no longer present in directory '&quot;+_directory+&quot;'.&quot;;</span>
-<span class="fc" id="L100">                  _LOG.warn(message);</span>
+<span class="fc" id="L97">        _loadable.removeAll(_loaded.keySet());</span>
+<span class="fc" id="L98">        _loaded.keySet().forEach( fileName -&gt; {</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">              if ( !_loadable.contains(fileName) ) {</span>
+<span class="fc" id="L100">                  String message = &quot;Missing file detected! File with name '&quot;+fileName+&quot;' no longer present in directory '&quot;+_directory+&quot;'.&quot;;</span>
+<span class="fc" id="L101">                  _LOG.warn(message);</span>
               }
-<span class="fc" id="L102">        });</span>
-<span class="fc" id="L103">    }</span>
+<span class="fc" id="L103">        });</span>
+<span class="fc" id="L104">    }</span>
 
-<span class="fc" id="L105">    public &lt;V&gt; Tsr&lt;V&gt; load( String filename ) throws IOException { return load( filename, null ); }</span>
+<span class="fc" id="L106">    public &lt;V&gt; Optional&lt;Tsr&lt;V&gt;&gt; load( String filename ) throws IOException { return load( filename, null ); }</span>
 
-    public &lt;V&gt; Tsr&lt;V&gt; load( String filename, Map&lt;String, Object&gt; conf ) throws IOException {
-<span class="fc" id="L108">        LogUtil.nullArgCheck(filename, &quot;filename&quot;, String.class);</span>
-<span class="fc" id="L109">        _updateFolderView();</span>
-<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if ( _loadable.contains( filename ) ) {</span>
-<span class="fc" id="L111">            String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );</span>
-<span class="fc" id="L112">            String filePath = _directory + &quot;/&quot; + filename;</span>
-<span class="fc" id="L113">            HandleFactory.Loader handleLoader = FileHandle.FACTORY.getLoader( extension );</span>
-<span class="pc bpc" id="L114" title="1 of 2 branches missed.">            if ( handleLoader == null )</span>
-<span class="nc" id="L115">                throw new IllegalStateException(</span>
+    public &lt;V&gt; Optional&lt;Tsr&lt;V&gt;&gt; load( String filename, Map&lt;String, Object&gt; conf ) throws IOException {
+<span class="fc" id="L109">        LogUtil.nullArgCheck(filename, &quot;filename&quot;, String.class);</span>
+<span class="fc" id="L110">        _updateFolderView();</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if ( _loaded.containsKey( filename ) ) {</span>
+<span class="nc" id="L112">            Tsr&lt;Object&gt; tensor = _loaded.get( filename );</span>
+<span class="nc" id="L113">            this.restore( tensor );</span>
+<span class="nc" id="L114">            return Optional.of( (Tsr&lt;V&gt;) tensor );</span>
+        }
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if ( _loadable.contains( filename ) ) {</span>
+<span class="fc" id="L117">            String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );</span>
+<span class="fc" id="L118">            String filePath = _directory + &quot;/&quot; + filename;</span>
+<span class="fc" id="L119">            HandleFactory.Loader handleLoader = FileHandle.FACTORY.getLoader( extension );</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">            if ( handleLoader == null )</span>
+<span class="nc" id="L121">                throw new IllegalStateException(</span>
                     &quot;Failed to create file handle loader for file with extension '&quot; + extension + &quot;'.&quot;
                 );
 
-<span class="fc" id="L119">            FileHandle&lt;?,Object&gt; handle = handleLoader.load( filePath, conf );</span>
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">            if ( handle == null )</span>
-<span class="nc" id="L121">                throw new IllegalStateException(</span>
+<span class="fc" id="L125">            FileHandle&lt;?,Object&gt; handle = handleLoader.load( filePath, conf );</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">            if ( handle == null )</span>
+<span class="nc" id="L127">                throw new IllegalStateException(</span>
                     &quot;Failed to create file handle for file path '&quot; + filePath + &quot; and loading conf '&quot; + conf + &quot;'.&quot;
                 );
 
-<span class="fc" id="L125">            Tsr&lt;Object&gt; tensor = handle.load();</span>
-<span class="fc" id="L126">            _stored.put( tensor, handle );</span>
-<span class="fc" id="L127">            _loadable.remove( filename );</span>
-<span class="fc" id="L128">            _loaded.add( filename );</span>
-<span class="fc" id="L129">            return (Tsr&lt;V&gt;) tensor;</span>
+<span class="fc" id="L131">            Tsr&lt;Object&gt; tensor = handle.load();</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">            if ( tensor == null )</span>
+<span class="nc" id="L133">                throw new IllegalStateException(</span>
+                    &quot;Failed to load tensor from file handle for file path '&quot; + filePath + &quot; and loading conf '&quot; + conf + &quot;'.&quot;
+                );
+
+<span class="fc" id="L137">            _stored.put( tensor, handle );</span>
+<span class="fc" id="L138">            _loadable.remove( filename );</span>
+<span class="fc" id="L139">            _loaded.put( filename, tensor );</span>
+<span class="fc" id="L140">            return Optional.of( (Tsr&lt;V&gt;) tensor );</span>
         }
-<span class="nc" id="L131">        return null;</span>
+<span class="nc" id="L142">        return Optional.empty();</span>
     }
 
     public FileHandle&lt;?, ?&gt; fileHandleOf( Tsr&lt;?&gt; tensor ) {
-<span class="fc" id="L135">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
-<span class="fc" id="L136">        return _stored.get( tensor );</span>
+<span class="fc" id="L146">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
+<span class="fc" id="L147">        return _stored.get( tensor );</span>
     }
 
     @Override
     public void dispose() {
-<span class="nc" id="L141">        _stored.clear();</span>
-<span class="nc" id="L142">        _loadable.clear();</span>
-<span class="nc" id="L143">        _loaded.clear();</span>
-<span class="nc" id="L144">    }</span>
+<span class="nc" id="L152">        _stored.clear();</span>
+<span class="nc" id="L153">        _loadable.clear();</span>
+<span class="nc" id="L154">        _loaded.clear();</span>
+<span class="nc" id="L155">    }</span>
 
     /** {@inheritDoc} */
     @Override
     public Device&lt;Object&gt; restore( Tsr&lt;Object&gt; tensor ) {
-<span class="nc" id="L149">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
-<span class="nc bnc" id="L150" title="All 2 branches missed.">        if ( !this.has( tensor ) )</span>
-<span class="nc" id="L151">            throw new IllegalStateException( &quot;The given tensor is not stored on this file device.&quot; );</span>
-<span class="nc" id="L152">        FileHandle&lt;?, Object&gt; head = _stored.get( tensor );</span>
+<span class="nc" id="L160">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if ( !this.has( tensor ) )</span>
+<span class="nc" id="L162">            throw new IllegalStateException( &quot;The given tensor is not stored on this file device.&quot; );</span>
+<span class="nc" id="L163">        FileHandle&lt;?, Object&gt; head = _stored.get( tensor );</span>
         try {
-<span class="nc" id="L154">            head.restore( tensor );</span>
-<span class="nc" id="L155">        } catch ( Exception e ) {</span>
-<span class="nc" id="L156">            e.printStackTrace();</span>
-<span class="nc" id="L157">        }</span>
-<span class="nc" id="L158">        return null;</span>
+<span class="nc" id="L165">            head.restore( tensor );</span>
+<span class="nc" id="L166">        } catch ( Exception e ) {</span>
+<span class="nc" id="L167">            e.printStackTrace();</span>
+<span class="nc" id="L168">        }</span>
+<span class="nc" id="L169">        return this;</span>
     }
 
     @Override
     public &lt;T&gt; Device&lt;Object&gt; store( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L163">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
-<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        if ( this.has( tensor ) ) {</span>
-<span class="nc" id="L165">            FileHandle&lt;?, Object&gt; head = _stored.get( tensor );</span>
+<span class="fc" id="L174">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if ( this.has( tensor ) ) {</span>
+<span class="nc" id="L176">            FileHandle&lt;?, Object&gt; head = _stored.get( tensor );</span>
             try {
-<span class="nc" id="L167">                head.store( tensor );</span>
-<span class="nc" id="L168">            } catch ( Exception e ) {</span>
-<span class="nc" id="L169">                e.printStackTrace();</span>
-<span class="nc" id="L170">            }</span>
-<span class="nc" id="L171">            return this;</span>
+<span class="nc" id="L178">                head.store( tensor );</span>
+<span class="nc" id="L179">            } catch ( Exception e ) {</span>
+<span class="nc" id="L180">                e.printStackTrace();</span>
+<span class="nc" id="L181">            }</span>
+<span class="nc" id="L182">            return this;</span>
         }
-<span class="fc" id="L173">        String filename = tensor.shape().stream().map( Object::toString ).collect(Collectors.joining(&quot;x&quot;));</span>
-<span class="fc" id="L174">        filename = &quot;tensor_&quot; + filename + &quot;_&quot; + tensor.getDataType().getRepresentativeType().getSimpleName().toLowerCase();</span>
-<span class="fc" id="L175">        filename = filename + &quot;_&quot; + java.time.LocalDate.now();</span>
-<span class="fc" id="L176">        filename = filename + &quot;_&quot; + java.time.LocalTime.now().toString();</span>
-<span class="fc" id="L177">        filename = filename.replace( &quot;.&quot;, &quot;_&quot; ).replace( &quot;:&quot;,&quot;-&quot; ) + &quot;_.idx&quot;;</span>
-<span class="fc" id="L178">        store( tensor, filename );</span>
-<span class="fc" id="L179">        return this;</span>
+<span class="fc" id="L184">        String filename = tensor.shape().stream().map( Object::toString ).collect(Collectors.joining(&quot;x&quot;));</span>
+<span class="fc" id="L185">        filename = &quot;tensor_&quot; + filename + &quot;_&quot; + tensor.getDataType().getRepresentativeType().getSimpleName().toLowerCase();</span>
+<span class="fc" id="L186">        filename = filename + &quot;_&quot; + java.time.LocalDate.now();</span>
+<span class="fc" id="L187">        filename = filename + &quot;_&quot; + java.time.LocalTime.now().toString();</span>
+<span class="fc" id="L188">        filename = filename.replace( &quot;.&quot;, &quot;_&quot; ).replace( &quot;:&quot;,&quot;-&quot; ) + &quot;_.idx&quot;;</span>
+<span class="fc" id="L189">        store( tensor, filename );</span>
+<span class="fc" id="L190">        return this;</span>
     }
 
     public &lt;T&gt; FileDevice store( Tsr&lt;T&gt; tensor, String filename ) {
-<span class="fc" id="L183">        return this.store( tensor, filename, null );</span>
+<span class="fc" id="L194">        return this.store( tensor, filename, null );</span>
     }
 
     public &lt;T&gt; FileDevice store( Tsr&lt;T&gt; tensor, String filename, Map&lt;String, Object&gt; configurations ) {
-<span class="fc" id="L187">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
-<span class="fc" id="L188">        LogUtil.nullArgCheck( filename, &quot;filename&quot;, String.class );</span>
+<span class="fc" id="L198">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
+<span class="fc" id="L199">        LogUtil.nullArgCheck( filename, &quot;filename&quot;, String.class );</span>
         String fullFileName;
         String extension;
-<span class="fc" id="L191">        int i = filename.lastIndexOf( '.' );</span>
-<span class="fc bfc" id="L192" title="All 2 branches covered.">        if ( i &lt; 1 ) {</span>
-<span class="fc" id="L193">            fullFileName = filename + &quot;.idx&quot;;</span>
-<span class="fc" id="L194">            extension = &quot;idx&quot;;</span>
+<span class="fc" id="L202">        int i = filename.lastIndexOf( '.' );</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        if ( i &lt; 1 ) {</span>
+<span class="fc" id="L204">            fullFileName = filename + &quot;.idx&quot;;</span>
+<span class="fc" id="L205">            extension = &quot;idx&quot;;</span>
         }
         else {
-<span class="fc" id="L197">            extension = filename.substring( i + 1 );</span>
-<span class="fc" id="L198">            fullFileName = filename;</span>
+<span class="fc" id="L208">            extension = filename.substring( i + 1 );</span>
+<span class="fc" id="L209">            fullFileName = filename;</span>
         }
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        if ( FileHandle.FACTORY.hasSaver( extension ) ) {</span>
-<span class="fc" id="L201">            _stored.put(</span>
-                    (Tsr&lt;Object&gt;) tensor,
-<span class="fc" id="L203">                    FileHandle.FACTORY.getSaver(extension).save( _directory + &quot;/&quot; + fullFileName, tensor, configurations )</span>
-            );
-<span class="fc" id="L205">            tensor.getMut().setData(null);</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">        if ( FileHandle.FACTORY.hasSaver( extension ) ) {</span>
+<span class="fc" id="L212">            FileHandle handle =</span>
+                    FileHandle.FACTORY
+<span class="fc" id="L214">                    .getSaver(extension)</span>
+<span class="fc" id="L215">                    .save( _directory + &quot;/&quot; + fullFileName, tensor, configurations );</span>
+
+<span class="fc" id="L217">            _stored.put((Tsr&lt;Object&gt;) tensor, handle);</span>
+<span class="fc" id="L218">            tensor.getMut().setData( new DeviceData( this, null, handle.getDataType() ){} );</span>
         }
-<span class="fc" id="L207">        return this;</span>
+<span class="fc" id="L220">        return this;</span>
     }
 
     @Override
     public &lt;T&gt; boolean has( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L212">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
-<span class="fc" id="L213">        return _stored.containsKey( tensor );</span>
+<span class="fc" id="L225">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
+<span class="fc" id="L226">        return _stored.containsKey( tensor );</span>
     }
 
     @Override
     public &lt;T&gt; Device&lt;Object&gt; free( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L218">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        if ( !this.has( tensor ) )</span>
-<span class="nc" id="L220">            throw new IllegalStateException( &quot;The given tensor is not stored on this file device.&quot; );</span>
-<span class="fc" id="L221">        FileHandle&lt;?,Object&gt; head = _stored.get( tensor );</span>
+<span class="fc" id="L231">        LogUtil.nullArgCheck(tensor, &quot;tensor&quot;, Tsr.class);</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if ( !this.has( tensor ) )</span>
+<span class="nc" id="L233">            throw new IllegalStateException( &quot;The given tensor is not stored on this file device.&quot; );</span>
+<span class="fc" id="L234">        FileHandle&lt;?,Object&gt; head = _stored.get( tensor );</span>
         try {
-<span class="fc" id="L223">            head.free();</span>
-<span class="nc" id="L224">        } catch ( Exception e ) {</span>
-<span class="nc" id="L225">            e.printStackTrace();</span>
-<span class="fc" id="L226">        }</span>
-<span class="fc" id="L227">        _stored.remove( tensor );</span>
-<span class="fc" id="L228">        return this;</span>
+<span class="fc" id="L236">            head.free();</span>
+<span class="nc" id="L237">        } catch ( Exception e ) {</span>
+<span class="nc" id="L238">            e.printStackTrace();</span>
+<span class="fc" id="L239">        }</span>
+<span class="fc" id="L240">        _stored.remove( tensor );</span>
+<span class="fc" id="L241">        return this;</span>
     }
 
     @Override
     public &lt;T&gt; Access&lt;T&gt; access( Tsr&lt;T&gt; tensor) {
-<span class="nc" id="L233">        throw new IllegalAccessError(</span>
-<span class="nc" id="L234">                this.getClass().getSimpleName()+&quot; instances do not support accessing the state of a stored tensor.&quot;</span>
+<span class="nc" id="L246">        throw new IllegalAccessError(</span>
+<span class="nc" id="L247">                this.getClass().getSimpleName()+&quot; instances do not support accessing the state of a stored tensor.&quot;</span>
             );
     }
 
     @Override
     public Device&lt;Object&gt; approve( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
-<span class="nc" id="L240">        throw new IllegalAccessError(</span>
-<span class="nc" id="L241">                this.getClass().getSimpleName()+&quot; instances do not support executions on stored tensors.&quot;</span>
+<span class="nc" id="L253">        throw new IllegalAccessError(</span>
+<span class="nc" id="L254">                this.getClass().getSimpleName()+&quot; instances do not support executions on stored tensors.&quot;</span>
             );
     }
 
     @Override
-<span class="fc" id="L246">    public Collection&lt;Tsr&lt;Object&gt;&gt; getTensors() { return _stored.keySet(); }</span>
+<span class="fc" id="L259">    public Collection&lt;Tsr&lt;Object&gt;&gt; getTensors() { return _stored.keySet(); }</span>
 
     @Override
-    public neureka.Data allocate(DataType&lt;?&gt; dataType, int size) {
-<span class="nc" id="L250">        throw new IllegalStateException(&quot;FileDevice instances do not support allocation of memory.&quot;);</span>
+    public &lt;V&gt; neureka.Data&lt;V&gt; allocate( DataType&lt;V&gt; dataType, NDConfiguration ndc ) {
+<span class="nc" id="L263">        throw new IllegalStateException(&quot;FileDevice instances do not support allocation of memory.&quot;);</span>
     }
 
     @Override
-    public &lt;V&gt; neureka.Data allocate(DataType&lt;V&gt; dataType, int size, V initialValue) {
-<span class="nc" id="L255">        throw new IllegalStateException(&quot;FileDevice instances do not support allocation of memory.&quot;);</span>
+    public &lt;V&gt; neureka.Data&lt;V&gt; allocateFromOne(DataType&lt;V&gt; dataType, NDConfiguration ndc, V initialValue ) {
+<span class="nc" id="L268">        throw new IllegalStateException(&quot;FileDevice instances do not support allocation of memory.&quot;);</span>
     }
 
     @Override
-    public neureka.Data allocate(Object jvmData, int desiredSize) {
-<span class="nc" id="L260">        throw new IllegalStateException(&quot;FileDevice instances do not support allocation of memory.&quot;);</span>
+    public &lt;T&gt; neureka.Data&lt;T&gt; allocateFromAll(DataType&lt;T&gt; dataType, NDConfiguration ndc, Object jvmData ) {
+<span class="nc" id="L273">        throw new IllegalStateException(&quot;FileDevice instances do not support allocation of memory.&quot;);</span>
     }
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) {
-<span class="nc" id="L265">        throw new IllegalStateException(</span>
-<span class="nc" id="L266">                this.getClass().getSimpleName()+&quot; instances do not support operations!&quot;</span>
+<span class="nc" id="L278">        throw new IllegalStateException(</span>
+<span class="nc" id="L279">                this.getClass().getSimpleName()+&quot; instances do not support operations!&quot;</span>
             );
     }
 
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;Object&gt;&gt; changeRequest ) {
-<span class="nc" id="L272">        Tsr&lt;Object&gt; oldOwner = changeRequest.getOldOwner();</span>
-<span class="nc" id="L273">        Tsr&lt;Object&gt; newOwner = changeRequest.getNewOwner();</span>
-<span class="nc bnc" id="L274" title="All 2 branches missed.">        if ( _stored.containsKey( oldOwner ) ) {</span>
-<span class="nc" id="L275">            FileHandle&lt;?, Object&gt; head = _stored.get( oldOwner );</span>
-<span class="nc" id="L276">            _stored.remove( oldOwner );</span>
-<span class="nc" id="L277">            _stored.put( newOwner, head );</span>
+<span class="nc" id="L285">        Tsr&lt;Object&gt; oldOwner = changeRequest.getOldOwner();</span>
+<span class="nc" id="L286">        Tsr&lt;Object&gt; newOwner = changeRequest.getNewOwner();</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">        if ( _stored.containsKey( oldOwner ) ) {</span>
+<span class="nc" id="L288">            FileHandle&lt;?, Object&gt; head = _stored.get( oldOwner );</span>
+<span class="nc" id="L289">            _stored.remove( oldOwner );</span>
+<span class="nc" id="L290">            _stored.put( newOwner, head );</span>
         }
-<span class="nc" id="L279">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
-<span class="nc" id="L280">        return true;</span>
+<span class="nc" id="L292">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
+<span class="nc" id="L293">        return true;</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L285">        return this.getClass().getSimpleName()+&quot;[directory=&quot; + _directory + &quot;,stored=&quot; + _stored + &quot;,loadable=&quot; + _loadable + &quot;,loaded=&quot; + _loaded + &quot;]&quot;;</span>
+<span class="fc" id="L298">        return this.getClass().getSimpleName()+&quot;[directory=&quot; + _directory + &quot;,stored=&quot; + _stored + &quot;,loadable=&quot; + _loadable + &quot;,loaded=&quot; + _loaded + &quot;]&quot;;</span>
     }
 
-<span class="nc" id="L288">    public String getDirectory() { return _directory; }</span>
+<span class="nc" id="L301">    public String getDirectory() { return _directory; }</span>
 
-<span class="fc" id="L290">    public List&lt;String&gt; getLoadable() { return new ArrayList&lt;&gt;(_loadable); }</span>
+<span class="fc" id="L303">    public List&lt;String&gt; getLoadable() { return new ArrayList&lt;&gt;(_loadable); }</span>
 
-<span class="fc" id="L292">    public List&lt;String&gt; getLoaded() { return new ArrayList&lt;&gt;(_loaded); }</span>
+<span class="fc" id="L305">    public List&lt;String&gt; getLoaded() { return new ArrayList&lt;&gt;(_loaded.keySet()); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

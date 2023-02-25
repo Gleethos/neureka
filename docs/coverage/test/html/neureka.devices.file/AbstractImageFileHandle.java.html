@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractImageFileHandle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file</a> &gt; <span class="el_source">AbstractImageFileHandle.java</span></div><h1>AbstractImageFileHandle.java</h1><pre class="source lang-java linenums">package neureka.devices.file;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Storage;
@@ -22,143 +23,142 @@ abstract class AbstractImageFileHandle&lt;C&gt; extends AbstractFileHandle&lt;C,
 
 
     protected AbstractImageFileHandle( Tsr&lt;Number&gt; t, String filename, ImageFileType type ) {
-<span class="fc" id="L25">        super( filename, type );</span>
-<span class="fc" id="L26">        LogUtil.nullArgCheck( type, &quot;type&quot;, ImageFileType.class );</span>
-<span class="fc" id="L27">        _type = type;</span>
-<span class="fc bfc" id="L28" title="All 2 branches covered.">        if ( t == null ) _loadHead();</span>
+<span class="fc" id="L26">        super( filename, type );</span>
+<span class="fc" id="L27">        LogUtil.nullArgCheck( type, &quot;type&quot;, ImageFileType.class );</span>
+<span class="fc" id="L28">        _type = type;</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if ( t == null ) _loadHead();</span>
         else
         {
-<span class="pc bpc" id="L31" title="2 of 4 branches missed.">            if ( t.rank() != 3 || t.rank() == 2 )</span>
-<span class="nc" id="L32">                throw new IllegalArgumentException(</span>
-<span class="nc" id="L33">                    &quot;Expected tensor of rank 3, or 2 but encountered rank &quot; + t.rank() + &quot;. &quot; +</span>
+<span class="pc bpc" id="L32" title="2 of 4 branches missed.">            if ( t.rank() != 3 || t.rank() == 2 )</span>
+<span class="nc" id="L33">                throw new IllegalArgumentException(</span>
+<span class="nc" id="L34">                    &quot;Expected tensor of rank 3, or 2 but encountered rank &quot; + t.rank() + &quot;. &quot; +</span>
                     &quot;Cannot interpret tensor as image!&quot;
                 );
 
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            if ( t.shape(t.rank()-1) != _type.numberOfChannels() )</span>
-<span class="nc" id="L38">                throw new IllegalArgumentException(</span>
-<span class="nc" id="L39">                    &quot;Expected last tensor axes length &quot; + t.shape(t.rank()-1) + &quot; to be equal &quot; +</span>
-<span class="nc" id="L40">                    &quot;to &quot; + _type.numberOfChannels() + &quot;, the number of expected color channels!&quot;</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">            if ( t.shape(t.rank()-1) != _type.numberOfChannels() )</span>
+<span class="nc" id="L39">                throw new IllegalArgumentException(</span>
+<span class="nc" id="L40">                    &quot;Expected last tensor axes length &quot; + t.shape(t.rank()-1) + &quot; to be equal &quot; +</span>
+<span class="nc" id="L41">                    &quot;to &quot; + _type.numberOfChannels() + &quot;, the number of expected color channels!&quot;</span>
                 );
 
-<span class="fc" id="L43">            _height = t.shape(0);</span>
-<span class="fc" id="L44">            _width  = t.shape(1);</span>
-<span class="fc" id="L45">            t.getMut().setIsVirtual(false);</span>
-<span class="fc" id="L46">            store(t);</span>
+<span class="fc" id="L44">            _height = t.shape(0);</span>
+<span class="fc" id="L45">            _width  = t.shape(1);</span>
+<span class="fc" id="L46">            t.getMut().setIsVirtual(false);</span>
+<span class="fc" id="L47">            store(t);</span>
         }
-<span class="fc" id="L48">    }</span>
+<span class="fc" id="L49">    }</span>
 
 
     private void _loadHead()
     {
-<span class="fc" id="L53">        final File found = _loadFile();</span>
+<span class="fc" id="L54">        final File found = _loadFile();</span>
         final BufferedImage image;
 
         try {
-<span class="fc" id="L57">            image = ImageIO.read(found);</span>
-<span class="fc" id="L58">            Raster data = image.getData();</span>
-<span class="fc" id="L59">            _height = data.getHeight();</span>
-<span class="fc" id="L60">            _width = data.getWidth();</span>
-<span class="nc" id="L61">        } catch ( Exception exception ) {</span>
-<span class="nc" id="L62">            String message = _type.imageTypeName().toUpperCase() + &quot; '&quot;+_fileName+&quot;' could not be read from file!&quot;;</span>
-<span class="nc" id="L63">            _LOG.error( message, exception );</span>
-<span class="nc" id="L64">            throw new IllegalStateException( message );</span>
-<span class="fc" id="L65">        }</span>
+<span class="fc" id="L58">            image = ImageIO.read(found);</span>
+<span class="fc" id="L59">            Raster data = image.getData();</span>
+<span class="fc" id="L60">            _height = data.getHeight();</span>
+<span class="fc" id="L61">            _width = data.getWidth();</span>
+<span class="nc" id="L62">        } catch ( Exception exception ) {</span>
+<span class="nc" id="L63">            String message = _type.imageTypeName().toUpperCase() + &quot; '&quot;+_fileName+&quot;' could not be read from file!&quot;;</span>
+<span class="nc" id="L64">            _LOG.error( message, exception );</span>
+<span class="nc" id="L65">            throw new IllegalStateException( message );</span>
+<span class="fc" id="L66">        }</span>
 
-<span class="pc bpc" id="L67" title="2 of 4 branches missed.">        if ( _height &lt; 1 || _width &lt; 1 ) {</span>
-<span class="nc" id="L68">            String message = &quot;The height and width of the &quot; + _type + &quot; at '&quot;+_fileName+&quot;' is &quot;+_height+&quot; &amp; &quot;+_width+&quot;.&quot; +</span>
+<span class="pc bpc" id="L68" title="2 of 4 branches missed.">        if ( _height &lt; 1 || _width &lt; 1 ) {</span>
+<span class="nc" id="L69">            String message = &quot;The height and width of the &quot; + _type + &quot; at '&quot;+_fileName+&quot;' is &quot;+_height+&quot; &amp; &quot;+_width+&quot;.&quot; +</span>
                              &quot;However both dimensions must at least be of size 1!&quot;;
-<span class="nc" id="L70">            IllegalStateException e = new IllegalStateException( message );</span>
-<span class="nc" id="L71">            _LOG.error( message, e );</span>
-<span class="nc" id="L72">            throw e;</span>
+<span class="nc" id="L71">            IllegalStateException e = new IllegalStateException( message );</span>
+<span class="nc" id="L72">            _LOG.error( message, e );</span>
+<span class="nc" id="L73">            throw e;</span>
         }
-<span class="fc" id="L74">    }</span>
+<span class="fc" id="L75">    }</span>
 
     /** {@inheritDoc} */
     @Override
     public Tsr&lt;Number&gt; load() throws IOException {
-<span class="fc" id="L79">        Object value = _loadData(); // This is simply some kind of primitive array.</span>
-<span class="fc" id="L80">        Tsr&lt;?&gt; t = Tsr.of(</span>
-<span class="fc" id="L81">                        _type.targetedValueType(),</span>
-<span class="fc" id="L82">                        new int[]{_height, _width, _type.numberOfChannels()},</span>
+<span class="fc" id="L80">        Object value = _loadData(); // This is simply some kind of primitive array.</span>
+<span class="fc" id="L81">        Tsr&lt;?&gt; t = Tsr.of(</span>
+<span class="fc" id="L82">                        _type.targetedValueType(),</span>
+<span class="fc" id="L83">                        new int[]{_height, _width, _type.numberOfChannels()},</span>
                         value
                     );
 
-<span class="fc" id="L86">        return t.getMut().upcast(Number.class);</span>
+<span class="fc" id="L87">        return t.getMut().upcast(Number.class);</span>
     }
 
     @Override protected Object _loadData() throws IOException
     {
-<span class="fc" id="L91">        File found = _loadFile();</span>
+<span class="fc" id="L92">        File found = _loadFile();</span>
         BufferedImage image;
         try
         {
-<span class="fc" id="L95">            image = ImageIO.read( found );</span>
-<span class="fc" id="L96">            byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();</span>
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">            if ( data.length != (_height * _width * _type.numberOfChannels()) )</span>
-<span class="nc" id="L98">                throw new IllegalStateException(&quot;Loaded image data array does not match expected number of elements!&quot;);</span>
+<span class="fc" id="L96">            image = ImageIO.read( found );</span>
+<span class="fc" id="L97">            byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">            if ( data.length != (_height * _width * _type.numberOfChannels()) )</span>
+<span class="nc" id="L99">                throw new IllegalStateException(&quot;Loaded image data array does not match expected number of elements!&quot;);</span>
 
-<span class="pc bpc" id="L100" title="1 of 2 branches missed.">            if ( _type.targetedValueType() == Short.class ) {</span>
-<span class="fc" id="L101">                short[] newData = new short[data.length];</span>
-<span class="fc" id="L102">                UI8 ui8 = new UI8();</span>
-<span class="fc" id="L103">                CPU.get().getExecutor().threaded(</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">            if ( _type.targetedValueType() == Short.class ) {</span>
+<span class="fc" id="L102">                short[] newData = new short[data.length];</span>
+<span class="fc" id="L103">                UI8 ui8 = new UI8();</span>
+<span class="fc" id="L104">                CPU.get().getExecutor().threaded(</span>
                         data.length,
-<span class="fc bfc" id="L105" title="All 2 branches covered.">                        (start, end) -&gt; { for (int i = start; i &lt; end; i++) newData[i] = ui8.toTarget(data[i]); }</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">                        (start, end) -&gt; { for (int i = start; i &lt; end; i++) newData[i] = ui8.toTarget(data[i]); }</span>
                     );
-<span class="fc" id="L107">                return newData;</span>
+<span class="fc" id="L108">                return newData;</span>
             }
-<span class="nc" id="L109">            else throw new IllegalStateException(&quot;Alternative types not yet supported!&quot;);</span>
+<span class="nc" id="L110">            else throw new IllegalStateException(&quot;Alternative types not yet supported!&quot;);</span>
         }
-<span class="nc" id="L111">        catch ( IOException e )</span>
+<span class="nc" id="L112">        catch ( IOException e )</span>
         {
-<span class="nc" id="L113">            _LOG.error( &quot;Failed loading &quot; + _type + &quot; file!&quot;, e );</span>
-<span class="nc" id="L114">            throw e;</span>
+<span class="nc" id="L114">            _LOG.error( &quot;Failed loading &quot; + _type + &quot; file!&quot;, e );</span>
+<span class="nc" id="L115">            throw e;</span>
         }
     }
 
     /** {@inheritDoc} */
-<span class="fc" id="L119">    @Override public int getValueSize() { return _width * _height * _type.numberOfChannels(); }</span>
+<span class="fc" id="L120">    @Override public int getValueSize() { return _width * _height * _type.numberOfChannels(); }</span>
 
     /** {@inheritDoc} */
-<span class="nc" id="L122">    @Override public int getDataSize() { return _width * _height * _type.numberOfChannels(); }</span>
+<span class="nc" id="L123">    @Override public int getDataSize() { return _width * _height * _type.numberOfChannels(); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L125">    @Override public int getTotalSize() { return _width * _height * _type.numberOfChannels(); }</span>
+<span class="fc" id="L126">    @Override public int getTotalSize() { return _width * _height * _type.numberOfChannels(); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L128">    @Override public DataType&lt;?&gt; getDataType() { return DataType.of( UI8.class ); }</span>
+<span class="fc" id="L129">    @Override public DataType&lt;?&gt; getDataType() { return DataType.of( UI8.class ); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L131">    @Override public int[] getShape() { return new int[]{ _height, _width, _type.numberOfChannels() }; }</span>
+<span class="fc" id="L132">    @Override public Shape getShape() { return Shape.of( _height, _width, _type.numberOfChannels() ); }</span>
 
     /** {@inheritDoc} */
     @Override
     public &lt;T extends Number&gt; Storage&lt;Number&gt; store( Tsr&lt;T&gt; tensor )
     {
-<span class="fc" id="L137">        LogUtil.nullArgCheck( tensor, &quot;tensor&quot;, Tsr.class );</span>
+<span class="fc" id="L138">        LogUtil.nullArgCheck( tensor, &quot;tensor&quot;, Tsr.class );</span>
 
-<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if ( _width != tensor.shape(1) )</span>
-<span class="nc" id="L140">            throw new IllegalArgumentException(</span>
-<span class="nc" id="L141">                &quot;Cannot store tensor, because length &quot; + tensor.shape(1) + &quot; &quot; +</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if ( _width != tensor.shape(1) )</span>
+<span class="nc" id="L141">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L142">                &quot;Cannot store tensor, because length &quot; + tensor.shape(1) + &quot; &quot; +</span>
                 &quot;of axis 1 is not equal to image width &quot; + _width + &quot;.&quot;
             );
 
-<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if ( _height != tensor.shape(0) )</span>
-<span class="nc" id="L146">            throw new IllegalArgumentException(</span>
-<span class="nc" id="L147">                    &quot;Cannot store tensor, because length &quot; + tensor.shape(0) + &quot; &quot; +</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if ( _height != tensor.shape(0) )</span>
+<span class="nc" id="L147">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L148">                    &quot;Cannot store tensor, because length &quot; + tensor.shape(0) + &quot; &quot; +</span>
                             &quot;of axis 0 is not equal to image width &quot; + _height + &quot;.&quot;
             );
 
 
-<span class="fc" id="L152">        BufferedImage buff = tensor.asImage( _type.imageType() );</span>
+<span class="fc" id="L153">        BufferedImage buff = tensor.asImage( _type.imageType() );</span>
 
         try {
-<span class="fc" id="L155">            ImageIO.write( buff, extension(), new File( _fileName ) );</span>
-<span class="nc" id="L156">        } catch ( Exception e ) {</span>
-<span class="nc" id="L157">            String message = &quot;Failed writing tensor as &quot; + extension() + &quot; file!&quot;;</span>
-<span class="nc" id="L158">            _LOG.error(message, e);</span>
-<span class="nc" id="L159">            throw new IllegalStateException(message);</span>
-<span class="fc" id="L160">        }</span>
-<span class="fc" id="L161">        tensor.getMut().setDataType( DataType.of( _type.targetedValueType() ) );</span>
+<span class="fc" id="L156">            ImageIO.write( buff, extension(), new File( _fileName ) );</span>
+<span class="nc" id="L157">        } catch ( Exception e ) {</span>
+<span class="nc" id="L158">            String message = &quot;Failed writing tensor as &quot; + extension() + &quot; file!&quot;;</span>
+<span class="nc" id="L159">            _LOG.error(message, e);</span>
+<span class="nc" id="L160">            throw new IllegalStateException(message);</span>
+<span class="fc" id="L161">        }</span>
 <span class="fc" id="L162">        return this;</span>
     }
 

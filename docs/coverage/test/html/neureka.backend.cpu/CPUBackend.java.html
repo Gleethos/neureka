@@ -18,146 +18,147 @@ import neureka.backend.main.operations.other.Sum;
 import neureka.backend.main.operations.other.internal.CPUSum;
 import neureka.devices.host.CPU;
 
-<span class="fc" id="L21">public class CPUBackend implements BackendExtension</span>
+/**
+ *  This class loads the CPU operations into the Neureka library context.
+ */
+<span class="fc" id="L24">public class CPUBackend implements BackendExtension</span>
 {
     @Override
     public DeviceOption find(String searchKey) {
-<span class="fc bfc" id="L25" title="All 2 branches covered.">        if ( searchKey.equalsIgnoreCase(&quot;cpu&quot;)  ) new DeviceOption( CPU.get(), 1f );</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        if ( searchKey.equalsIgnoreCase(&quot;jvm&quot;)  ) new DeviceOption( CPU.get(), 1f );</span>
-<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if ( searchKey.equalsIgnoreCase(&quot;java&quot;) ) new DeviceOption( CPU.get(), 1f );</span>
-<span class="fc" id="L28">        return new DeviceOption( CPU.get(), 0f );</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if ( searchKey.equalsIgnoreCase(&quot;cpu&quot;)  ) new DeviceOption( CPU.get(), 1f );</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if ( searchKey.equalsIgnoreCase(&quot;jvm&quot;)  ) new DeviceOption( CPU.get(), 1f );</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if ( searchKey.equalsIgnoreCase(&quot;java&quot;) ) new DeviceOption( CPU.get(), 1f );</span>
+<span class="fc" id="L31">        return new DeviceOption( CPU.get(), 0f );</span>
     }
 
     @Override
-<span class="nc" id="L32">    public void dispose() { CPU.get().dispose(); }</span>
+<span class="nc" id="L35">    public void dispose() { CPU.get().dispose(); }</span>
 
     @Override
-    public BackendLoader getLoader() {
-<span class="fc" id="L36">        return registry -&gt; _load( registry.forDevice(CPU.class) );</span>
-    }
+<span class="fc" id="L38">    public BackendLoader getLoader() { return registry -&gt; _load( registry.forDevice(CPU.class) ); }</span>
 
     private void _load( ReceiveForDevice&lt;CPU&gt; receive )
     {
-<span class="fc" id="L41">        receive.forOperation( Power.class )</span>
-<span class="fc" id="L42">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalaBroadcastPower() )</span>
-<span class="fc" id="L43">                .set( Broadcast.class,     context -&gt; new CPUBroadcastPower() )</span>
-<span class="fc" id="L44">                .set( BiElementwise.class, context -&gt; new CPUBiElementWisePower() );</span>
+<span class="fc" id="L42">        receive.forOperation( Power.class )</span>
+<span class="fc" id="L43">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalaBroadcastPower() )</span>
+<span class="fc" id="L44">                .set( Broadcast.class,     context -&gt; new CPUBroadcastPower() )</span>
+<span class="fc" id="L45">                .set( BiElementwise.class, context -&gt; new CPUBiElementWisePower() );</span>
 
-<span class="fc" id="L46">        receive.forOperation( Addition.class )</span>
-<span class="fc" id="L47">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastAddition() )</span>
-<span class="fc" id="L48">                .set( Broadcast.class,     context -&gt; new CPUBroadcastAddition() )</span>
-<span class="fc" id="L49">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseAddition() );</span>
+<span class="fc" id="L47">        receive.forOperation( Addition.class )</span>
+<span class="fc" id="L48">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastAddition() )</span>
+<span class="fc" id="L49">                .set( Broadcast.class,     context -&gt; new CPUBroadcastAddition() )</span>
+<span class="fc" id="L50">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseAddition() );</span>
 
-<span class="fc" id="L51">        receive.forOperation( Subtraction.class )</span>
-<span class="fc" id="L52">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastSubtraction() )</span>
-<span class="fc" id="L53">                .set( Broadcast.class,     context -&gt; new CPUBroadcastSubtraction() )</span>
-<span class="fc" id="L54">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseSubtraction() );</span>
+<span class="fc" id="L52">        receive.forOperation( Subtraction.class )</span>
+<span class="fc" id="L53">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastSubtraction() )</span>
+<span class="fc" id="L54">                .set( Broadcast.class,     context -&gt; new CPUBroadcastSubtraction() )</span>
+<span class="fc" id="L55">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseSubtraction() );</span>
 
-<span class="fc" id="L56">        receive.forOperation( Multiplication.class )</span>
-<span class="fc" id="L57">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastMultiplication() )</span>
-<span class="fc" id="L58">                .set( Broadcast.class,     context -&gt; new CPUBroadcastMultiplication() )</span>
-<span class="fc" id="L59">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseMultiplication() );</span>
+<span class="fc" id="L57">        receive.forOperation( Multiplication.class )</span>
+<span class="fc" id="L58">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastMultiplication() )</span>
+<span class="fc" id="L59">                .set( Broadcast.class,     context -&gt; new CPUBroadcastMultiplication() )</span>
+<span class="fc" id="L60">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseMultiplication() );</span>
 
-<span class="fc" id="L61">        receive.forOperation( Division.class )</span>
-<span class="fc" id="L62">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastDivision() )</span>
-<span class="fc" id="L63">                .set( Broadcast.class,     context -&gt; new CPUBroadcastDivision() )</span>
-<span class="fc" id="L64">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseDivision() );</span>
+<span class="fc" id="L62">        receive.forOperation( Division.class )</span>
+<span class="fc" id="L63">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastDivision() )</span>
+<span class="fc" id="L64">                .set( Broadcast.class,     context -&gt; new CPUBroadcastDivision() )</span>
+<span class="fc" id="L65">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseDivision() );</span>
 
-<span class="fc" id="L66">        receive.forOperation( Modulo.class )</span>
-<span class="fc" id="L67">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastModulo() )</span>
-<span class="fc" id="L68">                .set( Broadcast.class,     context -&gt; new CPUBroadcastModulo() )</span>
-<span class="fc" id="L69">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseModulo() );</span>
+<span class="fc" id="L67">        receive.forOperation( Modulo.class )</span>
+<span class="fc" id="L68">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastModulo() )</span>
+<span class="fc" id="L69">                .set( Broadcast.class,     context -&gt; new CPUBroadcastModulo() )</span>
+<span class="fc" id="L70">                .set( BiElementwise.class, context -&gt; new CPUBiElementWiseModulo() );</span>
 
-<span class="fc" id="L71">        receive.forOperation( AssignLeft.class )</span>
-<span class="fc" id="L72">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastIdentity() )</span>
-<span class="fc" id="L73">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseAssignFun() );</span>
+<span class="fc" id="L72">        receive.forOperation( AssignLeft.class )</span>
+<span class="fc" id="L73">                .set( BiScalarBroadcast.class, context -&gt; new CPUScalarBroadcastIdentity() )</span>
+<span class="fc" id="L74">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseAssignFun() );</span>
 
-<span class="fc" id="L75">        receive.forOperation( Convolution.class )</span>
-<span class="fc" id="L76">               .set( NDConvolution.class, context -&gt; new CPUConvolution() );</span>
-<span class="fc" id="L77">        receive.forOperation( XConvLeft.class )</span>
-<span class="fc" id="L78">                .set( NDConvolution.class, context -&gt; new CPUConvolution() );</span>
-<span class="fc" id="L79">        receive.forOperation( XConvRight.class )</span>
-<span class="fc" id="L80">                .set( NDConvolution.class, context -&gt; new CPUConvolution() );</span>
+<span class="fc" id="L76">        receive.forOperation( Convolution.class )</span>
+<span class="fc" id="L77">               .set( NDConvolution.class, context -&gt; new CPUConvolution() );</span>
+<span class="fc" id="L78">        receive.forOperation( XConvLeft.class )</span>
+<span class="fc" id="L79">                .set( NDConvolution.class, context -&gt; new CPUConvolution() );</span>
+<span class="fc" id="L80">        receive.forOperation( XConvRight.class )</span>
+<span class="fc" id="L81">                .set( NDConvolution.class, context -&gt; new CPUConvolution() );</span>
 
-<span class="fc" id="L82">        receive.forOperation( MatMul.class )</span>
-<span class="fc" id="L83">                .set( MatMulAlgorithm.class, context -&gt; new CPUMatMul() );</span>
+<span class="fc" id="L83">        receive.forOperation( MatMul.class )</span>
+<span class="fc" id="L84">                .set( MatMulAlgorithm.class, context -&gt; new CPUMatMul() );</span>
 
-<span class="fc" id="L85">        receive.forOperation( Sum.class )</span>
-<span class="fc" id="L86">                .set( SumAlgorithm.class, context -&gt; new CPUSum() );</span>
+<span class="fc" id="L86">        receive.forOperation( Sum.class )</span>
+<span class="fc" id="L87">                .set( SumAlgorithm.class, context -&gt; new CPUSum() );</span>
 
-<span class="fc" id="L88">        receive.forOperation( Randomization.class )</span>
-<span class="fc" id="L89">                .set( ElementwiseAlgorithm.class, context -&gt; new CPURandomization() );</span>
+<span class="fc" id="L89">        receive.forOperation( Randomization.class )</span>
+<span class="fc" id="L90">                .set( ElementwiseAlgorithm.class, context -&gt; new CPURandomization() );</span>
 
-<span class="fc" id="L91">        receive.forOperation( Absolute.class )</span>
-<span class="fc" id="L92">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.ABSOLUTE) )</span>
-<span class="fc" id="L93">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.ABSOLUTE) );</span>
-<span class="fc" id="L94">        receive.forOperation( Cosinus.class )</span>
-<span class="fc" id="L95">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.COSINUS) )</span>
-<span class="fc" id="L96">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.COSINUS) );</span>
-<span class="fc" id="L97">        receive.forOperation( GaSU.class )</span>
-<span class="fc" id="L98">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GASU) )</span>
-<span class="fc" id="L99">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GASU) );</span>
-<span class="fc" id="L100">        receive.forOperation( GaTU.class )</span>
-<span class="fc" id="L101">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GATU) )</span>
-<span class="fc" id="L102">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GATU) );</span>
-<span class="fc" id="L103">        receive.forOperation( Gaussian.class )</span>
-<span class="fc" id="L104">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GAUSSIAN) )</span>
-<span class="fc" id="L105">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GAUSSIAN) );</span>
-<span class="fc" id="L106">        receive.forOperation( GaussianFast.class )</span>
-<span class="fc" id="L107">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )</span>
-<span class="fc" id="L108">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GAUSSIAN_FAST) );</span>
-<span class="fc" id="L109">        receive.forOperation( GeLU.class )</span>
-<span class="fc" id="L110">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GELU) )</span>
-<span class="fc" id="L111">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GELU) );</span>
-<span class="fc" id="L112">        receive.forOperation( Identity.class )</span>
-<span class="fc" id="L113">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseAssignFun() )</span>
-<span class="fc" id="L114">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.IDENTITY) );</span>
-<span class="fc" id="L115">        receive.forOperation( Logarithm.class )</span>
-<span class="fc" id="L116">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.LOGARITHM) )</span>
-<span class="fc" id="L117">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.LOGARITHM) );</span>
-<span class="fc" id="L118">        receive.forOperation( Quadratic.class )</span>
-<span class="fc" id="L119">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.QUADRATIC) )</span>
-<span class="fc" id="L120">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.QUADRATIC) );</span>
-<span class="fc" id="L121">        receive.forOperation( ReLU.class )</span>
-<span class="fc" id="L122">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.RELU) )</span>
-<span class="fc" id="L123">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.RELU) );</span>
-<span class="fc" id="L124">        receive.forOperation( SeLU.class )</span>
-<span class="fc" id="L125">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SELU) )</span>
-<span class="fc" id="L126">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SELU) );</span>
-<span class="fc" id="L127">        receive.forOperation( Sigmoid.class )</span>
-<span class="fc" id="L128">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SIGMOID) )</span>
-<span class="fc" id="L129">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SIGMOID) );</span>
-<span class="fc" id="L130">        receive.forOperation( SiLU.class )</span>
-<span class="fc" id="L131">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SILU) )</span>
-<span class="fc" id="L132">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SILU) );</span>
-<span class="fc" id="L133">        receive.forOperation( Sinus.class )</span>
-<span class="fc" id="L134">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SINUS) )</span>
-<span class="fc" id="L135">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SINUS) );</span>
-<span class="fc" id="L136">        receive.forOperation( Softplus.class )</span>
-<span class="fc" id="L137">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SOFTPLUS) )</span>
-<span class="fc" id="L138">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SOFTPLUS) );</span>
-<span class="fc" id="L139">        receive.forOperation( Softsign.class )</span>
-<span class="fc" id="L140">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SOFTSIGN) )</span>
-<span class="fc" id="L141">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SOFTSIGN) );</span>
-<span class="fc" id="L142">        receive.forOperation( Tanh.class )</span>
-<span class="fc" id="L143">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.TANH) )</span>
-<span class="fc" id="L144">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.TANH) );</span>
-<span class="fc" id="L145">        receive.forOperation( TanhFast.class )</span>
-<span class="fc" id="L146">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.TANH_FAST) )</span>
-<span class="fc" id="L147">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.TANH_FAST) );</span>
-<span class="fc" id="L148">        receive.forOperation( Exp.class )</span>
-<span class="fc" id="L149">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.EXP) )</span>
-<span class="fc" id="L150">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.EXP) );</span>
-<span class="fc" id="L151">        receive.forOperation( Cbrt.class )</span>
-<span class="fc" id="L152">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.CBRT) )</span>
-<span class="fc" id="L153">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.CBRT) );</span>
-<span class="fc" id="L154">        receive.forOperation( Log10.class )</span>
-<span class="fc" id="L155">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.LOG10) )</span>
-<span class="fc" id="L156">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.LOG10) );</span>
-<span class="fc" id="L157">        receive.forOperation( Sqrt.class )</span>
-<span class="fc" id="L158">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SQRT) )</span>
-<span class="fc" id="L159">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SQRT) );</span>
-<span class="fc" id="L160">    }</span>
+<span class="fc" id="L92">        receive.forOperation( Absolute.class )</span>
+<span class="fc" id="L93">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.ABSOLUTE) )</span>
+<span class="fc" id="L94">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.ABSOLUTE) );</span>
+<span class="fc" id="L95">        receive.forOperation( Cosinus.class )</span>
+<span class="fc" id="L96">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.COSINUS) )</span>
+<span class="fc" id="L97">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.COSINUS) );</span>
+<span class="fc" id="L98">        receive.forOperation( GaSU.class )</span>
+<span class="fc" id="L99">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GASU) )</span>
+<span class="fc" id="L100">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GASU) );</span>
+<span class="fc" id="L101">        receive.forOperation( GaTU.class )</span>
+<span class="fc" id="L102">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GATU) )</span>
+<span class="fc" id="L103">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GATU) );</span>
+<span class="fc" id="L104">        receive.forOperation( Gaussian.class )</span>
+<span class="fc" id="L105">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GAUSSIAN) )</span>
+<span class="fc" id="L106">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GAUSSIAN) );</span>
+<span class="fc" id="L107">        receive.forOperation( GaussianFast.class )</span>
+<span class="fc" id="L108">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )</span>
+<span class="fc" id="L109">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GAUSSIAN_FAST) );</span>
+<span class="fc" id="L110">        receive.forOperation( GeLU.class )</span>
+<span class="fc" id="L111">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.GELU) )</span>
+<span class="fc" id="L112">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.GELU) );</span>
+<span class="fc" id="L113">        receive.forOperation( Identity.class )</span>
+<span class="fc" id="L114">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseAssignFun() )</span>
+<span class="fc" id="L115">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.IDENTITY) );</span>
+<span class="fc" id="L116">        receive.forOperation( Logarithm.class )</span>
+<span class="fc" id="L117">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.LOGARITHM) )</span>
+<span class="fc" id="L118">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.LOGARITHM) );</span>
+<span class="fc" id="L119">        receive.forOperation( Quadratic.class )</span>
+<span class="fc" id="L120">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.QUADRATIC) )</span>
+<span class="fc" id="L121">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.QUADRATIC) );</span>
+<span class="fc" id="L122">        receive.forOperation( ReLU.class )</span>
+<span class="fc" id="L123">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.RELU) )</span>
+<span class="fc" id="L124">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.RELU) );</span>
+<span class="fc" id="L125">        receive.forOperation( SeLU.class )</span>
+<span class="fc" id="L126">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SELU) )</span>
+<span class="fc" id="L127">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SELU) );</span>
+<span class="fc" id="L128">        receive.forOperation( Sigmoid.class )</span>
+<span class="fc" id="L129">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SIGMOID) )</span>
+<span class="fc" id="L130">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SIGMOID) );</span>
+<span class="fc" id="L131">        receive.forOperation( SiLU.class )</span>
+<span class="fc" id="L132">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SILU) )</span>
+<span class="fc" id="L133">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SILU) );</span>
+<span class="fc" id="L134">        receive.forOperation( Sinus.class )</span>
+<span class="fc" id="L135">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SINUS) )</span>
+<span class="fc" id="L136">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SINUS) );</span>
+<span class="fc" id="L137">        receive.forOperation( Softplus.class )</span>
+<span class="fc" id="L138">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SOFTPLUS) )</span>
+<span class="fc" id="L139">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SOFTPLUS) );</span>
+<span class="fc" id="L140">        receive.forOperation( Softsign.class )</span>
+<span class="fc" id="L141">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SOFTSIGN) )</span>
+<span class="fc" id="L142">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SOFTSIGN) );</span>
+<span class="fc" id="L143">        receive.forOperation( Tanh.class )</span>
+<span class="fc" id="L144">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.TANH) )</span>
+<span class="fc" id="L145">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.TANH) );</span>
+<span class="fc" id="L146">        receive.forOperation( TanhFast.class )</span>
+<span class="fc" id="L147">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.TANH_FAST) )</span>
+<span class="fc" id="L148">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.TANH_FAST) );</span>
+<span class="fc" id="L149">        receive.forOperation( Exp.class )</span>
+<span class="fc" id="L150">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.EXP) )</span>
+<span class="fc" id="L151">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.EXP) );</span>
+<span class="fc" id="L152">        receive.forOperation( Cbrt.class )</span>
+<span class="fc" id="L153">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.CBRT) )</span>
+<span class="fc" id="L154">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.CBRT) );</span>
+<span class="fc" id="L155">        receive.forOperation( Log10.class )</span>
+<span class="fc" id="L156">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.LOG10) )</span>
+<span class="fc" id="L157">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.LOG10) );</span>
+<span class="fc" id="L158">        receive.forOperation( Sqrt.class )</span>
+<span class="fc" id="L159">                .set( ElementwiseAlgorithm.class, context -&gt; new CPUElementwiseFunction( ScalarFun.SQRT) )</span>
+<span class="fc" id="L160">                .set( ScalarAlgorithm.class, context -&gt; new CPUScalarFunction(ScalarFun.SQRT) );</span>
+<span class="fc" id="L161">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

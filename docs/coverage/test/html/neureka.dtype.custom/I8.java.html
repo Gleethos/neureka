@@ -42,9 +42,9 @@ public final class I8 extends AbstractNumericType&lt;Byte, byte[], Byte, byte[]&
 
     @Override
     public byte[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
-<span class="nc" id="L45">        byte[] bytes = new byte[size];</span>
-<span class="nc" id="L46">        stream.readFully(bytes, size, size);</span>
-<span class="nc" id="L47">        return bytes;</span>
+<span class="fc" id="L45">        byte[] bytes = new byte[size];</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) bytes[ i ] = stream.readByte();</span>
+<span class="fc" id="L47">        return bytes;</span>
     }
 
     @Override

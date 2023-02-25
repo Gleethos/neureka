@@ -54,15 +54,15 @@ public class SGD&lt;V&gt; implements Optimizer&lt;V&gt;
 {
     private final double _lr; // learning rate
 
-<span class="nc" id="L57">    public SGD( double learningRate ) {</span>
-<span class="nc" id="L58">        _lr = learningRate; // Step size/learning rate is 0.01 by default!</span>
-<span class="nc" id="L59">    }</span>
+<span class="fc" id="L57">    SGD( double learningRate ) {</span>
+<span class="fc" id="L58">        _lr = learningRate; // Step size/learning rate is 0.01 by default!</span>
+<span class="fc" id="L59">    }</span>
 
     @Override
     public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
-<span class="nc" id="L63">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
-<span class="nc" id="L64">        Tsr&lt;V&gt; g = w.gradient().orElseThrow(()-&gt;new IllegalStateException(&quot;Gradient missing!&quot;));</span>
-<span class="nc" id="L65">        return Tsr.of(&quot;-&quot; + _lr + &quot; * &quot;, g);</span>
+<span class="fc" id="L63">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
+<span class="pc" id="L64">        Tsr&lt;V&gt; g = w.gradient().orElseThrow(()-&gt;new IllegalStateException(&quot;Gradient missing!&quot;));</span>
+<span class="fc" id="L65">        return Tsr.of(&quot;-&quot; + _lr + &quot; * i0&quot;, g);</span>
     }
 
 <span class="nc" id="L68">    public double learningRate() { return _lr; }</span>
