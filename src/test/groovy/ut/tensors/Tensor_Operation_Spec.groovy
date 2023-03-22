@@ -22,10 +22,11 @@ import java.util.function.BiFunction
 @Title("Running Tensors through operations")
 @Narrative('''
 
-    This specification covers the interaction 
-    between tensors and operations, more specifically it
-    runs tensors through operations and validates that the results are valid. 
-
+    This specification shows how to use the tensor API to run tensors through various operations.
+    Operations are triggered either by simply calling methods on tensors or by using 
+    `Function` objects which are used to define custom operations in the form 
+    of a syntax tree.
+    
 ''')
 class Tensor_Operation_Spec extends Specification
 {
@@ -98,6 +99,38 @@ class Tensor_Operation_Spec extends Specification
             Integer| [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 3, -2, 1, 0 ]
             Integer| [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 1 ]
             Integer| [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2, 2, -1, -1 ]
+    }
+
+    def 'You can do matrix multiplication using transposed matrices.'()
+    {
+        given : 'Two 2-dimensional tensors.'
+            var a = Tsr.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()
+            var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)
+
+        when : 'The "matMul" method is being called on "a" receiving "b"...'
+            var c = a.matMul(b)
+
+        then : 'The result tensor contains the expected shape and values.'
+            c.shape == [M, N]
+            c.items == expectedC as List
+        and :
+            c.itemType == type
+
+            where :
+                type   | A            | B                  | M | K | N || expectedC
+                Double | [1d, 1d]     | [2d]               | 2 | 1 | 1 || [ 2, 2 ]
+                Double | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 0.0, 2.0, -0.5, 2.5 ]
+                Double | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+                Double | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+                Float  | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 0.0, 2.0, -0.5, 2.5 ]
+                Float  | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+                Float  | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+                Long   | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 2, 0, 1, 1 ]
+                Long   | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 1 ]
+                Long   | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2, 2, -1, -1 ]
+                Integer| [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 2, 0, 1, 1 ]
+                Integer| [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 1 ]
+                Integer| [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2, 2, -1, -1 ]
     }
 
     def 'The "random" function/operation populates tensors randomly.'(
