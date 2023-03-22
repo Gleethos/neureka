@@ -66,7 +66,11 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
             Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getItemTypeClass();
             int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };
             NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();
-            call.input( 2 ).mut().toLayout(targetLayout);
+            NDConfiguration.Layout otherLayout = call.input( 2 ).getNDConf().getLayout();
+            if ( targetLayout != NDConfiguration.Layout.SYMMETRIC )
+                call.input( 2 ).mut().toLayout(targetLayout);
+            else
+                targetLayout = otherLayout;
             Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );
             output.mut().toLayout(targetLayout);
             output.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
