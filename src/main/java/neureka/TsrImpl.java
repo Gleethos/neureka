@@ -583,6 +583,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     private void _toLayout( NDConfiguration.Layout target )
     {
         if ( target == this.getNDConf().getLayout() ) return;
+        if ( target == NDConfiguration.Layout.SYMMETRIC )
+            throw new UnsupportedOperationException(
+                "Conversion of a non-symmetric tensor to a symmetric tensor is not supported!"
+            );
 
         NDConfiguration old = this.getNDConf();
 
