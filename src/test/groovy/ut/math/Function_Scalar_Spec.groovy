@@ -1,8 +1,7 @@
 package ut.math
 
-import neureka.Neureka
+
 import neureka.math.Function
-import neureka.math.parsing.FunctionParser
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
@@ -22,7 +21,7 @@ class Function_Scalar_Spec extends Specification
             double[] inputs, Integer index, double expected
     ){
         given : 'We create a Function instance from expression "1/I[0]".'
-            Function f = new FunctionParser( Neureka.get().backend() ).parse("1/I[0]", false)
+            Function f = Function.of("1/I[0]", false)
 
         expect : 'The function yields expected scalar results when called.'
             if (index!=null) assert f.derive( inputs, index ) == expected
@@ -39,7 +38,7 @@ class Function_Scalar_Spec extends Specification
             double[] inputs, Integer index, double expected
     ){
         given : 'We create a Function instance from expression "I[0]+1/I[0]".'
-            Function f = new FunctionParser( Neureka.get().backend() ).parse("I[0]+1/I[0]", false)
+            Function f = Function.of("I[0]+1/I[0]", false)
 
         expect : 'The function yields expected scalar results when called.'
             if (index!=null) assert f.derive( inputs, index ) == expected
@@ -58,7 +57,7 @@ class Function_Scalar_Spec extends Specification
             double[] inputs, Integer index, double expected
     ){
         given : 'We create a Function instance from expression "(I[0]+1/I[0])**-I[0]".'
-            Function f = new FunctionParser( Neureka.get().backend() ).parse("(I[0]+1/I[0])**-I[0]", false)
+            Function f = Function.of("(I[0]+1/I[0])**-I[0]", false)
 
         expect : 'The function yields expected scalar results when called.'
             if (index!=null) assert f.derive( inputs, index ) == expected
@@ -75,7 +74,7 @@ class Function_Scalar_Spec extends Specification
             double[] inputs, Integer index, double expected
     ){
         given :
-            Function f = new FunctionParser( Neureka.get().backend() ).parse("(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)", false)
+            Function f = Function.of("(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)", false)
 
         expect :
             if ( index != null ) assert f.derive( inputs, index )==expected
@@ -97,7 +96,7 @@ class Function_Scalar_Spec extends Specification
             double[] inputs, Integer index, double expected
     ){
         given :
-            Function f = new FunctionParser( Neureka.get().backend() ).parse("sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))", false)
+            Function f = Function.of("sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))", false)
 
         expect :
             if (index!=null) assert f.derive( inputs, index )==expected
@@ -116,7 +115,7 @@ class Function_Scalar_Spec extends Specification
             String equation, double[] inputs, Integer index, double expected
     ){
         given : 'A new Function instance which is detached! (no autograd support)'
-            Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, false)
+            Function f = Function.of(equation, false)
 
         expect : 'Calling the function will yield the expected result.'
             if ( index!=null ) assert f.derive( inputs, index ) == expected

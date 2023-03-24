@@ -547,14 +547,14 @@ class Tensor_Operation_Spec extends Specification
         when :
             Tsr[] trs = new Tsr[]{x}
         and :
-            def fun = new FunctionParser( Neureka.get().backend() ).parse("Ig[0]", false)
+            def fun = Function.of("Ig[0]", false)
         then :
             fun(trs).toString() == "[1]:(-8.0)"
 
         when :
             trs[0] = y
         and :
-            fun = new FunctionParser( Neureka.get().backend() ).parse("Ig[0]", false)
+            fun = Function.of("Ig[0]", false)
         and :
             fun(trs)
 

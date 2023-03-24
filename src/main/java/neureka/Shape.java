@@ -13,14 +13,38 @@ import java.util.stream.Stream;
 public interface Shape extends Iterable<Integer>
 {
     /**
-     *  This method is used to create a {@link Shape} instance from a list of integers.
-     *  The list is used to describe the shape of a nd-array.
+     *  This method is used to create a {@link Shape} instance from a list of numbers
+     *  whose integer values are used to describe the shape of a nd-array.
      *  The shape of an array is the number of elements in each dimension.
      *  @param shape The list of integers which is used to describe the shape of an array.
      *  @return A {@link Shape} instance which is created from the given array of integers.
      */
     static Shape of( List<? extends Number> shape ) {
         return Shape.of(shape.stream().mapToInt(Number::intValue).toArray());
+    }
+
+    /**
+     *  This method is used to create a {@link Shape} instance from a stream of numbers
+     *  whose integer values are used to describe the shape of a nd-array.
+     *  The shape of an array is the number of elements in each dimension.
+     *  @param shape The stream of integers which is used to describe the shape of an array.
+     *  @return A {@link Shape} instance which is created from the given array of integers.
+     */
+    static Shape of( Stream<? extends Number> shape ) {
+        return Shape.of(shape.mapToInt(Number::intValue).toArray());
+    }
+
+    /**
+     *  This method is used to create a {@link Shape} instance from an iterable of numbers
+     *  whose integer values are used to describe the shape of a nd-array.
+     *  The shape of an array is the number of elements in each dimension.
+     *  @param shape The iterable of integers which is used to describe the shape of an array.
+     *  @return A {@link Shape} instance which is created from the given array of integers.
+     */
+    static Shape of( Iterable<? extends Number> shape ) {
+        List<Integer> list = new java.util.ArrayList<>();
+        shape.forEach( n -> list.add( n.intValue() ) );
+        return Shape.of( list );
     }
 
     /**
@@ -95,10 +119,44 @@ public interface Shape extends Iterable<Integer>
         return Shape.of( arr );
     }
 
-    default Stream<Integer> stream() {
-        return java.util.stream.IntStream.range(0, size()).mapToObj(this::get);
+    /**
+     * @return This shape as a stream of integers.
+     */
+    default Stream<Integer> stream() { return java.util.stream.IntStream.range(0, size()).mapToObj(this::get); }
+
+    /**
+     * @param start The start index of the slice, inclusive.
+     * @param end The end index of the slice, exclusive.
+     * @return A slice of this shape starting at the given start index and ending at the given end index.
+     */
+    default Shape slice( int start, int end ) {
+        if ( start < 0 || end > size() || start > end ) throw new IndexOutOfBoundsException();
+        int[] arr = new int[ end - start ];
+        for ( int i = start; i < end; i++ ) arr[ i - start ] = get(i);
+        return Shape.of( arr );
     }
 
+    /**
+     * @param start The start index of the slice, inclusive.
+     * @return A slice of this shape starting at the given start index and ending at the end of the shape.
+     */
+    default Shape slice( int start ) { return slice( start, size() ); }
+
+    /**
+     * @param predicate The predicate which is used to filter the shape.
+     * @return A new shape which is the result of filtering this shape with the given predicate.
+     */
+    default Shape filter( java.util.function.Predicate<Integer> predicate ) {
+        int[] arr = new int[ size() ];
+        int i = 0;
+        for ( int j = 0; j < size(); j++ )
+            if ( predicate.test( get(j) ) ) arr[i++] = get(j);
+        return Shape.of( java.util.Arrays.copyOf( arr, i ) );
+    }
+
+    /**
+     * @return An iterator over the shape.
+     */
     @Override
     default java.util.Iterator<Integer> iterator() {
         return new java.util.Iterator<Integer>() {

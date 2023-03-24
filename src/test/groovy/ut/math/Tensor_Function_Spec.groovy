@@ -1,12 +1,10 @@
 package ut.math
 
-
 import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.ocl.CLBackend
-import neureka.math.Function
-import neureka.math.parsing.FunctionParser
 import neureka.devices.Device
+import neureka.math.Function
 import neureka.view.NDPrintSettings
 import spock.lang.*
 
@@ -133,7 +131,7 @@ class Tensor_Function_Spec extends Specification
             Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
 
         and : "A new Function instance created from ${equation}."
-            Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, true) // TODO : test with 'doAD' : false!
+            Function f = Function.of(equation, true) // TODO : test with 'doAD' : false!
         and :
             inputs.each {it.to(Device.get(device))}
 

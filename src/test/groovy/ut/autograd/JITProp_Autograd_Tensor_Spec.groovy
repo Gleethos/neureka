@@ -3,7 +3,7 @@ package ut.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.JITProp
-import neureka.math.parsing.FunctionParser
+import neureka.math.Function
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
 
@@ -174,7 +174,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             x.toString().contains("(-4.5)")
 
         when :
-            def f = new FunctionParser( Neureka.get().backend() ).parse("I[0]*I[1]", false)
+            def f = Function.of("I[0]*I[1]", false)
             Tsr[] inputs = new Tsr[]{c, a}
             var result = f(inputs) // Should have no affect!
 
@@ -191,7 +191,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             x.toString().contains("(-4.5)")
 
         when :
-            f = new FunctionParser( Neureka.get().backend() ).parse("I[0]*I[1]", true)
+            f = Function.of("I[0]*I[1]", true)
             result = f(inputs) // Should trigger JIT
 
         then :
@@ -258,7 +258,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             x.toString().contains("(-4.5)")
 
         when :
-            def f = new FunctionParser( Neureka.get().backend() ).parse("I[0]*I[1]", false)
+            def f = Function.of("I[0]*I[1]", false)
             Tsr[] inputs = new Tsr[]{c, a}
             var result = f(inputs) // No changes to inputs! No derivatives!
 
@@ -271,7 +271,7 @@ class JITProp_Autograd_Tensor_Spec extends Specification
             x.toString().contains("(-4.5)")
 
         when :
-            f = new FunctionParser( Neureka.get().backend() ).parse("I[0]*I[1]", true)
+            f = Function.of("I[0]*I[1]", true)
             result = f(inputs) // No changes to inputs, BUT derivatives!
 
         then :

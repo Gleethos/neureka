@@ -5,12 +5,23 @@ import neureka.Tsr;
 import neureka.backend.main.memory.MemUtil;
 import neureka.math.parsing.FunctionParser;
 
-public final class PendingError<ValType>
+/**
+ *  A wrapper for a tensor which is used to accumulate error values
+ *  during the back propagation phase of the autograd algorithm.
+ *  This is a library internal class, do not depend on this.
+ *  <p>
+ *  The {@link PendingError} class also keeps track of how many
+ *  more error values need to be accumulated before the error
+ *  value is fully accumulated.
+ *
+ * @param <V> The data type of the tensor which is used to accumulate error values.
+ */
+final class PendingError<V>
 {
     private int _toBeReceived;
-    private final Tsr<ValType> _accumulatedError;
+    private final Tsr<V> _accumulatedError;
 
-    public PendingError( Tsr<ValType> error, int toBeReceived ) {
+    public PendingError( Tsr<V> error, int toBeReceived ) {
         _toBeReceived = toBeReceived;
         _accumulatedError = error;
     }
@@ -18,9 +29,7 @@ public final class PendingError<ValType>
     public void accumulate( Tsr<?> error ) {
         Tsr[] inputs = { _accumulatedError, error };
         MemUtil.keep( inputs, () -> {
-                    new FunctionParser(
-                                Neureka.get().backend()
-                            )
+                    new FunctionParser( Neureka.get().backend() )
                             .parse("I[ 0 ] <- (I[ 0 ] + I[ 1 ])", false)
                             .call(inputs);
                     return null;
@@ -38,6 +47,6 @@ public final class PendingError<ValType>
 
     public int getToBeReceived() { return _toBeReceived; }
 
-    public Tsr<ValType> getAccumulatedError() { return _accumulatedError; }
+    public Tsr<V> getAccumulatedError() { return _accumulatedError; }
 
 }

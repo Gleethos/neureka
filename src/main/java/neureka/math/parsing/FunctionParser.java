@@ -18,11 +18,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- *  The {@link FunctionParser} takes a {@link BackendContext} instance based on which it can then build
- *  {@link Function} instances by calling one of its build methods.
- *  Usually one passes a {@link String} to be parsed to a {@link Function}.
- *  The information needed for parsing is being provided by the {@link Operation}s within the previously
- *  provided {@link BackendContext}...
+ *  The {@link FunctionParser} takes a {@link BackendContext} instance based on which
+ *  it builds {@link Function} implementation instances, usually by parsing {@link String}s.
+ *  The information needed for parsing is being provided by the {@link Operation}s within the formerly
+ *  mentioned {@link BackendContext}...
  */
 public class FunctionParser
 {
@@ -59,6 +58,7 @@ public class FunctionParser
                                 .mapToObj( i -> "I[" + i + "]" )
                                 .collect( Collectors.joining( ", " ) );
 
+        // A function always has to be parsable:
         return parse( operation.getIdentifier() + "(" + args + ")", doAD );
     }
 

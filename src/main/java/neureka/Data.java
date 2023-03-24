@@ -6,7 +6,10 @@ import neureka.dtype.DataType;
 /**
  *  A wrapper type for the raw data array of a tensor/nd-array,
  *  which is provided by implementations of the {@link Device} interface.
- *  This is used to interface with the raw data as well as check where it comes from.
+ *  Every tensor/nd-array has a {@link Data} object which it uses to access its raw data.
+ *  Use this to interface with the raw data as well as check where it comes from,
+ *  but be careful as this exposes mutable state as well as backend specific implementations
+ *  and types (e.g. OpenCL / JVM arrays).
  *
  * @param <V> The type of the data array.
  */
@@ -18,7 +21,8 @@ public interface Data<V> {
     Device<V> owner();
 
     /**
-     *  This returns the underlying raw data object of a nd-array or tensor.
+     *  This returns the underlying raw data object of a nd-array or tensor
+     *  of a backend specific type (e.g. OpenCL memory object or JVM array).
      *  Contrary to the {@link Nda#getItems()} ()} method, this will
      *  return an unbiased view on the raw data of this tensor.
      *  Be careful using this, as it exposes mutable state!
@@ -40,9 +44,12 @@ public interface Data<V> {
         Object data = getRef();
         if ( data != null && !dataType.isAssignableFrom(data.getClass()) )
             throw new IllegalArgumentException("Provided data type '"+dataType+"' is not assignable from '"+data.getClass()+"'.");
-        return (D) data;
+        return dataType.cast(data);
     }
 
+    /**
+     * @return The data type of the raw data array.
+     */
     DataType<V> dataType();
 
 }

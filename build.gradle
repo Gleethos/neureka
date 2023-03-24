@@ -58,7 +58,7 @@ plugins {
 compileJava { options.encoding = "UTF-8" } // Allows for '"' characters in comments for example...
 
 String PROJECT = "neureka"
-String VERSION = "0.20.0"
+String VERSION = "0.20.1"
 String GROUP_ID = "com.github.gleethos"
 String BASENAME = "neureka"
 
@@ -99,7 +99,7 @@ task setVersionAcrossProject() {
     change({VERSION}).between( "Neureka.version\\(\\)==\"", "\"//version" ).inFile("/src/test/groovy/ThoroughGroovyTests.groovy")
     change({VERSION}).between( "Neureka.version\\(\\)==\"", "\"//version" ).inFile("/src/test/groovy/ut/neureka/Neureka_Spec.groovy")
 
-    change({VERSION}).between( "VERSION = \"", "\" // " ).inFile("/src/test/resources/SpockConfig.groovy")
+    change({VERSION}).between( "VERSION = \"", "\" // " ).inFile("/src/test/resources/SpockConfig.Groovy")
 
     change({VERSION}).between( "raw/master/production/lib/neureka-", "\\.jar\\)" ).inFile("/README.md")
     change({VERSION}).between( "neureka/master/production/lib/neureka-", "\\.jar\\)" ).inFile("/README.md")

@@ -10,7 +10,6 @@ import neureka.backend.api.fun.SuitabilityPredicate
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm
 import neureka.backend.main.implementations.CPUImplementation
 import neureka.math.Function
-import neureka.math.parsing.FunctionParser
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import spock.lang.Specification
@@ -77,7 +76,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                 ))
                                                 .withAutoDiff((ADActionSupplier){ Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ->
                                                     if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                    return ADAction.of((t, error) -> new FunctionParser( Neureka.get().backend() ).parse(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                    return ADAction.of((t, error) -> Function.of(f.toString(), false).derive(new Tsr[]{error}, 0));
                                                 })
                                             )
                                             .setCallPreparation(

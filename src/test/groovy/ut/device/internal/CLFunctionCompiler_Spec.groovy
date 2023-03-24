@@ -6,12 +6,12 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
-import neureka.math.Function
-import neureka.math.parsing.FunctionParser
 import neureka.backend.ocl.CLBackend
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.CLFunctionCompiler
+import neureka.math.Function
+import neureka.math.parsing.FunctionParser
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
