@@ -3,13 +3,13 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.ocl.CLBackend
-import neureka.math.Function
-import neureka.math.args.Arg
-import neureka.math.parsing.FunctionParser
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.dtype.DataType
+import neureka.math.Function
+import neureka.math.args.Arg
+import neureka.math.parsing.FunctionParser
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
@@ -22,10 +22,11 @@ import java.util.function.BiFunction
 @Title("Running Tensors through operations")
 @Narrative('''
 
-    This specification covers the interaction 
-    between tensors and operations, more specifically it
-    runs tensors through operations and validates that the results are valid. 
-
+    This specification shows how to use the tensor API to run tensors through various operations.
+    Operations are triggered either by simply calling methods on tensors or by using 
+    `Function` objects which are used to define custom operations in the form 
+    of a syntax tree.
+    
 ''')
 class Tensor_Operation_Spec extends Specification
 {
@@ -98,6 +99,104 @@ class Tensor_Operation_Spec extends Specification
             Integer| [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 3, -2, 1, 0 ]
             Integer| [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 1 ]
             Integer| [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2, 2, -1, -1 ]
+    }
+
+    def 'You can do matrix multiplication using transposed matrices.'()
+    {
+        given : 'Two 2-dimensional tensors.'
+            var a = Tsr.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()
+            var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)
+
+        when : 'The "matMul" method is being called on "a" receiving "b"...'
+            var c = a.matMul(b)
+
+        then : 'The result tensor contains the expected shape and values.'
+            c.shape == [M, N]
+            c.items == expectedC as List
+        and :
+            c.itemType == type
+
+            where :
+                type   | A            | B                  | M | K | N || expectedC
+                Double | [1d, 1d]     | [2d, 2d]           | 1 | 2 | 1 || [ 4 ]
+                Double | [1d, 1d]     | [2d]               | 2 | 1 | 1 || [ 2, 2 ]
+                Double | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 0.0, 2.0, -0.5, 2.5 ]
+                Double | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+                Double | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+                Float  | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 0.0, 2.0, -0.5, 2.5 ]
+                Float  | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+                Float  | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+                Long   | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 2, 0, 1, 1 ]
+                Long   | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 1 ]
+                Long   | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2, 2, -1, -1 ]
+                Integer| [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 2, 0, 1, 1 ]
+                Integer| [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 1 ]
+                Integer| [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2, 2, -1, -1 ]
+    }
+
+    def 'You can do matrix multiplication using transposed matrices as second operand.'()
+    {
+        given : 'Two 2-dimensional tensors.'
+            var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)
+            var b = Tsr.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()
+
+        when : 'The "matMul" method is being called on "a" receiving "b"...'
+            var c = a.matMul(b)
+
+        then : 'The result tensor contains the expected shape and values.'
+            c.shape == [M, N]
+            c.items == expectedC as List
+        and :
+            c.itemType == type
+
+            where :
+                type   | A            | B                  | M | K | N || expectedC
+                Double | [1d, 1d]     | [2d]               | 2 | 1 | 1 || [ 2, 2 ]
+                Double | [1d, 1d]     | [2d, 2d]           | 1 | 2 | 1 || [ 4 ]
+                Double | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 2.5, -2.0, 0.5, 0.0 ]
+                Double | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+                Double | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+                Float  | [1, 1]       | [2]                | 2 | 1 | 1 || [ 2, 2 ]
+                Float  | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 2.5, -2.0, 0.5, 0.0 ]
+                Float  | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+                Float  | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+                Long   | [1, 1]       | [2]                | 2 | 1 | 1 || [ 2, 2 ]
+                Long   | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 3, -2, 1, 0 ]
+                Long   | [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 1 ]
+                Long   | [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2, 2, -1, -1 ]
+                Integer| [1, 1]       | [2]                | 2 | 1 | 1 || [ 2, 2 ]
+                Integer| [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 3, -2, 1, 0 ]
+                Integer| [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 1 ]
+                Integer| [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2, 2, -1, -1 ]
+    }
+
+    def 'You can do matrix multiplication using 2 transposed matrices.'()
+    {
+        given : 'Two 2-dimensional tensors.'
+            var a = Tsr.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()
+            var b = Tsr.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()
+
+        when : 'The "matMul" method is being called on "a" receiving "b"...'
+            println a.toString({it.isMultiline = true})
+            println b.toString({it.isMultiline = true})
+            var c = a.matMul(b)
+            println c.toString({it.isMultiline = true})
+
+        then : 'The result tensor contains the expected shape and values.'
+            c.shape == [M, N]
+            c.items == expectedC as List
+        and :
+            c.itemType == type
+
+            where :
+                type   | A            | B                    | M | K | N || expectedC
+                Double | [1d, 1d]     | [2d]                 | 1 | 2 | 1 || [ 4 ]
+                Double | [1d, 1d]     | [2d, 2d]             | 2 | 1 | 1 || [ 2, 2 ]
+                Double | [4, 3, 2, 1] | [-0.5, 1.5, 1, -2]   | 2 | 2 | 2 || [ 1.0, 0.0, 0.0, 1.0 ]
+                Double | [3, 3, 3, 3] | [0.5, 0.5, 0.5, 0.5] | 2 | 2 | 2 || [ 3.0, 3.0, 3.0, 3.0 ]
+                Double | [-2, 1]      | [-1, -1.5]           | 1 | 2 | 1 || [ 0.5 ]
+                Double | [-2, 1]      | [-1, -1.5]           | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+                Float  | [1, 1]       | [2]                  | 1 | 2 | 1 || [ 4 ]
     }
 
     def 'The "random" function/operation populates tensors randomly.'(

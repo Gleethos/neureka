@@ -47,7 +47,7 @@ public class CPUMatMul implements ImplementationFor<CPU> {
     }
 
     @Override
-    public Tsr<?> run(ExecutionCall<CPU> call )
+    public Tsr<?> run( ExecutionCall<CPU> call )
     {
         if ( !call.validate().all( (t1, t2) -> t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )
             throw new IllegalArgumentException(

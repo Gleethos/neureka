@@ -59,25 +59,59 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
     private static ExecutionCall<Device<Object>> _prepare( ExecutionCall call )
     {
         assert call.arity() <= 3;
-        Device<Number> device = call.getDeviceFor(Number.class);
         if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);
         if ( call.input( 0 ) == null ) // Creating a new tensor:
-        {
-            Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getItemTypeClass();
-            int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };
-            NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();
-            call.input( 2 ).mut().toLayout(targetLayout);
-            Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );
-            output.mut().toLayout(targetLayout);
-            output.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
-            try {
-                device.store( output );
-            } catch ( Exception e ) {
-                e.printStackTrace();
-            }
-            call = call.withInputAt( 0, output );
-        }
+            call = _withNewOutput( call );
+
         return (ExecutionCall<Device<Object>>) _autoClone( call );
+    }
+
+    private static ExecutionCall<?> _withNewOutput( ExecutionCall<?> call )
+    {
+        Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getItemTypeClass();
+
+        int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };
+        Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );
+
+        NDConfiguration.Layout layoutOut = _checkAndPrepareLayout( call.input( 1 ), call.input( 2 ), output );
+        output.mut().toLayout( layoutOut );
+        output.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
+
+        call.getDeviceFor(Number.class).store( output );
+        return call.withInputAt( 0, output );
+    }
+
+    private static NDConfiguration.Layout _checkAndPrepareLayout(Tsr<?> a, Tsr<?> b, Tsr<?> c )
+    {
+        // We need to make sure that the matrices have a common/compatible layout,
+        // ..before we can before the actual a @ b = c matrix multiplication!
+        NDConfiguration.Layout layoutA = a.getNDConf().getLayout();
+        NDConfiguration.Layout layoutB = b.getNDConf().getLayout();
+        NDConfiguration.Layout layoutC = c.getNDConf().getLayout();
+
+        boolean aIsCompatible = isRMOrCM( layoutA );
+        boolean bIsCompatible = isRMOrCM( layoutB );
+
+        if ( aIsCompatible ) {
+            b.mut().toLayout(layoutA); // We choose a valid layout based on a
+            layoutC = layoutA;
+        } else if ( bIsCompatible ) {
+            a.mut().toLayout(layoutB); // We choose a valid layout based on b
+            layoutC = layoutB;
+        } else {
+            // Ok so the inputs are unspecific/symmetric/ (not RM or CM)
+            // So we just need to decide on any valid layout really:
+            layoutC = isRMOrCM(layoutC) ? layoutC : NDConfiguration.Layout.ROW_MAJOR;
+            a.mut().toLayout( layoutC );
+            b.mut().toLayout( layoutC );
+        }
+
+        return layoutC;
+    }
+
+    private static boolean isRMOrCM(NDConfiguration.Layout layout ) {
+        return layout == NDConfiguration.Layout.ROW_MAJOR ||
+               layout == NDConfiguration.Layout.COLUMN_MAJOR;
     }
 
     /**
