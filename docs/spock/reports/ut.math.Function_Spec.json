@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.037 seconds"
+    "duration":"0.039 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Function implementations ensure that internally created tensors are flagged as \"intermediate\" initially!",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -74,7 +74,7 @@
     {
       "id":"Function implementations will ensure the \"call\" and \"invoke\" does not return tensors flagged as \"intermediate\".",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

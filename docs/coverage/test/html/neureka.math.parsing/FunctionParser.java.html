@@ -18,22 +18,21 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- *  The {@link FunctionParser} takes a {@link BackendContext} instance based on which it can then build
- *  {@link Function} instances by calling one of its build methods.
- *  Usually one passes a {@link String} to be parsed to a {@link Function}.
- *  The information needed for parsing is being provided by the {@link Operation}s within the previously
- *  provided {@link BackendContext}...
+ *  The {@link FunctionParser} takes a {@link BackendContext} instance based on which
+ *  it builds {@link Function} implementation instances, usually by parsing {@link String}s.
+ *  The information needed for parsing is being provided by the {@link Operation}s within the formerly
+ *  mentioned {@link BackendContext}...
  */
-<span class="pc bpc" id="L27" title="1 of 2 branches missed.">public class FunctionParser</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">public class FunctionParser</span>
 {
-<span class="fc" id="L29">    private static final Logger _LOG = LoggerFactory.getLogger(FunctionParser.class);</span>
+<span class="fc" id="L28">    private static final Logger _LOG = LoggerFactory.getLogger(FunctionParser.class);</span>
 
-<span class="fc" id="L31">    private static final Pattern _variablePattern = Pattern.compile(&quot;^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)&quot;);</span>
-<span class="fc" id="L32">    private static final Pattern _inputPattern = Pattern.compile(&quot;^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)&quot;);</span>
-<span class="fc" id="L33">    private static final Pattern _constantPattern = Pattern.compile(&quot;^((-?[0-9]*|[0-9]*)[.]?[0-9]*((e|E)[-]?[0-9]+)?)&quot;);</span>
+<span class="fc" id="L30">    private static final Pattern _variablePattern = Pattern.compile(&quot;^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)&quot;);</span>
+<span class="fc" id="L31">    private static final Pattern _inputPattern = Pattern.compile(&quot;^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)&quot;);</span>
+<span class="fc" id="L32">    private static final Pattern _constantPattern = Pattern.compile(&quot;^((-?[0-9]*|[0-9]*)[.]?[0-9]*((e|E)[-]?[0-9]+)?)&quot;);</span>
 
-<span class="fc" id="L35">    private static final Pattern _reshapePattern = Pattern.compile(&quot;^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))&quot;);</span>
-<span class="fc" id="L36">    private static final Pattern _nodePattern = Pattern.compile(&quot;^([\\(]{1}.+[\\)]{1})&quot;);</span>
+<span class="fc" id="L34">    private static final Pattern _reshapePattern = Pattern.compile(&quot;^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))&quot;);</span>
+<span class="fc" id="L35">    private static final Pattern _nodePattern = Pattern.compile(&quot;^([\\(]{1}.+[\\)]{1})&quot;);</span>
 
     private final BackendContext _context;
 
@@ -41,7 +40,7 @@ import java.util.stream.IntStream;
      * @param context The {@link BackendContext} which will be used as a basis to parse new {@link Function}
      *                implementation instance from provided {@link String} expressions.
      */
-<span class="fc" id="L44">    public FunctionParser( BackendContext context ) { _context = context; }</span>
+<span class="fc" id="L43">    public FunctionParser( BackendContext context ) { _context = context; }</span>
     
     /**
      * @param operation The {@link Operation} based on which the {@link Function} ought to be created.
@@ -51,14 +50,15 @@ import java.util.stream.IntStream;
      */
     public Function parse( Operation operation, int numberOfArgs, boolean doAD )
     {
-<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if ( operation.isIndexer() )</span>
-<span class="nc" id="L55">            return parse( operation.getIdentifier() + &quot;( I[j] )&quot;, doAD );</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if ( operation.isIndexer() )</span>
+<span class="nc" id="L54">            return parse( operation.getIdentifier() + &quot;( I[j] )&quot;, doAD );</span>
 
-<span class="fc" id="L57">        String args = IntStream.iterate( 0, n -&gt; n + 1 )</span>
-<span class="fc" id="L58">                                .limit( numberOfArgs )</span>
-<span class="fc" id="L59">                                .mapToObj( i -&gt; &quot;I[&quot; + i + &quot;]&quot; )</span>
-<span class="fc" id="L60">                                .collect( Collectors.joining( &quot;, &quot; ) );</span>
+<span class="fc" id="L56">        String args = IntStream.iterate( 0, n -&gt; n + 1 )</span>
+<span class="fc" id="L57">                                .limit( numberOfArgs )</span>
+<span class="fc" id="L58">                                .mapToObj( i -&gt; &quot;I[&quot; + i + &quot;]&quot; )</span>
+<span class="fc" id="L59">                                .collect( Collectors.joining( &quot;, &quot; ) );</span>
 
+        // A function always has to be parsable:
 <span class="fc" id="L62">        return parse( operation.getIdentifier() + &quot;(&quot; + args + &quot;)&quot;, doAD );</span>
     }
 

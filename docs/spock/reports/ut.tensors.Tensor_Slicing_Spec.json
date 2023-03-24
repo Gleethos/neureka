@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.032 seconds"
+    "duration":"0.031 seconds"
   },
   "headers":["\n                This specification covers the behavior of tensors when being sliced\n                on multiple different device types using the slice builder API.           \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

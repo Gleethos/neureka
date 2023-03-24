@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.020 seconds"
+    "duration":"0.023 seconds"
   },
   "headers":["\n            <h2> Autograd Tensor Behavior </h2>\n            <p>\n                Specified below is the behavior of the autograd system.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test basic autograd behaviour. (Not on device)",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

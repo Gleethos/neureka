@@ -429,7 +429,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="fc" id="L429">            newValue = new float[size];</span>
 <span class="fc bfc" id="L430" title="All 2 branches covered.">            if ( ( (float[]) value )[ 0 ] != 0f ) Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );</span>
 <span class="fc bfc" id="L431" title="All 2 branches covered.">        } else if ( typeClass == I32.class ) {</span>
-<span class="pc bpc" id="L432" title="1 of 2 branches missed.">            if ( ( (int[]) value ).length == size ) return data;</span>
+<span class="fc bfc" id="L432" title="All 2 branches covered.">            if ( ( (int[]) value ).length == size ) return data;</span>
 <span class="fc" id="L433">            newValue = new int[ size ];</span>
 <span class="fc bfc" id="L434" title="All 2 branches covered.">            if ( ( (int[]) value )[ 0 ] != 0 ) Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );</span>
 <span class="fc bfc" id="L435" title="All 2 branches covered.">        } else if ( typeClass == I16.class ) {</span>
@@ -441,7 +441,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="fc" id="L441">            newValue = new byte[ size ];</span>
 <span class="fc bfc" id="L442" title="All 2 branches covered.">            if ( ( (byte[]) value )[ 0 ] != 0 ) Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );</span>
 <span class="fc bfc" id="L443" title="All 2 branches covered.">        } else if ( typeClass == I64.class ) {</span>
-<span class="pc bpc" id="L444" title="1 of 2 branches missed.">            if ( ( (long[]) value ).length == size ) return data;</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">            if ( ( (long[]) value ).length == size ) return data;</span>
 <span class="fc" id="L445">            newValue = new long[ size ];</span>
 <span class="fc bfc" id="L446" title="All 2 branches covered.">            if ( ( (long[]) value )[ 0 ] != 0 ) Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );</span>
 <span class="fc bfc" id="L447" title="All 2 branches covered.">        } else if ( typeClass == Boolean.class ) {</span>

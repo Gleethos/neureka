@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"12.815 seconds"
+    "duration":"13.325 seconds"
   },
   "headers":["\n                    This specification defines what types of settings are exposed by\n                    Neureka as well as more general things like how string representations\n                    of various library types should look like... \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Neureka class instance has expected behaviour.",
       "result":"PASS",
-      "duration":"0.087 seconds",
+      "duration":"0.088 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,7 +27,7 @@
 
         {"kind":"then","text":"This setting change applies!","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()","!Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()"]},
 
-        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"0.20.0\"//version"]}
+        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"0.20.1\"//version"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -35,7 +35,7 @@
     {
       "id":"Neureka settings class can be locked causing its properties to be immutable.",
       "result":"PASS",
-      "duration":"0.678 seconds",
+      "duration":"0.706 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Every Thread instance has their own Neureka instance.",
       "result":"PASS",
-      "duration":"7.327 seconds",
+      "duration":"7.571 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
     {
       "id":"Various library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"1.476 seconds",
+      "duration":"1.578 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -102,7 +102,7 @@
     {
       "id":"OpenCL related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"0.193 seconds",
+      "duration":"0.204 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -117,7 +117,7 @@
     {
       "id":"Backend related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"2.973 seconds",
+      "duration":"3.090 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

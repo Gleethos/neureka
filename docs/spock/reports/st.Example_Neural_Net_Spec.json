@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.077 seconds"
+    "duration":"2.031 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A simple 3 layer neural network converges.",
       "result":"PASS",
-      "duration":"1.581 seconds",
+      "duration":"1.540 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"A very simple 1 layer NN converges.",
       "result":"PASS",
-      "duration":"0.488 seconds",
+      "duration":"0.484 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

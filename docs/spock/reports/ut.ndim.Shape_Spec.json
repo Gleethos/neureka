@@ -1,0 +1,97 @@
+{
+  "className":"ut.ndim.Shape_Spec",
+  "title":"The Shape Tuple",
+  "narrative":"The `Shape` of an nd-array/tensor is in essence merely an immutable tuple of integers\n    which define the size of each dimension of the tensor.\n    So if you think of an nd-array as a grid of numbers, then the shape of the\n    tensor is the size of the grid in each dimension.\n\n    This specifications shows you how to create a shape and how to use it.",
+  "subjects":["neureka.Shape"],
+  "statistics":{
+    "runs":"5",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.005 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"A shape can be created from a list of integers.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use the \"of\" method to create a shape from a list of integers.","code":["var shape = Shape.of( 2, 3, 4 )"]},
+
+        {"kind":"expect","text":"It has the expected size and values!","code":["shape.size() == 3","shape.get(0) == 2","shape.get(1) == 3","shape.get(2) == 4"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A shape can be created from a stream of ints.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use the \"of\" method to create a shape from a stream of integers.","code":["var shape = Shape.of( [2, 3, 4].stream() )"]},
+
+        {"kind":"expect","text":"It has the expected size and values!","code":["shape.size() == 3","shape.get(0) == 2","shape.get(1) == 3","shape.get(2) == 4"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A shape can be created from an iterable.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use the \"of\" method to create a shape from a stream of integers.","code":["var shape = Shape.of( Nda.of( 2, 3, 4 ) )"]},
+
+        {"kind":"expect","text":"It has the expected size and values!","code":["shape.size() == 3","shape.get(0) == 2","shape.get(1) == 3","shape.get(2) == 4"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A shape can be mapped to a new shape.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that as a tuple, the shape is immutable so you cannot change its values.\n            But as a monad, the shape can be mapped to a new shape\n            using the \"map\" method. :)\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use the \"of\" method to create a shape from a list of integers.","code":["var shape = Shape.of( 2, 3, 4 )"]},
+
+        {"kind":"when","text":"We multiply each value of the shape by 2 into a new shape.","code":["var newShape = shape.map( { it * 2 } )"]},
+
+        {"kind":"then","text":"The new shape has the expected size and values!","code":["newShape.size() == 3","newShape.get(0) == 4","newShape.get(1) == 6","newShape.get(2) == 8"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A shape can be sliced.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            This is similar as the \"subList\" method of the java.util.List interface.\n            It returns a new shape which is a slice of the original shape\n            starting at the given index and ending at the given index.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use the \"of\" method to create a shape from a list of integers.","code":["var shape = Shape.of( 2, 3, 4 )"]},
+
+        {"kind":"when","text":"We slice the shape from index 1 to index 2.","code":["var newShape = shape.slice( 1, 2 )"]},
+
+        {"kind":"then","text":"The new shape has the expected size and values!","code":["newShape.size() == 1","newShape.get(0) == 3"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

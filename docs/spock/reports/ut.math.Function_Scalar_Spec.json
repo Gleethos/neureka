@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.026 seconds"
+    "duration":"0.050 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a Function instance from expression \"1/I[0]\".","code":["Function f = new FunctionParser( Neureka.get().backend() ).parse(\"1/I[0]\", false)"]},
+        {"kind":"given","text":"We create a Function instance from expression \"1/I[0]\".","code":["Function f = Function.of(\"1/I[0]\", false)"]},
 
         {"kind":"expect","text":"The function yields expected scalar results when called.","code":["if (index!=null) assert f.derive( inputs, index ) == expected","else assert f.call( inputs ) == expected"]},
 
@@ -38,7 +38,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a Function instance from expression \"I[0]+1/I[0]\".","code":["Function f = new FunctionParser( Neureka.get().backend() ).parse(\"I[0]+1/I[0]\", false)"]},
+        {"kind":"given","text":"We create a Function instance from expression \"I[0]+1/I[0]\".","code":["Function f = Function.of(\"I[0]+1/I[0]\", false)"]},
 
         {"kind":"expect","text":"The function yields expected scalar results when called.","code":["if (index!=null) assert f.derive( inputs, index ) == expected","else assert f.call( inputs ) == expected"]},
 
@@ -55,7 +55,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a Function instance from expression \"(I[0]+1/I[0])**-I[0]\".","code":["Function f = new FunctionParser( Neureka.get().backend() ).parse(\"(I[0]+1/I[0])**-I[0]\", false)"]},
+        {"kind":"given","text":"We create a Function instance from expression \"(I[0]+1/I[0])**-I[0]\".","code":["Function f = Function.of(\"(I[0]+1/I[0])**-I[0]\", false)"]},
 
         {"kind":"expect","text":"The function yields expected scalar results when called.","code":["if (index!=null) assert f.derive( inputs, index ) == expected","else assert f.call( inputs ) == expected"]},
 
@@ -67,12 +67,12 @@
     {
       "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Function f = new FunctionParser( Neureka.get().backend() ).parse(\"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\", false)"]},
+        {"kind":"given","text":"","code":["Function f = Function.of(\"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\", false)"]},
 
         {"kind":"expect","text":"","code":["if ( index != null ) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
 
@@ -89,7 +89,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Function f = new FunctionParser( Neureka.get().backend() ).parse(\"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\", false)"]},
+        {"kind":"given","text":"","code":["Function f = Function.of(\"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\", false)"]},
 
         {"kind":"expect","text":"","code":["if (index!=null) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
 
@@ -101,12 +101,12 @@
     {
       "id":"Test scalar results of various Function instances.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.014 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, false)"]},
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
 
         {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
 

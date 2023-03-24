@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.015 seconds"
+    "duration":"0.017 seconds"
   },
   "headers":["\n           Although you can create a tensor of almost anything, you will\n           not be able to execute operations on every kind of tensor...        \n        "],"tags":{},"see":[],
   "features":[ 

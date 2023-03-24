@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.329 seconds"
+    "duration":"0.337 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -39,7 +39,7 @@
     {
       "id":"Matrix multiplication works for both column and row major matrices across devices.",
       "result":"PASS",
-      "duration":"0.259 seconds",
+      "duration":"0.266 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

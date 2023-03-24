@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.094 seconds"
+    "duration":"0.135 seconds"
   },
   "headers":[" \n                This specification ensures that tensors supplied\n                to functions are executed successfully and produce the expected results.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The tensor API has built-in methods for applying functions.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.025 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"The optimization function for the SGD algorithm produces the expected result",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -75,14 +75,14 @@
     {
       "id":"Tensor results of various Function instances return expected results.",
       "result":"PASS",
-      "duration":"0.044 seconds",
+      "duration":"0.063 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We set the experimental \"autoConvertToFloat\" flag to true.","code":["Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })"]},
 
-        {"kind":"and","text":"","code":["and : \"A new Function instance created from ${equation}.\"","Function f = new FunctionParser( Neureka.get().backend() ).parse(equation, true) // TODO : test with 'doAD' : false!"]},
+        {"kind":"and","text":"","code":["and : \"A new Function instance created from ${equation}.\"","Function f = Function.of(equation, true) // TODO : test with 'doAD' : false!"]},
 
         {"kind":"and","text":"","code":["inputs.each {it.to(Device.get(device))}"]},
 

@@ -59,25 +59,59 @@ import org.slf4j.LoggerFactory;
     private static ExecutionCall&lt;Device&lt;Object&gt;&gt; _prepare( ExecutionCall call )
     {
 <span class="pc bpc" id="L61" title="2 of 4 branches missed.">        assert call.arity() &lt;= 3;</span>
-<span class="fc" id="L62">        Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
-<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);</span>
-<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
-        {
-<span class="fc" id="L66">            Class&lt;Number&gt; type = (Class&lt;Number&gt;) call.input(  1 ).getDataType().getItemTypeClass();</span>
-<span class="fc" id="L67">            int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };</span>
-<span class="fc" id="L68">            NDConfiguration.Layout targetLayout = call.input( 1 ).getNDConf().getLayout();</span>
-<span class="fc" id="L69">            call.input( 2 ).mut().toLayout(targetLayout);</span>
-<span class="fc" id="L70">            Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );</span>
-<span class="fc" id="L71">            output.mut().toLayout(targetLayout);</span>
-<span class="fc" id="L72">            output.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).</span>
-            try {
-<span class="fc" id="L74">                device.store( output );</span>
-<span class="nc" id="L75">            } catch ( Exception e ) {</span>
-<span class="nc" id="L76">                e.printStackTrace();</span>
-<span class="fc" id="L77">            }</span>
-<span class="fc" id="L78">            call = call.withInputAt( 0, output );</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
+<span class="fc" id="L64">            call = _withNewOutput( call );</span>
+
+<span class="fc" id="L66">        return (ExecutionCall&lt;Device&lt;Object&gt;&gt;) _autoClone( call );</span>
+    }
+
+    private static ExecutionCall&lt;?&gt; _withNewOutput( ExecutionCall&lt;?&gt; call )
+    {
+<span class="fc" id="L71">        Class&lt;Number&gt; type = (Class&lt;Number&gt;) call.input(  1 ).getDataType().getItemTypeClass();</span>
+
+<span class="fc" id="L73">        int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };</span>
+<span class="fc" id="L74">        Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );</span>
+
+<span class="fc" id="L76">        NDConfiguration.Layout layoutOut = _checkAndPrepareLayout( call.input( 1 ), call.input( 2 ), output );</span>
+<span class="fc" id="L77">        output.mut().toLayout( layoutOut );</span>
+<span class="fc" id="L78">        output.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).</span>
+
+<span class="fc" id="L80">        call.getDeviceFor(Number.class).store( output );</span>
+<span class="fc" id="L81">        return call.withInputAt( 0, output );</span>
+    }
+
+    private static NDConfiguration.Layout _checkAndPrepareLayout(Tsr&lt;?&gt; a, Tsr&lt;?&gt; b, Tsr&lt;?&gt; c )
+    {
+        // We need to make sure that the matrices have a common/compatible layout,
+        // ..before we can before the actual a @ b = c matrix multiplication!
+<span class="fc" id="L88">        NDConfiguration.Layout layoutA = a.getNDConf().getLayout();</span>
+<span class="fc" id="L89">        NDConfiguration.Layout layoutB = b.getNDConf().getLayout();</span>
+<span class="fc" id="L90">        NDConfiguration.Layout layoutC = c.getNDConf().getLayout();</span>
+
+<span class="fc" id="L92">        boolean aIsCompatible = isRMOrCM( layoutA );</span>
+<span class="fc" id="L93">        boolean bIsCompatible = isRMOrCM( layoutB );</span>
+
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if ( aIsCompatible ) {</span>
+<span class="fc" id="L96">            b.mut().toLayout(layoutA); // We choose a valid layout based on a</span>
+<span class="fc" id="L97">            layoutC = layoutA;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        } else if ( bIsCompatible ) {</span>
+<span class="fc" id="L99">            a.mut().toLayout(layoutB); // We choose a valid layout based on b</span>
+<span class="fc" id="L100">            layoutC = layoutB;</span>
+        } else {
+            // Ok so the inputs are unspecific/symmetric/ (not RM or CM)
+            // So we just need to decide on any valid layout really:
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            layoutC = isRMOrCM(layoutC) ? layoutC : NDConfiguration.Layout.ROW_MAJOR;</span>
+<span class="fc" id="L105">            a.mut().toLayout( layoutC );</span>
+<span class="fc" id="L106">            b.mut().toLayout( layoutC );</span>
         }
-<span class="fc" id="L80">        return (ExecutionCall&lt;Device&lt;Object&gt;&gt;) _autoClone( call );</span>
+
+<span class="fc" id="L109">        return layoutC;</span>
+    }
+
+    private static boolean isRMOrCM(NDConfiguration.Layout layout ) {
+<span class="fc bfc" id="L113" title="All 4 branches covered.">        return layout == NDConfiguration.Layout.ROW_MAJOR ||</span>
+               layout == NDConfiguration.Layout.COLUMN_MAJOR;
     }
 
     /**
@@ -90,14 +124,14 @@ import org.slf4j.LoggerFactory;
      * @param call The execution call whose tensors ought to be cloned based on the complexity of their access patterns.
      */
     private static ExecutionCall&lt;?&gt; _autoClone( ExecutionCall&lt;?&gt; call ) {
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        for (int i = 0; i &lt; call.arity(); i++ ) {</span>
-<span class="fc" id="L94">            if (</span>
-<span class="fc bfc" id="L95" title="All 4 branches covered.">                    (!_isSimpleRowMajorMatrix( call.input( i ) ) &amp;&amp; !_isSimpleColumnMajorMatrix( call.input( i ) ))</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        for (int i = 0; i &lt; call.arity(); i++ ) {</span>
+<span class="fc" id="L128">            if (</span>
+<span class="fc bfc" id="L129" title="All 4 branches covered.">                    (!_isSimpleRowMajorMatrix( call.input( i ) ) &amp;&amp; !_isSimpleColumnMajorMatrix( call.input( i ) ))</span>
                             ||
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">                            call.input( i ).isPartialSlice()</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">                            call.input( i ).isPartialSlice()</span>
             ) {
-<span class="fc" id="L99">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
-<span class="fc" id="L100">                call = call.withInputAt( i, call.input( i ).deepCopy().mut().setIsIntermediate( true ) );</span>
+<span class="fc" id="L133">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
+<span class="fc" id="L134">                call = call.withInputAt( i, call.input( i ).deepCopy().mut().setIsIntermediate( true ) );</span>
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform auto cloning every time the
@@ -105,15 +139,15 @@ import org.slf4j.LoggerFactory;
                  */
             }
         }
-<span class="fc" id="L108">        return call;</span>
+<span class="fc" id="L142">        return call;</span>
     }
 
     private static boolean _isSimpleColumnMajorMatrix( Tsr&lt;?&gt; t ) {
-<span class="pc bpc" id="L112" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;</span>
+<span class="pc bpc" id="L146" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;</span>
     }
 
     private static boolean _isSimpleRowMajorMatrix( Tsr&lt;?&gt; t ) {
-<span class="pc bpc" id="L116" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;</span>
+<span class="pc bpc" id="L150" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;</span>
     }
 
 }

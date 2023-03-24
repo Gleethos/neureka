@@ -47,7 +47,7 @@ import neureka.ndim.config.NDConfiguration;
 <span class="fc" id="L47">    }</span>
 
     @Override
-    public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call )
+    public Tsr&lt;?&gt; run( ExecutionCall&lt;CPU&gt; call )
     {
 <span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if ( !call.validate().all( (t1, t2) -&gt; t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )</span>
 <span class="nc" id="L53">            throw new IllegalArgumentException(</span>

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.058 seconds"
+    "duration":"0.059 seconds"
   },
   "headers":["\n                This specification covers some basic behaviour related to\n                reading and modifying the data inside a tensor.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -89,7 +89,7 @@
     {
       "id":"We can manipulate the underlying data array of a tensor through the mut API.",
       "result":"PASS",
-      "duration":"0.019 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -141,7 +141,7 @@
     {
       "id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

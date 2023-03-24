@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"0.090 seconds"
+    "duration":"0.113 seconds"
   },
   "headers":["\n                Specified below is the behaviour of the factory methods in the\n                Device interface as well as its various implementations \n                which should adhere to a certain set of common behaviours.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -52,7 +52,7 @@
     {
       "id":"In total there are 3 different types of methods for finding device instances.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -90,7 +90,7 @@
     {
       "id":"Devices expose an API for accessing (reading and writing) the data of a tensor.",
       "result":"PASS",
-      "duration":"0.020 seconds",
+      "duration":"0.021 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -142,7 +142,7 @@
     {
       "id":"Devices store tensors which can also be restored.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Device implementations also behave like storage units for tensors,\n            which you can see below.\n        ","\n            Device implementations also behave like storage units for tensors,\n            which you can see below.\n        ","\n            Device implementations also behave like storage units for tensors,\n            which you can see below.\n        "]
       },
@@ -235,7 +235,7 @@
     {
       "id":"Virtual tensors stay virtual when outsourced.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note: A virtual tensor is a tensor which is not yet fully initialized\n            in the sense that the data array is not yet allocated according to the \n            tensors size (number of elements they hold).\n            This is the case for tensor which are filled homogeneously with a single value,\n            like for example an all 0 tensor.    \n        ","\n            Note: A virtual tensor is a tensor which is not yet fully initialized\n            in the sense that the data array is not yet allocated according to the \n            tensors size (number of elements they hold).\n            This is the case for tensor which are filled homogeneously with a single value,\n            like for example an all 0 tensor.    \n        "]
       },

@@ -1,22 +1,22 @@
 {
   "className":"ut.tensors.Tensor_Operation_Spec",
   "title":"Running Tensors through operations",
-  "narrative":"This specification covers the interaction \n    between tensors and operations, more specifically it\n    runs tensors through operations and validates that the results are valid.",
+  "narrative":"This specification shows how to use the tensor API to run tensors through various operations.\n    Operations are triggered either by simply calling methods on tensors or by using \n    `Function` objects which are used to define custom operations in the form \n    of a syntax tree.",
   "subjects":[],
   "statistics":{
-    "runs":"12",
+    "runs":"15",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"8.001 seconds"
+    "duration":"10.974 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"dot\" operation reshapes and produces valid \"x\" operation result.",
       "result":"PASS",
-      "duration":"0.132 seconds",
+      "duration":"0.134 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"The \"matMul\" operation produces the expected result.",
       "result":"PASS",
-      "duration":"0.734 seconds",
+      "duration":"0.758 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,9 +56,72 @@
     },
   
     {
+      "id":"You can do matrix multiplication using transposed matrices.",
+      "result":"PASS",
+      "duration":"0.873 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tsr.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()","var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)"]},
+
+        {"kind":"when","text":"The \"matMul\" method is being called on \"a\" receiving \"b\"...","code":["var c = a.matMul(b)"]},
+
+        {"kind":"then","text":"The result tensor contains the expected shape and values.","code":["c.shape == [M, N]","c.items == expectedC as List"]},
+
+        {"kind":"and","text":"","code":["c.itemType == type"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Double","Double","Double","Double","Float","Float","Float","Long","Long","Long","Integer","Integer","Integer"],"A":["[1d, 1d]","[1d, 1d]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]"],"B":["[2d, 2d]","[2d]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]"],"M":["1","2","2","1","2","2","1","2","2","1","2","2","1","2"],"K":["2","1","2","2","1","2","2","1","2","2","1","2","2","1"],"N":["1","1","2","1","2","2","1","2","2","1","2","2","1","2"],"expectedC":["[ 4 ]","[ 2, 2 ]","[ 0.0, 2.0, -0.5, 2.5 ]","[ 0.5 ]","[ 2.0, 3.0, -1.0, -1.5 ]","[ 0.0, 2.0, -0.5, 2.5 ]","[ 0.5 ]","[ 2.0, 3.0, -1.0, -1.5 ]","[ 2, 0, 1, 1 ]","[ 1 ]","[ 2, 2, -1, -1 ]","[ 2, 0, 1, 1 ]","[ 1 ]","[ 2, 2, -1, -1 ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"You can do matrix multiplication using transposed matrices as second operand.",
+      "result":"PASS",
+      "duration":"1.039 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)","var b = Tsr.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()"]},
+
+        {"kind":"when","text":"The \"matMul\" method is being called on \"a\" receiving \"b\"...","code":["var c = a.matMul(b)"]},
+
+        {"kind":"then","text":"The result tensor contains the expected shape and values.","code":["c.shape == [M, N]","c.items == expectedC as List"]},
+
+        {"kind":"and","text":"","code":["c.itemType == type"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Double","Double","Double","Double","Float","Float","Float","Float","Long","Long","Long","Long","Integer","Integer","Integer","Integer"],"A":["[1d, 1d]","[1d, 1d]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]","[1, 1]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]","[1, 1]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]","[1, 1]","[4, 3, 2, 1]","[-2, 1]","[-2, 1]"],"B":["[2d]","[2d, 2d]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]","[2]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]","[2]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]","[2]","[-0.5, 1.5, 1, -2]","[-1, -1.5]","[-1, -1.5]"],"M":["2","1","2","1","2","2","2","1","2","2","2","1","2","2","2","1","2"],"K":["1","2","2","2","1","1","2","2","1","1","2","2","1","1","2","2","1"],"N":["1","1","2","1","2","1","2","1","2","1","2","1","2","1","2","1","2"],"expectedC":["[ 2, 2 ]","[ 4 ]","[ 2.5, -2.0, 0.5, 0.0 ]","[ 0.5 ]","[ 2.0, 3.0, -1.0, -1.5 ]","[ 2, 2 ]","[ 2.5, -2.0, 0.5, 0.0 ]","[ 0.5 ]","[ 2.0, 3.0, -1.0, -1.5 ]","[ 2, 2 ]","[ 3, -2, 1, 0 ]","[ 1 ]","[ 2, 2, -1, -1 ]","[ 2, 2 ]","[ 3, -2, 1, 0 ]","[ 1 ]","[ 2, 2, -1, -1 ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"You can do matrix multiplication using 2 transposed matrices.",
+      "result":"PASS",
+      "duration":"0.463 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tsr.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()","var b = Tsr.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()"]},
+
+        {"kind":"when","text":"The \"matMul\" method is being called on \"a\" receiving \"b\"...","code":["println a.toString({it.isMultiline = true})","println b.toString({it.isMultiline = true})","var c = a.matMul(b)","println c.toString({it.isMultiline = true})"]},
+
+        {"kind":"then","text":"The result tensor contains the expected shape and values.","code":["c.shape == [M, N]","c.items == expectedC as List"]},
+
+        {"kind":"and","text":"","code":["c.itemType == type"]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Double","Double","Double","Double","Double","Float"],"A":["[1d, 1d]","[1d, 1d]","[4, 3, 2, 1]","[3, 3, 3, 3]","[-2, 1]","[-2, 1]","[1, 1]"],"B":["[2d]","[2d, 2d]","[-0.5, 1.5, 1, -2]","[0.5, 0.5, 0.5, 0.5]","[-1, -1.5]","[-1, -1.5]","[2]"],"M":["1","2","2","2","1","2","1"],"K":["2","1","2","2","2","1","2"],"N":["1","1","2","2","1","2","1"],"expectedC":["[ 4 ]","[ 2, 2 ]","[ 1.0, 0.0, 0.0, 1.0 ]","[ 3.0, 3.0, 3.0, 3.0 ]","[ 0.5 ]","[ 2.0, 3.0, -1.0, -1.5 ]","[ 4 ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
       "id":"The \"random\" function/operation populates tensors randomly.",
       "result":"PASS",
-      "duration":"0.114 seconds",
+      "duration":"0.122 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -89,7 +152,7 @@
     {
       "id":"The values of a randomly populated tensor seems to adhere to a gaussian distribution.",
       "result":"PASS",
-      "duration":"0.122 seconds",
+      "duration":"0.129 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -112,7 +175,7 @@
     {
       "id":"New method \"asFunction\" of String added at runtime is callable by groovy and also works.",
       "result":"PASS",
-      "duration":"0.525 seconds",
+      "duration":"0.567 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -137,7 +200,7 @@
     {
       "id":"New operator methods added to \"SDK-types\" at runtime are callable by groovy and also work.",
       "result":"PASS",
-      "duration":"1.276 seconds",
+      "duration":"1.456 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -156,7 +219,7 @@
     {
       "id":"Overloaded operation methods on tensors produce expected results when called.",
       "result":"PASS",
-      "duration":"0.074 seconds",
+      "duration":"0.063 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -171,7 +234,7 @@
     {
       "id":"Simple slice addition produces expected result.",
       "result":"PASS",
-      "duration":"0.127 seconds",
+      "duration":"0.129 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -192,7 +255,7 @@
     {
       "id":"Auto reshaping and broadcasting works and the result can be back propagated.",
       "result":"PASS",
-      "duration":"2.481 seconds",
+      "duration":"2.643 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -233,7 +296,7 @@
     {
       "id":"Scalar broadcasting works across devices.",
       "result":"PASS",
-      "duration":"0.296 seconds",
+      "duration":"0.349 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -254,7 +317,7 @@
     {
       "id":"Operators \"+,*,**\" produce expected results with gradients which can be accessed via a \"Ig[0]\" Function instance",
       "result":"PASS",
-      "duration":"0.086 seconds",
+      "duration":"0.062 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -285,13 +348,13 @@
 
         {"kind":"when","text":"","code":["Tsr[] trs = new Tsr[]{x}"]},
 
-        {"kind":"and","text":"","code":["def fun = new FunctionParser( Neureka.get().backend() ).parse(\"Ig[0]\", false)"]},
+        {"kind":"and","text":"","code":["def fun = Function.of(\"Ig[0]\", false)"]},
 
         {"kind":"then","text":"","code":["fun(trs).toString() == \"[1]:(-8.0)\""]},
 
         {"kind":"when","text":"","code":["trs[0] = y"]},
 
-        {"kind":"and","text":"","code":["fun = new FunctionParser( Neureka.get().backend() ).parse(\"Ig[0]\", false)"]},
+        {"kind":"and","text":"","code":["fun = Function.of(\"Ig[0]\", false)"]},
 
         {"kind":"and","text":"","code":["fun(trs)"]},
 
@@ -303,7 +366,7 @@
     {
       "id":"Activation functions work across types on slices and non sliced tensors.",
       "result":"PASS",
-      "duration":"1.924 seconds",
+      "duration":"2.037 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

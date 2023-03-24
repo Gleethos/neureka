@@ -6,7 +6,10 @@ import neureka.dtype.DataType;
 /**
  *  A wrapper type for the raw data array of a tensor/nd-array,
  *  which is provided by implementations of the {@link Device} interface.
- *  This is used to interface with the raw data as well as check where it comes from.
+ *  Every tensor/nd-array has a {@link Data} object which it uses to access its raw data.
+ *  Use this to interface with the raw data as well as check where it comes from,
+ *  but be careful as this exposes mutable state as well as backend specific implementations
+ *  and types (e.g. OpenCL / JVM arrays).
  *
  * @param &lt;V&gt; The type of the data array.
  */
@@ -18,7 +21,8 @@ public interface Data&lt;V&gt; {
     Device&lt;V&gt; owner();
 
     /**
-     *  This returns the underlying raw data object of a nd-array or tensor.
+     *  This returns the underlying raw data object of a nd-array or tensor
+     *  of a backend specific type (e.g. OpenCL memory object or JVM array).
      *  Contrary to the {@link Nda#getItems()} ()} method, this will
      *  return an unbiased view on the raw data of this tensor.
      *  Be careful using this, as it exposes mutable state!
@@ -37,12 +41,15 @@ public interface Data&lt;V&gt; {
      * @return The raw data object underlying a nd-array/tensor.
      */
     default &lt;D&gt; D getRef(Class&lt;D&gt; dataType) {
-<span class="fc" id="L40">        Object data = getRef();</span>
-<span class="pc bpc" id="L41" title="2 of 4 branches missed.">        if ( data != null &amp;&amp; !dataType.isAssignableFrom(data.getClass()) )</span>
-<span class="nc" id="L42">            throw new IllegalArgumentException(&quot;Provided data type '&quot;+dataType+&quot;' is not assignable from '&quot;+data.getClass()+&quot;'.&quot;);</span>
-<span class="fc" id="L43">        return (D) data;</span>
+<span class="fc" id="L44">        Object data = getRef();</span>
+<span class="pc bpc" id="L45" title="2 of 4 branches missed.">        if ( data != null &amp;&amp; !dataType.isAssignableFrom(data.getClass()) )</span>
+<span class="nc" id="L46">            throw new IllegalArgumentException(&quot;Provided data type '&quot;+dataType+&quot;' is not assignable from '&quot;+data.getClass()+&quot;'.&quot;);</span>
+<span class="fc" id="L47">        return dataType.cast(data);</span>
     }
 
+    /**
+     * @return The data type of the raw data array.
+     */
     DataType&lt;V&gt; dataType();
 
 }

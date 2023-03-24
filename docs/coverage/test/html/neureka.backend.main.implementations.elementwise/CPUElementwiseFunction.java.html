@@ -143,10 +143,10 @@ import neureka.ndim.iterator.NDIterator;
         {
 <span class="fc" id="L144">            long[] t0_value = (long[]) t0_drn.mut().getData().getRef();</span>
 <span class="fc" id="L145">            long[] t1_value = t1_src.mut().getDataAs(long[].class);</span>
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">            if ( isSimple )</span>
-<span class="nc" id="L147">                workload = (start, end) -&gt; {</span>
-<span class="nc bnc" id="L148" title="All 2 branches missed.">                    for ( int i = start; i &lt; end; i++ ) t0_value[i] = f.invoke(t1_value[i]);</span>
-<span class="nc" id="L149">                };</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            if ( isSimple )</span>
+<span class="fc" id="L147">                workload = (start, end) -&gt; {</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">                    for ( int i = start; i &lt; end; i++ ) t0_value[i] = f.invoke(t1_value[i]);</span>
+<span class="fc" id="L149">                };</span>
             else
 <span class="fc" id="L151">                workload = (i, end) -&gt; {</span>
 <span class="fc" id="L152">                    NDIterator t0Idx = NDIterator.of( t0_drn );</span>
