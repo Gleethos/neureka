@@ -104,6 +104,39 @@ class Tensor_Function_Spec extends Specification
             softmax.sum().item() == 1.0
     }
 
+    def 'The softmax can be calculated for a particular axis.'()
+    {
+        given : 'A tensor with more than one dimension.'
+            var x = Tsr.of( -3f..7f ).withShape( 2, 3 )
+
+        when: 'We apply the softmax function to it.'
+            var softmax = x.softmax(1)
+
+        then: 'We get the expected results.'
+            softmax.toString() == "(2x3):[0.09003, 0.24472, 0.66524, 0.09003, 0.24472, 0.66524]"
+        and : 'The resulting values have the property we expect from softmax: their sum is 1!'
+            softmax.sum(1).items == [1.0, 1.0]
+
+        when :
+            softmax = x.softmax(0)
+        then :
+            softmax.toString() == "(2x3):[0.04742, 0.04742, 0.04742, 0.95257, 0.95257, 0.95257]"
+        and : 'The resulting values have the property we expect from softmax: their sum is 1!'
+            softmax.sum(0).items.collect({it.round 10}) == [1.0, 1.0, 1.0]
+    }
+
+    def 'The softmax can be calculated alongside multiple axes.'()
+    {
+        given : 'A simple 2 by 3 by 4 matrix.'
+            var m = Tsr.of(-79f..43f).withShape(2, 3, 2, 4)
+        when : 'We create a softmax for every axis...'
+            var s = m.softmax(1, 2)
+        then : 'The resulting tensor will have the expected shape.'
+            s.shape() == [2, 3, 2, 4]
+        and : 'Using the sum function we can verify that the softmax is correct.'
+            s.sum(1, 2).items.collect({it.round 10}) == [1, 1, 1, 1, 1, 1, 1, 1]
+    }
+
     def 'The optimization function for the SGD algorithm produces the expected result'()
     {
         given : 'We use a common learning rate.'
