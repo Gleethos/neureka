@@ -1907,6 +1907,50 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
+     *  Calculate the sum value of all values
+     *  within this tensor along the specified axis and returns it
+     *  in the form of a tensor. <br>
+     *  For example, if this tensor has a shape of (2, 3, 4) and the axis is 1,
+     *  then the result will be a tensor with a shape of (2, 1, 4) because the
+     *  sum of all values along the axis 1 is a single value for each of the two
+     *  first dimensions. <br>
+     *  This operation supports autograd.
+     *
+     * @param axis The axis along which the sum should be calculated.
+     * @return A tensor which wraps the sum of all values of this tensor along the specified axis.
+     */
+    default Tsr<V> sum( int axis ) {
+        int toBeReduced = this.shape(axis);
+        Tsr<V> current = this.slice().axis(axis).at(0).get();
+        for ( int i = 0; i < toBeReduced; i++ ) {
+            if ( i > 0 )
+                current = this.slice().axis(axis).at(i).get().plus(current);
+        }
+        return current;
+    }
+
+    /**
+     *  Calculate the sum value of all values
+     *  within this tensor along the specified axes and returns it
+     *  in the form of a tensor. <br>
+     *  For example, if this tensor has a shape of (2, 3, 4) and the axes are 1 and 2,
+     *  then the result will be a tensor with a shape of (2, 1, 1) because the
+     *  sum of all values along the axis 1 and 2 is a single value for each of the two
+     *  first dimensions. <br>
+     *  This operation supports autograd.
+     *
+     * @param axes The axes along which the sum should be calculated.
+     * @return A tensor which wraps the sum of all values of this tensor along the specified axes.
+     */
+    default Tsr<V> sum( int... axes ) {
+        Tsr<V> current = this;
+        for ( int axis : axes )
+            current = current.sum( axis );
+
+        return current;
+    }
+
+    /**
      *  Calculate the min value of all values
      *  within this tensor and returns it
      *  in the form of a scalar tensor. <br>
@@ -2401,6 +2445,30 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> softmax() { 
         // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
         return exp().div( exp().sum() );
+    }
+
+    /**
+     * @return A new tensor whose items are the result of the <b>softmax function</b> applied to the items of this tensor.
+     */
+    default Tsr<V> softmax( int axis ) {
+        // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
+        return exp().div( exp().sum(axis) );
+    }
+
+    /**
+     *  Calculates the softmax function along the specified axes. <br>
+     *  For example, if this tensor has a shape of (2, 3, 4) and the axes 0 and 2 are chosen,
+     *  then the result will be a tensor of the same size where all elements summed up alongside
+     *  axis 0 and 2 would be 1.
+     *  Ao calling {@code sum(0, 2)} would in this example be a tensor of shape of (1, 3, 1) where every item is 1. <br>
+     *  This operation supports autograd.
+     *
+     * @param axes The axes along which the softmax function should be applied.
+     * @return A new tensor whose items are the result of the <b>softmax function</b> applied to the items of this tensor.
+     */
+    default Tsr<V> softmax( int... axes ) {
+        // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
+        return exp().div( exp().sum(axes) );
     }
 
     /**

@@ -129,7 +129,8 @@ class Tensor_Stats_Spec extends Specification
             sum.item() == a.mut.data.ref.sum()
     }
 
-    def 'The sum operation support autograd (back-propagation).'() {
+    def 'The sum operation support autograd (back-propagation).'()
+    {
         given : 'We create a simple tensor of floats which requires gradients:'
             var a = Tsr.of(1f, 2f, 3f, 4f).setRqsGradient(true)
         and : 'We first do a simple operation to get another tensor:'
@@ -144,4 +145,35 @@ class Tensor_Stats_Spec extends Specification
             a.gradient.get().items == [3f, 3f, 3f, 3f]
     }
 
+    def 'A tensor can be summed alongside a specific axis.'()
+    {
+        given : 'A simple 2 by 3 matrix.'
+            var m = Tsr.of(-3f..5f).withShape(2, 3)
+        when : 'We create a sum for every axis...'
+            var s1 = m.sum(0)
+            var s2 = m.sum(1)
+        then : 'The sums are vectors with the expected state.'
+            s1.items == [-3.0, -1.0, 1.0]
+            s2.items == [-6.0, 3.0]
+            s1.shape == [1, 3]
+            s2.shape == [2, 1]
+    }
+
+    def 'Multiple dimensions of a tensor can selectively be summed up.'()
+    {
+        reportInfo """
+            Given a tensor with a shape of (x, y, z) and the request to sum up axis 1 and 2,
+            then the result will be a tensor with a shape of (x, 1, 1) because the
+            sum of all values along the axis 1 and 2 is a single value for each of the two
+            first dimensions.
+            This operation supports autograd.
+        """
+        given : 'A simple 2 by 3 by 4 matrix.'
+            var m = Tsr.of(-3f..23f).withShape(2, 3, 4)
+        when : 'We create a sum for every axis...'
+            var s = m.sum(1, 2)
+        then : 'The sums are vectors with the expected state.'
+            s.items == [30.0, 174.0]
+            s.shape == [2, 1, 1]
+    }
 }
