@@ -341,7 +341,7 @@ public class BroadSystemTest
         int[] shape = {4, 2, 9, 5, 6, 2};
         int[] newForm = {1, 0, -1, -2, 2, 4, 3, -1, 5};
         int[] expected = {2, 4, 1, 2, 9, 6, 5, 1, 2};
-        tester.testTensorUtility_reshape(shape, newForm, expected);
+        tester.testTensorUtility_permute(shape, newForm, expected);
         //---
         shape = new int[]{4, 2, 9, 5, 6, 2};
         expected = new int[]{1080, 540, 60, 12, 2, 1, };

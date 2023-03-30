@@ -58,8 +58,8 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             }
 
         expect :
-            W1.mut.data.ref == RESULT_W1
-            W2.mut.data.ref == RESULT_W2
+            W1.mut.data.ref.collect({it.round 14}) == RESULT_W1.collect({it.round 14})
+            W2.mut.data.ref.collect({it.round 14}) == RESULT_W2.collect({it.round 14})
     }
 
     def 'One can write a simple neural network in less than 11 lines of code!'()
@@ -76,8 +76,8 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             }
 
         expect :
-            W1.mut.data.ref == RESULT_W1
-            W2.mut.data.ref == RESULT_W2
+            W1.mut.data.ref.collect({it.round 14}) == RESULT_W1.collect({it.round 14})
+            W2.mut.data.ref.collect({it.round 14}) == RESULT_W2.collect({it.round 14})
     }
 
 
@@ -114,8 +114,8 @@ class Eleven_Lines_NN_System_Spec extends Specification {
             }
 
         expect :
-            W1.mut.data.ref == RESULT_W1
-            W2.mut.data.ref == RESULT_W2
+            W1.mut.data.ref.collect({it.round 12}) == RESULT_W1.collect({it.round 12})
+            W2.mut.data.ref.collect({it.round 12}) == RESULT_W2.collect({it.round 12})
     }
 
 

@@ -28,7 +28,7 @@ public class DimFit extends AbstractOperation
 
         setAlgorithm(
             Algorithm
-            .withName("reshape")
+            .withName("dimFit")
             .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
             .setExecution(

@@ -3,6 +3,7 @@ package neureka.backend.api.fun;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.main.internal.FinalExecutor;
+import neureka.backend.main.operations.other.Permute;
 import neureka.math.Function;
 import neureka.devices.Device;
 
@@ -17,7 +18,7 @@ import neureka.devices.Device;
  *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link FinalExecutor}
  *  would not be used if not explicitly called.
  *  Bypassing other procedures is useful for full control and of course to implement unorthodox types of operations
- *  like the {@link neureka.backend.main.operations.other.Reshape} operation
+ *  like the {@link Permute} operation
  *  which is very different from classical operations.
  *  Although the `ExecutionCall` passed to implementations of this will contain
  *  a fairly suitable `Device` assigned to a given `neureka.backend.api.Algorithm`,

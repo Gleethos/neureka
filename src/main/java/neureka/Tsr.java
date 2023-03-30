@@ -1529,6 +1529,28 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return subset;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    default Tsr<V> permute( int... dims ) {
+        return Neureka.get()
+                .backend()
+                .getAutogradFunction()
+                .permute()
+                .with(Arg.Indices.of(dims))
+                .call(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default Tsr<V> transpose( int dim1, int dim2 ) {
+        // Transpose is based on permute, so we can just call permute with the correct arguments!
+        int[] dims = new int[ this.rank() ];
+        for ( int i = 0; i < dims.length; i++ ) dims[i] = i;
+        dims[dim1] = dim2;
+        dims[dim2] = dim1;
+        return this.permute( dims );
+    }
+
     /*==================================================================================================================
     |
     |       §(6) : ND-ITERATOR LOGIC :

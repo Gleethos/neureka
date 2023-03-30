@@ -9,17 +9,17 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Title
 
-@Title("Reshaping Slices of Tensors")
+@Title("Permuting Slices of Tensors")
 @Narrative('''
 
-    Neureka provides a convenient way to reshape tensors
+    Neureka provides a convenient way to permuting tensors
     even if they are slices of other tensors sharing the same underlying data.
     This is possible because of the under the hood indexing 
     abstractions provided by the `NDConfiguration` interface and its various implementations.
 
 ''')
 @Subject([Tsr])
-class Tensor_Slice_Reshape_Spec extends Specification
+class Tensor_Slice_Permute_Spec extends Specification
 {
     def setup() {
         Neureka.get().reset()
@@ -64,7 +64,7 @@ class Tensor_Slice_Reshape_Spec extends Specification
             a != b
             a.toString() == b.toString()
 
-        when : 'The slice "a" is being reshaped... (transposed)'
+        when : 'The slice "a" is being permuted... (transposed)'
             Tsr c = a.T()
 
         then : 'The returned tensor is a different one than "a".'

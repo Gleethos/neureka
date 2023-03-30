@@ -55,7 +55,7 @@ class Tensor_IO_Spec extends Specification
         and : 'A new tensor instance with the shape (4x3).'
             var t1 = Tsr.of([4, 3], 1d..12d)
 
-        when : 'Recording the index behavior before and after a reshape operation...'
+        when : 'Recording the index behavior before and after a permute operation...'
             var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
             var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})
             var t1_indices = t1.indicesOfIndex(5)

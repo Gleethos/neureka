@@ -6,7 +6,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.main.algorithms.NDConvolution;
-import neureka.backend.main.operations.other.Reshape;
+import neureka.backend.main.operations.other.Permute;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.devices.Device;
@@ -32,7 +32,7 @@ public class ConvUtil
                         {
                             int offset = ( call.input(0) == null ? 1 : 0 );
                             Tsr<?>[] tensors = new Tsr[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};
-                            Reshape.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)
+                            Permute.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)
                             for ( Tsr<?> t : tensors ) t.mut().setIsVirtual( false );
                             return AbstractDeviceAlgorithm.prepareAndExecute(
                                     ExecutionCall.of( tensors )

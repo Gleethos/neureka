@@ -658,7 +658,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     /**
      *  Use this to access elements of the underlying data array without any index
      *  transformation applied to it. This is usually similar to the {@link #item} method,
-     *  however for nd-arrays which are sliced or reshaped views of the data of another nd-array,
+     *  however for nd-arrays which are sliced or permuted views of the data of another nd-array,
      *  this method will always be unbiased access of the raw data...
      *
      * @param i The position of the targeted item within the raw data array of an NDArray implementation.
@@ -1022,6 +1022,26 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return A new nd-array instance with the same underlying data (~shallow copy) but with a different shape.
      */
     Nda<V> withShape( int... shape );
+
+    /**
+     *  Returns a view of the original tensor input with its dimensions permuted.<br>
+     *  Consider a 3-dimensional tensor x with shape (2×3×5),
+     *  then calling x.permute(1, 0, 2) will return a 3-dimensional tensor of shape (3×2×5). <br>
+     *
+     * @param dims The desired ordering of dimensions
+     * @return A new nd-array instance with the same underlying data (~shallow copy) but with a different shape.
+     */
+    Nda<V> permute( int... dims );
+
+    /**
+     * Returns a view of the original tensor input the targeted
+     * axes are swapped / transposed.<br>
+     *
+     * @param dim1 The first dimension to be swapped.
+     * @param dim2 The second dimension to be swapped.
+     * @return A new nd-array instance with the same underlying data (~shallow copy) but with a different shape.
+     */
+    Nda<V> transpose( int dim1, int dim2 );
 
     /**
      *  This method exposes the {@link Item} API which allows you to get or set

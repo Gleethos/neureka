@@ -30,7 +30,7 @@
     The following method calculates the true index for an element in the data array
     based on a provided "virtual index" and relevant context information which is needed for translation.
     This virtual index might be different from the true index, for example because it is
-    a slice of another larger nd-array, or maybe because it is in fact a reshaped version of another nd-array.
+    a slice of another larger nd-array, or maybe because it is in fact a permuted version of another nd-array.
     This virtual index will be turned in an index array which defines the position for every axis.
     Then this index array will be converted into the final and true index for an underlying item.
     The information needed for performing this translation is contained within the "cfg" array,

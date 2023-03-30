@@ -102,13 +102,13 @@ public class Slice extends AbstractOperation
                 (So it is not a slice of a slice... reason : 'rootTensor == parentTensor' )
 
                 2. There is however uncertainty about the 'true shape' of this parent tensor!
-                Meaning : It might have been reshaped and could therefore be distorted with
+                Meaning : It might have been permuted and could therefore be distorted with
                 respect to the slice that is currently being prepared!
                 -> This means we have to take this possible reshaping into account!
                 Like so:
 
-                The following uses an int array also called 'reshapeRelation'.
-                This is simply the 'reshape array' which has been recorded inside the 'Relation' component
+                The following uses an int array also called 'permuteRelation'.
+                This is simply the 'permute array' which has been recorded inside the 'Relation' component
                 by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
 
                 The following would occur when : "Tsr.of(...).T().getAt(...);"
@@ -117,10 +117,10 @@ public class Slice extends AbstractOperation
                 via the 'getAt(...)' method leads us to a situation where
                 the following variable is NOT NULL! :
              */
-            int[] reshaped = ( input.isSlice() ? parentTensor.get( Relation.class ).getReshapeRelationFor( input ) : null );
-            reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;
+            int[] permute = ( input.isSlice() ? parentTensor.get( Relation.class ).getPermuteRelationFor( input ) : null );
+            permute = ( permute != null ) ? Permute.invert( permute ) : null;
             for ( int i = 0; i < parentTensor.rank(); i++ ) {
-                int ii = ( reshaped != null ) ? reshaped[ i ] : i;
+                int ii = ( permute != null ) ? permute[ i ] : i;
                 int top = newOffset[ i ] + newShape[ i ];
                 if ( top > parentTensor.shape( ii ) ) {
                     String message =

@@ -139,7 +139,7 @@ It can also occupy the rest of the execution without any other steps being taken
 For example, a `neureka.backend.api.ImplementationFor` or a `RecursiveExecutor`
 would not be used if not explicitly called.
 Bypassing other procedures is useful for full control and of course to implement unorthodox types of operations
-like the `neureka.backend.main.operations.other.Reshape` operation
+like the `neureka.backend.main.operations.other.Permute` operation
 which is very different from classical operations.
 Although the `ExecutionCall` passed to implementations of this will contain
 a fairly suitable `Device` assigned to a given `neureka.backend.api.Algorithm`,

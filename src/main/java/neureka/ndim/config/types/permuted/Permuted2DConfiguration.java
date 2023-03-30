@@ -1,8 +1,8 @@
-package neureka.ndim.config.types.reshaped;
+package neureka.ndim.config.types.permuted;
 
 import neureka.ndim.config.types.D2C;
 
-public class Reshaped2DConfiguration extends D2C
+public class Permuted2DConfiguration extends D2C
 {
     /**
      *  The shape of the NDArray.
@@ -21,7 +21,7 @@ public class Reshaped2DConfiguration extends D2C
     private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
 
-    protected Reshaped2DConfiguration(
+    protected Permuted2DConfiguration(
             int[] shape,
             int[] translation,
             int[] indicesMap
@@ -34,12 +34,12 @@ public class Reshaped2DConfiguration extends D2C
         _indicesMap2 = indicesMap[ 1 ];
     }
 
-    public static Reshaped2DConfiguration construct(
+    public static Permuted2DConfiguration construct(
             int[] shape,
             int[] translation,
             int[] indicesMap
     ) {
-        return _cached( new Reshaped2DConfiguration(shape, translation, indicesMap) );
+        return _cached( new Permuted2DConfiguration(shape, translation, indicesMap) );
     }
 
     /** {@inheritDoc} */

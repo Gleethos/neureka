@@ -103,18 +103,23 @@ public abstract class Arg<T> implements Component<Args> {
     }
 
     public static class Shape extends Arg<int[]> {
-        public static Shape of( int[] arg ) { return new Shape( arg ); }
+        public static Shape of( int... arg ) { return new Shape( arg ); }
         private Shape( int[] arg ) { super(arg); }
     }
 
     public static class Offset extends Arg<int[]> {
-        public static Offset of( int[] arg ) { return new Offset( arg ); }
+        public static Offset of( int... arg ) { return new Offset( arg ); }
         private Offset( int[] arg ) { super(arg); }
     }
 
     public static class Stride extends Arg<int[]> {
-        public static Stride of( int[] arg ) { return new Stride( arg ); }
+        public static Stride of( int... arg ) { return new Stride( arg ); }
         private Stride( int[] arg ) { super(arg); }
+    }
+
+    public static class Indices extends Arg<int[]> {
+        public static Indices of( int... arg ) { return new Indices( arg ); }
+        private Indices( int[] arg ) { super(arg); }
     }
 
     @Override

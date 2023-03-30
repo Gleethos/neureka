@@ -6,7 +6,7 @@ import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
-import neureka.backend.main.operations.other.Reshape;
+import neureka.backend.main.operations.other.Permute;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 
@@ -67,7 +67,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                 )
                 {
                     Tsr<?>[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };
-                    Reshape.makeFit( inputs, true );
+                    Permute.makeFit( inputs, true );
                     inputs = new Tsr[]{ null, inputs[0], inputs[1] };
                     call = call.withInputs( inputs );
                 }

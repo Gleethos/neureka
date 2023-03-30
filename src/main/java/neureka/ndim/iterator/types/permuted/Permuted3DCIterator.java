@@ -1,15 +1,15 @@
-package neureka.ndim.iterator.types.reshaped;
+package neureka.ndim.iterator.types.permuted;
 
-import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration;
+import neureka.ndim.config.types.permuted.Permuted3DConfiguration;
 import neureka.ndim.iterator.NDIterator;
 
-public final class Reshaped3DCIterator extends Reshaped3DConfiguration implements NDIterator
+public final class Permuted3DCIterator extends Permuted3DConfiguration implements NDIterator
 {
     private int _d1 = 0;
     private int _d2 = 0;
     private int _d3 = 0;
 
-    public Reshaped3DCIterator(Reshaped3DConfiguration ndc) {
+    public Permuted3DCIterator(Permuted3DConfiguration ndc) {
         super( ndc.shape(), ndc.translation(), ndc.indicesMap() );
     }
 
