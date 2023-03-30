@@ -1024,6 +1024,26 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     Nda<V> withShape( int... shape );
 
     /**
+     *  Returns a view of the original tensor input with its dimensions permuted.<br>
+     *  Consider a 3-dimensional tensor x with shape (2×3×5),
+     *  then calling x.permute(1, 0, 2) will return a 3-dimensional tensor of shape (3×2×5). <br>
+     *
+     * @param dims The desired ordering of dimensions
+     * @return A new nd-array instance with the same underlying data (~shallow copy) but with a different shape.
+     */
+    Nda<V> permute( int... dims );
+
+    /**
+     * Returns a view of the original tensor input the targeted
+     * axes are swapped / transposed.<br>
+     *
+     * @param dim1 The first dimension to be swapped.
+     * @param dim2 The second dimension to be swapped.
+     * @return A new nd-array instance with the same underlying data (~shallow copy) but with a different shape.
+     */
+    Nda<V> transpose( int dim1, int dim2 );
+
+    /**
      *  This method exposes the {@link Item} API which allows you to get or set
      *  individual items within this nd-array targeted by an array of provided indices.
      * @param indices An array of indices targeting a particular position in this nd-array...

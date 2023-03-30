@@ -39,9 +39,19 @@ public class Permute extends AbstractOperation
                 ( caller, call ) ->
                 {
                     Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
-                    int[] axisIndicesOrder = new int[ inputs.length - 1 ];
-                    for ( int i = 0; i < inputs.length - 1; i++ )
-                        axisIndicesOrder[ i ] = ( (Number) inputs[ i ].item( 0 ) ).intValue();
+
+                    int[] axisIndicesOrder = call.getValOf( Arg.Indices.class );
+
+                    if ( axisIndicesOrder == null ) {
+                        axisIndicesOrder = new int[inputs.length - 1];
+                        for (int i = 0; i < inputs.length - 1; i++)
+                            axisIndicesOrder[i] = ((Number) inputs[i].item(0)).intValue();
+                    }
+                    else if ( inputs.length > 1 )
+                        throw new IllegalArgumentException(
+                                "Conflicted arguments detected, either the first inputs are tensors representing indices, " +
+                                "or the indices are given as meta arguments, in which case only a single tensor is expected as input!"
+                            );
 
                     if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) //reverse permute:
                         axisIndicesOrder = invert( axisIndicesOrder );

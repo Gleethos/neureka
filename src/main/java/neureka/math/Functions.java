@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 public class Functions {
 
+    private final Function _permute;
     private final Function _dimTrim;
     private final Function _idy;
     private final Function _conv;
@@ -59,6 +60,7 @@ public class Functions {
 
 
     public Functions( boolean doingAD ) {
+        _permute = Function.of( "permute(I[ 0 ])",             doingAD );
         _dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
         _idy = Function.of( "I[ 0 ] <- I[ 1 ]",                doingAD );
         _conv = Function.of( "I[ 0 ] x I[ 1 ]",                doingAD );
@@ -105,6 +107,10 @@ public class Functions {
         _cbrt  = Function.of("cbrt(I[0])",                     doingAD );
         _concat = Function.of("concat(I[0], I[1])",            doingAD );
     }
+
+    public final Function getPermute() { return _permute; }
+
+    public final Function permute() { return _permute; }
 
     public final Function getDimTrim() { return _dimTrim; }
 
