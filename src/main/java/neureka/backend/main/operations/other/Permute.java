@@ -16,13 +16,13 @@ import neureka.framing.Relation;
 import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
 
-public class Reshape extends AbstractOperation
+public class Permute extends AbstractOperation
 {
-    public Reshape()
+    public Permute()
     {
         super(
             new OperationBuilder()
-                .identifier(       "reshape"  )
+                .identifier(       "permute"  )
                 .operator(         ","        )
                 .arity(            -1         )
                 .isOperator(       true       )
@@ -32,21 +32,21 @@ public class Reshape extends AbstractOperation
         );
         setAlgorithm(
             Algorithm
-            .withName( "reshape" )
+            .withName( "permute" )
             .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
             .setExecution(
                 ( caller, call ) ->
                 {
                     Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
-                    int[] newForm = new int[ inputs.length - 1 ];
+                    int[] axisIndicesOrder = new int[ inputs.length - 1 ];
                     for ( int i = 0; i < inputs.length - 1; i++ )
-                        newForm[ i ] = ( (Number) inputs[ i ].item( 0 ) ).intValue();
+                        axisIndicesOrder[ i ] = ( (Number) inputs[ i ].item( 0 ) ).intValue();
 
-                    if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) //reverse reshape:
-                        newForm = invert( newForm );
+                    if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) //reverse permute:
+                        axisIndicesOrder = invert( axisIndicesOrder );
 
-                    return Result.of(_reshaped( inputs[ inputs.length - 1 ], newForm, true ))
+                    return Result.of(_rearrangeAxisOf( inputs[ inputs.length - 1 ], axisIndicesOrder, true ))
                             .withADAction( target -> new FunctionParser( Neureka.get().backend() ).parse( caller.toString(), false ).derive( new Tsr[]{ target.error() },0 ) );
                 }
             )
@@ -54,16 +54,16 @@ public class Reshape extends AbstractOperation
         );
     }
 
-    private static Tsr<?> _reshaped( Tsr<?> tensor, int[] newForm, boolean newTsr )
+    private static Tsr<?> _rearrangeAxisOf( Tsr<?> tensor, int[] indicesOrder, boolean newTsr )
     {
         Tsr<?> parent = tensor;
         tensor = newTsr ? tensor.shallowCopy().mut().setIsIntermediate( true ) : tensor;
-        NDConfiguration newNDC = tensor.getNDConf().newReshaped( newForm );
+        NDConfiguration newNDC = tensor.getNDConf().newReshaped( indicesOrder );
         _shapeCheck( newNDC.shape(), tensor );
         tensor.mut().setNDConf( newNDC );
         if ( newTsr ) {
             Relation r = parent.get( Relation.class );
-            r.addReshapeRelationFor( tensor, newForm );
+            r.addPermuteRelationFor( tensor, indicesOrder );
         }
         return tensor;
     }
@@ -100,21 +100,21 @@ public class Reshape extends AbstractOperation
     }
 
 
-    public static int[] invert( int[] reshape )
+    public static int[] invert( int[] axisIndicesOrder )
     {
         int reverseLength = 0;
-        for ( int e : reshape ) {
+        for ( int e : axisIndicesOrder )
             if ( e >= 0 ) reverseLength++;
-        }
+
         int[] reversed = new int[ reverseLength ];
-        int reshape_i = 0;
-        int reverse_i = 0;
-        while ( reverse_i < reverseLength ) {
-            if ( reshape[ reshape_i ] >= 0 ) {
-                reversed[ reshape[ reshape_i ] ] = reshape_i;
-                reverse_i++;
+        int currentIndex = 0;
+        int reverseIndex = 0;
+        while ( reverseIndex < reverseLength ) {
+            if ( axisIndicesOrder[ currentIndex ] >= 0 ) {
+                reversed[ axisIndicesOrder[ currentIndex ] ] = currentIndex;
+                reverseIndex++;
             }
-            reshape_i++;
+            currentIndex++;
         }
         return reversed;
     }

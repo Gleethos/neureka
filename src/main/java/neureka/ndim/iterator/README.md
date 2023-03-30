@@ -18,7 +18,7 @@ array of a tensor. <br>
 
 This process is in essence the access pattern of 
 the data array, and it can be very simple or
-very complex depending on the type of tensor (reshaped, sliced, transposed...). 
+very complex depending on the type of tensor (permuted, sliced, transposed...). 
 Complicated access patterns require complicated 
 implementations which are general purpose but less performant. 
 Therefore, multiple case

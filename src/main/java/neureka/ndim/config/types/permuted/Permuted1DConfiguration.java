@@ -1,8 +1,8 @@
-package neureka.ndim.config.types.reshaped;
+package neureka.ndim.config.types.permuted;
 
 import neureka.ndim.config.types.D1C;
 
-public class Reshaped1DConfiguration extends D1C {
+public class Permuted1DConfiguration extends D1C {
     /**
      *  The shape of the NDArray.
      */
@@ -17,15 +17,15 @@ public class Reshaped1DConfiguration extends D1C {
     private final int _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
 
-    public static Reshaped1DConfiguration construct(
+    public static Permuted1DConfiguration construct(
             int[] shape,
             int[] translation,
             int[] indicesMap
     ) {
-        return _cached( new Reshaped1DConfiguration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ]) );
+        return _cached( new Permuted1DConfiguration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ]) );
     }
 
-    protected Reshaped1DConfiguration(
+    protected Permuted1DConfiguration(
             int shape,
             int translation,
             int indicesMap

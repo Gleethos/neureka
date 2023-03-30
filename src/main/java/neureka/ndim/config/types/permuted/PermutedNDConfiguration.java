@@ -1,10 +1,10 @@
-package neureka.ndim.config.types.reshaped;
+package neureka.ndim.config.types.permuted;
 
 import neureka.ndim.config.AbstractNDC;
 
 import java.util.Arrays;
 
-public class ReshapedNDConfiguration extends AbstractNDC
+public class PermutedNDConfiguration extends AbstractNDC
 {
     /**
      *  The shape of the NDArray.
@@ -24,7 +24,7 @@ public class ReshapedNDConfiguration extends AbstractNDC
     private final int[] _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
 
-    protected ReshapedNDConfiguration(
+    protected PermutedNDConfiguration(
             int[] shape,
             int[] translation,
             int[] indicesMap
@@ -34,12 +34,12 @@ public class ReshapedNDConfiguration extends AbstractNDC
         _indicesMap  = _cacheArray(indicesMap);
     }
 
-    public static ReshapedNDConfiguration construct(
+    public static PermutedNDConfiguration construct(
             int[] shape,
             int[] translation,
             int[] indicesMap
     ) {
-        return _cached( new ReshapedNDConfiguration(shape, translation, indicesMap) );
+        return _cached( new PermutedNDConfiguration(shape, translation, indicesMap) );
     }
 
 

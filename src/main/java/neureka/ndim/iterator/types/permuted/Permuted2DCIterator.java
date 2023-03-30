@@ -1,14 +1,14 @@
-package neureka.ndim.iterator.types.reshaped;
+package neureka.ndim.iterator.types.permuted;
 
-import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
+import neureka.ndim.config.types.permuted.Permuted2DConfiguration;
 import neureka.ndim.iterator.NDIterator;
 
-public final class Reshaped2DCIterator extends Reshaped2DConfiguration implements NDIterator
+public final class Permuted2DCIterator extends Permuted2DConfiguration implements NDIterator
 {
     private int _d1 = 0;
     private int _d2 = 0;
 
-    public Reshaped2DCIterator(Reshaped2DConfiguration ndc) {
+    public Permuted2DCIterator(Permuted2DConfiguration ndc) {
         super( ndc.shape(), ndc.translation(), ndc.indicesMap() );
     }
 

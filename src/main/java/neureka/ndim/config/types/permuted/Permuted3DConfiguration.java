@@ -1,8 +1,8 @@
-package neureka.ndim.config.types.reshaped;
+package neureka.ndim.config.types.permuted;
 
 import neureka.ndim.config.types.D3C;
 
-public class Reshaped3DConfiguration extends D3C {
+public class Permuted3DConfiguration extends D3C {
     /**
      *  The shape of the NDArray.
      */
@@ -23,7 +23,7 @@ public class Reshaped3DConfiguration extends D3C {
     private final int _indicesMap3; // Maps index integer to array like translation. Used to avoid distortion when slicing!
 
 
-    protected Reshaped3DConfiguration(
+    protected Permuted3DConfiguration(
             int[] shape,
             int[] translation,
             int[] indicesMap
@@ -39,12 +39,12 @@ public class Reshaped3DConfiguration extends D3C {
         _indicesMap3 = indicesMap[ 2 ];
     }
 
-    public static Reshaped3DConfiguration construct(
+    public static Permuted3DConfiguration construct(
             int[] shape,
             int[] translation,
             int[] indicesMap
     ) {
-        return _cached( new Reshaped3DConfiguration(shape, translation, indicesMap) );
+        return _cached( new Permuted3DConfiguration(shape, translation, indicesMap) );
     }
 
     /** {@inheritDoc} */

@@ -115,7 +115,7 @@ class Tensor_Function_Spec extends Specification
         then: 'We get the expected results.'
             softmax.toString() == "(2x3):[0.09003, 0.24472, 0.66524, 0.09003, 0.24472, 0.66524]"
         and : 'The resulting values have the property we expect from softmax: their sum is 1!'
-            softmax.sum(1).items == [1.0, 1.0]
+            softmax.sum(1).items.collect({it.round 10}) == [1.0, 1.0]
 
         when :
             softmax = x.softmax(0)

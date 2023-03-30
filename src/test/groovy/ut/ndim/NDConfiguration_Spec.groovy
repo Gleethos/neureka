@@ -2,10 +2,10 @@ package ut.ndim
 
 
 import neureka.ndim.config.NDConfiguration
-import neureka.ndim.config.types.reshaped.Reshaped1DConfiguration
-import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration
-import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration
-import neureka.ndim.config.types.reshaped.ReshapedNDConfiguration
+import neureka.ndim.config.types.permuted.Permuted1DConfiguration
+import neureka.ndim.config.types.permuted.Permuted2DConfiguration
+import neureka.ndim.config.types.permuted.Permuted3DConfiguration
+import neureka.ndim.config.types.permuted.PermutedNDConfiguration
 import neureka.ndim.config.types.simple.Simple1DConfiguration
 import neureka.ndim.config.types.simple.Simple2DConfiguration
 import neureka.ndim.config.types.simple.Simple3DConfiguration
@@ -27,7 +27,7 @@ import spock.lang.Title
     abstractions through the `NDConfiguration` interface and its various implementations.
     This allows for the creation of tensors/nd-arrays with arbitrary dimensions, 
     the ability to slice them into smaller tensors/nd-arrays with the same underlying data,
-    and finally the ability to reshape their axes (like transposing them for example).
+    and finally the ability to permute their axes (like transposing them for example).
     
     This specification however only focuses on the behaviour of the `NDConfiguration` interface
     which translates various types of indices.
@@ -94,25 +94,25 @@ class NDConfiguration_Spec extends Specification
         where :
             shape     | translation    | indicesMap     | spread     | offset    || expected
             [2,3,8,4] | [96, 32, 4, 1] | [96, 32, 4, 1] | [1,1,1,1]  | [0,0,0,0] || SimpleNDConfiguration
-            [2,3,8,4] | [96, 200, 8, 1]| [96, 32, 4, 1] | [1,1,1,1]  | [0,0,0,0] || ReshapedNDConfiguration
+            [2,3,8,4] | [96, 200, 8, 1]| [96, 32, 4, 1] | [1,1,1,1]  | [0,0,0,0] || PermutedNDConfiguration
             [2,3,8,4] | [96, 32, 4, 1] | [96, 92, 4, 1] | [1,4,1,1]  | [0,0,0,0] || SlicedNDConfiguration
 
             [2,3,8]   | [24,8,1]       | [24,8,1]       | [1, 1, 1]  | [0,0,0]   || Simple3DConfiguration
-            [2,3,8]   | [8,24,7]       | [1,2,3]        | [1, 1, 1]  | [0,0,0]   || Reshaped3DConfiguration
+            [2,3,8]   | [8,24,7]       | [1,2,3]        | [1, 1, 1]  | [0,0,0]   || Permuted3DConfiguration
             [2,3,8]   | [8,24,7]       | [1,2,3]        | [1, 7, 1]  | [0,0,0]   || Sliced3DConfiguration
 
             [2,3]     | [3,1]          | [3,1]          | [1, 1]     | [0,0]     || Simple2DConfiguration
-            [2,3]     | [1,2]          | [1,2]          | [1, 1]     | [0,0]     || Reshaped2DConfiguration
-            [2,3]     | [1,2]          | [3,1]          | [1, 1]     | [0,0]     || Reshaped2DConfiguration
-            [2,3]     | [81,42]        | [3,99]         | [1, 1]     | [0,0]     || Reshaped2DConfiguration
+            [2,3]     | [1,2]          | [1,2]          | [1, 1]     | [0,0]     || Permuted2DConfiguration
+            [2,3]     | [1,2]          | [3,1]          | [1, 1]     | [0,0]     || Permuted2DConfiguration
+            [2,3]     | [81,42]        | [3,99]         | [1, 1]     | [0,0]     || Permuted2DConfiguration
             [2,3]     | [1,2]          | [2,1]          | [7, 2]     | [1,8]     || Sliced2DConfiguration
             [2,3]     | [3,1]          | [3,1]          | [1, 1]     | [6,0]     || Sliced2DConfiguration
             [2,3]     | [3,1]          | [3,1]          | [1, 2]     | [0,0]     || Sliced2DConfiguration
 
             [3]       | [1]            | [1]            | [1]        | [0]       || Simple1DConfiguration
             [42]      | [1]            | [1]            | [1]        | [0]       || Simple1DConfiguration
-            [3]       | [1]            | [2]            | [1]        | [0]       || Reshaped1DConfiguration
-            [30]      | [8]            | [2]            | [1]        | [0]       || Reshaped1DConfiguration
+            [3]       | [1]            | [2]            | [1]        | [0]       || Permuted1DConfiguration
+            [30]      | [8]            | [2]            | [1]        | [0]       || Permuted1DConfiguration
             [2]       | [1]            | [1]            | [1]        | [5]       || Sliced1DConfiguration
     }
 

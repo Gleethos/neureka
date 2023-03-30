@@ -31,7 +31,7 @@ public class FunctionParser
     private static final Pattern _inputPattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");
     private static final Pattern _constantPattern = Pattern.compile("^((-?[0-9]*|[0-9]*)[.]?[0-9]*((e|E)[-]?[0-9]+)?)");
 
-    private static final Pattern _reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
+    private static final Pattern _permutePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
     private static final Pattern _nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
 
     private final BackendContext _context;
@@ -279,7 +279,7 @@ public class FunctionParser
                                         foundComponents,
                                         _context.getOperation( operationIndex ).getOperator()
                                 );
-        } else if ( _reshapePattern.matcher(asString).matches() ) {
+        } else if ( _permutePattern.matcher(asString).matches() ) {
             foundComponents.set(0, foundComponents.get( 0 ).substring(1));
             String[] splitted;
             if (foundComponents.get(foundComponents.size() - 1).contains("]")) {

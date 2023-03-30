@@ -658,7 +658,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     /**
      *  Use this to access elements of the underlying data array without any index
      *  transformation applied to it. This is usually similar to the {@link #item} method,
-     *  however for nd-arrays which are sliced or reshaped views of the data of another nd-array,
+     *  however for nd-arrays which are sliced or permuted views of the data of another nd-array,
      *  this method will always be unbiased access of the raw data...
      *
      * @param i The position of the targeted item within the raw data array of an NDArray implementation.

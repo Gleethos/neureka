@@ -122,7 +122,7 @@ public class UnitTester_Tensor extends UnitTester
     }
 
 
-    public int testTensorUtility_reshape(int[] dim, int[] newForm, int[] expected){
+    public int testTensorUtility_permute(int[] dim, int[] newForm, int[] expected){
         int[] result = NDConfiguration.Utility.rearrange(dim, newForm);
         printSessionStart("Testing Tsr.indexing: dimension reshaping!");
         assertIsEqual(stringified(result), stringified(expected));

@@ -10,21 +10,20 @@ import spock.lang.Title
 @Title("Reshaping Tensors")
 @Narrative('''
 
-    Reshaping a tensor means changing its shape.
-    This is a very important operation in Neureka, because it allows for the creation of new views on the same data.
+    Permuting a tensor means rearranging the shape of a tensor.
     This is very useful for example when you want to perform a matrix multiplication on a tensor which is not a matrix.
-    In this case you can reshape the tensor to a matrix and then perform the multiplication.
+    In this case you can permute the tensor to a matrix and then perform the multiplication.
 
-    Reshaping a tensor is also very useful when you want to perform other kinds of linear
-    operations like for example doing 4D convolution with a tensor which is not a 4D tensor.
-    In this case you can create a reshape 4D tensor then perform the convolution.
+    Permuting a tensor is also very useful when you want to perform other kinds of linear
+    operations like for example doing 4D convolution with a tensor which is not compatible with 4D convolution.
+    In this case you can permute to a 4D tensor and then perform the convolution.
   
-    Reshaping is also a very cheap operation because it does not copy any data but merely
+    Permuting is also a very cheap operation because it does not copy any data but merely
     creates a new view on the same data with a different access pattern.
     
 ''')
 @Subject([Tsr])
-class Tensor_Reshape_Spec extends Specification {
+class Tensor_Permute_Spec extends Specification {
 
     def 'When matrices are transpose, they will change their layout type.'()
     {

@@ -78,17 +78,17 @@ public class Relation<V> implements Component<Tsr<V>>
     private WeakReference<Tsr<V>>[] _children; // Children may be garbage collected if not needed anywhere.
 
     /**
-     *  When creating reshaped versions of slices then
+     *  When creating permuted versions of slices then
      *  there must be a translation between the shape configuration between
      *  this new slice and the original parent tensor from which both slices
      *  have been derived. <br>
      *  This translation is in essence merely an int array which
      *  contains the index mapping to a new shape.
-     *  When accessing data for a reshaped slice then this
+     *  When accessing data for a permuted slice then this
      *  translation will be necessary for getting the right data. <br>
      *  <br>
      *  This field variable stores an array of int arrays which represent
-     *  dimension order mappings for reshaped slice tensors of the tensor
+     *  dimension order mappings for permuted slice tensors of the tensor
      *  to which this Relation instance is a component. <br>
      */
     private int[][] _shapeRelations;
@@ -151,42 +151,42 @@ public class Relation<V> implements Component<Tsr<V>>
     }
 
     /**
-     * When creating reshaped versions of slices then
+     * When creating permuted versions of slices then
      * there must be a translation between the shape configuration between
      * this new slice and the original parent tensor from which both slices
      * have been derived. <br>
      * This translation is in essence merely an int array which
      * contains the index mapping to a new shape.
-     * When accessing data for a reshaped slice then this
+     * When accessing data for a permuted slice then this
      * translation will be necessary for getting the right data. <br>
      * <br>
-     * This method enables adding such a reshape translation associated
+     * This method enables adding such a permute translation associated
      * to a slice, which is also the "child" of the tensor to which this
-     * Reshape component belongs! <br>
+     * Relation component belongs! <br>
      * <br>
      *
      * @param child   The child (slice) tensor which has a shape whose dimensions are in a different order.
-     * @param reshape The int array defining the reshaping (dimension index mapping).
+     * @param permuteOrder The int array defining the axis order (dimension index mapping).
      */
-    public void addReshapeRelationFor( Tsr<V> child, int[] reshape ) {
+    public void addPermuteRelationFor(Tsr<V> child, int[] permuteOrder ) {
         for ( int i = 0; i < _shapeRelations.length; i++ ) {
             Tsr<V> c = _children[ i ].get();
             if ( c != null && c == child )
-                _shapeRelations[ i ] = reshape;
+                _shapeRelations[ i ] = permuteOrder;
         }
     }
 
     /**
-     *  When creating reshaped versions of slices then
+     *  When creating permuted versions of slices then
      *  there must be a translation between the shape configuration between
      *  this new slice and the original parent tensor from which both slices
      *  have been derived. <br>
      *  This translation is in essence merely an int array which
      *  contains the index mapping to a new shape.
-     *  When accessing data for a reshaped slice then this
+     *  When accessing data for a permuted slice then this
      *  translation will be necessary for getting the right data. <br>
      *  <br>
-     *  This method can be used to access the dimension order translation (reshape)
+     *  This method can be used to access the dimension order translation (permute)
      *  from the order of the parent tensor (which is the component owner of this Relation)
      *  and the passed slice (which is a weakly referenced child tensor...). <br>
      *  <br>
@@ -194,7 +194,7 @@ public class Relation<V> implements Component<Tsr<V>>
      * @param child The child (slice) tensor which has a shape whose dimensions are in a different order.
      * @return The int array defining the reshaping (dimension index mapping).
      */
-    public int[] getReshapeRelationFor( Tsr<V> child )
+    public int[] getPermuteRelationFor( Tsr<V> child )
     {
         for ( int i = 0; i < _shapeRelations.length; i++ ) {
             Tsr<V> c = _children[ i ].get();
