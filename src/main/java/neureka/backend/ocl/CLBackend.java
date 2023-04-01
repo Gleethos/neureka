@@ -10,24 +10,22 @@ import neureka.backend.main.implementations.broadcast.*;
 import neureka.backend.main.implementations.convolution.CLConvolution;
 import neureka.backend.main.implementations.elementwise.*;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
+import neureka.backend.main.implementations.linear.CLDot;
 import neureka.backend.main.implementations.matmul.CLMatMul;
 import neureka.backend.main.implementations.scalar.CLScalarFunction;
 import neureka.backend.main.operations.functions.*;
-import neureka.backend.main.operations.linear.Convolution;
-import neureka.backend.main.operations.linear.MatMul;
-import neureka.backend.main.operations.linear.XConvLeft;
-import neureka.backend.main.operations.linear.XConvRight;
+import neureka.backend.main.operations.linear.*;
 import neureka.backend.main.operations.linear.internal.opencl.CLSum;
 import neureka.backend.main.operations.operator.*;
 import neureka.backend.main.operations.other.AssignLeft;
 import neureka.backend.main.operations.other.Randomization;
 import neureka.backend.main.operations.other.Sum;
-import neureka.math.parsing.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.OpenCLPlatform;
 import neureka.devices.opencl.utility.Messages;
+import neureka.math.parsing.ParseUtil;
 import org.jocl.cl_platform_id;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,6 +242,9 @@ public final class CLBackend implements BackendExtension
 
         receive.forOperation( MatMul.class )
                 .set( MatMulAlgorithm.class, context -> new CLMatMul() );
+
+        receive.forOperation( DotProduct.class )
+                .set( DotProductAlgorithm.class, context -> new CLDot() );
 
         receive.forOperation( Sum.class )
                 .set( SumAlgorithm.class, context -> new CLSum() );
