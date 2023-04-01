@@ -1112,11 +1112,21 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     /** {@inheritDoc} */
      @Override
     public TsrImpl<V> deepCopy() {
-        Function cloner = Neureka.get().backend().getFunction().idy();
+         return _clone( false );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Tsr<V> deepClone() {
+        return _clone( true );
+    }
+
+    private TsrImpl<V> _clone(boolean autograd) {
+        Function cloner = autograd ? Neureka.get().backend().getAutogradFunction().idy() : Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
         Tsr<V> clone = Tsr.like( this )
-                            .all( (V) Double.valueOf(0.0) );
+                .all( (V) Double.valueOf(0.0) );
 
         if ( clone.itemType() != this.itemType() )
             throw new IllegalStateException("Item type of clone must be the same as the item type of the original!");

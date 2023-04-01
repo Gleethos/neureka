@@ -2718,6 +2718,16 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
+     *  This is almost identical to the {@link Tsr#deepCopy()} method except that
+     *  the returned tensor will have autograd support, meaning that the cloning
+     *  will be part of the autograd computation graph, and backpropagation
+     *  will traverse the cloned tensor as well.
+     *
+     * @return A deep clone of this tensor with autograd support.
+     */
+    Tsr<V> deepClone();
+
+    /**
      * @return A shallow copy of this tensor with autograd support.
      */
     default Tsr<V> shallowClone() {

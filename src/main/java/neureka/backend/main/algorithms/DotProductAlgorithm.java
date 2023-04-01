@@ -70,9 +70,9 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
         Tsr<?> b = call.input( 1 );
         Tsr<?> c = call.input( 2 );
         Function dimTrim = Neureka.get().backend().getAutogradFunction().dimTrim();
-        if ( a != null && a.rank() > 1 ) call = call.withInputAt( 0, dimTrim.execute( a ) );
-        if ( b != null && b.rank() > 1 ) call = call.withInputAt( 1, dimTrim.execute( b ) );
-        if ( c != null && c.rank() > 1 ) call = call.withInputAt( 2, dimTrim.execute( c ) );
+        if ( a != null && a.rank() > 1 ) call = call.withInputAt( 0, dimTrim.execute( a ).deepClone() );
+        if ( b != null && b.rank() > 1 ) call = call.withInputAt( 1, dimTrim.execute( b ).deepClone() );
+        if ( c != null && c.rank() > 1 ) call = call.withInputAt( 2, dimTrim.execute( c ).deepClone() );
         return call;
     }
 
