@@ -8,6 +8,8 @@ import neureka.backend.main.implementations.broadcast.*;
 import neureka.backend.main.implementations.convolution.CPUConvolution;
 import neureka.backend.main.implementations.elementwise.*;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
+import neureka.backend.main.implementations.linear.CPUDot;
+import neureka.backend.main.implementations.matmul.CPUMatMul;
 import neureka.backend.main.implementations.scalar.CPUScalarFunction;
 import neureka.backend.main.operations.functions.*;
 import neureka.backend.main.operations.linear.*;
@@ -82,6 +84,9 @@ public class CPUBackend implements BackendExtension
 
         receive.forOperation( MatMul.class )
                 .set( MatMulAlgorithm.class, context -> new CPUMatMul() );
+
+        receive.forOperation( DotProduct.class )
+                .set( DotProductAlgorithm.class, context -> new CPUDot() );
 
         receive.forOperation( Sum.class )
                 .set( SumAlgorithm.class, context -> new CPUSum() );

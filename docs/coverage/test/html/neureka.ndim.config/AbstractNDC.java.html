@@ -2,10 +2,10 @@
 
 import neureka.Neureka;
 import neureka.common.utility.Cache;
-import neureka.ndim.config.types.reshaped.Reshaped1DConfiguration;
-import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
-import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration;
-import neureka.ndim.config.types.reshaped.ReshapedNDConfiguration;
+import neureka.ndim.config.types.permuted.Permuted1DConfiguration;
+import neureka.ndim.config.types.permuted.Permuted2DConfiguration;
+import neureka.ndim.config.types.permuted.Permuted3DConfiguration;
+import neureka.ndim.config.types.permuted.PermutedNDConfiguration;
 import neureka.ndim.config.types.simple.*;
 import neureka.ndim.config.types.sliced.*;
 import neureka.ndim.config.types.views.SimpleReshapeView;
@@ -103,13 +103,13 @@ import java.util.Objects;
 <span class="fc bfc" id="L103" title="All 2 branches covered.">        if ( isSimpleTransposed )</span>
         {
 <span class="fc bfc" id="L105" title="All 2 branches covered.">            if ( shape.length == 1 )</span>
-<span class="fc" id="L106">                return Reshaped1DConfiguration.construct(shape, translation, indicesMap);</span>
+<span class="fc" id="L106">                return Permuted1DConfiguration.construct(shape, translation, indicesMap);</span>
 <span class="fc bfc" id="L107" title="All 2 branches covered.">            else if ( shape.length == 2 )</span>
-<span class="fc" id="L108">                return Reshaped2DConfiguration.construct(shape, translation, indicesMap);</span>
+<span class="fc" id="L108">                return Permuted2DConfiguration.construct(shape, translation, indicesMap);</span>
 <span class="fc bfc" id="L109" title="All 2 branches covered.">            else if ( shape.length == 3 )</span>
-<span class="fc" id="L110">                return Reshaped3DConfiguration.construct(shape, translation, indicesMap);</span>
+<span class="fc" id="L110">                return Permuted3DConfiguration.construct(shape, translation, indicesMap);</span>
             else
-<span class="fc" id="L112">                return ReshapedNDConfiguration.construct(shape, translation, indicesMap);</span>
+<span class="fc" id="L112">                return PermutedNDConfiguration.construct(shape, translation, indicesMap);</span>
         }
 
 <span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( shape.length == 1 ) {</span>

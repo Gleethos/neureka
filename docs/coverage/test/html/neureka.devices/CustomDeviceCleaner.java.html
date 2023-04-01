@@ -47,7 +47,7 @@ import java.util.List;
 
     @Override
     public void run() {
-<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        while ( _registered &gt; 0 ) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        while ( _registered &gt; 0 ) {</span>
             try {
 <span class="fc" id="L52">                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove(_timeout);</span>
 <span class="pc bpc" id="L53" title="1 of 2 branches missed.">                if ( ref != null ) {</span>
@@ -64,7 +64,7 @@ import java.util.List;
 <span class="nc" id="L64">                e.printStackTrace(); // The queue failed</span>
 <span class="pc" id="L65">            }</span>
         }
-<span class="nc" id="L67">    }</span>
+<span class="fc" id="L67">    }</span>
 
     @Override
     public String toString() {

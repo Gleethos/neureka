@@ -48,7 +48,7 @@ import static org.jocl.CL.*;
     /**
      *  This method passes the ND-Configuration in the form of a flattened int array to the kernel.
      *  Kernels can use this information for more complex indexing mechanisms as one would
-     *  expect them to be present in tensor which have been reshaped or are simply
+     *  expect them to be present in tensor which have been permuted or are simply
      *  slices of other tensors.
      *
      *  @param tensor The tensor whose ND configuration ought to be passed to the kernel.

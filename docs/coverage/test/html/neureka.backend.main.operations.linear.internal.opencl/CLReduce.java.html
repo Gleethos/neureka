@@ -34,7 +34,7 @@ import java.util.function.Supplier;
     public Tsr&lt;Integer&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
 <span class="fc" id="L35">        CLBackend context = Neureka.get().backend().find(CLBackend.class).orElse(null);</span>
 <span class="pc bpc" id="L36" title="1 of 2 branches missed.">        CLSettings settings = context == null ? null : context.getSettings();</span>
-<span class="pc bpc" id="L37" title="1 of 4 branches missed.">        boolean autoConvert = context == null || settings.isAutoConvertToFloat();</span>
+<span class="pc bpc" id="L37" title="2 of 4 branches missed.">        boolean autoConvert = context == null || settings.isAutoConvertToFloat();</span>
 <span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if ( settings != null ) settings.setAutoConvertToFloat(false);</span>
 <span class="pc bpc" id="L39" title="1 of 2 branches missed.">        Tsr&lt;Float&gt; in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);</span>
 <span class="fc" id="L40">        int index = _runRecursively(in, call.getDevice());</span>

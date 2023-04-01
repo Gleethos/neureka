@@ -1,54 +1,16 @@
-package neureka.backend.main.operations.linear;
+package neureka.backend.main.implementations.linear;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.main.operations.linear.internal.blas.GEMM;
-import neureka.backend.main.operations.linear.internal.blas.IGEMM;
+import neureka.backend.main.operations.linear.internal.blas.DOT;
 import neureka.devices.host.CPU;
-import neureka.ndim.config.NDConfiguration;
 
-/**
- *  This is a library internal class, do not depend on this.
- */
-public class CPUMatMul implements ImplementationFor<CPU> {
-
-    public static void execute(
-            boolean rowMajor, double[] A, double[] B, double[] C, int aRows, int aCols, int bCols
-    ) {
-        /* // Use this for verifying validity:
-            for ( int i = 0; i < aRows; i++ ) { // aRow
-                for ( int j = 0; j < bCols; j++ ) { // bColumn
-                    for ( int k = 0; k < aCols; k++ ) { // aColumn
-                        C[ i * bCols + j ] += A[ i * aCols + k ] * B[ k * bCols + j ];
-                    }
-                }
-            }
-        */
-        GEMM.operationForF64( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
-    }
-
-    public static void execute(
-            boolean rowMajor, float[] A, float[] B, float[] C, int aRows, int aCols, int bCols
-    ) {
-        GEMM.operationForF32( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
-    }
-
-    public static void execute(
-            boolean rowMajor, long[] A, long[] B, long[] C, int aRows, int aCols, int bCols
-    ) {
-        IGEMM.operationForI64( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
-    }
-
-    public static void execute(
-            boolean rowMajor, int[] A, int[] B, int[] C, int aRows, int aCols, int bCols
-    ) {
-        IGEMM.operationForI32( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );
-    }
+public class CPUDot implements ImplementationFor<CPU> {
 
     @Override
-    public Tsr<?> run( ExecutionCall<CPU> call )
-    {
+    public Tsr<?> run(ExecutionCall<CPU> call) {
+
         if ( !call.validate().all( (t1, t2) -> t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )
             throw new IllegalArgumentException(
                         "Data layout inconsistency between provided tensors encountered. " +
@@ -61,53 +23,66 @@ public class CPUMatMul implements ImplementationFor<CPU> {
                        "All tensors must be of the same type."
                     );
 
-        NDConfiguration.Layout layout = call.input( 1 ).getNDConf().getLayout();
-
-        boolean rowMajor = ( layout == NDConfiguration.Layout.ROW_MAJOR );
-
         int[] shapeA = call.input( 1 ).getNDConf().shape();
         int[] shapeB = call.input( 2 ).getNDConf().shape();
         int[] shapeC = call.input( 0 ).getNDConf().shape();
 
-        // A * B = C // [MxK]*[KxN] = [MxN]
-        int aRows = shapeA[0];
-        int aCols = shapeA[1];
-        int bRows = shapeB[0];
-        int bCols = shapeB[1];
+        if ( shapeA.length != 1 || shapeB.length != 1 || shapeC.length != 1 )
+            throw new IllegalArgumentException("Dot product only works on vectors.");
 
-        if ( aCols != bRows )
-            throw new IllegalArgumentException("'A' matrix rows " + aCols + " did not match 'B' matrix columns " + bRows + ".");
+        if ( shapeA[0] != shapeB[0] )
+            throw new IllegalArgumentException("Dot product only works on vectors of the same length.");
+
+        // A * B = C // [N]*[N] = [1]
+        int size = shapeA[0];
 
         Class<?> type = call.input( 0 ).getDataType().getItemTypeClass();
         if ( type == Double.class ) {
             double[] A = call.input(Double.class, 1).mut().getDataAs(double[].class);
             double[] B = call.input(Double.class, 2).mut().getDataAs(double[].class);
             double[] C = call.input(Double.class, 0).mut().getDataForWriting(double[].class);
-            execute( rowMajor, A, B, C, aRows, aCols, bCols );
+            execute( A, B, C, size );
         } else if ( type == Float.class ) {
             float[] A = call.input(Float.class, 1).mut().getDataAs(float[].class);
             float[] B = call.input(Float.class, 2).mut().getDataAs(float[].class);
             float[] C = call.input(Float.class, 0).mut().getDataForWriting(float[].class);
-            execute( rowMajor, A, B, C, aRows, aCols, bCols );
+            execute( A, B, C, size );
         }
         else if ( type == Long.class ) {
             long[] A = call.input(Long.class, 1).mut().getDataAs(long[].class);
             long[] B = call.input(Long.class, 2).mut().getDataAs(long[].class);
             long[] C = call.input(Long.class, 0).mut().getDataForWriting(long[].class);
-            execute( rowMajor, A, B, C, aRows, aCols, bCols );
+            execute( A, B, C, size );
         }
         else if ( type == Integer.class ) {
             int[] A = call.input(Integer.class, 1).mut().getDataAs(int[].class);
             int[] B = call.input(Integer.class, 2).mut().getDataAs(int[].class);
             int[] C = call.input(Integer.class, 0).mut().getDataForWriting(int[].class);
-            execute( rowMajor, A, B, C, aRows, aCols, bCols );
+            execute( A, B, C, size );
         }
         else
             throw new IllegalArgumentException(
                         "Data type '"+type.getSimpleName()+"' not yet supported " +
-                        "for CPU based matrix multiplication!"
+                        "for CPU based dot product!"
                     );
 
         return call.input( 0 );
     }
+
+    private static void execute( double[] A, double[] B, double[] C, int size ) {
+        C[0] = DOT.invoke( A, 0, B, 0, 0, size );
+    }
+
+    private static void execute( float[] A, float[] B, float[] C, int size ) {
+        C[0] = DOT.invoke( A, 0, B, 0, 0, size );
+    }
+
+    private static void execute( long[] A, long[] B, long[] C, int size ) {
+        C[0] = DOT.invoke( A, 0, B, 0, 0, size );
+    }
+
+    private static void execute( int[] A, int[] B, int[] C, int size ) {
+        C[0] = DOT.invoke( A, 0, B, 0, 0, size );
+    }
+
 }

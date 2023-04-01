@@ -59,7 +59,7 @@ public interface NDConfiguration
 <span class="fc" id="L59">        ROW_MAJOR,</span>
 <span class="fc" id="L60">        COLUMN_MAJOR,</span>
 <span class="fc" id="L61">        SYMMETRIC, // Both row- and column-major compatible!</span>
-<span class="fc" id="L62">        UNSPECIFIC; // Possibly a slice or something reshaped or whatnot...</span>
+<span class="fc" id="L62">        UNSPECIFIC; // Possibly a slice or something reshaped/permuted or whatnot...</span>
 
         public boolean isCompatible(Layout other) {
 <span class="pc bpc" id="L65" title="2 of 4 branches missed.">            if (this == UNSPECIFIC || other == UNSPECIFIC) return false;</span>
@@ -106,7 +106,7 @@ public interface NDConfiguration
      * Column major is the exact opposite...
      * A tensor can also be symmetric, meaning it supports both column major and row major (scalar tensors have this property).
      * Other than that there are also tensors which are unspecific, meaning they are not row major or column major.
-     * This is the case for tensors which are slices of other tensors or tensors which have been reshaped.
+     * This is the case for tensors which are slices of other tensors or tensors which have been permuted.
      *
      * @return The layout of the underlying data array of a tensor.
      */
@@ -256,7 +256,7 @@ public interface NDConfiguration
      * based on a provided &quot;virtual index&quot;, or &quot;value array index&quot;.
      * This virtual index may be different from the true index depending on the type of nd-array,
      * like for example if the nd-array is
-     * a slice of another larger nd-array, or if it is in fact a reshaped version of another nd-array.
+     * a slice of another larger nd-array, or if it is in fact a permuted version of another nd-array.
      * This virtual index ought to be turned into an index array which defines the position for every axis.
      * Then this indices array will be converted into the final and true index targeting an underlying item.
      * The information needed for performing this translation is expressed by individual implementations of
@@ -316,10 +316,10 @@ public interface NDConfiguration
      * This method enables reshaping for {@link NDConfiguration} implementation instances.
      * Because {@link NDConfiguration}s are in essence things which define
      * the access relationship from shape indices to the actual underlying data,
-     * the creation of reshaped {@link NDConfiguration} is up to a specific implementation.
+     * the creation of permuted {@link NDConfiguration} is up to a specific implementation.
      *
      * @param newForm An array of indices which define how the axis ought to be rearranged.
-     * @return A new {@link NDConfiguration} which carries the needed information for the reshaped view.
+     * @return A new {@link NDConfiguration} which carries the needed information for the permuted view.
      */
     NDConfiguration newReshaped( int[] newForm );
 
@@ -328,14 +328,14 @@ public interface NDConfiguration
      * if this configuration is the most basic form of configuration
      * possible for the given shape represented by this instance.
      * This type of configuration is the typical for freshly created
-     * tensors which are neither slices nor reshaped variants of an
+     * tensors which are neither slices nor permuted variants of an
      * original tensor...
      * Therefore, such &quot;simple tensors&quot; do not need a fancy {@link neureka.ndim.iterator.NDIterator}
      * in order to perform operations on them.
      * One can simply iterate over their underlying data array.
      * (This does not mean that the tensor owning this {@link NDConfiguration} is not a slice!)
      *
-     * @return The truth value determining if this configuration is not modeling more complex indices like reshaped views or slices...
+     * @return The truth value determining if this configuration is not modeling more complex indices like permuted views or slices...
      */
     default boolean isSimple() {
 <span class="fc" id="L341">        int[] simpleTranslation = this.getLayout().newTranslationFor(this.shape());</span>

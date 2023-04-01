@@ -87,7 +87,7 @@ public interface NDimensional
      *  based on a provided &quot;user index&quot;, or &quot;user array index&quot;.
      *  This user index may be different from the true data array index depending on the type of nd-array,
      *  like for example if the nd-array is
-     *  a slice of another larger nd-array, or if it is in fact a reshaped version of another nd-array.
+     *  a slice of another larger nd-array, or if it is in fact a permuted version of another nd-array.
      *  The basis for performing this translation is expressed by individual implementations of
      *  this {@link NDConfiguration} interface, which contain everything
      *  needed to treat a given block of data as a nd-array.

@@ -161,7 +161,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );
     }
 
-    public ExecutionCall<D> withInputAt(int index, Tsr<?> replacement) {
+    public ExecutionCall<D> withInputAt( int index, Tsr<?> replacement ) {
         List<Tsr<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
         inputs.set(index, replacement);
         return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );

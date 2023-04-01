@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
 <span class="fc" id="L31">    private static final Pattern _inputPattern = Pattern.compile(&quot;^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)&quot;);</span>
 <span class="fc" id="L32">    private static final Pattern _constantPattern = Pattern.compile(&quot;^((-?[0-9]*|[0-9]*)[.]?[0-9]*((e|E)[-]?[0-9]+)?)&quot;);</span>
 
-<span class="fc" id="L34">    private static final Pattern _reshapePattern = Pattern.compile(&quot;^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))&quot;);</span>
+<span class="fc" id="L34">    private static final Pattern _permutePattern = Pattern.compile(&quot;^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))&quot;);</span>
 <span class="fc" id="L35">    private static final Pattern _nodePattern = Pattern.compile(&quot;^([\\(]{1}.+[\\)]{1})&quot;);</span>
 
     private final BackendContext _context;
@@ -279,7 +279,7 @@ import java.util.stream.IntStream;
                                         foundComponents,
 <span class="fc" id="L280">                                        _context.getOperation( operationIndex ).getOperator()</span>
                                 );
-<span class="fc bfc" id="L282" title="All 2 branches covered.">        } else if ( _reshapePattern.matcher(asString).matches() ) {</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        } else if ( _permutePattern.matcher(asString).matches() ) {</span>
 <span class="fc" id="L283">            foundComponents.set(0, foundComponents.get( 0 ).substring(1));</span>
             String[] splitted;
 <span class="pc bpc" id="L285" title="1 of 2 branches missed.">            if (foundComponents.get(foundComponents.size() - 1).contains(&quot;]&quot;)) {</span>

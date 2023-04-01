@@ -2047,9 +2047,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> dot( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform dot operation when second operand is 'null'!");
-        if ( this.rank() != 2 && other.rank() != 2 )
-            throw new IllegalStateException("Not yet implemented!"); // This is not yet available in the backend!
-        return this.matMul( other );
+        return Neureka.get().backend().getAutogradFunction().dot().call( this, other );
     }
 
     /**

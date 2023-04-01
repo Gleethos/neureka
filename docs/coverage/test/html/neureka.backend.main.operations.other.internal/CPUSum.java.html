@@ -14,7 +14,7 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L14">public class CPUSum implements ImplementationFor&lt;CPU&gt;</span>
 {
     @Override
-    public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
+    public Tsr&lt;?&gt; run( ExecutionCall&lt;CPU&gt; call ) {
 <span class="pc bpc" id="L18" title="1 of 2 branches missed.">        if ( call.getDevice() != CPU.get() )</span>
 <span class="nc" id="L19">            throw new IllegalArgumentException(&quot;This implementation is only available for the CPU!&quot;);</span>
 <span class="pc bpc" id="L20" title="1 of 2 branches missed.">        Tsr&lt;?&gt; in = call.input(0) == null ? call.input(1) : call.input(0);</span>
