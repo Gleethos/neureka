@@ -13,7 +13,8 @@ import java.util.function.Supplier;
 /**
  *  Performs a dot product on two vectors using OpenCL.
  */
-public class CLDot implements ImplementationFor<OpenCLDevice> {
+public class CLDot implements ImplementationFor<OpenCLDevice>
+{
     @Override
     public Tsr<?> run( ExecutionCall<OpenCLDevice> call ) {
         // First we unpack the input tensors:

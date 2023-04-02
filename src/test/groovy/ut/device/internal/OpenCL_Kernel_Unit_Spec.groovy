@@ -3,6 +3,7 @@ package ut.device.internal
 
 import neureka.Tsr
 import neureka.backend.api.ExecutionCall
+import neureka.backend.main.implementations.linear.CLDot
 import neureka.backend.main.operations.linear.internal.opencl.CLReduce
 import neureka.backend.main.operations.linear.internal.opencl.CLSum
 import neureka.backend.main.operations.linear.internal.opencl.CLGEMM
@@ -134,5 +135,42 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             (1.._) * kernel.passLocalFloats(_) >> kernel
     }
 
+    def 'The CLDot implementation for the OpenCLDevice has realistic behaviour'()
+    {
+        given :
+            var a = Tsr.ofFloats().withShape(19).andWhere({i, _ -> (1+(7**i)%30)})
+            var b = Tsr.ofFloats().withShape(19).andWhere({i, _ -> (1+(7**i)%30)})
+            var c = Tsr.ofFloats().withShape(1).all(0)
+            var call = Mock(ExecutionCall)
+            var device = Mock(OpenCLDevice)
+            var kernel = Mock(KernelCaller)
+
+        when :
+            new CLDot().run( call )
+
+        then :
+            _ * call.input(0) >> c
+            _ * call.input(1) >> a
+            _ * call.input(2) >> b
+            _ * call.input(Float.class, 0) >> c
+            _ * call.input(Float.class, 1) >> a
+            _ * call.input(Float.class, 2) >> b
+            (1.._) * call.getDevice() >> device
+            (1.._) * device.maxWorkGroupSize() >> 32
+            (0.._) * device.hasAdHocKernel("multiply_arrays_for_dot_product") >>> [false, true]
+            (0.._) * device.compileAdHocKernel("multiply_arrays_for_dot_product", _) >> device
+            (0.._) * device.compileAndGetAdHocKernel("multiply_arrays_for_dot_product", _) >> kernel
+            (0.._) * device.findAdHocKernel("multiply_arrays_for_dot_product") >> Optional.of(kernel)
+            (0.._) * device.getAdHocKernel("multiply_arrays_for_dot_product") >> kernel
+            (0.._) * device.findOrCompileAdHocKernel("multiply_arrays_for_dot_product", _) >> kernel
+            (0.._) * device.hasAdHocKernel("fast_local_mem_based_sum") >>> [false, true]
+            (0.._) * device.compileAdHocKernel("fast_local_mem_based_sum", _) >> device
+            (0.._) * device.compileAndGetAdHocKernel("fast_local_mem_based_sum", _) >> kernel
+            (0.._) * device.findAdHocKernel("fast_local_mem_based_sum") >> Optional.of(kernel)
+            (0.._) * device.getAdHocKernel("fast_local_mem_based_sum") >> kernel
+            (0.._) * device.findOrCompileAdHocKernel("fast_local_mem_based_sum", _) >> kernel
+            (3.._) * kernel.pass(_) >> kernel
+            (1.._) * kernel.passLocalFloats(_) >> kernel
+    }
 
 }
