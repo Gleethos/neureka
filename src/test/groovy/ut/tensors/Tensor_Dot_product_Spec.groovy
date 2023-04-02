@@ -1,12 +1,9 @@
 package ut.tensors
 
+import neureka.Neureka
 import neureka.Shape
 import neureka.Tsr
-import spock.lang.Ignore
-import spock.lang.Narrative
-import spock.lang.Specification
-import spock.lang.Subject
-import spock.lang.Title
+import spock.lang.*
 
 @Title("Tensor Dot Products")
 @Narrative('''
@@ -67,6 +64,26 @@ class Tensor_Dot_product_Spec extends Specification
             w.gradient.isPresent()
             w.gradient.get().shape == Shape.of(3)
             w.gradient.get().items == [ 2f, -0.5f, 1f ]
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    def 'The dot product operation runs on any device.'( String device )
+    {
+        reportInfo """
+            The dot product operation runs on any device that 
+            supports OpenCL (meaning that it has OpenCL drivers installed).
+        """
+        given : 'A pair of vector tensors which we move to the device!'
+            var a = Tsr.of(-1f, -3f, 0f, 4f, 2f).to( device )
+            var b = Tsr.of( 1f,  2f, 7f, -1f, 3f).to( device )
+        when : 'we calculate the dot product of a and b.'
+            var result = a.dot(b)
+        then : 'the result is a scalar.'
+            result.shape == Shape.of(1)
+            result.items == [ -1f * 1f + -3f * 2f + 0f * 7f + 4f * -1f + 2f * 3f ]
+
+        where :
+            device << [ 'CPU', 'GPU' ]
     }
 
 }

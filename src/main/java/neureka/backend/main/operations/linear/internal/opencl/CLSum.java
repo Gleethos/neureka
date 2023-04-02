@@ -1,5 +1,6 @@
 package neureka.backend.main.operations.linear.internal.opencl;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
@@ -12,14 +13,14 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
 {
     @Override
     public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
-        return _partialSum(call.input(Float.class, 0), call.getDevice());
+        return run(call.input(Float.class, 0), call.getDevice());
     }
 
     /**
      *  This method compiles and executes the kernel that will return the sum of the
      *  elements in the {@code in} tensor.
      */
-    private static Tsr<Float> _partialSum(
+    public static Tsr<Float> run(
         Tsr<Float> in, OpenCLDevice device
     ) {
         final long RTS = device.maxWorkGroupSize(); // Register tile size
@@ -43,7 +44,7 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
             else
                 newN = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)
 
-            out = Tsr.of(Float.class, new int[]{newN}, 0).to(device).mut().setIsVirtual(false);
+            out = Tsr.of(Float.class, Shape.of(newN), 0).to(device).mut().setIsVirtual(false);
             KernelCaller caller = _processPrivate(RTS, device);
             caller.pass(SIZE).pass(in).pass(out).call(global, local);
         }
@@ -55,7 +56,7 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
         }
 
         if ( N > 1 ) {
-            Tsr<Float> reduced = _partialSum(out, device);
+            Tsr<Float> reduced = run(out, device);
             out.mut().delete();
             return reduced;
         }
@@ -85,10 +86,8 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
                         "                                                                                          \n" +
                         "       out[ni] = value;                                                                   \n" +
                         "   }                                                                                      \n";
-        return
-            device.hasAdHocKernel(kernelName)
-                    ? device.findAdHocKernel(kernelName).orElseThrow(()-> new RuntimeException("Could not find kernel: "+kernelName))
-                    : device.compileAndGetAdHocKernel(kernelName, code.get());
+
+        return device.findOrCompileAdHocKernel(kernelName, code);
     }
 
     private static KernelCaller _processLocal(
@@ -129,10 +128,7 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
                 "            partialSums[get_group_id(0)] = localSums[0];                                          \n" +
                 "    }                                                                                             \n";
 
-        return
-                device.hasAdHocKernel(kernelName)
-                        ? device.findAdHocKernel(kernelName).orElseThrow(()-> new RuntimeException("Could not find kernel: "+kernelName))
-                        : device.compileAndGetAdHocKernel(kernelName, code.get());
+        return device.findOrCompileAdHocKernel(kernelName, code);
     }
 
 }

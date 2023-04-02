@@ -56,16 +56,18 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             (1.._) * call.input(Float, 0) >> a
             (1.._) * call.getDevice() >> device
             (1.._) * device.maxWorkGroupSize() >> 64
-            (1.._) * device.hasAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >>> [false, true]
+            (0.._) * device.hasAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >>> [false, true]
             (0.._) * device.findAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >> Optional.of(kernel)
             (0.._) * device.compileAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64", _) >> device
-            (1.._) * device.compileAndGetAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64", _) >> kernel
+            (0.._) * device.findOrCompileAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64", _) >> kernel
+            (0.._) * device.compileAndGetAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64", _) >> kernel
             (0.._) * device.getAdHocKernel("fast_${type.name().toLowerCase()}_reduce_RTS64") >> kernel
             (3.._) * kernel.pass(_) >> kernel
         and :
-            (1.._) * device.hasAdHocKernel(CLReduce.INDICES_MAPPER_ID) >>> [false, true]
+            (0.._) * device.hasAdHocKernel(CLReduce.INDICES_MAPPER_ID) >>> [false, true]
             (0.._) * device.compileAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> device
-            (1.._) * device.compileAndGetAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> kernel
+            (0.._) * device.compileAndGetAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> kernel
+            (0.._) * device.findOrCompileAdHocKernel(CLReduce.INDICES_MAPPER_ID, _) >> kernel
             (0.._) * device.getAdHocKernel(CLReduce.INDICES_MAPPER_ID) >> kernel
 
         where :
@@ -89,11 +91,12 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             (1.._) * call.input(Float, 0) >> a
             (1.._) * call.getDevice() >> device
             (1.._) * device.maxWorkGroupSize() >> 32
-            (1.._) * device.hasAdHocKernel("fast_local_mem_based_sum") >>> [false, true]
+            (0.._) * device.hasAdHocKernel("fast_local_mem_based_sum") >>> [false, true]
             (0.._) * device.compileAdHocKernel("fast_local_mem_based_sum", _) >> device
-            (1.._) * device.compileAndGetAdHocKernel("fast_local_mem_based_sum", _) >> kernel
+            (0.._) * device.compileAndGetAdHocKernel("fast_local_mem_based_sum", _) >> kernel
             (0.._) * device.findAdHocKernel("fast_local_mem_based_sum") >> Optional.of(kernel)
             (0.._) * device.getAdHocKernel("fast_local_mem_based_sum") >> kernel
+            (0.._) * device.findOrCompileAdHocKernel("fast_local_mem_based_sum", _) >> kernel
             (3.._) * kernel.pass(_) >> kernel
             (1.._) * kernel.passLocalFloats(_) >> kernel
     }
@@ -115,16 +118,18 @@ class OpenCL_Kernel_Unit_Spec extends Specification
             (1.._) * call.input(Float, 0) >> a
             (1.._) * call.getDevice() >> device
             (1.._) * device.maxWorkGroupSize() >> 16
-            (1.._) * device.hasAdHocKernel("fast_private_sum_reduction_RTS16") >>> [false, true]
+            (0.._) * device.hasAdHocKernel("fast_private_sum_reduction_RTS16") >>> [false, true]
             (0.._) * device.compileAdHocKernel("fast_private_sum_reduction_RTS16", _) >> device
-            (1.._) * device.compileAndGetAdHocKernel("fast_private_sum_reduction_RTS16", _) >> kernel
+            (0.._) * device.compileAndGetAdHocKernel("fast_private_sum_reduction_RTS16", _) >> kernel
             (0.._) * device.findAdHocKernel("fast_private_sum_reduction_RTS16") >> Optional.of(kernel)
             (0.._) * device.getAdHocKernel("fast_private_sum_reduction_RTS16") >> kernel
-            (1.._) * device.hasAdHocKernel("fast_local_mem_based_sum") >>> [false, true]
+            (0.._) * device.findOrCompileAdHocKernel("fast_private_sum_reduction_RTS16", _) >> kernel
+            (0.._) * device.hasAdHocKernel("fast_local_mem_based_sum") >>> [false, true]
             (0.._) * device.compileAdHocKernel("fast_local_mem_based_sum", _) >> device
-            (1.._) * device.compileAndGetAdHocKernel("fast_local_mem_based_sum", _) >> kernel
+            (0.._) * device.compileAndGetAdHocKernel("fast_local_mem_based_sum", _) >> kernel
             (0.._) * device.findAdHocKernel("fast_local_mem_based_sum") >> Optional.of(kernel)
             (0.._) * device.getAdHocKernel("fast_local_mem_based_sum") >> kernel
+            (0.._) * device.findOrCompileAdHocKernel("fast_local_mem_based_sum", _) >> kernel
             (3.._) * kernel.pass(_) >> kernel
             (1.._) * kernel.passLocalFloats(_) >> kernel
     }

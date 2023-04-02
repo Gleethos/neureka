@@ -72,6 +72,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static org.jocl.CL.*;
 
@@ -258,6 +259,18 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_ad_hoc adHoc = _kernelCache.get(name);
         if (adHoc != null) return Optional.of(new KernelCaller(adHoc.kernel, _queue));
         else return Optional.empty();
+    }
+
+    /**
+     * @param name The name of the kernel which should be retrieved.
+     * @param source The source code of the kernel which should be compiled if it is not present in the cache.
+     * @return The kernel caller for the kernel of the requested name, either from cache,
+     *          or compiled from the given source code if it was not present in the cache.
+     */
+    public KernelCaller findOrCompileAdHocKernel( String name, Supplier<String> source ) {
+        cl_ad_hoc adHoc = _kernelCache.get(name);
+        if ( adHoc != null ) return new KernelCaller(adHoc.kernel, _queue);
+        else return compileAndGetAdHocKernel(name, source.get());
     }
 
     /**
