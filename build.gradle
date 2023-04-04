@@ -195,13 +195,13 @@ test {
 
 jacoco {
     toolVersion = "0.8.5"
-    reportsDir = file("docs/coverage")
+    reportsDirectory.set(file("docs/coverage"))
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled true
-        csv.enabled false
+        xml.required.set(true)
+        csv.required.set(false)
     }
 }
 check.dependsOn jacocoTestReport
@@ -271,12 +271,12 @@ jar {
 }
 
 tasks.register('sourcesJar', Jar) {
-    classifier "sources"
+    archiveClassifier.set("sources")
     from sourceSets.main.allSource
 }
 
 tasks.register('javadocJar', Jar) {
-    classifier "javadoc"
+    archiveClassifier.set("javadoc")
     from javadoc
 }
 
