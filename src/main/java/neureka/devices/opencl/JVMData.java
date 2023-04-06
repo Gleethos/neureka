@@ -17,8 +17,14 @@ import java.util.Arrays;
 class JVMData
 {
     private final Object _data;
+    private final long _size;
 
     public static JVMData of( Class<?> type, int size ) {
+        return of( type, size, false );
+    }
+
+
+    public static JVMData of( Class<?> type, int size, boolean virtual ) {
         Object data = null;
         if      ( type == Float.class   ) data = new float[size];
         else if ( type == Double.class  ) data = new double[size];
@@ -35,25 +41,32 @@ class JVMData
     }
 
     public static JVMData of( Object data ) {
-        return new JVMData( data, 0, lengthOf(data), false );
+        return new JVMData( data, 0, lengthOf(data), false, false );
     }
 
     public static JVMData of( Object data, boolean convertToFloat ) {
-        return new JVMData( data, 0, lengthOf(data), convertToFloat );
+        return new JVMData( data, 0, lengthOf(data), convertToFloat, false );
+    }
+
+    public static JVMData of( Object data, int size, boolean convertToFloat, boolean virtual ) {
+        return new JVMData( data, 0, size, convertToFloat, virtual );
     }
 
     public static JVMData of( Object data, int size, int start ) {
-        return new JVMData( data, start, size, false );
+        return new JVMData( data, start, size, false, false );
     }
 
-    private JVMData( Object data, int start, int size, boolean convertToFloat ) {
-        _data = _preprocess( data, start, size, convertToFloat );
+    private JVMData( Object data, int start, int size, boolean convertToFloat, boolean virtual ) {
+        _size = size;
+        _data = _preprocess( data, start, size, convertToFloat, virtual );
     }
 
     Object getArray() { return _data; }
 
-    private Object _preprocess( Object data, int start, int size, boolean convertToFloat )
+    private Object _preprocess( Object data, int start, int size, boolean convertToFloat, boolean virtual )
     {
+        size = virtual ? lengthOf(data) : size;
+
         if ( data instanceof Number ) {
             if ( data instanceof Float ) {
                 float[] newData = new float[size];
@@ -154,6 +167,8 @@ class JVMData
         throw new IllegalStateException();
     }
 
+    public long getTargetLength() { return _size; }
+
     int getItemSize() {
         if ( _data instanceof float[]  ) return Sizeof.cl_float;
         if ( _data instanceof double[] ) return Sizeof.cl_double;
@@ -162,6 +177,10 @@ class JVMData
         if ( _data instanceof long[]   ) return Sizeof.cl_long;
         if ( _data instanceof byte[]   ) return 1;
         throw new IllegalStateException();
+    }
+
+    boolean isVirtual() {
+        return _size != getLength();
     }
 
     OpenCLDevice.cl_dtype getType() {

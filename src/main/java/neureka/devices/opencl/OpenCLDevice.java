@@ -53,7 +53,6 @@ import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.ocl.CLBackend;
-import neureka.math.Function;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
@@ -64,6 +63,7 @@ import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
+import neureka.math.Function;
 import neureka.ndim.config.NDConfiguration;
 import org.jocl.*;
 import org.slf4j.Logger;
@@ -481,41 +481,56 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if ( parent == null )
             jvmData = JVMData.of( tensor.getMut().getData().getRef(), convertToFloat );
 
-        cl_tsr.cl_config config = _writeNDConfig( tensor.getNDConf() );
-        cl_tsr.cl_value newVal = ( parent != null ? parent.value : new cl_tsr.cl_value((int) jvmData.getLength()) );
-        cl_tsr<Number, Number> newClt = ( parent != null ? new cl_tsr<>(newVal, parent.dtype, config) : new cl_tsr<>(newVal, jvmData.getType(), config) );
+        cl_tsr<Number, Number> newClt;
 
-        if ( parent == null ) {
-            _store( jvmData, newClt );
+        if ( parent != null )
+            newClt = _storeFromParent( tensor, parent );
+        else {
+            newClt = _storeNew( tensor.getNDConf(), jvmData );
             if ( tensor.rqsGradient() && tensor.hasGradient() )
                 this.store(tensor.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!")));
         }
 
-        cl_mem[] memos;
-        if ( parent == null )
-            memos = new cl_mem[]{newClt.value.data, newClt.config.data};
-        else
-            memos = new cl_mem[]{newClt.config.data};
+        cl_mem[] memos = parent == null
+                                ? new cl_mem[]{newClt.value.data, newClt.config.data}
+                                : new cl_mem[]{newClt.config.data};
 
         clEnqueueMigrateMemObjects(
-                _queue,
-                memos.length,
-                memos,
+                _queue, memos.length, memos,
                 CL_MIGRATE_MEM_OBJECT_HOST,
                 0,
                 null,
                 null
             );
 
+        neureka.Data<Number> data = _dataArrayOf(newClt, (DataType<Number>) _dataTypeOf(newClt));
+
         _tensors.add( tensor );
 
-        tensor.getMut().setData( _dataArrayOf(newClt, (DataType<Number>) _dataTypeOf(newClt)) );
+        tensor.getMut().setData( data );
         migration.run();
 
         // When tensors get stored on this device,
         // they are implicitly converted to a float tensor:
         if ( convertToFloat )
             tensor.getMut().toType(F32.class);
+    }
+
+    private cl_tsr<Number, Number> _storeFromParent( Tsr<Number> tensor, cl_tsr<Number, ?> parent ) {
+        cl_tsr.cl_config config = _writeNDConfig( tensor.getNDConf() );
+        return new cl_tsr<>(parent.value, parent.dtype, config);
+    }
+
+    private cl_tsr<Number, Number> _storeNew( NDConfiguration ndc, JVMData jvmData ) {
+        return _storeNew( ndc, jvmData, false );
+    }
+
+    private cl_tsr<Number, Number> _storeNew( NDConfiguration ndc, JVMData jvmData, boolean allocateTargetSize ) {
+        cl_tsr.cl_config config = _writeNDConfig( ndc );
+        cl_tsr.cl_value newVal = new cl_tsr.cl_value((int) jvmData.getLength());
+        cl_tsr<Number, Number> newClt = new cl_tsr<>(newVal, jvmData.getType(), config);
+        _store( jvmData, newClt, allocateTargetSize );
+        return newClt;
     }
 
     private cl_tsr.cl_config _writeNDConfig( NDConfiguration ndc ) {
@@ -534,15 +549,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
         );
 
         clEnqueueWriteBuffer(
-                _queue,
-                clf.data,
-                CL_TRUE,
-                0,
+                _queue, clf.data, CL_TRUE, 0,
                 (long) config.length * Sizeof.cl_int,
                 Pointer.to(config),
                 0,
-                null,
-                null
+                null, null
         );
         final cl_mem clConfMem = clf.data;
         _cleaning(clf, () -> clReleaseMemObject(clConfMem));
@@ -550,24 +561,41 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     private void _store(
-            JVMData jvmData,
-            cl_tsr<?, ?> newClTsr
+       JVMData jvmData,
+       cl_tsr<?, ?> newClTsr,
+       boolean allocateTarget
     ) {
-        //VALUE TRANSFER:
+        long bufferLength = allocateTarget ? jvmData.getTargetLength() : jvmData.getLength();
+
         cl_mem mem = clCreateBuffer(
-                _platform.getContext(),
-                CL_MEM_READ_WRITE,
-                (long) jvmData.getItemSize() * jvmData.getLength(),
-                null,
-                null
-        );
+                        _platform.getContext(),
+                        CL_MEM_READ_WRITE,
+                        (long) jvmData.getItemSize() * bufferLength,
+                        null,
+                        null
+                    );
+
         newClTsr.value.data = mem;
-        clEnqueueWriteBuffer(
-                _queue, mem,
-                CL_TRUE, 0,
-                (long) jvmData.getItemSize() * jvmData.getLength(),
-                jvmData.getPointer(), 0, null, null
-            );
+
+        // Virtual means that there is only a single value in the JVM array.
+        // So we don't have to write the whole array to the device!
+        // Instead, we can just fill the device memory with the single value.
+        boolean isASingleValue = jvmData.isVirtual();
+
+        if ( isASingleValue )
+            clEnqueueFillBuffer(
+                    _queue, mem, jvmData.getPointer(), // pattern
+                    jvmData.getItemSize(), 0,
+                    (long) jvmData.getItemSize() * bufferLength,
+                    0, null, null
+                );
+        else
+            clEnqueueWriteBuffer(
+                    _queue, mem,
+                    CL_TRUE, 0,
+                    (long) jvmData.getItemSize() * bufferLength,
+                    jvmData.getPointer(), 0, null, null
+                );
 
         final cl_mem clValMem = newClTsr.value.data;
         cl_event clValEvent = newClTsr.value.event;
@@ -629,23 +657,35 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number>  neureka.Data<T> allocate(DataType<T> dataType, NDConfiguration ndc ) {
-        throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
+    public <T extends Number>  neureka.Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
+        JVMData jvmData = JVMData.of( dataType.getItemTypeClass(), ndc.size() );
+        cl_tsr<Number, Number> clt = _storeNew( ndc, jvmData );
+        return (neureka.Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
     @Override
-    public <T extends Number>  neureka.Data<T> allocateFromOne(DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
-        throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
+    public <T extends Number>  neureka.Data<T> allocateFromOne( DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
+        JVMData jvmData = JVMData.of( initialValue, ndc.size(), false, true );
+        cl_tsr<Number, Number> clt = _storeNew( ndc, jvmData );
+        return (neureka.Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
     @Override
-    public <T extends Number> neureka.Data<T> allocateFromAll(DataType<T> dataType, NDConfiguration ndc, Object jvmData) {
-        throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
+    public <T extends Number> neureka.Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object data ) {
+        JVMData jvmData = JVMData.of( data );
+        cl_tsr<Number, Number> clt = _storeNew( ndc, jvmData );
+        return (neureka.Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
     @Override
     protected neureka.Data<Number> _actualize( Tsr<?> tensor ) {
-        throw new IllegalStateException("Not implemented yet!"); // Currently, tensors can only be initialized on the heap.
+        NDConfiguration ndc = tensor.getNDConf();
+        Object initialValue = tensor.item();
+        cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
+        if ( clt == null ) throw new IllegalStateException("The tensor has no device component!");
+        JVMData jvmData = JVMData.of( initialValue, ndc.size(), false, true );
+        clt = _storeNew( ndc, jvmData, true );
+        return _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
     @Override
