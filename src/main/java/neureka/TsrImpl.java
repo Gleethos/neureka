@@ -1308,11 +1308,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     @Override
     public Object getRawItems() {
         _guardGet("value object");
-        if ( this.isVirtual() )
-            return this.isOutsourced()
-                    ? getDevice().access( this.deepCopy().setIsVirtual( false ) ).readAll(false)
-                    : getDevice().access(this).actualize().getRef(); // Todo: make data access more consistent!
-        else if ( this.getNDConf().isSimple() && !this.isSlice() )
+        if ( this.getNDConf().isSimple() && !this.isSlice() )
             return getDevice().access(this).readAll(!this.isOutsourced());
         else
             return getDevice().access( this.deepCopy().setIsVirtual( false ) ).readAll(false);
