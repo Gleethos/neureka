@@ -240,7 +240,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         });
     }
 
-    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object value ) {
+    TsrImpl( NDConstructor ndConstructor, Device device, DataType<?> dataType, Object value ) {
         Object data = value;
         if ( List.class.isAssignableFrom( dataType.getItemTypeClass() ) )
             data = new Object[]{ value }; // Make an nd-array of lists possible"
@@ -254,7 +254,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
         }
-        constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data );
+        constructFor(device, ndConstructor).tryConstructing( dataType, data );
     }
 
     <V> TsrImpl( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
