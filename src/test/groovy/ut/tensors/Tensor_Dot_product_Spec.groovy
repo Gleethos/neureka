@@ -66,7 +66,7 @@ class Tensor_Dot_product_Spec extends Specification
             w.gradient.get().items == [ 2f, -0.5f, 1f ]
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' }) // We need to assure that this system supports OpenCL!
     def 'The dot product operation runs on any device.'( String device )
     {
         reportInfo """
@@ -86,7 +86,7 @@ class Tensor_Dot_product_Spec extends Specification
             device << [ 'CPU', 'GPU' ]
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' }) // We need to assure that this system supports OpenCL!
     def 'The dot operation works for virtual tensors as well.'( String device )
     {
         given : 'A pair of vector tensors which we move to the device!'
@@ -104,7 +104,7 @@ class Tensor_Dot_product_Spec extends Specification
             device << [ 'CPU', 'GPU' ]
     }
 
-    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' }) // We need to assure that this system supports OpenCL!
     def 'The dot operation work even when one tensor is virtual.'( String device )
     {
         given : 'A pair of vector tensors which we move to the device!'
