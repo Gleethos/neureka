@@ -237,6 +237,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             @Override public DataType<V> dataType() {
                 return (DataType<V>) Neureka.get().settings().dtype().getDefaultDataType();
             }
+            @Override public Data<V> withNDConf(NDConfiguration ndc) { throw new UnsupportedOperationException(); }
         });
     }
 
@@ -264,7 +265,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                     "The data type of the data is not compatible with the data type of the tensor!"
                 );
 
-        constructFor(CPU.get(), ndConstructor).constructTrusted( data );
+        constructFor(data.owner(), ndConstructor).constructTrusted( data );
     }
 
     /**

@@ -211,9 +211,4 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected abstract DataType<?> _dataTypeOf( Object rawData );
 
-    protected <T extends V> neureka.Data<T> _dataArrayOf( Object data, DataType<T> dataType ) {
-        assert !(data instanceof neureka.Data);
-        return new DeviceData<T>( this, data, dataType ) {};
-    }
-
 }

@@ -2,6 +2,7 @@ package neureka;
 
 import neureka.devices.Device;
 import neureka.dtype.DataType;
+import neureka.ndim.config.NDConfiguration;
 
 /**
  *  A wrapper type for the raw data array of a tensor/nd-array,
@@ -52,4 +53,5 @@ public interface Data<V> {
      */
     DataType<V> dataType();
 
+    Data<V> withNDConf( NDConfiguration ndc );
 }

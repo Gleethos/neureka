@@ -1730,11 +1730,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Device<V> getDevice() {
         Device device = this.get( Device.class );
         if ( device == null )
-            return (Device<V>) CPU.get();
-            //if ( !this.isDeleted() && mut().getData() != null )
-            //    return mut().getData().owner();
-            //else
-            //    return (Device<V>) CPU.get();
+            if ( !this.isDeleted() && mut().getData() != null )
+                return mut().getData().owner();
+            else
+                return (Device<V>) CPU.get();
         else
             return device;
     }

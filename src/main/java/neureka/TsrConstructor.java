@@ -71,8 +71,9 @@ final class TsrConstructor
     public void constructTrusted(
             Data<?> data
     ) {
-        _API.setData( data );
-        _API.setConf( _ndConstructor.produceNDC( false ) );
+        NDConfiguration ndc = _ndConstructor.produceNDC( false );
+        _API.setData( data.withNDConf(ndc) );
+        _API.setConf( ndc );
     }
 
     public void tryConstructing(

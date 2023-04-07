@@ -1,5 +1,6 @@
 package neureka.devices.host;
 
+import neureka.Data;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.math.Function;
@@ -75,6 +76,17 @@ public class CPU extends AbstractDevice<Object>
      * @return A parallel range based execution API running on the JVM.
      */
     public JVMExecutor getExecutor() { return _executor; }
+
+
+    private <T> neureka.Data<T> _dataArrayOf( Object data, DataType<T> dataType ) {
+        assert !(data instanceof neureka.Data);
+        return new DeviceData<T>( this, data, dataType ) {
+            @Override
+            public neureka.Data<T> withNDConf(NDConfiguration ndc) {
+                return this;
+            }
+        };
+    }
 
     @Override
     protected boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation operation ) { return true; }

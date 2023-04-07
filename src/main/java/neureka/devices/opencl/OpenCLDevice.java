@@ -861,12 +861,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     public Type type() {
         long deviceType = Query.getLong(_deviceId, CL_DEVICE_TYPE);
-        if ((deviceType & CL_DEVICE_TYPE_CPU) != 0) return Type.CPU;
-        if ((deviceType & CL_DEVICE_TYPE_GPU) != 0) return Type.GPU;
-        if ((deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0) return Type.ACCELERATOR;
-        if ((deviceType & CL_DEVICE_TYPE_DEFAULT) != 0) return Type.DEFAULT;
-        if ((deviceType & CL_DEVICE_TYPE_CUSTOM) != 0) return Type.CUSTOM;
-        if ((deviceType & CL_DEVICE_TYPE_ALL) != 0) return Type.ALL;
+        if ( (deviceType & CL_DEVICE_TYPE_CPU         ) != 0 ) return Type.CPU;
+        if ( (deviceType & CL_DEVICE_TYPE_GPU         ) != 0 ) return Type.GPU;
+        if ( (deviceType & CL_DEVICE_TYPE_ACCELERATOR ) != 0 ) return Type.ACCELERATOR;
+        if ( (deviceType & CL_DEVICE_TYPE_DEFAULT     ) != 0 ) return Type.DEFAULT;
+        if ( (deviceType & CL_DEVICE_TYPE_CUSTOM      ) != 0 ) return Type.CUSTOM;
+        if ( (deviceType & CL_DEVICE_TYPE_ALL         ) != 0 ) return Type.ALL;
         return Type.UNKNOWN;
     }
 
@@ -1062,5 +1062,26 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     }
 
+
+    private <T extends Number> neureka.Data<T> _dataArrayOf( Object data, DataType<T> dataType ) {
+        return (neureka.Data<T>) new CLData(this, data, (DataType<Number>) dataType);
+    }
+
+    private static class CLData extends DeviceData<Number> {
+
+        public CLData(Device<Number> owner, Object dataRef, DataType<Number> dataType) {
+            super(owner, dataRef, dataType);
+            assert !(dataRef instanceof neureka.Data);
+        }
+
+        @Override
+        public neureka.Data<Number> withNDConf(NDConfiguration ndc) {
+            // We create a new cl_tsr object with the same data but a different ND-configuration:
+            cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
+            cl_tsr.cl_config config = ((OpenCLDevice)_owner)._writeNDConfig( ndc );
+            cl_tsr<?,?> newDataRef = new cl_tsr<>(clTsr.value, clTsr.dtype, config);
+            return new CLData((Device<Number>) _owner, newDataRef, _dataType );
+        }
+    }
 
 }
