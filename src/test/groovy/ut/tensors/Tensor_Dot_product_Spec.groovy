@@ -86,4 +86,40 @@ class Tensor_Dot_product_Spec extends Specification
             device << [ 'CPU', 'GPU' ]
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    def 'The dot operation works for virtual tensors as well.'( String device )
+    {
+        given : 'A pair of vector tensors which we move to the device!'
+            var a = Tsr.of(Shape.of(8), 3f).to(device)
+            var b = Tsr.of(Shape.of(8), 3f).to(device)
+        expect : 'the tensors are virtual.'
+            a.isVirtual() // They are calars in disguise!
+            b.isVirtual()
+        when : 'we calculate the dot product of a and b.'
+            var result = a.dot(b)
+        then : 'the result is a scalar.'
+            result.shape == Shape.of(1)
+            result.items == [ 3f * 3f * 8f ]
+        where :
+            device << [ 'CPU', 'GPU' ]
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    def 'The dot operation work even when one tensor is virtual.'( String device )
+    {
+        given : 'A pair of vector tensors which we move to the device!'
+            var a = Tsr.of(Shape.of(8), 3f).to(device)
+            var b = Tsr.of(Shape.of(8), new float[]{3f, 4f, -1f}).to(device)
+        expect : 'the tensors are virtual.'
+            a.isVirtual() // They are calars in disguise!
+            !b.isVirtual()
+        when : 'we calculate the dot product of a and b.'
+            var result = a.dot(b)
+        then : 'the result is a scalar.'
+            result.shape == Shape.of(1)
+            result.items == [ 57f ]
+        where :
+            device << [ 'CPU', 'GPU' ]
+    }
+
 }

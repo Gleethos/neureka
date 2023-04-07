@@ -757,6 +757,15 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Float> of( Shape shape, float[] values ) { return ofAny( Float.class, shape, values ); }
 
     /**
+     *  Use this to construct and return a homogeneously populated float tensor of the specified shape.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param value The value which ought to be used to populate the tensor homogeneously.
+     * @return A new tensor instance with the provided shape and initial value.
+     */
+    static Tsr<Float> of( Shape shape, float value ) { return ofAny( Float.class, shape, value ); }
+
+    /**
      *  Use this to construct and return a boolean tensor of the specified shape and initial values.
      *  The length of the provided array does not have to match the number of elements
      *  defined by the provided shape, the tensor will be populated based on repeated iteration over the

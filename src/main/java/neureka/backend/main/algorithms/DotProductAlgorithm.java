@@ -90,7 +90,7 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
         return call.withInputAt( 0, output );
     }
 
-    private static NDConfiguration.Layout _checkAndPrepareLayout(Tsr<?> a, Tsr<?> b, Tsr<?> c )
+    private static NDConfiguration.Layout _checkAndPrepareLayout( Tsr<?> a, Tsr<?> b, Tsr<?> c )
     {
         // We need to make sure that the vectors have a common/compatible layout,
         // ..before we can do the actual a . b = c dot product!
@@ -102,15 +102,19 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
         boolean bIsCompatible = isSymmetric( layoutB );
 
         if ( aIsCompatible ) {
+            b.mut().setIsVirtual(false);
             b.mut().toLayout(layoutA); // We choose a valid layout based on a
             layoutC = layoutA;
         } else if ( bIsCompatible ) {
+            a.mut().setIsVirtual(false);
             a.mut().toLayout(layoutB); // We choose a valid layout based on b
             layoutC = layoutB;
         } else {
             // Ok so the inputs are unspecific (or RM or CM)
             // So we just need to decide on any valid layout really:
             layoutC = isSymmetric(layoutC) ? layoutC : NDConfiguration.Layout.SYMMETRIC;
+            a.mut().setIsVirtual(false);
+            b.mut().setIsVirtual(false);
             a.mut().toLayout( layoutC );
             b.mut().toLayout( layoutC );
         }

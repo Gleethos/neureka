@@ -67,12 +67,23 @@ public class Convolution extends AbstractOperation
                         assert adCall.arity() >= 2 && adCall.arity() <= 3;
                         // Now we need to remember the shape of the input which is targeted for back prop.
                         Shape shape = Shape.of(adCall.input( adCall.arity() > 2 ? d + 1 : d ).getNDConf().shape());
+                        Number zero;
+                        if ( derivative.getItemType() == Double.class         ) zero = 0d;
+                        else if ( derivative.getItemType() == Float.class     ) zero = 0f;
+                        else if ( derivative.getItemType() == Integer.class   ) zero = 0;
+                        else if ( derivative.getItemType() == Long.class      ) zero = 0L;
+                        else if ( derivative.getItemType() == Short.class     ) zero = (short) 0;
+                        else if ( derivative.getItemType() == Byte.class      ) zero = (byte) 0;
+                        else {
+                            zero = null;
+                            throw new RuntimeException("Unsupported item type for convolution derivative: " + derivative.getItemType());
+                        }
                         // This is because it will be the shape of the output to the de-convolution!
                         return ADAction.of( target ->
                                 deConv.execute(
                                         target.error(),
                                         derivative,
-                                        Tsr.of(shape, 0).mut().setIsIntermediate( false )
+                                        Tsr.of(shape, zero).mut().setIsIntermediate( false )
                                 )
                         );
                     })
