@@ -155,6 +155,37 @@ public interface Shape extends Iterable<Integer>
     }
 
     /**
+     * @param predicate The predicate which is used to count the elements of the shape for which it is true.
+     * @return The number of elements in the shape which satisfy the given predicate.
+     */
+    default int count( java.util.function.Predicate<Integer> predicate ) {
+        int count = 0;
+        for ( int i = 0; i < size(); i++ )
+            if ( predicate.test( get(i) ) ) count++;
+        return count;
+    }
+
+    /**
+     * @param predicate The predicate which is used to test the elements of the shape.
+     * @return True if the given predicate is true for all elements of the shape.
+     */
+    default boolean every( java.util.function.Predicate<Integer> predicate ) {
+        for ( int i = 0; i < size(); i++ )
+            if ( !predicate.test( get(i) ) ) return false;
+        return true;
+    }
+
+    /**
+     * @param predicate The predicate which is used to test the elements of the shape.
+     * @return True if the given predicate is true for at least one element of the shape.
+     */
+    default boolean any( java.util.function.Predicate<Integer> predicate ) {
+        for ( int i = 0; i < size(); i++ )
+            if ( predicate.test( get(i) ) ) return true;
+        return false;
+    }
+
+    /**
      * @return An iterator over the shape.
      */
     @Override

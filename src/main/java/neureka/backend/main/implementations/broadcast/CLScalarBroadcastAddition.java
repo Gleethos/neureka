@@ -2,10 +2,8 @@ package neureka.backend.main.implementations.broadcast;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.math.args.Arg;
 import neureka.devices.opencl.OpenCLDevice;
-
-import java.util.List;
+import neureka.math.args.Arg;
 
 public class CLScalarBroadcastAddition extends CLScalarBroadcast
 {

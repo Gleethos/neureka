@@ -28,8 +28,8 @@ package neureka.backend.main.operations.linear.internal.blas;
  * elements of vectors x and y.
  *
  */
-<span class="nc" id="L31">public final class DOT {</span>
-
+<span class="nc" id="L31">public final class DOT</span>
+{
     public static double invoke(final double[] array1, final int offset1, final double[] array2, final int offset2, final int first, final int limit) {
 <span class="fc" id="L34">        return DOT.unrolled04(array1, offset1, array2, offset2, first, limit);</span>
     }
@@ -38,70 +38,144 @@ package neureka.backend.main.operations.linear.internal.blas;
 <span class="fc" id="L38">        return DOT.unrolled04(array1, offset1, array2, offset2, first, limit);</span>
     }
 
+    public static long invoke(final long[] array1, final int offset1, final long[] array2, final int offset2, final int first, final int limit) {
+<span class="nc" id="L42">        return DOT.unrolled04(array1, offset1, array2, offset2, first, limit);</span>
+    }
+
+    public static int invoke(final int[] array1, final int offset1, final int[] array2, final int offset2, final int first, final int limit) {
+<span class="nc" id="L46">        return DOT.unrolled04(array1, offset1, array2, offset2, first, limit);</span>
+    }
+
+    static long unrolled04(final long[] array1, final int offset1, final long[] array2, final int offset2, final int first, final int limit) {
+
+<span class="nc" id="L51">        int remainder = (limit - first) % 4;</span>
+
+<span class="nc" id="L53">        long sum0 = 0L;</span>
+<span class="nc" id="L54">        long sum1 = 0L;</span>
+<span class="nc" id="L55">        long sum2 = 0L;</span>
+<span class="nc" id="L56">        long sum3 = 0L;</span>
+
+<span class="nc" id="L58">        int shift10 = offset1 + 0;</span>
+<span class="nc" id="L59">        int shift11 = offset1 + 1;</span>
+<span class="nc" id="L60">        int shift12 = offset1 + 2;</span>
+<span class="nc" id="L61">        int shift13 = offset1 + 3;</span>
+
+<span class="nc" id="L63">        int shift20 = offset2 + 0;</span>
+<span class="nc" id="L64">        int shift21 = offset2 + 1;</span>
+<span class="nc" id="L65">        int shift22 = offset2 + 2;</span>
+<span class="nc" id="L66">        int shift23 = offset2 + 3;</span>
+
+<span class="nc" id="L68">        int i = first;</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        for (int lim = limit - remainder; i &lt; lim; i += 4) {</span>
+<span class="nc" id="L70">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
+<span class="nc" id="L71">            sum1 += array1[shift11 + i] * array2[shift21 + i];</span>
+<span class="nc" id="L72">            sum2 += array1[shift12 + i] * array2[shift22 + i];</span>
+<span class="nc" id="L73">            sum3 += array1[shift13 + i] * array2[shift23 + i];</span>
+        }
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        for (; i &lt; limit; i++) {</span>
+<span class="nc" id="L76">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
+        }
+
+<span class="nc" id="L79">        return sum0 + sum1 + sum2 + sum3;</span>
+    }
+
+    static int unrolled04(final int[] array1, final int offset1, final int[] array2, final int offset2, final int first, final int limit) {
+
+<span class="nc" id="L84">        int remainder = (limit - first) % 4;</span>
+
+<span class="nc" id="L86">        int sum0 = 0;</span>
+<span class="nc" id="L87">        int sum1 = 0;</span>
+<span class="nc" id="L88">        int sum2 = 0;</span>
+<span class="nc" id="L89">        int sum3 = 0;</span>
+
+<span class="nc" id="L91">        int shift10 = offset1 + 0;</span>
+<span class="nc" id="L92">        int shift11 = offset1 + 1;</span>
+<span class="nc" id="L93">        int shift12 = offset1 + 2;</span>
+<span class="nc" id="L94">        int shift13 = offset1 + 3;</span>
+
+<span class="nc" id="L96">        int shift20 = offset2 + 0;</span>
+<span class="nc" id="L97">        int shift21 = offset2 + 1;</span>
+<span class="nc" id="L98">        int shift22 = offset2 + 2;</span>
+<span class="nc" id="L99">        int shift23 = offset2 + 3;</span>
+
+<span class="nc" id="L101">        int i = first;</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        for (int lim = limit - remainder; i &lt; lim; i += 4) {</span>
+<span class="nc" id="L103">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
+<span class="nc" id="L104">            sum1 += array1[shift11 + i] * array2[shift21 + i];</span>
+<span class="nc" id="L105">            sum2 += array1[shift12 + i] * array2[shift22 + i];</span>
+<span class="nc" id="L106">            sum3 += array1[shift13 + i] * array2[shift23 + i];</span>
+        }
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (; i &lt; limit; i++) {</span>
+<span class="nc" id="L109">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
+        }
+
+<span class="nc" id="L112">        return sum0 + sum1 + sum2 + sum3;</span>
+    }
+
     static double unrolled04(final double[] array1, final int offset1, final double[] array2, final int offset2, final int first, final int limit) {
 
-<span class="fc" id="L43">        int remainder = (limit - first) % 4;</span>
+<span class="fc" id="L117">        int remainder = (limit - first) % 4;</span>
 
-<span class="fc" id="L45">        double sum0 = 0F;</span>
-<span class="fc" id="L46">        double sum1 = 0F;</span>
-<span class="fc" id="L47">        double sum2 = 0F;</span>
-<span class="fc" id="L48">        double sum3 = 0F;</span>
+<span class="fc" id="L119">        double sum0 = 0F;</span>
+<span class="fc" id="L120">        double sum1 = 0F;</span>
+<span class="fc" id="L121">        double sum2 = 0F;</span>
+<span class="fc" id="L122">        double sum3 = 0F;</span>
 
-<span class="fc" id="L50">        int shift10 = offset1 + 0;</span>
-<span class="fc" id="L51">        int shift11 = offset1 + 1;</span>
-<span class="fc" id="L52">        int shift12 = offset1 + 2;</span>
-<span class="fc" id="L53">        int shift13 = offset1 + 3;</span>
+<span class="fc" id="L124">        int shift10 = offset1 + 0;</span>
+<span class="fc" id="L125">        int shift11 = offset1 + 1;</span>
+<span class="fc" id="L126">        int shift12 = offset1 + 2;</span>
+<span class="fc" id="L127">        int shift13 = offset1 + 3;</span>
 
-<span class="fc" id="L55">        int shift20 = offset2 + 0;</span>
-<span class="fc" id="L56">        int shift21 = offset2 + 1;</span>
-<span class="fc" id="L57">        int shift22 = offset2 + 2;</span>
-<span class="fc" id="L58">        int shift23 = offset2 + 3;</span>
+<span class="fc" id="L129">        int shift20 = offset2 + 0;</span>
+<span class="fc" id="L130">        int shift21 = offset2 + 1;</span>
+<span class="fc" id="L131">        int shift22 = offset2 + 2;</span>
+<span class="fc" id="L132">        int shift23 = offset2 + 3;</span>
 
-<span class="fc" id="L60">        int i = first;</span>
-<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (int lim = limit - remainder; i &lt; lim; i += 4) {</span>
-<span class="fc" id="L62">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
-<span class="fc" id="L63">            sum1 += array1[shift11 + i] * array2[shift21 + i];</span>
-<span class="fc" id="L64">            sum2 += array1[shift12 + i] * array2[shift22 + i];</span>
-<span class="fc" id="L65">            sum3 += array1[shift13 + i] * array2[shift23 + i];</span>
+<span class="fc" id="L134">        int i = first;</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        for (int lim = limit - remainder; i &lt; lim; i += 4) {</span>
+<span class="fc" id="L136">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
+<span class="fc" id="L137">            sum1 += array1[shift11 + i] * array2[shift21 + i];</span>
+<span class="fc" id="L138">            sum2 += array1[shift12 + i] * array2[shift22 + i];</span>
+<span class="fc" id="L139">            sum3 += array1[shift13 + i] * array2[shift23 + i];</span>
         }
-<span class="fc bfc" id="L67" title="All 2 branches covered.">        for (; i &lt; limit; i++) {</span>
-<span class="fc" id="L68">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        for (; i &lt; limit; i++) {</span>
+<span class="fc" id="L142">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
         }
 
-<span class="fc" id="L71">        return sum0 + sum1 + sum2 + sum3;</span>
+<span class="fc" id="L145">        return sum0 + sum1 + sum2 + sum3;</span>
     }
 
     static float unrolled04(final float[] array1, final int offset1, final float[] array2, final int offset2, final int first, final int limit) {
 
-<span class="fc" id="L76">        int remainder = (limit - first) % 4;</span>
+<span class="fc" id="L150">        int remainder = (limit - first) % 4;</span>
 
-<span class="fc" id="L78">        float sum0 = 0F;</span>
-<span class="fc" id="L79">        float sum1 = 0F;</span>
-<span class="fc" id="L80">        float sum2 = 0F;</span>
-<span class="fc" id="L81">        float sum3 = 0F;</span>
+<span class="fc" id="L152">        float sum0 = 0F;</span>
+<span class="fc" id="L153">        float sum1 = 0F;</span>
+<span class="fc" id="L154">        float sum2 = 0F;</span>
+<span class="fc" id="L155">        float sum3 = 0F;</span>
 
-<span class="fc" id="L83">        int shift10 = offset1 + 0;</span>
-<span class="fc" id="L84">        int shift11 = offset1 + 1;</span>
-<span class="fc" id="L85">        int shift12 = offset1 + 2;</span>
-<span class="fc" id="L86">        int shift13 = offset1 + 3;</span>
+<span class="fc" id="L157">        int shift10 = offset1 + 0;</span>
+<span class="fc" id="L158">        int shift11 = offset1 + 1;</span>
+<span class="fc" id="L159">        int shift12 = offset1 + 2;</span>
+<span class="fc" id="L160">        int shift13 = offset1 + 3;</span>
 
-<span class="fc" id="L88">        int shift20 = offset2 + 0;</span>
-<span class="fc" id="L89">        int shift21 = offset2 + 1;</span>
-<span class="fc" id="L90">        int shift22 = offset2 + 2;</span>
-<span class="fc" id="L91">        int shift23 = offset2 + 3;</span>
+<span class="fc" id="L162">        int shift20 = offset2 + 0;</span>
+<span class="fc" id="L163">        int shift21 = offset2 + 1;</span>
+<span class="fc" id="L164">        int shift22 = offset2 + 2;</span>
+<span class="fc" id="L165">        int shift23 = offset2 + 3;</span>
 
-<span class="fc" id="L93">        int i = first;</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">        for (int lim = limit - remainder; i &lt; lim; i += 4) {</span>
-<span class="fc" id="L95">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
-<span class="fc" id="L96">            sum1 += array1[shift11 + i] * array2[shift21 + i];</span>
-<span class="fc" id="L97">            sum2 += array1[shift12 + i] * array2[shift22 + i];</span>
-<span class="fc" id="L98">            sum3 += array1[shift13 + i] * array2[shift23 + i];</span>
+<span class="fc" id="L167">        int i = first;</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        for (int lim = limit - remainder; i &lt; lim; i += 4) {</span>
+<span class="fc" id="L169">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
+<span class="fc" id="L170">            sum1 += array1[shift11 + i] * array2[shift21 + i];</span>
+<span class="fc" id="L171">            sum2 += array1[shift12 + i] * array2[shift22 + i];</span>
+<span class="fc" id="L172">            sum3 += array1[shift13 + i] * array2[shift23 + i];</span>
         }
-<span class="fc bfc" id="L100" title="All 2 branches covered.">        for (; i &lt; limit; i++) {</span>
-<span class="fc" id="L101">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        for (; i &lt; limit; i++) {</span>
+<span class="fc" id="L175">            sum0 += array1[shift10 + i] * array2[shift20 + i];</span>
         }
 
-<span class="fc" id="L104">        return sum0 + sum1 + sum2 + sum3;</span>
+<span class="fc" id="L178">        return sum0 + sum1 + sum2 + sum3;</span>
     }
 
 }

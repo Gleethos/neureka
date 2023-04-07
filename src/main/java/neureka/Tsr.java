@@ -757,6 +757,15 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     static Tsr<Float> of( Shape shape, float[] values ) { return ofAny( Float.class, shape, values ); }
 
     /**
+     *  Use this to construct and return a homogeneously populated float tensor of the specified shape.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param value The value which ought to be used to populate the tensor homogeneously.
+     * @return A new tensor instance with the provided shape and initial value.
+     */
+    static Tsr<Float> of( Shape shape, float value ) { return ofAny( Float.class, shape, value ); }
+
+    /**
      *  Use this to construct and return a boolean tensor of the specified shape and initial values.
      *  The length of the provided array does not have to match the number of elements
      *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
@@ -915,7 +924,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
-    static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data ); }
+    static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) {
+        return new TsrImpl<>( NDConstructor.of(shape), CPU.get(), dataType, data );
+    }
 
     /**
      *  This factory method is among the most flexible and forgiving ways to create a {@link Tsr} instance.
@@ -929,7 +940,26 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
-    static <V> Tsr<V> of( DataType<V> dataType, Shape shape, Object data ) { return new TsrImpl<>( NDConstructor.of(shape), dataType, data ); }
+    static <V> Tsr<V> of( DataType<V> dataType, Shape shape, Object data ) {
+        return new TsrImpl<>( NDConstructor.of(shape), CPU.get(), dataType, data );
+    }
+
+    /**
+     *  This factory method is among the most flexible and forgiving ways to create a {@link Tsr} instance.
+     *  It receives a {@link DataType} for type safety and to ensure that the produced {@link Tsr} instance
+     *  will contain elements of the correct type, and a {@link Shape} tuple which stores the sizes of the axes that the
+     *  instance ought to possess, and finally it receives a data {@link Object} which can be anything ranging from
+     *  a {@link List} to an array or simply a single value which ought to fill out the entire {@link Tsr}.
+     *
+     * @param dataType The data type of the data represented by {@link Tsr} instance created by this method.
+     * @param device The device on which the tensor will be stored.
+     * @param shape An immutable tuple of axis sizes describing the dimensionality of the {@link Tsr} created by this method.
+     * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
+     * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
+     */
+    static <V extends N, N> Tsr<V> of( DataType<V> dataType, Device<N> device, Shape shape, Object data ) {
+        return new TsrImpl<>( NDConstructor.of(shape), device, dataType, data );
+    }
 
     /**
      *  This factory method a raw tensor constructor which will not perform any type checking
@@ -1709,7 +1739,10 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Device<V> getDevice() {
         Device device = this.get( Device.class );
         if ( device == null )
-            return (Device<V>) CPU.get();
+            if ( !this.isDeleted() && mut().getData() != null )
+                return mut().getData().owner();
+            else
+                return (Device<V>) CPU.get();
         else
             return device;
     }
@@ -2047,9 +2080,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> dot( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform dot operation when second operand is 'null'!");
-        if ( this.rank() != 2 && other.rank() != 2 )
-            throw new IllegalStateException("Not yet implemented!"); // This is not yet available in the backend!
-        return this.matMul( other );
+        return Neureka.get().backend().getAutogradFunction().dot().call( this, other );
     }
 
     /**
@@ -2718,6 +2749,16 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...
         return slice().detached();
     }
+
+    /**
+     *  This is almost identical to the {@link Tsr#deepCopy()} method except that
+     *  the returned tensor will have autograd support, meaning that the cloning
+     *  will be part of the autograd computation graph, and backpropagation
+     *  will traverse the cloned tensor as well.
+     *
+     * @return A deep clone of this tensor with autograd support.
+     */
+    Tsr<V> deepClone();
 
     /**
      * @return A shallow copy of this tensor with autograd support.

@@ -359,7 +359,7 @@ public final class NdaAsString
         int trim = ( size - max );
         size = ( trim > 0 ? max : size );
         for ( int i = 0; i < size; i++ ) {
-            String vStr = getter.stringify( ( _tensor.isVirtual() ) ? 0 : _tensor.indexOfIndex( i ) );
+            String vStr = getter.stringify( _tensor.isVirtual() ? 0 : _tensor.indexOfIndex( i ) );
             _$( vStr );
             if ( i < size - 1 ) _$( ", " );
             else if ( trim > 0 ) _$( ", ... + " )._$( trim )._$( " more" );

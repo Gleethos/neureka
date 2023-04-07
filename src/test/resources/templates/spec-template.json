@@ -137,7 +137,7 @@ def strCode = { it == null || it.isEmpty() ? "" : (it.size() == 1 ? ('"'+simpleE
 
 
 println("Generating json for '"+utils.getSpecClassName( data )+"' now!")
-
+try {
 def stats = utils.stats( data )
 def subjects = utils.specAnnotation( data, spock.lang.Subject )?.value()
 if ( subjects == null ) subjects = []
@@ -166,7 +166,7 @@ def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
     }
     out << '},'
     out << '"see":['
-    if ( feature.attachments.size > 0 ) out << feature.attachments.collect({v->esc(v.url)}).collect({'"'+it+'"'}).join(",")
+    if ( feature.attachments.size() > 0 ) out << feature.attachments.collect({v->esc(v.url)}).collect({'"'+it+'"'}).join(",")
     out << '],'
   }
   def writeHeaders = { headers ->
@@ -257,3 +257,9 @@ def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
   ],
   "generator":"<%out << com.athaydes.spockframework.report.SpockReportExtension.PROJECT_URL%>"
 }
+<%
+} catch (Exception e) {
+  e.printStackTrace()
+  println("ERROR: Failed to generate json for '"+utils.getSpecClassName( data )+"'! Exception: "+e)
+}
+%>

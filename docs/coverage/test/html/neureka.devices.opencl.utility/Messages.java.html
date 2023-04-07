@@ -36,29 +36,29 @@ public final class Messages
 <span class="fc" id="L36">        Properties properties = new Properties();</span>
 <span class="fc" id="L37">        String osName = System.getProperty(&quot;os.name&quot;);</span>
 <span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if ( osName.toLowerCase().contains(&quot;linux&quot;) ) {</span>
-<span class="nc" id="L39">            String[] cmd = {&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;cat /etc/*-release&quot;};</span>
+<span class="fc" id="L39">            String[] cmd = {&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;cat /etc/*-release&quot;};</span>
             try {
-<span class="nc" id="L41">                Process p = Runtime.getRuntime().exec(cmd);</span>
-<span class="nc" id="L42">                BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));</span>
-<span class="nc" id="L43">                StringBuilder text = new StringBuilder();</span>
-<span class="nc" id="L44">                String line = &quot;&quot;;</span>
-<span class="nc bnc" id="L45" title="All 2 branches missed.">                while ( (line = bri.readLine() ) != null) {</span>
-<span class="nc" id="L46">                    text.append(line);</span>
-<span class="nc" id="L47">                    text.append(&quot;\n&quot;);</span>
+<span class="fc" id="L41">                Process p = Runtime.getRuntime().exec(cmd);</span>
+<span class="fc" id="L42">                BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));</span>
+<span class="fc" id="L43">                StringBuilder text = new StringBuilder();</span>
+<span class="fc" id="L44">                String line = &quot;&quot;;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                while ( (line = bri.readLine() ) != null) {</span>
+<span class="fc" id="L46">                    text.append(line);</span>
+<span class="fc" id="L47">                    text.append(&quot;\n&quot;);</span>
                 }
-<span class="nc" id="L49">                properties.load(new StringReader(text.toString()));</span>
+<span class="fc" id="L49">                properties.load(new StringReader(text.toString()));</span>
 
 <span class="nc" id="L51">            } catch (IOException e) {</span>
 <span class="nc" id="L52">                e.printStackTrace();</span>
-<span class="nc" id="L53">            }</span>
-<span class="nc" id="L54">        }</span>
+<span class="fc" id="L53">            }</span>
+<span class="fc" id="L54">        }</span>
         else // We just assume windows for now.
         {
             try {
-<span class="fc" id="L58">                properties.load(new StringReader(&quot;NAME=\&quot;Windows\&quot;&quot;));</span>
+<span class="nc" id="L58">                properties.load(new StringReader(&quot;NAME=\&quot;Windows\&quot;&quot;));</span>
 <span class="nc" id="L59">            } catch (IOException e) {</span>
 <span class="nc" id="L60">                e.printStackTrace();</span>
-<span class="fc" id="L61">            }</span>
+<span class="nc" id="L61">            }</span>
         }
         //---
 <span class="fc" id="L64">        String foundOS = properties.getProperty(&quot;NAME&quot;);</span>
@@ -67,9 +67,9 @@ public final class Messages
 
 <span class="fc" id="L68">        foundOS = foundOS.toLowerCase().replace(&quot;\&quot;&quot;, &quot;&quot;).trim();</span>
 <span class="pc bpc" id="L69" title="3 of 4 branches missed.">        switch ( foundOS ) {</span>
-<span class="nc" id="L70">            case &quot;ubuntu&quot;:  return Tips.UBUNTU;</span>
+<span class="fc" id="L70">            case &quot;ubuntu&quot;:  return Tips.UBUNTU;</span>
 <span class="nc" id="L71">            case &quot;fedora&quot;:  return Tips.FEDORA;</span>
-<span class="fc" id="L72">            case &quot;windows&quot;: return Tips.WINDOWS;</span>
+<span class="nc" id="L72">            case &quot;windows&quot;: return Tips.WINDOWS;</span>
         }
 <span class="nc" id="L74">        return Tips.UNKNOWN;</span>
     }
@@ -102,8 +102,8 @@ public final class Messages
 
         public String bootstrapTip() {
 <span class="pc bpc" id="L104" title="1 of 2 branches missed.">            return !HOW_TO_INSTALL_OPENCL.isEmpty()</span>
-<span class="nc" id="L105">                    ? (HOW_TO_INSTALL_OPENCL +&quot;&quot;+ HOW_TO_INSTALL_OPENCL_DRIVERS)</span>
-<span class="fc" id="L106">                    : (&quot;Make sure you have an OpenCL runtime as well as device drivers installed.\n&quot;);</span>
+<span class="fc" id="L105">                    ? (HOW_TO_INSTALL_OPENCL +&quot;&quot;+ HOW_TO_INSTALL_OPENCL_DRIVERS)</span>
+<span class="nc" id="L106">                    : (&quot;Make sure you have an OpenCL runtime as well as device drivers installed.\n&quot;);</span>
         }
     }
 

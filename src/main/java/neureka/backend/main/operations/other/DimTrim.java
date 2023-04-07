@@ -141,6 +141,15 @@ public class DimTrim extends AbstractOperation
             newSpread.add( tensor.getNDConf().spread( i ) );
             newOffset.add( tensor.getNDConf().offset( i ) );
         }
+        if ( newOffset.size() > 0 ) {
+            // We determine the prefix offset:
+            int prefixOffset = 0;
+            for (int i = 0; i < prefix; i++)
+                prefixOffset += tensor.getNDConf().translation(i) * tensor.getNDConf().offset(i);
+
+            // We adjust the offset of the first non-trimmed dimension:
+            newOffset.set(0, newOffset.get(0) + prefixOffset);
+        }
         tensor
             .mut()
             .setNDConf(

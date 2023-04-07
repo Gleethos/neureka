@@ -36,18 +36,19 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.Data;
 import neureka.MutateTsr;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.math.Function;
-import neureka.math.parsing.FunctionParser;
 import neureka.common.composition.Component;
 import neureka.common.utility.LogUtil;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
+import neureka.math.Function;
+import neureka.math.parsing.FunctionParser;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 
@@ -191,15 +192,15 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      */
     Collection<Tsr<V>> getTensors();
 
-    <T extends V> neureka.Data<T> allocate( DataType<T> dataType, NDConfiguration ndc );
+    <T extends V> Data<T> allocate( DataType<T> dataType, NDConfiguration ndc );
 
-    default <T extends V> neureka.Data<T> allocate( DataType<T> dataType, int size ) {
+    default <T extends V> Data<T> allocate( DataType<T> dataType, int size ) {
         return allocate( dataType, NDConstructor.of( size ).produceNDC( false ) );
     }
 
-    <T extends V> neureka.Data<T> allocateFromOne( DataType<T> dataType, NDConfiguration ndc, T initialValue );
+    <T extends V> Data<T> allocateFromOne( DataType<T> dataType, NDConfiguration ndc, T initialValue );
 
-    <T extends V> neureka.Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object jvmData );
+    <T extends V> Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object jvmData );
     /**
      *  This method tries to allow this device to produce an optimized {@link Operation}
      *  based on the provided function.
@@ -291,7 +292,15 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         <R> R in( Supplier<R> lambda );
     }
 
-    interface Data<V>
+    /**
+     *  Implementations of this represent the access to tensors stored on a device
+     *  in order to read from or write to said tensor. <br>
+     *  <b>Warning: This API exposes the true underlying data of a tensor
+     *  which does not take into account slice, permute or stride information...</b>
+     *
+     * @param <V> The type parameter of the tensor accessed by an instance of this.
+     */
+    interface Access<V>
     {
         /**
          *  Use this to write a single scalar item into the accessed tensor at
@@ -301,6 +310,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @return A {@link Device.Writer} implementation which expects the type of writing to be specified.
          */
         Writer write( V item );
+
         /**
          *  Use this to write data from an array into the accessed tensor.
          *
@@ -309,6 +319,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @return A {@link Device.Writer} implementation which expects the type of writing to be specified.
          */
         Writer writeFrom( Object array, int offset );
+
         /**
          *  Use this method to write data to the provided tensor, given that
          *  the tensor is already stored on this device!                         <br><br>
@@ -316,6 +327,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @param array The data inn the form of a primitive array.
          */
         default void writeFrom( Object array ) { this.writeFrom( array, 0 ).fully(); }
+
         /**
          *  Find a particular tensor item by providing its location.
          *
@@ -323,6 +335,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @return The tensor item found at the provided location.
          */
         V readAt( int index );
+
         /**
          *  Use this to read an array of items from the accessed tensor
          *  by specifying a start position of the chunk of data that should be read.
@@ -334,6 +347,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @return An instance of the provided array type class.
          */
         <A> A readArray( Class<A> arrayType, int start, int size );
+
         /**
          *  Use this to read the full data array of the accessed tensor.
          *
@@ -341,30 +355,19 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @return The full data array of the tensor accessed by this API.
          */
         Object readAll( boolean clone );
+
         /**
          * @return The size of the underlying data array of the accessed tensor.
          */
         int getDataSize();
 
-    }
-
-
-    /**
-     *  Implementations of this represent the access to tensors stored on a device
-     *  in order to read from or write to said tensor. <br>
-     *  <b>Warning: This API exposes the true underlying data of a tensor
-     *  which does not take into account slice, permute or stride information...</b>
-     *
-     * @param <V> The type parameter of the tensor accessed by an instance of this.
-     */
-    interface Access<V> extends Data<V>
-    {
         /**
          *  Use this to perform some custom memory cleanup for when the accessed {@link Tsr} gets garbage collected.   <br><br>
          *
          * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
          */
         void cleanup( Runnable action );
+
         /**
          *  This method automatically called within the {@link MutateTsr#setNDConf(NDConfiguration)} method
          *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
@@ -372,7 +375,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          */
         void updateNDConf();
 
-        neureka.Data actualize();
+        <T> Data<T> actualize();
+
+        <T> Data<T> virtualize();
     }
 
     /**

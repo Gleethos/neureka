@@ -37,8 +37,8 @@ package neureka.ndim.iterator;
 
 import neureka.Tsr;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.reshaped.Reshaped2DConfiguration;
-import neureka.ndim.config.types.reshaped.Reshaped3DConfiguration;
+import neureka.ndim.config.types.permuted.Permuted2DConfiguration;
+import neureka.ndim.config.types.permuted.Permuted3DConfiguration;
 import neureka.ndim.config.types.simple.Simple1DConfiguration;
 import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import neureka.ndim.config.types.simple.Simple3DConfiguration;
@@ -46,8 +46,8 @@ import neureka.ndim.config.types.sliced.Sliced1DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced2DConfiguration;
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration;
 import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
-import neureka.ndim.iterator.types.reshaped.Reshaped2DCIterator;
-import neureka.ndim.iterator.types.reshaped.Reshaped3DCIterator;
+import neureka.ndim.iterator.types.permuted.Permuted2DCIterator;
+import neureka.ndim.iterator.types.permuted.Permuted3DCIterator;
 import neureka.ndim.iterator.types.simple.Simple1DCIterator;
 import neureka.ndim.iterator.types.simple.Simple2DCIterator;
 import neureka.ndim.iterator.types.simple.Simple3DCIterator;
@@ -108,11 +108,11 @@ public interface NDIterator
 <span class="fc bfc" id="L108" title="All 2 branches covered.">        if ( ndc instanceof Sliced1DConfiguration   ) return new Sliced1DCIterator(     (Sliced1DConfiguration) ndc );</span>
 
 <span class="fc bfc" id="L110" title="All 2 branches covered.">        if ( ndc instanceof Simple2DConfiguration   ) return new Simple2DCIterator(     (Simple2DConfiguration) ndc );</span>
-<span class="fc bfc" id="L111" title="All 2 branches covered.">        if ( ndc instanceof Reshaped2DConfiguration ) return new Reshaped2DCIterator( (Reshaped2DConfiguration) ndc );</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if ( ndc instanceof Permuted2DConfiguration) return new Permuted2DCIterator( (Permuted2DConfiguration) ndc );</span>
 <span class="fc bfc" id="L112" title="All 2 branches covered.">        if ( ndc instanceof Sliced2DConfiguration   ) return new Sliced2DCIterator(     (Sliced2DConfiguration) ndc );</span>
 
 <span class="fc bfc" id="L114" title="All 2 branches covered.">        if ( ndc instanceof Simple3DConfiguration   ) return new Simple3DCIterator(      (Simple3DConfiguration) ndc );</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( ndc instanceof Reshaped3DConfiguration ) return new Reshaped3DCIterator(  (Reshaped3DConfiguration) ndc );</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( ndc instanceof Permuted3DConfiguration) return new Permuted3DCIterator(  (Permuted3DConfiguration) ndc );</span>
 <span class="fc bfc" id="L116" title="All 2 branches covered.">        if ( ndc instanceof Sliced3DConfiguration   ) return new Sliced3DCIterator(      (Sliced3DConfiguration) ndc );</span>
 
 <span class="fc bfc" id="L118" title="All 4 branches covered.">        if ( ndc instanceof VirtualNDConfiguration &amp;&amp; shouldNotBeVirtual == NonVirtual.FALSE )</span>

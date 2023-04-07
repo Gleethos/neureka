@@ -36,11 +36,8 @@ SOFTWARE.
 package neureka.dtype;
 
 
-import neureka.Data;
 import neureka.common.utility.LogUtil;
-import neureka.devices.host.CPU;
 import neureka.dtype.custom.*;
-import neureka.ndim.NDConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,29 +150,6 @@ public final class DataType<T>
             return ( (NumericType<?,?,?,?>) Objects.requireNonNull( getTypeClassInstance(NumericType.class) ) ).holderArrayType();
         else
             return Object[].class;
-    }
-
-    public <V> Data<V> virtualize( Data<V> data )
-    {
-        Object value = data == null ? null : data.getRef();
-        assert value != null;
-        Object newValue;
-        if ( _typeClass == F64.class )
-            newValue = ( ( (double[]) value ).length <= 1 ) ? value : new double[]{ ( (double[]) value )[ 0 ] };
-        else if ( _typeClass == F32.class )
-            newValue = ( ( (float[]) value ).length <= 1 ) ? value : new float[]{ ( (float[]) value )[ 0 ] };
-        else if ( _typeClass == I64.class )
-            newValue = ( ( (long[]) value ).length <= 1 ) ? value : new long[]{ ( (long[]) value )[ 0 ] };
-        else if ( _typeClass == I32.class )
-            newValue = ( ( (int[]) value ).length <= 1 ) ? value : new int[]{ ( (int[]) value )[ 0 ] };
-        else if ( _typeClass == I16.class )
-            newValue = ( ( (short[]) value ).length <= 1 ) ? value : new short[]{ ( (short[]) value )[ 0 ] };
-        else if ( _typeClass == I8.class )
-            newValue = ( ( (byte[]) value ).length <= 1 ) ? value : new byte[]{ ( (byte[]) value )[ 0 ] };
-        else
-            newValue = ( ( (Object[]) value ).length <= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };
-
-        return CPU.get().allocateFromAll( data.dataType(), NDConstructor.of(1).produceNDC(false), newValue);
     }
 
     public boolean equals(final Object o) {

@@ -39,13 +39,12 @@ neureka.backend.main.operations.operator.Modulo
 neureka.backend.main.operations.operator.Subtraction
 neureka.backend.main.operations.operator.Addition
 
-# convolution :
+# linear (convolution, mat mul...):
 neureka.backend.main.operations.linear.Convolution
 neureka.backend.main.operations.linear.XConvLeft
 neureka.backend.main.operations.linear.XConvRight
-
-# Matrix Multiplication :
 neureka.backend.main.operations.linear.MatMul
+neureka.backend.main.operations.linear.DotProduct
 
 # other :
 neureka.backend.main.operations.other.DimTrim

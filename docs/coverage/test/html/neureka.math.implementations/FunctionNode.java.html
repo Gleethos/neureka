@@ -3,7 +3,7 @@
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.main.operations.other.Reshape;
+import neureka.backend.main.operations.other.Permute;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.math.args.Args;
@@ -81,7 +81,7 @@ public final class FunctionNode implements Function
     public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... inputs )
     {
 <span class="fc bfc" id="L83" title="All 2 branches covered.">        if ( this.isDoingAD() )</span>
-<span class="fc" id="L84">            Reshape.makeFit( inputs, this.isDoingAD() ); // reshaping if needed</span>
+<span class="fc" id="L84">            Permute.makeFit( inputs, this.isDoingAD() ); // reshaping if needed</span>
 
 <span class="fc" id="L86">        ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call = ExecutionCall.of(inputs)</span>
 <span class="fc" id="L87">                                                                .andArgs(arguments.getAll(Arg.class))</span>

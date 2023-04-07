@@ -12,10 +12,10 @@ import java.util.function.Supplier;
  */
 public final class LazyRef<V>
 {
-    public static <V> LazyRef<V> of( Supplier<V> source ) { return new LazyRef<>(source); }
-
     private Supplier<V> _source;
     private V _variable = null;
+
+    public static <V> LazyRef<V> of( Supplier<V> source ) { return new LazyRef<>(source); }
 
     private LazyRef(Supplier<V> source) { _source = source; }
 

@@ -237,10 +237,11 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             @Override public DataType<V> dataType() {
                 return (DataType<V>) Neureka.get().settings().dtype().getDefaultDataType();
             }
+            @Override public Data<V> withNDConf(NDConfiguration ndc) { throw new UnsupportedOperationException(); }
         });
     }
 
-    TsrImpl( NDConstructor ndConstructor, DataType<?> dataType, Object value ) {
+    TsrImpl( NDConstructor ndConstructor, Device device, DataType<?> dataType, Object value ) {
         Object data = value;
         if ( List.class.isAssignableFrom( dataType.getItemTypeClass() ) )
             data = new Object[]{ value }; // Make an nd-array of lists possible"
@@ -254,7 +255,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
         }
-        constructFor(CPU.get(), ndConstructor).tryConstructing( dataType, data );
+        constructFor(device, ndConstructor).tryConstructing( dataType, data );
     }
 
     <V> TsrImpl( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
@@ -264,7 +265,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                     "The data type of the data is not compatible with the data type of the tensor!"
                 );
 
-        constructFor(CPU.get(), ndConstructor).constructTrusted( data );
+        constructFor(data.owner(), ndConstructor).constructTrusted( data );
     }
 
     /**
@@ -372,26 +373,15 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                 "Cannot set the virtual flag of a tensor which has not been constructed yet!"
             );
 
-        if ( isVirtual() != isVirtual ) {
-            // Currently, we avoid offloading the virtualization by restoring outsourced tensors into RAM...
-            Device<V> device = this.get( Device.class );
-            try {
-                // TODO: Fix this im-performant mess below:
-                if ( device != null ) device.restore( this );
-            } catch ( Exception exception ) {
-                _LOG.error(
-                    "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + ".",
-                    exception
-                );
-                throw exception;
-            }
+        if ( isVirtual() != isVirtual )
+        {
             if ( isVirtual )
                 _virtualize();
             else
                 _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            constructFor(CPU.get(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
+            constructFor(getDevice(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
             if ( isVirtual )
                 this.find( Relation.class )
                         .ifPresent( r ->
@@ -405,18 +395,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                     .map( relation -> ((Relation<V>)relation).getParent().orElse(null) )
                     .map( parent -> parent.get(Relation.class) )
                     .ifPresent( parentRelation -> parentRelation.removeChild( this ) );
-
-            try {
-                if ( device != null ) device.store( this );
-            } catch ( Exception exception ) {
-                String message =
-                        "Tensor could not be migrated back to host device after changing flag 'isVirtual' to "+isVirtual+".";
-                _LOG.error(
-                        message,
-                        exception
-                );
-                throw new IllegalStateException( message );
-            }
         }
         else if ( isVirtual ) _allocateVirtual(); //> Only a single value representing the rest.
         return this;
@@ -1112,11 +1090,21 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     /** {@inheritDoc} */
      @Override
     public TsrImpl<V> deepCopy() {
-        Function cloner = Neureka.get().backend().getFunction().idy();
+         return _clone( false );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Tsr<V> deepClone() {
+        return _clone( true );
+    }
+
+    private TsrImpl<V> _clone(boolean autograd) {
+        Function cloner = autograd ? Neureka.get().backend().getAutogradFunction().idy() : Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
         Tsr<V> clone = Tsr.like( this )
-                            .all( (V) Double.valueOf(0.0) );
+                .all( (V) Double.valueOf(0.0) );
 
         if ( clone.itemType() != this.itemType() )
             throw new IllegalStateException("Item type of clone must be the same as the item type of the original!");
@@ -1261,14 +1249,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             this.setIsVirtual( true );
             value = DataConverter.get().convert( value, this.itemType() );
             this.getMut().setDataAt( 0, (V) value );
-        } else if ( value.getClass().isArray() ) {
-            if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );
-            else {
-                // This usually happens when a tensor was just freed from a device.
-                getDevice().access(this).writeFrom(value);
-                if ( this.isOutsourced() ) setIsVirtual(false);
-            }
         }
+        else if ( value.getClass().isArray() )
+            getDevice().access(this).writeFrom( value );
+
         else success = false;
 
         if ( !success )
@@ -1298,11 +1282,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     @Override
     public Object getRawItems() {
         _guardGet("value object");
-        if ( this.isVirtual() )
-            return this.isOutsourced()
-                    ? getDevice().access( this.deepCopy().setIsVirtual( false ) ).readAll(false)
-                    : getDevice().access(this).actualize().getRef(); // Todo: make data access more consistent!
-        else if ( this.getNDConf().isSimple() && !this.isSlice() )
+        if ( this.getNDConf().isSimple() && !this.isSlice() )
             return getDevice().access(this).readAll(!this.isOutsourced());
         else
             return getDevice().access( this.deepCopy().setIsVirtual( false ) ).readAll(false);

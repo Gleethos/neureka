@@ -84,7 +84,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
 
     private Tsr<V> _get( Object value ) {
         LogUtil.nullArgCheck( value, "value", Object.class, "Cannot build tensor where value is null!" );
-        return Tsr.of( _dataType, _shape, value ).to( _device );
+        return Tsr.of( _dataType, _device, _shape, value );
     }
 
     /**

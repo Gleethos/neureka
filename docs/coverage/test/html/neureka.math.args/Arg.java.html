@@ -103,22 +103,27 @@ public abstract class Arg&lt;T&gt; implements Component&lt;Args&gt; {
     }
 
     public static class Shape extends Arg&lt;int[]&gt; {
-<span class="fc" id="L106">        public static Shape of( int[] arg ) { return new Shape( arg ); }</span>
+<span class="fc" id="L106">        public static Shape of( int... arg ) { return new Shape( arg ); }</span>
 <span class="fc" id="L107">        private Shape( int[] arg ) { super(arg); }</span>
     }
 
     public static class Offset extends Arg&lt;int[]&gt; {
-<span class="fc" id="L111">        public static Offset of( int[] arg ) { return new Offset( arg ); }</span>
+<span class="fc" id="L111">        public static Offset of( int... arg ) { return new Offset( arg ); }</span>
 <span class="fc" id="L112">        private Offset( int[] arg ) { super(arg); }</span>
     }
 
     public static class Stride extends Arg&lt;int[]&gt; {
-<span class="fc" id="L116">        public static Stride of( int[] arg ) { return new Stride( arg ); }</span>
+<span class="fc" id="L116">        public static Stride of( int... arg ) { return new Stride( arg ); }</span>
 <span class="fc" id="L117">        private Stride( int[] arg ) { super(arg); }</span>
     }
 
+    public static class Indices extends Arg&lt;int[]&gt; {
+<span class="fc" id="L121">        public static Indices of( int... arg ) { return new Indices( arg ); }</span>
+<span class="fc" id="L122">        private Indices( int[] arg ) { super(arg); }</span>
+    }
+
     @Override
-<span class="fc" id="L121">    public String toString() { return this.getClass().getSimpleName() + &quot;[&quot; + _value + &quot;]&quot;; }</span>
+<span class="fc" id="L126">    public String toString() { return this.getClass().getSimpleName() + &quot;[&quot; + _value + &quot;]&quot;; }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -159,6 +159,46 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
                 }
             };
         }
+        if ( typeClass == Character.class ) {
+            char value = call.input(Character.class, 1 + offset).at(0).get();
+            char[] t0_value = t0_drn.mut().getDataForWriting(char[].class);
+            char[] t1_value = src.mut().getDataAs(char[].class);
+            workload = ( i, end ) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator srcIdx = NDIterator.of(src);
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                srcIdx.set(src.indicesOfIndex(i));
+                while (i < end) // increment on drain accordingly:
+                {
+                    // setInto _value in drn:
+                    t0_value[t0Idx.i()] = f.invoke(t1_value[srcIdx.i()], value);
+                    // increment on drain:
+                    t0Idx.increment();
+                    srcIdx.increment();
+                    i++;
+                }
+            };
+        }
+        if ( typeClass == Boolean.class ) {
+            boolean value = call.input(Boolean.class, 1 + offset).at(0).get();
+            boolean[] t0_value = t0_drn.mut().getDataForWriting(boolean[].class);
+            boolean[] t1_value = src.mut().getDataAs(boolean[].class);
+            workload = ( i, end ) -> {
+                NDIterator t0Idx = NDIterator.of(t0_drn);
+                NDIterator srcIdx = NDIterator.of(src);
+                t0Idx.set(t0_drn.indicesOfIndex(i));
+                srcIdx.set(src.indicesOfIndex(i));
+                while (i < end) // increment on drain accordingly:
+                {
+                    // setInto _value in drn:
+                    t0_value[t0Idx.i()] = f.invoke(t1_value[srcIdx.i()], value);
+                    // increment on drain:
+                    t0Idx.increment();
+                    srcIdx.increment();
+                    i++;
+                }
+            };
+        }
         if ( t0_drn.mut().getData().getRef().getClass() == Object[].class ) {
             Object value = call.input( 1 + offset ).at(0).get();
             Object[] t0_value = t0_drn.mut().getDataForWriting(Object[].class);

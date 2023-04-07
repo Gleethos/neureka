@@ -2,9 +2,6 @@ package st
 
 import neureka.Tsr
 import neureka.optimization.Optimizer
-import neureka.optimization.implementations.ADAM
-import neureka.optimization.implementations.RMSProp
-import neureka.optimization.implementations.SGD
 import spock.lang.Specification
 import testutility.nns.SimpleFeedForwardNN
 

@@ -68,19 +68,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     private final static Logger _LOG = LoggerFactory.getLogger(ExecutionCall.class);
 
     /**
-     *  Use this factory method to build {@link ExecutionCall} instances in a readable fashion.
-     *
-     * @param inputs The input tensors for the {@link ExecutionCall}.
-     * @param <D> The device type parameter of the device which is targeted.
-     * @return A builder for an {@link ExecutionCall}.
-     */
-    public static <D extends Device<?>> Builder<D> of( Tsr<?>... inputs ) {
-        LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
-        return new Builder<D>(inputs);
-    }
-
-
-    /**
      *  This is the operation type which will be applied to this execution call.
      *  It contains multiple implementations, one of which might be applicable to this call...
      */
@@ -95,8 +82,21 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
      */
     private final LazyRef<Algorithm> _algorithm;
+
     private final LazyRef<AutoDiffMode> _autogradMode;
 
+
+    /**
+     *  Use this factory method to build {@link ExecutionCall} instances in a readable fashion.
+     *
+     * @param inputs The input tensors for the {@link ExecutionCall}.
+     * @param <D> The device type parameter of the device which is targeted.
+     * @return A builder for an {@link ExecutionCall}.
+     */
+    public static <D extends Device<?>> Builder<D> of( Tsr<?>... inputs ) {
+        LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
+        return new Builder<D>(inputs);
+    }
 
     private ExecutionCall(
             D device,
@@ -161,7 +161,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );
     }
 
-    public ExecutionCall<D> withInputAt(int index, Tsr<?> replacement) {
+    public ExecutionCall<D> withInputAt( int index, Tsr<?> replacement ) {
         List<Tsr<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
         inputs.set(index, replacement);
         return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );

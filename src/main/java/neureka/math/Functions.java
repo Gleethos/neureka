@@ -27,6 +27,7 @@ public class Functions {
     private final Function _modAssign;
     private final Function _neg;
 
+    private final Function _dot;
     private final Function _matMul;
     private final Function _transpose2D;
     private final Function _random;
@@ -79,12 +80,13 @@ public class Functions {
         _mod = Function.of( "(I[ 0 ]%I[ 1 ])",                 doingAD );
         _modAssign = Function.of( "I[ 0 ]<-(I[ 0 ]%I[ 1 ])",   doingAD );
         _neg = Function.of( "(-1*I[ 0 ])",                     doingAD );
+        _dot = Function.of("dot(I[0], I[1])",                  doingAD );
         _matMul = Function.of("I[0] @ I[1]",                   doingAD );
         _transpose2D = Function.of("[1, 0]:(I[0])",            doingAD );
         _random = Function.of("random(I[0])",                  doingAD );
         _tanh = Function.of( "tanh(I[0])",                     doingAD );
         _fastTanh = Function.of( "fast_tanh(I[0])",            doingAD );
-        _softsign = Function.of( "softsign(I[0])",            doingAD );
+        _softsign = Function.of( "softsign(I[0])",             doingAD );
         _sigmoid = Function.of( "sig(I[0])",                   doingAD );
         _gaus = Function.of("gaus(I[0])",                      doingAD );
         _fastGaus = Function.of("fast_gaus(I[0])",             doingAD );
@@ -193,6 +195,10 @@ public class Functions {
     public final Function getMatMul() { return _matMul; }
 
     public final Function matMul() { return _matMul; }
+
+    public final Function getDot() { return _dot; }
+
+    public final Function dot() { return _dot; }
 
     public final Function getTranspose2D() { return _transpose2D; }
 

@@ -1,6 +1,6 @@
 package ut.backend.core
 
-import neureka.backend.main.operations.linear.CPUMatMul
+import neureka.backend.main.implementations.matmul.CPUMatMul
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
