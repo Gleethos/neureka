@@ -4,7 +4,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.math.Function;
 import neureka.optimization.Optimizer;
-import neureka.optimization.implementations.ADAM;
 
 public class SimpleFeedForwardNN
 {

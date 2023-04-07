@@ -24,7 +24,14 @@ import java.util.stream.Collectors;
  */
 public class Call<D>
 {
-    public static <V, T extends Device<V>> Call.Builder<V,T> to( T device ) { return new Builder<V,T>( device ); }
+    /**
+     *  This field references the device on which this ExecutionCall should be executed.
+     */
+    protected final D _device;
+    /**
+     *  Meta arguments which are usually specific to certain operations.
+     */
+    protected final Args _arguments = new Args();
 
     /**
      *  The tensor arguments from which an operation will either
@@ -34,14 +41,9 @@ public class Call<D>
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
     protected final Tsr<?>[] _inputs;
-    /**
-     *  This field references the device on which this ExecutionCall should be executed.
-     */
-    protected final D _device;
-    /**
-     *  Meta arguments which are usually specific to certain operations.
-     */
-    protected final Args _arguments = new Args();
+
+
+    public static <V, T extends Device<V>> Call.Builder<V,T> to( T device ) { return new Builder<V,T>( device ); }
 
 
     protected Call( Tsr<?>[] tensors, D device, List<Arg> arguments ) {

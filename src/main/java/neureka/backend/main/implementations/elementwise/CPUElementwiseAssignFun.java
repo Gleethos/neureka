@@ -6,8 +6,6 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.devices.host.CPU;
 import neureka.ndim.NDimensional;
 
-import java.util.Arrays;
-
 public class CPUElementwiseAssignFun extends CPUElementwiseFunction
 {
     public CPUElementwiseAssignFun() { super(ScalarFun.IDENTITY); }
