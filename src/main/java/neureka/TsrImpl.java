@@ -373,19 +373,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                 "Cannot set the virtual flag of a tensor which has not been constructed yet!"
             );
 
-        if ( isVirtual() != isVirtual ) {
-            // Currently, we avoid offloading the virtualization by restoring outsourced tensors into RAM...
-            Device<V> device = this.get( Device.class );
-            try {
-                // TODO: Fix this im-performant mess below:
-                if ( device != null ) device.restore( this );
-            } catch ( Exception exception ) {
-                _LOG.error(
-                    "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + ".",
-                    exception
-                );
-                throw exception;
-            }
+        if ( isVirtual() != isVirtual )
+        {
             if ( isVirtual )
                 _virtualize();
             else
@@ -406,18 +395,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                     .map( relation -> ((Relation<V>)relation).getParent().orElse(null) )
                     .map( parent -> parent.get(Relation.class) )
                     .ifPresent( parentRelation -> parentRelation.removeChild( this ) );
-
-            try {
-                if ( device != null ) device.store( this );
-            } catch ( Exception exception ) {
-                String message =
-                        "Tensor could not be migrated back to host device after changing flag 'isVirtual' to "+isVirtual+".";
-                _LOG.error(
-                        message,
-                        exception
-                );
-                throw new IllegalStateException( message );
-            }
         }
         else if ( isVirtual ) _allocateVirtual(); //> Only a single value representing the rest.
         return this;

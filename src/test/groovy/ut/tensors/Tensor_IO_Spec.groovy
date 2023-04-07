@@ -168,6 +168,12 @@ class Tensor_IO_Spec extends Specification
             'CPU'  | Double
             'CPU'  | Short
             'CPU'  | Float
+
+            'GPU'  | Byte
+            'GPU'  | Integer
+            'GPU'  | Long
+            'GPU'  | Double
+            'GPU'  | Short
             'GPU'  | Float
     }
 

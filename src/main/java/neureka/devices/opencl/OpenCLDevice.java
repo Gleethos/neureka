@@ -527,7 +527,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private cl_tsr<Number, Number> _storeNew( NDConfiguration ndc, JVMData jvmData, boolean allocateTargetSize ) {
         cl_tsr.cl_config config = _writeNDConfig( ndc );
-        cl_tsr.cl_value newVal = new cl_tsr.cl_value((int) jvmData.getLength());
+        cl_tsr.cl_value newVal = new cl_tsr.cl_value((int) (allocateTargetSize ? jvmData.getTargetLength() : jvmData.getLength()));
         cl_tsr<Number, Number> newClt = new cl_tsr<>(newVal, jvmData.getType(), config);
         _store( jvmData, newClt, allocateTargetSize );
         return newClt;
