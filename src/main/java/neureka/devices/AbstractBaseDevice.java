@@ -34,6 +34,7 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.Data;
 import neureka.Tsr;
 import neureka.common.utility.LogUtil;
 import neureka.dtype.DataType;
@@ -72,7 +73,7 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
     @Override
     public Spliterator<Tsr<V>> spliterator() { return getTensors().spliterator(); }
 
-    protected abstract static class DeviceData<T> implements neureka.Data<T>
+    protected abstract static class DeviceData<T> implements Data<T>
     {
         protected final Device<?> _owner;
         protected final Object _dataRef;
@@ -93,7 +94,7 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
         @Override public final Device<T> owner() { return (Device<T>) _owner; }
         @Override public final Object getRef() { return _dataRef; }
         @Override public final DataType<T> dataType() { return _dataType; }
-        @Override public neureka.Data<T> withNDConf(NDConfiguration ndc) { return this; }
+        @Override public       Data<T> withNDConf(NDConfiguration ndc) { return this; }
     }
 
 }

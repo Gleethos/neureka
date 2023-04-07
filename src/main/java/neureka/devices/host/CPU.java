@@ -3,7 +3,6 @@ package neureka.devices.host;
 import neureka.Data;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
-import neureka.math.Function;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractDevice;
@@ -13,6 +12,7 @@ import neureka.devices.host.concurrent.WorkScheduler;
 import neureka.devices.host.machine.ConcreteMachine;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
+import neureka.math.Function;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
@@ -76,18 +76,7 @@ public class CPU extends AbstractDevice<Object>
      * @return A parallel range based execution API running on the JVM.
      */
     public JVMExecutor getExecutor() { return _executor; }
-
-
-    private <T> neureka.Data<T> _dataArrayOf( Object data, DataType<T> dataType ) {
-        assert !(data instanceof neureka.Data);
-        return new DeviceData<T>( this, data, dataType ) {
-            @Override
-            public neureka.Data<T> withNDConf(NDConfiguration ndc) {
-                return this;
-            }
-        };
-    }
-
+    
     @Override
     protected boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation operation ) { return true; }
 
@@ -258,7 +247,7 @@ public class CPU extends AbstractDevice<Object>
         Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getRef();
         if ( data == null ) {
             DataType<?> dataType = tensor.getDataType() != null ? tensor.getDataType() : _dataTypeOf(array);
-            tensor.getMut().setData( _dataArrayOf( array, (DataType<T>) dataType) );
+            tensor.getMut().setData( new CPUData<>( this, array, (DataType<T>) dataType) );
             return;
         }
         Class<?> arrayType = data.getClass();
@@ -303,10 +292,10 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T> neureka.Data<T> allocateFromOne(DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
+    public <T> Data<T> allocateFromOne(DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
         int size = ndc instanceof VirtualNDConfiguration ? 1 : ndc.size();
         Class<?> type = dataType.getItemTypeClass();
-        neureka.Data<T> array = allocate( dataType, size );
+        Data<T> array = allocate( dataType, size );
         Object data = array.getRef();
         if      ( type == Double   .class ) Arrays.fill((double[])  data, (Double)   initialValue);
         else if ( type == Float    .class ) Arrays.fill((float[])   data, (Float)    initialValue);
@@ -321,10 +310,10 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T> neureka.Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object jvmData )
+    public <T> Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object jvmData )
     {
         int desiredSize = ndc.size();
-        neureka.Data data = _dataArrayOf(jvmData, (DataType<Object>) (dataType != null ? dataType : _dataTypeOf(jvmData)));
+        Data data = new CPUData<>( this, jvmData, (DataType<Object>) (dataType != null ? dataType : _dataTypeOf(jvmData)));
         if ( jvmData instanceof int[] ) {
             int[] array = (int[]) jvmData;
             if ( desiredSize != array.length ) {
@@ -393,7 +382,7 @@ public class CPU extends AbstractDevice<Object>
             throw new IllegalArgumentException("Array type '"+jvmData.getClass().getSimpleName()+"' not supported!");
     }
 
-    public neureka.Data<Object> allocate( Object data ) {
+    public Data<Object> allocate( Object data ) {
         int size;
         if ( data instanceof Object[] ) {
             size = ( (Object[]) data ).length;
@@ -417,7 +406,7 @@ public class CPU extends AbstractDevice<Object>
         else
             throw new IllegalArgumentException( "Unsupported data type: " + data.getClass() );
 
-        neureka.Data dataArray = CPU.get().allocateFromAll( _dataTypeOf(data), NDConstructor.of(size).produceNDC(false), data );
+        Data dataArray = CPU.get().allocateFromAll( _dataTypeOf(data), NDConstructor.of(size).produceNDC(false), data );
         if ( dataArray.getRef() != data )
             throw new IllegalStateException( "CPU seems to have reallocated some already valid data unnecessarily! This is most likely a bug." );
 
@@ -425,8 +414,8 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final neureka.Data<Object> _actualize( Tsr<?> tensor ) {
-        neureka.Data<Object> data = (neureka.Data<Object>) tensor.getMut().getData();
+    protected final Data<Object> _actualize( Tsr<?> tensor ) {
+        Data<Object> data = (Data<Object>) tensor.getMut().getData();
         Object value = data.getRef();
         DataType<?> dataType = tensor.getDataType();
         int size = tensor.size();
@@ -469,13 +458,13 @@ public class CPU extends AbstractDevice<Object>
             newValue = new Object[ size ];
             if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
         }
-        return _dataArrayOf(newValue, (DataType<Object>) dataType);
+        return new CPUData<>( this, newValue, (DataType<Object>) dataType);
     }
 
     @Override
-    protected final neureka.Data<Object> _virtualize( Tsr<?> tensor ) {
+    protected final Data<Object> _virtualize( Tsr<?> tensor ) {
         Class<?> typeClass = tensor.getDataType().getRepresentativeType();
-        neureka.Data data = tensor.getMut().getData();
+        Data data = tensor.getMut().getData();
         Object value = data == null ? null : data.getRef();
         assert value != null;
         Object newValue;
@@ -526,7 +515,7 @@ public class CPU extends AbstractDevice<Object>
     public Collection<Tsr<Object>> getTensors() { return _tensors; }
 
     @Override
-    public <T> neureka.Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
+    public <T> Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
         int size;
         if ( ndc instanceof VirtualNDConfiguration )
             size = 1;
@@ -535,23 +524,23 @@ public class CPU extends AbstractDevice<Object>
 
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
-            return _dataArrayOf(new double[ size ], dataType);
+            return new CPUData<>( this, new double[ size ], dataType );
         else if ( typeClass == F32.class )
-            return _dataArrayOf(new float[ size ], dataType);
+            return new CPUData<>( this, new float[ size ], dataType );
         else if ( typeClass == I32.class || typeClass == UI32.class )
-            return _dataArrayOf(new int[ size ], dataType);
+            return new CPUData<>( this, new int[ size ], dataType );
         else if ( typeClass == I16.class || typeClass == UI16.class )
-            return _dataArrayOf(new short[ size ], dataType);
+            return new CPUData<>( this, new short[ size ], dataType );
         else if ( typeClass == I8.class || typeClass == UI8.class )
-            return _dataArrayOf(new byte[ size ], dataType);
+            return new CPUData<>( this, new byte[ size ], dataType );
         else if ( typeClass == I64.class || typeClass == UI64.class )
-            return _dataArrayOf(new long[ size ], dataType);
+            return new CPUData<>( this, new long[ size ], dataType );
         else if ( dataType.getItemTypeClass() == Boolean.class )
-            return _dataArrayOf(new boolean[ size ], dataType);
+            return new CPUData<>( this, new boolean[ size ], dataType );
         else if ( dataType.getItemTypeClass() == Character.class )
-            return _dataArrayOf(new char[ size ], dataType);
+            return new CPUData<>( this, new char[ size ], dataType );
         else
-            return _dataArrayOf(new Object[ size ], dataType);
+            return new CPUData<>( this, new Object[ size ], dataType );
     }
 
     @Override
@@ -733,7 +722,12 @@ public class CPU extends AbstractDevice<Object>
                     .threshold( PARALLELIZATION_THRESHOLD )
                     .divide( first, limit, rangeWorkload);
         }
-
+    }
+    
+    private static class CPUData<T> extends DeviceData<T> {
+        public CPUData(Device<?> owner, Object ref, DataType<T> dataType) {
+            super(owner, ref, dataType);
+        }
     }
 
 }

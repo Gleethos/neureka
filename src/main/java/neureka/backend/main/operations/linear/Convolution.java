@@ -76,7 +76,7 @@ public class Convolution extends AbstractOperation
                         else if ( derivative.getItemType() == Byte.class      ) zero = (byte) 0;
                         else {
                             zero = null;
-                            throw new RuntimeException("Unsupported item type for convolution derivative: " + derivative.getItemType());
+                            throw new IllegalArgumentException("Unsupported item type for convolution derivative: " + derivative.getItemType());
                         }
                         // This is because it will be the shape of the output to the de-convolution!
                         return ADAction.of( target ->

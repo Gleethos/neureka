@@ -36,11 +36,8 @@ SOFTWARE.
 package neureka.dtype;
 
 
-import neureka.Data;
 import neureka.common.utility.LogUtil;
-import neureka.devices.host.CPU;
 import neureka.dtype.custom.*;
-import neureka.ndim.NDConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

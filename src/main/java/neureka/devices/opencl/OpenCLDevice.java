@@ -48,6 +48,7 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
+import neureka.Data;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.*;
@@ -503,7 +504,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null
             );
 
-        neureka.Data<Number> data = _dataArrayOf(newClt, (DataType<Number>) _dataTypeOf(newClt));
+        Data<Number> data = _dataArrayOf(newClt, (DataType<Number>) _dataTypeOf(newClt));
 
         _tensors.add( tensor );
 
@@ -657,28 +658,28 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number>  neureka.Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
+    public <T extends Number> Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
         JVMData jvmData = JVMData.of( dataType.getItemTypeClass(), ndc.size() );
         cl_tsr<Number, Number> clt = _storeNew( ndc, jvmData );
-        return (neureka.Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
+        return (Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
     @Override
-    public <T extends Number>  neureka.Data<T> allocateFromOne( DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
+    public <T extends Number> Data<T> allocateFromOne( DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
         JVMData jvmData = JVMData.of( initialValue, ndc.size(), false, true );
         cl_tsr<Number, Number> clt = _storeNew( ndc, jvmData );
-        return (neureka.Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
+        return (Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
     @Override
-    public <T extends Number> neureka.Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object data ) {
+    public <T extends Number> Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object data ) {
         JVMData jvmData = JVMData.of( data );
         cl_tsr<Number, Number> clt = _storeNew( ndc, jvmData );
-        return (neureka.Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
+        return (Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
     @Override
-    protected neureka.Data<Number> _actualize( Tsr<?> tensor ) {
+    protected Data<Number> _actualize( Tsr<?> tensor ) {
         NDConfiguration ndc = tensor.getNDConf();
         Object initialValue = tensor.item();
         cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
@@ -689,7 +690,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected neureka.Data<Number> _virtualize( Tsr<?> tensor ) {
+    protected Data<Number> _virtualize( Tsr<?> tensor ) {
         NDConfiguration ndc = tensor.getNDConf();
         Object initialValue = tensor.item();
         cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
@@ -1074,19 +1075,19 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
 
-    private <T extends Number> neureka.Data<T> _dataArrayOf( Object data, DataType<T> dataType ) {
-        return (neureka.Data<T>) new CLData(this, data, (DataType<Number>) dataType);
+    private <T extends Number> Data<T> _dataArrayOf( Object data, DataType<T> dataType ) {
+        return (Data<T>) new CLData(this, data, (DataType<Number>) dataType);
     }
 
     private static class CLData extends DeviceData<Number> {
 
         public CLData(Device<Number> owner, Object dataRef, DataType<Number> dataType) {
             super(owner, dataRef, dataType);
-            assert !(dataRef instanceof neureka.Data);
+            assert !(dataRef instanceof Data);
         }
 
         @Override
-        public neureka.Data<Number> withNDConf(NDConfiguration ndc) {
+        public Data<Number> withNDConf(NDConfiguration ndc) {
             // We create a new cl_tsr object with the same data but a different ND-configuration:
             cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
             cl_tsr.cl_config config = ((OpenCLDevice)_owner)._writeNDConfig( ndc );

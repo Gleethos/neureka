@@ -34,6 +34,7 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.Data;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
@@ -75,7 +76,13 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      */
     protected abstract boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation type );
 
-
+    /**
+     *  A {@link Device} is a component of a tensor. This method is used to inform the device
+     *  that the device is being added, removed or replaced (from the tensor).
+     *
+     * @param changeRequest An {@link OwnerChangeRequest} implementation instance used to communicate the type of change, context information and the ability to execute the change directly.
+     * @return The truth value determining if the change should be executed.
+     */
     @Override
     public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
         Tsr<V> oldOwner = changeRequest.getOldOwner();
@@ -86,14 +93,15 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
                 Relation<V> relation = newOwner.get(Relation.class);
                 if ( relation.hasParent() ) { // Root needs to be found ! :
                     Tsr<V> root = relation.findRootTensor().orElseThrow(IllegalStateException::new);
-                    if (!this.has(root) || !root.isOutsourced())
+                    if ( !this.has(root) || !root.isOutsourced() )
                         throw new IllegalStateException("Data parent is not outsourced!");
                 }
             }
+
             Device<V> found = newOwner.getMut().getData().owner();
-            if ( found != null && found != this ) {
+
+            if ( found != null && found != this )
                 found.restore( newOwner );
-            }
         }
         return true;
     }
@@ -111,18 +119,18 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     @Override
     public Device<V> approve( ExecutionCall<? extends Device<?>> call )
     {
-        if ( !_approveExecutionOf( call.inputs(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {
+        if ( !_approveExecutionOf( call.inputs(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) )
             throw new IllegalArgumentException("Provided execution call has not been approved by this device.");
-        }
+
         return this;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T extends V> Storage<V> store( Tsr<T> tensor ) {
         tensor.set( (Component) this ); // This way we move the storing procedure to the update function!
         return this;
     }
-
 
     /**
      * This method checks if the passed tensor
@@ -134,11 +142,11 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public <T extends V> boolean has(Tsr<T> tensor) {
+    public <T extends V> boolean has( Tsr<T> tensor ) {
         return tensor.getMut().getData() != null && tensor.getMut().getData().owner() == this;
     }
 
-
+    /** {@inheritDoc} */
     @Override
     public <T extends V> Access<T> access( Tsr<T> tensor ) {
         return new Access<T>() {
@@ -160,8 +168,8 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public int getDataSize() { return _sizeOccupiedBy( tensor ); }
             @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
-            @Override public neureka.Data<V> actualize() { return _actualize( tensor ); }
-            @Override public neureka.Data virtualize() { return _virtualize( tensor ); }
+            @Override public Data<V> actualize() { return _actualize( tensor ); }
+            @Override public Data<V> virtualize() { return _virtualize( tensor ); }
         };
     }
 
@@ -208,9 +216,9 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
 
-    protected abstract neureka.Data<V> _actualize( Tsr<?> tensor );
+    protected abstract Data<V> _actualize( Tsr<?> tensor );
 
-    protected abstract neureka.Data<V> _virtualize( Tsr<?> tensor );
+    protected abstract Data<V> _virtualize( Tsr<?> tensor );
 
     protected abstract DataType<?> _dataTypeOf( Object rawData );
 
