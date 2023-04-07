@@ -195,7 +195,7 @@ test {
 
 jacoco {
     toolVersion = "0.8.9"
-    reportsDirectory.set(file("docs/coverage"))
+    reportsDir = file("docs/coverage")
 }
 
 jacocoTestReport {
