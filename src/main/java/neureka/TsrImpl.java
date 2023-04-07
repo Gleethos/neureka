@@ -1272,14 +1272,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             this.setIsVirtual( true );
             value = DataConverter.get().convert( value, this.itemType() );
             this.getMut().setDataAt( 0, (V) value );
-        } else if ( value.getClass().isArray() ) {
-            if ( this.isOutsourced() ) getDevice().access(this).writeFrom( value );
-            else {
-                // This usually happens when a tensor was just freed from a device.
-                getDevice().access(this).writeFrom(value);
-                if ( this.isOutsourced() ) setIsVirtual(false);
-            }
         }
+        else if ( value.getClass().isArray() )
+            getDevice().access(this).writeFrom( value );
+
         else success = false;
 
         if ( !success )
