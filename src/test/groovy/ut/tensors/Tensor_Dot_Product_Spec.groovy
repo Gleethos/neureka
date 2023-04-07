@@ -93,7 +93,7 @@ class Tensor_Dot_Product_Spec extends Specification
             var a = Tsr.of(Shape.of(8), 3f).to(device)
             var b = Tsr.of(Shape.of(8), 3f).to(device)
         expect : 'the tensors are virtual.'
-            a.isVirtual() // They are calars in disguise!
+            a.isVirtual() // They are scalars in disguise!
             b.isVirtual()
         when : 'we calculate the dot product of a and b.'
             var result = a.dot(b)
@@ -111,7 +111,7 @@ class Tensor_Dot_Product_Spec extends Specification
             var a = Tsr.of(Shape.of(8), 3f).to(device)
             var b = Tsr.of(Shape.of(8), new float[]{3f, 4f, -1f}).to(device)
         expect : 'the tensors are virtual.'
-            a.isVirtual() // They are calars in disguise!
+            a.isVirtual() // They are scalars in disguise!
             !b.isVirtual()
         when : 'we calculate the dot product of a and b.'
             var result = a.dot(b)

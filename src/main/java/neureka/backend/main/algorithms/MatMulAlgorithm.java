@@ -124,7 +124,7 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
      * @param call The execution call whose tensors ought to be cloned based on the complexity of their access patterns.
      */
     private static ExecutionCall<?> _autoClone( ExecutionCall<?> call ) {
-        for (int i = 0; i < call.arity(); i++ ) {
+        for ( int i = 0; i < call.arity(); i++ )
             if (
                     (!_isSimpleRowMajorMatrix( call.input( i ) ) && !_isSimpleColumnMajorMatrix( call.input( i ) ))
                             ||
@@ -138,7 +138,7 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
                     slice is being used for operations like this one...
                  */
             }
-        }
+
         return call;
     }
 
