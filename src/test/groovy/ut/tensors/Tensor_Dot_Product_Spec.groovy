@@ -13,7 +13,7 @@ import spock.lang.*
     
 ''')
 @Subject([Tsr])
-class Tensor_Dot_product_Spec extends Specification
+class Tensor_Dot_Product_Spec extends Specification
 {
     def 'The "dot" method calculates the dot product between vectors.'()
     {
@@ -120,6 +120,35 @@ class Tensor_Dot_product_Spec extends Specification
             result.items == [ 57f ]
         where :
             device << [ 'CPU', 'GPU' ]
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' }) // We need to assure that this system supports OpenCL!
+    def 'The dot product works across different types and devices.'(
+        String device, Object data1, Object data2, List expected
+    ) {
+        given : 'A pair of vector tensors which we move to the device!'
+            var a = Tsr.of(data1).to(device)
+            var b = Tsr.of(data2).to(device)
+        when : 'we calculate the dot product of a and b.'
+            var result = a.dot(b)
+        then : 'the result is a scalar.'
+            result.shape == Shape.of(1)
+            result.items == expected
+        where :
+            device | data1                       | data2                      | expected
+            'CPU'  | [ 8f, -4f, -1f ] as float[] | [ 1f, 2f, 4f ] as float[]  | [ 8f * 1f + -4f * 2f + -1f * 4f ]
+            'CPU'  | [ 42f ] as float[]          | [ 56f ] as float[]         | [ 42f * 56f ]
+            'CPU'  | [ 8d, -4d, -1d ] as double[]| [ 1d, 2d, 4d ] as double[] | [ 8d * 1d + -4d * 2d + -1d * 4d ]
+            'CPU'  | [ 2d, 3d, 4d ] as double[]  | [ 0d, 2d, 3d ] as double[] | [ 2d * 0d + 3d * 2d + 4d * 3d ]
+            'CPU'  | [ 1d, -4d ] as double[]     | [ 4d, 2d ] as double[]     | [ 1d * 4d + -4d * 2d ]
+            'CPU'  | [ 8, -4, -1 ] as int[]      | [ 1, 2, 4 ] as int[]       | [ 8 * 1 + -4 * 2 + -1 * 4 ]
+            'CPU'  | [ 42 ] as int[]             | [ 56 ] as int[]            | [ 42 * 56 ]
+            'CPU'  | [ 2, 3, 4 ] as long[]       | [ 0, 2, 3 ] as long[]      | [ 2 * 0 + 3 * 2 + 4 * 3 ]
+            'CPU'  | [ 1, -4 ] as long[]         | [ 4, 2 ] as long[]         | [ 1 * 4 + -4 * 2 ]
+            'CPU'  | [ 42 ] as long[]            | [ 56 ] as long[]           | [ 42 * 56 ]
+
+            'GPU'  | [ 8f, -4f, -1f ] as float[] | [ 1f, 2f, 4f ] as float[]  | [ 8f * 1f + -4f * 2f + -1f * 4f ]
+            'GPU'  | [ 42f ] as float[]          | [ 56f ] as float[]         | [ 42f * 56f ]
     }
 
 }
