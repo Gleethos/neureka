@@ -784,7 +784,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     protected <T extends Number> Object _readAll( Tsr<T> tensor, boolean clone ) {
         cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
-        return _readArray( tensor, float[].class, 0, clt.value.size );
+        return _readArray( tensor, tensor.getDataType().dataArrayType(), 0, clt.value.size );
     }
 
     private void _updateInternal(Tsr<Number> newOwner, Runnable migration) {
