@@ -7,6 +7,8 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Title
 
+import java.util.function.Predicate
+
 @Title("The Shape Tuple")
 @Narrative('''
     The `Shape` of an nd-array/tensor is in essence merely an immutable tuple of integers
@@ -82,6 +84,35 @@ class Shape_Spec extends Specification
         then : 'The new shape has the expected size and values!'
             newShape.size() == 1
             newShape.get(0) == 3
+    }
+
+    def 'Use the "any" or "every" method to check if a predicate holds for any or every value of the shape.'()
+    {
+        reportInfo """
+            The `Shape` class allows you to check if a condition holds for any or every value of the shape
+            in a functional way by simply passing a predicate to the "any" or "every" method.
+            This allows for much more readable code than using a for-loop.
+        """
+        given : 'We use the "of" method to create a shape from a list of integers.'
+            var shape = Shape.of( 2, 3, 4 )
+        when : 'We check if any value of the shape is greater than 3.'
+            var any = shape.any( (Predicate<Integer>){ it > 3 } )
+        then : 'The result is true.'
+            any == true
+        when : 'We check if every value of the shape is greater than 3.'
+            var every = shape.every( (Predicate<Integer>){ it > 3 } )
+        then : 'The result is false.'
+            every == false
+    }
+
+    def 'You can use the "count(Predicate)" method to count the number of values that satisfy a predicate.'()
+    {
+        given : 'We use the "of" method to create a shape from a list of integers.'
+            var shape = Shape.of( 2, 3, 4 )
+        when : 'We count the number of values that are greater than 3.'
+            var count = shape.count( (Predicate<Integer>){ it > 3 } )
+        then : 'The result is 1.'
+            count == 1
     }
 
 }
