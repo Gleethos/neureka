@@ -373,6 +373,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         void updateNDConf();
 
         neureka.Data actualize();
+
+        neureka.Data virtualize();
     }
 
     /**

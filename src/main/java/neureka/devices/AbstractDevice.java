@@ -38,11 +38,11 @@ import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.math.args.Arg;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.dtype.DataType;
 import neureka.framing.Relation;
+import neureka.math.args.Arg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,6 +161,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }
             @Override public void updateNDConf() { _updateNDConf( tensor ); }
             @Override public neureka.Data<V> actualize() { return _actualize( tensor ); }
+            @Override public neureka.Data virtualize() { return _virtualize( tensor ); }
         };
     }
 
@@ -208,6 +209,8 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
 
     protected abstract neureka.Data<V> _actualize( Tsr<?> tensor );
+
+    protected abstract neureka.Data<V> _virtualize( Tsr<?> tensor );
 
     protected abstract DataType<?> _dataTypeOf( Object rawData );
 

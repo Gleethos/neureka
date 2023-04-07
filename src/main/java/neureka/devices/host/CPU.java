@@ -473,6 +473,31 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
+    protected final neureka.Data<Object> _virtualize( Tsr<?> tensor ) {
+        Class<?> typeClass = tensor.getDataType().getRepresentativeType();
+        neureka.Data data = tensor.getMut().getData();
+        Object value = data == null ? null : data.getRef();
+        assert value != null;
+        Object newValue;
+        if ( typeClass == F64.class )
+            newValue = ( ( (double[]) value ).length <= 1 ) ? value : new double[]{ ( (double[]) value )[ 0 ] };
+        else if ( typeClass == F32.class )
+            newValue = ( ( (float[]) value ).length <= 1 ) ? value : new float[]{ ( (float[]) value )[ 0 ] };
+        else if ( typeClass == I64.class )
+            newValue = ( ( (long[]) value ).length <= 1 ) ? value : new long[]{ ( (long[]) value )[ 0 ] };
+        else if ( typeClass == I32.class )
+            newValue = ( ( (int[]) value ).length <= 1 ) ? value : new int[]{ ( (int[]) value )[ 0 ] };
+        else if ( typeClass == I16.class )
+            newValue = ( ( (short[]) value ).length <= 1 ) ? value : new short[]{ ( (short[]) value )[ 0 ] };
+        else if ( typeClass == I8.class )
+            newValue = ( ( (byte[]) value ).length <= 1 ) ? value : new byte[]{ ( (byte[]) value )[ 0 ] };
+        else
+            newValue = ( ( (Object[]) value ).length <= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };
+
+        return CPU.get().allocateFromAll( data.dataType(), NDConstructor.of(1).produceNDC(false), newValue);
+    }
+
+    @Override
     protected final DataType<?> _dataTypeOf(Object rawData) {
         LogUtil.nullArgCheck( rawData, "rawData", Object.class );
         if ( rawData instanceof double[] ) return DataType.of( F64.class );

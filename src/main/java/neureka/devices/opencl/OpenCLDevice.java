@@ -689,6 +689,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
+    protected neureka.Data<Number> _virtualize( Tsr<?> tensor ) {
+        NDConfiguration ndc = tensor.getNDConf();
+        Object initialValue = tensor.item();
+        cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
+        if ( clt == null ) throw new IllegalStateException("The tensor has no device component!");
+        JVMData jvmData = JVMData.of( initialValue, ndc.size(), false, true );
+        clt = _storeNew( ndc, jvmData, false );
+        return _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
+    }
+
+    @Override
     protected final DataType<?> _dataTypeOf( Object rawData ) {
         LogUtil.nullArgCheck( rawData, "rawData", Object.class );
         if ( rawData instanceof cl_tsr ) {
