@@ -20,11 +20,6 @@ class JVMData
     private final long _size;
 
     public static JVMData of( Class<?> type, int size ) {
-        return of( type, size, false );
-    }
-
-
-    public static JVMData of( Class<?> type, int size, boolean virtual ) {
         Object data = null;
         if      ( type == Float.class   ) data = new float[size];
         else if ( type == Double.class  ) data = new double[size];
@@ -56,90 +51,97 @@ class JVMData
         return new JVMData( data, start, size, false, false );
     }
 
-    private JVMData( Object data, int start, int size, boolean convertToFloat, boolean virtual ) {
+    private JVMData( Object data, int start, int size, boolean convertToFloat, boolean allowVirtual ) {
         _size = size;
-        _data = _preprocess( data, start, size, convertToFloat, virtual );
+        _data = _preprocess( data, start, size, convertToFloat, allowVirtual );
     }
 
     Object getArray() { return _data; }
 
-    private Object _preprocess( Object data, int start, int size, boolean convertToFloat, boolean virtual )
+    private Object _preprocess( Object data, int start, int targetSize, boolean convertToFloat, boolean allowVirtual )
     {
-        size = virtual ? lengthOf(data) : size;
+        int size = allowVirtual ? lengthOf(data) : targetSize;
 
-        if ( data instanceof Number ) {
-            if ( data instanceof Float ) {
-                float[] newData = new float[size];
-                Arrays.fill( newData, ((Float) (data)) );
-                data = newData;
-            } else if ( data instanceof Double ) {
-                double[] newData = new double[size];
-                Arrays.fill( newData, ((Double) (data)) );
-                data = newData;
-            } else if ( data instanceof Integer ) {
-                int[] newData = new int[size];
-                Arrays.fill( newData, ((Integer) (data)) );
-                data = newData;
-            } else if ( data instanceof Short ) {
-                short[] newData = new short[size];
-                Arrays.fill( newData, ((Short) (data)) );
-                data = newData;
-            } else if ( data instanceof Byte ) {
-                byte[] newData = new byte[size];
-                Arrays.fill( newData, ((Byte) (data)) );
-                data = newData;
-            } else if ( data instanceof Long ) {
-                long[] newData = new long[size];
-                Arrays.fill( newData, ((Long) (data)) );
-                data = newData;
-            }
-            else throw new IllegalArgumentException("Unsupported data type: "+data.getClass());
-        }
+        if ( data instanceof Number )
+            data = _allocArrayFromNumber( (Number) data, size );
 
         if ( convertToFloat )
             data = DataConverter.get().convert( data, float[].class );
 
+        return _fillArray( data, start, size ); // Make sure the array is of the correct size!
+    }
+
+    private static Object _allocArrayFromNumber( Number n, int size ) {
+        if ( n instanceof Float ) {
+            float[] newData = new float[size];
+            Arrays.fill( newData, ((Float) (n)) );
+            return newData;
+        } else if ( n instanceof Double ) {
+            double[] newData = new double[size];
+            Arrays.fill( newData, ((Double) (n)) );
+            return newData;
+        } else if ( n instanceof Integer ) {
+            int[] newData = new int[size];
+            Arrays.fill( newData, ((Integer) (n)) );
+            return newData;
+        } else if ( n instanceof Short ) {
+            short[] newData = new short[size];
+            Arrays.fill( newData, ((Short) (n)) );
+            return newData;
+        } else if ( n instanceof Byte ) {
+            byte[] newData = new byte[size];
+            Arrays.fill( newData, ((Byte) (n)) );
+            return newData;
+        } else if ( n instanceof Long ) {
+            long[] newData = new long[size];
+            Arrays.fill( newData, ((Long) (n)) );
+            return newData;
+        }
+        else throw new IllegalArgumentException("Unsupported data type: "+n.getClass());
+    }
+
+    private static Object _fillArray( Object data, int start, int size ) {
         if ( data instanceof float[] ) {
             float[] array = (float[]) data;
             if ( start > 0 || size < array.length ) {
                 float[] newData = new float[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
-                data = newData;
+                return newData;
             }
         } else if ( data instanceof double[] ) {
             double[] array = (double[]) data;
             if ( start > 0 || size < array.length ) {
                 double[] newData = new double[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
-                data = newData;
+                return newData;
             }
         } else if ( data instanceof int[] ) {
             int[] array = (int[]) data;
             if ( start > 0 || size < array.length ) {
                 int[] newData = new int[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
-                data = newData;
+                return newData;
             }
         } else if ( data instanceof long[] ) {
             long[] array = (long[]) data;
             if ( start > 0 || size < array.length ) {
                 long[] newData = new long[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
-                data = newData;
+                return newData;
             }
         } else if ( data instanceof short[] ) {
             short[] array = (short[]) data;
             if ( start > 0 || size < array.length ) {
                 short[] newData = new short[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
-                data = newData;
+                return newData;
             }
         } else if ( data instanceof byte[] ) {
             byte[] array = (byte[]) data;
             if ( start > 0 || size < array.length ) {
                 byte[] newData = new byte[size];
                 System.arraycopy(array, start, newData, 0, newData.length);
-                data = newData;
+                return newData;
             }
         }
         else throw new IllegalArgumentException("Unsupported data type: "+data.getClass().getName());
