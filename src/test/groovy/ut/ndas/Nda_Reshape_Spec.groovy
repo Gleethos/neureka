@@ -30,7 +30,7 @@ class Nda_Reshape_Spec extends Specification
     def 'We can create a new Nda instance with a different shape.'()
     {
         given : 'We create a new Nda instance with a shape of [3, 2].'
-            Nda<?> nda = Nda.of( 1..6 ).withShape( 3, 2 )
+            Nda<?> nda = Nda.of( 1..6 ).reshape( 3, 2 )
         expect : 'The new instance will have the expected shape.'
             nda.shape() == [3, 2]
         and : 'The new instance will have the expected items.'

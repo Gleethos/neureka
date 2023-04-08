@@ -33,7 +33,7 @@ class Nda_Permute_Spec extends Specification
             The size of the returned nd-array remains the same as that of the original.
         """
         given : 'A nd-array with a shape of [7, 2, 4, 3]'
-            Nda t = Nda.of(-12..11).withShape(7, 2, 4, 3)
+            Nda t = Nda.of(-12..11).reshape(7, 2, 4, 3)
 
         when : 'We create a new permuted nd-array with the shape of [4, 3, 7, 2] and store it as `t2`.'
             var t2 = t.permute( 2, 3, 0, 1 )
@@ -50,7 +50,7 @@ class Nda_Permute_Spec extends Specification
             It is based on the algorithm of the `permute` method.
         """
         given : 'A nd-array with a shape of [2, 1, 4, 5]'
-            Nda t = Nda.of(-12..11).withShape(2, 1, 4, 5)
+            Nda t = Nda.of(-12..11).reshape(2, 1, 4, 5)
 
         when : 'We create a new transposed nd-array where the 2nd and 3rd dimensions are swapped and store it as `t2`.'
             var t2 = t.transpose( 1, 2 )

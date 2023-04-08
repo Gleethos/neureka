@@ -1540,7 +1540,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     @Override default MutateTsr<V> mut() { return getMut(); }
 
     /** {@inheritDoc} */
-    @Override default Tsr<V> withShape( int... shape ) {
+    @Override default Tsr<V> reshape( int... shape ) {
         return Neureka.get()
                 .backend()
                 .getAutogradFunction()

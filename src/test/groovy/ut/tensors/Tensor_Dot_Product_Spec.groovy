@@ -30,7 +30,7 @@ class Tensor_Dot_Product_Spec extends Specification
     def 'You can slice a Matrix into vectors and then used them for dot products.'()
     {
         given : 'A matrix we want to slice.'
-            var m = Tsr.of(1f..4f).withShape(2,2)
+            var m = Tsr.of(1f..4f).reshape(2,2)
         when : 'we slice the matrix into two vectors.'
             var a = m.slice().axis(0).at(0).get()
             var b = m.slice().axis(0).at(1).get()

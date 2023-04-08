@@ -140,8 +140,8 @@ class Nda_Framing_Spec extends Specification
     def 'Concatenating 2 labeled nd-arrays will produce a nd-array which is also labeled.'()
     {
         given : 'Two rank 2 nd-arrays with shape (2x3).'
-            var nda1 = Nda.of("a", "1", "!", "b", "2", "§").withShape(2,3)
-            var nda2 = Nda.of("x", "2,50", "%", "y", "4,90", "&").withShape(2,3)
+            var nda1 = Nda.of("a", "1", "!", "b", "2", "§").reshape(2,3)
+            var nda2 = Nda.of("x", "2,50", "%", "y", "4,90", "&").reshape(2,3)
         when : 'We label the nd-arrays.'
             nda1 = nda1.withLabel("Nda1").withLabels(["rows":["A", "B"], "cols":["Letter", "Num", "Symbol"]])
             nda2 = nda2.withLabel("Nda2").withLabels(["rows":["1", "2"], "cols":["Letter",  "€",  "Symbol"]])
