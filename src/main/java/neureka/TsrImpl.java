@@ -990,25 +990,37 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     @Override
     public Tsr<V> withLabel( String label ) {
-        return this.shallowCopy().mut().label( label );
+        Tsr<V> copy = this.shallowCopy();
+        if ( copy.label().endsWith(":slice") ) // We remove the slice postfix if it exists...
+            copy = copy.shallowClone().mut().label( copy.label().substring(0, copy.label().length()-6) );
+        return copy.mut().label( label );
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr<V> withLabels( String[]... labels ) {
-        return this.shallowClone().getMut().labelAxes( labels );
+        Tsr<V> copy = this.shallowCopy();
+        if ( copy.label().endsWith(":slice") ) // We remove the slice postfix if it exists...
+            copy = copy.shallowClone().mut().label( copy.label().substring(0, copy.label().length()-6) );
+        return copy.mut().labelAxes( labels );
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr<V> withLabels( List<List<Object>> labels ) {
-        return this.shallowClone().getMut().labelAxes( labels );
+        Tsr<V> copy = this.shallowCopy();
+        if ( copy.label().endsWith(":slice") ) // We remove the slice postfix if it exists...
+            copy = copy.shallowClone().mut().label( copy.label().substring(0, copy.label().length()-6) );
+        return copy.getMut().labelAxes( labels );
     }
 
     /** {@inheritDoc} */
     @Override
     public Tsr<V> withLabels( Map<Object, List<Object>> labels ) {
-        return this.shallowClone().getMut().labelAxes( labels );
+        Tsr<V> copy = this.shallowCopy();
+        if ( copy.label().endsWith(":slice") ) // We remove the slice postfix if it exists...
+            copy = copy.shallowClone().mut().label( copy.label().substring(0, copy.label().length()-6) );
+        return copy.getMut().labelAxes( labels );
     }
 
     /*==================================================================================================================
