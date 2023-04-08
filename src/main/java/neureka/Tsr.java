@@ -1540,23 +1540,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     @Override default MutateTsr<V> mut() { return getMut(); }
 
     /** {@inheritDoc} */
-    @Override default Tsr<V> withShape( int... shape )
-    {
-        Tsr<V> subset = Tsr.of(
-                            this.getDataType(),
-                            NDConstructor.of( shape ),
-                            this.mut().getData()
-                        );
-
-        subset.set( Relation.newChildToParent( this ) );
-        Relation<V> parent = this.find( Relation.class ).orElseGet(Relation::newParentToChildren);
-        parent.addChild( subset );
-        this.set( parent );
-
-        if ( this.isOutsourced() )
-            this.getDevice().store( subset );
-
-        return subset;
+    @Override default Tsr<V> reshape( int... shape ) {
+        return Neureka.get()
+                .backend()
+                .getAutogradFunction()
+                .reshape()
+                .with(Arg.Shape.of(shape))
+                .call(this);
     }
 
     /** {@inheritDoc} */

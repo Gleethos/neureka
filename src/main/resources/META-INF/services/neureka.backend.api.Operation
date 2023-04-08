@@ -48,6 +48,7 @@ neureka.backend.main.operations.linear.DotProduct
 
 # other :
 neureka.backend.main.operations.other.DimTrim
+neureka.backend.main.operations.other.Reshape
 neureka.backend.main.operations.other.Permute
 neureka.backend.main.operations.other.AssignLeft
 neureka.backend.main.operations.other.Randomization

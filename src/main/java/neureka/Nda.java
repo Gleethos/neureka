@@ -313,7 +313,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param values The values which ought to be used to populate the tensor.
      */
     @SafeVarargs
-    static <T> Nda<T> of( Shape shape, T... values ) { return (Nda<T>) Tsr.of( values ).withShape( shape.toIntArray() ); }
+    static <T> Nda<T> of( Shape shape, T... values ) { return (Nda<T>) Tsr.of( values ).reshape( shape.toIntArray() ); }
 
     /**
      * Constructs a vector of objects based on the provided iterable.
@@ -1013,15 +1013,20 @@ public interface Nda<V> extends NDimensional, Iterable<V>
     default MutateNda<V> mut() { return getMut(); }
 
     /**
-     *  A wither method which creates a new nd-array instance with the same underlying data
-     *  but with a different shape.
-     *  The new shape must have the same number of elements as the original shape. <br>
-     *  (Note: the underlying nd-array will not be attached to any kind of computation graph)
+     *  Returns a nd-array with the same data and number of elements as this nd-array, but with the specified shape.
+     *  When possible, the returned nd-array will be a view of this nd-array.
+     *
+     *  A single dimension may be -1, in which case it’s inferred from the remaining
+     *  dimensions and the number of elements in input.
+     *
+     *  Keep in mind that the new shape must have the same number of elements as the original shape. <br>
      *  <br>
+     *  This operation supports autograd.
+     *
      * @param shape The new shape of the returned nd-array.
      * @return A new nd-array instance with the same underlying data (~shallow copy) but with a different shape.
      */
-    Nda<V> withShape( int... shape );
+    Nda<V> reshape( int... shape );
 
     /**
      *  Returns a view of the original tensor input with its dimensions permuted.<br>

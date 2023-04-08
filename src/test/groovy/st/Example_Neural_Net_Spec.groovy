@@ -13,8 +13,8 @@ class Example_Neural_Net_Spec extends Specification
     {
         given :
             var predictor = new SimpleFeedForwardNN(5, 42)
-            var input = Tsr.of( -0.2f, -0.1f, 0f, 0.1f, 0.2f ).withShape( 1, 5 )
-            var target = Tsr.of( 0.2f, 0.1f, 0f, -0.1f, -0.2f ).withShape( 1, 5 )
+            var input = Tsr.of( -0.2f, -0.1f, 0f, 0.1f, 0.2f ).reshape( 1, 5 )
+            var target = Tsr.of( 0.2f, 0.1f, 0f, -0.1f, -0.2f ).reshape( 1, 5 )
         when :
             var pred
             var loss = []
@@ -37,7 +37,7 @@ class Example_Neural_Net_Spec extends Specification
         given :
             var inputs = Tsr.ofFloats().withShape( 2, 6 ).andFill(-4f..3f)
             var weights = Tsr.ofRandom(Float, 6, 1)
-            var targets = Tsr.of( 0.2f, -0.1f, 0.5f, 1.2f, -0.3f, 0.2f ).withShape( 2, 1 )
+            var targets = Tsr.of( 0.2f, -0.1f, 0.5f, 1.2f, -0.3f, 0.2f ).reshape( 2, 1 )
         and :
             weights.setRqsGradient( true )
             applyOptimizer.accept(weights)

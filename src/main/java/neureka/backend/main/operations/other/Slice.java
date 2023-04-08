@@ -178,9 +178,11 @@ public class Slice extends AbstractOperation
                     sliceState.put( k, null ); // newShape[i]
                 else {
                     List<Object> slicedLabels = new ArrayList<>();
-                    for ( int j = 0; j < newShape[i]; j++ ) {
-                        int index = newOffset[i] + j * newSpread[i];
-                        slicedLabels.add( axesLabels.get(index) );
+                    if ( !axesLabels.isEmpty() ) {
+                        for ( int j = 0; j < newShape[i]; j++ ) {
+                            int index = newOffset[i] + j * newSpread[i];
+                            slicedLabels.add( axesLabels.get(index) );
+                        }
                     }
                     sliceState.put( k, slicedLabels );
                 }

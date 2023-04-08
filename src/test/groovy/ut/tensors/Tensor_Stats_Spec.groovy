@@ -148,7 +148,7 @@ class Tensor_Stats_Spec extends Specification
     def 'A tensor can be summed alongside a specific axis.'()
     {
         given : 'A simple 2 by 3 matrix.'
-            var m = Tsr.of(-3f..5f).withShape(2, 3)
+            var m = Tsr.of(-3f..5f).reshape(2, 3)
         when : 'We create a sum for every axis...'
             var s1 = m.sum(0)
             var s2 = m.sum(1)
@@ -169,7 +169,7 @@ class Tensor_Stats_Spec extends Specification
             This operation supports autograd.
         """
         given : 'A simple 2 by 3 by 4 matrix.'
-            var m = Tsr.of(-3f..23f).withShape(2, 3, 4)
+            var m = Tsr.of(-3f..23f).reshape(2, 3, 4)
         when : 'We create a sum for every axis...'
             var s = m.sum(1, 2)
         then : 'The sums are vectors with the expected state.'

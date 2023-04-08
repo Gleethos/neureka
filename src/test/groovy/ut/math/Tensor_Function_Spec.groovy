@@ -93,7 +93,7 @@ class Tensor_Function_Spec extends Specification
     def 'The softmax function can be applied to tensors with more than one dimension.'()
     {
         given : 'A tensor with more than one dimension.'
-            var x = Tsr.of( -3f..7f ).withShape( 2, 3 )
+            var x = Tsr.of( -3f..7f ).reshape( 2, 3 )
 
         when: 'We apply the softmax function to it.'
             var softmax = x.softmax()
@@ -107,7 +107,7 @@ class Tensor_Function_Spec extends Specification
     def 'The softmax can be calculated for a particular axis.'()
     {
         given : 'A tensor with more than one dimension.'
-            var x = Tsr.of( -3f..7f ).withShape( 2, 3 )
+            var x = Tsr.of( -3f..7f ).reshape( 2, 3 )
 
         when: 'We apply the softmax function to it.'
             var softmax = x.softmax(1)
@@ -128,7 +128,7 @@ class Tensor_Function_Spec extends Specification
     def 'The softmax can be calculated alongside multiple axes.'()
     {
         given : 'A simple 2 by 3 by 4 matrix.'
-            var m = Tsr.of(-79f..43f).withShape(2, 3, 2, 4)
+            var m = Tsr.of(-79f..43f).reshape(2, 3, 2, 4)
         when : 'We create a softmax for every axis...'
             var s = m.softmax(1, 2)
         then : 'The resulting tensor will have the expected shape.'
