@@ -1,6 +1,6 @@
 package ut.tensors
 
-
+import neureka.Shape
 import neureka.Tsr
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -38,6 +38,18 @@ class Reshape_Spec extends Specification
             t.items() == [6, 7, 8, 9, 10, 11]
         and : 'The new instance will have the same data type as the original instance.'
             t.itemType() == Integer
+    }
+
+    def 'We can use `-1` in the desired shape if we want the axis size to be determined automatically.'()
+    {
+        given : 'We create a new tensor with a shape of [4, 2, 3].'
+            Tsr<Integer> t = Tsr.of(Shape.of(4, 2, 3), 1..24)
+        when : 'We reshape the tensor to a new tensor with shape [4, -1, 2].'
+            Tsr<Integer> t2 = t.withShape(4, -1, 2)
+        then : 'The new tensor will have the expected shape.'
+            t2.shape() == [4, 3, 2]
+        and : 'The new tensor will have the expected items.'
+            t2.items == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
     }
 
     def 'The reshape operation supports autograd!'()

@@ -39,10 +39,12 @@ public class Reshape extends AbstractOperation
                     Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
                     Tsr<Object> input = (Tsr<Object>) inputs[0];
 
-                    int[] shape = call.getValOf( Arg.Shape.class );
+                    int[] foundShape = call.getValOf( Arg.Shape.class );
 
-                    if ( shape == null )
+                    if ( foundShape == null )
                         throw new IllegalArgumentException("Shape argument is missing!");
+
+                    int[] shape = _resolveNewShape(input.size(), foundShape);
 
                     Tsr reshaped = Tsr.of(
                                     input.getDataType(),
@@ -73,6 +75,43 @@ public class Reshape extends AbstractOperation
             )
             .buildFunAlgorithm()
         );
+    }
+
+    /**
+     *   If the provided shape array contains a -1 as one of its elements,
+     *   then this method will resolve the -1 to the correct value
+     *   which results in a shape array which is compatible with the provided size,
+     *   meaning that when we multiply all the elements of the resolved shape array
+     *   we will get the provided size.
+     *
+     * @param size The size which the resolved shape array should be compatible with.
+     * @param shape The shape array which may contain a -1.
+     * @return The resolved shape array.
+     */
+    private static int[] _resolveNewShape( int size, int[] shape )
+    {
+        int[] resolvedShape = new int[ shape.length ];
+        int minusOneIndex = -1;
+        int minusOneCount = 0;
+        int product = 1;
+        for ( int i = 0; i < shape.length; i++ )
+        {
+            if ( shape[ i ] == -1 )
+            {
+                minusOneIndex = i;
+                minusOneCount++;
+            }
+            else
+            {
+                resolvedShape[ i ] = shape[ i ];
+                product *= shape[ i ];
+            }
+        }
+        if ( minusOneCount > 1 )
+            throw new IllegalArgumentException("The shape array contains more than one -1!");
+        if ( minusOneCount == 1 )
+            resolvedShape[ minusOneIndex ] = size / product;
+        return resolvedShape;
     }
 
     @Override
