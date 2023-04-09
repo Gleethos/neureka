@@ -655,29 +655,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tsr<Integer> of( int[] shape, int[] values ) { return ofAny( Integer.class, Shape.of(shape), values ); }
-
-    /**
-     *  Use this to construct and return an int tensor of the specified shape and initial values.
-     *  The length of the provided array does not have to match the number of elements
-     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
-     *  provided int array.
-     *
-     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
-     * @param values The values which ought to be used to populate the tensor.
-     */
     static Tsr<Integer> of( Shape shape, int[] values ) { return ofAny( Integer.class, shape, values ); }
-
-    /**
-     *  Use this to construct and return a byte tensor of the specified shape and initial values.
-     *  The length of the provided array does not have to match the number of elements
-     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
-     *  provided byte array..
-     *
-     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
-     * @param values The values which ought to be used to populate the tensor.
-     */
-    static Tsr<Byte> of( int[] shape, byte[] values ) { return ofAny( Byte.class, Shape.of(shape), values ); }
 
     /**
      *  Use this to construct and return a byte tensor of the specified shape and initial values.
@@ -699,17 +677,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tsr<Long> of( int[] shape, long[] values ) { return ofAny( Long.class, Shape.of(shape), values ); }
-
-    /**
-     *  Use this to construct and return a long tensor of the specified shape and initial values.
-     *  The length of the provided array does not have to match the number of elements
-     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
-     *  provided long array..
-     *
-     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
-     * @param values The values which ought to be used to populate the tensor.
-     */
     static Tsr<Long> of( Shape shape, long[] values ) { return ofAny( Long.class, shape, values ); }
 
     /**
@@ -721,29 +688,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tsr<Short> of( int[] shape, short[] values ) { return ofAny( Short.class, Shape.of(shape), values ); }
-
-    /**
-     *  Use this to construct and return a short tensor of the specified shape and initial values.
-     *  The length of the provided array does not have to match the number of elements
-     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
-     *  provided short array..
-     *
-     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
-     * @param values The values which ought to be used to populate the tensor.
-     */
     static Tsr<Short> of( Shape shape, short[] values ) { return ofAny( Short.class, shape, values ); }
-
-    /**
-     *  Use this to construct and return a float tensor of the specified shape and initial values.
-     *  The length of the provided array does not have to match the number of elements
-     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
-     *  provided float array..
-     *
-     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
-     * @param values The values which ought to be used to populate the tensor.
-     */
-    static Tsr<Float> of( int[] shape, float[] values ) { return ofAny( Float.class, Shape.of(shape), values ); }
 
     /**
      *  Use this to construct and return a float tensor of the specified shape and initial values.
@@ -774,18 +719,24 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tsr<Boolean> of( int[] shape, boolean[] values ) { return ofAny( Boolean.class, Shape.of(shape), values ); }
+    static Tsr<Boolean> of( Shape shape, boolean[] values ) { return ofAny( Boolean.class, shape, values ); }
 
     /**
-     *  Use this to construct and return a boolean tensor of the specified shape and initial values.
-     *  The length of the provided array does not have to match the number of elements
-     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
-     *  provided boolean array..
+     *  Use this to construct and return a tensor of the specified shape and data object.<br>
+     *  This method is typically used like this:<br>
+     *  <pre>{@code
+     *      Tsr<Integer> tensor = Tsr.of( Shape.of(2,3), Data.of(1,2,3,4,5,6) );
+     *  }</pre>
+     *  The resulting tensor will have the shape {@code [2,3]} and the values {@code [1,2,3,4,5,6]}.
      *
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
-     * @param values The values which ought to be used to populate the tensor.
+     * @param data The data object which contains the values to be used to populate the tensor.
+     * @return A newly created tensor of the provided shape and data.
+     * @param <V> The type parameter of individual tensor items.
      */
-    static Tsr<Boolean> of( Shape shape, boolean[] values ) { return ofAny( Boolean.class, shape, values ); }
+    static <V> Tsr<V> of( Shape shape, Data<V> data ) {
+        return Tsr.of( data.dataType().getItemTypeClass(), shape.toIntArray(), data.getRef() );
+    }
 
     /**
      *  Use this to construct and return a tensor of the specified type and shape.
@@ -1227,13 +1178,29 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return a {@code Collector} which collects all the input elements into a
      *          {@link Tsr}, in encounter order.
      */
-    static <T> Collector<T, ?, Tsr<T>> shaped( int... shape ) {
+    static <T> Collector<T, ?, Tsr<T>> shaped( int... shape ) { return shaped( Shape.of(shape) ); }
+
+    /**
+     * Returns a {@code Collector} that accumulates the input elements into a
+     * new {@link Tsr} with the specified shape. <br>
+     * Usage example : <br>
+     * <pre>{@code
+     *    var tensor = Stream.of( 1, 2, 3, 4, 5, 6 )
+     *                      .collect( Tsr.shaped( otherTensor.shape() ) );
+     * }</pre>
+     *
+     * @param shape The shape of the tensor to be returned.
+     * @param <T> the type of the input elements
+     * @return a {@code Collector} which collects all the input elements into a
+     *          {@link Tsr}, in encounter order.
+     */
+    static <T> Collector<T, ?, Tsr<T>> shaped( Shape shape ) {
         return Collector.of(
-                (Supplier<List<T>>) ArrayList::new,
-                List::add,
-                (left, right) -> { left.addAll(right); return left; },
-                list -> Tsr.of( shape, list )
-            );
+                    (Supplier<List<T>>) ArrayList::new,
+                    List::add,
+                    (left, right) -> { left.addAll(right); return left; },
+                    list -> Tsr.of( shape, list )
+                );
     }
 
     /*==================================================================================================================

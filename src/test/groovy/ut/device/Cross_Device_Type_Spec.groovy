@@ -190,7 +190,7 @@ class Cross_Device_Type_Spec extends Specification
             if ( device == null ) return
 
         when : 'A 2D tensor is being instantiated by passing the given shape and data...'
-            Tsr t = Tsr.of(shape, data).to(device)
+            Tsr t = Tsr.of(Shape.of(shape), data).to(device)
 
         then : 'The tensor values (as List) are as expected.'
             Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))

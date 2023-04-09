@@ -1,6 +1,7 @@
 package neureka;
 
 import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 
@@ -14,7 +15,27 @@ import neureka.ndim.config.NDConfiguration;
  *
  * @param <V> The type of the data array.
  */
-public interface Data<V> {
+public interface Data<V>
+{
+    static <V> Data<V> of( Class<V> type, V... data ) { return CPU.get().allocate( type, data ); }
+
+    static Data<Float> of( float... items ) { return CPU.get().allocate( Float.class, items ); }
+
+    static Data<Double> of( double... items ) { return CPU.get().allocate( Double.class, items ); }
+
+    static Data<Integer> of( int... items ) { return CPU.get().allocate( Integer.class, items ); }
+
+    static Data<Long> of( long... items ) { return CPU.get().allocate( Long.class, items ); }
+
+    static Data<Byte> of( byte... items ) { return CPU.get().allocate( Byte.class, items ); }
+
+    static Data<Short> of( short... items ) { return CPU.get().allocate( Short.class, items ); }
+
+    static Data<Boolean> of( boolean... items ) { return CPU.get().allocate( Boolean.class, items ); }
+
+    static Data<Character> of( char... items ) { return CPU.get().allocate( Character.class, items ); }
+
+    static Data<String> of( String... items ) { return CPU.get().allocate( String.class, items ); }
 
     /**
      * @return The owner of this data array wrapper (the device which allocated the memory).
