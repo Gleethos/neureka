@@ -509,13 +509,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The array of doubles from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of doubles.
      */
-    static Tsr<Double> of( double... value ) { return of( Double.class, new int[]{ value.length }, value ); }
+    static Tsr<Double> of( double... value ) { return of( Double.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar double tensor.
      */
-    static Tsr<Double> of( double value ) { return of( Double.class, new int[]{ 1 }, value ); }
+    static Tsr<Double> of( double value ) { return of( Double.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -523,13 +523,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The array of floats from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of floats.
      */
-    static Tsr<Float> of( float... value ) { return of( Float.class, new int[]{ value.length }, value ); }
+    static Tsr<Float> of( float... value ) { return of( Float.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar float tensor.
      */
-    static Tsr<Float> of( float value ) { return of( Float.class, new int[]{ 1 }, value ); }
+    static Tsr<Float> of( float value ) { return of( Float.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of bytes based on the provided array.
@@ -537,13 +537,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The array of bytes from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of bytes.
      */
-    static Tsr<Byte> of( byte... value ) { return of( Byte.class, new int[]{ value.length }, value ); }
+    static Tsr<Byte> of( byte... value ) { return of( Byte.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar byte tensor.
      */
-    static Tsr<Byte> of( byte value ) { return of( Byte.class, new int[]{ 1 }, value ); }
+    static Tsr<Byte> of( byte value ) { return of( Byte.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -551,13 +551,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The array of ints from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of ints.
      */
-    static Tsr<Integer> of( int... value ) { return of( Integer.class, new int[]{ value.length }, value ); }
+    static Tsr<Integer> of( int... value ) { return of( Integer.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar int tensor.
      */
-    static Tsr<Integer> of( int value ) { return of( Integer.class, new int[]{ 1 }, value ); }
+    static Tsr<Integer> of( int value ) { return of( Integer.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of longs based on the provided array.
@@ -565,13 +565,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The array of longs from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of longs.
      */
-    static Tsr<Long> of( long... value ) { return of( Long.class, new int[]{ value.length }, value ); }
+    static Tsr<Long> of( long... value ) { return of( Long.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar long tensor.
      */
-    static Tsr<Long> of( long value ) { return of( Long.class, new int[]{ 1 }, value ); }
+    static Tsr<Long> of( long value ) { return of( Long.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of shorts based on the provided array.
@@ -579,13 +579,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The array of shorts from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    static Tsr<Short> of( short... value ) { return of( Short.class, new int[]{ value.length }, value ); }
+    static Tsr<Short> of( short... value ) { return of( Short.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar short tensor.
      */
-    static Tsr<Short> of( short value ) { return of( Short.class, new int[]{ 1 }, value ); }
+    static Tsr<Short> of( short value ) { return of( Short.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of booleans based on the provided array.
@@ -593,7 +593,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The array of booleans from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    static Tsr<Boolean> of( boolean... value ) { return of( Boolean.class, new int[]{ value.length }, value ); }
+    static Tsr<Boolean> of( boolean... value ) { return of( Boolean.class, Shape.of( value.length ), value ); }
 
     /**
      *  Use this to construct and return a seeded tensor of the specified type.
@@ -735,7 +735,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      */
     static <V> Tsr<V> of( Shape shape, Data<V> data ) {
-        return Tsr.of( data.dataType().getItemTypeClass(), shape.toIntArray(), data.getRef() );
+        return Tsr.of( data.dataType().getItemTypeClass(), shape, data.getRef() );
     }
 
     /**
@@ -759,6 +759,19 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     static <V> Tsr<V> of( Class<V> type, int[] shape, Object data ) {
         return of( DataType.of(type), Shape.of(shape), data );
+    }
+
+    /**
+     *  Use this to construct and return a tensor of the specified type, shape and data object.
+     *
+     * @param type The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of an array of axis-sizes.
+     * @param data The data object which will be used to populate the tensor.
+     * @param <V> The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type, shape and data.
+     */
+    static <V> Tsr<V> of( Class<V> type, Shape shape, Object data ) {
+        return of( DataType.of(type), shape, data );
     }
 
     /**
@@ -1622,7 +1635,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return The tensor, to allow for method chaining.
      */
     default Tsr<V> backward( double value ) {
-        ((TsrImpl<V>)this)._backward( LazyRef.of( () -> Tsr.of( this.getItemType(), getNDConf().shape(), value )) );
+        ((TsrImpl<V>)this)._backward( LazyRef.of( () -> Tsr.of( this.getItemType(), shape(), value )) );
         return this;
     }
 
@@ -1894,7 +1907,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> mean() {
         Functions functions = Neureka.get().backend().getAutogradFunction();
         Tsr<V> sum = this.sum();
-        Tsr<V> result = functions.div().call( sum, of( this.getItemType(), new int[]{1}, this.size() ) );
+        Tsr<V> result = functions.div().call( sum, of( this.getItemType(), Shape.of( 1 ), this.size() ) );
         if ( sum != this ) sum.getMut().delete(); // This is a temporary tensor which is not needed anymore! (not even for back propagation)
         return result;
     }
@@ -2177,7 +2190,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The value which should be broadcast to all elements of a clone of this tensor.
      * @return A new tensor where all elements are multiplied by the provided value.
      */
-    default Tsr<V> multiply( double value ) { return multiply( of( getItemType(), getNDConf().shape(), value ) ); }
+    default Tsr<V> multiply( double value ) { return multiply( of( getItemType(), shape(), value ) ); }
 
     /**
      *  This method will produce the quotient of
@@ -2199,7 +2212,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide a tensor by 'null' (In any sense of the word)!");
         return Neureka.get().backend().getAutogradFunction().div().call( this, other );
     }
-    default Tsr<V> div( V value ) { return div( of( getItemType(), getNDConf().shape(), value ) ); }
+    default Tsr<V> div( V value ) { return div( of( getItemType(), shape(), value ) ); }
 
     /**
      *  Produces the modulus of
@@ -2227,7 +2240,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A new tensor where the modulo operation is applied to all
      *          elements using the provided int as right operand.
      */
-    default Tsr<V> mod( int other ) { return mod(of(getItemType(), getNDConf().shape(), other)); }
+    default Tsr<V> mod( int other ) { return mod(of(getItemType(), shape(), other)); }
 
     /**
      *  This method is synonymous to the {@link #mod(int)} method.
@@ -2652,7 +2665,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
                         newData = map.toObjectArray(access);
                     }
-                    return Tsr.of( typeClass, this.getNDConf().shape(), newData );
+                    return Tsr.of( typeClass, this.shape(), newData );
                 });
     }
 

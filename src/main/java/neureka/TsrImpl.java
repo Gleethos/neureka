@@ -813,7 +813,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     /** {@inheritDoc} */
     @Override public Tsr<V> timesAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", TsrImpl.this.getItemType(), "Cannot multiply-assign 'null' to a tensor!");
-        return this.timesAssign( Tsr.of( getItemType(), getNDConf().shape(), other ) );
+        return this.timesAssign( Tsr.of( getItemType(), this.shape(), other ) );
     }
 
     /** {@inheritDoc} */
