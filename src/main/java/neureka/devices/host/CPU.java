@@ -26,6 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
+import java.util.stream.IntStream;
 
 /**
  *  The CPU class, one of many implementations of the {@link Device} interface,
@@ -382,27 +383,17 @@ public class CPU extends AbstractDevice<Object>
             throw new IllegalArgumentException("Array type '"+jvmData.getClass().getSimpleName()+"' not supported!");
     }
 
-    public Data<Object> allocate( Object data ) {
+    private Data<Object> _allocate( Object data ) {
         int size;
-        if ( data instanceof Object[] ) {
-            size = ( (Object[]) data ).length;
-        } else if ( data instanceof int[] ) {
-            size = ( (int[]) data ).length;
-        } else if ( data instanceof long[] ) {
-            size = ( (long[]) data ).length;
-        } else if ( data instanceof float[] ) {
-            size = ( (float[]) data ).length;
-        } else if ( data instanceof double[] ) {
-            size = ( (double[]) data ).length;
-        } else if ( data instanceof short[] ) {
-            size = ( (short[]) data ).length;
-        } else if ( data instanceof byte[] ) {
-            size = ( (byte[]) data ).length;
-        } else if ( data instanceof boolean[] ) {
-            size = ( (boolean[]) data ).length;
-        } else if ( data instanceof char[] ) {
-            size = ( (char[]) data ).length;
-        }
+        if (      data instanceof Object[]  ) size = ( (Object[]) data ).length;
+        else if ( data instanceof int[]     ) size = ( (int[]) data ).length;
+        else if ( data instanceof long[]    ) size = ( (long[]) data ).length;
+        else if ( data instanceof float[]   ) size = ( (float[]) data ).length;
+        else if ( data instanceof double[]  ) size = ( (double[]) data ).length;
+        else if ( data instanceof short[]   ) size = ( (short[]) data ).length;
+        else if ( data instanceof byte[]    ) size = ( (byte[]) data ).length;
+        else if ( data instanceof boolean[] ) size = ( (boolean[]) data ).length;
+        else if ( data instanceof char[]    ) size = ( (char[]) data ).length;
         else
             throw new IllegalArgumentException( "Unsupported data type: " + data.getClass() );
 
@@ -412,6 +403,90 @@ public class CPU extends AbstractDevice<Object>
 
         return dataArray;
     }
+
+    public final <T> Data<T> allocate( Class<T> type, Object data ) {
+        Data<Object> dataArray = _allocate( data );
+        // Now we check if the data is of the correct type
+        Class<?> arrayType = DataType.of( type ).dataArrayType();
+        if ( !arrayType.isAssignableFrom( dataArray.getRef().getClass() ) )
+            throw new IllegalArgumentException(
+                    "Data is not of the correct type! Expected: " + arrayType.getSimpleName() + ", " +
+                    "but got: " + dataArray.getRef().getClass().getSimpleName()
+                );
+        return (Data<T>) dataArray;
+    }
+
+    public final <T> Data<T> allocate( Class<T> type, int size, Object source ) {
+        if ( source instanceof Object[] )
+            source = _autoConvertAndOptimizeObjectArray( (Object[]) source, DataType.of(type), size );
+
+        Data<Object> dataArray = _allocate( source );
+        // Now we check if the data is of the correct type
+        Class<?> arrayType = DataType.of( type ).dataArrayType();
+        if ( !arrayType.isAssignableFrom( dataArray.getRef().getClass() ) )
+            throw new IllegalArgumentException(
+                    "Data is not of the correct type! Expected: " + arrayType.getSimpleName() + ", " +
+                    "but got: " + dataArray.getRef().getClass().getSimpleName()
+                );
+        return (Data<T>) dataArray;
+    }
+
+    private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
+        if ( Arrays.stream( data ).anyMatch( e -> e != null && DataType.of(e.getClass()) != dataType ) )
+            for ( int i = 0; i < ( data ).length; i++ )
+                ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getItemTypeClass() );
+
+        return _compactAndSizeObjectArray( dataType, data, size );
+    }
+
+    /**
+     *  If possible, turns the provided {@code Object} array into a memory compact array of primitive types.
+     *
+     * @param dataType The {@link DataType} of the elements in the provided array.
+     * @param values The array of values which ought to be optimized into a flat array of primitives.
+     * @param size The size of the optimized array of primitives.
+     * @return An optimized flat array of primitives.
+     */
+    private static Object _compactAndSizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
+        Object data = values;
+        IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size);
+        if ( size > 1_000 ) indices = indices.parallel();
+        indices = indices.map( i -> i % values.length );
+        if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -> (Double) values[i] ).toArray();
+        else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -> (Integer) values[i] ).toArray();
+        else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -> (Long) values[i] ).toArray();
+        else if ( dataType == DataType.of(Float.class)   ) {
+            float[] floats = new float[size];
+            for( int i = 0; i < size; i++ ) floats[ i ] = (Float) values[ i % values.length ];
+            data = floats;
+        }
+        else if ( dataType == DataType.of(Byte.class) ) {
+            byte[] bytes = new byte[size];
+            for( int i = 0; i < size; i++ ) bytes[ i ] = (Byte) values[ i % values.length ];
+            data = bytes;
+        }
+        else if ( dataType == DataType.of(Short.class) ) {
+            short[] shorts = new short[size];
+            for( int i = 0; i < size; i++ ) shorts[ i ] = (Short) values[ i % values.length ];
+            data = shorts;
+        } else if ( dataType == DataType.of(Boolean.class) ) {
+            boolean[] booleans = new boolean[size];
+            for( int i = 0; i < size; i++ ) booleans[ i ] = (Boolean) values[ i % values.length ];
+            data = booleans;
+        }
+        else if ( dataType == DataType.of(Character.class) ) {
+            char[] chars = new char[size];
+            for( int i = 0; i < size; i++ ) chars[ i ] = (Character) values[ i % values.length ];
+            data = chars;
+        } else if ( values.length != size ) {
+            Object[] objects = new Object[size];
+            for( int i = 0; i < size; i++ ) objects[ i ] = values[ i % values.length ];
+            data = objects;
+        }
+        return data;
+    }
+
+
 
     @Override
     protected final Data<Object> _actualize( Tsr<?> tensor ) {
