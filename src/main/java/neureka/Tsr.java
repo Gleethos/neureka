@@ -757,19 +757,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tsr<V> of( Class<V> type, int[] shape, Object data ) {
-        return of( DataType.of(type), Shape.of(shape), data );
-    }
-
-    /**
-     *  Use this to construct and return a tensor of the specified type, shape and data object.
-     *
-     * @param type The type of the items stored by the resulting tensor.
-     * @param shape The shape of the resulting tensor consisting of an array of axis-sizes.
-     * @param data The data object which will be used to populate the tensor.
-     * @param <V> The type parameter of individual tensor items.
-     * @return A newly created tensor of the provided type, shape and data.
-     */
     static <V> Tsr<V> of( Class<V> type, Shape shape, Object data ) {
         return of( DataType.of(type), shape, data );
     }

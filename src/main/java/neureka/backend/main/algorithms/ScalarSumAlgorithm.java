@@ -1,5 +1,6 @@
 package neureka.backend.main.algorithms;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -25,10 +26,10 @@ public class ScalarSumAlgorithm extends AbstractFunAlgorithm
                 call = call.withInputAt( 0, call.input( 1 ) );
 
             Tsr<?> in = call.input(0);
-            int[] originalShape = in.getNDConf().shape();
+            Shape originalShape = in.shape();
             Number item = (Number) in.item();
             double sum = item.doubleValue() * in.size();
-            Tsr<?> result = Tsr.of( in.itemType(), new int[]{1}, sum ).to( in.getDevice() );
+            Tsr<?> result = Tsr.of( in.itemType(), Shape.of( 1 ), sum ).to( in.getDevice() );
             return Result.of( result.mut().setIsIntermediate(true) )
                     .withADAction( target -> {
                         Tsr<Object> error = (Tsr<Object>) target.error();

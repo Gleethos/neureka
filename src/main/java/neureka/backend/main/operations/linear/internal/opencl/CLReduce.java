@@ -121,7 +121,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
     private Tsr<Float> _fetch(
             Tsr<Float> in, Tsr<Integer> indices, OpenCLDevice device
     ) {
-        Tsr<Float> out = Tsr.of(Float.class, new int[]{indices.size()}, 0).to(device);
+        Tsr<Float> out = Tsr.of(Float.class, Shape.of(indices.size()), 0).to(device);
         out.mut().setIsVirtual(false);
 
         String kernelName = INDICES_MAPPER_ID;

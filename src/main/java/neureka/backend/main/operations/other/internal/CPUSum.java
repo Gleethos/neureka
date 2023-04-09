@@ -1,5 +1,6 @@
 package neureka.backend.main.operations.other.internal;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
@@ -51,7 +52,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Float> reduced = Tsr.of(Float.class, new int[]{N}, out);
+            Tsr<Float> reduced = Tsr.of(Float.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -67,7 +68,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Double> reduced = Tsr.of(Double.class, new int[]{N}, out);
+            Tsr<Double> reduced = Tsr.of(Double.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -83,7 +84,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Integer> reduced = Tsr.of(Integer.class, new int[]{N}, out);
+            Tsr<Integer> reduced = Tsr.of(Integer.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -99,7 +100,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Long> reduced = Tsr.of(Long.class, new int[]{N}, out);
+            Tsr<Long> reduced = Tsr.of(Long.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -115,7 +116,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Short> reduced = Tsr.of(Short.class, new int[]{N}, out);
+            Tsr<Short> reduced = Tsr.of(Short.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -131,7 +132,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Byte> reduced = Tsr.of(Byte.class, new int[]{N}, out);
+            Tsr<Byte> reduced = Tsr.of(Byte.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -148,7 +149,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value = value.doubleValue() + ((Number)inData[i]).doubleValue();
                 out[ni] = value;
             });
-            Tsr<Number> reduced = Tsr.of(Number.class, new int[]{N}, out);
+            Tsr<Number> reduced = Tsr.of(Number.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else

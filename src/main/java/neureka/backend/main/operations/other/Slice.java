@@ -1,6 +1,7 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
@@ -47,7 +48,7 @@ public class Slice extends AbstractOperation
                     Tsr<?> subset     = _slice(newShape, newOffset, newSpread, input);
                     //---
                     Class<?>       typeClass = input.itemType();
-                    int[]          shape = input.getNDConf().shape();
+                    Shape          shape = input.shape();
                     boolean        isOutsourced = input.isOutsourced();
                     Device<Object> device = input.getDevice();
                     //---
