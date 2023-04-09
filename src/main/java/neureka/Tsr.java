@@ -336,21 +336,6 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     }
 
     /**
-     *  Creates a new {@link Tsr} instance based on an array of integers representing the shape,
-     *  and a list of values representing the value of the resulting tensor.
-     *
-     * @param shape An array of integers will be used to form the shape of the resulting {@link Tsr}.
-     * @param items A list of values which will be used to populate the data array of the resulting {@link Tsr}.
-     * @param <V> The type parameter of the value list and returned tensor.
-     * @return A new {@link Tsr} instance constructed based on the provided shape and value list.
-     */
-    static <V> Tsr<V> of( int[] shape, List<V> items ) {
-        Class<V> typeClass = (Class<V>) Object.class;
-        if ( items.size() > 0 ) typeClass = (Class<V>) items.get(0).getClass();
-        return of( DataType.of(typeClass), shape, items );
-    }
-
-    /**
      *  This factory method will turn a list of values or nested lists of values into a {@link Tsr}
      *  instance with the corresponding rank and shape.
      *
@@ -613,27 +598,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The value which ought to be used to populate the tensor homogeneously.
      * @return A new tensor instance with the provided shape and initial value.
      */
-    static Tsr<Double> of( int[] shape, double value ) { return ofAny( Double.class, Shape.of(shape), value ); }
-
-    /**
-     *  Use this to construct and return a homogeneously populated double tensor of the specified shape.
-     *
-     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
-     * @param value The value which ought to be used to populate the tensor homogeneously.
-     * @return A new tensor instance with the provided shape and initial value.
-     */
     static Tsr<Double> of( Shape shape, double value ) { return ofAny( Double.class, shape, value ); }
-
-    /**
-     *  Use this to construct and return a double tensor of the specified shape and initial values.
-     *  The length of the provided array does not have to match the number of elements
-     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
-     *  provided double array.
-     *
-     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
-     * @param values The values which ought to be used to populate the tensor.
-     */
-    static Tsr<Double> of( int[] shape, double[] values ) { return ofAny( Double.class, Shape.of(shape), values ); }
 
     /**
      *  Use this to construct and return a double tensor of the specified shape and initial values.

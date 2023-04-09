@@ -369,7 +369,7 @@ public class BroadSystemTest
                 3,
         };
         tester.testTensCon(
-                frstShape, scndShape,
+                Shape.of(frstShape), Shape.of(scndShape),
                 frstData, scndData,
                 new double[]{
                         -4.0, 8.0, -6.0, -2.0,
@@ -390,7 +390,7 @@ public class BroadSystemTest
                 -5, 2,
         };
         tester.testTensCon(
-                frstShape, scndShape,
+                Shape.of(frstShape), Shape.of(scndShape),
                 frstData, scndData,
                 new double[]{
                         -10.0, 35.0, 7.0,
@@ -408,7 +408,7 @@ public class BroadSystemTest
                 -5, 2,
         };
         tester.testTensCon(
-                frstShape, scndShape,
+                Shape.of(frstShape), Shape.of(scndShape),
                 frstData, scndData,
                 new double[]{
                         8, -4,
@@ -440,7 +440,7 @@ public class BroadSystemTest
                 5, -1
         };
         tester.testTensCon(
-                frstShape, scndShape,
+                Shape.of(frstShape), Shape.of(scndShape),
                 frstData, scndData,
                 new double[]{
                         -4.0, 0.0,
@@ -464,7 +464,7 @@ public class BroadSystemTest
                 0, 2, 4, 2, 1
         };
         tester.testInvTensCon(//
-                frstShape, scndShape,
+                Shape.of(frstShape), Shape.of(scndShape),
                 frstData, scndData,
                 new double[]{
                         1, 2, -3, 2,//<= drain data!
@@ -488,7 +488,7 @@ public class BroadSystemTest
         scndShape = new int[]{2, 1};
         scndData = new double[]{4, -2,};
         tester.testTensBroadcast(
-                frstShape, scndShape,
+                Shape.of(frstShape), Shape.of(scndShape),
                 frstData, scndData,
                 new double[]{
                         8.0, -4.0, 12.0, -4.0, 2.0, -6.0
@@ -508,8 +508,8 @@ public class BroadSystemTest
         scndData = new double[]{
                 2, -1,
         };
-        tester.testInvTensBroadcast(//
-                frstShape, scndShape,
+        tester.testInvTensBroadcast(
+                Shape.of(frstShape), Shape.of(scndShape),
                 frstData, scndData,
                 new double[]{
                         8, -4,

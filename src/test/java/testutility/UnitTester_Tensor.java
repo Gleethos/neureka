@@ -152,7 +152,7 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testTensCon(
-            int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd
+            Shape frstShp, Shape scndShp, double[] frstData, double[] scondData, double[] expctd
     ){
         printSessionStart("Test tensor indexing: tensMul_mxd");
         Shape drnMxd  = _shpOfCon(frstShp, scndShp);
@@ -175,7 +175,7 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testInvTensCon(
-            int[] frstShp, int[] scndShp,
+            Shape frstShp, Shape scndShp,
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
@@ -198,10 +198,10 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensBroadcast(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
+    public int testTensBroadcast(Shape frstShp, Shape scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
-        int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
-        double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd)];
+        Shape drnMxd  = _shpOfBrc(frstShp, scndShp);
+        double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd.toIntArray())];
 
         Neureka.get().backend().getOperation("*")
                 .getAlgorithm(Broadcast.class)
@@ -221,12 +221,12 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testInvTensBroadcast(
-            int[] frstShp, int[] scndShp,
+            Shape frstShp, Shape scndShp,
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
-        int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
+        Shape drnMxd  = _shpOfBrc(frstShp, scndShp);
 
         Broadcast right = new Broadcast()
                             .setAutogradModeFor(
@@ -366,22 +366,22 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     
-    private static int[] _shpOfBrc( int[] shp1, int[] shp2 ) {
-        int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
-        for ( int i = 0; i < shp1.length && i < shp2.length; i++ ) {
-            shape[ i ] = Math.max( shp1[ i ], shp2[ i ] );
-            if ( Math.min(shp1[ i ], shp2[ i ]) != 1 && Math.max( shp1[ i ], shp2[ i ] ) != shape[ i ] ) {
+    private static Shape _shpOfBrc( Shape shp1, Shape shp2 ) {
+        int[] shape = new int[ ( shp1.size() + shp2.size() ) / 2 ];
+        for ( int i = 0; i < shp1.size() && i < shp2.size(); i++ ) {
+            shape[ i ] = Math.max( shp1.get( i ), shp2.get( i ) );
+            if ( Math.min(shp1.get( i ), shp2.get( i )) != 1 && Math.max( shp1.get( i ), shp2.get( i ) ) != shape[ i ] ) {
                 throw new IllegalStateException("Broadcast not possible. Shapes do not match!");
             }
         }
-        return shape;
+        return Shape.of(shape);
     }
 
     
-    private static Shape _shpOfCon(int[] shp1, int[] shp2 ) {
-        int[] shapeArray = new int[ ( shp1.length + shp2.length ) / 2 ];
-        for ( int i = 0; i < shp1.length && i < shp2.length; i++ )
-            shapeArray[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
+    private static Shape _shpOfCon(Shape shp1, Shape shp2 ) {
+        int[] shapeArray = new int[ ( shp1.size() + shp2.size() ) / 2 ];
+        for ( int i = 0; i < shp1.size() && i < shp2.size(); i++ )
+            shapeArray[ i ] = Math.abs( shp1.get( i ) - shp2.get( i ) ) + 1;
         return Shape.of(shapeArray);
     }
 

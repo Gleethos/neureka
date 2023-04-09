@@ -1,14 +1,10 @@
 package ut.device
 
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.file.FileDevice
-import neureka.devices.file.FileHandle
-import neureka.devices.file.CSVHandle
-import neureka.devices.file.IDXHandle
-import neureka.devices.file.JPEGHandle
-import neureka.devices.file.PNGHandle
+import neureka.devices.file.*
 import neureka.dtype.DataType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.UI8
@@ -92,7 +88,7 @@ class FileDevice_Spec extends Specification
             String path, String filename, int[] shape, Class<FileHandle<?,Number>> fileHandleClass, Class<?> dataTypeClass
     ) {
         given : 'A new tensor is being created for testing.'
-            var a = Tsr.of( shape, -8d..8d )
+            var a = Tsr.of( Shape.of(shape), -8d..8d )
         and : 'A String representation of the shape.'
             var shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})
         and : 'A file device instance is being accessed for a given path.'
