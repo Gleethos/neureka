@@ -51,7 +51,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
 
             if ( rightTypeClass == Integer.class )
             {
-                int[] t1_value = (int[]) t1_src.mut().getData().getRef();
+                int[] t1_value = t1_src.mut().getData().as(int[].class);
                 workload = (i, end) -> {
                     NDIterator t0Idx = NDIterator.of(t0_drn);
                     NDIterator t1Idx = NDIterator.of(t1_src);
@@ -117,7 +117,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Integer.class )
         {
-            int[] t0_value = (int[]) t0_drn.mut().getData().getRef();
+            int[] t0_value = t0_drn.mut().getData().as(int[].class);
             int[] t1_value = t1_src.mut().getDataAs(int[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -141,7 +141,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Long.class )
         {
-            long[] t0_value = (long[]) t0_drn.mut().getData().getRef();
+            long[] t0_value = t0_drn.mut().getData().as(long[].class);
             long[] t1_value = t1_src.mut().getDataAs(long[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -165,7 +165,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Byte.class )
         {
-            byte[] t0_value = (byte[]) t0_drn.mut().getData().getRef();
+            byte[] t0_value = t0_drn.mut().getData().as(byte[].class);
             byte[] t1_value = t1_src.mut().getDataAs(byte[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -189,7 +189,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Short.class )
         {
-            short[] t0_value = (short[]) t0_drn.mut().getData().getRef();
+            short[] t0_value = t0_drn.mut().getData().as(short[].class);
             short[] t1_value = t1_src.mut().getDataAs(short[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -213,7 +213,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Boolean.class )
         {
-            boolean[] t0_value = (boolean[]) t0_drn.mut().getData().getRef();
+            boolean[] t0_value = t0_drn.mut().getData().as(boolean[].class);
             boolean[] t1_value = t1_src.mut().getDataAs(boolean[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -237,7 +237,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
         }
         else if ( typeClass == Character.class )
         {
-            char[] t0_value = (char[]) t0_drn.mut().getData().getRef();
+            char[] t0_value = t0_drn.mut().getData().as(char[].class);
             char[] t1_value = t1_src.mut().getDataAs(char[].class);
             if ( isSimple )
                 workload = (start, end) -> {
@@ -260,7 +260,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
                 };
         } else {
             try {
-                Object[] t0_value = (Object[]) t0_drn.mut().getData().getRef();
+                Object[] t0_value = t0_drn.mut().getData().as(Object[].class);
                 Object[] t1_value = t1_src.mut().getDataAs(Object[].class);
                 if (isSimple)
                     workload = (start, end) -> {

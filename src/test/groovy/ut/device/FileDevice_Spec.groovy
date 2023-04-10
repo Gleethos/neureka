@@ -70,7 +70,7 @@ class FileDevice_Spec extends Specification
             new File( path + '/' + filename + '.idx' ).exists()
 
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
-            a.mut.data.ref == null
+            a.mut.data.getOrNull() == null
 
         when : 'Freeing the tensor...'
             device.free( a )
@@ -108,7 +108,7 @@ class FileDevice_Spec extends Specification
             }
 
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
-            a.mut.data.ref == null
+            a.mut.data.getOrNull() == null
 
         and : 'The tensor is now of the expected data-type.'
             a.dataType == DataType.of( dataTypeClass )

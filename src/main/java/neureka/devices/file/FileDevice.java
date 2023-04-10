@@ -8,6 +8,7 @@ import neureka.backend.api.Operation;
 import neureka.common.utility.Cache;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
+import neureka.devices.AbstractDeviceData;
 import neureka.devices.Device;
 import neureka.dtype.DataType;
 import neureka.math.Function;
@@ -216,7 +217,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     .save( _directory + "/" + fullFileName, tensor, configurations );
 
             _stored.put((Tsr<Object>) tensor, handle);
-            tensor.getMut().setData( new DeviceData( this, null, handle.getDataType() ){} );
+            tensor.getMut().setData( new AbstractDeviceData( this, null, handle.getDataType() ){} );
         }
         return this;
     }

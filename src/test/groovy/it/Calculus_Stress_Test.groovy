@@ -77,8 +77,8 @@ class Calculus_Stress_Test extends Specification
                         "101, -4.5" +
                     "]"
         and :
-            (device instanceof OpenCLDevice) || s.mut.data.ref == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]
-            (device instanceof OpenCLDevice) || source.mut.data.ref == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]
+            (device instanceof OpenCLDevice) || s.mut.data.get() == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]
+            (device instanceof OpenCLDevice) || source.mut.data.get() == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]
 
         cleanup :
             Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }
@@ -186,8 +186,8 @@ class Calculus_Stress_Test extends Specification
         when : 'We apply the function to both tensors...'
             var result1 = func(t1)
             var result2 = func(t2)
-            var data1 = result1.mut.data.ref
-            var data2 = result2.mut.data.ref
+            var data1 = result1.mut.data.get()
+            var data2 = result2.mut.data.get()
 
         then : 'First we ensure that both tensors have the correct value/element type.'
             result1.itemType == type
@@ -253,8 +253,8 @@ class Calculus_Stress_Test extends Specification
             result1.itemType == type
             result2.itemType == type
         and : 'The underlying data object should match the data array type as is defined by the data type!'
-            result1.mut.data.ref.class == result1.dataType.dataArrayType()
-            result2.mut.data.ref.class == result2.dataType.dataArrayType()
+            result1.mut.data.get().class == result1.dataType.dataArrayType()
+            result2.mut.data.get().class == result2.dataType.dataArrayType()
 
         and : 'The data of the first non slice tensor as well as its slice should be as expected.'
             result1.items == expected

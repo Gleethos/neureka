@@ -51,14 +51,14 @@ class Tensor_Conversion_Spec extends Specification
         when : x.mut.toType( Float.class )
         then :
             x.rawItems instanceof float[]
-            x.mut.data.ref instanceof float[]
+            x.mut.data.get() instanceof float[]
             x.rawData instanceof float[]
             x.getItemsAs( float[].class )[ 0 ] == 3.0f
 
         when : x.mut.toType( Double.class )
         then :
             x.rawItems instanceof double[]
-            x.mut.data.ref instanceof double[]
+            x.mut.data.get() instanceof double[]
             x.rawData instanceof double[]
             x.getItemsAs( float[].class )[ 0 ]==3.0f
     }

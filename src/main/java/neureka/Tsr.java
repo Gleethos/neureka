@@ -700,7 +700,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      */
     static <V> Tsr<V> of( Shape shape, Data<V> data ) {
-        return Tsr.of( data.dataType().getItemTypeClass(), shape, data.getRef() );
+        return Tsr.of( data.dataType().getItemTypeClass(), shape, data.getOrNull() );
     }
 
     /**
@@ -1246,7 +1246,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      *
      * @return The truth value determining if this tensor has no {@link Data}.
      */
-    default boolean isEmpty() { return getMut().getData() == null || getMut().getData().getRef() == null; }
+    default boolean isEmpty() { return getMut().getData() == null || getMut().getData().getOrNull() == null; }
 
     /**
      *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
@@ -2554,7 +2554,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
         return CPU.get() // This little API will temporarily migrate this to the JVM.
                 .borrow( (Tsr<Object>) this )
                 .in( () -> {
-                    Object data = getMut().getData().getRef();
+                    Object data = getMut().getData().getOrNull();
                     DataConverter.ForTensor map = new DataConverter.ForTensor( this );
                     if ( data == null ) {
                         if ( this.isOutsourced() )
@@ -2567,19 +2567,19 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                     if ( Number.class.isAssignableFrom(typeClass) ) {
                         java.util.function.Function<Integer, Number> access;
                         if ( this.getItemType() == Integer.class ) {
-                            int[] sourceData = (int[]) getMut().getData().getRef();
+                            int[] sourceData = getMut().getData().as(int[].class);
                             access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
                         } else if (this.getItemType() == Double.class) {
-                            double[] sourceData = (double[]) getMut().getData().getRef();
+                            double[] sourceData = getMut().getData().as(double[].class);
                             access = (i -> (Number) mapper.apply((V) Double.valueOf(sourceData[i])));
                         } else if (this.getItemType() == Float.class) {
-                            float[] sourceData = (float[]) getMut().getData().getRef();
+                            float[] sourceData = getMut().getData().as(float[].class);
                             access = (i -> (Number) mapper.apply((V) Float.valueOf(sourceData[i])));
                         } else if (this.getItemType() == Short.class) {
-                            short[] sourceData = (short[]) getMut().getData().getRef();
+                            short[] sourceData = getMut().getData().as(short[].class);
                             access = (i -> (Number) mapper.apply((V) Short.valueOf(sourceData[i])));
                         } else if (this.getItemType() == Byte.class) {
-                            byte[] sourceData = (byte[]) getMut().getData().getRef();
+                            byte[] sourceData = getMut().getData().as(byte[].class);
                             access = (i -> (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
@@ -2595,22 +2595,22 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
                     } else {
                         java.util.function.Function<Integer, Object> access = null;
                         if ( this.getItemType() == Integer.class ) {
-                            int[] sourceData = (int[]) getMut().getData().getRef();
+                            int[] sourceData = getMut().getData().as(int[].class);
                             access = (i -> mapper.apply((V) Integer.valueOf(sourceData[i])));
                         } else if ( this.getItemType() == Double.class ) {
-                            double[] sourceData = (double[]) getMut().getData().getRef();
+                            double[] sourceData = getMut().getData().as(double[].class);
                             access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
                         } else if ( this.getItemType() == Float.class ) {
-                            float[] sourceData = (float[]) getMut().getData().getRef();
+                            float[] sourceData = getMut().getData().as(float[].class);
                             access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
                         } else if ( this.getItemType() == Short.class ) {
-                            short[] sourceData = (short[]) getMut().getData().getRef();
+                            short[] sourceData = getMut().getData().as(short[].class);
                             access = (i -> mapper.apply((V) Short.valueOf(sourceData[i])));
                         } else if ( this.getItemType() == Byte.class ) {
-                            byte[] sourceData = (byte[]) getMut().getData().getRef();
+                            byte[] sourceData = getMut().getData().as(byte[].class);
                             access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else if ( typeClass == itemType() ) {
-                            Object[] sourceData = (Object[]) getMut().getData().getRef();
+                            Object[] sourceData = getMut().getData().as(Object[].class);
                             access = (i -> mapper.apply( (V) sourceData[i] ));
                         } else
                             throw new IllegalArgumentException(failMessage);

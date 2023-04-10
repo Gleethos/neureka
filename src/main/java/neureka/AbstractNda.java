@@ -128,7 +128,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     protected final Data<V> _getData() { _guardGet("data object"); return _data; }
 
     protected final Object _getRawData() {
-        return  _getData() == null ? null : _getData().getRef();
+        return  _getData() == null ? null : _getData().getOrNull();
     }
 
     /** {@inheritDoc} */
@@ -150,10 +150,10 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     protected final void _setData( Data<V> array )
     {
         _guardSet( "data object" );
-        Object data = array == null ? null : array.getRef();
+        Object data = array == null ? null : array.getOrNull();
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-        if ( _data != null && _data.getRef() != data && data != null && _data.getRef() != null ) {
-            boolean isProbablyDeviceTransfer = ( _data.getRef().getClass().isArray() != data.getClass().isArray() );
+        if ( _data != null && _data.getOrNull() != data && data != null && _data.getOrNull() != null ) {
+            boolean isProbablyDeviceTransfer = ( _data.getOrNull().getClass().isArray() != data.getClass().isArray() );
             if ( !isProbablyDeviceTransfer)
                 _version++; // Autograd must be warned!
         }
@@ -163,7 +163,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     protected <T> void _initDataArrayFrom( Filler<T> filler )
     {
         CPU.JVMExecutor executor = CPU.get().getExecutor();
-        Object data = _getData().getRef();
+        Object data = _getData().getOrNull();
         if ( data instanceof double[] )
             executor.threaded( ( (double[]) data ).length, ( start, end ) -> {
                 for (int i = start; i < end; i++)

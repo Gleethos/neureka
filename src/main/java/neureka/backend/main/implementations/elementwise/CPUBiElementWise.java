@@ -147,7 +147,7 @@ public abstract class CPUBiElementWise implements ImplementationFor<CPU>
     ) {
         t1_src.mut().setIsVirtual( false );
         t2_src.mut().setIsVirtual( false );
-        int[] t0_val = (int[]) t0_drn.mut().getData().getRef();
+        int[] t0_val = t0_drn.mut().getData().as(int[].class);
         int[] t1_val = t1_src.mut().getDataAs( int[].class );
         int[] t2_val = t2_src.mut().getDataAs( int[].class );
 

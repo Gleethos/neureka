@@ -58,7 +58,9 @@ import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractDevice;
+import neureka.devices.AbstractDeviceData;
 import neureka.devices.Device;
+import neureka.devices.DeviceData;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
@@ -445,7 +447,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add(
             tensor.getMut().upcast(Number.class),
-            parent.getMut().getData().getRef( cl_tsr.class ),
+            parent.getMut().getData().as( cl_tsr.class ),
             () -> tensor.set((Component) this)
         );
     }
@@ -480,7 +482,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         JVMData jvmData = null;
 
         if ( parent == null )
-            jvmData = JVMData.of( tensor.getMut().getData().getRef(), convertToFloat );
+            jvmData = JVMData.of( tensor.getMut().getData().getOrNull(), convertToFloat );
 
         cl_tsr<Number, Number> newClt;
 
@@ -608,7 +610,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public final <T extends Number> Device<Number> free( Tsr<T> tensor ) {
-        cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         if ( clt == null ) return this;
         _tensors.remove(tensor);
         tensor.getMut().setData(null);
@@ -682,7 +684,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     protected Data<Number> _actualize( Tsr<?> tensor ) {
         NDConfiguration ndc = tensor.getNDConf();
         Object initialValue = tensor.item();
-        cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         if ( clt == null ) throw new IllegalStateException("The tensor has no device component!");
         JVMData jvmData = JVMData.of( initialValue, ndc.size(), false, true );
         clt = _storeNew( ndc, jvmData, true );
@@ -693,7 +695,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     protected Data<Number> _virtualize( Tsr<?> tensor ) {
         NDConfiguration ndc = tensor.getNDConf();
         Object initialValue = tensor.item();
-        cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         if ( clt == null ) throw new IllegalStateException("The tensor has no device component!");
         JVMData jvmData = JVMData.of( initialValue, ndc.size(), false, true );
         clt = _storeNew( ndc, jvmData, false );
@@ -725,7 +727,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             Tsr<?> tensor, long offset, JVMData jvmData
     ) {
         if ( jvmData.getLength() == 0 ) return;
-        cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
 
         if ( clt.value.event != null ) clWaitForEvents(1, new cl_event[]{clt.value.event});
         clt.value.event = new cl_event();
@@ -741,7 +743,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected final <T extends Number> void _swap(Tsr<T> former, Tsr<T> replacement) {
-        cl_tsr<Number, T> clTsr = former.getMut().getData().getRef( cl_tsr.class);
+        cl_tsr<Number, T> clTsr = former.getMut().getData().as( cl_tsr.class);
         former.getMut().setData(null);
         replacement.getMut().setData( _dataArrayOf(clTsr, (DataType<T>) _dataTypeOf(clTsr)) );
         _tensors.remove(former);
@@ -761,7 +763,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     protected <T extends Number> void _updateNDConf( Tsr<T> tensor ) {
-        cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         if ( clt != null ) {
             // This will create a new cl config.
             clt.config = _writeNDConfig(tensor.getNDConf());
@@ -780,11 +782,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected <T extends Number> int _sizeOccupiedBy( Tsr<T> tensor ) { return tensor.getMut().getData().getRef( cl_tsr.class).value.size; }
+    protected <T extends Number> int _sizeOccupiedBy( Tsr<T> tensor ) { return tensor.getMut().getData().as( cl_tsr.class).value.size; }
 
     @Override
     protected <T extends Number> Object _readAll( Tsr<T> tensor, boolean clone ) {
-        cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         return _readArray( tensor, tensor.getDataType().dataArrayType(), 0, clt.value.size );
     }
 
@@ -804,7 +806,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     private JVMData _read( JVMData jvmData, Tsr<Number> tensor, int offset ) {
-        cl_tsr<?, ?> clt = tensor.getMut().getData().getRef( cl_tsr.class);
+        cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         clEnqueueReadBuffer(
                 _queue,
                 clt.value.data,
@@ -1079,15 +1081,15 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return (Data<T>) new CLData(this, data, (DataType<Number>) dataType);
     }
 
-    private static class CLData extends DeviceData<Number> {
+    private static class CLData extends AbstractDeviceData<Number> {
 
-        public CLData(Device<Number> owner, Object dataRef, DataType<Number> dataType) {
+        public CLData( Device<Number> owner, Object dataRef, DataType<Number> dataType ) {
             super(owner, dataRef, dataType);
             assert !(dataRef instanceof Data);
         }
 
         @Override
-        public Data<Number> withNDConf(NDConfiguration ndc) {
+        public DeviceData<Number> withNDConf(NDConfiguration ndc) {
             // We create a new cl_tsr object with the same data but a different ND-configuration:
             cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
             cl_tsr.cl_config config = ((OpenCLDevice)_owner)._writeNDConfig( ndc );

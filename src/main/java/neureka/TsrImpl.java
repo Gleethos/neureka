@@ -233,11 +233,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     TsrImpl() {
         _setData(new Data<V>() {
             @Override public Device<V> owner() { return (Device<V>) CPU.get(); }
-            @Override public Object getRef() { return null;}
+            @Override public Object getOrNull() { return null;}
             @Override public DataType<V> dataType() {
                 return (DataType<V>) Neureka.get().settings().dtype().getDefaultDataType();
             }
-            @Override public Data<V> withNDConf(NDConfiguration ndc) { throw new UnsupportedOperationException(); }
         });
     }
 
@@ -1141,8 +1140,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         _putAtCheckFor( (Tsr<?>) value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
         Data<V> thisData = this.getMut().getData();
-        Object thisDataRef = ( thisData != null ? thisData.getRef() : null );
-        if ( thisDataRef != null && !thisDataRef.equals(slice.getMut().getData().getRef()) )
+        Object thisDataRef = ( thisData != null ? thisData.getOrNull() : null );
+        if ( thisDataRef != null && !thisDataRef.equals(slice.getMut().getData().getOrNull()) )
             throw new IllegalStateException("Failed to isolate slice for inline assignment!");
 
         return _putAt( slice, (Tsr<V>) value );

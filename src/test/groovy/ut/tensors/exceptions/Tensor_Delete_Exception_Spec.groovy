@@ -60,7 +60,7 @@ class Tensor_Delete_Exception_Spec extends Specification
             t.isDeleted()
 
         when : 'Trying to access the data object...'
-            t.mut.data.ref
+            t.mut.data.get()
 
         then : 'This should lead to a descriptive exception.'
             def exception = thrown(IllegalAccessError)

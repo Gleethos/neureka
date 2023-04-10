@@ -116,7 +116,7 @@ class OpenCLDevice_Spec extends Specification
         given : 'A new tensor belonging to the first found OpenCLDevice instance.'
             Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
         and : 'The tensor value is being fetched...'
-            def data = t.mut.data.ref
+            def data = t.mut.data.get()
 
         expect : 'The tensor start with having data stored within.'
             data != null
@@ -124,8 +124,8 @@ class OpenCLDevice_Spec extends Specification
         when : 'The tensor is being stored on the device...'
             t.to(Device.get('first'))
         then : 'The value variable is still not null.'
-            t.mut.data.ref != null
-            t.mut.data.ref !== data
+            t.mut.data.get() != null
+            t.mut.data.get() !== data
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!

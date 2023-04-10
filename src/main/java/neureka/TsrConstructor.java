@@ -4,14 +4,12 @@ import neureka.backend.main.implementations.elementwise.CPURandomization;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
+import neureka.devices.DeviceData;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.math.args.Arg;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
-
-import java.util.Arrays;
-import java.util.stream.IntStream;
 
 /**
  *  The {@link TsrConstructor} is an <b>internal API</b> for receiving a wide range
@@ -74,7 +72,7 @@ final class TsrConstructor
     ) {
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
         _API.setConf( ndc );
-        _API.setData( data.withNDConf(ndc) );
+        _API.setData( data instanceof DeviceData ? ((DeviceData<Object>)data).withNDConf(ndc) : data );
     }
 
     public void tryConstructing(
@@ -88,7 +86,7 @@ final class TsrConstructor
 
         int size = _ndConstructor.getSize();
         if ( data instanceof Object[] )
-            data = CPU.get().allocate( dataType.getItemTypeClass(), size, data ).getRef();
+            data = CPU.get().allocate( dataType.getItemTypeClass(), size, data ).getOrNull();
         else
         {
             boolean isDefinitelyScalarValue = ( dataType == DataType.of(data.getClass()) );
@@ -147,8 +145,8 @@ final class TsrConstructor
     {
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
         Data<?> data = _targetDevice.allocate( DataType.of( valueType ), ndc );
-        Object out = CPURandomization.fillRandomly( data.getRef(), seed );
-        assert out == data.getRef();
+        Object out = CPURandomization.fillRandomly( data.getOrNull(), seed );
+        assert out == data.getOrNull();
         _API.setIsVirtual( false );
         _API.setConf( ndc );
         _API.setData( data );

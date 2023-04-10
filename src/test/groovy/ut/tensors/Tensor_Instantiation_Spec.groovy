@@ -54,7 +54,7 @@ class Tensor_Instantiation_Spec extends Specification
             t.items == data
         and : 'The tensor is not virtual nor is it a slice... so the underlying data is also as expected.'
             t.rawData == data
-            t.mut.data.ref == data // This exposes the internal data array
+            t.mut.data.get() == data // This exposes the internal data array
 
         where : 'The following data arrays will lead to the tensor having the expected type and shape.'
             data                        ||  type  | shape
@@ -78,7 +78,7 @@ class Tensor_Instantiation_Spec extends Specification
         and : 'Also the expected shape.'
             t.shape() == [ 1 ]
         and : 'The tensor has the expected data array.'
-            t.mut.data.ref == [data] // Internal data
+            t.mut.data.get() == [data] // Internal data
             t.rawData == [data]
         and : 'The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.'
             t.items == [data]

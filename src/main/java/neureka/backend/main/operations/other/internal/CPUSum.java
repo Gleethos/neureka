@@ -43,7 +43,7 @@ public class CPUSum implements ImplementationFor<CPU>
         Class<?> type = in.itemType();
 
         if ( type == Float.class ) {
-            float[] inData = in.mut().getData().getRef(float[].class);
+            float[] inData = in.mut().getData().as(float[].class);
             float[] out = new float[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -59,7 +59,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Double.class ) {
-            double[] inData = in.mut().getData().getRef(double[].class);
+            double[] inData = in.mut().getData().as(double[].class);
             double[] out = new double[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -75,7 +75,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Integer.class ) {
-            int[] inData = in.mut().getData().getRef(int[].class);
+            int[] inData = in.mut().getData().as(int[].class);
             int[] out = new int[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -91,7 +91,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Long.class ) {
-            long[] inData = in.mut().getData().getRef(long[].class);
+            long[] inData = in.mut().getData().as(long[].class);
             long[] out = new long[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -107,7 +107,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Short.class ) {
-            short[] inData = in.mut().getData().getRef(short[].class);
+            short[] inData = in.mut().getData().as(short[].class);
             short[] out = new short[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -123,7 +123,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( type == Byte.class ) {
-            byte[] inData = in.mut().getData().getRef(byte[].class);
+            byte[] inData = in.mut().getData().as(byte[].class);
             byte[] out = new byte[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -139,7 +139,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 return reduced; // This is the final result!
         }
         else if ( Number.class.isAssignableFrom(type) ) {
-            Object[] inData = in.mut().getData().getRef(Object[].class);
+            Object[] inData = in.mut().getData().as(Object[].class);
             Number[] out = new Number[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;

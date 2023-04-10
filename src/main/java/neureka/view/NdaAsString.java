@@ -353,7 +353,7 @@ public final class NdaAsString
     private void _stringifyAllValues()
     {
         int max = _rowLimit;
-        Object data = ( _tensor.isOutsourced() ? _tensor.getRawData() : _tensor.getMut().getData().getRef() );
+        Object data = ( _tensor.isOutsourced() ? _tensor.getRawData() : _tensor.getMut().getData().getOrNull() );
         ValStringifier getter = _createValStringifierAndFormatter( data );
         int size = _tensor.size();
         int trim = ( size - max );

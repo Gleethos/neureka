@@ -34,11 +34,7 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.Data;
 import neureka.Tsr;
-import neureka.common.utility.LogUtil;
-import neureka.dtype.DataType;
-import neureka.ndim.config.NDConfiguration;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -72,29 +68,5 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
 
     @Override
     public Spliterator<Tsr<V>> spliterator() { return getTensors().spliterator(); }
-
-    protected abstract static class DeviceData<T> implements Data<T>
-    {
-        protected final Device<?> _owner;
-        protected final Object _dataRef;
-        protected final DataType<T> _dataType;
-
-        public DeviceData(
-                Device<?> owner,
-                Object ref,
-                DataType<T> dataType
-        ) {
-            LogUtil.nullArgCheck( owner, "owner", Device.class );
-            LogUtil.nullArgCheck( dataType, "dataType", DataType.class );
-            _owner = owner;
-            _dataRef = ref;
-            _dataType = dataType;
-        }
-
-        @Override public final Device<T> owner() { return (Device<T>) _owner; }
-        @Override public final Object getRef() { return _dataRef; }
-        @Override public final DataType<T> dataType() { return _dataType; }
-        @Override public       Data<T> withNDConf(NDConfiguration ndc) { return this; }
-    }
 
 }
