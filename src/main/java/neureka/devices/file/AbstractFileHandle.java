@@ -1,7 +1,9 @@
 package neureka.devices.file;
 
+import neureka.Data;
 import neureka.Tsr;
 import neureka.devices.Storage;
+import neureka.devices.host.CPU;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -110,8 +112,24 @@ abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
     @Override
     public Storage<V> restore( Tsr<V> tensor ) {
         try {
-            Object value = _loadData();
-            tensor.getMut().setItems( value );
+            Object array = _loadData();
+            Data<V> data;
+            if (      array instanceof int[]     ) data = (Data<V>) Data.of( (int[])     array );
+            else if ( array instanceof double[]  ) data = (Data<V>) Data.of( (double[])  array );
+            else if ( array instanceof float[]   ) data = (Data<V>) Data.of( (float[])   array );
+            else if ( array instanceof long[]    ) data = (Data<V>) Data.of( (long[])    array );
+            else if ( array instanceof short[]   ) data = (Data<V>) Data.of( (short[])   array );
+            else if ( array instanceof byte[]    ) data = (Data<V>) Data.of( (byte[])    array );
+            else if ( array instanceof char[]    ) data = (Data<V>) Data.of( (char[])    array );
+            else if ( array instanceof boolean[] ) data = (Data<V>) Data.of( (boolean[]) array );
+            else if ( array instanceof String[]  ) data = (Data<V>) Data.of( (String[])  array );
+            else if ( array instanceof Object[]  ) data = CPU.get().allocate( tensor.itemType(), ((Object[])array).length, array );
+            else {
+                String message = "Restoring tensor from filesystem failed because the data type of the file is not supported!\n";
+                _LOG.error( message );
+                throw new IllegalArgumentException( message );
+            }
+            tensor.mut().setData( data );
         } catch ( Exception e ) {
             _LOG.error( "Restoring tensor from filesystem failed!\n", e );
             e.printStackTrace();

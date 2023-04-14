@@ -168,6 +168,8 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
+        _stored.remove( tensor );
+        _loaded.remove( head.getFileName() );
         return this;
     }
 
