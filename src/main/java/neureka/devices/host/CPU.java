@@ -6,7 +6,6 @@ import neureka.backend.api.Operation;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractDevice;
-import neureka.devices.AbstractDeviceData;
 import neureka.devices.Device;
 import neureka.devices.host.concurrent.Parallelism;
 import neureka.devices.host.concurrent.WorkScheduler;
@@ -797,12 +796,6 @@ public class CPU extends AbstractDevice<Object>
             _DIVIDER.parallelism( _PARALLELISM )
                     .threshold( PARALLELIZATION_THRESHOLD )
                     .divide( first, limit, rangeWorkload);
-        }
-    }
-    
-    private static class CPUData<T> extends AbstractDeviceData<T> {
-        public CPUData(Device<?> owner, Object ref, DataType<T> dataType) {
-            super(owner, ref, dataType);
         }
     }
 

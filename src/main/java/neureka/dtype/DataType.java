@@ -166,7 +166,7 @@ public final class DataType<T>
     public int hashCode() { return _typeClass.hashCode() * 31; }
 
     public String toString() {
-        String representative = (getRepresentativeType() != null ? "("+getRepresentativeType().getSimpleName()+")" : "");
+        String representative = (getRepresentativeType() != getItemTypeClass() ? "("+getRepresentativeType().getSimpleName()+")" : "");
         return "DataType[class=" + getItemTypeClass().getSimpleName() + representative + "]";
     }
 

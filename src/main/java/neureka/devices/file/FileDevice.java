@@ -173,6 +173,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         return this;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T> Device<Object> store( Tsr<T> tensor ) {
         LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
@@ -194,10 +195,27 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         return this;
     }
 
+    /**
+     * Stores the given tensor in the file system with the given filename.
+     *
+     * @param tensor The tensor to store
+     * @param filename The filename of the file containing the tensor.
+     * @return The file device itself.
+     * @param <T> The type of the tensor.
+     */
     public <T> FileDevice store( Tsr<T> tensor, String filename ) {
         return this.store( tensor, filename, null );
     }
 
+    /**
+     * Stores the given tensor in the file system with the given filename.
+     *
+     * @param tensor The tensor to store
+     * @param filename The filename of the file containing the tensor.
+     * @param configurations The configurations to use when storing the tensor.
+     * @return The file device itself.
+     * @param <T> The type of the tensor.
+     */
     public <T> FileDevice store( Tsr<T> tensor, String filename, Map<String, Object> configurations ) {
         LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
         LogUtil.nullArgCheck( filename, "filename", String.class );
@@ -299,7 +317,12 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName()+"[directory=" + _directory + ",stored=" + _stored + ",loadable=" + _loadable + ",loaded=" + _loaded + "]";
+        return this.getClass().getSimpleName()+"[" +
+                    "dir=" + _directory + "," +
+                    "stored={.." + _stored.size() + "..}," +
+                    "loadable={.." + _loadable.size() + "..}," +
+                    "loaded={.." + _loaded.size() + "..}" +
+                "]";
     }
 
     public String getDirectory() { return _directory; }

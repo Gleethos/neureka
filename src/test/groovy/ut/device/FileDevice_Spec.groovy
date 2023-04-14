@@ -221,6 +221,7 @@ class FileDevice_Spec extends Specification
         and : 'We create a simple tensor which we want to save.'
             var t = Tsr.of(shape, data)
         expect :
+            device.directory == 'build/resources/test/idx2'
             t.getDevice() === CPU.get()
             device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!
             device.loaded == []
@@ -262,6 +263,7 @@ class FileDevice_Spec extends Specification
             Shape.of(3, 2) |  Data.of( -1, -2, -3, -4, -5, -6 )
             Shape.of(4)    |  Data.of( 1.1, 2.2, 3.3, 4.4 )
             Shape.of(5)    |  Data.of( 0.3f, 0.4f, 0.5f, 0.6f, 0.7f )
+            Shape.of(2)    |  Data.of( 42L, -7L )
     }
 
 }
