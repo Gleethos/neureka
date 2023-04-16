@@ -53,9 +53,39 @@ public interface NDConfiguration
     }
 
     /**
-     * Types of common data layouts.
+     * Types of common data layouts: <br>
+     * <ul>
+     *     <li>ROW_MAJOR
+     *          <p>
+     *              Row major means that row elements are right next to one another
+     *              in the underlying data array of a tensor.
+     *              This is the default layout for tensors.
+     *          </p>
+     *     </li>
+     *     <li>COLUMN_MAJOR
+     *          <p>
+     *               Column major means that column elements are right next to one another
+     *               in the underlying data array of a tensor.
+     *          </p>
+     *     </li>
+     *     <li>SYMMETRIC
+     *          <p>
+     *               Symmetric means that the tensor can either be interpreted as a row vector or a column vector.
+     *               Row major means that items are stored in a row-wise fashion
+     *               and column major means that items are stored in a column-wise fashion.
+     *               A vector can be interpreted as a row vector or a column vector and thus is symmetric.
+     *          </p>
+     *     </li>
+     *     <li>UNSPECIFIC
+     *          <p>
+     *              Unspecific means that the tensor is not row major or column major.
+     *              This is the case for tensors which are slices of other tensors or tensors which have been permuted.
+     *          </p>
+     *     </li>
+     * </ul>
      */
-    enum Layout {
+    enum Layout
+    {
         ROW_MAJOR,
         COLUMN_MAJOR,
         SYMMETRIC, // Both row- and column-major compatible!

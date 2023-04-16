@@ -100,6 +100,12 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
 
         boolean aIsCompatible = isSymmetric( layoutA );
         boolean bIsCompatible = isSymmetric( layoutB );
+        /*
+            Symmetric means that the tensor can either be interpreted as a row vector or a column vector.
+            Row major means that items are stored in a row-wise fashion
+            and column major means that items are stored in a column-wise fashion.
+            A vector can be interpreted as a row vector or a column vector and thus is symmetric.
+        */
 
         if ( aIsCompatible ) {
             b = _toInline( b, layoutA );
