@@ -17,39 +17,39 @@ public class ReLayout extends AbstractOperation
     public ReLayout()
     {
         super(
-                new OperationBuilder()
-                        .identifier(       "layout"  )
-                        .operator(         "layout"  )
-                        .arity(            1          )
-                        .isOperator(       false      )
-                        .isIndexer(        false      )
-                        .isDifferentiable( true       )
-                        .isInline(         false      )
+            new OperationBuilder()
+            .identifier(       "layout"  )
+            .operator(         "layout"  )
+            .arity(            1          )
+            .isOperator(       false      )
+            .isIndexer(        false      )
+            .isDifferentiable( true       )
+            .isInline(         false      )
         );
         setAlgorithm(
-                Algorithm
-                        .withName( "layout" )
-                        .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
-                        .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
-                        .setExecution(
-                                ( caller, call ) ->
-                                {
-                                    Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
-                                    Tsr<Object> input = (Tsr<Object>) inputs[0];
+            Algorithm
+            .withName( "layout" )
+            .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
+            .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
+            .setExecution(
+                ( caller, call ) ->
+                {
+                    Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
+                    Tsr<Object> input = (Tsr<Object>) inputs[0];
 
-                                    NDConfiguration.Layout originalLayout = input.getNDConf().getLayout();
-                                    NDConfiguration.Layout newLayout = call.getValOf( Arg.Layout.class );
+                    NDConfiguration.Layout originalLayout = input.getNDConf().getLayout();
+                    NDConfiguration.Layout newLayout = call.getValOf( Arg.Layout.class );
 
-                                    Tsr<?> reLayout = input.deepCopy().mut().toLayout(newLayout);
+                    Tsr<?> reLayout = input.deepCopy().mut().toLayout(newLayout);
 
-                                    return Result.of(reLayout.mut().setIsIntermediate(true))
-                                            .withADAction( target -> {
-                                                Tsr<Object> error = (Tsr<Object>) target.error().deepCopy();
-                                                return error.mut().toLayout(originalLayout);
-                                            });
-                                }
-                        )
-                        .buildFunAlgorithm()
+                    return Result.of(reLayout.mut().setIsIntermediate(true))
+                            .withADAction( target -> {
+                                Tsr<Object> error = (Tsr<Object>) target.error().deepCopy();
+                                return error.mut().toLayout(originalLayout);
+                            });
+                }
+            )
+            .buildFunAlgorithm()
         );
     }
 

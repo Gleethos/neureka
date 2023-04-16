@@ -572,9 +572,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         NDConfiguration old = this.getNDConf();
 
         if ( target == NDConfiguration.Layout.ROW_MAJOR )
-            _fromCMToRM();
+            _fromCMToRM( this );
         else
-            _fromRMToCM();
+            _fromRMToCM( this );
 
         _checkLayoutConversion( this.getNDConf(), old, target );
     }
@@ -582,40 +582,40 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     /**
      *  Converts this tensor from column major to column major layout.
      */
-    private void _fromCMToRM() {
-        if ( this.getNDConf().isVirtual() ) {
-            this.setIsVirtual( false ); // We actualized the tensor before conversion!
-            if ( this.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )
+    private static void _fromCMToRM( Tsr<?> t ) {
+        if ( t.getNDConf().isVirtual() ) {
+            t.mut().setIsVirtual( false ); // We actualized the tensor before conversion!
+            if ( t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )
                 return;
         }
-        TsrImpl<V> clone = deepCopy(); // A clone will have by default a row major layout.
-        _setNDConf( clone.getNDConf() );
-        _assignIfActual( () -> clone );
+        Tsr<?> clone = t.deepCopy(); // A clone will have by default a row major layout.
+        t.mut().setNDConf( clone.getNDConf() );
+        _assignIfActual( t, () -> clone );
     }
 
     /**
      *  Converts this tensor from row major to column major layout.
      */
-    private void _fromRMToCM() {
-        _assignIfActual( () -> TsrImpl.this.T().deepCopy().getMut().detach() );
-        NDConfiguration old = this.getNDConf();
+    private static void _fromRMToCM( Tsr<?> t ) {
+        _assignIfActual( t, () -> t.T().deepCopy().getMut().detach() );
+        NDConfiguration old = t.getNDConf();
         int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());
         if ( old.isVirtual() ) {
-            this.setIsVirtual(false);
-            old = this.getNDConf();
+            t.mut().setIsVirtual(false);
+            old = t.getNDConf();
         }
-        _setNDConf( _createNewNDCFrom( old, newTranslation, old.translation() ) );
+        t.mut().setNDConf( _createNewNDCFrom( old, newTranslation, old.translation() ) );
     }
 
     /**
      *  This will only call the supplier and copy its result into this tensor
      *  if this tensor is not virtual (meaning this is an actual tensor).
      */
-    private void _assignIfActual( Supplier<Tsr<?>> provider ) {
-        if ( !this.isVirtual() ) {
+    private static void _assignIfActual( Tsr<?> t, Supplier<Tsr<?>> provider ) {
+        if ( !t.isVirtual() ) {
             Tsr<?> toBeAssigned = provider.get();
-            MemUtil.keep(this, toBeAssigned,
-                () -> Neureka.get().backend().getFunction().idy().execute( this, toBeAssigned )
+            MemUtil.keep(t, toBeAssigned,
+                () -> Neureka.get().backend().getFunction().idy().execute( t, toBeAssigned )
             );
         }
     }
