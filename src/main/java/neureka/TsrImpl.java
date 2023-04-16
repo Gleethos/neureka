@@ -58,6 +58,7 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.LazyRef;
 import neureka.backend.main.memory.MemUtil;
+import neureka.backend.main.operations.other.ReLayout;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
@@ -559,88 +560,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     private void _toLayout( NDConfiguration.Layout target )
     {
-        if ( target == this.getNDConf().getLayout() ) return;
-        if ( target == NDConfiguration.Layout.SYMMETRIC )
-            throw new UnsupportedOperationException(
-                "Conversion of a non-symmetric tensor to a symmetric tensor is not possible!"
-            );
-        if ( target == NDConfiguration.Layout.UNSPECIFIC )
-            throw new UnsupportedOperationException(
-                "Conversion of a tensor to an unspecific layout is not possible!"
-            );
-
-        NDConfiguration old = this.getNDConf();
-
-        if ( target == NDConfiguration.Layout.ROW_MAJOR )
-            _fromCMToRM( this );
-        else
-            _fromRMToCM( this );
-
-        _checkLayoutConversion( this.getNDConf(), old, target );
-    }
-
-    /**
-     *  Converts this tensor from column major to column major layout.
-     */
-    private static void _fromCMToRM( Tsr<?> t ) {
-        if ( t.getNDConf().isVirtual() ) {
-            t.mut().setIsVirtual( false ); // We actualized the tensor before conversion!
-            if ( t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )
-                return;
-        }
-        Tsr<?> clone = t.deepCopy(); // A clone will have by default a row major layout.
-        t.mut().setNDConf( clone.getNDConf() );
-        _assignIfActual( t, () -> clone );
-    }
-
-    /**
-     *  Converts this tensor from row major to column major layout.
-     */
-    private static void _fromRMToCM( Tsr<?> t ) {
-        _assignIfActual( t, () -> t.T().deepCopy().getMut().detach() );
-        NDConfiguration old = t.getNDConf();
-        int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());
-        if ( old.isVirtual() ) {
-            t.mut().setIsVirtual(false);
-            old = t.getNDConf();
-        }
-        t.mut().setNDConf( _createNewNDCFrom( old, newTranslation, old.translation() ) );
-    }
-
-    /**
-     *  This will only call the supplier and copy its result into this tensor
-     *  if this tensor is not virtual (meaning this is an actual tensor).
-     */
-    private static void _assignIfActual( Tsr<?> t, Supplier<Tsr<?>> provider ) {
-        if ( !t.isVirtual() ) {
-            Tsr<?> toBeAssigned = provider.get();
-            MemUtil.keep(t, toBeAssigned,
-                () -> Neureka.get().backend().getFunction().idy().execute( t, toBeAssigned )
-            );
-        }
-    }
-
-    private static NDConfiguration _createNewNDCFrom(
-        NDConfiguration old, int[] newTranslation, int[] indicesMap
-    ) {
-        assert !old.isVirtual();
-        return NDConfiguration.of(
-                    old.shape(), newTranslation, indicesMap, old.spread(), old.offset()
-                );
-    }
-
-    private static void _checkLayoutConversion(
-            NDConfiguration newConf,
-            NDConfiguration oldConf,
-            NDConfiguration.Layout targetLayout
-    ) {
-        if ( newConf.isVirtual() )
-            throw new IllegalStateException("Layout conversion produced a virtual nd-configuration!");
-        if ( !newConf.getLayout().isCompatible(targetLayout) )
-            throw new IllegalArgumentException(
-                "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +
-                "to target layout '"+targetLayout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
-            );
+        ReLayout.toLayout( this, target );
     }
 
     /**
