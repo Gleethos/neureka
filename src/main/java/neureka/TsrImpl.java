@@ -558,11 +558,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     |   ------------------------------------------
     */
 
-    private void _toLayout( NDConfiguration.Layout target )
-    {
-        ReLayout.toLayout( this, target );
-    }
-
     /**
      * This method is responsible for incrementing
      * the "_version" field variable which represents the version of the data of this tensor.
@@ -663,7 +658,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> toLayout(NDConfiguration.Layout layout) { TsrImpl.this._toLayout( layout ); return TsrImpl.this; }
+    public Tsr<V> toLayout( NDConfiguration.Layout layout ) {
+        ReLayout.toLayout( this, layout );
+        return TsrImpl.this;
+    }
 
     /**
      *  {@inheritDoc}

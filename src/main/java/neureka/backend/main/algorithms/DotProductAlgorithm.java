@@ -82,16 +82,16 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
 
         Tsr<Number> output = Tsr.of( type ).withShape( 1 ).all( 0 ).mut().setIsIntermediate( true );
 
-        NDConfiguration.Layout layoutOut = _checkAndPrepareLayout( call.input( 1 ), call.input( 2 ), output );
-        output.mut().toLayout( layoutOut );
-        output.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
+        call = _checkAndPrepareLayout( call, output );
 
         call.getDeviceFor(Number.class).store( output );
         return call.withInputAt( 0, output );
     }
 
-    private static NDConfiguration.Layout _checkAndPrepareLayout( Tsr<?> a, Tsr<?> b, Tsr<?> c )
+    private static ExecutionCall<?> _checkAndPrepareLayout( ExecutionCall<?> call, Tsr<?> c )
     {
+        Tsr<?> a = call.input( 1 );
+        Tsr<?> b = call.input( 2 );
         // We need to make sure that the vectors have a common/compatible layout,
         // ..before we can do the actual a . b = c dot product!
         NDConfiguration.Layout layoutA = a.getNDConf().getLayout();
@@ -102,24 +102,34 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
         boolean bIsCompatible = isSymmetric( layoutB );
 
         if ( aIsCompatible ) {
-            b.mut().setIsVirtual(false);
-            b.mut().toLayout(layoutA); // We choose a valid layout based on a
+            b = _toInline( b, layoutA );
             layoutC = layoutA;
         } else if ( bIsCompatible ) {
-            a.mut().setIsVirtual(false);
-            a.mut().toLayout(layoutB); // We choose a valid layout based on b
+            a = _toInline( a, layoutB );
             layoutC = layoutB;
         } else {
             // Ok so the inputs are unspecific (or RM or CM)
             // So we just need to decide on any valid layout really:
             layoutC = isSymmetric(layoutC) ? layoutC : NDConfiguration.Layout.SYMMETRIC;
-            a.mut().setIsVirtual(false);
-            b.mut().setIsVirtual(false);
-            a.mut().toLayout( layoutC );
-            b.mut().toLayout( layoutC );
-        }
 
-        return layoutC;
+            b = _toInline( b, layoutA );
+            a = _toInline( a, layoutB );
+        }
+        c.mut().toLayout( layoutC );
+        c.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
+
+        return call.withInputAt( 1, a ).withInputAt( 2, b );
+    }
+
+    private static Tsr<?> _toInline( Tsr<?> t, NDConfiguration.Layout targetLayout ) {
+        Function relayout = Neureka.get().backend().getFunction().relayout();
+        if ( t.isVirtual() ) {
+            t = t.deepCopy().mut().setIsVirtual(false);
+            if ( targetLayout != NDConfiguration.Layout.SYMMETRIC && targetLayout != NDConfiguration.Layout.UNSPECIFIC )
+                t = t.mut().toLayout(targetLayout); // We choose a valid layout based on a
+        } else
+            t = relayout.with(Arg.Layout.of(targetLayout)).call( t ); // We choose a valid layout based on a
+        return t;
     }
 
     private static boolean isSymmetric( NDConfiguration.Layout layout ) {
