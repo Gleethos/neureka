@@ -3,6 +3,7 @@ package neureka.math.args;
 import neureka.common.composition.Component;
 import neureka.Tsr;
 import neureka.devices.Device;
+import neureka.ndim.config.NDConfiguration;
 
 /**
  *  Extend this class to define additional meta arguments for {@link neureka.math.Functions}.
@@ -120,6 +121,10 @@ public abstract class Arg<T> implements Component<Args> {
     public static class Indices extends Arg<int[]> {
         public static Indices of( int... arg ) { return new Indices( arg ); }
         private Indices( int[] arg ) { super(arg); }
+    }
+    public static class Layout extends Arg<NDConfiguration.Layout> {
+        public static Layout of(NDConfiguration.Layout arg) { return new Layout( arg ); }
+        private Layout( NDConfiguration.Layout arg ) { super(arg); }
     }
 
     @Override

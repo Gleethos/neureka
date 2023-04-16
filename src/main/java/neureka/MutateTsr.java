@@ -97,7 +97,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param layout The layout of the data array (row or column major).
      * @return The final instance type of this class which enables method chaining.
      */
-    Tsr<T> toLayout(NDConfiguration.Layout layout);
+    Tsr<T> toLayout( NDConfiguration.Layout layout );
 
     /**
      * This method is responsible for incrementing

@@ -93,10 +93,12 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
         boolean bIsCompatible = isRMOrCM( layoutB );
 
         if ( aIsCompatible ) {
-            b.mut().toLayout(layoutA); // We choose a valid layout based on a
+            if ( layoutB != NDConfiguration.Layout.SYMMETRIC )
+                b.mut().toLayout(layoutA); // We choose a valid layout based on a
             layoutC = layoutA;
         } else if ( bIsCompatible ) {
-            a.mut().toLayout(layoutB); // We choose a valid layout based on b
+            if ( layoutA != NDConfiguration.Layout.SYMMETRIC )
+                a.mut().toLayout(layoutB); // We choose a valid layout based on b
             layoutC = layoutB;
         } else {
             // Ok so the inputs are unspecific/symmetric/ (not RM or CM)
