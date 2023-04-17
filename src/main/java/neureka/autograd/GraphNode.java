@@ -408,27 +408,47 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp() )
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients( pendingNodes ) );
         else {
+            _verifyErrorAccumulation( pendingNodes );
             pendingNodes.forEach( n -> {
-                if ( !n._pendingError.isFullyAccumulated() ) {
-                    throw new IllegalStateException(
-                        "Pending error in graph node '"+ n +"' has not received expected accumulation during back-prop. " +
-                        "This is most likely because the recorded computation graph has multiple root!\n " +
-                        "Otherwise please examine function " + n._function + " and its underlying operations: '" +
-                        (
-                                n._function == null
-                                ? "[]"
-                                : n._function.getAllFunctions()
-                                    .stream()
-                                    .filter( f -> f.getOperation() != null )
-                                    .map( f -> f.getOperation().getIdentifier() )
-                                    .collect(Collectors.joining("', '"))
-                        )+ "'!"
-                    );
-                }
                 n.backward( n._pendingError.getAccumulatedError() ); // Continue back-propagation recursively!
             });
         }
         _deleteDerivativesRecursively(); // Cleanup after back-propagation!
+    }
+
+    private void _verifyErrorAccumulation( Set<GraphNode<V>> pendingNodes )
+    {
+        List<GraphNode<?>> notFullyAccumulated = pendingNodes
+                                                        .stream()
+                                                        .filter( n -> !n._pendingError.isFullyAccumulated() )
+                                                        .collect(Collectors.toList());
+
+        if ( !notFullyAccumulated.isEmpty() ) {
+            String explanation = "Not all graph nodes have received the expected amount of errors from their children!\n" +
+                                 "This usually happens because the recorded computation graph has multiple roots, which " +
+                                 "is most likely because not all of your model outputs are captured by a common loss function.\n";
+            String problem =
+                    "The following graph nodes have not received the expected amount of errors from their children:\n" +
+                    notFullyAccumulated
+                        .stream().map( n ->
+                            n +"; " +
+                            "Accumulation: " + (n._pendingError.getExpectedToBeReceived() - n._pendingError.getToBeReceived()) + "/" + n._pendingError.getExpectedToBeReceived() + "; " +
+                            "Involved operations '" +
+                            Optional.ofNullable(n._function)
+                                    .map( fun ->
+                                            fun.getAllFunctions()
+                                               .stream()
+                                               .filter( f -> f.getOperation() != null )
+                                               .map( f -> f.getOperation().getIdentifier() )
+                                               .collect(Collectors.joining("', '"))
+                                    )
+                                    .orElse("[]")
+                            + "'; Children: " + n._children.stream().map( c -> String.valueOf(c.get())).collect(Collectors.joining(", "))
+                        )
+                        .collect(Collectors.joining("\n"));
+
+            throw new IllegalStateException( explanation + problem );
+        }
     }
 
     /**
