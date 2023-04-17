@@ -18,10 +18,12 @@ import neureka.math.parsing.FunctionParser;
  */
 final class PendingError<V>
 {
+    private int _expectedToBeReceived;
     private int _toBeReceived;
     private final Tsr<V> _accumulatedError;
 
     public PendingError( Tsr<V> error, int toBeReceived ) {
+        _expectedToBeReceived = toBeReceived;
         _toBeReceived = toBeReceived;
         _accumulatedError = error;
     }
@@ -46,6 +48,8 @@ final class PendingError<V>
     }
 
     public int getToBeReceived() { return _toBeReceived; }
+
+    public int getExpectedToBeReceived() { return _expectedToBeReceived; }
 
     public Tsr<V> getAccumulatedError() { return _accumulatedError; }
 
