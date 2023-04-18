@@ -179,7 +179,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
                          "Input tensors of a new GraphNode must be part of the computation graph!"
                     );
-            if ( function != null && function.getOperation().isInline() && child.usesAD() )
+            if ( function.getOperation().isInline() && child.usesAD() )
                 throw new IllegalStateException(
                         "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
                         "on active autograd computation graph in non detached function.\n" +
@@ -196,7 +196,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
             }
         }
-        if ( allChildrenUseForwardAD && _targetsToAgents != null ) _targetsToAgents.clear();
+        if ( allChildrenUseForwardAD && !_targetsToAgents.isEmpty() ) _targetsToAgents.clear();
     }
 
     /**
@@ -209,7 +209,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         Result output, Function function, ExecutionCall<? extends Device<?>> call
     ) {
         if ( call == null || !function.isFlat() )
-            return null; // Leave nodes don't need agents!
+            return Collections.emptyList(); // Leave nodes don't need agents!
 
         BackPropTargetCollector<V> collector = new BackPropTargetCollector<>();
 
@@ -226,8 +226,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode().orElseThrow(IllegalStateException::new);
                     if ( srcNode.usesAD() && function.dependsOn(i) ) {
                         if (
-                            srcNode.size() == 0 && this.size() == 0
-                               ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
+                            srcNode.size() == 0
+                               || // Sources created by for example by dot/mm or x-mul are reverse-mode cases!
                             !srcNode.isLeave() && !srcNode._adMode.allowsForward()
                         ) {
                             ADAction agent = output.getAgentSupplier().supplyADActionFor(function, call.withArgs(Arg.DerivIdx.of(i)) );
@@ -237,7 +237,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             int finalI = i;
                             Tsr<V> localDerivative = function.derive( inputs, i );
-                            srcNode.forEachTargetActionPair(
+                            srcNode._forEachTargetActionPair(
                                 ( targets, localADAction ) ->
                                 {
                                     // The agent multiplies the local derivative with its stored partial derivative...
@@ -373,7 +373,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  Meaning it is the tensor owning this {@link GraphNode} component.
      *  It is referenced weakly because it might not be needed any more (Not referenced inside AD-Agent for example)
      *  and can therefore be garbage collected.
-     *
+     *  <p>
      *  Warning: This method might return null because
      *           the payload is weakly referenced!
      *           Meaning that it might get garbage collected.
@@ -391,7 +391,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * This method is called by the JITProp component.
      * A pending should only ever be retrieved from a GraphNode once because
-     * afterwards the accumulated error is about to be back-propagated.
+     * afterward the accumulated error is about to be back-propagated.
      * Therefore, this method nulls the reference when returning the PendingError instance.
      * @return Returns an instance of the PendingError class containing a error accumulation.
      */
@@ -608,7 +608,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private void _deleteDerivativesRecursively() {
         if ( !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads() ) { // <=- This flag is almost always false. (Used for testing)
-            if ( !this.isReliesOnJustInTimeProp() && _targetsToAgents != null ) _targetsToAgents.clear();
+            if ( !this.isReliesOnJustInTimeProp() && !_targetsToAgents.isEmpty() ) _targetsToAgents.clear();
             if ( !this.isGraphLeave() ) forEachTarget( GraphNode::_deleteDerivativesRecursively );
         }
     }
@@ -648,7 +648,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return boolean
      */
     public boolean has( GraphNode<V> target ) {
-        if ( _targetsToAgents == null ) return false;
         return _targetsToAgents.stream().anyMatch( ref -> ref.node() == target );
     }
 
@@ -658,15 +657,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return int
      */
-    public int size() { return _targetsToAgents != null ? _targetsToAgents.size() : 0; }
+    public int size() {
+        return _targetsToAgents.size();
+    }
 
     /**
      * @param action The lambda performing an action on all targeted nodes and their agents.
      */
     public void forEachDerivative( BiConsumer<GraphNode<V>, ADAction> action ) {
-        if ( _targetsToAgents == null ) return;
+        if ( _targetsToAgents.isEmpty() ) return;
         new ArrayList<>(_targetsToAgents).forEach(
-            ( ref ) -> ref.actions().forEach(a -> action.accept( ref.node(), a ) )
+            ( ref ) -> ref.actions().forEach( a -> action.accept( ref.node(), a ) )
         );
     }
 
@@ -675,7 +676,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param action A lambda action providing derivative and target node as parameter.
      */
     private void _forEachBackRef( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
-        if ( _targetsToAgents == null ) return;
         if ( _targetsToAgents.isEmpty() ) return;
         error.getMut().setIsIntermediate( false );
         for ( BackPropTargets<V> ref : new ArrayList<>(_targetsToAgents) )
@@ -687,15 +687,15 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param action An action which should be applied to the graph nodes of all the partial derivatives.
      */
     public void forEachTarget( Consumer<GraphNode<V>> action ) {
-        if ( _targetsToAgents == null ) return;
+        if ( _targetsToAgents.isEmpty() ) return;
         new ArrayList<>(_targetsToAgents).forEach( ref -> action.accept( ref.node() ) );
     }
 
     /**
      * @param action The action which ought to be applied to each target {@link GraphNode} / {@link ADAction} pair.
      */
-    public void forEachTargetActionPair( BiConsumer<BackPropTargets<V>, ADAction> action ) {
-        if ( _targetsToAgents == null ) return;
+    private void _forEachTargetActionPair( BiConsumer<BackPropTargets<V>, ADAction> action ) {
+        if ( _targetsToAgents.isEmpty() ) return;
         new ArrayList<>( _targetsToAgents )
                 .forEach( ref  -> ref.actions().forEach(a -> action.accept( ref, a ) ) );
     }
@@ -704,7 +704,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * @return Checks if this node stores target / AD-action (usually derivatives) pairs.
      */
-    public boolean hasDerivatives() { return _targetsToAgents != null && _targetsToAgents.size() > 0; }
+    public boolean hasDerivatives() { return !_targetsToAgents.isEmpty(); }
 
     /**
      *  This is the getter for an important {@link GraphNode} property which

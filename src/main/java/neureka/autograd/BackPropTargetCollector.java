@@ -1,6 +1,7 @@
 package neureka.autograd;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ class BackPropTargetCollector<V> {
     }
 
     public List<BackPropTargets<V>> getTargets() {
-        if ( _targetsToAgents == null ) return null;
+        if ( _targetsToAgents == null ) return Collections.emptyList();
         else
             return _targetsToAgents.entrySet()
                     .stream()
