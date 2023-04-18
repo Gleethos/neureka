@@ -525,7 +525,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
             }
             // The following call ADActions for reverse-mode AutoDiff!
-            this.forEachBackward( error, ( t, e ) -> t._backward( e, pendingNodes, true ) );
+            _forEachBackRef( error, ( t, e ) -> t._backward( e, pendingNodes, true ) );
             // Standard reverse mode-AutoDiff!
         }
     }
@@ -591,11 +591,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
              */
             return; // This node will continue its propagation via a JIT-Prop component later!
         }
-        if ( this.usesAD() ) {
+        if ( this.usesAD() )
             // The following call ADActions for reverse-mode AutoDiff!
-            this.forEachBackward( error, ( t, e ) -> t._backwardJIT( e, source ) );
+            _forEachBackRef( error, ( t, e ) -> t._backwardJIT( e, source ) );
             // JITProp reverse mode-AutoDiff!
-        }
     }
 
     /**
@@ -675,14 +674,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param error The error which ought to be passed to the {@link ADAction}s.
      * @param action A lambda action providing derivative and target node as parameter.
      */
-    public void forEachBackward( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
+    private void _forEachBackRef( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
         if ( _targetsToAgents == null ) return;
         if ( _targetsToAgents.isEmpty() ) return;
         error.getMut().setIsIntermediate( false );
-        new ArrayList<>(_targetsToAgents).forEach( ref -> {
+        for ( BackPropTargets<V> ref : new ArrayList<>(_targetsToAgents) )
             for ( ADAction a : ref.actions() )
                 action.accept( ref.node(), (Tsr<V>) a.act( new ADTarget<>(ref.index(), ref.node(), error) ));
-        });
     }
 
     /**
