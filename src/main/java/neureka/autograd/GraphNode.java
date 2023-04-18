@@ -264,7 +264,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
             {
                 for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode().orElseThrow(IllegalStateException::new);
-                    if ( ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) && function.dependsOn(i) ) {
+                    if ( ( srcNode.usesAD() || inputs[ i ].rqsGradient() )) {
+                        if ( !function.dependsOn(i) )
+                            throw new IllegalStateException(
+                                    "The function '" + function + "' does not have an input for " +
+                                    "for argument index '" + i + "'!\n" +
+                                    "This is most likely due to a bug in the implementation of the function or the underlying operation(s)."
+                                );
+
                         ADAction agent = output.getAgentSupplier().supplyADActionFor(
                                                         function,
                                                         call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
@@ -272,12 +279,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         collector.put( i, srcNode, agent );
                         _informPartialDerivative(agent);
                     }
-                    else if ( !function.dependsOn(i) )
-                        throw new IllegalStateException(
-                            "The function '" + function + "' does not have an input for " +
-                            "for argument index '" + i + "'!\n" +
-                            "This is most likely due to a bug in the implementation of the function or the underlying operation(s)."
-                        );
                 }
             }
         }
@@ -298,17 +299,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
             try {
                 if ( payload.isOutsourced() ) payload.getDevice().store( e );
             } catch ( Exception exception ) {
-                if ( payload.isUndefined() ) {
+                if ( payload.isUndefined() )
                     throw new IllegalStateException(
                             "An undefined payload tensor has been detected inside the computation graph!\n" +
-                                    "This is most likely due to an error occurring during tensor identity transfer (Also see AbstractComponentOwner).\n" +
-                                    "One type of constructor in the 'Tsr' class enables passing a String expression for execution, " +
-                                    "whose resulting tensor needs to be merged into the newly created one..."
-                    );
-                }
-                else exception.printStackTrace();
+                            "This is most likely due to an error occurring during tensor identity transfer (Also see AbstractComponentOwner).\n" +
+                            "One type of constructor in the 'Tsr' class enables passing a String expression for execution, " +
+                            "whose resulting tensor needs to be merged into the newly created one..."
+                        );
+                else
+                    exception.printStackTrace();
             }
-            if ( payload.rqsGradient() ) payload.getMut().addToGradient( e );
+            if ( payload.rqsGradient() ) payload.mut().addToGradient( e );
             if ( also != null ) also.accept( payload );
         });
     }
