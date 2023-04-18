@@ -18,22 +18,20 @@ import neureka.math.parsing.FunctionParser;
  */
 final class PendingError<V>
 {
-    private int _expectedToBeReceived;
+    private final int _expectedToBeReceived;
     private int _toBeReceived;
     private final Tsr<V> _accumulatedError;
 
     public PendingError( Tsr<V> error, int toBeReceived ) {
         _expectedToBeReceived = toBeReceived;
-        _toBeReceived = toBeReceived;
+        _toBeReceived = toBeReceived - 1; // -1 because the first error value is already given to the constructor.
         _accumulatedError = error;
     }
 
     public void accumulate( Tsr<?> error ) {
         Tsr[] inputs = { _accumulatedError, error };
         MemUtil.keep( inputs, () -> {
-                    new FunctionParser( Neureka.get().backend() )
-                            .parse("I[ 0 ] <- (I[ 0 ] + I[ 1 ])", false)
-                            .call(inputs);
+                    _accumulatedError.mut().plusAssign((Tsr<V>)error);
                     return null;
                 });
         _toBeReceived--;

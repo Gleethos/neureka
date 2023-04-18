@@ -57,6 +57,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *  Instances of the {@link GraphNode} class are components of tensors ({@link Tsr} instances)
@@ -453,8 +454,37 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         )
                         .collect(Collectors.joining("\n"));
 
+            List<List<GraphNode<V>>> rootPaths = new ArrayList<>();
+            for ( GraphNode<V> node : pendingNodes )
+                node._findRootPathsRecursively( rootPaths, new ArrayList<>(), this );
+
+            if ( !rootPaths.isEmpty() )
+                problem += "\n\nThe following paths from the current node to root nodes have been found:\n" +
+                          IntStream.range(0, rootPaths.size())
+                            .mapToObj( i -> (1+i) + ".: " + rootPaths.get(i).stream().map(GraphNode::toString).collect(Collectors.joining(" -> ")) )
+                            .collect(Collectors.joining("\n"))+"\n";
+
             throw new IllegalStateException( explanation + problem );
         }
+    }
+
+    private void _findRootPathsRecursively( List<List<GraphNode<V>>> paths, List<GraphNode<V>> current, GraphNode<V> correctRoot )
+    {   /*
+           This method is used to find all possible paths from the current node to "invalid" root nodes.
+           Root nodes are nodes which have no children but are still part of the autograd graph.
+        */
+        if ( this == correctRoot )
+            return; // We are looking for paths to root nodes which are not the correct root node! (debugging)
+        current.add( this );
+
+        if ( _children == null || _children.isEmpty() )
+            paths.add( new ArrayList<>(current) ); // We have found a path to a root node!
+        else
+            for ( WeakReference<GraphNode<V>> child : _children ) {
+                GraphNode<V> c = child.get();
+                if ( c != null ) c._findRootPathsRecursively( paths, current, correctRoot );
+            }
+        current.remove( this ); // Remove this node from the current path so that we can continue searching for other paths!
     }
 
     /**
@@ -480,7 +510,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 int numOfADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error
                 if ( numOfADPaths > 1 ) {
                     if ( _pendingError == null ) {
-                        _pendingError = new PendingError<>( error, numOfADPaths - 1 );
+                        _pendingError = new PendingError<>( error, numOfADPaths );
                         pendingNodes.add( this );
                     }
                     else
