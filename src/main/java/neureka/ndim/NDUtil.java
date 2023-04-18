@@ -1,6 +1,10 @@
 package neureka.ndim;
 
 
+import neureka.Neureka;
+import neureka.Shape;
+import neureka.Tsr;
+
 /**
  *  Static utility methods for the NDArray.
  */
@@ -38,5 +42,24 @@ public class NDUtil
             if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
         }
         return new int[][]{ rsA, rsB };
+    }
+
+    public static boolean canBeBroadcast(Shape a, Shape b) {
+        if ( a.size() != b.size() ) return false;
+        boolean areEqual = a.equals(b);
+        if ( areEqual ) return true;
+        for ( int i = 0; i < a.size(); i++ )
+            if ( a.get(i) != b.get(i) && a.get(i) != 1 && b.get(i) != 1 )
+                return false;
+
+        return true;
+    }
+
+    public static <T> Tsr<T> transpose( Tsr<T> t ) {
+        boolean wasIntermediate = t.isIntermediate();
+        t.getMut().setIsIntermediate(false);
+        Tsr<T> result = Neureka.get().backend().getFunction().transpose2D().call( t );
+        t.getMut().setIsIntermediate(wasIntermediate);
+        return result;
     }
 }

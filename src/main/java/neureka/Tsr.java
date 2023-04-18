@@ -1827,13 +1827,9 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     default Tsr<V> T() {
         if ( this.rank() == 1 ) return this;
-        else if ( this.rank() == 2 ) {
-            boolean wasIntermediate = this.isIntermediate();
-            this.getMut().setIsIntermediate(false);
-            Tsr<V> result = Neureka.get().backend().getFunction().transpose2D().call( this );
-            this.getMut().setIsIntermediate(wasIntermediate);
-            return result;
-        }
+        else if ( this.rank() == 2 )
+            return Neureka.get().backend().getAutogradFunction().transpose2D().call(this);
+
         StringBuilder operation = new StringBuilder();
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( i == 0 ? "" : ", " );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );

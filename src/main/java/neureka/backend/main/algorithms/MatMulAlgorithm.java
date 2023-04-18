@@ -11,6 +11,7 @@ import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.devices.Device;
+import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
                         throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
                     Function matMul = Neureka.get().backend().getFunction().matMul();
                     int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                    Tsr<?> derivative = adCall.input( d ).T().deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                    Tsr<?> derivative = NDUtil.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                     derivative.to(adCall.getDevice());
                     return ADAction.of(target ->
                                 d == 1
@@ -54,7 +55,6 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
         );
         setCallPreparation(MatMulAlgorithm::_prepare);
     }
-
 
     private static ExecutionCall<Device<Object>> _prepare( ExecutionCall<?> call )
     {
