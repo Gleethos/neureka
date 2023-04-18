@@ -93,6 +93,15 @@ public interface Shape extends Iterable<Integer>
     int size();
 
     /**
+     * @return The number of elements in the shape.
+     */
+    default int elements() {
+        int elements = 1;
+        for ( int i = 0; i < size(); i++ ) elements *= get(i);
+        return elements;
+    }
+
+    /**
      * @param i The index of the dimension/axis.
      * @return The number of elements in the dimension/axis at the given index.
      */

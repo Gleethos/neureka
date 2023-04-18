@@ -1,13 +1,12 @@
 package st.attention;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 
 import java.util.List;
 
-public class AttentionBundle
+public class QuasiMultiHeadAttention
 {
     private final Function _cat = Function.of("concat(i0, i1, i2, i3)");
 
@@ -20,7 +19,7 @@ public class AttentionBundle
 
     private Tsr<Float> _lastPrediction = null;
 
-    public AttentionBundle(
+    public QuasiMultiHeadAttention(
         int numberOfNeurons,
         int numberOfInputs
     ) {
