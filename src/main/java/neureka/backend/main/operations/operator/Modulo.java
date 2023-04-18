@@ -19,6 +19,7 @@ import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.math.parsing.FunctionParser;
 import neureka.devices.Device;
+import neureka.ndim.NDUtil;
 import neureka.ndim.NDimensional;
 
 import java.util.Arrays;
@@ -102,8 +103,8 @@ public class Modulo extends AbstractOperation
             }
         }
         if ( d >= 0 ) {
-            if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
-                throw new IllegalArgumentException("The shapes of the operands of the division operation must be equal! (when deriving nested functions)");
+            if ( !call.validate().all( (a, b) -> NDUtil.canBeBroadcast(a.shape(), b.shape()) ).isValid() )
+                throw new IllegalArgumentException("The shapes of the operands of the modulo operation must be equal or broadcast compatible! (when deriving nested functions)");
 
             // So here we assume that there are only two sub-functions: a/b
 

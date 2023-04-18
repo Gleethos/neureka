@@ -19,6 +19,7 @@ import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.math.parsing.FunctionParser;
 import neureka.devices.Device;
+import neureka.ndim.NDUtil;
 import neureka.ndim.NDimensional;
 
 import java.util.Arrays;
@@ -92,8 +93,8 @@ public class Multiplication extends AbstractOperation
                 //    _deleteIfNotIn(call.inputs(), flatCall.input(i)); // TODO: Make it possible to delete more stuff
                 return r;
             } else {
-                if ( !call.validate().allNotNullHaveSame(NDimensional::shape).isValid() )
-                    throw new IllegalArgumentException("The shapes of the operands of the multiplication operation must be equal! (when deriving nested functions)");
+                if ( !call.validate().all( (a, b) -> NDUtil.canBeBroadcast(a.shape(), b.shape()) ).isValid() )
+                    throw new IllegalArgumentException("The shapes of the operands of the multiplication operation must be equal or broadcast compatible! (when deriving nested functions)");
 
                 Function noAd = Function.of( caller.toString(), false );
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( noAd, call.withArgs(Arg.DerivIdx.of(-1)) );
