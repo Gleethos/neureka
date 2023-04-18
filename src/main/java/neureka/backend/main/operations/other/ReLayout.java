@@ -12,6 +12,7 @@ import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.memory.MemUtil;
 import neureka.math.Function;
 import neureka.math.args.Arg;
+import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.function.Supplier;
@@ -102,7 +103,7 @@ public class ReLayout extends AbstractOperation
      *  Converts this tensor from row major to column major layout.
      */
     private static void _fromRMToCM( Tsr<?> t ) {
-        _assignIfActual( t, () -> t.T().deepCopy().getMut().detach() );
+        _assignIfActual( t, () -> NDUtil.transpose(t).deepCopy().getMut().detach() );
         NDConfiguration old = t.getNDConf();
         int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());
         if ( old.isVirtual() ) {
