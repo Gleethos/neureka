@@ -4,6 +4,7 @@ package neureka.ndim;
 import neureka.Neureka;
 import neureka.Shape;
 import neureka.Tsr;
+import neureka.math.Function;
 
 /**
  *  Static utility methods for the NDArray.
@@ -56,10 +57,17 @@ public class NDUtil
     }
 
     public static <T> Tsr<T> transpose( Tsr<T> t ) {
-        boolean wasIntermediate = t.isIntermediate();
-        t.getMut().setIsIntermediate(false);
-        Tsr<T> result = Neureka.get().backend().getFunction().transpose2D().call( t );
-        t.getMut().setIsIntermediate(wasIntermediate);
-        return result;
+        if ( t.rank() == 1 ) return t;
+        if ( t.rank() == 2 ) {
+            boolean wasIntermediate = t.isIntermediate();
+            t.getMut().setIsIntermediate(false);
+            Tsr<T> result = Neureka.get().backend().getFunction().transpose2D().call(t);
+            t.getMut().setIsIntermediate(wasIntermediate);
+            return result;
+        }
+        StringBuilder operation = new StringBuilder();
+        for ( int i = t.rank() - 1; i >= 0; i-- ) operation.append( i ).append( i == 0 ? "" : ", " );
+        operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
+        return Function.of( operation.toString(), false ).call( t );
     }
 }
