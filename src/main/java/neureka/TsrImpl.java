@@ -272,7 +272,11 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  see {@link Tsr#of(DataType, Shape, Filler)}
      */
     <T> TsrImpl( NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
-        _constructFromInitializer(ndConstructor, type, filler);
+        LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
+        LogUtil.nullArgCheck( type, "type", DataType.class );
+        LogUtil.nullArgCheck( type, "filler", Filler.class );
+        constructFor(CPU.get(), ndConstructor).unpopulated( false, true, type );
+        _initDataArrayFrom( filler );
     }
 
     /**
@@ -283,28 +287,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     }
 
     TsrImpl( NDConstructor ndConstructor, DataType<?> type ) {
-        _constructAndAllocate( ndConstructor, true, DataType.of( type.getRepresentativeType() ) );
+        constructFor(CPU.get(), ndConstructor).unpopulated( true, true, type );
     }
-
-
-    /**
-     * @param ndConstructor The {@link NDConfiguration} producer of that this new tensor ought to have.
-     * @param type The data type that this tensor ought to have.
-     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
-     * @param <T> The type parameter for the actual data array items.
-     */
-    private <T> void _constructFromInitializer(NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
-        LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
-        LogUtil.nullArgCheck( type, "type", DataType.class );
-        LogUtil.nullArgCheck( type, "filler", Filler.class );
-        _constructAndAllocate( ndConstructor, false, type );
-        _initDataArrayFrom( filler );
-    }
-
-    private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual, DataType<?> type ) {
-        constructFor(CPU.get(), ndConstructor).unpopulated( virtual, true, type );
-    }
-
 
     /*==================================================================================================================
     |
