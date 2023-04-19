@@ -589,7 +589,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created and seeded tensor of the provided type and shape.
      */
-    static <V> Tsr<V> of( Class<V> valueType, Shape shape, Arg.Seed seed ) { return new TsrImpl<>( valueType, NDConstructor.of(shape), seed ); }
+    static <V> Tsr<V> of( Class<V> valueType, Shape shape, Arg.Seed seed ) { return TsrImpl._of( valueType, NDConstructor.of(shape), seed ); }
 
     /**
      *  Use this to construct and return a homogeneously populated double tensor of the specified shape.
@@ -711,7 +711,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type and shape.
      */
-    static <V> Tsr<V> of( DataType<V> type, Shape shape ) { return new TsrImpl<>( NDConstructor.of(shape), type ); }
+    static <V> Tsr<V> of( DataType<V> type, Shape shape ) { return TsrImpl._of( NDConstructor.of(shape), type ); }
 
     /**
      *  Use this to construct and return a tensor of the specified type, shape and data object.
@@ -841,7 +841,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
     static <V> Tsr<V> of( DataType<V> dataType, int[] shape, Object data ) {
-        return new TsrImpl<>( NDConstructor.of(shape), CPU.get(), dataType, data );
+        return TsrImpl._of( NDConstructor.of(shape), CPU.get(), dataType, data );
     }
 
     /**
@@ -857,7 +857,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
     static <V> Tsr<V> of( DataType<V> dataType, Shape shape, Object data ) {
-        return new TsrImpl<>( NDConstructor.of(shape), CPU.get(), dataType, data );
+        return TsrImpl._of( NDConstructor.of(shape), CPU.get(), dataType, data );
     }
 
     /**
@@ -874,7 +874,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      */
     static <V extends N, N> Tsr<V> of( DataType<V> dataType, Device<N> device, Shape shape, Object data ) {
-        return new TsrImpl<>( NDConstructor.of(shape), device, dataType, data );
+        return TsrImpl._of( NDConstructor.of(shape), device, dataType, data );
     }
 
     /**
@@ -889,7 +889,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
      * @param <V> The type parameter of individual tensor items.
      */
-    static <V> Tsr<V> of( DataType<V> dataType, NDConstructor ndConstructor, Data<V> data ) { return new TsrImpl<>( ndConstructor, dataType, data ); }
+    static <V> Tsr<V> of( DataType<V> dataType, NDConstructor ndConstructor, Data<V> data ) { return TsrImpl._of( ndConstructor, dataType, data ); }
 
     /**
      *  This factory method allows the creation of tensors with an additional initialization
@@ -932,7 +932,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      */
     static <T> Tsr<T> of( DataType<T> type, Shape shape, Filler<T> filler) {
         LogUtil.nullArgCheck( shape, "shape", Shape.class );
-        return new TsrImpl<>( NDConstructor.of(shape), type, filler );
+        return TsrImpl._of( NDConstructor.of(shape), type, filler );
     }
 
     /**
@@ -951,7 +951,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param <T> The type parameter for the actual data array items.
      */
     static <T> Tsr<T> of( DataType<T> type, int[] shape, Filler<T> filler ) {
-        return new TsrImpl<>( NDConstructor.of(shape), type, filler );
+        return TsrImpl._of( NDConstructor.of(shape), type, filler );
     }
 
     /**

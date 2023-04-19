@@ -242,16 +242,15 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @return An {@link TsrConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
      */
-    protected TsrConstructor constructFor( Device<?> targetDevice, NDConstructor ndConstructor )
+    protected static TsrConstructor constructFor( AbstractNda<?, ?> nda, Device<?> targetDevice, NDConstructor ndConstructor )
     {
-        AbstractNda<C, ?> nda = this;
         return
             new TsrConstructor(
                 targetDevice, ndConstructor,
                 new TsrConstructor.API() {
-                    @Override public void   setConf( NDConfiguration conf   ) { nda.getMut().setNDConf( conf ); }
-                    @Override public void   setData( Data o                 ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }
-                    @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
+                    @Override public void setConf( NDConfiguration conf   ) { nda.getMut().setNDConf( conf ); }
+                    @Override public void setData( Data o                 ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }
+                    @Override public void setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                 }
             );
     }

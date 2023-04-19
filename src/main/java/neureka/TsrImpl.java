@@ -85,7 +85,6 @@ import java.awt.*;
 import java.awt.image.*;
 import java.util.List;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -128,7 +127,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         if ( args == null || args.length == 0 ) return new TsrImpl<>();
         if ( args.length == 1 ) {
             TsrImpl<T> t = new TsrImpl<>();
-            boolean success = t.constructFor(CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
+            boolean success = constructFor(t, CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
             if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
@@ -142,7 +141,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         Class<?> commonType = _extractCommonType(args);
         if ( commonType != null ) {
             TsrImpl<T> t = new TsrImpl<>();
-            t.constructFor(CPU.get(), NDConstructor.of( args.length ))
+            constructFor(t, CPU.get(), NDConstructor.of( args.length ))
                 .tryConstructing(
                     DataType.of(commonType),
                     args
@@ -196,7 +195,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         TsrImpl<T> t = new TsrImpl<>();
         Class<?> commonType = _extractCommonType( list.toArray() );
         // We construct the tensor:
-        t.constructFor(CPU.get(), NDConstructor.of( list.size() ))
+        constructFor(t, CPU.get(), NDConstructor.of( list.size() ))
                     .tryConstructing(
                         DataType.of(commonType),
                         list.toArray()
@@ -241,7 +240,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         });
     }
 
-    TsrImpl( NDConstructor ndConstructor, Device device, DataType<?> dataType, Object value ) {
+    public static <V> TsrImpl<V> _of( NDConstructor ndConstructor, Device device, DataType<V> dataType, Object value ) {
         Object data = value;
         if ( List.class.isAssignableFrom( dataType.getItemTypeClass() ) )
             data = new Object[]{ value }; // Make an nd-array of lists possible"
@@ -255,39 +254,54 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
         }
-        constructFor(device, ndConstructor).tryConstructing( dataType, data );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, device, ndConstructor).tryConstructing( dataType, data );
+        return t;
     }
 
-    <V> TsrImpl( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
+    static <V> TsrImpl<V> _of( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
         // We check if the type of the data is compatible with the type of the tensor:
         if ( !dataType.getItemTypeClass().isAssignableFrom( data.dataType().getItemTypeClass() ) )
             throw new IllegalArgumentException(
                     "The data type of the data is not compatible with the data type of the tensor!"
                 );
 
-        constructFor(data.owner(), ndConstructor).constructTrusted( data );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, data.owner(), ndConstructor).constructTrusted( data );
+        return t;
     }
 
     /**
      *  see {@link Tsr#of(DataType, Shape, Filler)}
      */
-    <T> TsrImpl( NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
+    static <V> TsrImpl<V> _of( NDConstructor ndConstructor, DataType<V> type, Filler<V> filler ) {
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
         LogUtil.nullArgCheck( type, "filler", Filler.class );
-        constructFor(CPU.get(), ndConstructor).unpopulated( false, true, type );
-        _initDataArrayFrom( filler );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, CPU.get(), ndConstructor).unpopulated( false, true, type );
+        t._initDataArrayFrom( filler );
+        return t;
     }
 
     /**
      *  See {@link Tsr#of(Class, Shape, neureka.math.args.Arg.Seed)} and {@link #of(List, String)}
      */
-    TsrImpl( Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
-        constructFor(CPU.get(), ndConstructor).newSeeded( valueType, seed );
+    static <V> TsrImpl<V> _of( Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
+        LogUtil.nullArgCheck( valueType, "valueType", Class.class );
+        LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
+        LogUtil.nullArgCheck( seed, "seed", Arg.Seed.class );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, CPU.get(), ndConstructor).newSeeded( valueType, seed );
+        return t;
     }
 
-    TsrImpl( NDConstructor ndConstructor, DataType<?> type ) {
-        constructFor(CPU.get(), ndConstructor).unpopulated( true, true, type );
+    static <V> TsrImpl<V> _of( NDConstructor ndConstructor, DataType<?> type ) {
+        LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
+        LogUtil.nullArgCheck( type, "type", DataType.class );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, CPU.get(), ndConstructor).unpopulated( true, true, type );
+        return t;
     }
 
     /*==================================================================================================================
@@ -365,7 +379,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                 _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            constructFor(getDevice(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
+            constructFor(this, getDevice(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
             if ( isVirtual )
                 this.find( Relation.class )
                         .ifPresent( r ->
