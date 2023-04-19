@@ -100,15 +100,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     private final List<BackPropTargets<V>> _targetsToAgents;
 
+    private final List<WeakReference<GraphNode<V>>> _children = new ArrayList<>(1);
+
+    private final NodePayload<V> _nodePayload;
+
     private int _usedAsDerivative = 0;
 
     private boolean _reliesOnJustInTimeProp = false;
 
     private PendingError<V> _pendingError = null;
 
-    private final NodePayload<V> _nodePayload;
 
-    private List<WeakReference<GraphNode<V>>> _children;
 
 
     /**
@@ -129,7 +131,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         GraphNode<V>[] parents = ( call != null ? new GraphNode[call.arity()]             : null                                );
 
         if ( function != null && function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graphs!
-            data = new NodePayload<>( out.get(), this::_performPayloadCleanup);
+            data = new NodePayload<>( out.get(), this::_performPayloadCleanup );
             ((Tsr<V>)out.get()).set(this);
             if ( call != null ) {
                 Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
@@ -190,12 +192,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     private void _performPayloadCleanup() {
         boolean allChildrenUseForwardAD = true;
-        if ( _children != null ) {
+        if ( !_children.isEmpty() )
             for ( WeakReference<GraphNode<V>> childRef : new ArrayList<>(_children) ) {
                 GraphNode<V> childNode = childRef.get();
                 if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
             }
-        }
+
         if ( allChildrenUseForwardAD && !_targetsToAgents.isEmpty() ) _targetsToAgents.clear();
     }
 
@@ -363,9 +365,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param newChild which references it's input namely the parent (this) has...
      */
     private synchronized void _attachChild( GraphNode<V> newChild ) {
-        if ( _children == null ) _children = new ArrayList<>();
-        WeakReference<GraphNode<V>> ref = new WeakReference<>( newChild, null );
-        _children.add( ref );
+        Objects.requireNonNull( newChild );
+        _children.add( new WeakReference<>( newChild, null ) );
     }
 
     /**
@@ -478,10 +479,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
             return; // We are looking for paths to root nodes which are not the correct root node! (debugging)
         current.add( this );
 
-        if ( _children == null || _children.isEmpty() )
+        if ( _children.isEmpty() )
             paths.add( new ArrayList<>(current) ); // We have found a path to a root node!
         else
-            for ( WeakReference<GraphNode<V>> child : _children ) {
+            for ( WeakReference<GraphNode<V>> child : new ArrayList<>(_children) ) {
                 GraphNode<V> c = child.get();
                 if ( c != null ) c._findRootPathsRecursively( paths, current, correctRoot );
             }
@@ -620,7 +621,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private int _numberOfReverseModeADChildren() {
         int count = 0;
-        if ( _children != null ) {
+        if ( !_children.isEmpty() ) {
             for ( WeakReference<GraphNode<V>> weak : _children ) {
                 if ( weak != null && weak.get() != null ) {
                     GraphNode<V> child = weak.get(); // TODO: make test which asserts that Detached Function does not trigger this!
@@ -789,7 +790,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  involving the payload of this very {@link GraphNode} instance.
      */
     public List<WeakReference<GraphNode<V>>> getChildren() {
-        return _children == null ? Collections.emptyList() : Collections.unmodifiableList( _children );
+        return Collections.unmodifiableList( _children );
     }
 
     public boolean canBeDeleted() {
