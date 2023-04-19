@@ -1,6 +1,8 @@
 package ut.tensors
 
+import neureka.Data
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.backend.ocl.CLBackend
 import neureka.common.utility.SettingsLoader
@@ -635,6 +637,18 @@ class Tensor_Operation_Spec extends Specification
 
             Double | 'random(i0)'       || ['r2':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.242396559265774, 0.23980663860290638, 0.4667980401594514, 0.0, 0.0, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as double[], 'r1':[2.242396559265774, 0.23980663860290638, 0.4667980401594514, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283] as double[]]
             Float  | 'random(i0)'       || ['r2':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2423966, 0.23980664, 0.46679804, 0.0, 0.0, -1.0840396, 0.43090823, 1.0381081, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as float[], 'r1':[2.2423966, 0.23980664, 0.46679804, -1.0840396, 0.43090823, 1.0381081] as float[]]
+    }
+
+    def 'The transpose operation exposed by the "T()" method, supports autograd.'()
+    {
+        given : 'A simple 2d array'
+            var n = Tsr.of(Shape.of(3, 4), Data.of(6f, -5f, 2.4f)).setRqsGradient(true)
+        when : 'The transpose operation is applied'
+            var t = n.T()
+        and : 'We call the backward method on it...'
+            t.backward()
+        then : 'The gradient of the original tensor is correct'
+            n.getGradient().get().toString() == "(3x4):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
     }
 
 }
