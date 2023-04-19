@@ -44,12 +44,12 @@ import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
-import neureka.math.Function;
-import neureka.math.args.Arg;
 import neureka.common.composition.Component;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.dtype.DataType;
+import neureka.math.Function;
+import neureka.math.args.Arg;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -437,12 +437,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                  "This usually happens because the recorded computation graph has multiple roots, which " +
                                  "is most likely because not all of your model outputs are captured by a common loss function.\n";
             String problem =
-                    "The following graph nodes have not received the expected amount of errors from their children:\n" +
+                    "The following graph nodes have not received the expected amount of errors from their children:\n\n" +
                     notFullyAccumulated
                         .stream().map( n ->
-                            n +"; " +
-                            "Accumulation: " + (n._pendingError.getExpectedToBeReceived() - n._pendingError.getToBeReceived()) + "/" + n._pendingError.getExpectedToBeReceived() + "; " +
-                            "Involved operations '" +
+                            "    " + n +";\n" +
+                            "        Accumulation: " + (n._pendingError.getExpectedToBeReceived() - n._pendingError.getToBeReceived()) + "/" + n._pendingError.getExpectedToBeReceived() + ";\n" +
+                            "        Involved operations '" +
                             Optional.ofNullable(n._function)
                                     .map( fun ->
                                             fun.getAllFunctions()
@@ -452,19 +452,27 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                .collect(Collectors.joining("', '"))
                                     )
                                     .orElse("[]")
-                            + "'; Children: " + n._children.stream().map( c -> String.valueOf(c.get())).collect(Collectors.joining(", "))
+                            + "';\n" +
+                            "        Children: " + n._children.stream().map( c -> String.valueOf(c.get())).collect(Collectors.joining(", ")) + ";"
                         )
-                        .collect(Collectors.joining("\n"));
+                        .collect(Collectors.joining("\n")) +
+                        "\n";
 
             List<List<GraphNode<V>>> rootPaths = new ArrayList<>();
             for ( GraphNode<V> node : pendingNodes )
                 node._findRootPathsRecursively( rootPaths, new ArrayList<>(), this );
 
             if ( !rootPaths.isEmpty() )
-                problem += "\n\nThe following paths from the current node to root nodes have been found:\n" +
+                problem += "\nThe following paths from the current node to root nodes have been found:\n" +
                           IntStream.range(0, rootPaths.size())
                             .mapToObj( i -> (1+i) + ".: " + rootPaths.get(i).stream().map(GraphNode::toString).collect(Collectors.joining(" -> ")) )
                             .collect(Collectors.joining("\n"))+"\n";
+            else
+                problem += "\nWe tried to find paths from the current node to root nodes but failed to do so.\n" +
+                            "This is really strange and should not happen!\n" +
+                            "Here a snapshot of the computation graph from the root graph node:" +
+                            "\n" +
+                            _fancyToString(112);
 
             throw new IllegalStateException( explanation + problem );
         }
@@ -879,46 +887,20 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public String toString( Print mode ) {
         LogUtil.nullArgCheck( mode, "mode", Print.class );
-        Optional<Tsr<V>> payload = getPayload();
         switch ( mode ) {
-            case SIMPLE:
-                return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
+            case SIMPLE: return _simpleToString();
+            case FANCY: return _fancyToString(1028);
+            case COMPACT: return _compactToString();
+        }
+        throw new IllegalStateException();
+    }
+
+    private String _simpleToString() {
+        return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
                         "parents=[" + ( _parentsToString() ) + "]," +
                         "function=" + (_function == null ? "?" : _function) + "," +
                         "shape=" + (getPayloadShape() != null ? getPayloadShape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
                         "]";
-
-            case FANCY:
-                return "]> GRAPH:\n]\n" + _toString( "]    0", true, Print.COMPACT ) + "\n]\n]|END|>";
-
-            case COMPACT:
-                String nid = this.getClass().getSimpleName();// + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
-                return " " + nid + "[ "
-                        + ( _function == null ? "" : _function + " => " )
-                        + (
-                            payload.map( p -> p.toString(
-                                settings -> settings
-                                        .setRowLimit(  3  )
-                                        .setIsScientific(  true   )
-                                        .setIsMultiline(  false  )
-                                        .setHasGradient(  false    )
-                                        .setCellSize(  1  )
-                                        .setHasValue( true )
-                                        .setHasRecursiveGraph( false   )
-                                        .setHasDerivatives(  false      )
-                                        .setHasShape( true            )
-                                        .setIsCellBound(  false       )
-                                        .setPostfix(  ""      )
-                                        .setPrefix(  ""      )
-                                        .setHasSlimNumbers(  false      )
-                                )
-                            ).orElse("?")
-                        ) +
-                        ", type='" + this.type() + "'" +
-                        "] ";
-        }
-
-        throw new IllegalStateException();
     }
 
     private String _parentsToString() {
@@ -936,6 +918,38 @@ public class GraphNode<V> implements Component<Tsr<V>>
             .orElse("?");
     }
 
+    private String _fancyToString( int depthLimit ) {
+        return "]> GRAPH:\n]\n" + _toString( "]    0", true, Print.COMPACT, depthLimit ) + "\n]\n]|END|>";
+    }
+
+    private String _compactToString() {
+        Optional<Tsr<V>> payload = getPayload();
+        String nid = this.getClass().getSimpleName();// + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
+        return " " + nid + "[ "
+                + ( _function == null ? "" : _function + " => " )
+                + (
+                    payload.map( p -> p.toString(
+                        settings -> settings
+                                .setRowLimit( 3 )
+                                .setIsScientific( true )
+                                .setIsMultiline( false )
+                                .setHasGradient( false )
+                                .setCellSize( 1 )
+                                .setHasValue( true )
+                                .setHasRecursiveGraph( false )
+                                .setHasDerivatives( false )
+                                .setHasShape( true )
+                                .setIsCellBound( false )
+                                .setPostfix( "" )
+                                .setPrefix( "" )
+                                .setHasSlimNumbers( false )
+                        )
+                    ).orElse("?")
+                ) +
+                ", type='" + this.type() + "'" +
+                "] ";
+    }
+
     /**
      * A private recursive method used by its public counterpart ( 'toString(String m)' )
      * in order to build a indented multi-line tree-like
@@ -946,7 +960,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param isLast Tells if this is the last parent node of this child.
      * @return A indented multi-line tree-like String representation of the computation graph.
      */
-    private String _toString( String deep, boolean isLast, Print mode ) {
+    private String _toString( String deep, boolean isLast, Print mode, int depthLimit ) {
         String delimiter = ( isLast ? ("    ") : ("|   ") );
         String arrow = ( (char) 187 ) + "" + ( _parents != null ? String.valueOf( _parents.length ) : "0" ) + ( (char) 187 );
         StringBuilder asString = new StringBuilder( deep + arrow + toString( mode ) );
@@ -955,8 +969,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
             asString.append( "\n" ).append( deep ).append( isLast ? "   \\\n" : "|  \\\n" );
             for ( int i = 0; i < _parents.length; i++ ) {
                 boolean last = ( i == _parents.length - 1 );
-                asString.append( i != 0 ? deep + delimiter + "|\n" : "" );
-                asString.append( _parents[ i ]._toString(deep + delimiter + i, last, mode) ).append( "\n" );
+                if ( deep.length() < depthLimit ) { // prevent stack overflow + blowing up the heap (although the heap will probably already have blown up before this point)
+                    asString.append( i != 0 ? deep + delimiter + "|\n" : "" );
+                    asString.append( _parents[ i ]._toString( deep + delimiter + i, last, mode, depthLimit ) ).append( "\n" );
+                } else
+                    asString.append( deep + delimiter + i + " ... (graph to deep for further traversal) " + (!last ? "\n" : " ") );
             }
             asString = new StringBuilder( asString.substring( 0, asString.length() - 1 ) );
         }
