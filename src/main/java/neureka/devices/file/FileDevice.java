@@ -10,6 +10,7 @@ import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.AbstractDeviceData;
 import neureka.devices.Device;
+import neureka.devices.ReferenceCounter;
 import neureka.dtype.DataType;
 import neureka.math.Function;
 import neureka.ndim.config.NDConfiguration;
@@ -241,9 +242,9 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
             _numberOfTensors++;
             _stored.put((Tsr<Object>) tensor, handle);
-            tensor.getMut().setData( new AbstractDeviceData( this, null, handle.getDataType() ){
-                @Override protected void _free() {}
-            } );
+            tensor.getMut().setData(
+                    new AbstractDeviceData( this, null, handle.getDataType(), new ReferenceCounter(e->{})){}
+                );
         }
         return this;
     }

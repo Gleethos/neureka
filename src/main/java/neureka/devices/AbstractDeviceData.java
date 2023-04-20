@@ -9,19 +9,23 @@ public abstract class AbstractDeviceData<T> implements DeviceData<T>
     protected final Device<?> _owner;
     protected final Object _dataRef;
     protected final DataType<T> _dataType;
-    protected int _usageCount = 0;
+    protected final ReferenceCounter _refCounter;
 
 
     public AbstractDeviceData(
         Device<?> owner,
         Object ref,
-        DataType<T> dataType
+        DataType<T> dataType,
+        ReferenceCounter refCounter
     ) {
         LogUtil.nullArgCheck(owner, "owner", Device.class);
         LogUtil.nullArgCheck(dataType, "dataType", DataType.class);
+        LogUtil.nullArgCheck(refCounter, "refCounter", ReferenceCounter.class);
         _owner = owner;
         _dataRef = ref;
         _dataType = dataType;
+        _refCounter = refCounter;
+        DeviceCleaner.INSTANCE.register( this, _refCounter::fullDelete );
     }
 
     @Override public final Device<T> owner() { return (Device<T>) _owner; }
@@ -32,12 +36,8 @@ public abstract class AbstractDeviceData<T> implements DeviceData<T>
 
     @Override public DeviceData<T> withNDConf(NDConfiguration ndc) { return this; }
 
-    @Override public void incrementUsageCount() { _usageCount++; }
+    @Override public final void incrementUsageCount() { _refCounter.increment(); }
 
-    @Override public void decrementUsageCount() {
-        _usageCount--;
-        if ( _usageCount == 0 ) _free();
-    }
+    @Override public final void decrementUsageCount() { _refCounter.decrement(); }
 
-    protected abstract void _free();
 }

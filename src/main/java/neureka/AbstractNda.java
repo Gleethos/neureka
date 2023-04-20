@@ -145,25 +145,29 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     }
 
     /**
-     * @param array The data array managing the underlying data of this tensor/nd-array.
+     * @param newData The data array managing the underlying data of this tensor/nd-array.
      *             This will be the same instance returned by {@link #_getData()}.
      */
-    protected final void _setData( Data<V> array )
+    protected final void _setData( Data<V> newData )
     {
         _guardSet( "data object" );
-        Object data = array == null ? null : array.getOrNull();
+        Object data = newData == null ? null : newData.getOrNull();
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
         if ( _data != null && _data.getOrNull() != data && data != null && _data.getOrNull() != null ) {
             boolean isProbablyDeviceTransfer = ( _data.getOrNull().getClass().isArray() != data.getClass().isArray() );
             if ( !isProbablyDeviceTransfer)
                 _version++; // Autograd must be warned!
         }
+        _setDataAndCountUsage( newData );
+    }
+
+    private void _setDataAndCountUsage( Data<V> newData ) {
         if ( _data != null && _data instanceof DeviceData )
             ( (DeviceData<?>) _data ).decrementUsageCount();
-        if ( array instanceof DeviceData )
-            ( (DeviceData<?>) array ).incrementUsageCount();
+        if ( newData instanceof DeviceData )
+            ( (DeviceData<?>) newData ).incrementUsageCount();
 
-        _data = array;
+        _data = newData; // This must be the only place where the data is set!!!
     }
 
     protected <T> void _initDataArrayFrom( Filler<T> filler )
@@ -225,11 +229,13 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  This is because the data type has to be known in order to correctly perform an allocation.<br>
      */
     protected final void _allocateVirtual() {
-        _data = getDevice()
+        _setDataAndCountUsage(
+                getDevice()
                 .allocate(
                     this.getDataType(),
                     NDConstructor.of( this.getNDConf().shape() ).produceNDC(true)
-                );
+                )
+            );
     }
 
     /**
@@ -270,7 +276,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  <br>
      */
-    protected final void _virtualize() { _data = getDevice().access(this).virtualize(); }
+    protected final void _virtualize() { _setDataAndCountUsage(getDevice().access(this).virtualize()); }
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. <br>
@@ -282,7 +288,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... <br>
      */
-    protected final void _actualize() { _data = getDevice().access(this).actualize(); }
+    protected final void _actualize() { _setDataAndCountUsage(getDevice().access(this).actualize()); }
 
     protected Object _convertedDataOfType( Class<?> typeClass )
     {

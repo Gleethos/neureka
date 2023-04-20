@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 {
-    private static final DeviceCleaner _CLEANER = new CustomDeviceCleaner();
+    private static final DeviceCleaner _CLEANER = DeviceCleaner.INSTANCE;
 
     protected Logger _log;
 

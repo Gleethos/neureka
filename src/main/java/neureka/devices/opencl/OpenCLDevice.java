@@ -57,10 +57,7 @@ import neureka.backend.ocl.CLBackend;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
-import neureka.devices.AbstractDevice;
-import neureka.devices.AbstractDeviceData;
-import neureka.devices.Device;
-import neureka.devices.DeviceData;
+import neureka.devices.*;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
@@ -1059,7 +1056,21 @@ public class OpenCLDevice extends AbstractDevice<Number>
     private static class CLData extends AbstractDeviceData<Number> {
 
         public CLData( Device<Number> owner, Object dataRef, DataType<Number> dataType ) {
-            super(owner, dataRef, dataType);
+            super(owner, dataRef, dataType, new ReferenceCounter( changeEvent ->{
+                switch ( changeEvent.type() ) {
+                    case INCREMENT:
+                    case DECREMENT:
+                    case FULL_DELETE:
+                        ((OpenCLDevice)owner)._numberOfTensors += changeEvent.change();
+                        break;
+                }
+                if ( changeEvent.currentCount() == 0 ) {
+                    // TODO!
+                    //cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
+                    //if ( clTsr.value.event != null ) clWaitForEvents(1, new cl_event[]{clTsr.value.event});
+                    //clReleaseMemObject(clTsr.value.data); // Removing data from the device!
+                }
+            }));
             assert !(dataRef instanceof Data);
         }
 
@@ -1070,24 +1081,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
             cl_tsr.cl_config config = ((OpenCLDevice)_owner)._writeNDConfig( ndc );
             cl_tsr<?,?> newDataRef = new cl_tsr<>(clTsr.value, clTsr.dtype, config);
             return new CLData((Device<Number>) _owner, newDataRef, _dataType );
-        }
-
-        @Override public void incrementUsageCount() {
-            super.incrementUsageCount();
-            if ( _usageCount > 0 ) ((OpenCLDevice)_owner)._numberOfTensors++;
-        }
-
-        @Override public void decrementUsageCount() {
-            super.decrementUsageCount();
-            if ( _usageCount >= 0 ) ((OpenCLDevice)_owner)._numberOfTensors--;
-        }
-
-        @Override
-        protected void _free() {
-            // TODO!
-            //cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
-            //if ( clTsr.value.event != null ) clWaitForEvents(1, new cl_event[]{clTsr.value.event});
-            //clReleaseMemObject(clTsr.value.data); // Removing data from the device!
         }
     }
 
