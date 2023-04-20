@@ -136,6 +136,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     "Failed to load tensor from file handle for file path '" + filePath + " and loading conf '" + conf + "'."
                 );
 
+            _numberOfTensors++;
             _stored.put( tensor, handle );
             _loadable.remove( filename );
             _loaded.put( filename, tensor );
@@ -151,6 +152,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     @Override
     public void dispose() {
+        _numberOfTensors = 0;
         _stored.clear();
         _loadable.clear();
         _loaded.clear();
@@ -168,6 +170,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
+        _numberOfTensors--;
         _stored.remove( tensor );
         _loaded.remove( head.getFileName() );
         return this;
@@ -236,6 +239,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     .getSaver(extension)
                     .save( _directory + "/" + fullFileName, tensor, configurations );
 
+            _numberOfTensors++;
             _stored.put((Tsr<Object>) tensor, handle);
             tensor.getMut().setData( new AbstractDeviceData( this, null, handle.getDataType() ){
                 @Override protected void _free() {}
@@ -261,6 +265,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
+        _numberOfTensors--;
         _stored.remove( tensor );
         return this;
     }
@@ -278,9 +283,6 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                 this.getClass().getSimpleName()+" instances do not support executions on stored tensors."
             );
     }
-
-    @Override
-    public Collection<Tsr<Object>> getTensors() { return _stored.keySet(); }
 
     @Override
     public <V> Data<V> allocate(DataType<V> dataType, NDConfiguration ndc ) {

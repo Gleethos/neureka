@@ -74,7 +74,8 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.jocl.CL.*;
@@ -188,8 +189,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
     |       §(2) : FIELD VARIABLES
     |   ---------------------------
     */
-
-    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<>());
 
     private final KernelCache _kernelCache = new KernelCache();
 
@@ -373,21 +372,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return this;
     }
 
-
-    /**
-     * This method returns all the tensors stored on this
-     * OpenCLDevice instance as a Collection.
-     *
-     * @return A collection of all tensors currently stored on the device.
-     */
-    @Override
-    public synchronized Collection<Tsr<Number>> getTensors() {
-        Collection<Collection<Tsr<Number>>> collection = Collections.singleton(_tensors);
-        Collection<Tsr<Number>> extracted = new ArrayList<>();
-        collection.forEach( c -> c.forEach( t -> { if ( t != null ) extracted.add(t); } ) );
-        return extracted;
-    }
-
     @Override
     public Operation optimizedOperationOf( Function function, String name ) {
         return new CLFunctionCompiler( this, function, name ).optimize();
@@ -398,7 +382,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     @Override
     public void dispose() {
-        _tensors.forEach( this::restore );
+        _numberOfTensors = 0;
         clFinish( _queue );
         clReleaseCommandQueue( _queue );
     }
@@ -452,11 +436,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         );
     }
 
-    @Override
-    public final <T extends Number> boolean has( Tsr<T> tensor ) {
-        return _tensors.contains(tensor);
-    }
-
     private <T extends Number> void _add(
             Tsr<Number> tensor,
             cl_tsr<Number, T> parent,
@@ -468,7 +447,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
         if ( parent == null ) {
             if ( tensor.getMut().getData().owner() == this ) {
-                _tensors.add( tensor );
                 migration.run();
                 return;
             }
@@ -507,8 +485,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
             );
 
         Data<Number> data = _dataArrayOf(newClt, (DataType<Number>) _dataTypeOf(newClt));
-
-        _tensors.add( tensor );
 
         tensor.getMut().setData( data );
         migration.run();
@@ -612,7 +588,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public final <T extends Number> Device<Number> free( Tsr<T> tensor ) {
         cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         if ( clt == null ) return this;
-        _tensors.remove(tensor);
         tensor.getMut().setData(null);
         tensor.find(Device.class).ifPresent(
             device -> {
@@ -622,7 +597,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                         ( (Tsr<Number>) gradient ).find(Device.class).ifPresent(
                             gradDevice -> {
                                 try {
-                                    if ( _tensors.contains( gradient ) ) gradDevice.restore( gradient );
+                                    if ( this.has( gradient ) ) gradDevice.restore( gradient );
                                 }
                                 catch ( Exception exception ) {
                                     _LOG.error(
@@ -746,8 +721,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_tsr<Number, T> clTsr = former.getMut().getData().as( cl_tsr.class);
         former.getMut().setData(null);
         replacement.getMut().setData( _dataArrayOf(clTsr, (DataType<T>) _dataTypeOf(clTsr)) );
-        _tensors.remove(former);
-        _tensors.add( replacement.getMut().upcast(Number.class) );
     }
 
     @Override
@@ -1097,6 +1070,16 @@ public class OpenCLDevice extends AbstractDevice<Number>
             cl_tsr.cl_config config = ((OpenCLDevice)_owner)._writeNDConfig( ndc );
             cl_tsr<?,?> newDataRef = new cl_tsr<>(clTsr.value, clTsr.dtype, config);
             return new CLData((Device<Number>) _owner, newDataRef, _dataType );
+        }
+
+        @Override public void incrementUsageCount() {
+            super.incrementUsageCount();
+            if ( _usageCount > 0 ) ((OpenCLDevice)_owner)._numberOfTensors++;
+        }
+
+        @Override public void decrementUsageCount() {
+            super.decrementUsageCount();
+            if ( _usageCount >= 0 ) ((OpenCLDevice)_owner)._numberOfTensors--;
         }
 
         @Override

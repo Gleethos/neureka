@@ -8,7 +8,6 @@ import testutility.Sleep;
 import testutility.UnitTester_Tensor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class CrossDeviceSystemTest
@@ -195,22 +194,21 @@ public class CrossDeviceSystemTest
         {
             System.gc();
             Sleep.until(400, ()->{
-                int numberOfOutsourced = gpu.getTensors().size() - initialNumberOfOutsourced;
+                int numberOfOutsourced = gpu.size() - initialNumberOfOutsourced;
                 return numberOfOutsourced <= listOfTensors.size();
             });
             System.gc();
             Sleep.until(400, ()->{
-                int numberOfOutsourced = gpu.getTensors().size() - initialNumberOfOutsourced;
+                int numberOfOutsourced = gpu.size() - initialNumberOfOutsourced;
                 return numberOfOutsourced <= listOfTensors.size();
             });
 
-            Collection<Tsr<?>> outsourced = gpu.getTensors();
-            int numberOfOutsourced = outsourced.size() - initialNumberOfOutsourced;
+            int numberOfOutsourced = gpu.size() - initialNumberOfOutsourced;
 
             assert numberOfOutsourced <= listOfTensors.size();
             //---
             boolean[] stillOnDevice = new boolean[]{true};
-            listOfTensors.forEach((t)->stillOnDevice[0] = outsourced.contains(t)&&stillOnDevice[0]);
+            listOfTensors.forEach((t)->stillOnDevice[0] = gpu.contains(t) && stillOnDevice[0]);
             String sentence = "Used tensors still on device: ";
             tester.testContains(
                     sentence +stillOnDevice[0],
@@ -221,7 +219,7 @@ public class CrossDeviceSystemTest
             listOfTensors.forEach(gpu::free);
             sentence = "Number of tensors after deleting: ";
             tester.testContains(
-                    sentence + Math.max(0, gpu.getTensors().size()-initialNumberOfOutsourced),
+                    sentence + Math.max(0, gpu.size()-initialNumberOfOutsourced),
                     new String[]{sentence+"0"},
                     "Testing if all tensors have been deleted!"
             );

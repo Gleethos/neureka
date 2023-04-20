@@ -19,7 +19,7 @@ import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -55,7 +55,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     private final JVMExecutor _executor = new JVMExecutor();
-    private final Set<Tsr<Object>> _tensors = Collections.newSetFromMap(new WeakHashMap<>());
+
 
     private CPU() { super(); }
 
@@ -88,7 +88,7 @@ public class CPU extends AbstractDevice<Object>
     @Override
     public void dispose() {
         _executor._pool.shutdown();
-        _tensors.clear();
+        _numberOfTensors = 0;
         _LOG.warn(
             "Main thread pool in '"+this.getClass()+"' shutting down! " +
             "Newly incoming operations will not be executed in parallel."
@@ -103,7 +103,6 @@ public class CPU extends AbstractDevice<Object>
         if ( !this.has( tensor ) )
             tensor.getMut().getData().owner().restore( tensor );
 
-        _tensors.add( (Tsr<Object>) tensor);
         return this;
     }
 
@@ -241,6 +240,12 @@ public class CPU extends AbstractDevice<Object>
         }
     }
 
+    private <V> CPUData<V> _createDataFor( Object reference, DataType<V> dataType ) {
+        return new CPUData<>( this, reference, dataType, usageChange -> {
+            CPU.this._numberOfTensors += usageChange; // Reference counting
+        });
+    }
+
     @Override
     protected final <T> void _writeArray(
             Tsr<T> tensor, Object array, int offset, int start, int size
@@ -248,7 +253,7 @@ public class CPU extends AbstractDevice<Object>
         Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getOrNull();
         if ( data == null ) {
             DataType<?> dataType = tensor.getDataType() != null ? tensor.getDataType() : _dataTypeOf(array);
-            tensor.getMut().setData( new CPUData<>( this, array, (DataType<T>) dataType) );
+            tensor.getMut().setData( _createDataFor(  array, (DataType<T>) dataType) );
             return;
         }
         Class<?> arrayType = data.getClass();
@@ -314,7 +319,7 @@ public class CPU extends AbstractDevice<Object>
     public <T> Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object jvmData )
     {
         int desiredSize = ndc.size();
-        Data<T> data = (Data<T>) new CPUData<>( this, jvmData, (DataType<Object>) (dataType != null ? dataType : _dataTypeOf(jvmData)));
+        Data<T> data = (Data<T>) _createDataFor(  jvmData, (DataType<Object>) (dataType != null ? dataType : _dataTypeOf(jvmData)));
         if ( jvmData instanceof int[] ) {
             int[] array = (int[]) jvmData;
             if ( desiredSize != array.length ) {
@@ -533,7 +538,7 @@ public class CPU extends AbstractDevice<Object>
             newValue = new Object[ size ];
             if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
         }
-        return new CPUData<>( this, newValue, (DataType<Object>) dataType);
+        return _createDataFor(  newValue, (DataType<Object>) dataType);
     }
 
     @Override
@@ -579,15 +584,12 @@ public class CPU extends AbstractDevice<Object>
     @Override
     public <T> CPU free( Tsr<T> tensor ) {
         LogUtil.nullArgCheck( tensor, "tensor", Tsr.class );
-        _tensors.remove( tensor );
+        tensor.getMut().setData(null);
         return this;
     }
 
     @Override
     protected <T> void _swap( Tsr<T> former, Tsr<T> replacement ) {}
-
-    @Override
-    public Collection<Tsr<Object>> getTensors() { return _tensors; }
 
     @Override
     public <T> Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
@@ -599,23 +601,23 @@ public class CPU extends AbstractDevice<Object>
 
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
-            return new CPUData<>( this, new double[ size ], dataType );
+            return _createDataFor(  new double[ size ], dataType );
         else if ( typeClass == F32.class )
-            return new CPUData<>( this, new float[ size ], dataType );
+            return _createDataFor(  new float[ size ], dataType );
         else if ( typeClass == I32.class || typeClass == UI32.class )
-            return new CPUData<>( this, new int[ size ], dataType );
+            return _createDataFor(  new int[ size ], dataType );
         else if ( typeClass == I16.class || typeClass == UI16.class )
-            return new CPUData<>( this, new short[ size ], dataType );
+            return _createDataFor(  new short[ size ], dataType );
         else if ( typeClass == I8.class || typeClass == UI8.class )
-            return new CPUData<>( this, new byte[ size ], dataType );
+            return _createDataFor(  new byte[ size ], dataType );
         else if ( typeClass == I64.class || typeClass == UI64.class )
-            return new CPUData<>( this, new long[ size ], dataType );
+            return _createDataFor(  new long[ size ], dataType );
         else if ( dataType.getItemTypeClass() == Boolean.class )
-            return new CPUData<>( this, new boolean[ size ], dataType );
+            return _createDataFor(  new boolean[ size ], dataType );
         else if ( dataType.getItemTypeClass() == Character.class )
-            return new CPUData<>( this, new char[ size ], dataType );
+            return _createDataFor(  new char[ size ], dataType );
         else
-            return new CPUData<>( this, new Object[ size ], dataType );
+            return _createDataFor(  new Object[ size ], dataType );
     }
 
     @Override

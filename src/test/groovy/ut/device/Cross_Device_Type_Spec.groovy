@@ -12,12 +12,7 @@ import neureka.devices.file.FileDevice
 import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.view.NDPrintSettings
-import spock.lang.Ignore
-import spock.lang.IgnoreIf
-import spock.lang.Narrative
-import spock.lang.Specification
-import spock.lang.Subject
-import spock.lang.Title
+import spock.lang.*
 import testutility.mock.DummyDevice
 
 import java.util.function.BiConsumer
@@ -255,11 +250,15 @@ class Cross_Device_Type_Spec extends Specification
     }
 
     def 'Devices store tensors which can also be restored.'(
-            Device device
+        Device device
     ) {
         reportInfo """
-            Device implementations also behave like storage units for tensors,
-            which you can see below.
+            A Device implementation keeps track of the number of tensors it "owns",
+            which you can see below. This is basically just reference counting.
+            
+            Also note that in this example we are making some exceptions for the CPU device
+            simply because it is the default device on which all tensors are being stored
+            if no other device is specified.
         """
 
         given : 'The given device is available and Neureka is being reset.'
@@ -279,7 +278,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...tensor "a" is now on the device.'
             !device.isEmpty()
-            device.size() == initialNumber + 1
+            device.size() == initialNumber + ( device instanceof CPU ? 2 : 1 )
             device.has( a )
             !device.has( b ) || device instanceof CPU
 
@@ -311,9 +310,14 @@ class Cross_Device_Type_Spec extends Specification
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
-    def 'Devices also store slices which can also be restored just like normal tensors.'(
+    def 'Devices store slices which can also be restored just like any other tensor.'(
             Device device
     ) {
+        reportInfo """
+            Note that in this example we are making some exceptions for the CPU device
+            simply because it is the default device on which all tensors are being stored
+            if no other device is specified.
+        """
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
         and : 'Two tensors which will be transferred later on...'
@@ -331,7 +335,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...tensor "a" is now on the device.'
             !device.isEmpty()
-            device.size() == initialNumber + 1
+            device.size() == initialNumber + ( device instanceof CPU ? 2 : 1 )
             device.has( a )
         and :
             !device.has( b ) || device instanceof CPU
@@ -340,8 +344,8 @@ class Cross_Device_Type_Spec extends Specification
             device.free( a )
 
         then : '...the device is empty again.'
-            device.isEmpty() == ( initialNumber == 0 )
-            device.size() == initialNumber
+            device.isEmpty() == (( initialNumber == 0 ) && !( device instanceof CPU ))
+            device.size() == initialNumber + ( device instanceof CPU ? 1 : 0 )
             !device.has( a ) || device instanceof CPU
             !device.has( b ) || device instanceof CPU
 

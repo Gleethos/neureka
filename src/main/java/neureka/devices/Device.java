@@ -71,7 +71,7 @@ import java.util.stream.Collectors;
  *
  * @param <V> The super type of all values that can be stored on a {@link Device} implementation...
  */
-public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V>>
+public interface Device<V> extends Component<Tsr<V>>, Storage<V>
 {
     /**
      * This method returns {@link Device} instances matching
@@ -186,11 +186,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @return This very instance to allow for method chaining.
      */
     Device<V> approve( ExecutionCall<? extends Device<?>> call );
-
-    /**
-     * @return A {@link Collection} of all tensors stored by this device.
-     */
-    Collection<Tsr<V>> getTensors();
 
     <T extends V> Data<T> allocate( DataType<T> dataType, NDConfiguration ndc );
 

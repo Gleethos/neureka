@@ -34,22 +34,19 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.Data;
 import neureka.Tsr;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Spliterator;
 
 /**
  * @param <V> The value type parameter representing a common super type for all values supported by the device.
  */
 public abstract class AbstractBaseDevice<V> implements Device<V>
 {
+    protected int _numberOfTensors = 0;
+
     @Override
     public int size() {
-        Collection<Tsr<V>> tensors = this.getTensors();
-        if ( tensors == null ) return 0;
-        return tensors.size();
+        return _numberOfTensors;
     }
 
     /**
@@ -61,12 +58,24 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
     public boolean isEmpty() { return this.size() == 0; }
 
     @Override
-    public boolean contains( Tsr<V> o ) { return this.getTensors().contains( o ); }
+    public final boolean contains( Tsr<V> o ) {
+        Data<V> data = o.mut().getData();
+        if ( data == null ) return false;
+        return data.owner() == this;
+    }
 
+    /**
+     * This method checks if the passed tensor
+     * is stored on this {@link Device} instance.
+     * "Stored" means that the data of the tensor was created by this device.
+     * This data is referenced inside the tensor...
+     *
+     * @param tensor The tensor in question.
+     * @return The truth value of the fact that the provided tensor is on this device.
+     */
     @Override
-    public Iterator<Tsr<V>> iterator() { return this.getTensors().iterator(); }
-
-    @Override
-    public Spliterator<Tsr<V>> spliterator() { return getTensors().spliterator(); }
+    public <T extends V> boolean has( Tsr<T> tensor ) {
+        return this.contains((Tsr<V>) tensor);
+    }
 
 }
