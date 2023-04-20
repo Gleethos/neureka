@@ -1056,21 +1056,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
     private static class CLData extends AbstractDeviceData<Number> {
 
         public CLData( AbstractBaseDevice<Number> owner, Object dataRef, DataType<Number> dataType ) {
-            super(owner, dataRef, dataType, new ReferenceCounter( changeEvent ->{
-                switch ( changeEvent.type() ) {
-                    case INCREMENT:
-                    case DECREMENT:
-                    case FULL_DELETE:
-                        ((OpenCLDevice)owner)._numberOfTensors += changeEvent.change();
-                        break;
-                }
-                if ( changeEvent.currentCount() == 0 ) {
+            super(owner, dataRef, dataType, ()->{
                     // TODO!
                     //cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
                     //if ( clTsr.value.event != null ) clWaitForEvents(1, new cl_event[]{clTsr.value.event});
                     //clReleaseMemObject(clTsr.value.data); // Removing data from the device!
-                }
-            }));
+            });
             assert !(dataRef instanceof Data);
         }
 

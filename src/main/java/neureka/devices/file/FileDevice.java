@@ -137,7 +137,6 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     "Failed to load tensor from file handle for file path '" + filePath + " and loading conf '" + conf + "'."
                 );
 
-            _numberOfTensors++;
             _stored.put( tensor, handle );
             _loadable.remove( filename );
             _loaded.put( filename, tensor );
@@ -171,7 +170,6 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-        _numberOfTensors--;
         _stored.remove( tensor );
         _loaded.remove( head.getFileName() );
         return this;
@@ -240,10 +238,9 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     .getSaver(extension)
                     .save( _directory + "/" + fullFileName, tensor, configurations );
 
-            _numberOfTensors++;
             _stored.put((Tsr<Object>) tensor, handle);
             tensor.getMut().setData(
-                    new AbstractDeviceData( this, null, handle.getDataType(), new ReferenceCounter(e->{})){}
+                    new AbstractDeviceData( this, null, handle.getDataType(), ()->{}){}
                 );
         }
         return this;
@@ -266,7 +263,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-        _numberOfTensors--;
+        tensor.mut().setData(null);
         _stored.remove( tensor );
         return this;
     }

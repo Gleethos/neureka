@@ -11,6 +11,7 @@ import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Title
+import testutility.Sleep
 
 @Title("The CPU device, an API for CPU based execution")
 @Narrative('''
@@ -155,7 +156,8 @@ class CPU_Spec extends Specification
             t2 = null
             t3 = null
             System.gc()
-            Thread.sleep( 400 )
+            Thread.sleep( 128 )
+            Sleep.until(1028, {CPU.get().size() == initial})
         then : 'The CPU should have forgotten about the tensors.'
             CPU.get().size() == initial
         and : 'The CPU should have forgotten about the data objects as well.'

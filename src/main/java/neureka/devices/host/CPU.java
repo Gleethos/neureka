@@ -241,9 +241,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     private <V> CPUData<V> _createDataFor( Object reference, DataType<V> dataType ) {
-        return new CPUData<>( this, reference, dataType, usageChange -> {
-            CPU.this._numberOfTensors += usageChange; // Reference counting
-        });
+        return new CPUData<>( this, reference, dataType);
     }
 
     @Override

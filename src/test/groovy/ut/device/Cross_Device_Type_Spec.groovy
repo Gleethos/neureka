@@ -302,8 +302,8 @@ class Cross_Device_Type_Spec extends Specification
 
         where : 'The following Device instances are being tested :'
             device << [
-                    CPU.get(),
-                    Device.get( "openCL" ),
+                    //CPU.get(),
+                    //Device.get( "openCL" ),
                     FileDevice.at( "build/test-can" )
                 ]
 

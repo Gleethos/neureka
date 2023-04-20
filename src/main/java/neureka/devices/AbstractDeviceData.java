@@ -16,20 +16,26 @@ public abstract class AbstractDeviceData<T> implements DeviceData<T>
         AbstractBaseDevice<?> owner,
         Object ref,
         DataType<T> dataType,
-        ReferenceCounter refCounter
+        Runnable cleanup
     ) {
         LogUtil.nullArgCheck(owner, "owner", Device.class);
         LogUtil.nullArgCheck(dataType, "dataType", DataType.class);
-        LogUtil.nullArgCheck(refCounter, "refCounter", ReferenceCounter.class);
+        LogUtil.nullArgCheck(cleanup, "cleanup", Runnable.class);
+        ReferenceCounter counter = new ReferenceCounter( changeEvent ->{
+                                        owner._numberOfTensors += changeEvent.change();
+                                        if ( changeEvent.currentCount() == 0 )
+                                            cleanup.run();
+                                    });
+
         _owner = owner;
         _dataRef = ref;
         _dataType = dataType;
-        _refCounter = refCounter;
+        _refCounter = counter;
         DeviceCleaner.INSTANCE.register( this, ()->{
-            if ( refCounter.count() > 0 )
+            if ( counter.count() > 0 )
                 owner._numberOfDataObjects--;
 
-            refCounter.fullDelete();
+            counter.fullDelete();
         });
     }
 
@@ -39,7 +45,7 @@ public abstract class AbstractDeviceData<T> implements DeviceData<T>
 
     @Override public final DataType<T> dataType() { return _dataType; }
 
-    @Override public DeviceData<T> withNDConf(NDConfiguration ndc) { return this; }
+    @Override public DeviceData<T> withNDConf( NDConfiguration ndc ) { return this; }
 
     @Override public final void incrementUsageCount() {
         if ( _refCounter.count() == 0 ) _owner._numberOfDataObjects++;
