@@ -316,19 +316,12 @@ public final class DeviceQuery
                 Pointer.to(buffer), null);
         long values[] = new long[numValues];
         if (Sizeof.size_t == 4)
-        {
-            for ( int i=0; i<numValues; i++)
-            {
+            for ( int i = 0; i < numValues; i++ )
                 values[ i ] = buffer.getInt(i * Sizeof.size_t);
-            }
-        }
         else
-        {
-            for ( int i=0; i<numValues; i++)
-            {
+            for ( int i = 0; i < numValues; i++ )
                 values[ i ] = buffer.getLong(i * Sizeof.size_t);
-            }
-        }
+
         return values;
     }
 

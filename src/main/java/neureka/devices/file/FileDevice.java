@@ -237,7 +237,9 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     .save( _directory + "/" + fullFileName, tensor, configurations );
 
             _stored.put((Tsr<Object>) tensor, handle);
-            tensor.getMut().setData( new AbstractDeviceData( this, null, handle.getDataType() ){} );
+            tensor.getMut().setData( new AbstractDeviceData( this, null, handle.getDataType() ){
+                @Override protected void _free() {}
+            } );
         }
         return this;
     }

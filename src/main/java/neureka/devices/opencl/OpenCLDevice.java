@@ -1062,15 +1062,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     null
             );
             long[] values = new long[numValues];
-            if (Sizeof.size_t == 4) {
-                for (int i = 0; i < numValues; i++) {
+            return getLongs(numValues, buffer, values);
+        }
+
+        public static long[] getLongs(int numValues, ByteBuffer buffer, long[] values) {
+            if (Sizeof.size_t == 4)
+                for (int i = 0; i < numValues; i++)
                     values[i] = buffer.getInt(i * Sizeof.size_t);
-                }
-            } else {
-                for (int i = 0; i < numValues; i++) {
+            else
+                for ( int i = 0; i < numValues; i++ )
                     values[i] = buffer.getLong(i * Sizeof.size_t);
-                }
-            }
+
             return values;
         }
 
@@ -1089,12 +1091,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
 
         @Override
-        public DeviceData<Number> withNDConf(NDConfiguration ndc) {
+        public DeviceData<Number> withNDConf( NDConfiguration ndc ) {
             // We create a new cl_tsr object with the same data but a different ND-configuration:
             cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
             cl_tsr.cl_config config = ((OpenCLDevice)_owner)._writeNDConfig( ndc );
             cl_tsr<?,?> newDataRef = new cl_tsr<>(clTsr.value, clTsr.dtype, config);
             return new CLData((Device<Number>) _owner, newDataRef, _dataType );
+        }
+
+        @Override
+        protected void _free() {
+            // TODO!
+            //cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
+            //if ( clTsr.value.event != null ) clWaitForEvents(1, new cl_event[]{clTsr.value.event});
+            //clReleaseMemObject(clTsr.value.data); // Removing data from the device!
         }
     }
 

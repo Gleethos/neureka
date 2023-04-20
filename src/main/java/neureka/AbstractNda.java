@@ -40,6 +40,7 @@ import neureka.autograd.GraphNode;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.utility.DataConverter;
 import neureka.devices.Device;
+import neureka.devices.DeviceData;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
@@ -157,6 +158,11 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             if ( !isProbablyDeviceTransfer)
                 _version++; // Autograd must be warned!
         }
+        if ( _data != null && _data instanceof DeviceData )
+            ( (DeviceData<?>) _data ).decrementUsageCount();
+        if ( array instanceof DeviceData )
+            ( (DeviceData<?>) array ).incrementUsageCount();
+
         _data = array;
     }
 
@@ -249,7 +255,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
                 targetDevice, ndConstructor,
                 new TsrConstructor.API() {
                     @Override public void setConf( NDConfiguration conf   ) { nda.getMut().setNDConf( conf ); }
-                    @Override public void setData( Data o                 ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }
+                    @Override public void setData( Data o                 ) { nda._setData( o ); }
                     @Override public void setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                 }
             );
