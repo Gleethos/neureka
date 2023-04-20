@@ -43,10 +43,16 @@ import neureka.Tsr;
 public abstract class AbstractBaseDevice<V> implements Device<V>
 {
     protected int _numberOfTensors = 0;
+    protected int _numberOfDataObjects = 0;
 
     @Override
     public int size() {
         return _numberOfTensors;
+    }
+
+    @Override
+    public int numberOfDataObjects() {
+        return _numberOfDataObjects;
     }
 
     /**

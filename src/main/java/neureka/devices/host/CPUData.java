@@ -1,7 +1,7 @@
 package neureka.devices.host;
 
+import neureka.devices.AbstractBaseDevice;
 import neureka.devices.AbstractDeviceData;
-import neureka.devices.Device;
 import neureka.devices.ReferenceCounter;
 import neureka.dtype.DataType;
 
@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 class CPUData<T> extends AbstractDeviceData<T>
 {
-    CPUData( Device<?> owner, Object ref, DataType<T> dataType, Consumer<Integer> usageCountListener ) {
+    CPUData( AbstractBaseDevice<?> owner, Object ref, DataType<T> dataType, Consumer<Integer> usageCountListener ) {
         super(owner, ref, dataType, new ReferenceCounter( changeEvent ->{
             switch ( changeEvent.type() ) {
                 case INCREMENT:

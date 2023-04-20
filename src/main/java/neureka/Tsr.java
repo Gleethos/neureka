@@ -2138,7 +2138,13 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
      * @param value The value which should be broadcast to all elements of a clone of this tensor.
      * @return A new tensor where all elements are multiplied by the provided value.
      */
-    default Tsr<V> multiply( double value ) { return multiply( of( getItemType(), shape(), value ) ); }
+    default Tsr<V> multiply( double value ) {
+        Tsr<V> other = of( getItemType(), shape(), value );
+        Tsr<V> result = multiply( other );
+        if ( !other.graphNode().map(GraphNode::isUsedAsDerivative).orElse(false) )
+            other.mut().delete();
+        return result;
+    }
 
     /**
      *  This method will produce the quotient of

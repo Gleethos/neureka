@@ -1,5 +1,6 @@
 package ut.device
 
+import neureka.Data
 import neureka.Neureka
 import neureka.Shape
 import neureka.Tsr
@@ -117,4 +118,47 @@ class CPU_Spec extends Specification
             CPU.get().executor.completedTaskCount >= 0
     }
 
+    def 'The CPU device will keep track of the amount of tensors it stores.'()
+    {
+        given : 'A CPU device instance.'
+            CPU cpu = CPU.get()
+        and : 'We note the initial amount of tensors stored on the CPU.'
+            int initial = cpu.size()
+            int initialDataObjects = cpu.numberOfDataObjects()
+
+        when : 'We first create a data object...'
+            var data = Data.of( 42, 73, 11, 7 )
+        then : 'The CPU should not have stored any tensors yet.'
+            cpu.size() == initial
+
+        when : 'We create a tensor from the data object...'
+            var t = Tsr.of( Shape.of(2, 2), data )
+        then : 'The CPU should know about the existence of a new tensor.'
+            CPU.get().size() == initial + 1
+        and : 'The number of data objects stored on the CPU should also be increased.'
+            CPU.get().numberOfDataObjects() == initialDataObjects + 1
+
+        when : 'We create a new tensor from the first one...'
+            var t2 = t * 2
+        then : 'The CPU should know about the existence of a new tensor as well as the data objects.'
+            CPU.get().size() == initial + 2
+            CPU.get().numberOfDataObjects() == initialDataObjects + 2
+
+        when : 'We however create a new reshaped version of the first tensor...'
+            var t3 = t.reshape( 4 )
+        then : 'The CPU should also know about the existence of a new tensor, but not a new data object.'
+            CPU.get().size() == initial + 3
+            CPU.get().numberOfDataObjects() == initialDataObjects + 2
+
+        when : 'We delete the references to the tensors, and then give the GC some time to do its job...'
+            t = null
+            t2 = null
+            t3 = null
+            System.gc()
+            Thread.sleep( 400 )
+        then : 'The CPU should have forgotten about the tensors.'
+            CPU.get().size() == initial
+        and : 'The CPU should have forgotten about the data objects as well.'
+            CPU.get().numberOfDataObjects() == initialDataObjects
+    }
 }

@@ -6,14 +6,14 @@ import neureka.ndim.config.NDConfiguration;
 
 public abstract class AbstractDeviceData<T> implements DeviceData<T>
 {
-    protected final Device<?> _owner;
+    protected final AbstractBaseDevice<?> _owner;
     protected final Object _dataRef;
     protected final DataType<T> _dataType;
     protected final ReferenceCounter _refCounter;
 
 
     public AbstractDeviceData(
-        Device<?> owner,
+        AbstractBaseDevice<?> owner,
         Object ref,
         DataType<T> dataType,
         ReferenceCounter refCounter
@@ -25,7 +25,12 @@ public abstract class AbstractDeviceData<T> implements DeviceData<T>
         _dataRef = ref;
         _dataType = dataType;
         _refCounter = refCounter;
-        DeviceCleaner.INSTANCE.register( this, _refCounter::fullDelete );
+        DeviceCleaner.INSTANCE.register( this, ()->{
+            if ( refCounter.count() > 0 )
+                owner._numberOfDataObjects--;
+
+            refCounter.fullDelete();
+        });
     }
 
     @Override public final Device<T> owner() { return (Device<T>) _owner; }
@@ -36,8 +41,15 @@ public abstract class AbstractDeviceData<T> implements DeviceData<T>
 
     @Override public DeviceData<T> withNDConf(NDConfiguration ndc) { return this; }
 
-    @Override public final void incrementUsageCount() { _refCounter.increment(); }
+    @Override public final void incrementUsageCount() {
+        if ( _refCounter.count() == 0 ) _owner._numberOfDataObjects++;
+        _refCounter.increment();
+    }
 
-    @Override public final void decrementUsageCount() { _refCounter.decrement(); }
+    @Override public final void decrementUsageCount() {
+        if ( _refCounter.count() == 1 ) _owner._numberOfDataObjects--;
+        _refCounter.decrement();
+    }
 
+    @Override public final int usages() { return _refCounter.count(); }
 }

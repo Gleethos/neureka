@@ -88,4 +88,15 @@ public interface Data<V>
      * @return The data type of the raw data array.
      */
     DataType<V> dataType();
+
+    /**
+     *  This method returns the number of times this data object is currently in use by a nd-array,
+     *  meaning that the number of usages is also the number of nd-arrays which are currently
+     *  referencing this data object. <br>
+     *  The reason why this can be greater than one is because of the existence of sliced, transposed
+     *  and reshaped nd-arrays which all share the same data object as their parent nd-array.
+     *
+     * @return The number of times this data object is currently in use by a nd-array.
+     */
+    int usages();
 }

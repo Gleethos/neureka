@@ -141,6 +141,11 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
     }
 
     /**
+     * @return The number of {@link Data} objects stored on this {@link Device}.
+     */
+    int numberOfDataObjects();
+
+    /**
      *  This method signals the device to get ready for garbage collection.
      *  A given device may have resources which ought to be freed when it is no longer used.
      *  One may also choose to do resource freeing manually.

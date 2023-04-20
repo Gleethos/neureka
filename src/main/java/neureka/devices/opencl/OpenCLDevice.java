@@ -1055,7 +1055,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private static class CLData extends AbstractDeviceData<Number> {
 
-        public CLData( Device<Number> owner, Object dataRef, DataType<Number> dataType ) {
+        public CLData( AbstractBaseDevice<Number> owner, Object dataRef, DataType<Number> dataType ) {
             super(owner, dataRef, dataType, new ReferenceCounter( changeEvent ->{
                 switch ( changeEvent.type() ) {
                     case INCREMENT:
@@ -1080,7 +1080,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
             cl_tsr.cl_config config = ((OpenCLDevice)_owner)._writeNDConfig( ndc );
             cl_tsr<?,?> newDataRef = new cl_tsr<>(clTsr.value, clTsr.dtype, config);
-            return new CLData((Device<Number>) _owner, newDataRef, _dataType );
+            return new CLData( (AbstractBaseDevice<Number>) _owner, newDataRef, _dataType );
         }
     }
 

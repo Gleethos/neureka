@@ -237,6 +237,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             @Override public DataType<V> dataType() {
                 return (DataType<V>) Neureka.get().settings().dtype().getDefaultDataType();
             }
+
+            @Override public int usages() { return 1; }
         });
     }
 
