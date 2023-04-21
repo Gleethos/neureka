@@ -79,6 +79,17 @@ public abstract class AbstractNDC implements NDConfiguration
                     "Shape dimensions must be greater than 0!\n"
                 );
 
+        for ( int i = 0; i < shape.length; i++ )
+            if ( shape[i] == 1 && spread[i] > 1 )
+                throw new IllegalStateException(
+                    "Trying to create an '" + NDConfiguration.class.getSimpleName() + "' with a " +
+                    "nonsensical spread/stride value for dimension " + i + ", using " +
+                    "shape " + Arrays.toString(shape) + " and spread " + Arrays.toString(spread) + ".\n" +
+                    "A spread/stride of size " + spread[i] + " does not make sense for a dimension of size 1 " +
+                    "because you need at least 2 elements to be able to stride over them!\n " +
+                    "This is most likely a bug in the Neureka library, please report it!\n"
+                );
+
         if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() )
             return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
 

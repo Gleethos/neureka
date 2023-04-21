@@ -6,10 +6,12 @@ import neureka.ndim.config.types.permuted.Permuted1DConfiguration
 import neureka.ndim.config.types.permuted.Permuted2DConfiguration
 import neureka.ndim.config.types.permuted.Permuted3DConfiguration
 import neureka.ndim.config.types.permuted.PermutedNDConfiguration
+import neureka.ndim.config.types.simple.Simple0DConfiguration
 import neureka.ndim.config.types.simple.Simple1DConfiguration
 import neureka.ndim.config.types.simple.Simple2DConfiguration
 import neureka.ndim.config.types.simple.Simple3DConfiguration
 import neureka.ndim.config.types.simple.SimpleNDConfiguration
+import neureka.ndim.config.types.sliced.Sliced0DConfiguration
 import neureka.ndim.config.types.sliced.Sliced1DConfiguration
 import neureka.ndim.config.types.sliced.Sliced2DConfiguration
 import neureka.ndim.config.types.sliced.Sliced3DConfiguration
@@ -36,7 +38,7 @@ import spock.lang.Title
 @Subject([NDConfiguration])
 class NDConfiguration_Spec extends Specification
 {
-    def 'Various NDConfigurations behaviour exactly as their general purpose implementation.'(
+    def 'Various NDConfigurations behave exactly like their general purpose implementation.'(
             int[] shape,
             int[] translation,
             int[] indicesMap,
@@ -114,6 +116,9 @@ class NDConfiguration_Spec extends Specification
             [3]       | [1]            | [2]            | [1]        | [0]       || Permuted1DConfiguration
             [30]      | [8]            | [2]            | [1]        | [0]       || Permuted1DConfiguration
             [2]       | [1]            | [1]            | [1]        | [5]       || Sliced1DConfiguration
+
+            [1]       | [1]            | [1]            | [1]        | [0]       || Simple0DConfiguration
+            [1]       | [1]            | [1]            | [1]        | [3]       || Sliced0DConfiguration
     }
 
 
