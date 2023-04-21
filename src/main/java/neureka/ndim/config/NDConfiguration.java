@@ -35,6 +35,7 @@ SOFTWARE.
 package neureka.ndim.config;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -156,6 +157,14 @@ public interface NDConfiguration
             if (         isCM ) return Layout.COLUMN_MAJOR;
         }
         return Layout.UNSPECIFIC;
+    }
+
+    default List<NDTrait> getTraits() {
+        return NDTrait.traitsOf(this);
+    }
+
+    default boolean is( NDTrait trait ) {
+        return NDTrait.traitsOf(this).contains(trait);
     }
 
     /**
@@ -385,9 +394,9 @@ public interface NDConfiguration
      */
     default boolean isCompact() {
         return
-                IntStream.range(0, this.rank()).allMatch(i -> this.spread(i) == 1)
-                        &&
-                IntStream.range(0, this.rank()).allMatch(i -> this.offset(i) == 0);
+            IntStream.range(0, this.rank()).allMatch( i -> this.spread(i) == 1 || this.spread(i) == 0 )
+                    &&
+            IntStream.range(0, this.rank()).allMatch(i -> this.offset(i) == 0);
     }
 
     /**
