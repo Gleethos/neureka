@@ -29,8 +29,14 @@ public class CPUMatMul implements ImplementationFor<CPU>
                     );
 
         NDConfiguration.Layout layout = call.input( 1 ).getNDConf().getLayout();
+        NDConfiguration.Layout layout2 = call.input( 2 ).getNDConf().getLayout();
 
-        boolean rowMajor = ( layout == NDConfiguration.Layout.ROW_MAJOR );
+        boolean bothRowMajor = ( layout == NDConfiguration.Layout.ROW_MAJOR && layout2 == NDConfiguration.Layout.ROW_MAJOR );
+        boolean oneRMOneSym = ( layout == NDConfiguration.Layout.ROW_MAJOR && layout2 == NDConfiguration.Layout.SYMMETRIC ) ||
+                              ( layout == NDConfiguration.Layout.SYMMETRIC && layout2 == NDConfiguration.Layout.ROW_MAJOR );
+        boolean bothSym = ( layout == NDConfiguration.Layout.SYMMETRIC && layout2 == NDConfiguration.Layout.SYMMETRIC );
+
+        boolean rowMajor = bothRowMajor || oneRMOneSym || bothSym;
 
         int[] shapeA = call.input( 1 ).getNDConf().shape();
         int[] shapeB = call.input( 2 ).getNDConf().shape();

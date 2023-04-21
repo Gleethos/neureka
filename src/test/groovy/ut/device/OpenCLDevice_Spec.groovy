@@ -512,9 +512,9 @@ class OpenCLDevice_Spec extends Specification
             def data1 = data.collect( v -> ((v+5)%11)-5 as float )
             def data2 = data.collect( v -> ((v+7)%11)-5 as float )
         and : 'We create column major based matrices!'
-            Tsr A = Tsr.of( [M,K], data1    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-            Tsr B = Tsr.of( [K,N], data2    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-            Tsr C = Tsr.of( [M,N], 0f ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            Tsr A = Tsr.of( [M,K], data1 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            Tsr B = Tsr.of( [K,N], data2 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            Tsr C = Tsr.of( [M,N], 0f    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
 
             var reference = A.matMul(B).rawData // CPU execution for reference!
 

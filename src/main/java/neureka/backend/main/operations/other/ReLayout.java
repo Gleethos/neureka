@@ -74,6 +74,11 @@ public class ReLayout extends AbstractOperation
                     "Conversion of a tensor to an unspecific layout is not possible!"
             );
 
+        if ( target == NDConfiguration.Layout.ROW_MAJOR || target == NDConfiguration.Layout.COLUMN_MAJOR ) {
+            if ( t.getNDConf().getLayout() == NDConfiguration.Layout.SYMMETRIC )
+                return t; // Symmetric tensors are both row and column major.
+        }
+
         NDConfiguration old = t.getNDConf();
 
         if ( target == NDConfiguration.Layout.ROW_MAJOR )
