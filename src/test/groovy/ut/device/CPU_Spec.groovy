@@ -122,6 +122,8 @@ class CPU_Spec extends Specification
     def 'The CPU device will keep track of the amount of tensors it stores.'()
     {
         given : 'A CPU device instance.'
+            System.gc()
+            Sleep.until(5_000, 100, {CPU.get().size() == 0})
             CPU cpu = CPU.get()
         and : 'We note the initial amount of tensors stored on the CPU.'
             int initial = cpu.size()

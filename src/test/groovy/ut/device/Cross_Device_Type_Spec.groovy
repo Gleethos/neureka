@@ -1,5 +1,6 @@
 package ut.device
 
+import neureka.Data
 import neureka.Neureka
 import neureka.Shape
 import neureka.Tsr
@@ -13,6 +14,7 @@ import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.view.NDPrintSettings
 import spock.lang.*
+import testutility.Sleep
 import testutility.mock.DummyDevice
 
 import java.util.function.BiConsumer
@@ -350,9 +352,62 @@ class Cross_Device_Type_Spec extends Specification
             !device.has( b ) || device instanceof CPU
 
         where : 'The following Device instances are being tested :'
-        device << [
+            device << [
                 CPU.get(),
                 Device.get( "openCL" )
+            ]
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
+    def 'A device will keep track of the amount of tensors and data objects it stores.'(
+        Device device
+    ) {
+        given : 'We note the initial amount of tensors stored on the device.'
+            System.gc()
+            Sleep.until(5_000, 100, {CPU.get().size() == 0})
+            int initial = device.size()
+            int initialDataObjects = device.numberOfDataObjects()
+
+        when : 'We first create a data object...'
+            var data = Data.of( 42, 73, 11, 7 )
+        then : 'The CPU should not have stored any tensors yet.'
+            device.size() == initial
+
+        when : 'We create a tensor from the data object...'
+            var t = Tsr.of( Shape.of(2, 2), data ).to(device)
+        then : 'The device should know about the existence of a new tensor.'
+            device.size() == initial + 1
+        and : 'The number of data objects stored on the device should also be increased.'
+            device.numberOfDataObjects() == initialDataObjects + 1
+
+        when : 'We create a new tensor from the first one...'
+            var t2 = t * 2
+        then : 'The device should know about the existence of a new tensor as well as the data objects.'
+            device.size() == initial + 2
+            device.numberOfDataObjects() == initialDataObjects + 2
+
+        when : 'We however create a new reshaped version of the first tensor...'
+            var t3 = t.reshape( 4 )
+        then : 'The device should also know about the existence of a new tensor, but not a new data object.'
+            device.size() == initial + 3
+            device.numberOfDataObjects() == initialDataObjects + 2
+
+        when : 'We delete the references to the tensors, and then give the GC some time to do its job...'
+            t = null
+            t2 = null
+            t3 = null
+            System.gc()
+            Thread.sleep( 128 )
+            Sleep.until(1028, {CPU.get().size() == initial})
+        then : 'The CPU should have forgotten about the tensors.'
+            device.size() == initial
+        and : 'The CPU should have forgotten about the data objects as well.'
+            device.numberOfDataObjects() == initialDataObjects
+
+        where : 'The following Device instances are being tested :'
+            device << [
+                CPU.get(),
+                //Device.get( "openCL" )
             ]
     }
 

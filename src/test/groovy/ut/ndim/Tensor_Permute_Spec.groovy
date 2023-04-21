@@ -50,7 +50,7 @@ class Tensor_Permute_Spec extends Specification
             t2.shape == [6, 4, 8, 2]
         and : 'A unspecific layout is assigned to the new tensor.'
             t2.NDConf.layout == NDConfiguration.Layout.UNSPECIFIC
-            t2.NDConf.traits == [NDTrait.COMPACT]
+            t2.NDConf.traits == [NDTrait.COMPACT, NDTrait.COL_MAJOR, NDTrait.CONTINUOUS_MATRIX]
         and : 'The new tensor has the same size as the original tensor, but it is not the same object.'
             t2.size == t.size
             t2 !== t
