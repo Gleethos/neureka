@@ -115,7 +115,7 @@ public class ReLayout extends AbstractOperation
             t.mut().setIsVirtual(false);
             old = t.getNDConf();
         }
-        t.mut().setNDConf( _createNewNDCFrom( old, newTranslation, old.translation() ) );
+        t.mut().setNDConf( _createNewNDCFrom( old, newTranslation ) );
     }
 
     /**
@@ -132,12 +132,12 @@ public class ReLayout extends AbstractOperation
     }
 
     private static NDConfiguration _createNewNDCFrom(
-            NDConfiguration old, int[] newTranslation, int[] indicesMap
+            NDConfiguration old, int[] newTranslation
     ) {
         assert !old.isVirtual();
         return NDConfiguration.of(
-                old.shape(), newTranslation, indicesMap, old.spread(), old.offset()
-        );
+                    old.shape(), newTranslation, old.indicesMap(), old.spread(), old.offset()
+                );
     }
 
     private static void _checkLayoutConversion(

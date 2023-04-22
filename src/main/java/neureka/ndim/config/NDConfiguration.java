@@ -98,17 +98,23 @@ public interface NDConfiguration
             return this == other;
         }
 
-        
+
         public int[] newTranslationFor(int[] shape) {
+            int[] order = new int[shape.length];
+            for ( int i = 0; i < shape.length; i++ )
+                order[i] = shape.length - 1 - i;
+
+            if ( this == COLUMN_MAJOR && shape.length > 1 ) {
+                // Swap the first two elements of the order array:
+                int tmp  = order[0];
+                order[0] = order[1];
+                order[1] = tmp;
+            }
+
             int[] translation = new int[shape.length];
             int prod = 1;
-            if (this == COLUMN_MAJOR) {
-                for (int i = 0; i < translation.length; i++) {
-                    translation[i] = prod;
-                    prod *= shape[i];
-                }
-            } else if (this == ROW_MAJOR || this == UNSPECIFIC || this == SYMMETRIC) {
-                for (int i = translation.length - 1; i >= 0; i--) {
+            if ( this == COLUMN_MAJOR || this == ROW_MAJOR || this == UNSPECIFIC || this == SYMMETRIC) {
+                for ( int i : order ) {
                     translation[i] = prod;
                     prod *= shape[i];
                 }
@@ -166,18 +172,6 @@ public interface NDConfiguration
     default boolean is( NDTrait trait ) {
         return NDTrait.traitsOf(this).contains(trait);
     }
-
-    /**
-     * A slice has a unique kind of access pattern which require
-     * a the {@link neureka.ndim.iterator.NDIterator} for iterating over their data.
-     * This is contrary to the {@link #isSimple()} flag which guarantees
-     * a simple access pattern.
-     * <b>Note: The flag returned by this method does not necessarily
-     * mean that this is the {@link NDConfiguration} of a slice!</b>
-     *
-     * @return The truth value determining if this ND-Configuration models a slice index pattern.
-     */
-    default boolean isNotSimple() { return !this.isSimple(); }
 
     /**
      * This method returns the number of axis of
@@ -379,9 +373,9 @@ public interface NDConfiguration
     default boolean isSimple() {
         int[] simpleTranslation = this.getLayout().newTranslationFor(this.shape());
         return Arrays.equals(this.translation(), simpleTranslation)
-                &&
+                    &&
                 Arrays.equals(this.indicesMap(), simpleTranslation)
-                &&
+                    &&
                 isCompact();
     }
 

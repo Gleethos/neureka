@@ -66,7 +66,11 @@ public class NDUtil
             return result;
         }
         StringBuilder operation = new StringBuilder();
-        for ( int i = t.rank() - 1; i >= 0; i-- ) operation.append( i ).append( i == 0 ? "" : ", " );
+        for ( int i = 0; i < t.rank()-2; i++ )
+            operation.append( i ).append( ", " );
+
+        // The last 2 dimensions are swapped:
+        operation.append( t.rank()-1 ).append( ", " ).append( t.rank()-2 );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
         return Function.of( operation.toString(), false ).call( t );
     }

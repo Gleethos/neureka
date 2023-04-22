@@ -453,7 +453,7 @@ class Tensor_Convolution_Spec extends Specification
         then :
             t0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR
             x0.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR
-            t0.mut.data.get() == [1, 3, 5, 2, 4, 6] as double[]
+            t0.mut.data.get() == [1, 2, 3, 4, 5, 6] as double[]
             x0.mut.data.get() == [1, 4, 2, 5, 3, 6] as double[]
         and :
             t0.toString() == "(3x2x1):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"

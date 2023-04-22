@@ -94,9 +94,9 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
     @Override
     public final int[] indicesOfIndex( int index ) {
         int[] indices = new int[ _shape.length ];
-        for ( int ii = 0; ii < rank(); ii++ ) {
-            indices[ ii ] += index / _indicesMap[ ii ];
-            index %= _indicesMap[ ii ];
+        for ( int i = 0; i < rank(); i++ ) {
+            indices[ i ] += index / _indicesMap[ i ];
+            index %= _indicesMap[ i ];
         }
         return indices;
     }
@@ -104,10 +104,10 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /** {@inheritDoc} */
     @Override
     public final int indexOfIndices( int[] indices ) {
-        int i = 0;
-        for ( int ii = 0; ii < _shape.length; ii++ )
-            i += ( indices[ ii ] * _spread[ ii ] + _offset[ ii ] ) * _translation[ ii ];
-        return i;
+        int index = 0;
+        for ( int i = 0; i < _shape.length; i++ )
+            index += ( indices[ i ] * _spread[ i ] + _offset[ i ] ) * _translation[ i ];
+        return index;
     }
 
     
