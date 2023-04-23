@@ -898,11 +898,11 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  j... end indexAlias. (inclusive!)                                           <br>
      *  k... step size.
      *
-     * @param rangToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
+     * @param rangToSteps A map where the keys define where axes should be sliced and values which define the steps for the specific axis.
      * @return A nd-array slice with an offset based on the provided map keys and
-     *         strides based on the provided map values.
+     *         steps based on the provided map values.
      */
-    Nda<V> getAt( Map<?,Integer> rangToStrides );
+    Nda<V> getAt( Map<?,Integer> rangToSteps );
 
     /**
      *  This method enables nd-array slicing!

@@ -148,7 +148,7 @@ public interface NDConfiguration
      * @return The layout of the underlying data array of a tensor.
      */
     default Layout getLayout() {
-        if ( !this.isCompact() ) // Non-compact tensors have at least 1 stride greater than 1 AND at least 1 offset greater than 0!
+        if ( !this.isCompact() ) // Non-compact tensors have at least 1 step/spread greater than 1 AND at least 1 offset greater than 0!
             return Layout.UNSPECIFIC;
         else {
             int[] translationRM = Layout.ROW_MAJOR.newTranslationFor(this.shape());
@@ -165,13 +165,9 @@ public interface NDConfiguration
         return Layout.UNSPECIFIC;
     }
 
-    default List<NDTrait> getTraits() {
-        return NDTrait.traitsOf(this);
-    }
+    default List<NDTrait> getTraits() { return NDTrait.traitsOf(this); }
 
-    default boolean is( NDTrait trait ) {
-        return NDTrait.traitsOf(this).contains(trait);
-    }
+    default boolean has( NDTrait trait ) { return NDTrait.traitsOf(this).contains(trait); }
 
     /**
      * This method returns the number of axis of
@@ -325,14 +321,14 @@ public interface NDConfiguration
      * define this nd-configuration in a compact manner.
      * The array consists of the following arrays joined
      * in the following order:
-     * [ shape | translation | indicesMap | offsets | strides ]
+     * [ shape | translation | indicesMap | offsets | spreads ]
      *
      * @return An array of flattened arrays which define this nd-configuration in a compact manner.
      */
     default int[] asInlineArray() {
         int rank = rank();
         int[] inline = new int[rank * 5];
-        //config format: [ shape | translation | indicesMap | offsets | strides ]
+        //config format: [ shape | translation | indicesMap | offsets | spreads ]
         System.arraycopy(shape(),       0, inline, rank * 0, rank); //=> SHAPE
         System.arraycopy(translation(), 0, inline, rank * 1, rank); //=> TRANSLATION (translates n-dimensional indices to an index)
         System.arraycopy(indicesMap(),  0, inline, rank * 2, rank); //=> INDICES MAP (translates scalar to n-dimensional index)
@@ -382,9 +378,9 @@ public interface NDConfiguration
     /**
      * {@link NDConfiguration} instance where this flag is true
      * will most likely not be slices because they have no offset (all 0)
-     * and a compact spread / stride array (all 1).
+     * and a compact spread / step array (all 1).
      *
-     * @return The truth value determining if this configuration has no offset and spread/strides larger than 1.
+     * @return The truth value determining if this configuration has no offset and spread/steps larger than 1.
      */
     default boolean isCompact() {
         return

@@ -5,7 +5,7 @@
     The kernel is a rather high level kernel because it take into account the
     entirety of an nd-configuration of a given nd-array / tensor.
     This means that the supplied nd-array might be a slice of another tensor
-    which might also have strides or is positioned by an offset within
+    which might also have steps or is positioned by an offset within
     some data array...
     This kernel is built to support all of this for element wise operations.
 

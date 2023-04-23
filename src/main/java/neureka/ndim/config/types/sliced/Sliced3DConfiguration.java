@@ -23,7 +23,7 @@ public class Sliced3DConfiguration extends D3C //:= IMMUTABLE
     private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     private final int _indicesMap3;
     /**
-     *  Produces the strides of a tensor subset / slice
+     *  Produces the steps of a tensor subset / slice
      */
     private final int _spread1;
     private final int _spread2;

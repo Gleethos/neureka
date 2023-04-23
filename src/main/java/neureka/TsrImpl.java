@@ -972,10 +972,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> getAt( Map<?,Integer> rankToStrides ) {
-        LogUtil.nullArgCheck(rankToStrides, "rankToStrides", Map.class, "Rank-to-strides map must not be 'null'!");
+    public Tsr<V> getAt( Map<?,Integer> rangToSteps) {
+        LogUtil.nullArgCheck(rangToSteps, "rankToSteps", Map.class, "Rank-to-steps map must not be 'null'!");
         // ...not a simple slice... Advanced:
-        return SmartSlicer.slice(new Object[]{rankToStrides}, this);
+        return SmartSlicer.slice(new Object[]{rangToSteps}, this);
     }
 
     /**

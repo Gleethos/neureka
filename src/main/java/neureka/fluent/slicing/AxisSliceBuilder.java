@@ -56,7 +56,7 @@ public class AxisSliceBuilder<V> implements FromOrAtTsr<V>, ToForTsr<V>, StepsOr
      *  The {@link AxisSliceBuilder} class implements the {@link AxisOrGet} interface in order to ensure
      *  that the builder methods of this API are being called in the correct order.
      *
-     * @param size The step size for the strides of the slice of the current axis.
+     * @param size The step size for the slice of the current axis.
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override

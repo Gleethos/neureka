@@ -2529,7 +2529,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
 
     /** {@inheritDoc} */
     @Override
-    Tsr<V> getAt( Map<?,Integer> rangToStrides );
+    Tsr<V> getAt( Map<?,Integer> rangToSteps);
 
     /** {@inheritDoc} */
     @Override Tsr<V> getAt( List<?> key );

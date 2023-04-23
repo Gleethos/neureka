@@ -26,7 +26,7 @@ public enum NDTrait
         return Collections.unmodifiableList( traits );
     }
 
-    private static int _rightSrpeadPadding(NDConfiguration ndc ) {
+    private static int _rightSpreadPadding(NDConfiguration ndc ) {
         int numberOf0Spreads = 0;
         for ( int i = ndc.rank() - 1; i >= 0; i-- ) {
             if ( ndc.spread( i ) == 0 ) numberOf0Spreads++;
@@ -51,55 +51,50 @@ public enum NDTrait
                 _isCompact(ndc);
     }
 
+    /**
+     *  What does it mean to be row major essentially? <br>
+     *  Well all it really means is that the last dimension of a nd-array configuration
+     *  has a stride of 1! <br>
+     *
+     * @param ndc The configuration to check.
+     * @return Whether the configuration is row major.
+     */
     private static boolean _isRM( NDConfiguration ndc ) {
         /*
-            We simply need to check if the last real dimension has a stride of 1
-            and is not permuted!
+            We simply need to check if the last real dimension has a stride and spread of 1.
             This tells us that at the last dimension we have all elements in
             a contiguous block of memory.
         */
-        int realRank = ndc.rank() - _rightSrpeadPadding( ndc );
+        int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 1 ) return false;
         boolean translation = ndc.translation( realRank - 1 ) == 1;
-        boolean indicesMap  = ndc.indicesMap(  realRank - 1 ) == 1;
         boolean spread      = ndc.spread(      realRank - 1 ) == 1;
-        return translation && indicesMap && spread;
-
+        return translation && spread;
     }
 
+    /**
+     *  What does it mean to be column major essentially? <br>
+     *  Well all it really means is that the second last dimension of a nd-array configuration
+     *  has a stride of 1! <br>
+     *
+     * @param ndc The configuration to check.
+     * @return Whether the configuration is column major.
+     */
     private static boolean _isCM( NDConfiguration ndc ) {
         /*
-           We simply need to check if the second last real dimension has a stride of 1
-           and is not permuted!
+           We simply need to check if the second last real dimension has a stride and spread of 1.
            This tells us that at the second last dimension we have all elements in
            a contiguous block of memory.
         */
-        int realRank = ndc.rank() - _rightSrpeadPadding( ndc );
-        if ( realRank < 2 ) return false;
+        int realRank = ndc.rank() - _rightSpreadPadding( ndc );
+        if ( realRank < 1 ) return false;
         boolean translation = ndc.translation( realRank - 2 ) == 1;
-        //boolean indicesMap  = ndc.indicesMap(  realRank - 2 ) == 1;
         boolean spread      = ndc.spread(      realRank - 2 ) == 1;
         return translation && spread;
     }
 
     private static boolean _last2DimensionsAreNotPermuted( NDConfiguration ndc ) {
-
-        //int[] translation = ndc.translation();
-        //int[] indicesMap  = ndc.indicesMap();
-        //int[] shape       = ndc.shape();
-        //
-        //int[] translationRM = NDConfiguration.Layout.ROW_MAJOR.newTranslationFor(shape);
-        //boolean hasRMIndices = Arrays.equals(translationRM, indicesMap);
-        //boolean isRM = (Arrays.equals(translationRM, translation) && hasRMIndices);
-//
-        //int[] translationCM = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(shape);
-        //boolean isCM = (Arrays.equals(translationCM, translation) && hasRMIndices);
-//
-        //if ( isRM && isCM ) return NDConfiguration.Layout.SYMMETRIC;
-        //if ( isRM         ) return NDConfiguration.Layout.ROW_MAJOR;
-        //if (         isCM ) return NDConfiguration.Layout.COLUMN_MAJOR;
-
-        int realRank = ndc.rank() - _rightSrpeadPadding( ndc );
+        int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 2 ) return true;
         int translationCol = ndc.translation( realRank - 2 );
         int translationRow = ndc.translation( realRank - 1 );
@@ -109,7 +104,7 @@ public enum NDTrait
     private static boolean _isContinuousMatrix(NDConfiguration ndc ) {
         boolean isMatrix = _isMatrix( ndc );
         if ( !isMatrix ) return false;
-        int realRank = ndc.rank() - _rightSrpeadPadding( ndc );
+        int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( _isRM(ndc) ) {
             // We need to check if the there is no row offset!
             return ndc.offset( realRank - 1 ) == 0;
@@ -122,20 +117,21 @@ public enum NDTrait
     private static boolean _isOffsetMatrix(NDConfiguration ndc) {
         boolean isMatrix = _isMatrix( ndc );
         if ( !isMatrix ) return false;
-        int realRank = ndc.rank() - _rightSrpeadPadding( ndc );
+        int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( _isRM(ndc) ) {
             // We need to check if the there is no row offset!
             return ndc.offset( realRank - 1 ) != 0;
-        } else {
+        } else if ( _isCM(ndc) ) {
             // We need to check if the there is no column offset!
             return ndc.offset( realRank - 2 ) != 0;
         }
+        return false;
     }
 
     private static boolean _isMatrix( NDConfiguration ndc ) {
         boolean last2DimsNotPermuted = _last2DimensionsAreNotPermuted( ndc );
         if ( !last2DimsNotPermuted ) return false;
-        int realRank = ndc.rank() - _rightSrpeadPadding( ndc );
+        int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 2 ) return false;
         // Now we need to make sure the strides of the last 2 dimensions are both 1.
         int spreadCol = ndc.spread( realRank - 2 );

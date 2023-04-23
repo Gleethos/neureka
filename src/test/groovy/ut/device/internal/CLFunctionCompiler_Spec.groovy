@@ -290,7 +290,7 @@ class CLFunctionCompiler_Spec extends Specification
         and : 'The implementation will then also build and pass an "adHoc" kernel to the mocked device.'
             1 * mockDevice.compileAndGetAdHocKernel("test_fun_F64\$1_F64\$1_F64\$1_F64\$1",
                     """
-    int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
+    int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:spread | 5:offset ]
     {
         int* offset      = ( cfg + rank * 5 );
         int* strides     = ( cfg + rank * 4 );
@@ -303,7 +303,7 @@ class CLFunctionCompiler_Spec extends Specification
         return i;
     }
 
-    int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
+    int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:spread | 5:offset ]
     {
         int* indices    = ( cfg + rank * 3 );
         int* indicesMap = ( cfg + rank * 2 );

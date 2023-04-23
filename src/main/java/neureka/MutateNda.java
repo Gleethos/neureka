@@ -29,7 +29,7 @@ public interface MutateNda<T>
      *  j... end indexAlias. (inclusive!)                                           <br>
      *  k... step size.                                                             <br>
      *
-     * @param key This object is a map defining a stride and a targeted index or range of indices...
+     * @param key This object is a map defining a step and a targeted index or range of indices...
      * @param value The nd-array which ought to be assigned into a slice of this nd-array.
      * @return A slice nd-array or scalar value.
      */

@@ -17,7 +17,7 @@ public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
      */
     private final int _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
-     *  Produces the strides of a tensor subset / slice
+     *  Produces the steps of a tensor subset / slice
      */
     private final int _spread;
     /**

@@ -296,7 +296,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
      *  Implementations of this represent the access to tensors stored on a device
      *  in order to read from or write to said tensor. <br>
      *  <b>Warning: This API exposes the true underlying data of a tensor
-     *  which does not take into account slice, permute or stride information...</b>
+     *  which does not take into account slice, permute or step information...</b>
      *
      * @param <V> The type parameter of the tensor accessed by an instance of this.
      */
