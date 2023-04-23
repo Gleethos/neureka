@@ -37,7 +37,7 @@
     which has the size (6 * rank * sizeof(int)) and contains everything
     needed to treat a given block of data as an nd-array!
 */
-    int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:steps | 5:offset ]
+    int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:spread | 5:offset ]
     {
         int* indices    = ( cfg + rank * 3 );
         int* indicesMap = ( cfg + rank * 2 );
@@ -56,7 +56,7 @@
     All of this is contained within the "cfg" array, which has the size (6 * rank * sizeof(int)) and
     contains everything needed to treat a given block of data as an nd-array!
 */
-    int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:steps | 5:offset ]
+    int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:spread | 5:offset ]
     {
         int* offset      = ( cfg + rank * 5 );
         int* strides     = ( cfg + rank * 4 );
