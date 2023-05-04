@@ -21,7 +21,7 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
      */
     private final int[] _indicesMap; // Maps index integer to array similar as translation. Used to avoid distortion when slicing!
     /**
-     *  Produces the strides of a tensor subset / slice
+     *  Produces the steps of a tensor subset / slice
      */
     private final int[] _spread;
     /**

@@ -293,12 +293,12 @@ class CLFunctionCompiler_Spec extends Specification
     int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:spread | 5:offset ]
     {
         int* offset      = ( cfg + rank * 5 );
-        int* strides     = ( cfg + rank * 4 );
+        int* spread      = ( cfg + rank * 4 );
         int* indices     = ( cfg + rank * 3 );
         int* translation = ( cfg + rank     );
         int i = 0;
         for ( int ii = 0; ii < rank; ii++ ) {
-            i += ( indices[ ii ] * strides[ ii ] + offset[ ii ] ) * translation[ ii ];
+            i += ( indices[ ii ] * spread[ ii ] + offset[ ii ] ) * translation[ ii ];
         }
         return i;
     }

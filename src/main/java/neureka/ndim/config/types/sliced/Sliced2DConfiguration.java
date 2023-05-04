@@ -20,7 +20,7 @@ public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
     private final int _indicesMap1;
     private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
-     *  Produces the strides of a tensor subset / slice
+     *  Produces the steps of a tensor subset / slice
      */
     private final int _spread1;
     private final int _spread2;

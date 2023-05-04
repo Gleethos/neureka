@@ -43,7 +43,7 @@ public abstract class AbstractNDC implements NDConfiguration
      *  Warning! This can of course become dangerous when these arrays are being shared and modified.
      *  Please copy them when exposing them to the user.
      */
-    private static final Cache<int[]> _CACHED_INT_ARRAYS; // ND-Configurations are often based on integer arrays representing things like shape, strides, etc...
+    private static final Cache<int[]> _CACHED_INT_ARRAYS; // ND-Configurations are often based on integer arrays representing things like shape, steps, etc...
     static
     {
         _CACHED_INT_ARRAYS = new Cache<>(512);

@@ -133,7 +133,7 @@ public enum NDTrait
         if ( !last2DimsNotPermuted ) return false;
         int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 2 ) return false;
-        // Now we need to make sure the strides of the last 2 dimensions are both 1.
+        // Now we need to make sure the steps of the last 2 dimensions are both 1.
         int spreadCol = ndc.spread( realRank - 2 );
         int spreadRow = ndc.spread( realRank - 1 );
         return spreadCol == 1 && spreadRow == 1;
