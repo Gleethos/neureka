@@ -12,15 +12,13 @@ import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementwise;
-import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.BiScalarBroadcast;
+import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.memory.MemUtil;
+import neureka.devices.Device;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.math.parsing.FunctionParser;
-import neureka.devices.Device;
-import neureka.ndim.NDUtil;
-import neureka.ndim.NDimensional;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -93,7 +91,7 @@ public class Multiplication extends AbstractOperation
                 //    _deleteIfNotIn(call.inputs(), flatCall.input(i)); // TODO: Make it possible to delete more stuff
                 return r;
             } else {
-                if ( !call.validate().all( (a, b) -> NDUtil.canBeBroadcast(a.shape(), b.shape()) ).isValid() )
+                if ( !call.validate().all( (a, b) -> Util.canBeBroadcast(a.shape(), b.shape()) ).isValid() )
                     throw new IllegalArgumentException("The shapes of the operands of the multiplication operation must be equal or broadcast compatible! (when deriving nested functions)");
 
                 Function noAd = Function.of( caller.toString(), false );

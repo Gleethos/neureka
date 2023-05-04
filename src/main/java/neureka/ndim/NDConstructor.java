@@ -79,7 +79,7 @@ public interface NDConstructor
                 _isVirtual = makeVirtual;
                 if (makeVirtual) _constructedNDC = VirtualNDConfiguration.construct(newShape);
                 else {
-                    int[] newTranslation = NDConfiguration.Layout.ROW_MAJOR.newTranslationFor(newShape);
+                    int[] newTranslation = NDConfiguration.Layout.ROW_MAJOR.newStridesFor(newShape);
                     int[] newSpread = new int[newShape.length];
                     Arrays.fill(newSpread, 1);
                     int[] newOffset = new int[newShape.length];

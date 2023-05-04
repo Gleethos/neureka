@@ -37,10 +37,10 @@ public class VirtualNDConfiguration extends AbstractNDC
     @Override public final int indicesMap( int i ) { return 0; }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return new int[rank()]; }
+    @Override public final int[] strides() { return new int[rank()]; }
 
     /** {@inheritDoc} */
-    @Override public final int translation( int i ) { return 0; }
+    @Override public final int strides(int i ) { return 0; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return new int[rank()]; }

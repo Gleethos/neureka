@@ -84,8 +84,8 @@ public class Slice extends AbstractOperation
         Tsr<Object> input
     ) {
         input.mut().setIsVirtual( false );
-        int[] newTranslation = input.getNDConf().translation();
-        int[] newIndicesMap = input.getNDConf().getLayout().newTranslationFor( newShape );
+        int[] newStrides    = input.getNDConf().strides();
+        int[] newIndicesMap = input.getNDConf().getLayout().newStridesFor( newShape );
 
         for ( int i = 0; i < input.rank(); i++ )
             newSpread[ i ] = ( newSpread[i] == 0 ) ? 1 : newSpread[ i ];
@@ -165,7 +165,7 @@ public class Slice extends AbstractOperation
         Tsr<Object> subset =
                         Tsr.of(
                             input.getDataType(),
-                            NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),
+                            NDConstructor.of( newShape, newStrides, newIndicesMap, newSpread, newOffset ),
                             input.mut().getData()
                         );
 

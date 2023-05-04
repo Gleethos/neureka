@@ -1971,7 +1971,7 @@ public interface Tsr<V> extends Nda<V>, Component<Tsr<V>>, ComponentOwner<Tsr<V>
     default Tsr<V> convDot( Tsr<V> other ) {
         LogUtil.nullArgCheck(other, "other", Tsr.class);
         Tsr<V> a = this;
-        int[][] fitter = NDUtil.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
+        int[][] fitter = TsrImpl.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
         for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;

@@ -148,7 +148,7 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] offset
     ) {
         // Note: Column major is not simple because there are no simple column major implementations...
-        int[] newTranslation = Layout.ROW_MAJOR.newTranslationFor( shape );
+        int[] newTranslation = Layout.ROW_MAJOR.newStridesFor( shape );
         int[] newSpread = new int[ shape.length ];
         Arrays.fill( newSpread, 1 );
         return  Arrays.equals( translation, newTranslation ) &&
@@ -172,7 +172,7 @@ public abstract class AbstractNDC implements NDConfiguration
         return "NDConfiguration@"+Integer.toHexString(hashCode())+"#"+Long.toHexString(this.hashCode())+"[" +
                     "layout="+getLayout().name()+","+
                     "shape="+Arrays.toString(shape())+","+
-                    "translation="+Arrays.toString(translation())+","+
+                    "translation="+Arrays.toString(strides())+","+
                     "indicesMap="+Arrays.toString(indicesMap())+","+
                     "spread="+Arrays.toString(spread())+","+
                     "offset="+Arrays.toString(offset())+""+
@@ -182,8 +182,8 @@ public abstract class AbstractNDC implements NDConfiguration
     protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc )
     {
         int[] newShape = Utility.rearrange( ndc.shape(), newForm );
-        int[] newTranslation = ndc.getLayout().rearrange( ndc.translation(), newShape, newForm );
-        int[] newIndicesMap = ndc.getLayout().newTranslationFor( newShape );
+        int[] newTranslation = ndc.getLayout().rearrange( ndc.strides(), newShape, newForm );
+        int[] newIndicesMap = ndc.getLayout().newStridesFor( newShape );
         int[] newSpread = new int[ newForm.length ];
         for ( int i = 0; i < newForm.length; i++ ) {
             if ( newForm[ i ] < 0 ) newSpread[ i ] = 1;
@@ -207,7 +207,7 @@ public abstract class AbstractNDC implements NDConfiguration
     public NDConfiguration newReshaped( int[] newForm )
     {
         //TODO : shape check!
-        if ( _isSimpleConfiguration( shape(), translation(), indicesMap(), spread(), offset() ) )
+        if ( _isSimpleConfiguration( shape(), strides(), indicesMap(), spread(), offset() ) )
             return _simpleReshape( newForm, this );
         else
             return new SimpleReshapeView( newForm, this );
@@ -218,7 +218,7 @@ public abstract class AbstractNDC implements NDConfiguration
         return Long.valueOf(
                    this.getClass().hashCode() +
                    Arrays.hashCode( shape() )       * 1L +
-                   Arrays.hashCode( translation() ) * 2L +
+                   Arrays.hashCode( strides() ) * 2L +
                    Arrays.hashCode( indicesMap() )  * 3L +
                    Arrays.hashCode( spread() )      * 4L +
                    Arrays.hashCode( offset() )      * 5L +
@@ -241,7 +241,7 @@ public abstract class AbstractNDC implements NDConfiguration
         if ( ndc == this ) return true;
         return this.getClass() == ndc.getClass() && // TODO: Think about this -> do we require them to be of the same class?
                Arrays.equals(this.shape(),       ndc.shape()      ) &&
-               Arrays.equals(this.translation(), ndc.translation()) &&
+               Arrays.equals(this.strides(), ndc.strides()) &&
                Arrays.equals(this.indicesMap(),  ndc.indicesMap() ) &&
                Arrays.equals(this.spread(),      ndc.spread()     ) &&
                Arrays.equals(this.offset(),      ndc.offset()     ) &&

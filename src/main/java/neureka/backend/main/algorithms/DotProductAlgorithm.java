@@ -11,7 +11,6 @@ import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
 import neureka.devices.Device;
 import neureka.math.Function;
 import neureka.math.args.Arg;
-import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.simple.Simple1DConfiguration;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
                             throw new IllegalArgumentException("Dot product does not support forward-AD!");
                         Function mul = Neureka.get().backend().getFunction().mul();
                         int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                        Tsr<?> derivative = NDUtil.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                        Tsr<?> derivative = Util.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                         derivative.to(adCall.getDevice());
                         return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                     });

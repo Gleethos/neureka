@@ -40,11 +40,11 @@ public interface NDimensional
      */
     default Shape getShape() { return shape(); }
 
-    default List<Integer> indicesMap() { return Util.asList(getNDConf().indicesMap()); }
+    default List<Integer> indicesMap() { return NDUtil.asList(getNDConf().indicesMap()); }
 
-    default List<Integer> translation() { return Util.asList(getNDConf().translation()); }
+    default List<Integer> strides() { return NDUtil.asList(getNDConf().strides()); }
 
-    default List<Integer> spread() { return Util.asList(getNDConf().spread()); }
+    default List<Integer> spread() { return NDUtil.asList(getNDConf().spread()); }
 
     /**
      * The offset is the position of a slice within the n-dimensional
@@ -53,7 +53,7 @@ public interface NDimensional
      *
      * @return The offset position of the slice tensor inside the n-dimensional data array of the parent array.
      */
-    default List<Integer> offset() { return Util.asList(getNDConf().offset()); }
+    default List<Integer> offset() { return NDUtil.asList(getNDConf().offset()); }
 
     /**
      * @return The {@link NDConfiguration} implementation instance of this {@link Tsr} storing dimensionality information.
@@ -117,16 +117,5 @@ public interface NDimensional
      * @return The true index targeting the underlying data array of a given nd-array.
      */
     default int indexOfIndices( int[] indices ) { return getNDConf().indexOfIndices( indices ); }
-
-
-    class Util {
-
-        public static List<Integer> asList( int[] array ) {
-            List<Integer> intList = new ArrayList<>( array.length );
-            for ( int i : array ) intList.add( i );
-            return Collections.unmodifiableList(intList);
-        }
-
-    }
 
 }

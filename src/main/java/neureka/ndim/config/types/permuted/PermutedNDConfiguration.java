@@ -59,10 +59,10 @@ public class PermutedNDConfiguration extends AbstractNDC
     @Override public final int indicesMap(int i ) { return _indicesMap[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return _translation.clone(); }
+    @Override public final int[] strides() { return _translation.clone(); }
 
     /** {@inheritDoc} */
-    @Override public final int translation( int i ) { return _translation[ i ]; }
+    @Override public final int strides(int i ) { return _translation[ i ]; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() {

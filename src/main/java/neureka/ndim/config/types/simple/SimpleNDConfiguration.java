@@ -46,10 +46,10 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
     @Override public final int indicesMap( int i ) { return _translation_and_indicesMap[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return _translation_and_indicesMap.clone(); }
+    @Override public final int[] strides() { return _translation_and_indicesMap.clone(); }
 
     /** {@inheritDoc} */
-    @Override public final int translation( int i ) { return _translation_and_indicesMap[ i ]; }
+    @Override public final int strides(int i ) { return _translation_and_indicesMap[ i ]; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() {

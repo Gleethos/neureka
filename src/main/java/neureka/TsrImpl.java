@@ -1387,4 +1387,29 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         return NdaAsString.representing( this ).byDefaults().toString();
     }
 
+    static int[][] makeFit( int[] sA, int[] sB ) {
+        int lastIndexOfA = 0;
+        for ( int i = sA.length-1; i >= 0; i-- ) {
+            if ( sA[ i ] != 1 ) {
+                lastIndexOfA = i;
+                break;
+            }
+        }
+        int firstIndexOfB = 0;
+        for ( int i = 0; i < sB.length; i++ ) {
+            if ( sB[ i ] != 1 ) {
+                firstIndexOfB = i;
+                break;
+            }
+        }
+        int newSize = lastIndexOfA + sB.length - firstIndexOfB;
+        int[] rsA = new int[ newSize ];
+        int[] rsB = new int[ newSize ];
+        for( int i = 0; i <newSize; i++ ) {
+            if ( i <= lastIndexOfA ) rsA[ i ] = i; else rsA[ i ] = -1;
+            if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
+        }
+        return new int[][]{ rsA, rsB };
+    }
+
 }

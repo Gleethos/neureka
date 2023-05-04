@@ -58,7 +58,7 @@ class NDConfiguration_Spec extends Specification
             ndc1.rank()        == ndc2.rank()
             ndc1.size()        == ndc2.size()
             ndc1.shape()       == ndc2.shape()
-            ndc1.translation() == ndc2.translation()
+            ndc1.strides() == ndc2.strides()
             ndc1.indicesMap()  == ndc2.indicesMap()
             ndc1.spread()      == ndc2.spread()
             ndc1.offset()      == ndc2.offset()

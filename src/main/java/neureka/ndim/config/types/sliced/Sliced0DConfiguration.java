@@ -48,10 +48,10 @@ public final class Sliced0DConfiguration extends AbstractNDC //:= IMMUTABLE
     public int indicesMap(int i ) { return 1; }
 
     /** {@inheritDoc} */
-    @Override public int[] translation() { return new int[]{1}; }
+    @Override public int[] strides() { return new int[]{1}; }
 
     /** {@inheritDoc} */
-    @Override public int translation( int i ) { return 1; }
+    @Override public int strides(int i ) { return 1; }
 
     /** {@inheritDoc} */
     @Override public int[] spread() { return new int[]{ 1 }; }

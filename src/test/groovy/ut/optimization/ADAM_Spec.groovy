@@ -4,7 +4,6 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.math.Function
 import neureka.optimization.Optimizer
-import neureka.optimization.implementations.ADAM
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Shared
@@ -73,7 +72,7 @@ class ADAM_Spec extends Specification
         expect : 'The following state emerges:'
             w.toString().contains(g.toString())
             w.shape.hashCode()==g.shape.hashCode()
-            w.translation().hashCode()==g.translation().hashCode()
+            w.strides().hashCode()==g.strides().hashCode()
             w.indicesMap().hashCode()==g.indicesMap().hashCode()
             w.spread().hashCode()==g.spread().hashCode()
             w.offset().hashCode()==g.offset().hashCode()

@@ -130,14 +130,14 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  NDConfiguration.Layout.ROW_MAJOR.newTranslationFor(dim);
+        int [] result =  NDConfiguration.Layout.ROW_MAJOR.newStridesFor(dim);
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_makeFit( int[] a, int[] b, int[][] expected ){
-        int [][] result =  NDUtil.makeFit( a, b );
+        int [][] result =  makeFit( a, b );
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         if ( result.length != 2 ) throw new AssertionError("Invalid result!");
         assertIsEqual(
@@ -150,6 +150,33 @@ public class UnitTester_Tensor extends UnitTester
         );
         return (printSessionEnd()>0)?1:0;
     }
+
+
+    public static int[][] makeFit( int[] sA, int[] sB ) {
+        int lastIndexOfA = 0;
+        for ( int i = sA.length-1; i >= 0; i-- ) {
+            if ( sA[ i ] != 1 ) {
+                lastIndexOfA = i;
+                break;
+            }
+        }
+        int firstIndexOfB = 0;
+        for ( int i = 0; i < sB.length; i++ ) {
+            if ( sB[ i ] != 1 ) {
+                firstIndexOfB = i;
+                break;
+            }
+        }
+        int newSize = lastIndexOfA + sB.length - firstIndexOfB;
+        int[] rsA = new int[ newSize ];
+        int[] rsB = new int[ newSize ];
+        for( int i = 0; i <newSize; i++ ) {
+            if ( i <= lastIndexOfA ) rsA[ i ] = i; else rsA[ i ] = -1;
+            if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
+        }
+        return new int[][]{ rsA, rsB };
+    }
+
 
     public int testTensCon(
             Shape frstShp, Shape scndShp, double[] frstData, double[] scondData, double[] expctd

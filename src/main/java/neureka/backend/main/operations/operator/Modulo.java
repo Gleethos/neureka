@@ -13,13 +13,12 @@ import neureka.backend.api.template.algorithms.FallbackAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.BiElementwise;
-import neureka.backend.main.algorithms.Broadcast;
 import neureka.backend.main.algorithms.BiScalarBroadcast;
+import neureka.backend.main.algorithms.Broadcast;
+import neureka.devices.Device;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.math.parsing.FunctionParser;
-import neureka.devices.Device;
-import neureka.ndim.NDUtil;
 import neureka.ndim.NDimensional;
 
 import java.util.Arrays;
@@ -103,7 +102,7 @@ public class Modulo extends AbstractOperation
             }
         }
         if ( d >= 0 ) {
-            if ( !call.validate().all( (a, b) -> NDUtil.canBeBroadcast(a.shape(), b.shape()) ).isValid() )
+            if ( !call.validate().all( (a, b) -> Util.canBeBroadcast(a.shape(), b.shape()) ).isValid() )
                 throw new IllegalArgumentException("The shapes of the operands of the modulo operation must be equal or broadcast compatible! (when deriving nested functions)");
 
             // So here we assume that there are only two sub-functions: a/b

@@ -53,10 +53,10 @@ public class Permuted1DConfiguration extends D1C {
     @Override public final int indicesMap( int i ) { return _indicesMap; }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return new int[]{_translation}; }
+    @Override public final int[] strides() { return new int[]{_translation}; }
 
     /** {@inheritDoc} */
-    @Override public final int translation( int i ) { return _translation; }
+    @Override public final int strides(int i ) { return _translation; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return new int[]{1}; }

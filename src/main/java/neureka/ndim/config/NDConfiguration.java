@@ -99,7 +99,7 @@ public interface NDConfiguration
         }
 
 
-        public int[] newTranslationFor(int[] shape) {
+        public int[] newStridesFor(int[] shape) {
             int[] order = new int[shape.length];
             for ( int i = 0; i < shape.length; i++ )
                 order[i] = shape.length - 1 - i;
@@ -126,7 +126,7 @@ public interface NDConfiguration
 
         
         public int[] rearrange(int[] tln, int[] shape, int[] newForm) {
-            int[] shpTln = this.newTranslationFor(shape);
+            int[] shpTln = this.newStridesFor(shape);
             int[] newTln = new int[newForm.length];
             for (int i = 0; i < newForm.length; i++) {
                 if (newForm[i] < 0) newTln[i] = shpTln[i];
@@ -151,12 +151,12 @@ public interface NDConfiguration
         if ( !this.isCompact() ) // Non-compact tensors have at least 1 step/spread greater than 1 AND at least 1 offset greater than 0!
             return Layout.UNSPECIFIC;
         else {
-            int[] translationRM = Layout.ROW_MAJOR.newTranslationFor(this.shape());
+            int[] translationRM = Layout.ROW_MAJOR.newStridesFor(this.shape());
             boolean hasRMIndices = Arrays.equals(translationRM, indicesMap());
-            boolean isRM = (Arrays.equals(translationRM, translation()) && hasRMIndices);
+            boolean isRM = (Arrays.equals(translationRM, strides()) && hasRMIndices);
 
-            int[] translationCM = Layout.COLUMN_MAJOR.newTranslationFor(this.shape());
-            boolean isCM = (Arrays.equals(translationCM, translation()) && hasRMIndices);
+            int[] translationCM = Layout.COLUMN_MAJOR.newStridesFor(this.shape());
+            boolean isCM = (Arrays.equals(translationCM, strides()) && hasRMIndices);
 
             if ( isRM && isCM ) return Layout.SYMMETRIC;
             if ( isRM         ) return Layout.ROW_MAJOR;
@@ -230,7 +230,7 @@ public interface NDConfiguration
      *
      * @return An array of values used to translate the axes indices to a data array index.
      */
-    int[] translation();
+    int[] strides();
 
     /**
      * This method receives an axis index and returns the
@@ -241,7 +241,7 @@ public interface NDConfiguration
      * @param i The index of the axis whose translation ought to be returned.
      * @return The axis translation targeted by the provided index.
      */
-    int translation(int i);
+    int strides( int i );
 
     /**
      * The spread is the access step size of a slice within the n-dimensional
@@ -330,7 +330,7 @@ public interface NDConfiguration
         int[] inline = new int[rank * 5];
         //config format: [ shape | translation | indicesMap | offsets | spreads ]
         System.arraycopy(shape(),       0, inline, rank * 0, rank); //=> SHAPE
-        System.arraycopy(translation(), 0, inline, rank * 1, rank); //=> TRANSLATION (translates n-dimensional indices to an index)
+        System.arraycopy(strides(), 0, inline, rank * 1, rank); //=> TRANSLATION (translates n-dimensional indices to an index)
         System.arraycopy(indicesMap(),  0, inline, rank * 2, rank); //=> INDICES MAP (translates scalar to n-dimensional index)
         System.arraycopy(offset(),      0, inline, rank * 3, rank); //=> SPREAD / STRIDES (step size for dimensions in underlying parent tensor)
         System.arraycopy(spread(),      0, inline, rank * 4, rank); //=> OFFSET (nd-position inside underlying parent tensor)
@@ -367,8 +367,8 @@ public interface NDConfiguration
      * @return The truth value determining if this configuration is not modeling more complex indices like permuted views or slices...
      */
     default boolean isSimple() {
-        int[] simpleTranslation = this.getLayout().newTranslationFor(this.shape());
-        return Arrays.equals(this.translation(), simpleTranslation)
+        int[] simpleTranslation = this.getLayout().newStridesFor(this.shape());
+        return Arrays.equals(this.strides(), simpleTranslation)
                     &&
                 Arrays.equals(this.indicesMap(), simpleTranslation)
                     &&

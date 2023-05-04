@@ -9,7 +9,7 @@ public final class Permuted2DCIterator extends Permuted2DConfiguration implement
     private int _d2 = 0;
 
     public Permuted2DCIterator(Permuted2DConfiguration ndc) {
-        super( ndc.shape(), ndc.translation(), ndc.indicesMap() );
+        super( ndc.shape(), ndc.strides(), ndc.indicesMap() );
     }
 
     /** {@inheritDoc} */

@@ -92,7 +92,7 @@ public class DimTrim extends AbstractOperation
         }
         for ( int i = 0; i < shape.length; i++ ) {
             newShape.add(shape[ i ]);
-            newTranslation.add(tensor.getNDConf().translation( i ));
+            newTranslation.add(tensor.getNDConf().strides( i ));
             newIndicesMap.add(tensor.getNDConf().indicesMap( i ));
             newSpread.add(tensor.getNDConf().spread( i ));
             newOffset.add(tensor.getNDConf().offset( i ));
@@ -136,7 +136,7 @@ public class DimTrim extends AbstractOperation
 
         for ( int i = prefix; i < shape.length-postfix; i++ ) {
             newShape.add( shape[ i ] );
-            newTranslation.add( tensor.getNDConf().translation( i ) );
+            newTranslation.add( tensor.getNDConf().strides( i ) );
             newIndicesMap.add( tensor.getNDConf().indicesMap( i ) );
             newSpread.add( tensor.getNDConf().spread( i ) );
             newOffset.add( tensor.getNDConf().offset( i ) );
@@ -145,7 +145,7 @@ public class DimTrim extends AbstractOperation
             // We determine the prefix offset:
             int prefixOffset = 0;
             for (int i = 0; i < prefix; i++)
-                prefixOffset += tensor.getNDConf().translation(i) * tensor.getNDConf().offset(i);
+                prefixOffset += tensor.getNDConf().strides(i) * tensor.getNDConf().offset(i);
 
             // We adjust the offset of the first non-trimmed dimension:
             newOffset.set(0, newOffset.get(0) + prefixOffset);

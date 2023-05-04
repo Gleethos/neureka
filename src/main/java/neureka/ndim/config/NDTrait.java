@@ -43,8 +43,8 @@ public enum NDTrait
     }
 
     private static boolean _isSimple( NDConfiguration ndc ) {
-        int[] simpleTranslation = ndc.getLayout().newTranslationFor(ndc.shape());
-        return Arrays.equals(ndc.translation(), simpleTranslation)
+        int[] simpleTranslation = ndc.getLayout().newStridesFor(ndc.shape());
+        return Arrays.equals(ndc.strides(), simpleTranslation)
                     &&
                 Arrays.equals(ndc.indicesMap(), simpleTranslation)
                     &&
@@ -67,7 +67,7 @@ public enum NDTrait
         */
         int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 1 ) return false;
-        boolean translation = ndc.translation( realRank - 1 ) == 1;
+        boolean translation = ndc.strides( realRank - 1 ) == 1;
         boolean spread      = ndc.spread(      realRank - 1 ) == 1;
         return translation && spread;
     }
@@ -88,7 +88,7 @@ public enum NDTrait
         */
         int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 1 ) return false;
-        boolean translation = ndc.translation( realRank - 2 ) == 1;
+        boolean translation = ndc.strides( realRank - 2 ) == 1;
         boolean spread      = ndc.spread(      realRank - 2 ) == 1;
         return translation && spread;
     }
@@ -96,8 +96,8 @@ public enum NDTrait
     private static boolean _last2DimensionsAreNotPermuted( NDConfiguration ndc ) {
         int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 2 ) return true;
-        int translationCol = ndc.translation( realRank - 2 );
-        int translationRow = ndc.translation( realRank - 1 );
+        int translationCol = ndc.strides( realRank - 2 );
+        int translationRow = ndc.strides( realRank - 1 );
         return translationCol == 1 || translationRow == 1;
     }
 

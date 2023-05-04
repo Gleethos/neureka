@@ -9,10 +9,10 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.backend.main.algorithms.Util;
 import neureka.backend.main.memory.MemUtil;
 import neureka.math.Function;
 import neureka.math.args.Arg;
-import neureka.ndim.NDUtil;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.function.Supplier;
@@ -108,9 +108,9 @@ public class ReLayout extends AbstractOperation
      *  Converts this tensor from row major to column major layout.
      */
     private static void _fromRMToCM( Tsr<?> t ) {
-        _assignIfActual( t, () -> NDUtil.transpose(t).deepCopy().getMut().detach() );
+        _assignIfActual( t, () -> Util.transpose(t).deepCopy().getMut().detach() );
         NDConfiguration old = t.getNDConf();
-        int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());
+        int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newStridesFor(old.shape());
         if ( old.isVirtual() ) {
             t.mut().setIsVirtual(false);
             old = t.getNDConf();

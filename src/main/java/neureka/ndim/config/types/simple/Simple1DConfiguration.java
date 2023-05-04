@@ -46,10 +46,10 @@ public class Simple1DConfiguration extends D1C //:= IMMUTABLE
     @Override public final int indicesMap( int i ) { return _translation_and_indicesMap; }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return new int[]{_translation_and_indicesMap}; }
+    @Override public final int[] strides() { return new int[]{_translation_and_indicesMap}; }
 
     /** {@inheritDoc} */
-    @Override public final int translation( int i ) { return _translation_and_indicesMap; }
+    @Override public final int strides(int i ) { return _translation_and_indicesMap; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return new int[]{1}; }

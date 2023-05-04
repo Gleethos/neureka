@@ -76,10 +76,10 @@ public class Sliced2DConfiguration extends D2C //:= IMMUTABLE
     @Override public final int indicesMap( int i ) { return ( i == 0 ? _indicesMap1 : _indicesMap2 ); }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return new int[]{_translation1, _translation2}; }
+    @Override public final int[] strides() { return new int[]{_translation1, _translation2}; }
 
     /** {@inheritDoc} */
-    @Override public final int translation( int i ) { return ( i == 0 ? _translation1 : _translation2 ); }
+    @Override public final int strides(int i ) { return ( i == 0 ? _translation1 : _translation2 ); }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return new int[]{_spread1, _spread2}; }

@@ -8,7 +8,7 @@ public final class Sliced1DCIterator extends Sliced1DConfiguration implements ND
     private int _d1;
 
     public Sliced1DCIterator(Sliced1DConfiguration ndc) {
-        super(ndc.shape(0), ndc.translation(0), ndc.indicesMap(0), ndc.spread(0), ndc.offset(0));
+        super(ndc.shape(0), ndc.strides(0), ndc.indicesMap(0), ndc.spread(0), ndc.offset(0));
     }
 
     /** {@inheritDoc} */
