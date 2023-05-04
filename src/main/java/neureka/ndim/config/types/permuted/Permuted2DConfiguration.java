@@ -12,8 +12,8 @@ public class Permuted2DConfiguration extends D2C
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation1;
-    private final int _translation2;
+    private final int _stride1;
+    private final int _stride2;
     /**
      *  The mapping for the indices array.
      */
@@ -23,23 +23,23 @@ public class Permuted2DConfiguration extends D2C
 
     protected Permuted2DConfiguration(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap
     ) {
         _shape1 = shape[ 0 ];
         _shape2 = shape[ 1 ];
-        _translation1 = translation[ 0 ];
-        _translation2 = translation[ 1 ];
+        _stride1 = strides[ 0 ];
+        _stride2 = strides[ 1 ];
         _indicesMap1 = indicesMap[ 0 ];
         _indicesMap2 = indicesMap[ 1 ];
     }
 
     public static Permuted2DConfiguration construct(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap
     ) {
-        return _cached( new Permuted2DConfiguration(shape, translation, indicesMap) );
+        return _cached( new Permuted2DConfiguration(shape, strides, indicesMap) );
     }
 
     /** {@inheritDoc} */
@@ -58,10 +58,10 @@ public class Permuted2DConfiguration extends D2C
     @Override public final int indicesMap( int i ) { return ( i==0 ? _indicesMap1 : _indicesMap2 ); }
 
     /** {@inheritDoc} */
-    @Override public final int[] strides() { return new int[]{_translation1, _translation2}; }
+    @Override public final int[] strides() { return new int[]{_stride1, _stride2}; }
 
     /** {@inheritDoc} */
-    @Override public final int strides(int i ) { return ( i==0 ? _translation1 : _translation2 ); }
+    @Override public final int strides(int i ) { return ( i==0 ? _stride1 : _stride2); }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return new int[]{1, 1}; }
@@ -77,8 +77,8 @@ public class Permuted2DConfiguration extends D2C
 
     /** {@inheritDoc} */
     @Override public final int indexOfIndex( int index ) {
-        return (index / _indicesMap1) * _translation1 +
-                ((index %_indicesMap1) / _indicesMap2) * _translation2;
+        return (index / _indicesMap1) * _stride1 +
+                ((index %_indicesMap1) / _indicesMap2) * _stride2;
     }
 
     /** {@inheritDoc} */
@@ -93,16 +93,16 @@ public class Permuted2DConfiguration extends D2C
     /** {@inheritDoc} */
     @Override public final int indexOfIndices( int[] indices ) {
         int i = 0;
-        i += indices[ 0 ]* _translation1;
-        i += indices[ 1 ]* _translation2;
+        i += indices[ 0 ]* _stride1;
+        i += indices[ 1 ]* _stride2;
         return i;
     }
 
     /** {@inheritDoc} */
     @Override public final int indexOfIndices( int d1, int d2 ) {
         int i = 0;
-        i += d1 * _translation1;
-        i += d2 * _translation2;
+        i += d1 * _stride1;
+        i += d2 * _stride2;
         return i;
     }
 }

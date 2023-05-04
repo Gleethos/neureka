@@ -13,7 +13,7 @@ public class PermutedNDConfiguration extends AbstractNDC
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int[] _translation;
+    private final int[] _strides;
     /**
      *  The mapping of an index to an index array.
      *  The index array is created and filled
@@ -25,21 +25,21 @@ public class PermutedNDConfiguration extends AbstractNDC
 
 
     protected PermutedNDConfiguration(
-            int[] shape,
-            int[] translation,
-            int[] indicesMap
+        int[] shape,
+        int[] strides,
+        int[] indicesMap
     ) {
         _shape       = _cacheArray(shape);
-        _translation = _cacheArray(translation);
+        _strides     = _cacheArray(strides);
         _indicesMap  = _cacheArray(indicesMap);
     }
 
     public static PermutedNDConfiguration construct(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap
     ) {
-        return _cached( new PermutedNDConfiguration(shape, translation, indicesMap) );
+        return _cached( new PermutedNDConfiguration(shape, strides, indicesMap) );
     }
 
 
@@ -59,10 +59,10 @@ public class PermutedNDConfiguration extends AbstractNDC
     @Override public final int indicesMap(int i ) { return _indicesMap[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] strides() { return _translation.clone(); }
+    @Override public final int[] strides() { return _strides.clone(); }
 
     /** {@inheritDoc} */
-    @Override public final int strides(int i ) { return _translation[ i ]; }
+    @Override public final int strides(int i ) { return _strides[ i ]; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() {
@@ -101,7 +101,7 @@ public class PermutedNDConfiguration extends AbstractNDC
     @Override public final int indexOfIndices( int[] indices ) {
         int i = 0;
         for ( int ii = 0; ii < _shape.length; ii++ )
-            i += indices[ ii ] * _translation[ ii ];
+            i += indices[ ii ] * _strides[ ii ];
         return i;
     }
 

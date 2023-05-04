@@ -11,7 +11,7 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int[] _translation;
+    private final int[] _strides;
     /**
      *  The mapping of an index to an index array.
      *  The index array is created and filled
@@ -32,13 +32,13 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     protected SlicedNDConfiguration(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
         _shape       = _cacheArray(shape);
-        _translation = _cacheArray(translation);
+        _strides     = _cacheArray(strides);
         _indicesMap  = _cacheArray(indicesMap);
         _spread      = _cacheArray(spread);
         _offset      = _cacheArray(offset);
@@ -46,12 +46,12 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     public static SlicedNDConfiguration construct(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return _cached( new SlicedNDConfiguration(shape, translation, indicesMap, spread, offset) );
+        return _cached( new SlicedNDConfiguration(shape, strides, indicesMap, spread, offset) );
     }
 
     /** {@inheritDoc} */
@@ -70,10 +70,10 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
     @Override public final int indicesMap( int i ) { return _indicesMap[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] strides() { return _translation.clone(); }
+    @Override public final int[] strides() { return _strides.clone(); }
 
     /** {@inheritDoc} */
-    @Override public final int strides(int i ) { return _translation[ i ]; }
+    @Override public final int strides(int i ) { return _strides[ i ]; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return _spread.clone(); }
@@ -106,7 +106,7 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
     public final int indexOfIndices( int[] indices ) {
         int index = 0;
         for ( int i = 0; i < _shape.length; i++ )
-            index += ( indices[ i ] * _spread[ i ] + _offset[ i ] ) * _translation[ i ];
+            index += ( indices[ i ] * _spread[ i ] + _offset[ i ] ) * _strides[ i ];
         return index;
     }
 

@@ -67,7 +67,7 @@ public abstract class AbstractNDC implements NDConfiguration
      */
     static NDConfiguration construct (
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap,
             int[] spread,
             int[] offset
@@ -91,9 +91,9 @@ public abstract class AbstractNDC implements NDConfiguration
                 );
 
         if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() )
-            return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
+            return SlicedNDConfiguration.construct(shape, strides, indicesMap, spread, offset);
 
-        boolean isSimple = _isSimpleConfiguration(shape, translation, indicesMap, spread, offset);
+        boolean isSimple = _isSimpleConfiguration(shape, strides, indicesMap, spread, offset);
         boolean isSimpleTransposed = _isSimpleTransposedConfiguration(shape, spread, offset);
 
         if ( isSimple )
@@ -102,57 +102,57 @@ public abstract class AbstractNDC implements NDConfiguration
                 if ( shape[ 0 ] == 1 )
                     return Simple0DConfiguration.construct();
                 else
-                    return Simple1DConfiguration.construct(shape, translation);
+                    return Simple1DConfiguration.construct(shape, strides);
             }
             else if ( shape.length == 2 )
-                return Simple2DConfiguration.construct(shape, translation);
+                return Simple2DConfiguration.construct(shape, strides);
             else if ( shape.length == 3 )
-                return Simple3DConfiguration.construct(shape, translation);
+                return Simple3DConfiguration.construct(shape, strides);
             else
-                return SimpleNDConfiguration.construct(shape, translation);
+                return SimpleNDConfiguration.construct(shape, strides);
         }
         if ( isSimpleTransposed )
         {
             if ( shape.length == 1 )
-                return Permuted1DConfiguration.construct(shape, translation, indicesMap);
+                return Permuted1DConfiguration.construct(shape, strides, indicesMap);
             else if ( shape.length == 2 )
-                return Permuted2DConfiguration.construct(shape, translation, indicesMap);
+                return Permuted2DConfiguration.construct(shape, strides, indicesMap);
             else if ( shape.length == 3 )
-                return Permuted3DConfiguration.construct(shape, translation, indicesMap);
+                return Permuted3DConfiguration.construct(shape, strides, indicesMap);
             else
-                return PermutedNDConfiguration.construct(shape, translation, indicesMap);
+                return PermutedNDConfiguration.construct(shape, strides, indicesMap);
         }
 
         if ( shape.length == 1 ) {
             if ( shape[ 0 ] == 1 )
                 return Sliced0DConfiguration.construct(shape, offset);
             else
-                return Sliced1DConfiguration.construct(shape, translation, indicesMap, spread, offset);
+                return Sliced1DConfiguration.construct(shape, strides, indicesMap, spread, offset);
         }
         else if ( shape.length == 2 )
-            return Sliced2DConfiguration.construct(shape, translation, indicesMap, spread, offset);
+            return Sliced2DConfiguration.construct(shape, strides, indicesMap, spread, offset);
         else if ( shape.length == 3 )
-            return Sliced3DConfiguration.construct(shape, translation, indicesMap, spread, offset);
+            return Sliced3DConfiguration.construct(shape, strides, indicesMap, spread, offset);
 
         // This configuration fits every shape:
-        return SlicedNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
+        return SlicedNDConfiguration.construct(shape, strides, indicesMap, spread, offset);
     }
 
     protected static <T extends NDConfiguration> T _cached( T ndc ) { return _CACHED_NDCS.process( ndc ); }
 
     private static boolean _isSimpleConfiguration(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
         // Note: Column major is not simple because there are no simple column major implementations...
-        int[] newTranslation = Layout.ROW_MAJOR.newStridesFor( shape );
+        int[] newStrides = Layout.ROW_MAJOR.newStridesFor( shape );
         int[] newSpread = new int[ shape.length ];
         Arrays.fill( newSpread, 1 );
-        return  Arrays.equals( translation, newTranslation ) &&
-                Arrays.equals( indicesMap, newTranslation ) &&
+        return  Arrays.equals( strides, newStrides ) &&
+                Arrays.equals( indicesMap, newStrides ) &&
                 Arrays.equals( offset, new int[ shape.length ] ) &&
                 Arrays.equals( spread, newSpread );
     }
@@ -172,7 +172,7 @@ public abstract class AbstractNDC implements NDConfiguration
         return "NDConfiguration@"+Integer.toHexString(hashCode())+"#"+Long.toHexString(this.hashCode())+"[" +
                     "layout="+getLayout().name()+","+
                     "shape="+Arrays.toString(shape())+","+
-                    "translation="+Arrays.toString(strides())+","+
+                    "strides="+Arrays.toString(strides())+","+
                     "indicesMap="+Arrays.toString(indicesMap())+","+
                     "spread="+Arrays.toString(spread())+","+
                     "offset="+Arrays.toString(offset())+""+
@@ -182,7 +182,7 @@ public abstract class AbstractNDC implements NDConfiguration
     protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc )
     {
         int[] newShape = Utility.rearrange( ndc.shape(), newForm );
-        int[] newTranslation = ndc.getLayout().rearrange( ndc.strides(), newShape, newForm );
+        int[] newStrides = ndc.getLayout().rearrange( ndc.strides(), newShape, newForm );
         int[] newIndicesMap = ndc.getLayout().newStridesFor( newShape );
         int[] newSpread = new int[ newForm.length ];
         for ( int i = 0; i < newForm.length; i++ ) {
@@ -196,7 +196,7 @@ public abstract class AbstractNDC implements NDConfiguration
         }
         return AbstractNDC.construct(
                 newShape,
-                newTranslation,
+                newStrides,
                 newIndicesMap,
                 newSpread,
                 newOffset
@@ -218,7 +218,7 @@ public abstract class AbstractNDC implements NDConfiguration
         return Long.valueOf(
                    this.getClass().hashCode() +
                    Arrays.hashCode( shape() )       * 1L +
-                   Arrays.hashCode( strides() ) * 2L +
+                   Arrays.hashCode( strides() )     * 2L +
                    Arrays.hashCode( indicesMap() )  * 3L +
                    Arrays.hashCode( spread() )      * 4L +
                    Arrays.hashCode( offset() )      * 5L +
@@ -241,7 +241,7 @@ public abstract class AbstractNDC implements NDConfiguration
         if ( ndc == this ) return true;
         return this.getClass() == ndc.getClass() && // TODO: Think about this -> do we require them to be of the same class?
                Arrays.equals(this.shape(),       ndc.shape()      ) &&
-               Arrays.equals(this.strides(), ndc.strides()) &&
+               Arrays.equals(this.strides(),     ndc.strides()    ) &&
                Arrays.equals(this.indicesMap(),  ndc.indicesMap() ) &&
                Arrays.equals(this.spread(),      ndc.spread()     ) &&
                Arrays.equals(this.offset(),      ndc.offset()     ) &&

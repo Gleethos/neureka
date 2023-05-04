@@ -67,9 +67,9 @@ public enum NDTrait
         */
         int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 1 ) return false;
-        boolean translation = ndc.strides( realRank - 1 ) == 1;
-        boolean spread      = ndc.spread(      realRank - 1 ) == 1;
-        return translation && spread;
+        boolean strides = ndc.strides( realRank - 1 ) == 1;
+        boolean spread  = ndc.spread(  realRank - 1 ) == 1;
+        return strides && spread;
     }
 
     /**
@@ -88,17 +88,17 @@ public enum NDTrait
         */
         int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 1 ) return false;
-        boolean translation = ndc.strides( realRank - 2 ) == 1;
-        boolean spread      = ndc.spread(      realRank - 2 ) == 1;
-        return translation && spread;
+        boolean strideIs1 = ndc.strides( realRank - 2 ) == 1;
+        boolean spreadIs1 = ndc.spread(      realRank - 2 ) == 1;
+        return strideIs1 && spreadIs1;
     }
 
     private static boolean _last2DimensionsAreNotPermuted( NDConfiguration ndc ) {
         int realRank = ndc.rank() - _rightSpreadPadding( ndc );
         if ( realRank < 2 ) return true;
-        int translationCol = ndc.strides( realRank - 2 );
-        int translationRow = ndc.strides( realRank - 1 );
-        return translationCol == 1 || translationRow == 1;
+        int strideCol = ndc.strides( realRank - 2 );
+        int strideRow = ndc.strides( realRank - 1 );
+        return strideCol == 1 || strideRow == 1;
     }
 
     private static boolean _isContinuousMatrix(NDConfiguration ndc ) {

@@ -13,21 +13,21 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int[] _translation_and_indicesMap;
+    private final int[] _strides_and_indicesMap;
 
 
     protected SimpleNDConfiguration(
-            int[] shape, int[] translation
+            int[] shape, int[] strides
     ) {
         _shape = _cacheArray( shape );
-        _translation_and_indicesMap = _cacheArray( translation );
+        _strides_and_indicesMap = _cacheArray( strides );
     }
 
     public static SimpleNDConfiguration construct(
             int[] shape,
-            int[] translation
+            int[] strides
     ) {
-        return _cached( new SimpleNDConfiguration( shape, translation ) );
+        return _cached( new SimpleNDConfiguration( shape, strides ) );
     }
 
     /** {@inheritDoc} */
@@ -40,16 +40,16 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
     @Override public final int shape( int i ) { return _shape[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] indicesMap() { return _translation_and_indicesMap.clone(); }
+    @Override public final int[] indicesMap() { return _strides_and_indicesMap.clone(); }
 
     /** {@inheritDoc} */
-    @Override public final int indicesMap( int i ) { return _translation_and_indicesMap[ i ]; }
+    @Override public final int indicesMap( int i ) { return _strides_and_indicesMap[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] strides() { return _translation_and_indicesMap.clone(); }
+    @Override public final int[] strides() { return _strides_and_indicesMap.clone(); }
 
     /** {@inheritDoc} */
-    @Override public final int strides(int i ) { return _translation_and_indicesMap[ i ]; }
+    @Override public final int strides(int i ) { return _strides_and_indicesMap[ i ]; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() {
@@ -73,8 +73,8 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /** {@inheritDoc} */
     @Override public final int[] indicesOfIndex( int index ) { int[] indices = new int[ _shape.length ];
         for ( int ii=0; ii<rank(); ii++ ) {
-            indices[ ii ] += index / _translation_and_indicesMap[ ii ];
-            index %= _translation_and_indicesMap[ ii ];
+            indices[ ii ] += index / _strides_and_indicesMap[ ii ];
+            index %= _strides_and_indicesMap[ ii ];
         }
         return indices;
     }
@@ -82,7 +82,7 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /** {@inheritDoc} */
     @Override public int indexOfIndices( int[] indices ) {
         int i = 0;
-        for ( int ii = 0; ii < _shape.length; ii++ ) i += indices[ ii ] * _translation_and_indicesMap[ ii ];
+        for ( int ii = 0; ii < _shape.length; ii++ ) i += indices[ ii ] * _strides_and_indicesMap[ ii ];
         return i;
     }
 

@@ -12,7 +12,7 @@ public class SimpleReshapeView extends AbstractNDC
     private final int[] _form;
     private final int[] _formTranslator;
     private final int[] _shape;
-    private final int[] _translation;
+    private final int[] _strides;
     private final int[] _indicesMap;
     private final int[] _spread;
     private final int[] _offset;
@@ -37,11 +37,11 @@ public class SimpleReshapeView extends AbstractNDC
 
 
         NDConfiguration ndc = _simpleReshape( form, toBeViewed );
-        _shape       = ndc.shape();
-        _translation = ndc.strides();
-        _indicesMap  = ndc.indicesMap();
-        _spread      = ndc.spread();
-        _offset      = ndc.offset();
+        _shape      = ndc.shape();
+        _strides    = ndc.strides();
+        _indicesMap = ndc.indicesMap();
+        _spread     = ndc.spread();
+        _offset     = ndc.offset();
     }
 
     /** {@inheritDoc} */
@@ -60,10 +60,10 @@ public class SimpleReshapeView extends AbstractNDC
     @Override public final int indicesMap(int i ) { return _indicesMap[ i ]; }
 
     /** {@inheritDoc} */
-    @Override public final int[] strides() { return _translation; }
+    @Override public final int[] strides() { return _strides; }
 
     /** {@inheritDoc} */
-    @Override public final int strides(int i ) { return _translation[ i ]; }
+    @Override public final int strides(int i ) { return _strides[ i ]; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return _spread; }

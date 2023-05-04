@@ -82,7 +82,7 @@ public class Relation<V> implements Component<Tsr<V>>
      *  there must be a translation between the shape configuration between
      *  this new slice and the original parent tensor from which both slices
      *  have been derived. <br>
-     *  This translation is in essence merely an int array which
+     *  This translation, referred to as 'strides', is in essence merely an int array which
      *  contains the index mapping to a new shape.
      *  When accessing data for a permuted slice then this
      *  translation will be necessary for getting the right data. <br>

@@ -16,7 +16,7 @@ public final class Sliced0DConfiguration extends AbstractNDC //:= IMMUTABLE
 
     public static Sliced0DConfiguration construct(
             int[] shape,
-            // translation, will always be 1
+            // stride, will always be 1
             // indicesMap, will also always be 1
             // spread, does not matter!
             int[] offset

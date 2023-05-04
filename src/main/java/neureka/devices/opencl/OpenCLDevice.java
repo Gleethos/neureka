@@ -513,7 +513,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         cl_tsr.cl_config clf = new cl_tsr.cl_config();
 
-        //CONFIG TRANSFER: <[ shape | translation | indicesMap | indices | scale ]>
+        //CONFIG TRANSFER: <[ shape | strides | indicesMap | indices | scale ]>
         int[] config = ndc.asInlineArray();
 
         //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:

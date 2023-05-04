@@ -44,13 +44,13 @@ import java.util.stream.IntStream;
 public interface NDConfiguration
 {
     static NDConfiguration of(
-            int[] shape,
-            int[] translation,
+            int[] shape, // The shape of the tensor.
+            int[] strides, // Strides are the distances between elements of a tensor in each dimension.
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return AbstractNDC.construct(shape, translation, indicesMap, spread, offset);
+        return AbstractNDC.construct(shape, strides, indicesMap, spread, offset);
     }
 
     /**
@@ -111,17 +111,17 @@ public interface NDConfiguration
                 order[1] = tmp;
             }
 
-            int[] translation = new int[shape.length];
+            int[] strides = new int[shape.length];
             int prod = 1;
             if ( this == COLUMN_MAJOR || this == ROW_MAJOR || this == UNSPECIFIC || this == SYMMETRIC) {
                 for ( int i : order ) {
-                    translation[i] = prod;
+                    strides[i] = prod;
                     prod *= shape[i];
                 }
             } else
                 throw new IllegalStateException("Unknown data layout!");
 
-            return translation;
+            return strides;
         }
 
         
@@ -151,12 +151,12 @@ public interface NDConfiguration
         if ( !this.isCompact() ) // Non-compact tensors have at least 1 step/spread greater than 1 AND at least 1 offset greater than 0!
             return Layout.UNSPECIFIC;
         else {
-            int[] translationRM = Layout.ROW_MAJOR.newStridesFor(this.shape());
-            boolean hasRMIndices = Arrays.equals(translationRM, indicesMap());
-            boolean isRM = (Arrays.equals(translationRM, strides()) && hasRMIndices);
+            int[] stridesRM = Layout.ROW_MAJOR.newStridesFor(this.shape());
+            boolean hasRMIndices = Arrays.equals(stridesRM, indicesMap());
+            boolean isRM = (Arrays.equals(stridesRM, strides()) && hasRMIndices);
 
-            int[] translationCM = Layout.COLUMN_MAJOR.newStridesFor(this.shape());
-            boolean isCM = (Arrays.equals(translationCM, strides()) && hasRMIndices);
+            int[] stridesCM = Layout.COLUMN_MAJOR.newStridesFor(this.shape());
+            boolean isCM = (Arrays.equals(stridesCM, strides()) && hasRMIndices);
 
             if ( isRM && isCM ) return Layout.SYMMETRIC;
             if ( isRM         ) return Layout.ROW_MAJOR;

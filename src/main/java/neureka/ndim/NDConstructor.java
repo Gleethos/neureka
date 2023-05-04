@@ -17,12 +17,12 @@ public interface NDConstructor
 
     static NDConstructor of(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return of(NDConfiguration.of(shape, translation, indicesMap, spread, offset));
+        return of(NDConfiguration.of(shape, strides, indicesMap, spread, offset));
     }
 
     static NDConstructor of( NDConfiguration ndc )
