@@ -71,7 +71,7 @@ import java.util.stream.Collectors;
  *
  * @param <V> The super type of all values that can be stored on a {@link Device} implementation...
  */
-public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V>>
+public interface Device<V> extends Component<Tsr<V>>, Storage<V>
 {
     /**
      * This method returns {@link Device} instances matching
@@ -141,6 +141,14 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     }
 
     /**
+     *  Note that this is not necessarily equal to {@link #numberOfStored()}, because
+     *  multiple tensors may share a single {@link Data} object.
+     *
+     * @return The number of {@link Data} objects stored on this {@link Device}.
+     */
+    int numberOfDataObjects();
+
+    /**
      *  This method signals the device to get ready for garbage collection.
      *  A given device may have resources which ought to be freed when it is no longer used.
      *  One may also choose to do resource freeing manually.
@@ -186,11 +194,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * @return This very instance to allow for method chaining.
      */
     Device<V> approve( ExecutionCall<? extends Device<?>> call );
-
-    /**
-     * @return A {@link Collection} of all tensors stored by this device.
-     */
-    Collection<Tsr<V>> getTensors();
 
     <T extends V> Data<T> allocate( DataType<T> dataType, NDConfiguration ndc );
 
@@ -296,7 +299,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      *  Implementations of this represent the access to tensors stored on a device
      *  in order to read from or write to said tensor. <br>
      *  <b>Warning: This API exposes the true underlying data of a tensor
-     *  which does not take into account slice, permute or stride information...</b>
+     *  which does not take into account slice, permute or step information...</b>
      *
      * @param <V> The type parameter of the tensor accessed by an instance of this.
      */
@@ -367,13 +370,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
          * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
          */
         void cleanup( Runnable action );
-
-        /**
-         *  This method automatically called within the {@link MutateTsr#setNDConf(NDConfiguration)} method
-         *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
-         *  given {@link Device} implementation... <br><br>
-         */
-        void updateNDConf();
 
         <T> Data<T> actualize();
 

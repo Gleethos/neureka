@@ -54,27 +54,27 @@ import neureka.Tsr;
 public interface Storage<V>
 {
     /**
-     *  Implementations of this method ought to store the value
-     *  of the given tensor in whatever formant suites the underlying
+     *  Implementations of this method ought to store the data
+     *  of the tensor in whatever formant suites the underlying
      *  implementation and or final type.
      *  Classes like "OpenCLDevice" or "FileDevice" for example are tensor storages.
      *
-     * @param <T> A valid value type of the tensor which ought to be stored on this device.
+     * @param <T> A valid data type of the tensor which should be stored on this device.
      * @param tensor The tensor whose data ought to be stored.
-     * @return A reference this object to allow for method chaining. (factory pattern)
+     * @return This {@link Storage} instance, to allow for method chaining.
      */
     <T extends V> Storage<V> store( Tsr<T> tensor );
 
     /**
-     * @param tensor The tensor whose data ought to be restored (loaded to RAM).
-     * @return A reference this object to allow for method chaining. (factory pattern)
+     * @param tensor The tensor whose data ought to be restored (loaded to RAM/CPU device).
+     * @return This {@link Storage} instance, to allow for method chaining.
      */
     Storage<V> restore( Tsr<V> tensor );
 
     /**
-     * @return The number of tensors stored on this.
+     * @return The number of nd-array stored on this.
      */
-    int size();
+    int numberOfStored();
 
     /**
      * @return The truth value determining if there are no tensors stored on this or false if there are tensors stored.

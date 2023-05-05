@@ -9,7 +9,7 @@ public final class Simple1DCIterator extends Simple1DConfiguration implements ND
     private int _d1;
 
     public Simple1DCIterator(Simple1DConfiguration ndc ) {
-        super( ndc.shape( 0 ), ndc.translation( 0 ));
+        super( ndc.shape( 0 ), ndc.strides( 0 ));
     }
 
 

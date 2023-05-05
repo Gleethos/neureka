@@ -36,24 +36,23 @@ package neureka.devices;
 
 import neureka.Data;
 import neureka.Tsr;
-import neureka.common.utility.LogUtil;
-import neureka.dtype.DataType;
-import neureka.ndim.config.NDConfiguration;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Spliterator;
 
 /**
  * @param <V> The value type parameter representing a common super type for all values supported by the device.
  */
 public abstract class AbstractBaseDevice<V> implements Device<V>
 {
+    protected int _numberOfTensors = 0;
+    protected int _numberOfDataObjects = 0;
+
     @Override
-    public int size() {
-        Collection<Tsr<V>> tensors = this.getTensors();
-        if ( tensors == null ) return 0;
-        return tensors.size();
+    public int numberOfStored() {
+        return _numberOfTensors;
+    }
+
+    @Override
+    public int numberOfDataObjects() {
+        return _numberOfDataObjects;
     }
 
     /**
@@ -62,39 +61,27 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
      * @return The truth value determining if there are no tensors stored on this device.
      */
     @Override
-    public boolean isEmpty() { return this.size() == 0; }
+    public boolean isEmpty() { return this.numberOfStored() == 0; }
 
     @Override
-    public boolean contains( Tsr<V> o ) { return this.getTensors().contains( o ); }
+    public final boolean contains( Tsr<V> o ) {
+        Data<V> data = o.mut().getData();
+        if ( data == null ) return false;
+        return data.owner() == this;
+    }
 
+    /**
+     * This method checks if the passed tensor
+     * is stored on this {@link Device} instance.
+     * "Stored" means that the data of the tensor was created by this device.
+     * This data is referenced inside the tensor...
+     *
+     * @param tensor The tensor in question.
+     * @return The truth value of the fact that the provided tensor is on this device.
+     */
     @Override
-    public Iterator<Tsr<V>> iterator() { return this.getTensors().iterator(); }
-
-    @Override
-    public Spliterator<Tsr<V>> spliterator() { return getTensors().spliterator(); }
-
-    protected abstract static class DeviceData<T> implements Data<T>
-    {
-        protected final Device<?> _owner;
-        protected final Object _dataRef;
-        protected final DataType<T> _dataType;
-
-        public DeviceData(
-                Device<?> owner,
-                Object ref,
-                DataType<T> dataType
-        ) {
-            LogUtil.nullArgCheck( owner, "owner", Device.class );
-            LogUtil.nullArgCheck( dataType, "dataType", DataType.class );
-            _owner = owner;
-            _dataRef = ref;
-            _dataType = dataType;
-        }
-
-        @Override public final Device<T> owner() { return (Device<T>) _owner; }
-        @Override public final Object getRef() { return _dataRef; }
-        @Override public final DataType<T> dataType() { return _dataType; }
-        @Override public       Data<T> withNDConf(NDConfiguration ndc) { return this; }
+    public <T extends V> boolean has( Tsr<T> tensor ) {
+        return this.contains((Tsr<V>) tensor);
     }
 
 }

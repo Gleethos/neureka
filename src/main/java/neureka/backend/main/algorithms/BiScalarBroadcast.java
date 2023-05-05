@@ -1,5 +1,6 @@
 package neureka.backend.main.algorithms;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -30,7 +31,7 @@ public class BiScalarBroadcast extends AbstractFunDeviceAlgorithm<BiScalarBroadc
             call -> {
                 int offset = ( call.input( Number.class, 0 ) == null ? 1 : 0 );
                 Device<Number> device = call.getDeviceFor(Number.class);
-                int[] outShape = call.input( offset ).getNDConf().shape();
+                Shape outShape = call.input( offset ).shape();
                 Class<Object> type = (Class<Object>) call.input( offset ).getItemType();
                 Tsr output = Tsr.of( type, outShape, 0.0 ).mut().setIsIntermediate( true );
                 output.mut().setIsVirtual( false );

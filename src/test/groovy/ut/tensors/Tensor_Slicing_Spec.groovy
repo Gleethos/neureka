@@ -239,7 +239,7 @@ class Tensor_Slicing_Spec extends Specification
     ) {
         given : 'A 2 dimensional tensor requiring gradients.'
             var t = Tsr.ofBytes().withShape(4, 4).andFill(-1, 7, 3).setRqsGradient(true)
-        and : '3 arrays we need to slice (the slice shape, offset and spread/strides).'
+        and : '3 arrays we need to slice (the slice shape, offset and spread/steps).'
             int[] newShape  = [2, 2]
             int[] newOffset = [1, 1]
             int[] newSpread = [1, 1]

@@ -1,14 +1,12 @@
 package ut.device
 
+import neureka.Data
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.file.FileDevice
-import neureka.devices.file.FileHandle
-import neureka.devices.file.CSVHandle
-import neureka.devices.file.IDXHandle
-import neureka.devices.file.JPEGHandle
-import neureka.devices.file.PNGHandle
+import neureka.devices.file.*
+import neureka.devices.host.CPU
 import neureka.dtype.DataType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.UI8
@@ -74,7 +72,7 @@ class FileDevice_Spec extends Specification
             new File( path + '/' + filename + '.idx' ).exists()
 
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
-            a.mut.data.ref == null
+            a.mut.data.getOrNull() == null
 
         when : 'Freeing the tensor...'
             device.free( a )
@@ -92,7 +90,7 @@ class FileDevice_Spec extends Specification
             String path, String filename, int[] shape, Class<FileHandle<?,Number>> fileHandleClass, Class<?> dataTypeClass
     ) {
         given : 'A new tensor is being created for testing.'
-            var a = Tsr.of( shape, -8d..8d )
+            var a = Tsr.of( Shape.of(shape), -8d..8d )
         and : 'A String representation of the shape.'
             var shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})
         and : 'A file device instance is being accessed for a given path.'
@@ -112,7 +110,7 @@ class FileDevice_Spec extends Specification
             }
 
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
-            a.mut.data.ref == null
+            a.mut.data.getOrNull() == null
 
         and : 'The tensor is now of the expected data-type.'
             a.dataType == DataType.of( dataTypeClass )
@@ -215,5 +213,57 @@ class FileDevice_Spec extends Specification
                     ']'
     }
 
+
+    def 'A tensor loaded from a file device can be loaded again.'( Shape shape, Data data )
+    {
+        given: 'A file device instance is being accessed for a simple test path.'
+            def device = FileDevice.at( 'build/resources/test/idx2' )
+        and : 'We create a simple tensor which we want to save.'
+            var t = Tsr.of(shape, data)
+        expect :
+            device.directory == 'build/resources/test/idx2'
+            t.getDevice() === CPU.get()
+            device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!
+            device.loaded == []
+
+        when : 'We save the tensor to the device.'
+            device.store( t, 'my-tensor-file.idx' )
+
+        then : 'The device contains the expected tensor.'
+            device.has( t )
+            t.isOutsourced()
+            t.getDevice() === device
+            device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!
+            device.loaded == []
+
+        when : 'We load the tensor from the device.'
+            device.restore( t )
+
+        then : 'The tensor is restored correctly.'
+            !device.has( t )
+            !t.isOutsourced()
+            t.getDevice() === CPU.get()
+            device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!
+            device.loaded == []
+
+        when : 'We store the tensor again.'
+            device.store( t, 'my-tensor-file.idx' )
+
+        then : 'The tensor is stored correctly.'
+            device.has( t )
+            device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!
+            device.loaded == []
+
+        cleanup : 'We delete the file again.'
+            new File( 'build/resources/test/idx2/my-tensor-file.idx' ).delete()
+
+        where : 'We use the following shapes and data arrays:'
+            shape          |  data
+            Shape.of(2, 3) |  Data.of( 1, 2, 3, 4, 5, 6 )
+            Shape.of(3, 2) |  Data.of( -1, -2, -3, -4, -5, -6 )
+            Shape.of(4)    |  Data.of( 1.1, 2.2, 3.3, 4.4 )
+            Shape.of(5)    |  Data.of( 0.3f, 0.4f, 0.5f, 0.6f, 0.7f )
+            Shape.of(2)    |  Data.of( 42L, -7L )
+    }
 
 }

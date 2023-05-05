@@ -1,6 +1,7 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
@@ -9,14 +10,17 @@ import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.operations.ElemWiseUtil;
-import neureka.math.Function;
-import neureka.math.args.Arg;
 import neureka.devices.Device;
 import neureka.framing.Relation;
+import neureka.math.Function;
+import neureka.math.args.Arg;
 import neureka.ndim.NDConstructor;
 import org.slf4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Slice extends AbstractOperation
 {
@@ -47,7 +51,7 @@ public class Slice extends AbstractOperation
                     Tsr<?> subset     = _slice(newShape, newOffset, newSpread, input);
                     //---
                     Class<?>       typeClass = input.itemType();
-                    int[]          shape = input.getNDConf().shape();
+                    Shape          shape = input.shape();
                     boolean        isOutsourced = input.isOutsourced();
                     Device<Object> device = input.getDevice();
                     //---
@@ -80,8 +84,8 @@ public class Slice extends AbstractOperation
         Tsr<Object> input
     ) {
         input.mut().setIsVirtual( false );
-        int[] newTranslation = input.getNDConf().translation();
-        int[] newIndicesMap = input.getNDConf().getLayout().newTranslationFor( newShape );
+        int[] newStrides    = input.getNDConf().strides();
+        int[] newIndicesMap = input.getNDConf().getLayout().newStridesFor( newShape );
 
         for ( int i = 0; i < input.rank(); i++ )
             newSpread[ i ] = ( newSpread[i] == 0 ) ? 1 : newSpread[ i ];
@@ -97,6 +101,22 @@ public class Slice extends AbstractOperation
             respect to the 'parentTensor' of this new slice.
          */
         if ( parentTensor.rank() == newShape.length && rootTensor == parentTensor ) {
+
+            Shape parentShape = parentTensor.shape();
+
+            if ( Shape.of(newShape).elements() > parentShape.elements() )
+                throw new IllegalArgumentException(
+                        "The new shape of the slice exceeds the number of elements of the parent tensor!"
+                    );
+
+            boolean sliceSeemsToBeCompletelyReshaped = false;
+            for ( int i = 0; i < newShape.length; i++ ) {
+                if ( newShape[i] > parentShape.get(i) ) {
+                    sliceSeemsToBeCompletelyReshaped = true;
+                    break;
+                }
+            }
+
             /*
                 1. We know that inside this else branch 'this' tensor is a first order slice!
                 (So it is not a slice of a slice... reason : 'rootTensor == parentTensor' )
@@ -119,19 +139,19 @@ public class Slice extends AbstractOperation
              */
             int[] permute = ( input.isSlice() ? parentTensor.get( Relation.class ).getPermuteRelationFor( input ) : null );
             permute = ( permute != null ) ? Permute.invert( permute ) : null;
-            for ( int i = 0; i < parentTensor.rank(); i++ ) {
-                int ii = ( permute != null ) ? permute[ i ] : i;
-                int top = newOffset[ i ] + newShape[ i ];
-                if ( top > parentTensor.shape( ii ) ) {
-                    String message =
-                            "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                            "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
-                            "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
-                    Exception exception = new IllegalArgumentException( message );
-                    _LOG.error( message, exception );
-                    throw new IllegalArgumentException( exception );
+
+            if ( !sliceSeemsToBeCompletelyReshaped ) // If the slice is not reshaped we can do some basic verification:
+                for ( int i = 0; i < parentShape.size(); i++ ) {
+                    int ii = ( permute != null ) ? permute[ i ] : i;
+                    int top = newOffset[ i ] + newShape[ i ];
+                    if ( top > parentShape.get( ii ) ) {
+                        throw new IllegalArgumentException(
+                                "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
+                                "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
+                                "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!"
+                            );
+                    }
                 }
-            }
         }
         else if ( rootTensor != parentTensor ) {
             // TODO! This requires some more thought about how handle slices of slices!
@@ -145,7 +165,7 @@ public class Slice extends AbstractOperation
         Tsr<Object> subset =
                         Tsr.of(
                             input.getDataType(),
-                            NDConstructor.of( newShape, newTranslation, newIndicesMap, newSpread, newOffset ),
+                            NDConstructor.of( newShape, newStrides, newIndicesMap, newSpread, newOffset ),
                             input.mut().getData()
                         );
 

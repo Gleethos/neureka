@@ -8,9 +8,9 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.devices.Device;
 import neureka.math.Function;
 import neureka.math.args.Arg;
-import neureka.devices.Device;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.simple.Simple2DConfiguration;
 import org.slf4j.Logger;
@@ -43,20 +43,19 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
                         throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
                     Function matMul = Neureka.get().backend().getFunction().matMul();
                     int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                    Tsr<?> derivative = adCall.input( d ).T().deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                    Tsr<?> derivative = Util.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                     derivative.to(adCall.getDevice());
                     return ADAction.of(target ->
-                            d == 1
+                                d == 1
                                     ? matMul.execute( target.error(), derivative )
                                     : matMul.execute( derivative, target.error() )
-                    );
+                            );
                 })
         );
         setCallPreparation(MatMulAlgorithm::_prepare);
     }
 
-
-    private static ExecutionCall<Device<Object>> _prepare( ExecutionCall call )
+    private static ExecutionCall<Device<Object>> _prepare( ExecutionCall<?> call )
     {
         assert call.arity() <= 3;
         if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);
@@ -73,16 +72,16 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
         int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };
         Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );
 
-        NDConfiguration.Layout layoutOut = _checkAndPrepareLayout( call.input( 1 ), call.input( 2 ), output );
-        output.mut().toLayout( layoutOut );
-        output.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
+        call = _checkAndPrepareLayout( call, output );
 
         call.getDeviceFor(Number.class).store( output );
         return call.withInputAt( 0, output );
     }
 
-    private static NDConfiguration.Layout _checkAndPrepareLayout(Tsr<?> a, Tsr<?> b, Tsr<?> c )
+    private static ExecutionCall<?> _checkAndPrepareLayout( ExecutionCall<?> call, Tsr<?> c )
     {
+        Tsr<?> a = call.input( 1 );
+        Tsr<?> b = call.input( 2 );
         // We need to make sure that the matrices have a common/compatible layout,
         // ..before we can before the actual a @ b = c matrix multiplication!
         NDConfiguration.Layout layoutA = a.getNDConf().getLayout();
@@ -92,21 +91,28 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
         boolean aIsCompatible = isRMOrCM( layoutA );
         boolean bIsCompatible = isRMOrCM( layoutB );
 
+        Function relayout = Neureka.get().backend().getFunction().relayout();
+
         if ( aIsCompatible ) {
-            b.mut().toLayout(layoutA); // We choose a valid layout based on a
+            if ( layoutB != NDConfiguration.Layout.SYMMETRIC )
+                b = relayout.with(Arg.Layout.of(layoutA)).call(b); // We choose a valid layout based on a
             layoutC = layoutA;
         } else if ( bIsCompatible ) {
-            a.mut().toLayout(layoutB); // We choose a valid layout based on b
+            if ( layoutA != NDConfiguration.Layout.SYMMETRIC )
+                a = relayout.with(Arg.Layout.of(layoutB)).call(a); // We choose a valid layout based on b
             layoutC = layoutB;
         } else {
             // Ok so the inputs are unspecific/symmetric/ (not RM or CM)
             // So we just need to decide on any valid layout really:
             layoutC = isRMOrCM(layoutC) ? layoutC : NDConfiguration.Layout.ROW_MAJOR;
-            a.mut().toLayout( layoutC );
-            b.mut().toLayout( layoutC );
+            a = relayout.with(Arg.Layout.of(layoutC)).call(a);
+            b = relayout.with(Arg.Layout.of(layoutC)).call(b);
         }
 
-        return layoutC;
+        c.mut().toLayout( layoutC );
+        c.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).
+
+        return call.withInputAt( 1, a ).withInputAt( 2, b );
     }
 
     private static boolean isRMOrCM(NDConfiguration.Layout layout ) {
@@ -126,9 +132,9 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
     private static ExecutionCall<?> _autoClone( ExecutionCall<?> call ) {
         for ( int i = 0; i < call.arity(); i++ )
             if (
-                    (!_isSimpleRowMajorMatrix( call.input( i ) ) && !_isSimpleColumnMajorMatrix( call.input( i ) ))
-                            ||
-                            call.input( i ).isPartialSlice()
+                (!_isSimpleRowMajorMatrix( call.input( i ) ) && !_isSimpleColumnMajorMatrix( call.input( i ) ))
+                        ||
+                call.input( i ).isPartialSlice()
             ) {
                 _LOG.debug("Auto cloning a tensor which does not have a simple ND configuration...");
                 call = call.withInputAt( i, call.input( i ).deepCopy().mut().setIsIntermediate( true ) );

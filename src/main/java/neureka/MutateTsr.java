@@ -68,7 +68,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param configuration The new NDConfiguration instance which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    Tsr<T> setNDConf(NDConfiguration configuration);
+    Tsr<T> setNDConf( NDConfiguration configuration );
 
     /**
      * {@inheritDoc}
@@ -97,7 +97,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param layout The layout of the data array (row or column major).
      * @return The final instance type of this class which enables method chaining.
      */
-    Tsr<T> toLayout(NDConfiguration.Layout layout);
+    Tsr<T> toLayout( NDConfiguration.Layout layout );
 
     /**
      * This method is responsible for incrementing
@@ -175,7 +175,7 @@ public interface MutateTsr<T> extends MutateNda<T>
         LogUtil.nullArgCheck(arrayTypeClass, "arrayTypeClass", Class.class, "Array type must not be null!");
         if (!arrayTypeClass.isArray())
             throw new IllegalArgumentException("Provided type is not an array type.");
-        Object data = MutateTsr.this.getData().getRef();
+        Object data = MutateTsr.this.getData().getOrNull();
         if (data == null)
             throw new IllegalStateException("Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).");
 

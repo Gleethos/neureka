@@ -116,7 +116,7 @@ class OpenCLDevice_Spec extends Specification
         given : 'A new tensor belonging to the first found OpenCLDevice instance.'
             Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
         and : 'The tensor value is being fetched...'
-            def data = t.mut.data.ref
+            def data = t.mut.data.get()
 
         expect : 'The tensor start with having data stored within.'
             data != null
@@ -124,8 +124,8 @@ class OpenCLDevice_Spec extends Specification
         when : 'The tensor is being stored on the device...'
             t.to(Device.get('first'))
         then : 'The value variable is still not null.'
-            t.mut.data.ref != null
-            t.mut.data.ref !== data
+            t.mut.data.get() != null
+            t.mut.data.get() !== data
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
@@ -512,9 +512,9 @@ class OpenCLDevice_Spec extends Specification
             def data1 = data.collect( v -> ((v+5)%11)-5 as float )
             def data2 = data.collect( v -> ((v+7)%11)-5 as float )
         and : 'We create column major based matrices!'
-            Tsr A = Tsr.of( [M,K], data1    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-            Tsr B = Tsr.of( [K,N], data2    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-            Tsr C = Tsr.of( [M,N], 0f ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            Tsr A = Tsr.of( [M,K], data1 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            Tsr B = Tsr.of( [K,N], data2 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            Tsr C = Tsr.of( [M,N], 0f    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
 
             var reference = A.matMul(B).rawData // CPU execution for reference!
 

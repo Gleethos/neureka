@@ -35,6 +35,7 @@ SOFTWARE.
 package neureka.ndim.config;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -43,19 +44,49 @@ import java.util.stream.IntStream;
 public interface NDConfiguration
 {
     static NDConfiguration of(
-            int[] shape,
-            int[] translation,
+            int[] shape, // The shape of the tensor.
+            int[] strides, // Strides are the distances between elements of a tensor in each dimension.
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return AbstractNDC.construct(shape, translation, indicesMap, spread, offset);
+        return AbstractNDC.construct(shape, strides, indicesMap, spread, offset);
     }
 
     /**
-     * Types of common data layouts.
+     * Types of common data layouts: <br>
+     * <ul>
+     *     <li>ROW_MAJOR
+     *          <p>
+     *              Row major means that row elements are right next to one another
+     *              in the underlying data array of a tensor.
+     *              This is the default layout for tensors.
+     *          </p>
+     *     </li>
+     *     <li>COLUMN_MAJOR
+     *          <p>
+     *               Column major means that column elements are right next to one another
+     *               in the underlying data array of a tensor.
+     *          </p>
+     *     </li>
+     *     <li>SYMMETRIC
+     *          <p>
+     *               Symmetric means that the tensor can either be interpreted as a row vector or a column vector.
+     *               Row major means that items are stored in a row-wise fashion
+     *               and column major means that items are stored in a column-wise fashion.
+     *               A vector can be interpreted as a row vector or a column vector and thus is symmetric.
+     *          </p>
+     *     </li>
+     *     <li>UNSPECIFIC
+     *          <p>
+     *              Unspecific means that the tensor is not row major or column major.
+     *              This is the case for tensors which are slices of other tensors or tensors which have been permuted.
+     *          </p>
+     *     </li>
+     * </ul>
      */
-    enum Layout {
+    enum Layout
+    {
         ROW_MAJOR,
         COLUMN_MAJOR,
         SYMMETRIC, // Both row- and column-major compatible!
@@ -67,29 +98,35 @@ public interface NDConfiguration
             return this == other;
         }
 
-        
-        public int[] newTranslationFor(int[] shape) {
-            int[] translation = new int[shape.length];
+
+        public int[] newStridesFor(int[] shape) {
+            int[] order = new int[shape.length];
+            for ( int i = 0; i < shape.length; i++ )
+                order[i] = shape.length - 1 - i;
+
+            if ( this == COLUMN_MAJOR && shape.length > 1 ) {
+                // Swap the first two elements of the order array:
+                int tmp  = order[0];
+                order[0] = order[1];
+                order[1] = tmp;
+            }
+
+            int[] strides = new int[shape.length];
             int prod = 1;
-            if (this == COLUMN_MAJOR) {
-                for (int i = 0; i < translation.length; i++) {
-                    translation[i] = prod;
-                    prod *= shape[i];
-                }
-            } else if (this == ROW_MAJOR || this == UNSPECIFIC || this == SYMMETRIC) {
-                for (int i = translation.length - 1; i >= 0; i--) {
-                    translation[i] = prod;
+            if ( this == COLUMN_MAJOR || this == ROW_MAJOR || this == UNSPECIFIC || this == SYMMETRIC) {
+                for ( int i : order ) {
+                    strides[i] = prod;
                     prod *= shape[i];
                 }
             } else
                 throw new IllegalStateException("Unknown data layout!");
 
-            return translation;
+            return strides;
         }
 
         
         public int[] rearrange(int[] tln, int[] shape, int[] newForm) {
-            int[] shpTln = this.newTranslationFor(shape);
+            int[] shpTln = this.newStridesFor(shape);
             int[] newTln = new int[newForm.length];
             for (int i = 0; i < newForm.length; i++) {
                 if (newForm[i] < 0) newTln[i] = shpTln[i];
@@ -111,15 +148,15 @@ public interface NDConfiguration
      * @return The layout of the underlying data array of a tensor.
      */
     default Layout getLayout() {
-        if ( !this.isCompact() ) // Non-compact tensors have at least 1 stride greater than 1 AND at least 1 offset greater than 0!
+        if ( !this.isCompact() ) // Non-compact tensors have at least 1 step/spread greater than 1 AND at least 1 offset greater than 0!
             return Layout.UNSPECIFIC;
         else {
-            int[] translationRM = Layout.ROW_MAJOR.newTranslationFor(this.shape());
-            boolean hasRMIndices = Arrays.equals(translationRM, indicesMap());
-            boolean isRM = (Arrays.equals(translationRM, translation()) && hasRMIndices);
+            int[] stridesRM = Layout.ROW_MAJOR.newStridesFor(this.shape());
+            boolean hasRMIndices = Arrays.equals(stridesRM, indicesMap());
+            boolean isRM = (Arrays.equals(stridesRM, strides()) && hasRMIndices);
 
-            int[] translationCM = Layout.COLUMN_MAJOR.newTranslationFor(this.shape());
-            boolean isCM = (Arrays.equals(translationCM, translation()) && hasRMIndices);
+            int[] stridesCM = Layout.COLUMN_MAJOR.newStridesFor(this.shape());
+            boolean isCM = (Arrays.equals(stridesCM, strides()) && hasRMIndices);
 
             if ( isRM && isCM ) return Layout.SYMMETRIC;
             if ( isRM         ) return Layout.ROW_MAJOR;
@@ -128,17 +165,9 @@ public interface NDConfiguration
         return Layout.UNSPECIFIC;
     }
 
-    /**
-     * A slice has a unique kind of access pattern which require
-     * a the {@link neureka.ndim.iterator.NDIterator} for iterating over their data.
-     * This is contrary to the {@link #isSimple()} flag which guarantees
-     * a simple access pattern.
-     * <b>Note: The flag returned by this method does not necessarily
-     * mean that this is the {@link NDConfiguration} of a slice!</b>
-     *
-     * @return The truth value determining if this ND-Configuration models a slice index pattern.
-     */
-    default boolean isNotSimple() { return !this.isSimple(); }
+    default List<NDTrait> getTraits() { return NDTrait.traitsOf(this); }
+
+    default boolean has( NDTrait trait ) { return NDTrait.traitsOf(this).contains(trait); }
 
     /**
      * This method returns the number of axis of
@@ -201,7 +230,7 @@ public interface NDConfiguration
      *
      * @return An array of values used to translate the axes indices to a data array index.
      */
-    int[] translation();
+    int[] strides();
 
     /**
      * This method receives an axis index and returns the
@@ -212,7 +241,7 @@ public interface NDConfiguration
      * @param i The index of the axis whose translation ought to be returned.
      * @return The axis translation targeted by the provided index.
      */
-    int translation(int i);
+    int strides( int i );
 
     /**
      * The spread is the access step size of a slice within the n-dimensional
@@ -292,16 +321,16 @@ public interface NDConfiguration
      * define this nd-configuration in a compact manner.
      * The array consists of the following arrays joined
      * in the following order:
-     * [ shape | translation | indicesMap | offsets | strides ]
+     * [ shape | translation | indicesMap | offsets | spreads ]
      *
      * @return An array of flattened arrays which define this nd-configuration in a compact manner.
      */
     default int[] asInlineArray() {
         int rank = rank();
         int[] inline = new int[rank * 5];
-        //config format: [ shape | translation | indicesMap | offsets | strides ]
+        //config format: [ shape | translation | indicesMap | offsets | spreads ]
         System.arraycopy(shape(),       0, inline, rank * 0, rank); //=> SHAPE
-        System.arraycopy(translation(), 0, inline, rank * 1, rank); //=> TRANSLATION (translates n-dimensional indices to an index)
+        System.arraycopy(strides(), 0, inline, rank * 1, rank); //=> TRANSLATION (translates n-dimensional indices to an index)
         System.arraycopy(indicesMap(),  0, inline, rank * 2, rank); //=> INDICES MAP (translates scalar to n-dimensional index)
         System.arraycopy(offset(),      0, inline, rank * 3, rank); //=> SPREAD / STRIDES (step size for dimensions in underlying parent tensor)
         System.arraycopy(spread(),      0, inline, rank * 4, rank); //=> OFFSET (nd-position inside underlying parent tensor)
@@ -338,26 +367,26 @@ public interface NDConfiguration
      * @return The truth value determining if this configuration is not modeling more complex indices like permuted views or slices...
      */
     default boolean isSimple() {
-        int[] simpleTranslation = this.getLayout().newTranslationFor(this.shape());
-        return Arrays.equals(this.translation(), simpleTranslation)
-                &&
+        int[] simpleTranslation = this.getLayout().newStridesFor(this.shape());
+        return Arrays.equals(this.strides(), simpleTranslation)
+                    &&
                 Arrays.equals(this.indicesMap(), simpleTranslation)
-                &&
+                    &&
                 isCompact();
     }
 
     /**
      * {@link NDConfiguration} instance where this flag is true
      * will most likely not be slices because they have no offset (all 0)
-     * and a compact spread / stride array (all 1).
+     * and a compact spread / step array (all 1).
      *
-     * @return The truth value determining if this configuration has no offset and spread/strides larger than 1.
+     * @return The truth value determining if this configuration has no offset and spread/steps larger than 1.
      */
     default boolean isCompact() {
         return
-                IntStream.range(0, this.rank()).allMatch(i -> this.spread(i) == 1)
-                        &&
-                IntStream.range(0, this.rank()).allMatch(i -> this.offset(i) == 0);
+            IntStream.range(0, this.rank()).allMatch( i -> this.spread(i) == 1 || this.spread(i) == 0 )
+                    &&
+            IntStream.range(0, this.rank()).allMatch(i -> this.offset(i) == 0);
     }
 
     /**

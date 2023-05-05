@@ -1,5 +1,6 @@
 package neureka.backend.main.operations;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;
@@ -18,7 +19,7 @@ public class ElemWiseUtil
     public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
         return newTsrLike(
             template.itemType(),
-            template.getNDConf().shape(),
+            template.shape(),
             template.isOutsourced(),
             template.get( Device.class ),
             value
@@ -26,7 +27,7 @@ public class ElemWiseUtil
     }
 
     public static <V> Tsr<V> newTsrLike(
-        Class<V> type, int[] shape, boolean isOutsourced, Device<Object> device, double value
+        Class<V> type, Shape shape, boolean isOutsourced, Device<Object> device, double value
     ) {
         Tsr<V> t = Tsr.of( type, shape, value ).mut().setIsIntermediate( true );
         t.mut().setIsVirtual( false );

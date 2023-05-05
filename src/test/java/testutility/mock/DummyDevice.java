@@ -2,16 +2,14 @@ package testutility.mock;
 
 import neureka.Data;
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.math.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
-import neureka.backend.api.ExecutionCall;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
+import neureka.math.Function;
 import neureka.ndim.config.NDConfiguration;
-
-import java.util.Collection;
 
 public class DummyDevice extends AbstractBaseDevice<Object>
 {
@@ -39,9 +37,6 @@ public class DummyDevice extends AbstractBaseDevice<Object>
 
     @Override
     public Device<Object> approve( ExecutionCall<? extends Device<?>> call ) { return this; }
-
-    @Override
-    public Collection<Tsr<Object>> getTensors() { return null; }
 
     @Override
     public <V> Data<V> allocate(DataType<V> dataType, NDConfiguration ndc ) { return null; }

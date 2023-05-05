@@ -23,7 +23,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.mut.data.ref == data
+            t.mut.data.get() == data
             t.rawData.length == 1
             t.items.size() == 6
 
@@ -63,7 +63,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.mut.data.ref == data
+            t.mut.data.get() == data
             t.rawData == data
 
 
@@ -106,7 +106,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.mut.data.ref == expected
+            t.mut.data.get() == expected
             t.rawData == expected
 
         and : 'The tensor will have the shape we passed to the builder.'
@@ -148,7 +148,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.mut.data.ref == expected
+            t.mut.data.get() == expected
             t.rawData == expected
 
         and : 'The tensor will have the shape we passed to the builder.'
@@ -194,7 +194,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.mut.data.ref == expected
+            t.mut.data.get() == expected
             t.rawData == expected
 
         and : 'The tensor will have the shape we passed to the builder.'
@@ -235,7 +235,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.mut.data.ref == data
+            t.mut.data.get() == data
             t.rawData == data
 
         and : 'The tensor will have a one dimensional shape of the same length as the provided data array.'
@@ -272,7 +272,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
             t.dataType == DataType.of(type)
 
         and : '...also it will contain the expected data.'
-            t.mut.data.ref == data
+            t.mut.data.get() == data
             t.rawData == data
 
         and : 'The tensor will have a one dimensional shape of 1.'

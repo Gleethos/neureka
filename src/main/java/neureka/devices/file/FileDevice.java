@@ -8,7 +8,9 @@ import neureka.backend.api.Operation;
 import neureka.common.utility.Cache;
 import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
+import neureka.devices.AbstractDeviceData;
 import neureka.devices.Device;
+import neureka.devices.ReferenceCounter;
 import neureka.dtype.DataType;
 import neureka.math.Function;
 import neureka.ndim.config.NDConfiguration;
@@ -150,6 +152,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     @Override
     public void dispose() {
+        _numberOfTensors = 0;
         _stored.clear();
         _loadable.clear();
         _loaded.clear();
@@ -167,9 +170,12 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
+        _stored.remove( tensor );
+        _loaded.remove( head.getFileName() );
         return this;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T> Device<Object> store( Tsr<T> tensor ) {
         LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
@@ -191,10 +197,27 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         return this;
     }
 
+    /**
+     * Stores the given tensor in the file system with the given filename.
+     *
+     * @param tensor The tensor to store
+     * @param filename The filename of the file containing the tensor.
+     * @return The file device itself.
+     * @param <T> The type of the tensor.
+     */
     public <T> FileDevice store( Tsr<T> tensor, String filename ) {
         return this.store( tensor, filename, null );
     }
 
+    /**
+     * Stores the given tensor in the file system with the given filename.
+     *
+     * @param tensor The tensor to store
+     * @param filename The filename of the file containing the tensor.
+     * @param configurations The configurations to use when storing the tensor.
+     * @return The file device itself.
+     * @param <T> The type of the tensor.
+     */
     public <T> FileDevice store( Tsr<T> tensor, String filename, Map<String, Object> configurations ) {
         LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
         LogUtil.nullArgCheck( filename, "filename", String.class );
@@ -216,7 +239,9 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     .save( _directory + "/" + fullFileName, tensor, configurations );
 
             _stored.put((Tsr<Object>) tensor, handle);
-            tensor.getMut().setData( new DeviceData( this, null, handle.getDataType() ){} );
+            tensor.getMut().setData(
+                    new AbstractDeviceData( this, null, handle.getDataType(), ()->{}){}
+                );
         }
         return this;
     }
@@ -238,6 +263,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
+        tensor.mut().setData(null);
         _stored.remove( tensor );
         return this;
     }
@@ -255,9 +281,6 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                 this.getClass().getSimpleName()+" instances do not support executions on stored tensors."
             );
     }
-
-    @Override
-    public Collection<Tsr<Object>> getTensors() { return _stored.keySet(); }
 
     @Override
     public <V> Data<V> allocate(DataType<V> dataType, NDConfiguration ndc ) {
@@ -296,7 +319,12 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName()+"[directory=" + _directory + ",stored=" + _stored + ",loadable=" + _loadable + ",loaded=" + _loaded + "]";
+        return this.getClass().getSimpleName()+"[" +
+                    "dir=" + _directory + "," +
+                    "stored={.." + _stored.size() + "..}," +
+                    "loadable={.." + _loadable.size() + "..}," +
+                    "loaded={.." + _loaded.size() + "..}" +
+                "]";
     }
 
     public String getDirectory() { return _directory; }

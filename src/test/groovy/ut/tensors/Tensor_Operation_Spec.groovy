@@ -1,6 +1,8 @@
 package ut.tensors
 
+import neureka.Data
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
 import neureka.backend.ocl.CLBackend
 import neureka.common.utility.SettingsLoader
@@ -9,7 +11,6 @@ import neureka.devices.host.CPU
 import neureka.dtype.DataType
 import neureka.math.Function
 import neureka.math.args.Arg
-import neureka.math.parsing.FunctionParser
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
@@ -215,7 +216,7 @@ class Tensor_Operation_Spec extends Specification
         then :
             r === t
         and :
-            ( r.mut.data.ref as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]
+            ( r.mut.data.get() as float[] ) == [1.0588075, 1.4017555, 1.2537496, -1.3897222, 1.0374786, 0.743316, 1.1692946, 1.3977289] as float[]
 
         when :
             r = f.with(Arg.Seed.of(42)).call(t)
@@ -223,7 +224,7 @@ class Tensor_Operation_Spec extends Specification
         then :
             r === t
         and :
-            ( r.mut.data.ref as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]
+            ( r.mut.data.get() as float[] ) == [2.2639139286289724, -0.2763464310754003, 0.3719153742868813, -0.9768504740489802, 0.5154099159307729, 1.1608137295804097, 2.1905023977046336, -0.5449569795660217] as float[]
 
         where :
             type << [Double, Float]
@@ -240,7 +241,7 @@ class Tensor_Operation_Spec extends Specification
 
         when :
             f.with(Arg.Seed.of(-73L)).call(t)
-            var stats = new Statistics( t.mut.data.ref as double[] )
+            var stats = new Statistics( t.mut.data.get() as double[] )
         then :
             -0.05d < stats.mean && stats.mean < 0.05d
         and :
@@ -587,7 +588,7 @@ class Tensor_Operation_Spec extends Specification
             result2.itemType == type
 
         and : 'The data of the first (non slice) tensor should be as expected.'
-            result1.mut.data.ref == expected instanceof Map ? expected['r1'] : expected
+            result1.mut.data.get() == expected instanceof Map ? expected['r1'] : expected
         and : 'As well the value of the slice tensor (Its data would be a sparse array).'
             result2.items == expected instanceof Map ? expected['r2'] : expected
 
@@ -636,6 +637,18 @@ class Tensor_Operation_Spec extends Specification
 
             Double | 'random(i0)'       || ['r2':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.242396559265774, 0.23980663860290638, 0.4667980401594514, 0.0, 0.0, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as double[], 'r1':[2.242396559265774, 0.23980663860290638, 0.4667980401594514, -1.0840395336123059, 0.43090823203242123, 1.0381081218392283] as double[]]
             Float  | 'random(i0)'       || ['r2':[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2423966, 0.23980664, 0.46679804, 0.0, 0.0, -1.0840396, 0.43090823, 1.0381081, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] as float[], 'r1':[2.2423966, 0.23980664, 0.46679804, -1.0840396, 0.43090823, 1.0381081] as float[]]
+    }
+
+    def 'The transpose operation exposed by the "T()" method, supports autograd.'()
+    {
+        given : 'A simple 2d array'
+            var n = Tsr.of(Shape.of(3, 4), Data.of(6f, -5f, 2.4f)).setRqsGradient(true)
+        when : 'The transpose operation is applied'
+            var t = n.T()
+        and : 'We call the backward method on it...'
+            t.backward()
+        then : 'The gradient of the original tensor is correct'
+            n.getGradient().get().toString() == "(3x4):[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
     }
 
 }

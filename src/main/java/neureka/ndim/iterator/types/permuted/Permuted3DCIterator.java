@@ -10,7 +10,7 @@ public final class Permuted3DCIterator extends Permuted3DConfiguration implement
     private int _d3 = 0;
 
     public Permuted3DCIterator(Permuted3DConfiguration ndc) {
-        super( ndc.shape(), ndc.translation(), ndc.indicesMap() );
+        super( ndc.shape(), ndc.strides(), ndc.indicesMap() );
     }
 
 

@@ -9,7 +9,7 @@ public final class Sliced2DCIterator extends Sliced2DConfiguration implements ND
     private int _d2 = 0;
 
     public Sliced2DCIterator(Sliced2DConfiguration ndc) {
-        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );
+        super( ndc.shape(), ndc.strides(), ndc.indicesMap(), ndc.spread(), ndc.offset() );
     }
 
 

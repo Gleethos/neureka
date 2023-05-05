@@ -1,6 +1,7 @@
 package neureka.backend.api.template.algorithms;
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
@@ -180,13 +181,13 @@ implements DeviceAlgorithm<C>
         Tsr<?>[] inputs = innerCall.inputs();
         return MemUtil.keep( inputs, () ->
         {
-            int[] tempShape = null;
+            Shape tempShape = null;
             Class<?> tempType = null;
             Tsr<?>[] tensors = new Tsr[src.length];
             for ( int i = 0; i < tensors.length; i++ ) {//constants need to be figured out!
                 if ( !( src[i] instanceof FunctionConstant) ) {
                     tensors[ i ] = src[i].execute(innerCall);
-                    tempShape = ( tempShape == null ? tensors[ i ].getNDConf().shape() : tempShape );
+                    tempShape = ( tempShape == null ? tensors[ i ].shape() : tempShape );
                     tempType  = ( tempType  == null ? tensors[ i ].getItemType()     : tempType  );
                 }
             }

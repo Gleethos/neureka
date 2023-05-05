@@ -1,12 +1,22 @@
 package neureka.ndim;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  *  Static utility methods for the NDArray.
  */
 public class NDUtil
 {
-    
+
+    static List<Integer> asList(int[] array ) {
+        List<Integer> intList = new ArrayList<>( array.length );
+        for ( int i : array ) intList.add( i );
+        return Collections.unmodifiableList(intList);
+    }
+
     public static String shapeString( int[] conf ) {
         StringBuilder str = new StringBuilder();
         for ( int i = 0; i < conf.length; i++ )
@@ -14,29 +24,4 @@ public class NDUtil
         return "[" + str + "]";
     }
 
-    
-    public static int[][] makeFit( int[] sA, int[] sB ) {
-        int lastIndexOfA = 0;
-        for ( int i = sA.length-1; i >= 0; i-- ) {
-            if ( sA[ i ] != 1 ) {
-                lastIndexOfA = i;
-                break;
-            }
-        }
-        int firstIndexOfB = 0;
-        for ( int i = 0; i < sB.length; i++ ) {
-            if ( sB[ i ] != 1 ) {
-                firstIndexOfB = i;
-                break;
-            }
-        }
-        int newSize = lastIndexOfA + sB.length - firstIndexOfB;
-        int[] rsA = new int[ newSize ];
-        int[] rsB = new int[ newSize ];
-        for( int i = 0; i <newSize; i++ ) {
-            if ( i <= lastIndexOfA ) rsA[ i ] = i; else rsA[ i ] = -1;
-            if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
-        }
-        return new int[][]{ rsA, rsB };
-    }
 }

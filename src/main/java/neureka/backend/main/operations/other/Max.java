@@ -1,5 +1,6 @@
 package neureka.backend.main.operations.other;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
@@ -46,10 +47,10 @@ public class Max extends AbstractOperation
                 int i = index.item();
                 Tsr<?> in = inputs[0] == null ? inputs[1] : inputs[0];
                 Class<Object> typeClass = (Class<Object>) in.itemType();
-                int[] shape = in.getNDConf().shape();
+                Shape shape = in.shape();
                 Device<Object> device = (Device<Object>) call.getDevice();
                 return Result.of(
-                            Tsr.of(in.itemType(), new int[]{1}, in.item(i)).to(call.getDevice()).mut().setIsIntermediate(true)
+                            Tsr.of(in.itemType(), Shape.of( 1 ), in.item(i)).to(call.getDevice()).mut().setIsIntermediate(true)
                         )
                         .withADAction( target -> {
                             Tsr<Object> error = (Tsr<Object>) target.error();

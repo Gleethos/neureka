@@ -1,5 +1,6 @@
 package ut.tensors
 
+import neureka.Data
 import neureka.Neureka
 import neureka.Shape
 import neureka.Tsr
@@ -109,7 +110,7 @@ class Tensor_Dot_Product_Spec extends Specification
     {
         given : 'A pair of vector tensors which we move to the device!'
             var a = Tsr.of(Shape.of(8), 3f).to(device)
-            var b = Tsr.of(Shape.of(8), new float[]{3f, 4f, -1f}).to(device)
+            var b = Tsr.of(Shape.of(8), Data.of(3f, 4f, -1f)).to(device)
         expect : 'the tensors are virtual.'
             a.isVirtual() // They are scalars in disguise!
             !b.isVirtual()

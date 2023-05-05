@@ -7,7 +7,7 @@ package neureka.fluent.slicing.states;
  *  already provided slice configuration.
  *  The method signature introduced in this interface provides the possibility to set a step size
  *  for the previously defined range ({@link FromOrAt#from(int)} and {@link To#to(int)}).
- *  This step size will be used to create strides within the sliced axis.
+ *  This step size will be used to create spread steps within the sliced axis.
  *
  * @param <V> The type parameter for items of the {@link neureka.Tsr} which ought to be sliced.
  */

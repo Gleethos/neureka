@@ -33,12 +33,12 @@ public class FunctionInput implements Function, GradientProvider
     private final int _index;
 
 
-    public static Function of(String equation) {
+    public static Function of(String equation, boolean doAD) {
         if ( equation.charAt( 0 ) == '-' )
             return new FunctionParser( Neureka.get().backend() )
                     .parse(
                             equation.substring(1)+"*-1",
-                            true
+                            doAD
                     ); // TODO: This might be false!
         int number = 0;
         for ( int i = 0; i < equation.length(); ++i) {

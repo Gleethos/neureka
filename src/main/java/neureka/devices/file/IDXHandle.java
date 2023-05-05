@@ -103,7 +103,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
 
 
     @Override
-    public <T extends Number> IDXHandle store(Tsr<T> tensor )
+    public <T extends Number> IDXHandle store( Tsr<T> tensor )
     {
         Iterator<T> data = tensor.iterator();
         FileOutputStream fos;
@@ -126,9 +126,17 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
         int offset = 0;
 
         try {
+            Class<?> representativeType = _dataType.getRepresentativeType();
+            Integer code = CODE_MAP.get( representativeType );
+            if ( code == null )
+                throw new IllegalStateException(
+                            "Unable to store nd-array of type: " + _dataType + ", because " +
+                            "no suitable IDX type code could be found for it!"
+                        );
+
             f.write( new byte[]{ 0, 0 } );
             offset += 2;
-            f.write( CODE_MAP.get( _dataType.getRepresentativeType() ).byteValue() );
+            f.write( code.byteValue() );
             offset += 1;
             byte rank = (byte) _shape.size();
             f.write( rank );

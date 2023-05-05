@@ -4,13 +4,12 @@ import neureka.backend.main.implementations.elementwise.CPURandomization;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
+import neureka.devices.DeviceData;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.math.args.Arg;
 import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
-
-import java.util.Arrays;
-import java.util.stream.IntStream;
 
 /**
  *  The {@link TsrConstructor} is an <b>internal API</b> for receiving a wide range
@@ -62,18 +61,18 @@ final class TsrConstructor
     void unpopulated(
             boolean makeVirtual, boolean autoAllocate, DataType<?> type
     ) {
-        _API.setIsVirtual( makeVirtual );
         NDConfiguration ndc = _ndConstructor.produceNDC( makeVirtual );
-        if ( autoAllocate ) _API.setData( _targetDevice.allocate( type, ndc ) );
+        _API.setIsVirtual( makeVirtual );
         _API.setConf( ndc );
+        if ( autoAllocate ) _API.setData( _targetDevice.allocate( type, ndc ) );
     }
 
     public void constructTrusted(
             Data<?> data
     ) {
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
-        _API.setData( data.withNDConf(ndc) );
         _API.setConf( ndc );
+        _API.setData( data );
     }
 
     public void tryConstructing(
@@ -87,41 +86,34 @@ final class TsrConstructor
 
         int size = _ndConstructor.getSize();
         if ( data instanceof Object[] )
-            data = _autoConvertAndOptimizeObjectArray( (Object[]) data, dataType, size );
+            data = CPU.get().allocate( dataType.getItemTypeClass(), size, data ).getOrNull();
+        else
+        {
+            boolean isDefinitelyScalarValue = ( dataType == DataType.of(data.getClass()) );
 
-        boolean isDefinitelyScalarValue = ( dataType == DataType.of( data.getClass() ) );
+            if ( data instanceof Number && !isDefinitelyScalarValue ) {
+                data = DataConverter.get().convert( data, dataType.getItemTypeClass() );
+                isDefinitelyScalarValue = true;
+            }
 
-        if ( data instanceof Number && !isDefinitelyScalarValue ) {
-            data = DataConverter.get().convert( data, dataType.getItemTypeClass() );
-            isDefinitelyScalarValue = true;
+            if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
+                if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
         }
 
-        if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
-            if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
-
-        _API.setIsVirtual( false );
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
+        _API.setIsVirtual( false );
         _API.setConf( ndc );
         _API.setData( _targetDevice.allocateFromAll( dataType, ndc, data) );
     }
 
-    private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
-        if ( Arrays.stream( data ).anyMatch( e -> e != null && DataType.of(e.getClass()) != dataType ) )
-            for ( int i = 0; i < ( data ).length; i++ )
-                ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getItemTypeClass() );
-
-        return _optimizeObjectArray( dataType, data, size );
-    }
-
-
     public boolean newPopulatedFromOne( Object singleItem, Class<?> type )
     {
         int size = _ndConstructor.getSize();
-        _API.setIsVirtual( size > 1 );
         NDConfiguration ndc = _ndConstructor.produceNDC(_ndConstructor.getSize() > 1);
         Data<?> array = _constructAllFromOne( singleItem, ndc, type );
-        _API.setData( array );
+        _API.setIsVirtual( size > 1 );
         _API.setConf( ndc );
+        _API.setData( array );
         return singleItem != null;
     }
 
@@ -153,60 +145,11 @@ final class TsrConstructor
     {
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
         Data<?> data = _targetDevice.allocate( DataType.of( valueType ), ndc );
-        Object out = CPURandomization.fillRandomly( data.getRef(), seed );
-        assert out == data.getRef();
+        Object out = CPURandomization.fillRandomly( data.getOrNull(), seed );
+        assert out == data.getOrNull();
         _API.setIsVirtual( false );
         _API.setConf( ndc );
         _API.setData( data );
-    }
-
-    /**
-     *  If possible, turns the provided {@code Object} array into a memory compact array of primitive types.
-     *
-     * @param dataType The {@link DataType} of the elements in the provided array.
-     * @param values The array of values which ought to be optimized into a flat array of primitives.
-     * @param size The size of the optimized array of primitives.
-     * @return An optimized flat array of primitives.
-     */
-    private static Object _optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
-        Object data = values;
-        IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size);
-        if ( size > 1_000 ) indices = indices.parallel();
-        indices = indices.map( i -> i % values.length );
-        if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -> (Double) values[i] ).toArray();
-        else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -> (Integer) values[i] ).toArray();
-        else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -> (Long) values[i] ).toArray();
-        else if ( dataType == DataType.of(Float.class)   ) {
-            float[] floats = new float[size];
-            for( int i = 0; i < size; i++ ) floats[ i ] = (Float) values[ i % values.length ];
-            data = floats;
-        }
-        else if ( dataType == DataType.of(Byte.class) ) {
-            byte[] bytes = new byte[size];
-            for( int i = 0; i < size; i++ ) bytes[ i ] = (Byte) values[ i % values.length ];
-            data = bytes;
-        }
-        else if ( dataType == DataType.of(Short.class) ) {
-            short[] shorts = new short[size];
-            for( int i = 0; i < size; i++ ) shorts[ i ] = (Short) values[ i % values.length ];
-            data = shorts;
-        }
-        else if ( values.length != size ) {
-            Object[] objects = new Object[size];
-            for( int i = 0; i < size; i++ ) objects[ i ] = values[ i % values.length ];
-            data = objects;
-        }
-        else if ( dataType == DataType.of(Boolean.class) ) {
-            boolean[] booleans = new boolean[size];
-            for( int i = 0; i < size; i++ ) booleans[ i ] = (Boolean) values[ i % values.length ];
-            data = booleans;
-        }
-        else if ( dataType == DataType.of(Character.class) ) {
-            char[] chars = new char[size];
-            for( int i = 0; i < size; i++ ) chars[ i ] = (Character) values[ i % values.length ];
-            data = chars;
-        }
-        return data;
     }
 
 }

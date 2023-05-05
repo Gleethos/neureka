@@ -1,5 +1,6 @@
 package neureka.backend.main.algorithms;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
@@ -21,7 +22,7 @@ public class SumAlgorithm extends AbstractFunDeviceAlgorithm<SumAlgorithm>
             Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
             call = call.withInputs(inputs);
             Tsr<?> result = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
-            int[] originalShape = call.input(0).getNDConf().shape();
+            Shape originalShape = call.input(0).shape();
             return Result.of(
                             result.mut().setIsIntermediate(true)
                     )

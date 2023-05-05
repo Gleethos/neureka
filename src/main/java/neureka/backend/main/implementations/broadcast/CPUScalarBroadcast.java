@@ -199,7 +199,7 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
                 }
             };
         }
-        if ( t0_drn.mut().getData().getRef().getClass() == Object[].class ) {
+        if ( t0_drn.mut().getData().getOrNull().getClass() == Object[].class ) {
             Object value = call.input( 1 + offset ).at(0).get();
             Object[] t0_value = t0_drn.mut().getDataForWriting(Object[].class);
             Object[] t1_value = src.mut().getDataAs(Object[].class);

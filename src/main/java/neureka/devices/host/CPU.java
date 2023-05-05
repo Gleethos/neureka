@@ -19,13 +19,14 @@ import neureka.ndim.config.types.views.virtual.VirtualNDConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
+import java.util.stream.IntStream;
 
 /**
  *  The CPU class, one of many implementations of the {@link Device} interface,
@@ -54,7 +55,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     private final JVMExecutor _executor = new JVMExecutor();
-    private final Set<Tsr<Object>> _tensors = Collections.newSetFromMap(new WeakHashMap<>());
+
 
     private CPU() { super(); }
 
@@ -87,7 +88,7 @@ public class CPU extends AbstractDevice<Object>
     @Override
     public void dispose() {
         _executor._pool.shutdown();
-        _tensors.clear();
+        _numberOfTensors = 0;
         _LOG.warn(
             "Main thread pool in '"+this.getClass()+"' shutting down! " +
             "Newly incoming operations will not be executed in parallel."
@@ -102,15 +103,12 @@ public class CPU extends AbstractDevice<Object>
         if ( !this.has( tensor ) )
             tensor.getMut().getData().owner().restore( tensor );
 
-        _tensors.add( (Tsr<Object>) tensor);
         return this;
     }
 
-    @Override protected final <T> void _updateNDConf(Tsr<T> tensor) { /* Nothing to do here */ }
-
     @Override
     protected final <T> int _sizeOccupiedBy(Tsr<T> tensor) {
-        Object data = tensor.getMut().getData().getRef();
+        Object data = tensor.getMut().getData().getOrNull();
         if      ( data instanceof float[]   ) return ( (float[])   data).length;
         else if ( data instanceof double[]  ) return ( (double[])  data).length;
         else if ( data instanceof short[]   ) return ( (short[])   data).length;
@@ -124,7 +122,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> Object _readAll(Tsr<T> tensor, boolean clone ) {
-        Object data = tensor.getMut().getData().getRef();
+        Object data = tensor.getMut().getData().getOrNull();
         if ( clone ) {
             if ( data instanceof double[]  ) return ( (double[])  data ).clone();
             if ( data instanceof float[]   ) return ( (float[])   data ).clone();
@@ -141,7 +139,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> T _readItem( Tsr<T> tensor, int index ) {
-        Object data = tensor.getMut().getData().getRef();
+        Object data = tensor.getMut().getData().getOrNull();
         if      ( data instanceof float[]   ) return (T)Float.valueOf( ((float[])   data)[ index ] );
         else if ( data instanceof double[]  ) return (T)Double.valueOf( ((double[])  data)[ index ] );
         else if ( data instanceof short[]   ) return (T)Short.valueOf( ((short[])   data)[ index ] );
@@ -158,41 +156,41 @@ public class CPU extends AbstractDevice<Object>
             Tsr<T> tensor, Class<A> arrayType, int start, int size
     ) {
         if ( arrayType == float[].class ) {
-            float[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), float[].class);
+            float[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), float[].class);
             float[] data = new float[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == short[].class ){
-            short[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), short[].class);
+            short[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), short[].class);
             short[] data = new short[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == byte[].class ){
-            byte[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), byte[].class);
+            byte[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), byte[].class);
             byte[] data = new byte[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == boolean[].class ){
-            boolean[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), boolean[].class);
+            boolean[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), boolean[].class);
             boolean[] data = new boolean[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == char[].class ){
-            char[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), char[].class);
+            char[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), char[].class);
             char[] data = new char[size];
             System.arraycopy(source, start, data, 0, size);
             return (A) data;
         } else if ( arrayType == double[].class ){
-            double[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), double[].class);
+            double[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), double[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         } else if ( arrayType == int[].class ){
-            int[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), int[].class);
+            int[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), int[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         } else if ( arrayType == long[].class ){
-            long[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), long[].class);
+            long[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), long[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         } else if ( arrayType == Object[].class ){
-            Object[] source = DataConverter.get().convert(tensor.getMut().getData().getRef(), Object[].class);
+            Object[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), Object[].class);
             return (A) java.util.Arrays.stream(source, start, start + size).toArray();
         }
         throw new IllegalArgumentException("Array type '"+arrayType.getSimpleName()+"' not supported!");
@@ -200,7 +198,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
-        Object data = tensor.getMut().getData().getRef();
+        Object data = tensor.getMut().getData().getOrNull();
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
             float source = DataConverter.get().convert(item, Float.class);
@@ -240,14 +238,18 @@ public class CPU extends AbstractDevice<Object>
         }
     }
 
+    private <V> CPUData<V> _createDataFor( Object reference, DataType<V> dataType ) {
+        return new CPUData<>( this, reference, dataType);
+    }
+
     @Override
     protected final <T> void _writeArray(
             Tsr<T> tensor, Object array, int offset, int start, int size
     ) {
-        Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getRef();
+        Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getOrNull();
         if ( data == null ) {
             DataType<?> dataType = tensor.getDataType() != null ? tensor.getDataType() : _dataTypeOf(array);
-            tensor.getMut().setData( new CPUData<>( this, array, (DataType<T>) dataType) );
+            tensor.getMut().setData( _createDataFor(  array, (DataType<T>) dataType) );
             return;
         }
         Class<?> arrayType = data.getClass();
@@ -296,7 +298,7 @@ public class CPU extends AbstractDevice<Object>
         int size = ndc instanceof VirtualNDConfiguration ? 1 : ndc.size();
         Class<?> type = dataType.getItemTypeClass();
         Data<T> array = allocate( dataType, size );
-        Object data = array.getRef();
+        Object data = array.getOrNull();
         if      ( type == Double   .class ) Arrays.fill((double[])  data, (Double)   initialValue);
         else if ( type == Float    .class ) Arrays.fill((float[])   data, (Float)    initialValue);
         else if ( type == Integer  .class ) Arrays.fill((int[])     data, (Integer)  initialValue);
@@ -313,68 +315,68 @@ public class CPU extends AbstractDevice<Object>
     public <T> Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object jvmData )
     {
         int desiredSize = ndc.size();
-        Data data = new CPUData<>( this, jvmData, (DataType<Object>) (dataType != null ? dataType : _dataTypeOf(jvmData)));
+        Data<T> data = (Data<T>) _createDataFor(  jvmData, (DataType<Object>) (dataType != null ? dataType : _dataTypeOf(jvmData)));
         if ( jvmData instanceof int[] ) {
             int[] array = (int[]) jvmData;
             if ( desiredSize != array.length ) {
-                data = CPU.get().allocate( DataType.of(I32.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (int[]) data.getRef() )[ i ]  = array[ i % array.length ];
+                data = (Data<T>) CPU.get().allocate( DataType.of(I32.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) data.as(int[].class)[ i ]  = array[ i % array.length ];
             }
             return data;
         } else if ( jvmData instanceof float[] ) {
             float[] array = (float[]) jvmData;
             if ( desiredSize != array.length ) {
-                data = CPU.get().allocate( DataType.of(F32.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (float[]) data.getRef() )[ i ]  = array[ i % array.length ];
+                data = (Data<T>) CPU.get().allocate( DataType.of(F32.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) data.as(float[].class)[ i ]  = array[ i % array.length ];
             }
             return data;
         } else if ( jvmData instanceof double[] ) {
             double[] array = (double[]) jvmData;
             if ( desiredSize != array.length ) {
-                data = CPU.get().allocate( DataType.of(F64.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (double[]) data.getRef() )[ i ]  = array[ i % array.length ];
+                data = (Data<T>) CPU.get().allocate( DataType.of(F64.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) data.as(double[].class)[ i ]  = array[ i % array.length ];
             }
             return data;
         } else if ( jvmData instanceof long[] ) {
             long[] array = (long[]) jvmData;
             if ( desiredSize != array.length ) {
-                data = CPU.get().allocate( DataType.of(I64.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (long[]) data.getRef() )[ i ]  = array[ i % array.length ];
+                data = (Data<T>) CPU.get().allocate( DataType.of(I64.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) data.as(long[].class)[ i ]  = array[ i % array.length ];
             }
             return data;
         } else if ( jvmData instanceof short[] ) {
             short[] array = (short[]) jvmData;
             if ( desiredSize != array.length ) {
-                data = CPU.get().allocate( DataType.of(I16.class), desiredSize );
-                for ( int i = 0; i < desiredSize; i++ ) ( (short[]) data.getRef() )[ i ]  = array[ i % array.length ];
+                data = (Data<T>) CPU.get().allocate( DataType.of(I16.class), desiredSize );
+                for ( int i = 0; i < desiredSize; i++ ) data.as(short[].class)[ i ]  = array[ i % array.length ];
             }
             return data;
         } else if ( jvmData instanceof byte[] ) {
             byte[] array = (byte[]) jvmData;
             if ( desiredSize != array.length ) {
-                data = CPU.get().allocate(DataType.of(I8.class), desiredSize);
-                for (int i = 0; i < desiredSize; i++) ((byte[]) data.getRef())[i] = array[i % array.length];
+                data = (Data<T>) CPU.get().allocate(DataType.of(I8.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) data.as(byte[].class)[i] = array[i % array.length];
             }
             return data;
         } else if ( jvmData instanceof boolean[] ) {
             boolean[] array = (boolean[]) jvmData;
             if ( desiredSize != array.length ) {
-                data = CPU.get().allocate(DataType.of(Boolean.class), desiredSize);
-                for (int i = 0; i < desiredSize; i++) ((boolean[]) data.getRef())[i] = array[i % array.length];
+                data = (Data<T>) CPU.get().allocate(DataType.of(Boolean.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) data.as(boolean[].class)[i] = array[i % array.length];
             }
             return data;
         } else if ( jvmData instanceof char[] ) {
             char[] array = (char[]) jvmData;
             if ( desiredSize != array.length ) {
-                data = CPU.get().allocate(DataType.of(Character.class), desiredSize);
-                for (int i = 0; i < desiredSize; i++) ((char[]) data.getRef())[i] = array[i % array.length];
+                data = (Data<T>) CPU.get().allocate(DataType.of(Character.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) data.as(char[].class)[i] = array[i % array.length];
             }
             return data;
         } else if ( jvmData instanceof Object[] ) {
             Object[] array = (Object[]) jvmData;
             if ( desiredSize != array.length ) {
-                data = CPU.get().allocate(DataType.of(Object.class), desiredSize);
-                for (int i = 0; i < desiredSize; i++) ((Object[]) data.getRef())[i] = array[i % array.length];
+                data = (Data<T>) CPU.get().allocate(DataType.of(Object.class), desiredSize);
+                for (int i = 0; i < desiredSize; i++) data.as(Object[].class)[i] = array[i % array.length];
             }
             return data;
         }
@@ -382,41 +384,115 @@ public class CPU extends AbstractDevice<Object>
             throw new IllegalArgumentException("Array type '"+jvmData.getClass().getSimpleName()+"' not supported!");
     }
 
-    public Data<Object> allocate( Object data ) {
+    private Data<Object> _allocate( Object data ) {
         int size;
-        if ( data instanceof Object[] ) {
-            size = ( (Object[]) data ).length;
-        } else if ( data instanceof int[] ) {
-            size = ( (int[]) data ).length;
-        } else if ( data instanceof long[] ) {
-            size = ( (long[]) data ).length;
-        } else if ( data instanceof float[] ) {
-            size = ( (float[]) data ).length;
-        } else if ( data instanceof double[] ) {
-            size = ( (double[]) data ).length;
-        } else if ( data instanceof short[] ) {
-            size = ( (short[]) data ).length;
-        } else if ( data instanceof byte[] ) {
-            size = ( (byte[]) data ).length;
-        } else if ( data instanceof boolean[] ) {
-            size = ( (boolean[]) data ).length;
-        } else if ( data instanceof char[] ) {
-            size = ( (char[]) data ).length;
-        }
+        if (      data instanceof Object[]  ) size = ( (Object[]) data ).length;
+        else if ( data instanceof int[]     ) size = ( (int[]) data ).length;
+        else if ( data instanceof long[]    ) size = ( (long[]) data ).length;
+        else if ( data instanceof float[]   ) size = ( (float[]) data ).length;
+        else if ( data instanceof double[]  ) size = ( (double[]) data ).length;
+        else if ( data instanceof short[]   ) size = ( (short[]) data ).length;
+        else if ( data instanceof byte[]    ) size = ( (byte[]) data ).length;
+        else if ( data instanceof boolean[] ) size = ( (boolean[]) data ).length;
+        else if ( data instanceof char[]    ) size = ( (char[]) data ).length;
         else
             throw new IllegalArgumentException( "Unsupported data type: " + data.getClass() );
 
         Data dataArray = CPU.get().allocateFromAll( _dataTypeOf(data), NDConstructor.of(size).produceNDC(false), data );
-        if ( dataArray.getRef() != data )
+        if ( dataArray.getOrNull() != data )
             throw new IllegalStateException( "CPU seems to have reallocated some already valid data unnecessarily! This is most likely a bug." );
 
         return dataArray;
     }
 
+    public final <T> Data<T> allocate( Class<T> type, Object data ) {
+        Data<Object> dataArray = _allocate( data );
+        // Now we check if the data is of the correct type
+        Class<?> arrayType = DataType.of( type ).dataArrayType();
+        if ( !arrayType.isAssignableFrom( dataArray.getOrNull().getClass() ) )
+            throw new IllegalArgumentException(
+                    "Data is not of the correct type! Expected: " + arrayType.getSimpleName() + ", " +
+                    "but got: " + dataArray.getOrNull().getClass().getSimpleName()
+                );
+        return (Data<T>) dataArray;
+    }
+
+    public final <T> Data<T> allocate( Class<T> type, int size, Object source ) {
+        if ( source instanceof Object[] )
+            source = _autoConvertAndOptimizeObjectArray( (Object[]) source, DataType.of(type), size );
+
+        Data<Object> dataArray = _allocate( source );
+        // Now we check if the data is of the correct type
+        Class<?> arrayType = DataType.of( type ).dataArrayType();
+        if ( !arrayType.isAssignableFrom( dataArray.getOrNull().getClass() ) )
+            throw new IllegalArgumentException(
+                    "Data is not of the correct type! Expected: " + arrayType.getSimpleName() + ", " +
+                    "but got: " + dataArray.getOrNull().getClass().getSimpleName()
+                );
+        return (Data<T>) dataArray;
+    }
+
+    private Object _autoConvertAndOptimizeObjectArray( Object[] data, DataType<?> dataType, int size ) {
+        if ( Arrays.stream( data ).anyMatch( e -> e != null && DataType.of(e.getClass()) != dataType ) )
+            for ( int i = 0; i < ( data ).length; i++ )
+                ( data )[i] = DataConverter.get().convert( ( (Object[]) data )[i], dataType.getItemTypeClass() );
+
+        return _compactAndSizeObjectArray( dataType, data, size );
+    }
+
+    /**
+     *  If possible, turns the provided {@code Object} array into a memory compact array of primitive types.
+     *
+     * @param dataType The {@link DataType} of the elements in the provided array.
+     * @param values The array of values which ought to be optimized into a flat array of primitives.
+     * @param size The size of the optimized array of primitives.
+     * @return An optimized flat array of primitives.
+     */
+    private static Object _compactAndSizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
+        Object data = values;
+        IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size);
+        if ( size > 1_000 ) indices = indices.parallel();
+        indices = indices.map( i -> i % values.length );
+        if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -> (Double) values[i] ).toArray();
+        else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -> (Integer) values[i] ).toArray();
+        else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -> (Long) values[i] ).toArray();
+        else if ( dataType == DataType.of(Float.class)   ) {
+            float[] floats = new float[size];
+            for( int i = 0; i < size; i++ ) floats[ i ] = (Float) values[ i % values.length ];
+            data = floats;
+        }
+        else if ( dataType == DataType.of(Byte.class) ) {
+            byte[] bytes = new byte[size];
+            for( int i = 0; i < size; i++ ) bytes[ i ] = (Byte) values[ i % values.length ];
+            data = bytes;
+        }
+        else if ( dataType == DataType.of(Short.class) ) {
+            short[] shorts = new short[size];
+            for( int i = 0; i < size; i++ ) shorts[ i ] = (Short) values[ i % values.length ];
+            data = shorts;
+        } else if ( dataType == DataType.of(Boolean.class) ) {
+            boolean[] booleans = new boolean[size];
+            for( int i = 0; i < size; i++ ) booleans[ i ] = (Boolean) values[ i % values.length ];
+            data = booleans;
+        }
+        else if ( dataType == DataType.of(Character.class) ) {
+            char[] chars = new char[size];
+            for( int i = 0; i < size; i++ ) chars[ i ] = (Character) values[ i % values.length ];
+            data = chars;
+        } else if ( values.length != size ) {
+            Object[] objects = new Object[size];
+            for( int i = 0; i < size; i++ ) objects[ i ] = values[ i % values.length ];
+            data = objects;
+        }
+        return data;
+    }
+
+
+
     @Override
     protected final Data<Object> _actualize( Tsr<?> tensor ) {
         Data<Object> data = (Data<Object>) tensor.getMut().getData();
-        Object value = data.getRef();
+        Object value = data.getOrNull();
         DataType<?> dataType = tensor.getDataType();
         int size = tensor.size();
         Class<?> typeClass = dataType.getRepresentativeType();
@@ -458,14 +534,14 @@ public class CPU extends AbstractDevice<Object>
             newValue = new Object[ size ];
             if ( ( (Object[]) value )[ 0 ] != null ) Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
         }
-        return new CPUData<>( this, newValue, (DataType<Object>) dataType);
+        return _createDataFor(  newValue, (DataType<Object>) dataType);
     }
 
     @Override
     protected final Data<Object> _virtualize( Tsr<?> tensor ) {
         Class<?> typeClass = tensor.getDataType().getRepresentativeType();
         Data data = tensor.getMut().getData();
-        Object value = data == null ? null : data.getRef();
+        Object value = data == null ? null : data.getOrNull();
         assert value != null;
         Object newValue;
         if ( typeClass == F64.class )
@@ -504,15 +580,12 @@ public class CPU extends AbstractDevice<Object>
     @Override
     public <T> CPU free( Tsr<T> tensor ) {
         LogUtil.nullArgCheck( tensor, "tensor", Tsr.class );
-        _tensors.remove( tensor );
+        tensor.getMut().setData(null);
         return this;
     }
 
     @Override
     protected <T> void _swap( Tsr<T> former, Tsr<T> replacement ) {}
-
-    @Override
-    public Collection<Tsr<Object>> getTensors() { return _tensors; }
 
     @Override
     public <T> Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
@@ -524,23 +597,23 @@ public class CPU extends AbstractDevice<Object>
 
         Class<?> typeClass = dataType.getRepresentativeType();
         if ( typeClass == F64.class )
-            return new CPUData<>( this, new double[ size ], dataType );
+            return _createDataFor(  new double[ size ], dataType );
         else if ( typeClass == F32.class )
-            return new CPUData<>( this, new float[ size ], dataType );
+            return _createDataFor(  new float[ size ], dataType );
         else if ( typeClass == I32.class || typeClass == UI32.class )
-            return new CPUData<>( this, new int[ size ], dataType );
+            return _createDataFor(  new int[ size ], dataType );
         else if ( typeClass == I16.class || typeClass == UI16.class )
-            return new CPUData<>( this, new short[ size ], dataType );
+            return _createDataFor(  new short[ size ], dataType );
         else if ( typeClass == I8.class || typeClass == UI8.class )
-            return new CPUData<>( this, new byte[ size ], dataType );
+            return _createDataFor(  new byte[ size ], dataType );
         else if ( typeClass == I64.class || typeClass == UI64.class )
-            return new CPUData<>( this, new long[ size ], dataType );
+            return _createDataFor(  new long[ size ], dataType );
         else if ( dataType.getItemTypeClass() == Boolean.class )
-            return new CPUData<>( this, new boolean[ size ], dataType );
+            return _createDataFor(  new boolean[ size ], dataType );
         else if ( dataType.getItemTypeClass() == Character.class )
-            return new CPUData<>( this, new char[ size ], dataType );
+            return _createDataFor(  new char[ size ], dataType );
         else
-            return new CPUData<>( this, new Object[ size ], dataType );
+            return _createDataFor(  new Object[ size ], dataType );
     }
 
     @Override
@@ -721,12 +794,6 @@ public class CPU extends AbstractDevice<Object>
             _DIVIDER.parallelism( _PARALLELISM )
                     .threshold( PARALLELIZATION_THRESHOLD )
                     .divide( first, limit, rangeWorkload);
-        }
-    }
-    
-    private static class CPUData<T> extends DeviceData<T> {
-        public CPUData(Device<?> owner, Object ref, DataType<T> dataType) {
-            super(owner, ref, dataType);
         }
     }
 

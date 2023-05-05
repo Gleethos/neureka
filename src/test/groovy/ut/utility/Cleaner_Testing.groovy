@@ -30,7 +30,7 @@ class Cleaner_Testing extends Specification
     def 'The DeviceCleaner triggers registered cleaner actions when things are eligible for GC.'(){
 
         given :
-            var cleaner = DeviceCleaner.getInstance()
+            var cleaner = DeviceCleaner.getNewInstance()
             var refCount = 10
             var r1 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
             var r2 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)

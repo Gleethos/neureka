@@ -4,11 +4,11 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.main.operations.other.Permute;
+import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.math.args.Args;
-import neureka.devices.Device;
-import neureka.devices.host.CPU;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +52,15 @@ public final class FunctionNode implements Function
         _isFlat = isFlat;
         _src = sources.toArray( new Function[0] );
         _isDoingAD = doAD;
+        for ( int i = 0; i < _src.length; i++ ) {
+            if ( _src[i] == null )
+                throw new IllegalArgumentException("The function node '" + this + "' has a null source at index " + i + "!");
+            if ( _src[i] instanceof FunctionNode && _src[i].isDoingAD() != _isDoingAD )
+                throw new IllegalArgumentException(
+                        "Detected an attempt to mix autograd and non-autograd functions in the same function graph!\n" +
+                        "A function can either be doing autograd or not doing autograd!"
+                    );
+        }
     }
 
     @Override

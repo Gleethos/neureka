@@ -80,7 +80,7 @@ abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, Number>
         Object value = _loadData(); // This is simply some kind of primitive array.
         Tsr<?> t = Tsr.of(
                         _type.targetedValueType(),
-                        new int[]{_height, _width, _type.numberOfChannels()},
+                        Shape.of(_height, _width, _type.numberOfChannels()),
                         value
                     );
 

@@ -9,7 +9,7 @@ public final class Simple2DCIterator extends Simple2DConfiguration implements ND
     private int _d2 = 0;
 
     public Simple2DCIterator(Simple2DConfiguration ndc) {
-        super( ndc.shape(), ndc.translation() );
+        super( ndc.shape(), ndc.strides() );
     }
 
     /** {@inheritDoc} */

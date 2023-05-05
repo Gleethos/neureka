@@ -106,7 +106,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (0.._) * tensor.itemType >> Double
             (0.._) * tensor.getDataAs(double[]) >> new double[0]
             (0.._) * mutate.data >> dataObj
-            (0.._) * dataObj.ref >> new double[0]
+            (0.._) * dataObj.get >> new double[0]
             (0.._) * mutate.getDataAs(double[]) >> new double[0]
             (0.._) * mutate.getDataForWriting(double[]) >> new double[0]
             (1.._) * tensor.getNDConf() >> ndConf

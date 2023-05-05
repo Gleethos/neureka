@@ -10,7 +10,7 @@ public final class Simple3DCIterator extends Simple3DConfiguration implements ND
     private int _d3 = 0;
 
     public Simple3DCIterator(Simple3DConfiguration ndc) {
-        super( ndc.shape(), ndc.translation() );
+        super( ndc.shape(), ndc.strides() );
     }
 
 

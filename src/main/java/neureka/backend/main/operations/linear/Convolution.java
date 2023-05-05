@@ -92,7 +92,7 @@ public class Convolution extends AbstractOperation
                  call -> {
                      if ( call.arity() <= 2 ) call = call.withAddedInputAt( 0, null );
                      Device<Number> device = call.getDeviceFor(Number.class);
-                     int[] shp = ConvUtil.shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
+                     Shape shp = ConvUtil.shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
                      Tsr<Number> output = (Tsr<Number>) Tsr.of( call.input(1).getItemType(), shp, 0 )
                                                              .mut()
                                                              .setIsIntermediate( true );

@@ -119,7 +119,7 @@ class FileHandle_Spec extends Specification
             loaded.dataType.getRepresentativeType() == I16.class
             loaded.dataType == DataType.of( I16.class )
         and : 'It contains the correct array type.'
-            loaded.mut.data.ref instanceof short[]
+            loaded.mut.data.get() instanceof short[]
 
         and : 'The "IDXHead" instance has the expected state :'
             idx.valueSize == 28 * 28

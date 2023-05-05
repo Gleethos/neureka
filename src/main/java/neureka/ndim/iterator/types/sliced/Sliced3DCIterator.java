@@ -10,7 +10,7 @@ public final class Sliced3DCIterator extends Sliced3DConfiguration implements ND
     private int _d3 = 0;
 
     public Sliced3DCIterator(Sliced3DConfiguration ndc) {
-        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );
+        super( ndc.shape(), ndc.strides(), ndc.indicesMap(), ndc.spread(), ndc.offset() );
     }
 
 

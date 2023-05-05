@@ -1,11 +1,13 @@
 package it
 
 import groovy.transform.CompileDynamic
+import neureka.Data
 import neureka.Neureka
+import neureka.Shape
 import neureka.Tsr
+import neureka.backend.ocl.CLBackend
 import neureka.devices.Device
 import neureka.devices.host.CPU
-import neureka.backend.ocl.CLBackend
 import neureka.devices.opencl.OpenCLDevice
 import neureka.view.NDPrintSettings
 import spock.lang.*
@@ -60,21 +62,23 @@ class Cross_Device_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         and : 'Two tensors, one requiring gradients and the other one does not.'
-            var tensor1 = Tsr.of(new int[]{2, 2, 1}, new float[]{
-                                                                    1,  2, //  3, 1,
-                                                                    2, -3, // -2, -1,
-                                                            })
-                                                            .setRqsGradient( true )
+            var tensor1 = Tsr.of(Shape.of(2, 2, 1),
+                                            Data.of(
+                                                1f,  2f, //  3, 1,
+                                                2f, -3f, // -2, -1,
+                                            ))
+                                            .setRqsGradient( true )
 
-            var tensor2 = Tsr.of(new int[]{1, 2, 2}, new float[]{
-                                                                    -2, 3, //  0  7
-                                                                    1, 2,  // -7  0
-                                                            })
+            var tensor2 = Tsr.of(Shape.of(1, 2, 2),
+                                            Data.of(
+                                                -2f, 3f, //  0  7
+                                                1f, 2f,  // -7  0
+                                            ))
             device.store(tensor1).store(tensor2)
 
         and :
             Tsr product = Tsr.of("i0xi1", tensor1, tensor2)
-            product.backward( Tsr.of(new int[]{2, 1, 2}, new float[]{1, 1, 1, 1}) )
+            product.backward( Tsr.of(Shape.of(2, 1, 2), Data.of(1, 1, 1, 1)) )
             String result = product.toString({
                 it.rowLimit = 15 // "rc"
                 it.isScientific = false

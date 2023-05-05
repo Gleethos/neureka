@@ -17,12 +17,12 @@ public interface NDConstructor
 
     static NDConstructor of(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return of(NDConfiguration.of(shape, translation, indicesMap, spread, offset));
+        return of(NDConfiguration.of(shape, strides, indicesMap, spread, offset));
     }
 
     static NDConstructor of( NDConfiguration ndc )
@@ -79,7 +79,7 @@ public interface NDConstructor
                 _isVirtual = makeVirtual;
                 if (makeVirtual) _constructedNDC = VirtualNDConfiguration.construct(newShape);
                 else {
-                    int[] newTranslation = NDConfiguration.Layout.ROW_MAJOR.newTranslationFor(newShape);
+                    int[] newTranslation = NDConfiguration.Layout.ROW_MAJOR.newStridesFor(newShape);
                     int[] newSpread = new int[newShape.length];
                     Arrays.fill(newSpread, 1);
                     int[] newOffset = new int[newShape.length];

@@ -1,5 +1,6 @@
 package neureka.backend.main.operations.other.internal;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
@@ -42,7 +43,7 @@ public class CPUSum implements ImplementationFor<CPU>
         Class<?> type = in.itemType();
 
         if ( type == Float.class ) {
-            float[] inData = in.mut().getData().getRef(float[].class);
+            float[] inData = in.mut().getData().as(float[].class);
             float[] out = new float[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -51,14 +52,14 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Float> reduced = Tsr.of(Float.class, new int[]{N}, out);
+            Tsr<Float> reduced = Tsr.of(Float.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
                 return reduced; // This is the final result!
         }
         else if ( type == Double.class ) {
-            double[] inData = in.mut().getData().getRef(double[].class);
+            double[] inData = in.mut().getData().as(double[].class);
             double[] out = new double[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -67,14 +68,14 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Double> reduced = Tsr.of(Double.class, new int[]{N}, out);
+            Tsr<Double> reduced = Tsr.of(Double.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
                 return reduced; // This is the final result!
         }
         else if ( type == Integer.class ) {
-            int[] inData = in.mut().getData().getRef(int[].class);
+            int[] inData = in.mut().getData().as(int[].class);
             int[] out = new int[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -83,14 +84,14 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Integer> reduced = Tsr.of(Integer.class, new int[]{N}, out);
+            Tsr<Integer> reduced = Tsr.of(Integer.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
                 return reduced; // This is the final result!
         }
         else if ( type == Long.class ) {
-            long[] inData = in.mut().getData().getRef(long[].class);
+            long[] inData = in.mut().getData().as(long[].class);
             long[] out = new long[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -99,14 +100,14 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Long> reduced = Tsr.of(Long.class, new int[]{N}, out);
+            Tsr<Long> reduced = Tsr.of(Long.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
                 return reduced; // This is the final result!
         }
         else if ( type == Short.class ) {
-            short[] inData = in.mut().getData().getRef(short[].class);
+            short[] inData = in.mut().getData().as(short[].class);
             short[] out = new short[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -115,14 +116,14 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Short> reduced = Tsr.of(Short.class, new int[]{N}, out);
+            Tsr<Short> reduced = Tsr.of(Short.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
                 return reduced; // This is the final result!
         }
         else if ( type == Byte.class ) {
-            byte[] inData = in.mut().getData().getRef(byte[].class);
+            byte[] inData = in.mut().getData().as(byte[].class);
             byte[] out = new byte[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -131,14 +132,14 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Byte> reduced = Tsr.of(Byte.class, new int[]{N}, out);
+            Tsr<Byte> reduced = Tsr.of(Byte.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
                 return reduced; // This is the final result!
         }
         else if ( Number.class.isAssignableFrom(type) ) {
-            Object[] inData = in.mut().getData().getRef(Object[].class);
+            Object[] inData = in.mut().getData().as(Object[].class);
             Number[] out = new Number[N];
             executor.threaded( N, ni -> {
                 int offset = ni * RTS;
@@ -148,7 +149,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value = value.doubleValue() + ((Number)inData[i]).doubleValue();
                 out[ni] = value;
             });
-            Tsr<Number> reduced = Tsr.of(Number.class, new int[]{N}, out);
+            Tsr<Number> reduced = Tsr.of(Number.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else

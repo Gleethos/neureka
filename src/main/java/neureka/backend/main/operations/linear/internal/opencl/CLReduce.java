@@ -1,6 +1,7 @@
 package neureka.backend.main.operations.linear.internal.opencl;
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
@@ -39,7 +40,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
         Tsr<Float> in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);
         int index = _runRecursively(in, call.getDevice());
         if ( settings != null ) settings.setAutoConvertToFloat(autoConvert);
-        return Tsr.of(Integer.class, new int[]{1}, index);
+        return Tsr.of(Integer.class, Shape.of( 1 ), index);
     }
 
     private int _runRecursively(Tsr<Float> in, OpenCLDevice device)
@@ -55,7 +56,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
         else
             N = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)
 
-        Tsr<Integer> out = Tsr.of(Integer.class, new int[]{N}, 0).to(device);
+        Tsr<Integer> out = Tsr.of(Integer.class, Shape.of(N), 0).to(device);
         out.mut().setIsVirtual(false);
 
         if ( in.size() == 1 ) {
@@ -120,7 +121,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
     private Tsr<Float> _fetch(
             Tsr<Float> in, Tsr<Integer> indices, OpenCLDevice device
     ) {
-        Tsr<Float> out = Tsr.of(Float.class, new int[]{indices.size()}, 0).to(device);
+        Tsr<Float> out = Tsr.of(Float.class, Shape.of(indices.size()), 0).to(device);
         out.mut().setIsVirtual(false);
 
         String kernelName = INDICES_MAPPER_ID;

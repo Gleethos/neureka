@@ -148,6 +148,10 @@ public final class DataType<T>
     public Class<?> dataArrayType() {
         if ( this.typeClassImplements( NumericType.class ) )
             return ( (NumericType<?,?,?,?>) Objects.requireNonNull( getTypeClassInstance(NumericType.class) ) ).holderArrayType();
+        else if ( this.getItemTypeClass() == Character.class )
+            return char[].class;
+        else if ( this.getItemTypeClass() == Boolean.class )
+            return boolean[].class;
         else
             return Object[].class;
     }
@@ -162,7 +166,7 @@ public final class DataType<T>
     public int hashCode() { return _typeClass.hashCode() * 31; }
 
     public String toString() {
-        String representative = (getRepresentativeType() != null ? "("+getRepresentativeType().getSimpleName()+")" : "");
+        String representative = (getRepresentativeType() != getItemTypeClass() ? "("+getRepresentativeType().getSimpleName()+")" : "");
         return "DataType[class=" + getItemTypeClass().getSimpleName() + representative + "]";
     }
 

@@ -159,7 +159,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The scalar value which ought to be represented as nd-array.
      * @return A scalar double nd-array.
      */
-    static Nda<Double> of( double value ) { return Tsr.of( Double.class, new int[]{ 1 }, value ); }
+    static Nda<Double> of( double value ) { return Tsr.of( Double.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -167,7 +167,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of floats from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of floats.
      */
-    static Nda<Float> of( float... value ) { return Tsr.of( Float.class, new int[]{ value.length }, value ); }
+    static Nda<Float> of( float... value ) { return Tsr.of( Float.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of doubles based on the provided array.
@@ -175,7 +175,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of doubles from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of doubles.
      */
-    static Nda<Double> of( double... value ) { return Tsr.of( Double.class, new int[]{ value.length }, value ); }
+    static Nda<Double> of( double... value ) { return Tsr.of( Double.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of bytes based on the provided array.
@@ -183,7 +183,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of bytes from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of bytes.
      */
-    static Nda<Byte> of( byte... value ) { return Tsr.of( Byte.class, new int[]{ value.length }, value ); }
+    static Nda<Byte> of( byte... value ) { return Tsr.of( Byte.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -191,7 +191,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of ints from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of ints.
      */
-    static Nda<Integer> of( int... value ) { return Tsr.of( Integer.class, new int[]{ value.length }, value ); }
+    static Nda<Integer> of( int... value ) { return Tsr.of( Integer.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of longs based on the provided array.
@@ -199,7 +199,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of longs from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of longs.
      */
-    static Nda<Long> of( long... value ) { return Tsr.of( Long.class, new int[]{ value.length }, value ); }
+    static Nda<Long> of( long... value ) { return Tsr.of( Long.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of shorts based on the provided array.
@@ -207,7 +207,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of shorts from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of shorts.
      */
-    static Nda<Short> of( short... value ) { return Tsr.of( Short.class, new int[]{ value.length }, value ); }
+    static Nda<Short> of( short... value ) { return Tsr.of( Short.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of booleans based on the provided array.
@@ -215,7 +215,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of booleans from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of shorts.
      */
-    static Nda<Boolean> of( boolean... value ) { return Tsr.of( Boolean.class, new int[]{ value.length }, value ); }
+    static Nda<Boolean> of( boolean... value ) { return Tsr.of( Boolean.class, Shape.of( value.length ), value ); }
 
     /**
      * Constructs a vector of objects based on the provided array.
@@ -898,11 +898,11 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  j... end indexAlias. (inclusive!)                                           <br>
      *  k... step size.
      *
-     * @param rangToStrides A map where the keys define where axes should be sliced and values which define the strides for the specific axis.
+     * @param rangToSteps A map where the keys define where axes should be sliced and values which define the steps for the specific axis.
      * @return A nd-array slice with an offset based on the provided map keys and
-     *         strides based on the provided map values.
+     *         steps based on the provided map values.
      */
-    Nda<V> getAt( Map<?,Integer> rangToStrides );
+    Nda<V> getAt( Map<?,Integer> rangToSteps );
 
     /**
      *  This method enables nd-array slicing!

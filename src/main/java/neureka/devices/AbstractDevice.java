@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 {
-    private static final DeviceCleaner _CLEANER = new CustomDeviceCleaner();
+    private static final DeviceCleaner _CLEANER = DeviceCleaner.INSTANCE;
 
     protected Logger _log;
 
@@ -64,7 +64,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     protected AbstractDevice() { _log = LoggerFactory.getLogger( getClass() ); }
 
     /**
-     *  This method is the internal approval routine called by it's public counterpart
+     *  This method is the internal approval routine called by its public counterpart
      *  and implemented by classes extending this very abstract class.
      *  It may or may not be called by an {@link Algorithm}
      *  in order to allow a {@link Device} to checked if the provided arguments are suitable for execution.
@@ -132,27 +132,13 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         return this;
     }
 
-    /**
-     * This method checks if the passed tensor
-     * is stored on this {@link Device} instance.
-     * "Stored" means that the data of the tensor was created by this device.
-     * This data is referenced inside the tensor...
-     *
-     * @param tensor The tensor in question.
-     * @return The truth value of the fact that the provided tensor is on this device.
-     */
-    @Override
-    public <T extends V> boolean has( Tsr<T> tensor ) {
-        return tensor.getMut().getData() != null && tensor.getMut().getData().owner() == this;
-    }
-
     /** {@inheritDoc} */
     @Override
     public <T extends V> Access<T> access( Tsr<T> tensor ) {
         return new Access<T>() {
-            @Override public Writer write(T item) {
+            @Override public Writer write( T item ) {
                 return new Writer() {
-                    @Override public void intoRange(int start, int limit) { _writeItemInternal( tensor, item, start, limit-start ); }
+                    @Override public void intoRange( int start, int limit ) { _writeItemInternal( tensor, item, start, limit-start ); }
                     @Override public void fully() { _writeItemInternal( tensor, item, 0, tensor.size() ); }
                 };
             }
@@ -167,7 +153,6 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
             @Override public Object readAll( boolean clone ) { return _readAll( tensor, clone ); }
             @Override public int getDataSize() { return _sizeOccupiedBy( tensor ); }
             @Override public void cleanup( Runnable action ) { _cleaning( tensor, action ); }
-            @Override public void updateNDConf() { _updateNDConf( tensor ); }
             @Override public Data<V> actualize() { return _actualize( tensor ); }
             @Override public Data<V> virtualize() { return _virtualize( tensor ); }
         };
@@ -181,8 +166,8 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     }
 
     private <T extends V> void _writeArrayInternal(
-            Tsr<T> tensor, Object array,
-            int offset, int start, int size
+        Tsr<T> tensor, Object array,
+        int offset, int start, int size
     ) {
         DataType<?> dataType = tensor.getDataType();
         if ( dataType == null )
@@ -201,8 +186,6 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      * @param replacement The tensor which ought to receive the data of the former tensor internally.
      */
     protected abstract <T extends V> void _swap( Tsr<T> former, Tsr<T> replacement );
-
-    protected abstract <T extends V> void _updateNDConf( Tsr<T> tensor );
 
     protected abstract <T extends V> int _sizeOccupiedBy( Tsr<T> tensor );
 

@@ -59,7 +59,7 @@ class Tensor_State_Spec extends Specification
         expect : 'The tensor has the item type, shape and data array!'
             t.itemType == type
             t.shape() == shape
-            t.mut.data.ref == expected
+            t.mut.data.get() == expected
 
         where :
             type   | list        || shape    | expected
@@ -163,23 +163,23 @@ class Tensor_State_Spec extends Specification
         expect: 'The first tensor has the expected internals and produces the correct String representation.'
             t1.toString(settings) == expected
             t1.dataType == DataType.of( Float.class )
-            t1.mut.data.ref instanceof float[]
+            t1.mut.data.get() instanceof float[]
         and : 'The second tensor has the expected internals and produces the correct String representation.'
             t2.toString(settings) == expected
             t2.dataType == DataType.of( Double.class )
-            t2.mut.data.ref instanceof double[]
+            t2.mut.data.get() instanceof double[]
         and : 'The third tensor has the expected internals and produces the correct String representation.'
             t3.toString(settings).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t3.dataType == DataType.of( Integer.class )
-            t3.mut.data.ref instanceof int[]
+            t3.mut.data.get() instanceof int[]
         and : 'The fourth tensor has the expected internals and produces the correct String representation.'
             t4.toString(settings).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t4.dataType == DataType.of( Short.class )
-            t4.mut.data.ref instanceof short[]
+            t4.mut.data.get() instanceof short[]
         and : 'The fifth tensor has the expected internals and produces the correct String representation.'
             t5.toString(settings).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t5.dataType == DataType.of( Byte.class )
-            t5.mut.data.ref instanceof byte[]
+            t5.mut.data.get() instanceof byte[]
 
         where : 'The print configurations codes "mode", a common shape and expected String representation will be supplied:'
             shape     | mode | expected
@@ -202,7 +202,7 @@ class Tensor_State_Spec extends Specification
         expect: 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
         and : 'The tensor contains the expected data.'
-            t.mut.data.ref == [6] as double[]
+            t.mut.data.get() == [6] as double[]
             t.items == [6d]
             t.rawItems == [6] as double[]
         and : 'We can read the data in various array types:'
@@ -221,7 +221,7 @@ class Tensor_State_Spec extends Specification
         and : 'We can access and verify this through the following ways as well:'
             t.getItemsAs( double[].class ) == [0, 0] as double[]
             t.getItemsAs( float[].class ) == [0, 0] as float[]
-            t.mut.data.ref == [0] as byte[]
+            t.mut.data.get() == [0] as byte[]
         and : 'It is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
             t.isVirtual()
@@ -245,7 +245,7 @@ class Tensor_State_Spec extends Specification
         and : 'They both do not share the same value array.'
             v.items != s.items
         and : 'They do however share the same underlying data.'
-            v.mut.data.ref == s.mut.data.ref
+            v.mut.data.get() == s.mut.data.get()
         and : 'The tensor simply stores the number 4.'
             s.items == [4f]
 

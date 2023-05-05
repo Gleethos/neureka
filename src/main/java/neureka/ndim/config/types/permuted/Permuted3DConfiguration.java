@@ -12,9 +12,9 @@ public class Permuted3DConfiguration extends D3C {
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation1;
-    private final int _translation2;
-    private final int _translation3;
+    private final int _stride1;
+    private final int _stride2;
+    private final int _stride3;
     /**
      *  The mapping of idx array.
      */
@@ -24,27 +24,27 @@ public class Permuted3DConfiguration extends D3C {
 
 
     protected Permuted3DConfiguration(
-            int[] shape,
-            int[] translation,
-            int[] indicesMap
+        int[] shape,
+        int[] strides,
+        int[] indicesMap
     ) {
-        _shape1 = shape[ 0 ];
-        _shape2 = shape[ 1 ];
-        _shape3 = shape[ 2 ];
-        _translation1 = translation[ 0 ];
-        _translation2 = translation[ 1 ];
-        _translation3 = translation[ 2 ];
+        _shape1      = shape[ 0 ];
+        _shape2      = shape[ 1 ];
+        _shape3      = shape[ 2 ];
+        _stride1     = strides[ 0 ];
+        _stride2     = strides[ 1 ];
+        _stride3     = strides[ 2 ];
         _indicesMap1 = indicesMap[ 0 ];
         _indicesMap2 = indicesMap[ 1 ];
         _indicesMap3 = indicesMap[ 2 ];
     }
 
     public static Permuted3DConfiguration construct(
-            int[] shape,
-            int[] translation,
-            int[] indicesMap
+        int[] shape,
+        int[] strides,
+        int[] indicesMap
     ) {
-        return _cached( new Permuted3DConfiguration(shape, translation, indicesMap) );
+        return _cached( new Permuted3DConfiguration(shape, strides, indicesMap) );
     }
 
     /** {@inheritDoc} */
@@ -63,10 +63,10 @@ public class Permuted3DConfiguration extends D3C {
     @Override public final int indicesMap(int i ) { return (i==0?_indicesMap1:(i==1?_indicesMap2:_indicesMap3)); }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return new int[]{_translation1, _translation2, _translation3}; }
+    @Override public final int[] strides() { return new int[]{_stride1, _stride2, _stride3}; }
 
     /** {@inheritDoc} */
-    @Override public final int translation( int i ) { return (i==0?_translation1:(i==1?_translation2:_translation3)); }
+    @Override public final int strides(int i ) { return (i==0? _stride1 :(i==1? _stride2 : _stride3)); }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return new int[]{1, 1, 1}; }
@@ -88,9 +88,9 @@ public class Permuted3DConfiguration extends D3C {
         indices2 = index / _indicesMap2;
         index %= _indicesMap2;
         indices3 = index / _indicesMap3;
-        return indices1 * _translation1 +
-                indices2 * _translation2 +
-                indices3 * _translation3;
+        return indices1 * _stride1 +
+                indices2 * _stride2 +
+                indices3 * _stride3;
     }
 
     /** {@inheritDoc} */
@@ -106,16 +106,16 @@ public class Permuted3DConfiguration extends D3C {
 
     /** {@inheritDoc} */
     @Override public final int indexOfIndices(int[] indices) {
-        return indices[ 0 ] * _translation1 +
-                indices[ 1 ] * _translation2 +
-                indices[ 2 ] * _translation3;
+        return indices[ 0 ] * _stride1 +
+                indices[ 1 ] * _stride2 +
+                indices[ 2 ] * _stride3;
     }
 
     /** {@inheritDoc} */
     @Override public final int indexOfIndices(int d1, int d2, int d3 ) {
-        return d1 * _translation1 +
-               d2 * _translation2 +
-               d3 * _translation3;
+        return d1 * _stride1 +
+               d2 * _stride2 +
+               d3 * _stride3;
     }
 
 }

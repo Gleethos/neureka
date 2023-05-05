@@ -50,7 +50,7 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
         }
         else
         {
-            out = Tsr.of(Float.class, new int[]{N}, 0).to(device).mut().setIsVirtual(false);
+            out = Tsr.of(Float.class, Shape.of( N ), 0).to(device).mut().setIsVirtual(false);
             KernelCaller caller = _processLocal(device);
             caller.pass(in).pass(out).passLocalFloats((int) localSize).call(global, local);
         }

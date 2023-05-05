@@ -269,7 +269,7 @@ class Tensor_Framing_Spec extends Specification
                   "   )\n" +
                   ")"
 
-        when : 'Creating a slice by passing a single label, a range of labels and a range with stride...'
+        when : 'Creating a slice by passing a single label, a range of labels and a range with steps...'
             var s = t["2", "b".."y", [["tim","tanya"]:2]]
 
         then : 'This new slice "x" then will yield true when using the "contains" operator on t.'
@@ -306,7 +306,7 @@ class Tensor_Framing_Spec extends Specification
             !s.isVirtual() // This might change if possible (technically difficult)
 
 
-        when : 'We slice the tensor t by passing a map of start and end labels as keys and strides as values.'
+        when : 'We slice the tensor t by passing a map of start and end labels as keys and steps as values.'
             s = t["2", [["b".."y"]:1, ["tim","tanya"]:2]]
         then :
             s in t
@@ -337,7 +337,7 @@ class Tensor_Framing_Spec extends Specification
             t.isSliceParent()
             t.sliceCount()==2
 
-        when : 'We slice the tensor t by passing a map of start and end labels as keys and strides as values.'
+        when : 'We slice the tensor t by passing a map of start and end labels as keys and steps as values.'
             s = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]]
         then :
             s in t

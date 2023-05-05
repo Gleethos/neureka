@@ -40,6 +40,7 @@ import neureka.autograd.GraphNode;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.utility.DataConverter;
 import neureka.devices.Device;
+import neureka.devices.DeviceData;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
@@ -128,7 +129,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     protected final Data<V> _getData() { _guardGet("data object"); return _data; }
 
     protected final Object _getRawData() {
-        return  _getData() == null ? null : _getData().getRef();
+        return  _getData() == null ? null : _getData().getOrNull();
     }
 
     /** {@inheritDoc} */
@@ -144,26 +145,35 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     }
 
     /**
-     * @param array The data array managing the underlying data of this tensor/nd-array.
+     * @param newData The data array managing the underlying data of this tensor/nd-array.
      *             This will be the same instance returned by {@link #_getData()}.
      */
-    protected final void _setData( Data<V> array )
+    protected final void _setData( Data<V> newData )
     {
         _guardSet( "data object" );
-        Object data = array == null ? null : array.getRef();
+        Object data = newData == null ? null : newData.getOrNull();
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-        if ( _data != null && _data.getRef() != data && data != null && _data.getRef() != null ) {
-            boolean isProbablyDeviceTransfer = ( _data.getRef().getClass().isArray() != data.getClass().isArray() );
+        if ( _data != null && _data.getOrNull() != data && data != null && _data.getOrNull() != null ) {
+            boolean isProbablyDeviceTransfer = ( _data.getOrNull().getClass().isArray() != data.getClass().isArray() );
             if ( !isProbablyDeviceTransfer)
                 _version++; // Autograd must be warned!
         }
-        _data = array;
+        _setDataAndCountUsage( newData );
+    }
+
+    private void _setDataAndCountUsage( Data<V> newData ) {
+        if ( _data != null && _data instanceof DeviceData )
+            ( (DeviceData<?>) _data ).decrementUsageCount();
+        if ( newData instanceof DeviceData )
+            ( (DeviceData<?>) newData ).incrementUsageCount();
+
+        _data = newData; // This must be the only place where the data is set!!!
     }
 
     protected <T> void _initDataArrayFrom( Filler<T> filler )
     {
         CPU.JVMExecutor executor = CPU.get().getExecutor();
-        Object data = _getData().getRef();
+        Object data = _getData().getOrNull();
         if ( data instanceof double[] )
             executor.threaded( ( (double[]) data ).length, ( start, end ) -> {
                 for (int i = start; i < end; i++)
@@ -219,11 +229,13 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  This is because the data type has to be known in order to correctly perform an allocation.<br>
      */
     protected final void _allocateVirtual() {
-        _data = getDevice()
+        _setDataAndCountUsage(
+                getDevice()
                 .allocate(
                     this.getDataType(),
                     NDConstructor.of( this.getNDConf().shape() ).produceNDC(true)
-                );
+                )
+            );
     }
 
     /**
@@ -242,16 +254,15 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @return An {@link TsrConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
      */
-    protected TsrConstructor constructFor( Device<?> targetDevice, NDConstructor ndConstructor )
+    protected static TsrConstructor constructFor( AbstractNda<?, ?> nda, Device<?> targetDevice, NDConstructor ndConstructor )
     {
-        AbstractNda<C, ?> nda = this;
         return
             new TsrConstructor(
                 targetDevice, ndConstructor,
                 new TsrConstructor.API() {
-                    @Override public void   setConf( NDConfiguration conf   ) { nda.getMut().setNDConf( conf ); }
-                    @Override public void   setData( Data o                 ) { nda._setData( o ); /*AbstractNda.this.set((Device)o.owner());*/ }
-                    @Override public void   setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
+                    @Override public void setConf( NDConfiguration conf   ) { nda.mut().setNDConf( conf ); }
+                    @Override public void setData( Data o                 ) { nda._setData( o ); }
+                    @Override public void setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                 }
             );
     }
@@ -265,7 +276,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  <br>
      */
-    protected final void _virtualize() { _data = getDevice().access(this).virtualize(); }
+    protected final void _virtualize() { _setDataAndCountUsage(getDevice().access(this).virtualize()); }
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. <br>
@@ -277,7 +288,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... <br>
      */
-    protected final void _actualize() { _data = getDevice().access(this).actualize(); }
+    protected final void _actualize() { _setDataAndCountUsage(getDevice().access(this).actualize()); }
 
     protected Object _convertedDataOfType( Class<?> typeClass )
     {
@@ -309,16 +320,15 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @param ndConfiguration The new NDConfiguration instance which ought to be set.
      */
-    protected void _setNDConf(NDConfiguration ndConfiguration )
+    protected void _setNDConf( NDConfiguration ndConfiguration )
     {
         _guardSet( "ND-Configuration" );
         if ( _NDConf != null && ndConfiguration != null ) {
-            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );
-            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );
+            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a * b );
+            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a * b );
             assert s1 == s2;
         }
         _NDConf = ndConfiguration;
-        getDevice().access(this).updateNDConf();
     }
 
 }

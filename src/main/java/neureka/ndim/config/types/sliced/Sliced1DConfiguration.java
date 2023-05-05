@@ -11,13 +11,13 @@ public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation;
+    private final int _stride;
     /**
      *  The mapping of the indices array.
      */
     private final int _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
-     *  Produces the strides of a tensor subset / slice
+     *  Produces the steps of a tensor subset / slice
      */
     private final int _spread;
     /**
@@ -27,28 +27,28 @@ public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
 
 
     public static Sliced1DConfiguration construct(
-            int[] shape,
-            int[] translation,
-            int[] indicesMap,
-            int[] spread,
-            int[] offset
+        int[] shape,
+        int[] strides,
+        int[] indicesMap,
+        int[] spread,
+        int[] offset
     ) {
-        return _cached( new Sliced1DConfiguration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ], spread[ 0 ], offset[ 0 ]) );
+        return _cached( new Sliced1DConfiguration(shape[ 0 ], strides[ 0 ],  indicesMap[ 0 ], spread[ 0 ], offset[ 0 ]) );
     }
 
     protected Sliced1DConfiguration(
-            int shape,
-            int translation,
-            int indicesMap,
-            int spread,
-            int offset
+        int shape,
+        int stride,
+        int indicesMap,
+        int spread,
+        int offset
     ) {
-        _shape = shape;
-        _translation = translation;
+        _shape      = shape;
+        _stride     = stride;
         _indicesMap = indicesMap;
-        _spread = spread;
-        _offset = offset;
-        assert translation != 0;
+        _spread     = spread;
+        _offset     = offset;
+        assert stride != 0;
         assert indicesMap != 0;
         assert spread != 0;
     }
@@ -69,10 +69,10 @@ public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
     @Override public final int indicesMap(int i ) { return _indicesMap; }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return new int[]{_translation}; }
+    @Override public final int[] strides() { return new int[]{_stride}; }
 
     /** {@inheritDoc} */
-    @Override public final int translation( int i ) { return _translation; }
+    @Override public final int strides(int i ) { return _stride; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return new int[]{_spread}; }
@@ -87,15 +87,15 @@ public class Sliced1DConfiguration extends D1C //:= IMMUTABLE
     @Override public final int offset( int i ) { return _offset; }
 
     /** {@inheritDoc} */
-    @Override public final int indexOfIndex( int index ) { return ( ( index / _indicesMap ) * _spread + _offset ) * _translation; }
+    @Override public final int indexOfIndex( int index ) { return ( ( index / _indicesMap ) * _spread + _offset ) * _stride; }
 
     /** {@inheritDoc} */
     @Override public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }
 
     /** {@inheritDoc} */
-    @Override public final int indexOfIndices( int[] indices ) { return ( indices[ 0 ] * _spread + _offset ) * _translation; }
+    @Override public final int indexOfIndices( int[] indices ) { return ( indices[ 0 ] * _spread + _offset ) * _stride; }
 
     /** {@inheritDoc} */
-    @Override public final int indexOfIndices( int d1 ) { return ( d1 * _spread + _offset ) * _translation; }
+    @Override public final int indexOfIndices( int d1 ) { return ( d1 * _spread + _offset ) * _stride; }
 
 }

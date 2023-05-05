@@ -44,12 +44,12 @@ import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
-import neureka.math.Function;
-import neureka.math.args.Arg;
 import neureka.common.composition.Component;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
 import neureka.dtype.DataType;
+import neureka.math.Function;
+import neureka.math.args.Arg;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -57,6 +57,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *  Instances of the {@link GraphNode} class are components of tensors ({@link Tsr} instances)
@@ -99,15 +100,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     private final List<BackPropTargets<V>> _targetsToAgents;
 
+    private final List<WeakReference<GraphNode<V>>> _children = new ArrayList<>(1);
+
+    private final NodePayload<V> _nodePayload;
+
     private int _usedAsDerivative = 0;
 
     private boolean _reliesOnJustInTimeProp = false;
 
     private PendingError<V> _pendingError = null;
 
-    private final NodePayload<V> _nodePayload;
 
-    private List<WeakReference<GraphNode<V>>> _children;
 
 
     /**
@@ -128,7 +131,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         GraphNode<V>[] parents = ( call != null ? new GraphNode[call.arity()]             : null                                );
 
         if ( function != null && function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graphs!
-            data = new NodePayload<>( out.get(), this::_performPayloadCleanup);
+            data = new NodePayload<>( out.get(), this::_performPayloadCleanup );
             ((Tsr<V>)out.get()).set(this);
             if ( call != null ) {
                 Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
@@ -178,7 +181,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
                          "Input tensors of a new GraphNode must be part of the computation graph!"
                     );
-            if ( function != null && function.getOperation().isInline() && child.usesAD() )
+            if ( function.getOperation().isInline() && child.usesAD() )
                 throw new IllegalStateException(
                         "Trying to apply inline operation '" + function.getOperation().getIdentifier() + "'\n" +
                         "on active autograd computation graph in non detached function.\n" +
@@ -189,13 +192,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
     private void _performPayloadCleanup() {
         boolean allChildrenUseForwardAD = true;
-        if ( _children != null ) {
+        if ( !_children.isEmpty() )
             for ( WeakReference<GraphNode<V>> childRef : new ArrayList<>(_children) ) {
                 GraphNode<V> childNode = childRef.get();
                 if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
             }
-        }
-        if ( allChildrenUseForwardAD && _targetsToAgents != null ) _targetsToAgents.clear();
+
+        if ( allChildrenUseForwardAD && !_targetsToAgents.isEmpty() ) _targetsToAgents.clear();
     }
 
     /**
@@ -208,7 +211,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         Result output, Function function, ExecutionCall<? extends Device<?>> call
     ) {
         if ( call == null || !function.isFlat() )
-            return null; // Leave nodes don't need agents!
+            return Collections.emptyList(); // Leave nodes don't need agents!
 
         BackPropTargetCollector<V> collector = new BackPropTargetCollector<>();
 
@@ -225,8 +228,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode().orElseThrow(IllegalStateException::new);
                     if ( srcNode.usesAD() && function.dependsOn(i) ) {
                         if (
-                            srcNode.size() == 0 && this.size() == 0
-                               ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
+                            srcNode.size() == 0
+                               || // Sources created by for example by dot/mm or x-mul are reverse-mode cases!
                             !srcNode.isLeave() && !srcNode._adMode.allowsForward()
                         ) {
                             ADAction agent = output.getAgentSupplier().supplyADActionFor(function, call.withArgs(Arg.DerivIdx.of(i)) );
@@ -236,7 +239,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             int finalI = i;
                             Tsr<V> localDerivative = function.derive( inputs, i );
-                            srcNode.forEachTargetActionPair(
+                            srcNode._forEachTargetActionPair(
                                 ( targets, localADAction ) ->
                                 {
                                     // The agent multiplies the local derivative with its stored partial derivative...
@@ -263,7 +266,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
             {
                 for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode<V> srcNode = inputs[ i ].getGraphNode().orElseThrow(IllegalStateException::new);
-                    if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
+                    if ( ( srcNode.usesAD() || inputs[ i ].rqsGradient() )) {
+                        if ( !function.dependsOn(i) )
+                            throw new IllegalStateException(
+                                    "The function '" + function + "' does not have an input for " +
+                                    "for argument index '" + i + "'!\n" +
+                                    "This is most likely due to a bug in the implementation of the function or the underlying operation(s)."
+                                );
+
                         ADAction agent = output.getAgentSupplier().supplyADActionFor(
                                                         function,
                                                         call.withArgs(Arg.DerivIdx.of(i),Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)))
@@ -291,17 +301,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
             try {
                 if ( payload.isOutsourced() ) payload.getDevice().store( e );
             } catch ( Exception exception ) {
-                if ( payload.isUndefined() ) {
+                if ( payload.isUndefined() )
                     throw new IllegalStateException(
                             "An undefined payload tensor has been detected inside the computation graph!\n" +
-                                    "This is most likely due to an error occurring during tensor identity transfer (Also see AbstractComponentOwner).\n" +
-                                    "One type of constructor in the 'Tsr' class enables passing a String expression for execution, " +
-                                    "whose resulting tensor needs to be merged into the newly created one..."
-                    );
-                }
-                else exception.printStackTrace();
+                            "This is most likely due to an error occurring during tensor identity transfer (Also see AbstractComponentOwner).\n" +
+                            "One type of constructor in the 'Tsr' class enables passing a String expression for execution, " +
+                            "whose resulting tensor needs to be merged into the newly created one..."
+                        );
+                else
+                    exception.printStackTrace();
             }
-            if ( payload.rqsGradient() ) payload.getMut().addToGradient( e );
+            if ( payload.rqsGradient() ) payload.mut().addToGradient( e );
             if ( also != null ) also.accept( payload );
         });
     }
@@ -355,9 +365,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param newChild which references it's input namely the parent (this) has...
      */
     private synchronized void _attachChild( GraphNode<V> newChild ) {
-        if ( _children == null ) _children = new ArrayList<>();
-        WeakReference<GraphNode<V>> ref = new WeakReference<>( newChild, null );
-        _children.add( ref );
+        Objects.requireNonNull( newChild );
+        _children.add( new WeakReference<>( newChild, null ) );
     }
 
     /**
@@ -365,7 +374,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  Meaning it is the tensor owning this {@link GraphNode} component.
      *  It is referenced weakly because it might not be needed any more (Not referenced inside AD-Agent for example)
      *  and can therefore be garbage collected.
-     *
+     *  <p>
      *  Warning: This method might return null because
      *           the payload is weakly referenced!
      *           Meaning that it might get garbage collected.
@@ -383,7 +392,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * This method is called by the JITProp component.
      * A pending should only ever be retrieved from a GraphNode once because
-     * afterwards the accumulated error is about to be back-propagated.
+     * afterward the accumulated error is about to be back-propagated.
      * Therefore, this method nulls the reference when returning the PendingError instance.
      * @return Returns an instance of the PendingError class containing a error accumulation.
      */
@@ -408,27 +417,84 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp() )
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients( pendingNodes ) );
         else {
+            _verifyErrorAccumulation( pendingNodes );
             pendingNodes.forEach( n -> {
-                if ( !n._pendingError.isFullyAccumulated() ) {
-                    throw new IllegalStateException(
-                        "Pending error in graph node '"+ n +"' has not received expected accumulation during back-prop. " +
-                        "This is most likely because the recorded computation graph has multiple root!\n " +
-                        "Otherwise please examine function " + n._function + " and its underlying operations: '" +
-                        (
-                                n._function == null
-                                ? "[]"
-                                : n._function.getAllFunctions()
-                                    .stream()
-                                    .filter( f -> f.getOperation() != null )
-                                    .map( f -> f.getOperation().getIdentifier() )
-                                    .collect(Collectors.joining("', '"))
-                        )+ "'!"
-                    );
-                }
                 n.backward( n._pendingError.getAccumulatedError() ); // Continue back-propagation recursively!
             });
         }
         _deleteDerivativesRecursively(); // Cleanup after back-propagation!
+    }
+
+    private void _verifyErrorAccumulation( Set<GraphNode<V>> pendingNodes )
+    {
+        List<GraphNode<?>> notFullyAccumulated = pendingNodes
+                                                        .stream()
+                                                        .filter( n -> !n._pendingError.isFullyAccumulated() )
+                                                        .collect(Collectors.toList());
+
+        if ( !notFullyAccumulated.isEmpty() ) {
+            String explanation = "Not all graph nodes have received the expected amount of errors from their children!\n" +
+                                 "This usually happens because the recorded computation graph has multiple roots, which " +
+                                 "is most likely because not all of your model outputs are captured by a common loss function.\n";
+            String problem =
+                    "The following graph nodes have not received the expected amount of errors from their children:\n\n" +
+                    notFullyAccumulated
+                        .stream().map( n ->
+                            "    " + n +";\n" +
+                            "        Accumulation: " + (n._pendingError.getExpectedToBeReceived() - n._pendingError.getToBeReceived()) + "/" + n._pendingError.getExpectedToBeReceived() + ";\n" +
+                            "        Involved operations '" +
+                            Optional.ofNullable(n._function)
+                                    .map( fun ->
+                                            fun.getAllFunctions()
+                                               .stream()
+                                               .filter( f -> f.getOperation() != null )
+                                               .map( f -> f.getOperation().getIdentifier() )
+                                               .collect(Collectors.joining("', '"))
+                                    )
+                                    .orElse("[]")
+                            + "';\n" +
+                            "        Children: " + n._children.stream().map( c -> String.valueOf(c.get())).collect(Collectors.joining(", ")) + ";"
+                        )
+                        .collect(Collectors.joining("\n")) +
+                        "\n";
+
+            List<List<GraphNode<V>>> rootPaths = new ArrayList<>();
+            for ( GraphNode<V> node : pendingNodes )
+                node._findRootPathsRecursively( rootPaths, new ArrayList<>(), this );
+
+            if ( !rootPaths.isEmpty() )
+                problem += "\nThe following paths from the current node to root nodes have been found:\n" +
+                          IntStream.range(0, rootPaths.size())
+                            .mapToObj( i -> (1+i) + ".: " + rootPaths.get(i).stream().map(GraphNode::toString).collect(Collectors.joining(" -> ")) )
+                            .collect(Collectors.joining("\n"))+"\n";
+            else
+                problem += "\nWe tried to find paths from the current node to root nodes but failed to do so.\n" +
+                            "This is really strange and should not happen!\n" +
+                            "Here a snapshot of the computation graph from the root graph node:" +
+                            "\n" +
+                            _fancyToString(112);
+
+            throw new IllegalStateException( explanation + problem );
+        }
+    }
+
+    private void _findRootPathsRecursively( List<List<GraphNode<V>>> paths, List<GraphNode<V>> current, GraphNode<V> correctRoot )
+    {   /*
+           This method is used to find all possible paths from the current node to "invalid" root nodes.
+           Root nodes are nodes which have no children but are still part of the autograd graph.
+        */
+        if ( this == correctRoot )
+            return; // We are looking for paths to root nodes which are not the correct root node! (debugging)
+        current.add( this );
+
+        if ( _children.isEmpty() )
+            paths.add( new ArrayList<>(current) ); // We have found a path to a root node!
+        else
+            for ( WeakReference<GraphNode<V>> child : new ArrayList<>(_children) ) {
+                GraphNode<V> c = child.get();
+                if ( c != null ) c._findRootPathsRecursively( paths, current, correctRoot );
+            }
+        current.remove( this ); // Remove this node from the current path so that we can continue searching for other paths!
     }
 
     /**
@@ -454,7 +520,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 int numOfADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error
                 if ( numOfADPaths > 1 ) {
                     if ( _pendingError == null ) {
-                        _pendingError = new PendingError<>( error, numOfADPaths - 1 );
+                        _pendingError = new PendingError<>( error, numOfADPaths );
                         pendingNodes.add( this );
                     }
                     else
@@ -468,7 +534,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
             }
             // The following call ADActions for reverse-mode AutoDiff!
-            this.forEachBackward( error, ( t, e ) -> t._backward( e, pendingNodes, true ) );
+            _forEachBackRef( error, ( t, e ) -> t._backward( e, pendingNodes, true ) );
             // Standard reverse mode-AutoDiff!
         }
     }
@@ -534,11 +600,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
              */
             return; // This node will continue its propagation via a JIT-Prop component later!
         }
-        if ( this.usesAD() ) {
+        if ( this.usesAD() )
             // The following call ADActions for reverse-mode AutoDiff!
-            this.forEachBackward( error, ( t, e ) -> t._backwardJIT( e, source ) );
+            _forEachBackRef( error, ( t, e ) -> t._backwardJIT( e, source ) );
             // JITProp reverse mode-AutoDiff!
-        }
     }
 
     /**
@@ -552,7 +617,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private void _deleteDerivativesRecursively() {
         if ( !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads() ) { // <=- This flag is almost always false. (Used for testing)
-            if ( !this.isReliesOnJustInTimeProp() && _targetsToAgents != null ) _targetsToAgents.clear();
+            if ( !this.isReliesOnJustInTimeProp() && !_targetsToAgents.isEmpty() ) _targetsToAgents.clear();
             if ( !this.isGraphLeave() ) forEachTarget( GraphNode::_deleteDerivativesRecursively );
         }
     }
@@ -564,7 +629,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private int _numberOfReverseModeADChildren() {
         int count = 0;
-        if ( _children != null ) {
+        if ( !_children.isEmpty() ) {
             for ( WeakReference<GraphNode<V>> weak : _children ) {
                 if ( weak != null && weak.get() != null ) {
                     GraphNode<V> child = weak.get(); // TODO: make test which asserts that Detached Function does not trigger this!
@@ -592,7 +657,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return boolean
      */
     public boolean has( GraphNode<V> target ) {
-        if ( _targetsToAgents == null ) return false;
         return _targetsToAgents.stream().anyMatch( ref -> ref.node() == target );
     }
 
@@ -602,15 +666,17 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return int
      */
-    public int size() { return _targetsToAgents != null ? _targetsToAgents.size() : 0; }
+    public int size() {
+        return _targetsToAgents.size();
+    }
 
     /**
      * @param action The lambda performing an action on all targeted nodes and their agents.
      */
     public void forEachDerivative( BiConsumer<GraphNode<V>, ADAction> action ) {
-        if ( _targetsToAgents == null ) return;
+        if ( _targetsToAgents.isEmpty() ) return;
         new ArrayList<>(_targetsToAgents).forEach(
-            ( ref ) -> ref.actions().forEach(a -> action.accept( ref.node(), a ) )
+            ( ref ) -> ref.actions().forEach( a -> action.accept( ref.node(), a ) )
         );
     }
 
@@ -618,29 +684,27 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param error The error which ought to be passed to the {@link ADAction}s.
      * @param action A lambda action providing derivative and target node as parameter.
      */
-    public void forEachBackward( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
-        if ( _targetsToAgents == null ) return;
+    private void _forEachBackRef( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
         if ( _targetsToAgents.isEmpty() ) return;
         error.getMut().setIsIntermediate( false );
-        new ArrayList<>(_targetsToAgents).forEach( ref -> {
+        for ( BackPropTargets<V> ref : new ArrayList<>(_targetsToAgents) )
             for ( ADAction a : ref.actions() )
                 action.accept( ref.node(), (Tsr<V>) a.act( new ADTarget<>(ref.index(), ref.node(), error) ));
-        });
     }
 
     /**
      * @param action An action which should be applied to the graph nodes of all the partial derivatives.
      */
     public void forEachTarget( Consumer<GraphNode<V>> action ) {
-        if ( _targetsToAgents == null ) return;
+        if ( _targetsToAgents.isEmpty() ) return;
         new ArrayList<>(_targetsToAgents).forEach( ref -> action.accept( ref.node() ) );
     }
 
     /**
      * @param action The action which ought to be applied to each target {@link GraphNode} / {@link ADAction} pair.
      */
-    public void forEachTargetActionPair( BiConsumer<BackPropTargets<V>, ADAction> action ) {
-        if ( _targetsToAgents == null ) return;
+    private void _forEachTargetActionPair( BiConsumer<BackPropTargets<V>, ADAction> action ) {
+        if ( _targetsToAgents.isEmpty() ) return;
         new ArrayList<>( _targetsToAgents )
                 .forEach( ref  -> ref.actions().forEach(a -> action.accept( ref, a ) ) );
     }
@@ -649,7 +713,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * @return Checks if this node stores target / AD-action (usually derivatives) pairs.
      */
-    public boolean hasDerivatives() { return _targetsToAgents != null && _targetsToAgents.size() > 0; }
+    public boolean hasDerivatives() { return !_targetsToAgents.isEmpty(); }
 
     /**
      *  This is the getter for an important {@link GraphNode} property which
@@ -734,7 +798,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  involving the payload of this very {@link GraphNode} instance.
      */
     public List<WeakReference<GraphNode<V>>> getChildren() {
-        return _children == null ? Collections.emptyList() : Collections.unmodifiableList( _children );
+        return Collections.unmodifiableList( _children );
     }
 
     public boolean canBeDeleted() {
@@ -823,46 +887,20 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public String toString( Print mode ) {
         LogUtil.nullArgCheck( mode, "mode", Print.class );
-        Optional<Tsr<V>> payload = getPayload();
         switch ( mode ) {
-            case SIMPLE:
-                return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
+            case SIMPLE: return _simpleToString();
+            case FANCY: return _fancyToString(1028);
+            case COMPACT: return _compactToString();
+        }
+        throw new IllegalStateException();
+    }
+
+    private String _simpleToString() {
+        return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
                         "parents=[" + ( _parentsToString() ) + "]," +
                         "function=" + (_function == null ? "?" : _function) + "," +
                         "shape=" + (getPayloadShape() != null ? getPayloadShape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
                         "]";
-
-            case FANCY:
-                return "]> GRAPH:\n]\n" + _toString( "]    0", true, Print.COMPACT ) + "\n]\n]|END|>";
-
-            case COMPACT:
-                String nid = this.getClass().getSimpleName();// + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
-                return " " + nid + "[ "
-                        + ( _function == null ? "" : _function + " => " )
-                        + (
-                            payload.map( p -> p.toString(
-                                settings -> settings
-                                        .setRowLimit(  3  )
-                                        .setIsScientific(  true   )
-                                        .setIsMultiline(  false  )
-                                        .setHasGradient(  false    )
-                                        .setCellSize(  1  )
-                                        .setHasValue( true )
-                                        .setHasRecursiveGraph( false   )
-                                        .setHasDerivatives(  false      )
-                                        .setHasShape( true            )
-                                        .setIsCellBound(  false       )
-                                        .setPostfix(  ""      )
-                                        .setPrefix(  ""      )
-                                        .setHasSlimNumbers(  false      )
-                                )
-                            ).orElse("?")
-                        ) +
-                        ", type='" + this.type() + "'" +
-                        "] ";
-        }
-
-        throw new IllegalStateException();
     }
 
     private String _parentsToString() {
@@ -880,6 +918,38 @@ public class GraphNode<V> implements Component<Tsr<V>>
             .orElse("?");
     }
 
+    private String _fancyToString( int depthLimit ) {
+        return "]> GRAPH:\n]\n" + _toString( "]    0", true, Print.COMPACT, depthLimit ) + "\n]\n]|END|>";
+    }
+
+    private String _compactToString() {
+        Optional<Tsr<V>> payload = getPayload();
+        String nid = this.getClass().getSimpleName();// + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
+        return " " + nid + "[ "
+                + ( _function == null ? "" : _function + " => " )
+                + (
+                    payload.map( p -> p.toString(
+                        settings -> settings
+                                .setRowLimit( 3 )
+                                .setIsScientific( true )
+                                .setIsMultiline( false )
+                                .setHasGradient( false )
+                                .setCellSize( 1 )
+                                .setHasValue( true )
+                                .setHasRecursiveGraph( false )
+                                .setHasDerivatives( false )
+                                .setHasShape( true )
+                                .setIsCellBound( false )
+                                .setPostfix( "" )
+                                .setPrefix( "" )
+                                .setHasSlimNumbers( false )
+                        )
+                    ).orElse("?")
+                ) +
+                ", type='" + this.type() + "'" +
+                "] ";
+    }
+
     /**
      * A private recursive method used by its public counterpart ( 'toString(String m)' )
      * in order to build a indented multi-line tree-like
@@ -890,7 +960,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param isLast Tells if this is the last parent node of this child.
      * @return A indented multi-line tree-like String representation of the computation graph.
      */
-    private String _toString( String deep, boolean isLast, Print mode ) {
+    private String _toString( String deep, boolean isLast, Print mode, int depthLimit ) {
         String delimiter = ( isLast ? ("    ") : ("|   ") );
         String arrow = ( (char) 187 ) + "" + ( _parents != null ? String.valueOf( _parents.length ) : "0" ) + ( (char) 187 );
         StringBuilder asString = new StringBuilder( deep + arrow + toString( mode ) );
@@ -899,8 +969,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
             asString.append( "\n" ).append( deep ).append( isLast ? "   \\\n" : "|  \\\n" );
             for ( int i = 0; i < _parents.length; i++ ) {
                 boolean last = ( i == _parents.length - 1 );
-                asString.append( i != 0 ? deep + delimiter + "|\n" : "" );
-                asString.append( _parents[ i ]._toString(deep + delimiter + i, last, mode) ).append( "\n" );
+                if ( deep.length() < depthLimit ) { // prevent stack overflow + blowing up the heap (although the heap will probably already have blown up before this point)
+                    asString.append( i != 0 ? deep + delimiter + "|\n" : "" );
+                    asString.append( _parents[ i ]._toString( deep + delimiter + i, last, mode, depthLimit ) ).append( "\n" );
+                } else
+                    asString.append( deep + delimiter + i + " ... (graph to deep for further traversal) " + (!last ? "\n" : " ") );
             }
             asString = new StringBuilder( asString.substring( 0, asString.length() - 1 ) );
         }

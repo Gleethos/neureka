@@ -10,7 +10,7 @@ public class Permuted1DConfiguration extends D1C {
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation;
+    private final int _stride;
     /**
      *  The mapping of the indices array.
      */
@@ -19,21 +19,21 @@ public class Permuted1DConfiguration extends D1C {
 
     public static Permuted1DConfiguration construct(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap
     ) {
-        return _cached( new Permuted1DConfiguration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ]) );
+        return _cached( new Permuted1DConfiguration(shape[ 0 ], strides[ 0 ],  indicesMap[ 0 ]) );
     }
 
     protected Permuted1DConfiguration(
             int shape,
-            int translation,
+            int stride,
             int indicesMap
     ) {
-        _shape = shape;
-        _translation = translation;
+        _shape      = shape;
+        _stride     = stride;
         _indicesMap = indicesMap;
-        assert translation != 0;
+        assert stride != 0;
         assert indicesMap != 0;
     }
 
@@ -53,10 +53,10 @@ public class Permuted1DConfiguration extends D1C {
     @Override public final int indicesMap( int i ) { return _indicesMap; }
 
     /** {@inheritDoc} */
-    @Override public final int[] translation() { return new int[]{_translation}; }
+    @Override public final int[] strides() { return new int[]{_stride}; }
 
     /** {@inheritDoc} */
-    @Override public final int translation( int i ) { return _translation; }
+    @Override public final int strides(int i ) { return _stride; }
 
     /** {@inheritDoc} */
     @Override public final int[] spread() { return new int[]{1}; }
@@ -71,15 +71,15 @@ public class Permuted1DConfiguration extends D1C {
     @Override public final int offset( int i ) { return 0; }
 
     /** {@inheritDoc} */
-    @Override public final int indexOfIndex( int index ) { return ( index / _indicesMap ) * _translation; }
+    @Override public final int indexOfIndex( int index ) { return ( index / _indicesMap ) * _stride; }
 
     /** {@inheritDoc} */
     @Override public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }
 
     /** {@inheritDoc} */
-    @Override public final int indexOfIndices( int[] indices ) { return indices[ 0 ] * _translation; }
+    @Override public final int indexOfIndices( int[] indices ) { return indices[ 0 ] * _stride; }
 
     /** {@inheritDoc} */
-    @Override public final int indexOfIndices( int d1 ) { return d1 * _translation; }
+    @Override public final int indexOfIndices( int d1 ) { return d1 * _stride; }
 
 }

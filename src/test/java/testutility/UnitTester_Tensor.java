@@ -130,14 +130,14 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  NDConfiguration.Layout.ROW_MAJOR.newTranslationFor(dim);
+        int [] result =  NDConfiguration.Layout.ROW_MAJOR.newStridesFor(dim);
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_makeFit( int[] a, int[] b, int[][] expected ){
-        int [][] result =  NDUtil.makeFit( a, b );
+        int [][] result =  makeFit( a, b );
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         if ( result.length != 2 ) throw new AssertionError("Invalid result!");
         assertIsEqual(
@@ -151,8 +151,35 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
+
+    public static int[][] makeFit( int[] sA, int[] sB ) {
+        int lastIndexOfA = 0;
+        for ( int i = sA.length-1; i >= 0; i-- ) {
+            if ( sA[ i ] != 1 ) {
+                lastIndexOfA = i;
+                break;
+            }
+        }
+        int firstIndexOfB = 0;
+        for ( int i = 0; i < sB.length; i++ ) {
+            if ( sB[ i ] != 1 ) {
+                firstIndexOfB = i;
+                break;
+            }
+        }
+        int newSize = lastIndexOfA + sB.length - firstIndexOfB;
+        int[] rsA = new int[ newSize ];
+        int[] rsB = new int[ newSize ];
+        for( int i = 0; i <newSize; i++ ) {
+            if ( i <= lastIndexOfA ) rsA[ i ] = i; else rsA[ i ] = -1;
+            if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
+        }
+        return new int[][]{ rsA, rsB };
+    }
+
+
     public int testTensCon(
-            int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd
+            Shape frstShp, Shape scndShp, double[] frstData, double[] scondData, double[] expctd
     ){
         printSessionStart("Test tensor indexing: tensMul_mxd");
         Shape drnMxd  = _shpOfCon(frstShp, scndShp);
@@ -175,7 +202,7 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testInvTensCon(
-            int[] frstShp, int[] scndShp,
+            Shape frstShp, Shape scndShp,
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
@@ -198,10 +225,10 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensBroadcast(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
+    public int testTensBroadcast(Shape frstShp, Shape scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
-        int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
-        double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd)];
+        Shape drnMxd  = _shpOfBrc(frstShp, scndShp);
+        double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd.toIntArray())];
 
         Neureka.get().backend().getOperation("*")
                 .getAlgorithm(Broadcast.class)
@@ -221,12 +248,12 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testInvTensBroadcast(
-            int[] frstShp, int[] scndShp,
+            Shape frstShp, Shape scndShp,
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
-        int[] drnMxd  = _shpOfBrc(frstShp, scndShp);
+        Shape drnMxd  = _shpOfBrc(frstShp, scndShp);
 
         Broadcast right = new Broadcast()
                             .setAutogradModeFor(
@@ -366,22 +393,22 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     
-    private static int[] _shpOfBrc( int[] shp1, int[] shp2 ) {
-        int[] shape = new int[ ( shp1.length + shp2.length ) / 2 ];
-        for ( int i = 0; i < shp1.length && i < shp2.length; i++ ) {
-            shape[ i ] = Math.max( shp1[ i ], shp2[ i ] );
-            if ( Math.min(shp1[ i ], shp2[ i ]) != 1 && Math.max( shp1[ i ], shp2[ i ] ) != shape[ i ] ) {
+    private static Shape _shpOfBrc( Shape shp1, Shape shp2 ) {
+        int[] shape = new int[ ( shp1.size() + shp2.size() ) / 2 ];
+        for ( int i = 0; i < shp1.size() && i < shp2.size(); i++ ) {
+            shape[ i ] = Math.max( shp1.get( i ), shp2.get( i ) );
+            if ( Math.min(shp1.get( i ), shp2.get( i )) != 1 && Math.max( shp1.get( i ), shp2.get( i ) ) != shape[ i ] ) {
                 throw new IllegalStateException("Broadcast not possible. Shapes do not match!");
             }
         }
-        return shape;
+        return Shape.of(shape);
     }
 
     
-    private static Shape _shpOfCon(int[] shp1, int[] shp2 ) {
-        int[] shapeArray = new int[ ( shp1.length + shp2.length ) / 2 ];
-        for ( int i = 0; i < shp1.length && i < shp2.length; i++ )
-            shapeArray[ i ] = Math.abs( shp1[ i ] - shp2[ i ] ) + 1;
+    private static Shape _shpOfCon(Shape shp1, Shape shp2 ) {
+        int[] shapeArray = new int[ ( shp1.size() + shp2.size() ) / 2 ];
+        for ( int i = 0; i < shp1.size() && i < shp2.size(); i++ )
+            shapeArray[ i ] = Math.abs( shp1.get( i ) - shp2.get( i ) ) + 1;
         return Shape.of(shapeArray);
     }
 

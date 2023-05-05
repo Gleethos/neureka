@@ -1,5 +1,6 @@
 package neureka.backend.main.operations;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -57,11 +58,11 @@ public class ConvUtil
                 .buildFunAlgorithm();
     }
 
-    public static int[] shapeOfCon(int[] shape1, int[] shape2 ) {
+    public static Shape shapeOfCon(int[] shape1, int[] shape2 ) {
         int[] shape = new int[ ( shape1.length + shape2.length ) / 2 ];
         for ( int i = 0; i < shape1.length && i < shape2.length; i++ )
             shape[ i ] = Math.abs( shape1[ i ] - shape2[ i ] ) + 1;
-        return shape;
+        return Shape.of(shape);
     }
     
     public static Tsr<?> executeRecursively(

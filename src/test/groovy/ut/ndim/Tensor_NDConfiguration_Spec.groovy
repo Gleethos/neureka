@@ -58,7 +58,7 @@ class Tensor_NDConfiguration_Spec extends Specification
             a.NDConf == b.NDConf
         and : 'This ND-Configuration has the expected state.'
             a.NDConf.shape(0) == 1
-            a.NDConf.translation(0) == 1
+            a.NDConf.strides(0) == 1
             a.NDConf.indicesMap(0) == 1
             a.NDConf.offset(0) == 0
             a.NDConf.spread(0) == 1
@@ -81,7 +81,7 @@ class Tensor_NDConfiguration_Spec extends Specification
             y.NDConf == z.NDConf
         and : 'The configuration behaves as expected.'
             x.NDConf.shape(0) == 3
-            x.NDConf.translation(0) == 1
+            x.NDConf.strides(0) == 1
             x.NDConf.indicesMap(0) == 1
             x.NDConf.offset(0) == 0
             x.NDConf.spread(0) == 1
@@ -95,7 +95,7 @@ class Tensor_NDConfiguration_Spec extends Specification
             x = x[new BigDecimal(2)]
         then : 'This also produces a valid slice with the expected properties :'
             x.NDConf.shape(0) == 1
-            x.NDConf.translation(0) == 1
+            x.NDConf.strides(0) == 1
             x.NDConf.indicesMap(0) == 1
             x.NDConf.offset(0) == 2
             x.NDConf.spread(0) == 1
@@ -107,7 +107,7 @@ class Tensor_NDConfiguration_Spec extends Specification
         and : 'The NDConfiguration of this slice has the expected state.'
             y.NDConf instanceof Sliced1DConfiguration
             y.NDConf.shape(0) == 2
-            y.NDConf.translation(0) == 1
+            y.NDConf.strides(0) == 1
             y.NDConf.indicesMap(0) == 1
             y.NDConf.offset(0) == 1
             y.NDConf.spread(0) == 1

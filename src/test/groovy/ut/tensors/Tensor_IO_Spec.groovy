@@ -98,7 +98,7 @@ class Tensor_IO_Spec extends Specification
 
         then : '...the tensor will change as expected.'
             !(x.getItems() instanceof float[])
-            !(x.mut.data.ref instanceof float[])
+            !(x.mut.data.get() instanceof float[])
             !(x.rawData instanceof float[])
             x.getItemsAs( float[].class )[ 0 ]==5.0f
             x.getItemsAs( double[].class )[0]==5.0d
@@ -110,7 +110,7 @@ class Tensor_IO_Spec extends Specification
 
         then : '...once again the tensor changes as expected.'
             x.rawItems instanceof double[]
-            x.mut.data.ref instanceof double[]
+            x.mut.data.get() instanceof double[]
             x.rawData instanceof double[]
             x.getItemsAs( float[].class )[ 0 ]==4.0f
             x.getItemsAs( double[].class )[0]==4.0d
@@ -138,7 +138,7 @@ class Tensor_IO_Spec extends Specification
 
         then :
             !(x.rawItems instanceof double[])
-            !(x.mut.data.ref instanceof double[])
+            !(x.mut.data.get() instanceof double[])
             !(x.rawData instanceof double[])
             x.getItemsAs( float[].class )[ 0 ]==7.0f
             x.getItemsAs( double[].class )[0]==7.0d
@@ -345,7 +345,7 @@ class Tensor_IO_Spec extends Specification
         then :
             t.getDataAt( 1 ) == element
         and :
-            t.mut.data.ref == expected
+            t.mut.data.get() == expected
             t.rawData == expected
 
         when :
@@ -355,7 +355,7 @@ class Tensor_IO_Spec extends Specification
         then :
             t.item( 1 ) == element
         and :
-            t.mut.data.ref == expected
+            t.mut.data.get() == expected
             t.rawData == expected
 
         where :

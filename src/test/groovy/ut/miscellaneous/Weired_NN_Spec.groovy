@@ -5,10 +5,7 @@ import neureka.Tsr
 import neureka.math.Function
 import neureka.ndim.config.types.views.SimpleReshapeView
 import neureka.optimization.Optimizer
-import neureka.optimization.implementations.ADAM
-import neureka.optimization.implementations.SGD
 import neureka.view.NDPrintSettings
-import spock.lang.Ignore
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
@@ -65,7 +62,7 @@ class Weired_NN_Spec extends Specification
         expect:
             X.NDConf instanceof SimpleReshapeView
             X.NDConf.indicesMap()  == [ 8,1  ] as int[]
-            X.NDConf.translation() == [ 1, 4 ] as int[]
+            X.NDConf.strides() == [1, 4 ] as int[]
             X.NDConf.offset()      == [ 0,0  ] as int[]
             X.NDConf.spread()      == [ 1,1  ] as int[]
             X.NDConf.shape()       == [ 3, 8 ] as int[]

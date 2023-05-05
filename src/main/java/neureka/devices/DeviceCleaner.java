@@ -1,10 +1,10 @@
 package neureka.devices;
 
-interface DeviceCleaner
+public interface DeviceCleaner
 {
-    static DeviceCleaner getInstance() {
-        return new CustomDeviceCleaner();
-    }
+    DeviceCleaner INSTANCE = new CustomDeviceCleaner();
+
+    static DeviceCleaner getNewInstance() { return new CustomDeviceCleaner(); }
 
     void register( Object o, Runnable action );
 }

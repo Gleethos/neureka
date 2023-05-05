@@ -1,5 +1,6 @@
 package ut.backend
 
+import neureka.Shape
 import neureka.Tsr
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Narrative
@@ -41,8 +42,8 @@ class Matrix_Multiplication_Spec extends Specification
             data types as well as data layouts!
         """
         given : 'We instantiate 2 matrices based on the data from the data table at the end of this method.'
-            Tsr<?> a = Tsr.of(type, [M,K] as int[], A)
-            Tsr<?> b = Tsr.of(type, [K,N] as int[], B)
+            Tsr<?> a = Tsr.of(type, Shape.of(M,K), A)
+            Tsr<?> b = Tsr.of(type, Shape.of(K,N), B)
         and : 'We create the data layout type based on the provided string...'
             var dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR
         and : 'After that we convert both matrices to the layout!'

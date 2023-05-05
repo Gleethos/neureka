@@ -1,5 +1,6 @@
 package neureka.backend.main.algorithms;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -36,7 +37,7 @@ public class ScalarAlgorithm extends AbstractFunDeviceAlgorithm<ScalarAlgorithm>
             call -> {
                 Device<Number> device = call.getDeviceFor(Number.class);
                 assert call.input( 0 ) == null;  // Creating a new tensor:
-                int[] outShape = call.input( 1 ).getNDConf().shape();
+                Shape outShape = call.input( 1 ).shape();
                 Class<Object> type = (Class<Object>) call.input( 1 ).getItemType();
                 Tsr output = Tsr.of( type, outShape, 0.0 ).mut().setIsIntermediate( true );
                 device.store( output );

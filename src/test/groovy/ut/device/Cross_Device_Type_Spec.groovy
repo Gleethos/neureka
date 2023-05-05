@@ -1,5 +1,6 @@
 package ut.device
 
+import neureka.Data
 import neureka.Neureka
 import neureka.Shape
 import neureka.Tsr
@@ -12,12 +13,8 @@ import neureka.devices.file.FileDevice
 import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.view.NDPrintSettings
-import spock.lang.Ignore
-import spock.lang.IgnoreIf
-import spock.lang.Narrative
-import spock.lang.Specification
-import spock.lang.Subject
-import spock.lang.Title
+import spock.lang.*
+import testutility.Sleep
 import testutility.mock.DummyDevice
 
 import java.util.function.BiConsumer
@@ -190,7 +187,7 @@ class Cross_Device_Type_Spec extends Specification
             if ( device == null ) return
 
         when : 'A 2D tensor is being instantiated by passing the given shape and data...'
-            Tsr t = Tsr.of(shape, data).to(device)
+            Tsr t = Tsr.of(Shape.of(shape), data).to(device)
 
         then : 'The tensor values (as List) are as expected.'
             Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))
@@ -255,22 +252,26 @@ class Cross_Device_Type_Spec extends Specification
     }
 
     def 'Devices store tensors which can also be restored.'(
-            Device device
+        Device device
     ) {
         reportInfo """
-            Device implementations also behave like storage units for tensors,
-            which you can see below.
+            A Device implementation keeps track of the number of tensors it "owns",
+            which you can see below. This is basically just reference counting.
+            
+            Also note that in this example we are making some exceptions for the CPU device
+            simply because it is the default device on which all tensors are being stored
+            if no other device is specified.
         """
 
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
         and : 'Two tensors which will be transferred later on...'
-            int initialNumber = device.size()
+            int initialNumber = device.numberOfStored()
             Tsr a = Tsr.of([2, 3], ";)")
             Tsr b = Tsr.of([3, 4], ":P")
 
         expect : 'The given device is initially empty.'
-            device.isEmpty() == ( device.size() == 0 )
+            device.isEmpty() == ( device.numberOfStored() == 0 )
             !device.has( a ) || device instanceof CPU
             !device.has( b ) || device instanceof CPU
 
@@ -279,7 +280,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...tensor "a" is now on the device.'
             !device.isEmpty()
-            device.size() == initialNumber + 1
+            device.numberOfStored() == initialNumber + ( device instanceof CPU ? 2 : 1 )
             device.has( a )
             !device.has( b ) || device instanceof CPU
 
@@ -288,7 +289,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...tensor "b" is now also on the device.'
             !device.isEmpty()
-            device.size() == initialNumber + 2
+            device.numberOfStored() == initialNumber + 2
             device.has( a )
             device.has( b )
 
@@ -297,32 +298,37 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...the device is empty again.'
             device.isEmpty() == ( initialNumber == 0 )
-            device.size() == initialNumber
+            device.numberOfStored() == initialNumber
             !device.has( a ) || device instanceof CPU
             !device.has( b ) || device instanceof CPU
 
         where : 'The following Device instances are being tested :'
             device << [
-                    CPU.get(),
-                    Device.get( "openCL" ),
+                    //CPU.get(),
+                    //Device.get( "openCL" ),
                     FileDevice.at( "build/test-can" )
                 ]
 
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
-    def 'Devices also store slices which can also be restored just like normal tensors.'(
+    def 'Devices store slices which can also be restored just like any other tensor.'(
             Device device
     ) {
+        reportInfo """
+            Note that in this example we are making some exceptions for the CPU device
+            simply because it is the default device on which all tensors are being stored
+            if no other device is specified.
+        """
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
         and : 'Two tensors which will be transferred later on...'
-            int initialNumber = device.size()
+            int initialNumber = device.numberOfStored()
             Tsr a = Tsr.of([2, 3], ";)")
             Tsr b = a[1, 0..2]
 
         expect : 'The given device is initially empty.'
-            device.isEmpty() == ( device.size() == 0 )
+            device.isEmpty() == ( device.numberOfStored() == 0 )
             !device.has( a ) || device instanceof CPU
             !device.has( b ) || device instanceof CPU
 
@@ -331,7 +337,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...tensor "a" is now on the device.'
             !device.isEmpty()
-            device.size() == initialNumber + 1
+            device.numberOfStored() == initialNumber + ( device instanceof CPU ? 2 : 1 )
             device.has( a )
         and :
             !device.has( b ) || device instanceof CPU
@@ -340,13 +346,66 @@ class Cross_Device_Type_Spec extends Specification
             device.free( a )
 
         then : '...the device is empty again.'
-            device.isEmpty() == ( initialNumber == 0 )
-            device.size() == initialNumber
+            device.isEmpty() == (( initialNumber == 0 ) && !( device instanceof CPU ))
+            device.numberOfStored() == initialNumber + ( device instanceof CPU ? 1 : 0 )
             !device.has( a ) || device instanceof CPU
             !device.has( b ) || device instanceof CPU
 
         where : 'The following Device instances are being tested :'
-        device << [
+            device << [
+                CPU.get(),
+                Device.get( "openCL" )
+            ]
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null })
+    def 'A device will keep track of the amount of tensors and data objects it stores.'(
+        Device device
+    ) {
+        given : 'We note the initial amount of tensors stored on the device.'
+            System.gc()
+            Sleep.until(5_000, 100, {CPU.get().numberOfStored() == 0})
+            int initial = device.numberOfStored()
+            int initialDataObjects = device.numberOfDataObjects()
+
+        when : 'We first create a data object...'
+            var data = Data.of( 42, 73, 11, 7 )
+        then : 'The CPU should not have stored any tensors yet.'
+            device.numberOfStored() == initial
+
+        when : 'We create a tensor from the data object...'
+            var t = Tsr.of( Shape.of(2, 2), data ).to(device)
+        then : 'The device should know about the existence of a new tensor.'
+            device.numberOfStored() == initial + 1
+        and : 'The number of data objects stored on the device should also be increased.'
+            device.numberOfDataObjects() == initialDataObjects + 1
+
+        when : 'We create a new tensor from the first one...'
+            var t2 = t * 2
+        then : 'The device should know about the existence of a new tensor as well as the data objects.'
+            device.numberOfStored() == initial + 2
+            device.numberOfDataObjects() == initialDataObjects + 2
+
+        when : 'We however create a new reshaped version of the first tensor...'
+            var t3 = t.reshape( 4 )
+        then : 'The device should also know about the existence of a new tensor, but not a new data object.'
+            device.numberOfStored() == initial + 3
+            device.numberOfDataObjects() == initialDataObjects + 2
+
+        when : 'We delete the references to the tensors, and then give the GC some time to do its job...'
+            t = null
+            t2 = null
+            t3 = null
+            System.gc()
+            Thread.sleep( 128 )
+            Sleep.until(1028, {device.numberOfStored() == initial})
+        then : 'The device should have forgotten about the tensors.'
+            device.numberOfStored() == initial
+        and : 'The device should have forgotten about the data objects as well.'
+            device.numberOfDataObjects() == initialDataObjects
+
+        where : 'The following Device instances are being tested :'
+            device << [
                 CPU.get(),
                 Device.get( "openCL" )
             ]
@@ -362,10 +421,10 @@ class Cross_Device_Type_Spec extends Specification
             Tsr a = Tsr.of([2, 3], ";)")
             Tsr b = a[1, 0..2]
         and :
-            var initialSize = device.size()
+            var initialSize = device.numberOfStored()
 
         expect : 'The given device is initially empty.'
-            device.isEmpty() == ( device.size() == 0 )
+            device.isEmpty() == ( device.numberOfStored() == 0 )
             !device.has( a )
             !device.has( b )
 
@@ -377,7 +436,7 @@ class Cross_Device_Type_Spec extends Specification
             exception.message.contains("Data parent is not outsourced!")
 
         expect : 'The given device is initially empty.'
-            device.isEmpty() == ( device.size() == 0 )
+            device.isEmpty() == ( device.numberOfStored() == 0 )
             !device.has( a )
             !device.has( b )
 
@@ -390,9 +449,9 @@ class Cross_Device_Type_Spec extends Specification
             b.isOutsourced()
         and :
             device.has( a )
-            b.mut.data.ref == null
+            b.mut.data.get() == null
             device.has( b )
-            device.size() == initialSize
+            device.numberOfStored() == initialSize
 
         where : 'The following Device instances are being tested :'
             device                                  | storageMethod

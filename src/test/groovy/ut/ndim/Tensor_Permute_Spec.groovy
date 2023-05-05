@@ -2,6 +2,7 @@ package ut.ndim
 
 import neureka.Tsr
 import neureka.ndim.config.NDConfiguration
+import neureka.ndim.config.NDTrait
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
@@ -40,6 +41,7 @@ class Tensor_Permute_Spec extends Specification
 
         expect : 'By default, the tensor has a row major layout.'
             t.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
+            t.NDConf.traits == [NDTrait.COMPACT, NDTrait.SIMPLE, NDTrait.ROW_MAJOR, NDTrait.CONTINUOUS_MATRIX]
 
         when : 'We create a new permuted tensor with the shape of [6, 4, 8, 2] and store it as `t2`.'
             var t2 = t.permute( 2, 1, 3, 0 )
@@ -48,6 +50,7 @@ class Tensor_Permute_Spec extends Specification
             t2.shape == [6, 4, 8, 2]
         and : 'A unspecific layout is assigned to the new tensor.'
             t2.NDConf.layout == NDConfiguration.Layout.UNSPECIFIC
+            t2.NDConf.traits == [NDTrait.COMPACT, NDTrait.COL_MAJOR, NDTrait.CONTINUOUS_MATRIX]
         and : 'The new tensor has the same size as the original tensor, but it is not the same object.'
             t2.size == t.size
             t2 !== t
@@ -60,13 +63,14 @@ class Tensor_Permute_Spec extends Specification
 
         expect :
             t.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
+            t.NDConf.traits == [NDTrait.COMPACT, NDTrait.SIMPLE, NDTrait.ROW_MAJOR, NDTrait.CONTINUOUS_MATRIX]
 
         when :
             t = t.T
 
         then :
             t.NDConf.layout == NDConfiguration.Layout.COLUMN_MAJOR
-
+            t.NDConf.traits == [NDTrait.COMPACT, NDTrait.COL_MAJOR, NDTrait.CONTINUOUS_MATRIX]
     }
 
 }

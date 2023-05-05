@@ -58,6 +58,7 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.LazyRef;
 import neureka.backend.main.memory.MemUtil;
+import neureka.backend.main.operations.other.ReLayout;
 import neureka.common.composition.AbstractComponentOwner;
 import neureka.common.composition.Component;
 import neureka.common.utility.DataConverter;
@@ -84,7 +85,6 @@ import java.awt.*;
 import java.awt.image.*;
 import java.util.List;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -127,7 +127,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         if ( args == null || args.length == 0 ) return new TsrImpl<>();
         if ( args.length == 1 ) {
             TsrImpl<T> t = new TsrImpl<>();
-            boolean success = t.constructFor(CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
+            boolean success = constructFor(t, CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
             if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
@@ -141,7 +141,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         Class<?> commonType = _extractCommonType(args);
         if ( commonType != null ) {
             TsrImpl<T> t = new TsrImpl<>();
-            t.constructFor(CPU.get(), NDConstructor.of( args.length ))
+            constructFor(t, CPU.get(), NDConstructor.of( args.length ))
                 .tryConstructing(
                     DataType.of(commonType),
                     args
@@ -195,7 +195,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         TsrImpl<T> t = new TsrImpl<>();
         Class<?> commonType = _extractCommonType( list.toArray() );
         // We construct the tensor:
-        t.constructFor(CPU.get(), NDConstructor.of( list.size() ))
+        constructFor(t, CPU.get(), NDConstructor.of( list.size() ))
                     .tryConstructing(
                         DataType.of(commonType),
                         list.toArray()
@@ -233,15 +233,16 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     TsrImpl() {
         _setData(new Data<V>() {
             @Override public Device<V> owner() { return (Device<V>) CPU.get(); }
-            @Override public Object getRef() { return null;}
+            @Override public Object getOrNull() { return null;}
             @Override public DataType<V> dataType() {
                 return (DataType<V>) Neureka.get().settings().dtype().getDefaultDataType();
             }
-            @Override public Data<V> withNDConf(NDConfiguration ndc) { throw new UnsupportedOperationException(); }
+
+            @Override public int usages() { return 1; }
         });
     }
 
-    TsrImpl( NDConstructor ndConstructor, Device device, DataType<?> dataType, Object value ) {
+    public static <V> TsrImpl<V> _of( NDConstructor ndConstructor, Device device, DataType<V> dataType, Object value ) {
         Object data = value;
         if ( List.class.isAssignableFrom( dataType.getItemTypeClass() ) )
             data = new Object[]{ value }; // Make an nd-array of lists possible"
@@ -255,56 +256,55 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
         }
-        constructFor(device, ndConstructor).tryConstructing( dataType, data );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, device, ndConstructor).tryConstructing( dataType, data );
+        return t;
     }
 
-    <V> TsrImpl( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
+    static <V> TsrImpl<V> _of( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
         // We check if the type of the data is compatible with the type of the tensor:
         if ( !dataType.getItemTypeClass().isAssignableFrom( data.dataType().getItemTypeClass() ) )
             throw new IllegalArgumentException(
                     "The data type of the data is not compatible with the data type of the tensor!"
                 );
 
-        constructFor(data.owner(), ndConstructor).constructTrusted( data );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, data.owner(), ndConstructor).constructTrusted( data );
+        return t;
     }
 
     /**
      *  see {@link Tsr#of(DataType, Shape, Filler)}
      */
-    <T> TsrImpl( NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
-        _constructFromInitializer(ndConstructor, type, filler);
+    static <V> TsrImpl<V> _of( NDConstructor ndConstructor, DataType<V> type, Filler<V> filler ) {
+        LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
+        LogUtil.nullArgCheck( type, "type", DataType.class );
+        LogUtil.nullArgCheck( type, "filler", Filler.class );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, CPU.get(), ndConstructor).unpopulated( false, true, type );
+        t._initDataArrayFrom( filler );
+        return t;
     }
 
     /**
      *  See {@link Tsr#of(Class, Shape, neureka.math.args.Arg.Seed)} and {@link #of(List, String)}
      */
-    TsrImpl( Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
-        constructFor(CPU.get(), ndConstructor).newSeeded( valueType, seed );
+    static <V> TsrImpl<V> _of( Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
+        LogUtil.nullArgCheck( valueType, "valueType", Class.class );
+        LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
+        LogUtil.nullArgCheck( seed, "seed", Arg.Seed.class );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, CPU.get(), ndConstructor).newSeeded( valueType, seed );
+        return t;
     }
 
-    TsrImpl( NDConstructor ndConstructor, DataType<?> type ) {
-        _constructAndAllocate( ndConstructor, true, DataType.of( type.getRepresentativeType() ) );
-    }
-
-
-    /**
-     * @param ndConstructor The {@link NDConfiguration} producer of that this new tensor ought to have.
-     * @param type The data type that this tensor ought to have.
-     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
-     * @param <T> The type parameter for the actual data array items.
-     */
-    private <T> void _constructFromInitializer(NDConstructor ndConstructor, DataType<T> type, Filler<T> filler ) {
+    static <V> TsrImpl<V> _of( NDConstructor ndConstructor, DataType<?> type ) {
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
-        LogUtil.nullArgCheck( type, "filler", Filler.class );
-        _constructAndAllocate( ndConstructor, false, type );
-        _initDataArrayFrom( filler );
+        TsrImpl<V> t = new TsrImpl<>();
+        constructFor(t, CPU.get(), ndConstructor).unpopulated( true, true, type );
+        return t;
     }
-
-    private void _constructAndAllocate( NDConstructor ndConstructor, boolean virtual, DataType<?> type ) {
-        constructFor(CPU.get(), ndConstructor).unpopulated( virtual, true, type );
-    }
-
 
     /*==================================================================================================================
     |
@@ -381,7 +381,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                 _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            constructFor(getDevice(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
+            constructFor(this, getDevice(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
             if ( isVirtual )
                 this.find( Relation.class )
                         .ifPresent( r ->
@@ -558,92 +558,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     |   ------------------------------------------
     */
 
-    private void _toLayout( NDConfiguration.Layout target )
-    {
-        if ( target == this.getNDConf().getLayout() ) return;
-        if ( target == NDConfiguration.Layout.SYMMETRIC )
-            throw new UnsupportedOperationException(
-                "Conversion of a non-symmetric tensor to a symmetric tensor is not possible!"
-            );
-        if ( target == NDConfiguration.Layout.UNSPECIFIC )
-            throw new UnsupportedOperationException(
-                "Conversion of a tensor to an unspecific layout is not possible!"
-            );
-
-        NDConfiguration old = this.getNDConf();
-
-        if ( target == NDConfiguration.Layout.ROW_MAJOR )
-            _fromCMToRM();
-        else
-            _fromRMToCM();
-
-        _checkLayoutConversion( this.getNDConf(), old, target );
-    }
-
-    /**
-     *  Converts this tensor from column major to column major layout.
-     */
-    private void _fromCMToRM() {
-        if ( this.getNDConf().isVirtual() ) {
-            this.setIsVirtual( false ); // We actualized the tensor before conversion!
-            if ( this.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )
-                return;
-        }
-        TsrImpl<V> clone = deepCopy(); // A clone will have by default a row major layout.
-        _setNDConf( clone.getNDConf() );
-        _assignIfActual( () -> clone );
-    }
-
-    /**
-     *  Converts this tensor from row major to column major layout.
-     */
-    private void _fromRMToCM() {
-        _assignIfActual( () -> TsrImpl.this.T().deepCopy().getMut().detach() );
-        NDConfiguration old = this.getNDConf();
-        int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newTranslationFor(old.shape());
-        if ( old.isVirtual() ) {
-            this.setIsVirtual(false);
-            old = this.getNDConf();
-        }
-        _setNDConf( _createNewNDCFrom( old, newTranslation, old.translation() ) );
-    }
-
-    /**
-     *  This will only call the supplier and copy its result into this tensor
-     *  if this tensor is not virtual (meaning this is an actual tensor).
-     */
-    private void _assignIfActual( Supplier<Tsr<?>> provider ) {
-        if ( !this.isVirtual() ) {
-            Tsr<?> toBeAssigned = provider.get();
-            MemUtil.keep(this, toBeAssigned,
-                () -> Neureka.get().backend().getFunction().idy().execute( this, toBeAssigned )
-            );
-        }
-    }
-
-    private static NDConfiguration _createNewNDCFrom(
-        NDConfiguration old, int[] newTranslation, int[] indicesMap
-    ) {
-        assert !old.isVirtual();
-        return NDConfiguration.of(
-                    old.shape(), newTranslation, indicesMap, old.spread(), old.offset()
-                );
-    }
-
-    private static void _checkLayoutConversion(
-            NDConfiguration newConf,
-            NDConfiguration oldConf,
-            NDConfiguration.Layout targetLayout
-    ) {
-        if ( newConf.isVirtual() )
-            throw new IllegalStateException("Layout conversion produced a virtual nd-configuration!");
-        if ( !newConf.getLayout().isCompatible(targetLayout) )
-            throw new IllegalArgumentException(
-                "Failed to convert this tensor from its original layout '"+oldConf.getLayout()+"' " +
-                "to target layout '"+targetLayout+"'. Instead this tensor has layout '"+newConf.getLayout()+"'."
-            );
-    }
-
     /**
      * This method is responsible for incrementing
      * the "_version" field variable which represents the version of the data of this tensor.
@@ -744,7 +658,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> toLayout(NDConfiguration.Layout layout) { TsrImpl.this._toLayout( layout ); return TsrImpl.this; }
+    public Tsr<V> toLayout( NDConfiguration.Layout layout ) {
+        ReLayout.toLayout( this, layout );
+        return TsrImpl.this;
+    }
 
     /**
      *  {@inheritDoc}
@@ -813,7 +730,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     /** {@inheritDoc} */
     @Override public Tsr<V> timesAssign( V other ) {
         LogUtil.nullArgCheck(other, "other", TsrImpl.this.getItemType(), "Cannot multiply-assign 'null' to a tensor!");
-        return this.timesAssign( Tsr.of( getItemType(), getNDConf().shape(), other ) );
+        return this.timesAssign( Tsr.of( getItemType(), this.shape(), other ) );
     }
 
     /** {@inheritDoc} */
@@ -1055,10 +972,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> getAt( Map<?,Integer> rankToStrides ) {
-        LogUtil.nullArgCheck(rankToStrides, "rankToStrides", Map.class, "Rank-to-strides map must not be 'null'!");
+    public Tsr<V> getAt( Map<?,Integer> rangToSteps) {
+        LogUtil.nullArgCheck(rangToSteps, "rankToSteps", Map.class, "Rank-to-steps map must not be 'null'!");
         // ...not a simple slice... Advanced:
-        return SmartSlicer.slice(new Object[]{rankToStrides}, this);
+        return SmartSlicer.slice(new Object[]{rangToSteps}, this);
     }
 
     /**
@@ -1141,8 +1058,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         _putAtCheckFor( (Tsr<?>) value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
         Data<V> thisData = this.getMut().getData();
-        Object thisDataRef = ( thisData != null ? thisData.getRef() : null );
-        if ( thisDataRef != null && !thisDataRef.equals(slice.getMut().getData().getRef()) )
+        Object thisDataRef = ( thisData != null ? thisData.getOrNull() : null );
+        if ( thisDataRef != null && !thisDataRef.equals(slice.getMut().getData().getOrNull()) )
             throw new IllegalStateException("Failed to isolate slice for inline assignment!");
 
         return _putAt( slice, (Tsr<V>) value );
@@ -1468,6 +1385,31 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         else if ( this.isEmpty() ) return "empty";
         else if ( this.isUndefined() ) return "undefined";
         return NdaAsString.representing( this ).byDefaults().toString();
+    }
+
+    static int[][] makeFit( int[] sA, int[] sB ) {
+        int lastIndexOfA = 0;
+        for ( int i = sA.length-1; i >= 0; i-- ) {
+            if ( sA[ i ] != 1 ) {
+                lastIndexOfA = i;
+                break;
+            }
+        }
+        int firstIndexOfB = 0;
+        for ( int i = 0; i < sB.length; i++ ) {
+            if ( sB[ i ] != 1 ) {
+                firstIndexOfB = i;
+                break;
+            }
+        }
+        int newSize = lastIndexOfA + sB.length - firstIndexOfB;
+        int[] rsA = new int[ newSize ];
+        int[] rsB = new int[ newSize ];
+        for( int i = 0; i <newSize; i++ ) {
+            if ( i <= lastIndexOfA ) rsA[ i ] = i; else rsA[ i ] = -1;
+            if ( i >= lastIndexOfA ) rsB[ i ] = i - lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
+        }
+        return new int[][]{ rsA, rsB };
     }
 
 }

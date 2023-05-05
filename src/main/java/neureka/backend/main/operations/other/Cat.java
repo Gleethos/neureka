@@ -4,13 +4,14 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.framing.NDFrame;
 import neureka.math.Function;
 import neureka.math.args.Arg;
-import neureka.framing.NDFrame;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,6 +93,15 @@ public class Cat extends AbstractOperation
             )
             .buildFunAlgorithm()
         );
+    }
+
+
+    @Override public Result execute( Function caller, ExecutionCall<?> call )
+    {
+        if ( caller.isFlat() && caller.numberOfArgs() != call.inputs().length )
+            throw new IllegalArgumentException("The number of arguments of the function call does not match the number of inputs!");
+
+        return super.execute( caller, call );
     }
 
     private void _catFrames( Tsr<?>[] inputs, Tsr<?> concat, int dim )

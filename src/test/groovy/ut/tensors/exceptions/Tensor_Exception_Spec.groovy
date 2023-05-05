@@ -130,17 +130,9 @@ class Tensor_Exception_Spec extends Specification
 
         then : 'The slice range 1..3 causes and exception!'
             def exception = thrown(IllegalArgumentException)
-            exception.message == "java.lang.IllegalArgumentException: " +
-                    "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                    "At index '1' : offset '1' + shape '3' = '4',\n" +
-                    "which is larger than the target shape '3' at the same index!"
-
-        and : 'The logger logs the exception message!'
-            1 * System.err.println({it.endsWith(
-                        "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                        "At index '1' : offset '1' + shape '3' = '4',\n" +
-                        "which is larger than the target shape '3' at the same index!")
-                    })
+            exception.message == "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
+                                 "At index '1' : offset '1' + shape '3' = '4',\n" +
+                                 "which is larger than the target shape '3' at the same index!"
     }
 
     def 'Building a tensor with 0 shape arguments throws an exception.'() {
