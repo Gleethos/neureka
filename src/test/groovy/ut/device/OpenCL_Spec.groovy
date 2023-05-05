@@ -156,7 +156,7 @@ class OpenCL_Spec extends Specification
         and :
             context.platforms.size() == 0
         and :
-            devices.every {it.size() == 0}
+            devices.every {it.numberOfStored() == 0}
 
     }
 

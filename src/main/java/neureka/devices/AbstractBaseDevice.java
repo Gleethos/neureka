@@ -46,7 +46,7 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
     protected int _numberOfDataObjects = 0;
 
     @Override
-    public int size() {
+    public int numberOfStored() {
         return _numberOfTensors;
     }
 
@@ -61,7 +61,7 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
      * @return The truth value determining if there are no tensors stored on this device.
      */
     @Override
-    public boolean isEmpty() { return this.size() == 0; }
+    public boolean isEmpty() { return this.numberOfStored() == 0; }
 
     @Override
     public final boolean contains( Tsr<V> o ) {

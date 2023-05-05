@@ -266,12 +266,12 @@ class Cross_Device_Type_Spec extends Specification
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
         and : 'Two tensors which will be transferred later on...'
-            int initialNumber = device.size()
+            int initialNumber = device.numberOfStored()
             Tsr a = Tsr.of([2, 3], ";)")
             Tsr b = Tsr.of([3, 4], ":P")
 
         expect : 'The given device is initially empty.'
-            device.isEmpty() == ( device.size() == 0 )
+            device.isEmpty() == ( device.numberOfStored() == 0 )
             !device.has( a ) || device instanceof CPU
             !device.has( b ) || device instanceof CPU
 
@@ -280,7 +280,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...tensor "a" is now on the device.'
             !device.isEmpty()
-            device.size() == initialNumber + ( device instanceof CPU ? 2 : 1 )
+            device.numberOfStored() == initialNumber + ( device instanceof CPU ? 2 : 1 )
             device.has( a )
             !device.has( b ) || device instanceof CPU
 
@@ -289,7 +289,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...tensor "b" is now also on the device.'
             !device.isEmpty()
-            device.size() == initialNumber + 2
+            device.numberOfStored() == initialNumber + 2
             device.has( a )
             device.has( b )
 
@@ -298,7 +298,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...the device is empty again.'
             device.isEmpty() == ( initialNumber == 0 )
-            device.size() == initialNumber
+            device.numberOfStored() == initialNumber
             !device.has( a ) || device instanceof CPU
             !device.has( b ) || device instanceof CPU
 
@@ -323,12 +323,12 @@ class Cross_Device_Type_Spec extends Specification
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
         and : 'Two tensors which will be transferred later on...'
-            int initialNumber = device.size()
+            int initialNumber = device.numberOfStored()
             Tsr a = Tsr.of([2, 3], ";)")
             Tsr b = a[1, 0..2]
 
         expect : 'The given device is initially empty.'
-            device.isEmpty() == ( device.size() == 0 )
+            device.isEmpty() == ( device.numberOfStored() == 0 )
             !device.has( a ) || device instanceof CPU
             !device.has( b ) || device instanceof CPU
 
@@ -337,7 +337,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...tensor "a" is now on the device.'
             !device.isEmpty()
-            device.size() == initialNumber + ( device instanceof CPU ? 2 : 1 )
+            device.numberOfStored() == initialNumber + ( device instanceof CPU ? 2 : 1 )
             device.has( a )
         and :
             !device.has( b ) || device instanceof CPU
@@ -347,7 +347,7 @@ class Cross_Device_Type_Spec extends Specification
 
         then : '...the device is empty again.'
             device.isEmpty() == (( initialNumber == 0 ) && !( device instanceof CPU ))
-            device.size() == initialNumber + ( device instanceof CPU ? 1 : 0 )
+            device.numberOfStored() == initialNumber + ( device instanceof CPU ? 1 : 0 )
             !device.has( a ) || device instanceof CPU
             !device.has( b ) || device instanceof CPU
 
@@ -364,32 +364,32 @@ class Cross_Device_Type_Spec extends Specification
     ) {
         given : 'We note the initial amount of tensors stored on the device.'
             System.gc()
-            Sleep.until(5_000, 100, {CPU.get().size() == 0})
-            int initial = device.size()
+            Sleep.until(5_000, 100, {CPU.get().numberOfStored() == 0})
+            int initial = device.numberOfStored()
             int initialDataObjects = device.numberOfDataObjects()
 
         when : 'We first create a data object...'
             var data = Data.of( 42, 73, 11, 7 )
         then : 'The CPU should not have stored any tensors yet.'
-            device.size() == initial
+            device.numberOfStored() == initial
 
         when : 'We create a tensor from the data object...'
             var t = Tsr.of( Shape.of(2, 2), data ).to(device)
         then : 'The device should know about the existence of a new tensor.'
-            device.size() == initial + 1
+            device.numberOfStored() == initial + 1
         and : 'The number of data objects stored on the device should also be increased.'
             device.numberOfDataObjects() == initialDataObjects + 1
 
         when : 'We create a new tensor from the first one...'
             var t2 = t * 2
         then : 'The device should know about the existence of a new tensor as well as the data objects.'
-            device.size() == initial + 2
+            device.numberOfStored() == initial + 2
             device.numberOfDataObjects() == initialDataObjects + 2
 
         when : 'We however create a new reshaped version of the first tensor...'
             var t3 = t.reshape( 4 )
         then : 'The device should also know about the existence of a new tensor, but not a new data object.'
-            device.size() == initial + 3
+            device.numberOfStored() == initial + 3
             device.numberOfDataObjects() == initialDataObjects + 2
 
         when : 'We delete the references to the tensors, and then give the GC some time to do its job...'
@@ -398,16 +398,16 @@ class Cross_Device_Type_Spec extends Specification
             t3 = null
             System.gc()
             Thread.sleep( 128 )
-            Sleep.until(1028, {CPU.get().size() == initial})
-        then : 'The CPU should have forgotten about the tensors.'
-            device.size() == initial
-        and : 'The CPU should have forgotten about the data objects as well.'
+            Sleep.until(1028, {device.numberOfStored() == initial})
+        then : 'The device should have forgotten about the tensors.'
+            device.numberOfStored() == initial
+        and : 'The device should have forgotten about the data objects as well.'
             device.numberOfDataObjects() == initialDataObjects
 
         where : 'The following Device instances are being tested :'
             device << [
                 CPU.get(),
-                //Device.get( "openCL" )
+                Device.get( "openCL" )
             ]
     }
 
@@ -421,10 +421,10 @@ class Cross_Device_Type_Spec extends Specification
             Tsr a = Tsr.of([2, 3], ";)")
             Tsr b = a[1, 0..2]
         and :
-            var initialSize = device.size()
+            var initialSize = device.numberOfStored()
 
         expect : 'The given device is initially empty.'
-            device.isEmpty() == ( device.size() == 0 )
+            device.isEmpty() == ( device.numberOfStored() == 0 )
             !device.has( a )
             !device.has( b )
 
@@ -436,7 +436,7 @@ class Cross_Device_Type_Spec extends Specification
             exception.message.contains("Data parent is not outsourced!")
 
         expect : 'The given device is initially empty.'
-            device.isEmpty() == ( device.size() == 0 )
+            device.isEmpty() == ( device.numberOfStored() == 0 )
             !device.has( a )
             !device.has( b )
 
@@ -451,7 +451,7 @@ class Cross_Device_Type_Spec extends Specification
             device.has( a )
             b.mut.data.get() == null
             device.has( b )
-            device.size() == initialSize
+            device.numberOfStored() == initialSize
 
         where : 'The following Device instances are being tested :'
             device                                  | storageMethod

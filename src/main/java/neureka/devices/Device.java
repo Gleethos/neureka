@@ -141,6 +141,9 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
     }
 
     /**
+     *  Note that this is not necessarily equal to {@link #numberOfStored()}, because
+     *  multiple tensors may share a single {@link Data} object.
+     *
      * @return The number of {@link Data} objects stored on this {@link Device}.
      */
     int numberOfDataObjects();

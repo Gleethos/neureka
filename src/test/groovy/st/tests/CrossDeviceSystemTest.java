@@ -15,7 +15,7 @@ public class CrossDeviceSystemTest
 
     public static boolean on( Device gpu )
     {
-        int initialNumberOfOutsourced = gpu.size();
+        int initialNumberOfOutsourced = gpu.numberOfStored();
 
         UnitTester_Tensor tester = new UnitTester_Tensor("");
 
@@ -194,16 +194,16 @@ public class CrossDeviceSystemTest
         {
             System.gc();
             Sleep.until(400, ()->{
-                int numberOfOutsourced = gpu.size() - initialNumberOfOutsourced;
+                int numberOfOutsourced = gpu.numberOfStored() - initialNumberOfOutsourced;
                 return numberOfOutsourced <= listOfTensors.size();
             });
             System.gc();
             Sleep.until(400, ()->{
-                int numberOfOutsourced = gpu.size() - initialNumberOfOutsourced;
+                int numberOfOutsourced = gpu.numberOfStored() - initialNumberOfOutsourced;
                 return numberOfOutsourced <= listOfTensors.size();
             });
 
-            int numberOfOutsourced = gpu.size() - initialNumberOfOutsourced;
+            int numberOfOutsourced = gpu.numberOfStored() - initialNumberOfOutsourced;
 
             assert numberOfOutsourced <= listOfTensors.size();
             //---
@@ -219,7 +219,7 @@ public class CrossDeviceSystemTest
             listOfTensors.forEach(gpu::free);
             sentence = "Number of tensors after deleting: ";
             tester.testContains(
-                    sentence + Math.max(0, gpu.size()-initialNumberOfOutsourced),
+                    sentence + Math.max(0, gpu.numberOfStored()-initialNumberOfOutsourced),
                     new String[]{sentence+"0"},
                     "Testing if all tensors have been deleted!"
             );

@@ -48,7 +48,7 @@ abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
         }
     }
 
-    public int size() { return _size; }
+    public int numberOfStored() { return _size; }
 
     public boolean isEmpty() { return _size == 0; }
 
