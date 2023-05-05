@@ -43,7 +43,7 @@ public final class ReferenceCounter
     }
 
     public void fullDelete() {
-        if ( _count == 0 ) return;
+        if ( _count == 0 ) return; // Cleanup action already performed by decrement()!
         if ( _count < 0 ) throw new IllegalStateException("Cannot decrement a reference counter with a negative count!");
         _action.accept(new ChangeEvent(ChangeType.FULL_DELETE, -_count, 0));
         _count = 0;

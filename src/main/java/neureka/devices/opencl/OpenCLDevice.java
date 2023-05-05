@@ -494,10 +494,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         final cl_mem clValMem = newClTsr.value.data;
         cl_event clValEvent = newClTsr.value.event;
-        _cleaning( newClTsr.value, () -> {
-            if ( clValEvent != null ) clWaitForEvents(1, new cl_event[]{clValEvent});
-            clReleaseMemObject(clValMem); // Removing data from the device!
-        });
     }
 
     @Override
@@ -956,10 +952,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         public CLData( AbstractBaseDevice<Number> owner, Object dataRef, DataType<Number> dataType ) {
             super(owner, dataRef, dataType, ()->{
-                    // TODO!
-                    //cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
-                    //if ( clTsr.value.event != null ) clWaitForEvents(1, new cl_event[]{clTsr.value.event});
-                    //clReleaseMemObject(clTsr.value.data); // Removing data from the device!
+                // In this lambda we free the memory, because the data is no longer needed!
+                cl_tsr<?,?> clTsr = (cl_tsr<?,?>) dataRef;
+                if ( clTsr.value.event != null ) clWaitForEvents(1, new cl_event[]{clTsr.value.event});
+                clReleaseMemObject(clTsr.value.data); // Removing data from the device!
             });
             assert !(dataRef instanceof Data);
         }
