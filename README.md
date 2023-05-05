@@ -249,9 +249,10 @@ for additional types of operations or data type support.
 
 [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka)
 
-## Stargazers over time
+## Star History ##
 
-[![Stargazers over time](https://starchart.cc/Gleethos/neureka.svg)](https://starchart.cc/Gleethos/neureka)
--->      
+[![Star History Chart](https://api.star-history.com/svg?repos=Gleethos/neureka&type=Date)](https://star-history.com/#Gleethos/neureka&Date)
+
+-->
 
 [![Tweet](https://img.shields.io/twitter/url/https/github.com/Gleethos/neureka.svg?style=social)](https://twitter.com/intent/tweet?text=Check%20out%20Neureka!%20https://github.com/Gleethos/neureka)
