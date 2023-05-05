@@ -39,10 +39,10 @@ SOFTWARE.
 
     Use the following as search keys :)
 
-    $(1) : NESTED CLASSES
-    $(2) : FIELD VARIABLES
-    $(3) : CONSTRUCTION
-    $(4) : OPENCL PROPERTIES
+    $(1) : FIELD VARIABLES
+    $(2) : CONSTRUCTION
+    $(3) : OPENCL PROPERTIES
+    $(4) : NESTED CLASSES
 
 */
 
@@ -100,90 +100,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     /*==================================================================================================================
     |
-    |       §(1) : NESTED CLASSES
-    |   ---------------------------
-    */
-
-    /**
-     * This class is an OpenCL-Device specific tensor component used to store
-     * the floating point size ( 1:float, 2:double, ...),
-     * a reference to a wrapper containing a pointer to the tensor's configuration (cl_config),
-     * and
-     * a reference to a wrapper containing a pointer to the tensor's data (cl_data)
-     * The latter two lend their identity for garbage collection!
-     */
-    static class cl_tsr<V, T extends V> {
-
-        cl_tsr(cl_tsr.cl_value value, cl_dtype  dtype) {
-            this.value = value;
-            this.dtype = dtype;
-        }
-
-        /**
-         * This class is responsible for representing the
-         * data of a tensor stored on the device.
-         * Instances of this class lend their identity to utilize garbage collection
-         * of the data that they reference via their "cl_mem" field.
-         * Meaning this inner memory object "cl_mem" will
-         * be freed via a call hook stored inside a Cleaner instance...
-         */
-        static class cl_value
-        {
-            cl_value( int size ) { this.size = size; }
-
-            public final int size;
-            public cl_mem    data;
-            public cl_event  event;
-        }
-
-        /**
-         * This is the class responsible for representing NDConfiguration data.
-         * Instances of this class lend their identity to utilize garbage collection
-         * of the data that they reference via their "cl_mem" field.
-         * Meaning this inner memory object "cl_mem" will
-         * be freed via a call hook stored inside a Cleaner instance...
-         */
-        static final class cl_config {
-            public cl_mem data;
-        }
-
-        public final cl_dtype  dtype;
-        public final cl_value  value;
-
-        @Override
-        public boolean equals(Object obj) {
-            if ( !(obj instanceof cl_tsr) ) return false;
-            return ((cl_tsr) obj).value == this.value;
-        }
-    }
-
-    /**
-     * This class manages a reference to a so called "ad hoc" program & kernel.
-     * Ad hoc is a Latin phrase meaning literally 'to this'.
-     * In English, it generally signifies a solution designed for a specific problem or task,
-     * non-generalizable, and not intended to be adapted to other purposes.
-     * This leads to the purpose of this class, namely to hold the context to a unique kernel with
-     * a uniquely associated purpose which has been created by an operation possibly for specific
-     * tensor dimensions or possibly other properties...
-     */
-    static final class cl_ad_hoc
-    {
-        public final String source;
-        public final cl_kernel kernel;
-        public final cl_program program;
-
-        public cl_ad_hoc(
-            String source, cl_kernel kernel, cl_program program
-        ) {
-            this.source = source;
-            this.kernel = kernel;
-            this.program = program;
-        }
-    }
-
-    /*==================================================================================================================
-    |
-    |       §(2) : FIELD VARIABLES
+    |       §(1) : FIELD VARIABLES
     |   ---------------------------
     */
 
@@ -204,11 +121,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
     private final cl_command_queue _queue;
 
 
-    private final Map<NDConfiguration, cl_tsr.cl_config> _configs = new WeakHashMap<>();
+    private final Map<NDConfiguration, cl_config> _configs = new WeakHashMap<>();
 
     /*==================================================================================================================
     |
-    |       §(3) : CONSTRUCTION
+    |       §(2) : CONSTRUCTION
     |   ---------------------------
     */
 
@@ -498,12 +415,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return newClt;
     }
 
-    public cl_tsr.cl_config clConfigOf( Tsr<?> t ) {
+    public cl_config clConfigOf(Tsr<?> t ) {
         return clConfigOf( t.getNDConf() );
     }
 
-    public cl_tsr.cl_config clConfigOf( NDConfiguration ndc ) {
-        cl_tsr.cl_config config = _configs.get(ndc);
+    public cl_config clConfigOf(NDConfiguration ndc ) {
+        cl_config config = _configs.get(ndc);
         if ( config == null ) {
             config = _writeNewNDConfig( ndc );
             _configs.put(ndc, config);
@@ -511,9 +428,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return config;
     }
 
-    private cl_tsr.cl_config _writeNewNDConfig( NDConfiguration ndc ) {
+    private cl_config _writeNewNDConfig(NDConfiguration ndc ) {
 
-        cl_tsr.cl_config clf = new cl_tsr.cl_config();
+        cl_config clf = new cl_config();
 
         //Config format: <[ shape | strides | indicesMap | indices | scale ]>
         int[] config = ndc.asInlineArray();
@@ -815,7 +732,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     /*==================================================================================================================
     |
-    |       §(4) : OPENCL PROPERTIES
+    |       §(3) : OPENCL PROPERTIES
     |   ---------------------------
     */
 
@@ -1049,4 +966,86 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     }
 
+    /*==================================================================================================================
+    |
+    |       §(4) : NESTED CLASSES
+    |   ---------------------------
+    */
+
+    /**
+     * This class is an OpenCL-Device specific tensor component used to store
+     * the floating point size ( 1:float, 2:double, ...),
+     * a reference to a wrapper containing a pointer to the tensor's configuration (cl_config),
+     * and
+     * a reference to a wrapper containing a pointer to the tensor's data (cl_data)
+     * The latter two lend their identity for garbage collection!
+     */
+    static class cl_tsr<V, T extends V> {
+
+        cl_tsr(cl_tsr.cl_value value, cl_dtype  dtype) {
+            this.value = value;
+            this.dtype = dtype;
+        }
+
+        /**
+         * This class is responsible for representing the
+         * data of a tensor stored on the device.
+         * Instances of this class lend their identity to utilize garbage collection
+         * of the data that they reference via their "cl_mem" field.
+         * Meaning this inner memory object "cl_mem" will
+         * be freed via a call hook stored inside a Cleaner instance...
+         */
+        static class cl_value
+        {
+            cl_value( int size ) { this.size = size; }
+
+            public final int size;
+            public cl_mem    data;
+            public cl_event  event;
+        }
+
+        public final cl_dtype  dtype;
+        public final cl_value  value;
+
+        @Override
+        public boolean equals(Object obj) {
+            if ( !(obj instanceof cl_tsr) ) return false;
+            return ((cl_tsr) obj).value == this.value;
+        }
+    }
+
+    /**
+     * This class manages a reference to a so called "ad hoc" program & kernel.
+     * Ad hoc is a Latin phrase meaning literally 'to this'.
+     * In English, it generally signifies a solution designed for a specific problem or task,
+     * non-generalizable, and not intended to be adapted to other purposes.
+     * This leads to the purpose of this class, namely to hold the context to a unique kernel with
+     * a uniquely associated purpose which has been created by an operation possibly for specific
+     * tensor dimensions or possibly other properties...
+     */
+    static final class cl_ad_hoc
+    {
+        public final String source;
+        public final cl_kernel kernel;
+        public final cl_program program;
+
+        public cl_ad_hoc(
+                String source, cl_kernel kernel, cl_program program
+        ) {
+            this.source = source;
+            this.kernel = kernel;
+            this.program = program;
+        }
+    }
+
+    /**
+     * This is the class responsible for representing NDConfiguration data.
+     * Instances of this class lend their identity to utilize garbage collection
+     * of the data that they reference via their "cl_mem" field.
+     * Meaning this inner memory object "cl_mem" will
+     * be freed via a call hook stored inside a Cleaner instance...
+     */
+    static final class cl_config {
+        public cl_mem data;
+    }
 }
