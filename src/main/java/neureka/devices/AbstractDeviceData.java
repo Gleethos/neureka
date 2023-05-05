@@ -45,8 +45,6 @@ public abstract class AbstractDeviceData<T> implements DeviceData<T>
 
     @Override public final DataType<T> dataType() { return _dataType; }
 
-    @Override public DeviceData<T> withNDConf( NDConfiguration ndc ) { return this; }
-
     @Override public final void incrementUsageCount() {
         if ( _refCounter.count() == 0 ) _owner._numberOfDataObjects++;
         _refCounter.increment();

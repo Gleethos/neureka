@@ -106,8 +106,6 @@ public class CPU extends AbstractDevice<Object>
         return this;
     }
 
-    @Override protected final <T> void _updateNDConf(Tsr<T> tensor) { /* Nothing to do here */ }
-
     @Override
     protected final <T> int _sizeOccupiedBy(Tsr<T> tensor) {
         Object data = tensor.getMut().getData().getOrNull();

@@ -71,8 +71,10 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
 import static org.jocl.CL.*;
@@ -112,10 +114,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     static class cl_tsr<V, T extends V> {
 
-        cl_tsr(cl_tsr.cl_value value, cl_dtype  dtype, cl_config config) {
+        cl_tsr(cl_tsr.cl_value value, cl_dtype  dtype) {
             this.value = value;
             this.dtype = dtype;
-            this.config = config;
         }
 
         /**
@@ -146,7 +147,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
             public cl_mem data;
         }
 
-        public cl_config config;
         public final cl_dtype  dtype;
         public final cl_value  value;
 
@@ -203,6 +203,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     private final cl_command_queue _queue;
 
+
+    private final Map<NDConfiguration, cl_tsr.cl_config> _configs = new WeakHashMap<>();
 
     /*==================================================================================================================
     |
@@ -428,101 +430,101 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add(
             tensor.getMut().upcast(Number.class),
-            parent.getMut().getData().as( cl_tsr.class ),
+            parent.getMut().getData(),
             () -> tensor.set((Component) this)
         );
     }
 
     private <T extends Number> void _add(
-            Tsr<Number> tensor,
-            cl_tsr<Number, T> parent,
-            Runnable migration // Causes the device to be a component of the tensor!
+        Tsr<Number> tensor,
+        Data<T> parentData,
+        Runnable migration // Causes the device to be a component of the tensor!
     ) {
         if ( this.has( tensor ) ) {
             _LOG.debug("Trying to add a tensor to a device which already reports hosting it.");
             return;
         }
-        if ( parent == null ) {
+
+        boolean convertToFloat = Neureka.get()
+                                    .backend()
+                                    .find(CLBackend.class)
+                                    .map( it -> it.getSettings().isAutoConvertToFloat() )
+                                    .orElse(false);
+
+        Data<Number> data;
+        if ( parentData == null ) {
             if ( tensor.getMut().getData().owner() == this ) {
                 migration.run();
                 return;
             }
-        }
-
-        boolean convertToFloat = Neureka.get()
-                                        .backend()
-                                        .find(CLBackend.class)
-                                        .map( it -> it.getSettings().isAutoConvertToFloat() )
-                                        .orElse(false);
-        JVMData jvmData = null;
-
-        if ( parent == null )
+            JVMData jvmData = null;
             jvmData = JVMData.of( tensor.getMut().getData().getOrNull(), convertToFloat );
-
-        cl_tsr<Number, Number> newClt;
-
-        if ( parent != null )
-            newClt = _storeFromParent( tensor, parent );
-        else {
-            newClt = _storeNew( tensor.getNDConf(), jvmData );
+            cl_tsr<Number, Number> newClt;
+            newClt = _storeNew( jvmData );
             if ( tensor.rqsGradient() && tensor.hasGradient() )
                 this.store(tensor.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!")));
+
+            cl_mem[] memos = new cl_mem[]{newClt.value.data};
+            clEnqueueMigrateMemObjects(
+                    _queue, memos.length, memos,
+                    CL_MIGRATE_MEM_OBJECT_HOST,
+                    0,
+                    null,
+                    null
+                );
+
+            data = _dataArrayOf(newClt, (DataType<Number>) _dataTypeOf(newClt));
         }
-
-        cl_mem[] memos = parent == null
-                                ? new cl_mem[]{newClt.value.data, newClt.config.data}
-                                : new cl_mem[]{newClt.config.data};
-
-        clEnqueueMigrateMemObjects(
-                _queue, memos.length, memos,
-                CL_MIGRATE_MEM_OBJECT_HOST,
-                0,
-                null,
-                null
-            );
-
-        Data<Number> data = _dataArrayOf(newClt, (DataType<Number>) _dataTypeOf(newClt));
+        else
+            data = (Data<Number>) parentData;
 
         tensor.getMut().setData( data );
         migration.run();
 
         // When tensors get stored on this device,
-        // they are implicitly converted to a float tensor:
+        // they can be implicitly converted to a float tensor:
         if ( convertToFloat )
             tensor.getMut().toType(F32.class);
     }
 
-    private cl_tsr<Number, Number> _storeFromParent( Tsr<Number> tensor, cl_tsr<Number, ?> parent ) {
-        cl_tsr.cl_config config = _writeNDConfig( tensor.getNDConf() );
-        return new cl_tsr<>(parent.value, parent.dtype, config);
+    private cl_tsr<Number, Number> _storeNew( JVMData jvmData ) {
+        return _storeNew( jvmData, false );
     }
 
-    private cl_tsr<Number, Number> _storeNew( NDConfiguration ndc, JVMData jvmData ) {
-        return _storeNew( ndc, jvmData, false );
-    }
-
-    private cl_tsr<Number, Number> _storeNew( NDConfiguration ndc, JVMData jvmData, boolean allocateTargetSize ) {
-        cl_tsr.cl_config config = _writeNDConfig( ndc );
+    private cl_tsr<Number, Number> _storeNew( JVMData jvmData, boolean allocateTargetSize ) {
         cl_tsr.cl_value newVal = new cl_tsr.cl_value((int) (allocateTargetSize ? jvmData.getTargetLength() : jvmData.getLength()));
-        cl_tsr<Number, Number> newClt = new cl_tsr<>(newVal, jvmData.getType(), config);
+        cl_tsr<Number, Number> newClt = new cl_tsr<>(newVal, jvmData.getType());
         _store( jvmData, newClt, allocateTargetSize );
         return newClt;
     }
 
-    private cl_tsr.cl_config _writeNDConfig( NDConfiguration ndc ) {
+    public cl_tsr.cl_config clConfigOf( Tsr<?> t ) {
+        return clConfigOf( t.getNDConf() );
+    }
+
+    public cl_tsr.cl_config clConfigOf( NDConfiguration ndc ) {
+        cl_tsr.cl_config config = _configs.get(ndc);
+        if ( config == null ) {
+            config = _writeNewNDConfig( ndc );
+            _configs.put(ndc, config);
+        }
+        return config;
+    }
+
+    private cl_tsr.cl_config _writeNewNDConfig( NDConfiguration ndc ) {
 
         cl_tsr.cl_config clf = new cl_tsr.cl_config();
 
-        //CONFIG TRANSFER: <[ shape | strides | indicesMap | indices | scale ]>
+        //Config format: <[ shape | strides | indicesMap | indices | scale ]>
         int[] config = ndc.asInlineArray();
 
-        //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:
+        //shape/strides/map/offset/spread
         clf.data = clCreateBuffer(
-                _platform.getContext(),
-                CL_MEM_READ_WRITE,
-                (long) config.length * Sizeof.cl_int,
-                null, null
-        );
+                    _platform.getContext(),
+                    CL_MEM_READ_WRITE,
+                    (long) config.length * Sizeof.cl_int,
+                    null, null
+                );
 
         clEnqueueWriteBuffer(
                 _queue, clf.data, CL_TRUE, 0,
@@ -530,9 +532,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 Pointer.to(config),
                 0,
                 null, null
-        );
+            );
         final cl_mem clConfMem = clf.data;
-        _cleaning(clf, () -> clReleaseMemObject(clConfMem));
+        _cleaning( clf, () -> clReleaseMemObject(clConfMem) );
         return clf;
     }
 
@@ -634,21 +636,21 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public <T extends Number> Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
         JVMData jvmData = JVMData.of( dataType.getItemTypeClass(), ndc.size() );
-        cl_tsr<Number, Number> clt = _storeNew( ndc, jvmData );
+        cl_tsr<Number, Number> clt = _storeNew(jvmData );
         return (Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
     @Override
     public <T extends Number> Data<T> allocateFromOne( DataType<T> dataType, NDConfiguration ndc, T initialValue ) {
         JVMData jvmData = JVMData.of( initialValue, ndc.size(), false, true );
-        cl_tsr<Number, Number> clt = _storeNew( ndc, jvmData );
+        cl_tsr<Number, Number> clt = _storeNew(jvmData );
         return (Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
     @Override
     public <T extends Number> Data<T> allocateFromAll( DataType<T> dataType, NDConfiguration ndc, Object data ) {
         JVMData jvmData = JVMData.of( data );
-        cl_tsr<Number, Number> clt = _storeNew( ndc, jvmData );
+        cl_tsr<Number, Number> clt = _storeNew(jvmData );
         return (Data<T>) _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
@@ -659,7 +661,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         if ( clt == null ) throw new IllegalStateException("The tensor has no device component!");
         JVMData jvmData = JVMData.of( initialValue, ndc.size(), false, true );
-        clt = _storeNew( ndc, jvmData, true );
+        clt = _storeNew( jvmData, true );
         return _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
@@ -670,7 +672,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         if ( clt == null ) throw new IllegalStateException("The tensor has no device component!");
         JVMData jvmData = JVMData.of( initialValue, ndc.size(), false, true );
-        clt = _storeNew( ndc, jvmData, false );
+        clt = _storeNew( jvmData, false );
         return _dataArrayOf(clt, (DataType<Number>) _dataTypeOf(clt));
     }
 
@@ -729,26 +731,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         } else
             changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         return true;
-    }
-
-    @Override
-    protected <T extends Number> void _updateNDConf( Tsr<T> tensor ) {
-        cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
-        if ( clt != null ) {
-            // This will create a new cl config.
-            clt.config = _writeNDConfig(tensor.getNDConf());
-            // The old one will be garbage collected through the cleaner!
-            cl_mem[] memos = new cl_mem[]{clt.config.data};
-            clEnqueueMigrateMemObjects(
-                    _queue,
-                    memos.length,
-                    memos,
-                    CL_MIGRATE_MEM_OBJECT_HOST,
-                    0,
-                    null,
-                    null
-            );
-        }
     }
 
     @Override
@@ -1065,14 +1047,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
             assert !(dataRef instanceof Data);
         }
 
-        @Override
-        public DeviceData<Number> withNDConf( NDConfiguration ndc ) {
-            // We create a new cl_tsr object with the same data but a different ND-configuration:
-            cl_tsr<?,?> clTsr = (cl_tsr<?,?>) _dataRef;
-            cl_tsr.cl_config config = ((OpenCLDevice)_owner)._writeNDConfig( ndc );
-            cl_tsr<?,?> newDataRef = new cl_tsr<>(clTsr.value, clTsr.dtype, config);
-            return new CLData( (AbstractBaseDevice<Number>) _owner, newDataRef, _dataType );
-        }
     }
 
 }

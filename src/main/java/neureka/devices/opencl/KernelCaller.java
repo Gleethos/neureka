@@ -55,7 +55,8 @@ public class KernelCaller
      *  @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller passConfOf( Tsr<Number> tensor ) {
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().as( OpenCLDevice.cl_tsr.class ).config.data ) );
+        OpenCLDevice device = (OpenCLDevice) tensor.getDevice();
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( device.clConfigOf(tensor ).data ) );
         _argId++;
         return this;
     }

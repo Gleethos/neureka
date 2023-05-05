@@ -260,7 +260,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
             new TsrConstructor(
                 targetDevice, ndConstructor,
                 new TsrConstructor.API() {
-                    @Override public void setConf( NDConfiguration conf   ) { nda.getMut().setNDConf( conf ); }
+                    @Override public void setConf( NDConfiguration conf   ) { nda.mut().setNDConf( conf ); }
                     @Override public void setData( Data o                 ) { nda._setData( o ); }
                     @Override public void setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                 }
@@ -320,16 +320,15 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
      *
      * @param ndConfiguration The new NDConfiguration instance which ought to be set.
      */
-    protected void _setNDConf(NDConfiguration ndConfiguration )
+    protected void _setNDConf( NDConfiguration ndConfiguration )
     {
         _guardSet( "ND-Configuration" );
         if ( _NDConf != null && ndConfiguration != null ) {
-            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );
-            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );
+            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a * b );
+            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a * b );
             assert s1 == s2;
         }
         _NDConf = ndConfiguration;
-        getDevice().access(this).updateNDConf();
     }
 
 }

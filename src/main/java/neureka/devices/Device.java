@@ -368,13 +368,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
          */
         void cleanup( Runnable action );
 
-        /**
-         *  This method automatically called within the {@link MutateTsr#setNDConf(NDConfiguration)} method
-         *  so that an outsourced tensor has a consistent ND-Configuration both in RAM and on any
-         *  given {@link Device} implementation... <br><br>
-         */
-        void updateNDConf();
-
         <T> Data<T> actualize();
 
         <T> Data<T> virtualize();

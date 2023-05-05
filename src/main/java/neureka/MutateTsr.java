@@ -68,7 +68,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param configuration The new NDConfiguration instance which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    Tsr<T> setNDConf(NDConfiguration configuration);
+    Tsr<T> setNDConf( NDConfiguration configuration );
 
     /**
      * {@inheritDoc}

@@ -11,8 +11,6 @@ import neureka.ndim.config.NDConfiguration;
  */
 public interface DeviceData<V> extends Data<V>
 {
-    DeviceData<V> withNDConf( NDConfiguration ndc );
-
     void incrementUsageCount();
 
     void decrementUsageCount();

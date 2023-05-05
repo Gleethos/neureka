@@ -72,7 +72,7 @@ final class TsrConstructor
     ) {
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
         _API.setConf( ndc );
-        _API.setData( data instanceof DeviceData ? ((DeviceData<Object>)data).withNDConf(ndc) : data );
+        _API.setData( data );
     }
 
     public void tryConstructing(
