@@ -491,9 +491,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     (long) jvmData.getItemSize() * bufferLength,
                     jvmData.getPointer(), 0, null, null
                 );
-
-        final cl_mem clValMem = newClTsr.value.data;
-        cl_event clValEvent = newClTsr.value.event;
     }
 
     @Override
