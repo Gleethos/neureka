@@ -523,8 +523,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         _pendingError = new PendingError<>( error, numOfADPaths );
                         pendingNodes.add( this );
                     }
-                    else
+                    else {
+                        if ( _pendingError.isFullyAccumulated() )
+                            _pendingError = new PendingError<>(_pendingError.getAccumulatedError(), numOfADPaths);
+
                         _pendingError.accumulate( error );
+                    }
 
                     return;
                     /* Back-prop will be continued later! This node is being remembered in 'PendingError'
