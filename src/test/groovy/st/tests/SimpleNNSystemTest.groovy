@@ -36,32 +36,32 @@ class SimpleNNSystemTest
     {
         boolean doMatMul = ( mode == Mode.MAT_MUL )
 
-        def inputShape =  ( doMatMul ? [5,3] : [5, 3, 1]             )// (5x3)
-        def w1Shape =     ( doMatMul ? [3,4] : [1, inputShape[1], 4] )// (3x4)
-        def w2Shape =     ( doMatMul ? [4,1] : [1, 1, 4]             )// (4x1)
-        def outputShape = ( doMatMul ? [5,1] : [5, 1, 1]             )// (5x1)
-
+        var inputShape =  ( doMatMul ? [5,3] : [5, 3, 1]             )// (5x3)
+        var w1Shape =     ( doMatMul ? [3,4] : [1, inputShape[1], 4] )// (3x4)
+        var w2Shape =     ( doMatMul ? [4,1] : [1, 1, 4]             )// (4x1)
+        var outputShape = ( doMatMul ? [5,1] : [5, 1, 1]             )// (5x1)
+        var layer1Shape = ( doMatMul ? [5,4] : [5, 1, 4]             )// (5x4)
         /*
                 (5x3)|(3x4)->(4x1)|(5x1)
                 (5x4)*(4x3)<-(5x1)*(1x4)
          */
 
-        Tsr X = Tsr.of( // input data: 5 vectors in binary form
-                            inputShape, // (5x3)
-                            [
+        var X = Tsr.of( // input data: 5 vectors in binary form
+                                inputShape, // (5x3)
+                                [
                                     0d, 0d, 1d,
                                     1d, 1d, 0d,
                                     1d, 0d, 1d,
                                     0d, 1d, 1d,
                                     1d, 1d, 1d
-                            ]
-                        ).to(device)
+                                ]
+                            ).to(device)
 
         // output values (labels)
-        Tsr y = Tsr.of(outputShape,[0d,1d,1d,1d,0d]).to(device)
+        var y = Tsr.of(outputShape,[0d,1d,1d,1d,0d]).to(device)
 
-        Tsr input = X
-        Tsr weights1 = Tsr.of(w1Shape,
+        var input = X
+        var weights1 = Tsr.of(w1Shape,
                                 [4.17022005e-01d, 7.20324493e-01d, 1.14374817e-04d, 3.02332573e-01d,
                                  1.46755891e-01d, 9.23385948e-02d, 1.86260211e-01d, 3.45560727e-01d,
                                  3.96767474e-01d, 5.38816734e-01d, 4.19194514e-01d, 6.85219500e-01d]
@@ -73,7 +73,7 @@ class SimpleNNSystemTest
              [1.46755891e-01 9.23385948e-02 1.86260211e-01 3.45560727e-01]
              [3.96767474e-01 5.38816734e-01 4.19194514e-01 6.85219500e-01]]
         */
-        Tsr weights2 = Tsr.of(w2Shape, [0.20445225d, 0.87811744d, 0.02738759d, 0.67046751d]).to(device)
+        var weights2 = Tsr.of(w2Shape, [0.20445225d, 0.87811744d, 0.02738759d, 0.67046751d]).to(device)
         /*
             [1x1x4]:...
             w2 (4, 1) :
@@ -82,7 +82,7 @@ class SimpleNNSystemTest
              [0.02738759]
              [0.67046751]]
          */
-        Tsr output = Tsr.of(outputShape, [0d, 0d, 0d, 0d, 0d]).to(device)
+        var output = Tsr.of(outputShape, [0d, 0d, 0d, 0d, 0d]).to(device)
         /*
             [5x1x1]...
             out (5, 1) :
@@ -92,10 +92,10 @@ class SimpleNNSystemTest
              [0.0]
              [0.0]]
         */
-        Tsr layer1 = Tsr.newInstance()
+        var layer1 = Tsr.of(layer1Shape, 0d).to(device)
 
         // iterate 500 times
-        for( i in 0..500 ){
+        for ( i in 0..500 ){
             feedforward(weights1, weights2, input, output, layer1)
             backprop(weights1, weights2, input, output, layer1, y)
         }

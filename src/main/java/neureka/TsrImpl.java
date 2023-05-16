@@ -583,26 +583,6 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     }
 
     /**
-     *  In essence tensors are merely fancy wrapper for some form of array of any type... 
-     *  This wrapper usually stays the same of a given data array.
-     *  However, sometimes a tensor changes its identity, or rather the underlying
-     *  data changes the wrapping tensor instance. <br>
-     *  <br>
-     * @param tensor The tensor whose identity should be stolen.
-     */
-    private void _become( TsrImpl<V> tensor )
-    {
-        if ( tensor == null ) return;
-        _setData( tensor.getMut().getData() );
-        _setNDConf( tensor.getNDConf() );
-        _flags = tensor._flags;
-        _transferFrom( tensor );
-        tensor._setData( null );
-        tensor._setNDConf( null );
-        tensor._flags = 0;
-    }
-
-    /**
      *  {@inheritDoc}
      */
     @Override
@@ -1119,8 +1099,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             }
             valueIsDeviceVisitor = true;
         }
-        if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become((TsrImpl<V>) value); // TODO: Rethink this a little
-        else Neureka.get().backend().getFunction().idy().call(  slice, value  );
+        Neureka.get().backend().getFunction().idy().call(  slice, value  );
         try {
             if ( valueIsDeviceVisitor ) value.getDevice().restore( value );
         } catch ( Exception exception ) {
