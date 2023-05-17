@@ -1,9 +1,7 @@
 package neureka.autograd;
 
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.main.memory.MemUtil;
-import neureka.math.parsing.FunctionParser;
 
 /**
  *  A wrapper for a tensor which is used to accumulate error values
@@ -19,13 +17,15 @@ import neureka.math.parsing.FunctionParser;
 final class PendingError<V>
 {
     private final int _expectedToBeReceived;
-    private int _toBeReceived;
+    private int _received;
     private final Tsr<V> _accumulatedError;
+    private final int _generation;
 
-    public PendingError( Tsr<V> error, int toBeReceived ) {
+    public PendingError( Tsr<V> error, int toBeReceived, int generation ) {
         _expectedToBeReceived = toBeReceived;
-        _toBeReceived = toBeReceived - 1; // -1 because the first error value is already given to the constructor.
+        _received = 1; // 1 because the first error value is already given to the constructor.
         _accumulatedError = error;
+        _generation = generation;
     }
 
     public void accumulate( Tsr<?> error ) {
@@ -34,18 +34,31 @@ final class PendingError<V>
                     _accumulatedError.mut().plusAssign((Tsr<V>)error);
                     return null;
                 });
-        _toBeReceived--;
+        _received++;
+        if ( _received > _expectedToBeReceived ) {
+            throw new IllegalStateException(
+                    "Received more error values than expected! " +
+                    "Expected: " + _expectedToBeReceived + ", " +
+                    "Received: " + _received + "."
+            );
+        }
     }
 
     public boolean isFullyAccumulated() {
-        return _toBeReceived == 0;
+        return _received == _expectedToBeReceived;
     }
+
+    public int getGeneration() { return _generation; }
 
     public String toString() {
-        return this.getClass().getSimpleName()+"[toBeReceived=" + _toBeReceived + ",accumulatedError=" + _accumulatedError + "]";
+        return this.getClass().getSimpleName()+"[" +
+                    "received=" + _received + "," +
+                    "accumulatedError=" + _accumulatedError + "," +
+                    "generation=" + _generation +
+                "]";
     }
 
-    public int getToBeReceived() { return _toBeReceived; }
+    public int getReceived() { return _received; }
 
     public int getExpectedToBeReceived() { return _expectedToBeReceived; }
 
