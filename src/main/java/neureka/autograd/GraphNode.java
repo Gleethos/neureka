@@ -366,6 +366,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private synchronized void _attachChild( GraphNode<V> newChild ) {
         Objects.requireNonNull( newChild );
+        if ( _pendingError != null )
+            throw new IllegalStateException(
+                    "This node cannot be used for forward propagation because it is currently actively involved in backward propagation!\n" +
+                    "Only after the pending error of this node has received all expected error contributions from its children, " +
+                    "can it be used for forward propagation again."
+                );
         _children.add( new WeakReference<>( newChild, null ) );
     }
 
