@@ -1,9 +1,9 @@
 package neureka.optimization;
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 public interface OptimizerFactory {
 
-    <V extends Number> Optimizer<V> create(Tsr<V> target);
+    <V extends Number> Optimizer<V> create(Tensor<V> target);
 
 }

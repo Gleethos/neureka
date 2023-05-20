@@ -1,10 +1,10 @@
 package neureka.fluent.slicing;
 
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.fluent.slicing.states.*;
 
-public class AxisSliceBuilder<V> implements FromOrAtTsr<V>, ToForTsr<V>, StepsOrAxisOrGetTsr<V>, AxisOrGetTsr<V>
+public class AxisSliceBuilder<V> implements FromOrAtTensor<V>, ToForTensor<V>, StepsOrAxisOrGetTensor<V>, AxisOrGetTensor<V>
 {
     interface Resolution<V> { SliceBuilder<V> resolve( int from, int to, int steps ); }
 
@@ -30,7 +30,7 @@ public class AxisSliceBuilder<V> implements FromOrAtTsr<V>, ToForTsr<V>, StepsOr
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link To} interface.
      */
     @Override
-    public ToForTsr<V> from(int index ) {
+    public ToForTensor<V> from(int index ) {
         _from = index;
         return this;
     }
@@ -45,7 +45,7 @@ public class AxisSliceBuilder<V> implements FromOrAtTsr<V>, ToForTsr<V>, StepsOr
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link StepsOrAxisOrGet} interface.
      */
     @Override
-    public StepsOrAxisOrGetTsr<V> to(int index ) {
+    public StepsOrAxisOrGetTensor<V> to( int index ) {
         _to = index;
         return this;
     }
@@ -60,7 +60,7 @@ public class AxisSliceBuilder<V> implements FromOrAtTsr<V>, ToForTsr<V>, StepsOr
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override
-    public AxisOrGetTsr<V> step(int size) {
+    public AxisOrGetTensor<V> step( int size) {
         _steps = size;
         return this;
     }
@@ -75,14 +75,14 @@ public class AxisSliceBuilder<V> implements FromOrAtTsr<V>, ToForTsr<V>, StepsOr
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override
-    public AxisOrGetTsr<V> at( int index ) {
+    public AxisOrGetTensor<V> at( int index ) {
         _from = index;
         _to = index;
         return this;
     }
 
     @Override
-    public AxisOrGetTsr<V> all() {
+    public AxisOrGetTensor<V> all() {
         return from( 0 ).to( _to );
     }
 
@@ -91,17 +91,17 @@ public class AxisSliceBuilder<V> implements FromOrAtTsr<V>, ToForTsr<V>, StepsOr
      *  This method returns an instance of the {@link AxisSliceBuilder} targeted by the provided index.
      */
     @Override
-    public FromOrAtTsr<V> axis( int axis ) {
+    public FromOrAtTensor<V> axis( int axis ) {
        return _then.resolve(_from, _to, _steps).axis(axis);
     }
 
     @Override
-    public Tsr<V> get() {
+    public Tensor<V> get() {
         return _then.resolve(_from, _to, _steps).get();
     }
 
     @Override
-    public Tsr<V> detached() {
+    public Tensor<V> detached() {
         return _then.resolve(_from, _to, _steps).detached();
     }
 

@@ -2,7 +2,7 @@ package st.tests;
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.GraphNode;
 import neureka.math.Function;
 import testutility.UnitTester_Tensor;
@@ -16,25 +16,25 @@ public class BroadSystemTest
 
         UnitTester_Tensor tester = new UnitTester_Tensor("Testing core tensor functionality");
 
-        Tsr<Double> x = Tsr.of(Shape.of(2, 2), new double[]{
+        Tensor<Double> x = Tensor.of(Shape.of(2, 2), new double[]{
                         -1d, 2d,
                         -3d, 3d
                     }).setRqsGradient(true);
-        Tsr<Double> y = Tsr.of(Shape.of(1, 1), -3d);
-        Tsr<Double> z = Tsr.of("I0xi1", x, y);
+        Tensor<Double> y = Tensor.of(Shape.of(1, 1), -3d);
+        Tensor<Double> z = Tensor.of("I0xi1", x, y);
         tester.testTensor(z, new String[]{"[2x2]:(3.0, -6.0, 9.0, -9.0)"});
-        z.backward(Tsr.of(Shape.of(2, 2), 1d));
+        z.backward(Tensor.of(Shape.of(2, 2), 1d));
         tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
         //---
         {
             Neureka.get().settings().debug().setIsDeletingIntermediateTensors(false);
-            x = Tsr.of(Shape.of(1), 0.1d).setRqsGradient(true);
+            x = Tensor.of(Shape.of(1), 0.1d).setRqsGradient(true);
             Function tanh = Function.of("tanh(i0)", true);
             Function tenxx = Function.of("i0*100", true);
             z = tenxx.call(tanh.call(x));
             tester.testTensor(z, new String[]{"[1]:(9.9668)"});
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
-            z.backward(Tsr.of(Shape.of(1), 1d));
+            z.backward(Tensor.of(Shape.of(1), 1d));
             tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0066)"});
             tester.testTensor(z, new String[]{"[1]:(9.9668); ->d[1]:(99.0066)"});
             tester.testContains(
@@ -43,20 +43,20 @@ public class BroadSystemTest
                     "test double formatting"
             );
             tester.testContains(
-                    Tsr.of(3d).toString("dgc"),
+                    Tensor.of(3d).toString("dgc"),
                     new String[]{"[1]:(3.0)"},
                     "test FP formatting"
             );
         }
         {
             Neureka.get().settings().debug().setIsDeletingIntermediateTensors(true);
-            x = Tsr.of(Shape.of(1), 0.1d).setRqsGradient(true);
+            x = Tensor.of(Shape.of(1), 0.1d).setRqsGradient(true);
             Function tanh = Function.of("tanh(i0)", true);
             Function tenxx = Function.of("i0*100", true);
             z = tenxx.call(tanh.call(x));
             tester.testTensor(z, new String[]{"[1]:(9.9668)"});
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
-            z.backward(Tsr.of(Shape.of(1), 1d));
+            z.backward(Tensor.of(Shape.of(1), 1d));
             tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0066)"});
             tester.testTensor(z, new String[]{"[1]:(9.9668); ->d[1]:(99.0066)"});
             tester.testContains(
@@ -65,18 +65,18 @@ public class BroadSystemTest
                     "test double formatting"
             );
             tester.testContains(
-                    Tsr.of(3d).toString("dgc"),
+                    Tensor.of(3d).toString("dgc"),
                     new String[]{"[1]:(3.0)"},
                     "test FP formatting"
             );
         }
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         //---
-        Tsr<Double> tensor1 = Tsr.of(3d).setRqsGradient(true);
-        Tsr<Double> tensor2 = Tsr.of(-4d);
-        Tsr<Double> tensor3 = Tsr.of(2d);
+        Tensor<Double> tensor1 = Tensor.of(3d).setRqsGradient(true);
+        Tensor<Double> tensor2 = Tensor.of(-4d);
+        Tensor<Double> tensor3 = Tensor.of(2d);
         tester.testInjection(
-                new Tsr[]{tensor1, tensor2, tensor3},
+                new Tensor[]{tensor1, tensor2, tensor3},
                 "I[2]<-(Ig[0]<-I[1])",
                 new String[][]{
                         {"(-4.0)"},// == I[2]
@@ -84,9 +84,9 @@ public class BroadSystemTest
                         {"(-4.0)"},//tensor2
                         {"(-4.0)"},//tensor3
                 });
-        tensor1 = Tsr.of(3d).setRqsGradient(true);
-        tensor2 = Tsr.of(-4d);
-        tensor3 = Tsr.of(2d);
+        tensor1 = Tensor.of(3d).setRqsGradient(true);
+        tensor2 = Tensor.of(-4d);
+        tensor3 = Tensor.of(2d);
         try {
             Function.of("I[2]<-(Ig[0]<-I[1])", true).call( tensor1, tensor2, tensor3 );
         } catch ( Exception e ) {
@@ -96,20 +96,20 @@ public class BroadSystemTest
                     "Non-detached functions performing inline operations will throw exceptions on active autograd computation graphs!"
             );
         }
-        Tsr<Double> result = Function.of("I[2]<-(Ig[0]<-I[1])", false).call( tensor1, tensor2, tensor3  );
+        Tensor<Double> result = Function.of("I[2]<-(Ig[0]<-I[1])", false).call( tensor1, tensor2, tensor3  );
         tester.testContains(
                 result.toString(),
                 new String[]{"(-4.0)"},
                 "Testing if Function.setup.commit() returns non unique result!"
         );
         //---
-        tensor1 = Tsr.of(Shape.of(1, 3), 2d);
-        tensor2 = Tsr.of(Shape.of(2, 1), -1d);
+        tensor1 = Tensor.of(Shape.of(1, 3), 2d);
+        tensor2 = Tensor.of(Shape.of(2, 1), -1d);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1, tensor2},
+                new Tensor[]{tensor1, tensor2},
                 "relu(I[0]xI[1])",
                 new String[]{
                         "[2x3]:(-0.02, -0.02, -0.02, -0.02, -0.02, -0.02);",
@@ -118,12 +118,12 @@ public class BroadSystemTest
                         " =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) }"
                 });
         //---
-        tensor1 = Tsr.of(Shape.of(1, 3), 2d);
-        tensor2 = Tsr.of(Double.class).withShape(2, 1).all(-1.0);
+        tensor1 = Tensor.of(Shape.of(1, 3), 2d);
+        tensor2 = Tensor.of(Double.class).withShape(2, 1).all(-1.0);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1, tensor2},
+                new Tensor[]{tensor1, tensor2},
                 "lig((I[0]xI[1])*-100)",
                 new String[]{
                         "[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0);",
@@ -133,12 +133,12 @@ public class BroadSystemTest
                 }
         );
         //---//Broken down to 2 functions:
-        tensor1 = Tsr.of(Shape.of(1, 3), 2d);
-        tensor2 = Tsr.of(Shape.of(2, 1), -1d);
+        tensor1 = Tensor.of(Shape.of(1, 3), 2d);
+        tensor2 = Tensor.of(Shape.of(2, 1), -1d);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
-        result = Tsr.of("I[0]xI[1]", tensor1, tensor2);
-        result = Tsr.of("lig(I[0]*-100)", result);
+        result = Tensor.of("I[0]xI[1]", tensor1, tensor2);
+        result = Tensor.of("lig(I[0]*-100)", result);
         tester.testContains(result.toString("rc"),
                 new String[]{
                         "[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0);",
@@ -148,20 +148,20 @@ public class BroadSystemTest
                 }, "");
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         //---
-        tensor1 = Tsr.of(Shape.of(2, 3, 4), 2d);
+        tensor1 = Tensor.of(Shape.of(2, 3, 4), 2d);
         tensor1.setRqsGradient(false);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1},//, tensor2},/<=TODO make this throw an exception (if input does not match function)
+                new Tensor[]{tensor1},//, tensor2},/<=TODO make this throw an exception (if input does not match function)
                 "lig( [2, 1, 0]:( I[0] )*-100 )",
                 new String[]{"[4x3x2]:(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)"}
         );
         //---
-        tensor1 = Tsr.of(Shape.of(2), 2d);
-        tensor2 = Tsr.of(Shape.of(2), 4d);
+        tensor1 = Tensor.of(Shape.of(2), 2d);
+        tensor2 = Tensor.of(Shape.of(2), 4d);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1, tensor2},
+                new Tensor[]{tensor1, tensor2},
                 "lig(tanh(I[0]*I[1]*2)*I[1])",
                 new String[]{
                         "[2]:(4.01815, 4.01815); ",
@@ -178,12 +178,12 @@ public class BroadSystemTest
         );
         //---
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
-        tensor1 = Tsr.of(Shape.of(3, 2, 1), 4d);
-        tensor2 = Tsr.of(Double.class).withShape(1, 1, 4).all(-1.0d);
-        tensor3 = Tsr.of(Shape.of(3, 2, 1), 2d);
+        tensor1 = Tensor.of(Shape.of(3, 2, 1), 4d);
+        tensor2 = Tensor.of(Double.class).withShape(1, 1, 4).all(-1.0d);
+        tensor3 = Tensor.of(Shape.of(3, 2, 1), 2d);
         tensor2.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1, tensor2, tensor3},
+                new Tensor[]{tensor1, tensor2, tensor3},
                 "I[0]xI[1]xI[2]",
                 new String[]{
                         "[1x1x4]:(-48.0, -48.0, -48.0, -48.0);",
@@ -194,12 +194,12 @@ public class BroadSystemTest
                                 "}"
                 });
         //--
-        tensor1 = Tsr.of(Shape.of(5, 1, 1), 4d);//-2*4 = 8 | *3 = -24
-        tensor2 = Tsr.of(Shape.of(1, 4, 1), -2d);
-        tensor3 = Tsr.of(Shape.of(1, 1, 2), 3d);
+        tensor1 = Tensor.of(Shape.of(5, 1, 1), 4d);//-2*4 = 8 | *3 = -24
+        tensor2 = Tensor.of(Shape.of(1, 4, 1), -2d);
+        tensor3 = Tensor.of(Shape.of(1, 1, 2), 3d);
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1, tensor2, tensor3},
+                new Tensor[]{tensor1, tensor2, tensor3},
                 "I[0]xI[1]xI[2]",
                 new String[]{
                         "[5x4x2]:(-24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0); =>d|[ [1x1x2]:(3.0, 3.0) ]|:t{ [5x4x1]:(-8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0); =>d|[ [1x4x1]:(-2.0, -2.0, -2.0, -2.0) ]|:t{ [5x1x1]:(4.0, 4.0, 4.0, 4.0, 4.0) } }"
@@ -207,38 +207,38 @@ public class BroadSystemTest
         );
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         //=====================
-        tensor1 = Tsr.ofDoubles().withShape(2,2).andFill(1.0, 2.0, 3.0, 4.0);
+        tensor1 = Tensor.ofDoubles().withShape(2,2).andFill(1.0, 2.0, 3.0, 4.0);
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1},
+                new Tensor[]{tensor1},
                 "((i0+2)**2)",
                 new String[]{"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"}
         );
         //---
-        tensor1 = Tsr.of(Shape.of(2, 2), new double[]{1d, 2d, 3d, 4d});//-2*4 = 8 | *3 = -24
+        tensor1 = Tensor.of(Shape.of(2, 2), new double[]{1d, 2d, 3d, 4d});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
-        result = Tsr.of("(i0+2)", tensor1);
-        result = Tsr.of("I[0]**2", result);
+        result = Tensor.of("(i0+2)", tensor1);
+        result = Tensor.of("I[0]**2", result);
         tester.testContains(
                 result.toString("rc"),
                 new String[]{"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"},
                 ""
         );
         //=====================
-        tensor1 = Tsr.of(Shape.of(2), new double[]{1d, 2d});//-2*4 = 8 | *3 = -24
+        tensor1 = Tensor.of(Shape.of(2), new double[]{1d, 2d});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1},
+                new Tensor[]{tensor1},
                 "cos(tanh(lig(i0)))",
                 new String[]{"[2]:(0.64856, 0.56366); =>d|[ [2]:(-0.14000, -0.04020) ]|:t{ [2]:(1.0, 2.0) }"}
         );
         //---
         //=====================
-        tensor1 = Tsr.of(-3d).setRqsGradient(true);
-        tensor2 = Tsr.of(Double.class).scalar(4.0).setRqsGradient(true);
-        tensor3 = Tsr.of(2d);
+        tensor1 = Tensor.of(-3d).setRqsGradient(true);
+        tensor2 = Tensor.of(Double.class).scalar(4.0).setRqsGradient(true);
+        tensor3 = Tensor.of(2d);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1, tensor2, tensor3},
+                new Tensor[]{tensor1, tensor2, tensor3},
                 "(relu(i0*i1)+i1)/i2",
                 new String[]{
                     "[1]:(1.94);",
@@ -263,19 +263,19 @@ public class BroadSystemTest
         // TESTING INVERSE:
         //=================
 
-        tensor1 = Tsr.of(Shape.of(2, 3), new double[]{
+        tensor1 = Tensor.of(Shape.of(2, 3), new double[]{
                 0d, 0d, 0d,
                 0d, 0d, 0d
             });
         //---
-        tensor2 = Tsr.of(Shape.of(5, 2), new double[]{
+        tensor2 = Tensor.of(Shape.of(5, 2), new double[]{
                 -2d, 3d,
                  6d, 3d,
                 -1d, 0d,
                  2d, 4d,
                  2d, 1d
             });
-        tensor3 = Tsr.of(Double.class)
+        tensor3 = Tensor.of(Double.class)
                         .withShape(4, 2)
                         .andFill(
                                 1.0, 2.0,
@@ -284,7 +284,7 @@ public class BroadSystemTest
                                 -1.0, 5.0
                         );
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1, tensor2, tensor3},
+                new Tensor[]{tensor1, tensor2, tensor3},
                 "i0<<xi1<<xi2",
                 new String[]{
                         "[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"
@@ -302,7 +302,7 @@ public class BroadSystemTest
                 "Testing if Function.setup.commit() returns non unique result!"
         );
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1, tensor2, tensor3},
+                new Tensor[]{tensor1, tensor2, tensor3},
                 "i2x>>i1x>>i0",
                 new String[]{"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"}
         );
@@ -315,7 +315,7 @@ public class BroadSystemTest
         );
         //=====================
         //---
-        tensor1 = Tsr.ofDoubles()
+        tensor1 = Tensor.ofDoubles()
                         .withShape(2, 2, 1)
                         .andFill(
                                 1.0, 2.0, //3, 1,
@@ -323,16 +323,16 @@ public class BroadSystemTest
                         );
         tensor1.setRqsGradient(true);
         //---
-        tensor2 = Tsr.of(Shape.of(1, 2, 2), new double[]{
+        tensor2 = Tensor.of(Shape.of(1, 2, 2), new double[]{
                             -2d, 3d,
                             1d, 2d
                     });
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
-                new Tsr[]{tensor1, tensor2},
+                new Tensor[]{tensor1, tensor2},
                 "i0xi1",
                 new String[]{"[2x1x2]:(0.0, 7.0, -7.0, 0.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"},
-                Tsr.of(Shape.of(2, 1, 2), new double[]{1, 1, 1, 1}),
+                Tensor.of(Shape.of(2, 1, 2), new double[]{1, 1, 1, 1}),
                 new double[][]{{1.0, 3.0, 1.0, 3.0}, null}
         );
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
@@ -529,10 +529,10 @@ public class BroadSystemTest
 
         Neureka.get().settings().debug().setIsDeletingIntermediateTensors(false);
 
-        Tsr<Double> tensor1 = Tsr.of(Shape.of(1), 2d);//-2*4 = 8 | *3 = -24
+        Tensor<Double> tensor1 = Tensor.of(Shape.of(1), 2d);//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
+                new Tensor[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
                 "(-3*(2*(i0*-1)))*(-1*i0)",
                 new String[]{
                         "[1]:(-24.0); ",
@@ -552,10 +552,10 @@ public class BroadSystemTest
         Neureka.get().settings().debug().setIsDeletingIntermediateTensors(true);
 
 
-        tensor1 = Tsr.of(Shape.of(1), 2d);//-2*4 = 8 | *3 = -24
+        tensor1 = Tensor.of(Shape.of(1), 2d);//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
-                new Tsr[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
+                new Tensor[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
                 "(-3*(2*(i0*-1)))*(-1*i0)",
                 new String[]{
                         "[1]:(-24.0); ",
@@ -586,9 +586,9 @@ public class BroadSystemTest
     private static void _subTest2(UnitTester_Tensor tester) {
 
         Neureka.get().settings().debug().setIsDeletingIntermediateTensors(false);
-        Tsr<Double> tensor1 = Tsr.of(Shape.of(1), 2d);//-2*4 = 8 | *3 = -24
+        Tensor<Double> tensor1 = Tensor.of(Shape.of(1), 2d);//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
-        Tsr<?> result = Tsr.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
+        Tensor<?> result = Tensor.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
         GraphNode<Double> node = (GraphNode) result.get( GraphNode.class );
         String asString = node.toString(GraphNode.Print.FANCY);
         tester.testContains(
@@ -606,7 +606,7 @@ public class BroadSystemTest
                 },
                 "Testing 'toString' of GraphNode");
         Neureka.get().settings().debug().setIsDeletingIntermediateTensors(true);
-        result = Tsr.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
+        result = Tensor.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
         node = (GraphNode) result.get( GraphNode.class );
         asString = node.toString(GraphNode.Print.FANCY);
         tester.testContains(

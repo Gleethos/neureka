@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.indexer;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.*;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
@@ -52,7 +52,7 @@ public final class Product extends AbstractOperation
                 throw new IllegalArgumentException("The shapes of the operands of the multiplication operation must be equal! (when deriving nested functions)");
 
             Function noAD = Function.of( caller.toString(), false );
-            Tsr<?>[] results = new Tsr[ call.arity() ];
+            Tensor<?>[] results = new Tensor[ call.arity() ];
             for ( int i = 0; i < results.length; i++ ) {
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flattenForIndexer( noAD, call.withArgs(Arg.VarIdx.of(i), Arg.DerivIdx.of(-1)) );
                 results[ i ] = flatCall.input( 0 );
@@ -63,7 +63,7 @@ public final class Product extends AbstractOperation
                                             .filter( i -> caller.dependsOn(d) )
                                             .toArray();
 
-            Tsr<?>[] derivs = new Tsr[ call.arity() ];
+            Tensor<?>[] derivs = new Tensor[ call.arity() ];
             for ( int i = 0; i < results.length; i++ ) {
                 int finalI = i;
                 if ( Arrays.stream(toBeDerived).anyMatch(v -> v == finalI) ) {
@@ -74,7 +74,7 @@ public final class Product extends AbstractOperation
             return Multiplication.derive( toBeDerived, results, i -> derivs[i] );
         }
 
-        Tsr<?>[] inputs = new Tsr[ call.arity() ];
+        Tensor<?>[] inputs = new Tensor[ call.arity() ];
         for ( int i = 0; i < inputs.length; i++ ) {
             ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flattenForIndexer( caller, call.withArgs(Arg.VarIdx.of(i)) );
             inputs[ i ] = flatCall.input( 0 );

@@ -2,7 +2,7 @@ package neureka.devices.file;
 
 
 import neureka.Data;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.common.utility.Cache;
@@ -10,7 +10,6 @@ import neureka.common.utility.LogUtil;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.AbstractDeviceData;
 import neureka.devices.Device;
-import neureka.devices.ReferenceCounter;
 import neureka.dtype.DataType;
 import neureka.math.Function;
 import neureka.ndim.config.NDConfiguration;
@@ -41,7 +40,7 @@ import java.util.stream.Collectors;
  *  Tensors on a file device however are not loaded onto memory entirely, instead
  *  a mere file handle for each "file tensor" is being instantiated.
  *  Therefore, tensors that are stored on this device are not fit for computation.
- *  The {@link #restore(Tsr)} method has to be called in order to load the provided
+ *  The {@link #restore(Tensor)} method has to be called in order to load the provided
  *  tensor back into RAM. <br><br>
  *
  *  A {@link FileDevice} can load PNG, JPG and IDX files. By default, tensors will
@@ -57,8 +56,8 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     private final String _directory;
     private final List<String> _loadable = new ArrayList<>();
-    private final Map<String, Tsr<Object>> _loaded = new LinkedHashMap<>();
-    private final Map<Tsr<Object>, FileHandle<?, Object>> _stored = new HashMap<>();
+    private final Map<String, Tensor<Object>> _loaded = new LinkedHashMap<>();
+    private final Map<Tensor<Object>, FileHandle<?, Object>> _stored = new HashMap<>();
 
 
     /**
@@ -106,15 +105,15 @@ public final class FileDevice extends AbstractBaseDevice<Object>
         });
     }
 
-    public <V> Optional<Tsr<V>> load( String filename ) throws IOException { return load( filename, null ); }
+    public <V> Optional<Tensor<V>> load(String filename ) throws IOException { return load( filename, null ); }
 
-    public <V> Optional<Tsr<V>> load( String filename, Map<String, Object> conf ) throws IOException {
+    public <V> Optional<Tensor<V>> load(String filename, Map<String, Object> conf ) throws IOException {
         LogUtil.nullArgCheck(filename, "filename", String.class);
         _updateFolderView();
         if ( _loaded.containsKey( filename ) ) {
-            Tsr<Object> tensor = _loaded.get( filename );
+            Tensor<Object> tensor = _loaded.get( filename );
             this.restore( tensor );
-            return Optional.of( (Tsr<V>) tensor );
+            return Optional.of( (Tensor<V>) tensor );
         }
         if ( _loadable.contains( filename ) ) {
             String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
@@ -131,7 +130,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     "Failed to create file handle for file path '" + filePath + " and loading conf '" + conf + "'."
                 );
 
-            Tsr<Object> tensor = handle.load();
+            Tensor<Object> tensor = handle.load();
             if ( tensor == null )
                 throw new IllegalStateException(
                     "Failed to load tensor from file handle for file path '" + filePath + " and loading conf '" + conf + "'."
@@ -140,13 +139,13 @@ public final class FileDevice extends AbstractBaseDevice<Object>
             _stored.put( tensor, handle );
             _loadable.remove( filename );
             _loaded.put( filename, tensor );
-            return Optional.of( (Tsr<V>) tensor );
+            return Optional.of( (Tensor<V>) tensor );
         }
         return Optional.empty();
     }
 
-    public FileHandle<?, ?> fileHandleOf( Tsr<?> tensor ) {
-        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
+    public FileHandle<?, ?> fileHandleOf( Tensor<?> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tensor.class);
         return _stored.get( tensor );
     }
 
@@ -160,8 +159,8 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     /** {@inheritDoc} */
     @Override
-    public Device<Object> restore( Tsr<Object> tensor ) {
-        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
+    public Device<Object> restore( Tensor<Object> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tensor.class);
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
         FileHandle<?, Object> head = _stored.get( tensor );
@@ -177,8 +176,8 @@ public final class FileDevice extends AbstractBaseDevice<Object>
 
     /** {@inheritDoc} */
     @Override
-    public <T> Device<Object> store( Tsr<T> tensor ) {
-        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
+    public <T> Device<Object> store( Tensor<T> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tensor.class);
         if ( this.has( tensor ) ) {
             FileHandle<?, Object> head = _stored.get( tensor );
             try {
@@ -205,7 +204,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
      * @return The file device itself.
      * @param <T> The type of the tensor.
      */
-    public <T> FileDevice store( Tsr<T> tensor, String filename ) {
+    public <T> FileDevice store(Tensor<T> tensor, String filename ) {
         return this.store( tensor, filename, null );
     }
 
@@ -218,8 +217,8 @@ public final class FileDevice extends AbstractBaseDevice<Object>
      * @return The file device itself.
      * @param <T> The type of the tensor.
      */
-    public <T> FileDevice store( Tsr<T> tensor, String filename, Map<String, Object> configurations ) {
-        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
+    public <T> FileDevice store(Tensor<T> tensor, String filename, Map<String, Object> configurations ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tensor.class);
         LogUtil.nullArgCheck( filename, "filename", String.class );
         String fullFileName;
         String extension;
@@ -238,7 +237,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
                     .getSaver(extension)
                     .save( _directory + "/" + fullFileName, tensor, configurations );
 
-            _stored.put((Tsr<Object>) tensor, handle);
+            _stored.put((Tensor<Object>) tensor, handle);
             tensor.getMut().setData(
                     new AbstractDeviceData( this, null, handle.getDataType(), ()->{}){}
                 );
@@ -247,14 +246,14 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T> boolean has( Tsr<T> tensor ) {
-        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
+    public <T> boolean has( Tensor<T> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tensor.class);
         return _stored.containsKey( tensor );
     }
 
     @Override
-    public <T> Device<Object> free( Tsr<T> tensor ) {
-        LogUtil.nullArgCheck(tensor, "tensor", Tsr.class);
+    public <T> Device<Object> free( Tensor<T> tensor ) {
+        LogUtil.nullArgCheck(tensor, "tensor", Tensor.class);
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
         FileHandle<?,Object> head = _stored.get( tensor );
@@ -269,7 +268,7 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T> Access<T> access( Tsr<T> tensor) {
+    public <T> Access<T> access( Tensor<T> tensor) {
         throw new IllegalAccessError(
                 this.getClass().getSimpleName()+" instances do not support accessing the state of a stored tensor."
             );
@@ -305,9 +304,9 @@ public final class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<Object>> changeRequest ) {
-        Tsr<Object> oldOwner = changeRequest.getOldOwner();
-        Tsr<Object> newOwner = changeRequest.getNewOwner();
+    public boolean update( OwnerChangeRequest<Tensor<Object>> changeRequest ) {
+        Tensor<Object> oldOwner = changeRequest.getOldOwner();
+        Tensor<Object> newOwner = changeRequest.getNewOwner();
         if ( _stored.containsKey( oldOwner ) ) {
             FileHandle<?, Object> head = _stored.get( oldOwner );
             _stored.remove( oldOwner );

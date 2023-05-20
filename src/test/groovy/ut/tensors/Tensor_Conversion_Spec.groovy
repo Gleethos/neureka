@@ -1,7 +1,7 @@
 package ut.tensors
 
 
-import neureka.Tsr
+import neureka.Tensor
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
@@ -14,14 +14,14 @@ import spock.lang.Title
     like for example another tensor of a different data type.
 
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Tensor_Conversion_Spec extends Specification
 {
 
     def 'We turn a tensor into a scalar value or string through the "as" operator!'()
     {
         given : 'A tensor of 3 floats:'
-            var t = Tsr.ofFloats().vector(42, 42, 42)
+            var t = Tensor.ofFloats().vector(42, 42, 42)
 
         expect : 'We can now turn the tensor int other data types!'
             (t as Integer) == 42
@@ -46,7 +46,7 @@ class Tensor_Conversion_Spec extends Specification
         """)
 
         given :
-            Tsr x = Tsr.of(3d)
+            Tensor x = Tensor.of(3d)
 
         when : x.mut.toType( Float.class )
         then :
@@ -78,7 +78,7 @@ class Tensor_Conversion_Spec extends Specification
 
         given : 'A simple tensor with a few initial values.'
             var data = [-3, -12, 42, -42, 12, 3]
-            var a = Tsr.of(sourceType).withShape(data.size()).andFill(data)
+            var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)
 
         when : 'We change the data type of the tensor using the unsafe "toType" method.'
             var b = a.mut.toType(targetType)

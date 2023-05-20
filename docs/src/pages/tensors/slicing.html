@@ -9,7 +9,7 @@
             be created which view the same underlying data.
             Slicing is about defining ranges for certain axes of a tensor.
             In order to make this rather abstract procedure as readable as possible
-            the slice builder API was created for the Tsr class.
+            the slice builder API was created for the Tensor class.
         </p>
     </div>
 </div>
@@ -23,7 +23,7 @@
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var t = Tsr.of([3, 3, 4], -11..3)
+var t = Tensor.of([3, 3, 4], -11..3)
 var s = t.slice()
             .axis(0).at(1)
             .axis(2).from(1).to(2)
@@ -47,11 +47,11 @@ var s = t.slice()
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Tsr&#60;Double&#62; t = Tsr.of(
+Tensor&#60;Double&#62; t = Tensor.of(
                 new int[]{3, 3, 4},
                 new double[]{-11, -10, ... 2, 3}
         );
-Tsr&#60;Double&#62; s = t.slice()
+Tensor&#60;Double&#62; s = t.slice()
                 .axis(0).at(1)
                 .axis(2).from(1).to(2)
                 .get();
@@ -74,7 +74,7 @@ Tsr&#60;Double&#62; s = t.slice()
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val t = Tsr.of(
+val t = Tensor.of(
                 intArrayOf(3, 3, 4),
                 doubleArrayOf(-11, -10, ... 2, 3)
         )
@@ -130,7 +130,7 @@ to trigger the actual slicing based on the previously specified range(s).
         </h3>
         <p>
             Besides using the slicing API one can also slice tensors by passing either primitive arrays
-            or lists to one of the various "getAt(..)" methods defined in the Tsr class.
+            or lists to one of the various "getAt(..)" methods defined in the Tensor class.
         </p>
     </div>
 </div>
@@ -150,7 +150,7 @@ var s = t[1, 0..2, 1..2]
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Tsr&#60;Double&#62; s = t.getAt(
+Tensor&#60;Double&#62; s = t.getAt(
             new int[]{1},    // Axis 0
             new int[]{0, 2}, // Axis 1
             new int[]{1, 2}  // Axis 2
@@ -208,7 +208,7 @@ val s = t.getAt(
             <div class="groovyExplainedTab row no-gutters">
                 <div class="col-sm-12 col-md-7 col-lg-6">
                 <pre><code class="hljs language-java">
-Tsr s = t[[[0..0]:1, [0..0]:1, [0..3]:2]]
+Tensor s = t[[[0..0]:1, [0..0]:1, [0..3]:2]]
 
 //  '[i..j]:k' is equivalent to pythons 'i:j:k' syntax for indexing! (numpy)
 //  i.. start indexAlias.
@@ -238,7 +238,7 @@ Tsr s = t[[[0..0]:1, [0..0]:1, [0..3]:2]]
             <div class="javaExplainedTab row no-gutters" style="display:none">
                 <div class="col-sm-12 col-md-7 col-lg-6">
                     <pre><code class="hljs language-java">
-Tsr&#60;Double&#62; s = t.slice()
+Tensor&#60;Double&#62; s = t.slice()
              .axis(0).at(0)
              .axis(1).at(0)
              .axis(2).from(0).to(3).step(2)

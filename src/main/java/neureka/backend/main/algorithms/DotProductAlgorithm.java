@@ -1,7 +1,7 @@
 package neureka.backend.main.algorithms;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -42,7 +42,7 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
                             throw new IllegalArgumentException("Dot product does not support forward-AD!");
                         Function mul = Neureka.get().backend().getFunction().mul();
                         int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                        Tsr<?> derivative = Util.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                        Tensor<?> derivative = Util.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                         derivative.to(adCall.getDevice());
                         return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                     });
@@ -66,9 +66,9 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
     }
 
     private static ExecutionCall<?> _withDimTrim( ExecutionCall<?> call ) {
-        Tsr<?> a = call.input( 0 );
-        Tsr<?> b = call.input( 1 );
-        Tsr<?> c = call.input( 2 );
+        Tensor<?> a = call.input( 0 );
+        Tensor<?> b = call.input( 1 );
+        Tensor<?> c = call.input( 2 );
         Function dimTrim = Neureka.get().backend().getAutogradFunction().dimTrim();
         if ( a != null && a.rank() > 1 ) call = call.withInputAt( 0, dimTrim.execute( a ).deepClone() );
         if ( b != null && b.rank() > 1 ) call = call.withInputAt( 1, dimTrim.execute( b ).deepClone() );
@@ -80,7 +80,7 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
     {
         Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getItemTypeClass();
 
-        Tsr<Number> output = Tsr.of( type ).withShape( 1 ).all( 0 ).mut().setIsIntermediate( true );
+        Tensor<Number> output = Tensor.of( type ).withShape( 1 ).all( 0 ).mut().setIsIntermediate( true );
 
         call = _checkAndPrepareLayout( call, output );
 
@@ -88,10 +88,10 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
         return call.withInputAt( 0, output );
     }
 
-    private static ExecutionCall<?> _checkAndPrepareLayout( ExecutionCall<?> call, Tsr<?> c )
+    private static ExecutionCall<?> _checkAndPrepareLayout( ExecutionCall<?> call, Tensor<?> c )
     {
-        Tsr<?> a = call.input( 1 );
-        Tsr<?> b = call.input( 2 );
+        Tensor<?> a = call.input( 1 );
+        Tensor<?> b = call.input( 2 );
         // We need to make sure that the vectors have a common/compatible layout,
         // ..before we can do the actual a . b = c dot product!
         NDConfiguration.Layout layoutA = a.getNDConf().getLayout();
@@ -127,7 +127,7 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
         return call.withInputAt( 1, a ).withInputAt( 2, b );
     }
 
-    private static Tsr<?> _toInline( Tsr<?> t, NDConfiguration.Layout targetLayout ) {
+    private static Tensor<?> _toInline(Tensor<?> t, NDConfiguration.Layout targetLayout ) {
         Function relayout = Neureka.get().backend().getFunction().relayout();
         if ( t.isVirtual() ) {
             t = t.deepCopy().mut().setIsVirtual(false);
@@ -143,7 +143,7 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
     }
 
     /**
-     *  This method will clone {@link Tsr} instances if they do not
+     *  This method will clone {@link Tensor} instances if they do not
      *  possess a simple {@link neureka.ndim.config.NDConfiguration}.
      *  This is usually the case when they are slices or permuted views on data...
      *  The reason for this is simply that we need inline data for the OpenCL/CPU kernels!
@@ -169,7 +169,7 @@ public class DotProductAlgorithm extends AbstractFunDeviceAlgorithm<DotProductAl
         return call;
     }
 
-    private static boolean _isSimpleSymmetric( Tsr<?> t ) {
+    private static boolean _isSimpleSymmetric( Tensor<?> t ) {
         return t.rank() == 1 && t.getNDConf().getLayout() == NDConfiguration.Layout.SYMMETRIC;
     }
 

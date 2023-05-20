@@ -1,6 +1,8 @@
 package neureka.fluent.slicing.states;
 
 
+import neureka.Tensor;
+
 /**
  *  This is the starting point for defining the slice range of a specified axis within
  *  the call transition graph exposed by the slice builder API.
@@ -10,7 +12,7 @@ package neureka.fluent.slicing.states;
  *  or a call to the "at" method, which is a shortcut for calling {@link FromOrAt#from} and {@link To#to}
  *  with the same arguments.
  *
- * @param <V> The type parameter for items of the {@link neureka.Tsr} which ought to be sliced.
+ * @param <V> The type parameter for items of the {@link Tensor} which ought to be sliced.
  */
 public interface FromOrAt<V>
 {

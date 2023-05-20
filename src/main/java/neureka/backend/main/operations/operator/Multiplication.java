@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.operator;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Call;
@@ -56,13 +56,13 @@ public class Multiplication extends AbstractOperation
                 {
                     if ( call.autogradMode().allowsForward() )
                         throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                    Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                    Tensor<?> ctxDerivative = (Tensor<?>) call.getValOf(Arg.Derivative.class);
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
                         return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                     }
                     int d = call.getDerivativeIndex();
-                    Tsr<?> derivative = MemUtil.keep( call.inputs(), () -> f.executeDerive( call.inputs(), d ) );
+                    Tensor<?> derivative = MemUtil.keep( call.inputs(), () -> f.executeDerive( call.inputs(), d ) );
                     return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                 }
             )
@@ -97,7 +97,7 @@ public class Multiplication extends AbstractOperation
                 Function noAd = Function.of( caller.toString(), false );
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( noAd, call.withArgs(Arg.DerivIdx.of(-1)) );
 
-                Tsr[] results = flatCall.inputs();
+                Tensor[] results = flatCall.inputs();
                 Function finalCaller = caller;
                 int[] toBeDerived = IntStream.range(0,caller.getSubFunctions().size())
                                                 .filter( i -> finalCaller.getSubFunctions().get(i).dependsOn(d) )
@@ -114,17 +114,17 @@ public class Multiplication extends AbstractOperation
 
     public static Result derive(
             int[] toBeDerived,
-            Tsr[] results,
-            java.util.function.Function<Integer, Tsr<?>> deriveAt
+            Tensor[] results,
+            java.util.function.Function<Integer, Tensor<?>> deriveAt
     ) {
-        Tsr[] derivatives = new Tsr[ toBeDerived.length ];
+        Tensor[] derivatives = new Tensor[ toBeDerived.length ];
         Function mul = Neureka.get().backend().getFunction().mul();
         Function add = Neureka.get().backend().getFunction().add();
-        Tsr<?> finalDerivative = null;
+        Tensor<?> finalDerivative = null;
         for ( int i = 0; i < derivatives.length; i++ ) {
-            Tsr<?> deriv = deriveAt.apply( toBeDerived[i] );
+            Tensor<?> deriv = deriveAt.apply( toBeDerived[i] );
             derivatives[ i ] = deriv;
-            Tsr<?> localDeriv = null;
+            Tensor<?> localDeriv = null;
             for ( int j = 0; j < results.length; j++ ) {
                 // Now we calculate the local derivatives of the multiplication operation:
                 if ( j == toBeDerived[i] ) {
@@ -136,7 +136,7 @@ public class Multiplication extends AbstractOperation
                 }
             }
             if ( finalDerivative == null ) finalDerivative = localDeriv;
-            else finalDerivative = add.call( (Tsr<Object>) finalDerivative, (Tsr<Object>) localDeriv );
+            else finalDerivative = add.call( (Tensor<Object>) finalDerivative, (Tensor<Object>) localDeriv );
         }
         return Result.of( finalDerivative.mut().setIsIntermediate(true) );
     }

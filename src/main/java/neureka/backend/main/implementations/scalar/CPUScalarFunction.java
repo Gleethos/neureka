@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.scalar;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUFun;
@@ -15,11 +15,11 @@ public class CPUScalarFunction implements ImplementationFor<CPU>
     public CPUScalarFunction(ScalarFun fun ) { _fun = fun; }
 
     @Override
-    public Tsr<?> run(ExecutionCall<CPU> call) {
+    public Tensor<?> run(ExecutionCall<CPU> call) {
         int d = call.getValOf(Arg.DerivIdx.class);
         CPUFun f = d < 0 ? _fun.getActivation() : _fun.getDerivative();
         double      in  = call.input( Number.class, 1 ).item(0).doubleValue();
-        Tsr<Number> out = call.input( Number.class, 0 );
+        Tensor<Number> out = call.input( Number.class, 0 );
         Number result =  f.invoke(in);
         out.mut().setDataAt(0, result);
         return call.input(0);

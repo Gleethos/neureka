@@ -1,9 +1,9 @@
 package ut.backend.core
 
 import neureka.Data
-import neureka.MutateTsr
+import neureka.MutateTensor
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.api.DeviceAlgorithm
 import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
@@ -80,8 +80,8 @@ class Backend_Algorithm_Implementation_Spec extends Specification
         given : 'Mock instances to simulate an ExecutionCall instance.'
             var call = Mock( ExecutionCall )
             var device = Mock( CPU )
-            var tensor = Mock( Tsr )
-            var mutate = Mock(MutateTsr)
+            var tensor = Mock( Tensor )
+            var mutate = Mock(MutateTensor)
             var ndConf = Mock(NDConfiguration)
             var hostExecutor = imp.getImplementationFor( CPU.class )
             var nativeExecutor = Mock( CPU.JVMExecutor )
@@ -97,7 +97,7 @@ class Backend_Algorithm_Implementation_Spec extends Specification
             (1.._) * call.getDevice() >> device
             1 * device.getExecutor() >> nativeExecutor
             1 * nativeExecutor.threaded( _, _ )
-            (0.._) * call.inputs() >> new Tsr[]{ tensor, tensor, tensor }
+            (0.._) * call.inputs() >> new Tensor[]{ tensor, tensor, tensor }
             (0.._) * call.input({it >= 0 && it <= 2}) >> tensor
             (0.._) * call.input( Number.class, 0 ) >> tensor
             (0.._) * call.input(0) >> tensor

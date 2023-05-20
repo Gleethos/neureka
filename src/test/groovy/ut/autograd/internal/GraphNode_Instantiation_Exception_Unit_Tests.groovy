@@ -1,7 +1,7 @@
 package ut.autograd.internal
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.autograd.GraphNode
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
@@ -49,9 +49,9 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
     def 'GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.'()
     {
         given : 'Mocked arguments used to call the GraphNode constructor.'
-            Tsr payload = Mock( Tsr )
-            Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
-            Supplier<Tsr> supplier = () -> payload
+        Tensor payload = Mock( Tensor )
+            Tensor[] inputs = new Tensor[]{ Mock(Tensor), Mock(Tensor), Mock(Tensor) }
+            Supplier<Tensor> supplier = () -> payload
             Function function = Mock( Function )
             Operation type = Mock(Operation)
             Object context = Mock( ExecutionCall )
@@ -85,9 +85,9 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
     def 'GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.'()
     {
         given : 'Mocked arguments used to call the GraphNode constructor.'
-            Tsr payload = Mock( Tsr )
-            Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
-            Supplier<Tsr> supplier = () -> payload
+            Tensor payload = Mock( Tensor )
+            Tensor[] inputs = new Tensor[]{ Mock(Tensor), Mock(Tensor), Mock(Tensor) }
+            Supplier<Tensor> supplier = () -> payload
             AbstractOperation type = Mock( AbstractOperation )
             Function function = Mock( Function )
             Object context = Mock( ExecutionCall )

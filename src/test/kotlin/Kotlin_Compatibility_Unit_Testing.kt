@@ -2,7 +2,7 @@
 import neureka.Nda
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.autograd.GraphNode
 import neureka.backend.api.Call
 import neureka.math.Function
@@ -44,18 +44,18 @@ Kotlin_Compatibility_Unit_Testing {
     fun operator_overloading_works_for_scalars_in_kotlin()
     {
         listOf(
-            Pair(-4.0, { t1 : Tsr<Double>, t2 : Tsr<Double> -> t1 * t2 }),
-            Pair( 3.0, { t1 : Tsr<Double>, t2 : Tsr<Double> -> t1 + t2 }),
-            Pair(-4.0, { t1 : Tsr<Double>, t2 : Tsr<Double> -> t1 / t2 }),
-            Pair( 5.0, { t1 : Tsr<Double>, t2 : Tsr<Double> -> t1 - t2 })
+            Pair(-4.0, { t1 : Tensor<Double>, t2 : Tensor<Double> -> t1 * t2 }),
+            Pair( 3.0, { t1 : Tensor<Double>, t2 : Tensor<Double> -> t1 + t2 }),
+            Pair(-4.0, { t1 : Tensor<Double>, t2 : Tensor<Double> -> t1 / t2 }),
+            Pair( 5.0, { t1 : Tensor<Double>, t2 : Tensor<Double> -> t1 - t2 })
         )
         .forEach { pair ->
 
             val expected = pair.first
             val exec     = pair.second
 
-            val t1 : Tsr<Double> = Tsr.of( 4.0  ).setRqsGradient(true)
-            val t2 : Tsr<Double> = Tsr.of( -1.0 )
+            val t1 : Tensor<Double> = Tensor.of( 4.0  ).setRqsGradient(true)
+            val t2 : Tensor<Double> = Tensor.of( -1.0 )
 
             // When:
             val t3 = exec(t1, t2)
@@ -80,12 +80,12 @@ Kotlin_Compatibility_Unit_Testing {
     fun tensor_operations_translate_to_custom_ComplexNumber_type_written_in_kotlin()
     {
         // Given :
-        val a : Tsr<ComplexNumber> = Tsr.of(
+        val a : Tensor<ComplexNumber> = Tensor.of(
                                         DataType.of(ComplexNumber::class.java),
                                         Shape.of(3, 2),
                                         { _ : Int, indices : IntArray -> ComplexNumber( indices[0].toDouble(), indices[1].toDouble() ) }
                                     )
-        val b : Tsr<ComplexNumber> = Tsr.of(
+        val b : Tensor<ComplexNumber> = Tensor.of(
                                         DataType.of(ComplexNumber::class.java),
                                         Shape.of(3, 2),
                                         { _ : Int, indices : IntArray -> ComplexNumber( indices[1].toDouble(), indices[0].toDouble() ) }
@@ -105,11 +105,11 @@ Kotlin_Compatibility_Unit_Testing {
     fun optimization_is_being_called()
     {
         listOf(
-            Pair( -3.0, { g : Tsr<Double> -> g - 4.0 } ), // 'g' will always be 1
-            Pair(  5.0, { g : Tsr<Double> -> g + 4.0 } ),
-            Pair( 0.25, { g : Tsr<Double> -> g / 4.0 } ),
-            Pair(  4.0, { g : Tsr<Double> -> g * 4.0 } ),
-            Pair(  0.0, { g : Tsr<Double> -> g % 1   } )
+            Pair( -3.0, { g : Tensor<Double> -> g - 4.0 } ), // 'g' will always be 1
+            Pair(  5.0, { g : Tensor<Double> -> g + 4.0 } ),
+            Pair( 0.25, { g : Tensor<Double> -> g / 4.0 } ),
+            Pair(  4.0, { g : Tensor<Double> -> g * 4.0 } ),
+            Pair(  0.0, { g : Tensor<Double> -> g % 1   } )
         )
         .forEach { pair ->
 
@@ -117,7 +117,7 @@ Kotlin_Compatibility_Unit_Testing {
             val expected = pair.first
             val exec = pair.second
             val weightVal = 2.0
-            val w: Tsr<Double> = Tsr.of(weightVal).setRqsGradient(true)
+            val w: Tensor<Double> = Tensor.of(weightVal).setRqsGradient(true)
 
             // When :
             w.set( Optimizer.ofGradient( { g -> exec(g) } ) ).backward()
@@ -137,7 +137,7 @@ Kotlin_Compatibility_Unit_Testing {
     fun we_can_use_the_subscription_operator_to_slice_tensors()
     {
         // Given :
-        val t : Tsr<ComplexNumber> = Tsr.of(
+        val t : Tensor<ComplexNumber> = Tensor.of(
                         DataType.of(ComplexNumber::class.java),
                         Shape.of(2, 3, 4),
                         { _, i -> ComplexNumber( i[0].toDouble(), i[1].toDouble() + i[2].toDouble()/10 ) }
@@ -353,17 +353,18 @@ Kotlin_Compatibility_Unit_Testing {
     fun convenience_methods_in_function_API_are_consistent()
     {
         listOf(
-            Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").with(Arg.DerivIdx.of(0))(Tsr.of(5.0)) } ),
-            Pair( "(1):[4.0]", { Function.of("i0 * 4 + 3").with(Arg.DerivIdx.of(0))(Tsr.of(5.0)) } ),
-            Pair( "(1):[3.0]", { Function.of("i0 * 4 - 3 - i0").with(Arg.DerivIdx.of(0))(Tsr.of(5.0)) } ),
-            Pair( "(1):[5.0]", { Function.of("i0 * 4 + 3 + i0").with(Arg.DerivIdx.of(0))(Tsr.of(5.0)) } ),
-            Pair( "(1):[6.0]", { Function.of("(i0 - 4) * 3 * i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
-            Pair( "(1):[-1.0]", { Function.of("(i0 - 4) * (1 - i0) * i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
-            Pair( "(1):[0.22222]", { Function.of("(i0 - 4) / 2 / i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
-            Pair( "(1):[-0.30555]", { Function.of("(i0 - 4) / (1 - i0) / i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
-            Pair( "(1):[-0.66666]", { Function.of("12 / 2 / i0").with(Arg.DerivIdx.of(0))(Tsr.of(3.0)) } ),
-            Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").invoke(Call.to(CPU.get()).with(Tsr.of(5.0)).andArgs( Arg.DerivIdx.of(0) )) } ),
-            Pair( "(1):[6.0]", { Function.of("i0 * i0").execute(Args.of(Arg.DerivIdx.of(0)), Tsr.of(3.0)) } )
+            Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").with(Arg.DerivIdx.of(0))(Tensor.of(5.0)) } ),
+            Pair( "(1):[4.0]", { Function.of("i0 * 4 + 3").with(Arg.DerivIdx.of(0))(Tensor.of(5.0)) } ),
+            Pair( "(1):[3.0]", { Function.of("i0 * 4 - 3 - i0").with(Arg.DerivIdx.of(0))(Tensor.of(5.0)) } ),
+            Pair( "(1):[5.0]", { Function.of("i0 * 4 + 3 + i0").with(Arg.DerivIdx.of(0))(Tensor.of(5.0)) } ),
+            Pair( "(1):[6.0]", { Function.of("(i0 - 4) * 3 * i0").with(Arg.DerivIdx.of(0))(Tensor.of(3.0)) } ),
+            Pair( "(1):[-1.0]", { Function.of("(i0 - 4) * (1 - i0) * i0").with(Arg.DerivIdx.of(0))(Tensor.of(3.0)) } ),
+            Pair( "(1):[0.22222]", { Function.of("(i0 - 4) / 2 / i0").with(Arg.DerivIdx.of(0))(Tensor.of(3.0)) } ),
+            Pair( "(1):[-0.30555]", { Function.of("(i0 - 4) / (1 - i0) / i0").with(Arg.DerivIdx.of(0))(
+                Tensor.of(3.0)) } ),
+            Pair( "(1):[-0.66666]", { Function.of("12 / 2 / i0").with(Arg.DerivIdx.of(0))(Tensor.of(3.0)) } ),
+            Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").invoke(Call.to(CPU.get()).with(Tensor.of(5.0)).andArgs( Arg.DerivIdx.of(0) )) } ),
+            Pair( "(1):[6.0]", { Function.of("i0 * i0").execute(Args.of(Arg.DerivIdx.of(0)), Tensor.of(3.0)) } )
         )
         .forEach { pair ->
             // Given :
@@ -398,7 +399,7 @@ Kotlin_Compatibility_Unit_Testing {
                         it.rowLimit = 30
                     }
         // When :
-        val t = Tsr.of(Float::class.java)
+        val t = Tensor.of(Float::class.java)
                         .withShape(2, 4, 3)
                         .andWhere { i, index -> index.sum().toFloat()/i  }
 
@@ -480,13 +481,13 @@ Kotlin_Compatibility_Unit_Testing {
             it.hasRecursiveGraph = true
         }
         // When :
-        val t = Tsr.of(Double::class.java)
+        val t = Tensor.of(Double::class.java)
                     .withShape(2, 3, 9)
                     .andWhere { i, index -> index.sum().toDouble()/i  }
                     .setRqsGradient(true)
 
         // And :
-        val o = t * Tsr.of(6.0)
+        val o = t * Tensor.of(6.0)
 
         // And :
         o.backward(2.0)

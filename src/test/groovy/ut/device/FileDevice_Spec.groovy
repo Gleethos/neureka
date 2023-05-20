@@ -3,7 +3,7 @@ package ut.device
 import neureka.Data
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.devices.Device
 import neureka.devices.file.*
 import neureka.devices.host.CPU
@@ -58,7 +58,7 @@ class FileDevice_Spec extends Specification
         String path, String filename
     ) {
         given : 'A new tensor is being created for testing.'
-            var a = Tsr.of([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])
+            var a = Tensor.of([2, 4], [5, 4, -7, 3, -2, 6, -4, 3 ])
         and : 'A file device instance is being accessed for a given path.'
             var device = FileDevice.at( path )
 
@@ -90,7 +90,7 @@ class FileDevice_Spec extends Specification
             String path, String filename, int[] shape, Class<FileHandle<?,Number>> fileHandleClass, Class<?> dataTypeClass
     ) {
         given : 'A new tensor is being created for testing.'
-            var a = Tsr.of( Shape.of(shape), -8d..8d )
+            var a = Tensor.of( Shape.of(shape), -8d..8d )
         and : 'A String representation of the shape.'
             var shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})
         and : 'A file device instance is being accessed for a given path.'
@@ -219,7 +219,7 @@ class FileDevice_Spec extends Specification
         given: 'A file device instance is being accessed for a simple test path.'
             def device = FileDevice.at( 'build/resources/test/idx2' )
         and : 'We create a simple tensor which we want to save.'
-            var t = Tsr.of(shape, data)
+            var t = Tensor.of(shape, data)
         expect :
             device.directory == 'build/resources/test/idx2'
             t.getDevice() === CPU.get()

@@ -2,7 +2,7 @@ package ut.framing
 
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.framing.NDFrame
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
@@ -25,7 +25,7 @@ import spock.lang.Title
     indices may also be something other than integers.
 
 ''')
-@Subject([Tsr, NDFrame])
+@Subject([Tensor, NDFrame])
 class Tensor_Framing_Spec extends Specification
 {
     def setupSpec() {
@@ -55,7 +55,7 @@ class Tensor_Framing_Spec extends Specification
     def 'We can add labels to tensors through lists or maps passed to the "label()" method.'()
     {
         given : 'We create a 3D tensor and label its indices.'
-            Tsr t = Tsr.of([2, 3, 2], 1..100)
+            Tensor t = Tensor.of([2, 3, 2], 1..100)
             t.mut.labelAxes([
                     ["1", "2"],
                     ["a", "b", "c"],
@@ -148,7 +148,7 @@ class Tensor_Framing_Spec extends Specification
         given: 'Tensor printing is set to "legacy" for this test.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and: 'A labeled tensor of rank 2 is being created.'
-            Tsr t = Tsr.of([3, 4], [
+            Tensor t = Tensor.of([3, 4], [
                     1d, 2d, 3d, 4d,
                     9d, 8d, 6d, 5d,
                     4d, 5d, 6d, 7d
@@ -229,7 +229,7 @@ class Tensor_Framing_Spec extends Specification
         given: 'Tensor printing is set to "legacy" for this test.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and: 'A labeled tensor of rank 3 is being created.'
-            var t = Tsr.of([2, 3, 4], -7d..7d)
+            var t = Tensor.of([2, 3, 4], -7d..7d)
             t.mut.label( 'My Tensor' )
             t.mut.labelAxes( [
                 ["1", "2"],
@@ -417,7 +417,7 @@ class Tensor_Framing_Spec extends Specification
     def 'A tensor can be labeled partially.'()
     {
         given: 'A labeled tensor of rank 3 is being created.'
-            Tsr t = Tsr.of([2, 3, 4], -7d..7d)
+            Tensor t = Tensor.of([2, 3, 4], -7d..7d)
             t.mut.label( 'My Tensor' )
             t.mut.labelAxes( [
                 ["1", "2"],

@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.broadcast;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.math.args.Arg;
 import neureka.devices.opencl.OpenCLDevice;
@@ -12,7 +12,7 @@ public class CLScalarBroadcastMultiplication extends CLScalarBroadcast
     }
 
     @Override
-    public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
+    public Tensor<?> run(ExecutionCall<OpenCLDevice> call) {
         if ( call.getDerivativeIndex() == 0 )
             return call.input( 2 ).shallowCopy().mut().setIsIntermediate( true );
         else if ( call.getDerivativeIndex() == 1 )

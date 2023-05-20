@@ -1,6 +1,7 @@
 package ut.ndim
 
-import neureka.Tsr
+
+import neureka.Tensor
 import neureka.ndim.config.NDConfiguration
 import neureka.ndim.config.NDTrait
 import spock.lang.Narrative
@@ -26,18 +27,18 @@ import spock.lang.Title
     creates a new view on the same data with a different access pattern.
     
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Tensor_Permute_Spec extends Specification
 {
     def 'We can use the "permute" method to rearrange the dimensions of a tensor.'()
     {
         reportInfo """
-            In Neureka `Tsr::permute(int...)` rearranges the original tensor according to the desired 
+            In Neureka `Tensor::permute(int...)` rearranges the original tensor according to the desired 
             ordering and returns a new multidimensional rotated tensor. 
             The size of the returned tensor remains the same as that of the original.
         """
         given : 'A tensor with a shape of [2, 4, 6, 8]'
-            Tsr t = Tsr.ofFloats().withShape(2, 4, 6, 8).andSeed(42)
+            Tensor t = Tensor.ofFloats().withShape(2, 4, 6, 8).andSeed(42)
 
         expect : 'By default, the tensor has a row major layout.'
             t.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
@@ -59,7 +60,7 @@ class Tensor_Permute_Spec extends Specification
     def 'When matrices are transpose, they will change their layout type as expected.'()
     {
         given :
-            Tsr t = Tsr.ofFloats().withShape(3, 4).andSeed(42)
+            Tensor t = Tensor.ofFloats().withShape(3, 4).andSeed(42)
 
         expect :
             t.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR

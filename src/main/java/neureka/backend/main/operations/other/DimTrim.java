@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
@@ -50,13 +50,13 @@ public class DimTrim extends AbstractOperation
                             call.autogradMode() == AutoDiffMode.FORWARD_ONLY
                                 ? new FunctionParser( Neureka.get().backend() )
                                                     .parse(caller.toString(), false)
-                                                    .derive(new Tsr[]{target.error()},0)
+                                                    .derive(new Tensor[]{target.error()},0)
                                 : _pad(target.error(), new int[]{prefix, postfix}, true);
                     };
 
-                    Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
+                    Tensor<?>[] inputs = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
                     assert inputs.length == 1;
-                    Tsr<?> t = inputs[ 0 ];
+                    Tensor<?> t = inputs[ 0 ];
                     if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
                         int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
                         int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
@@ -69,12 +69,12 @@ public class DimTrim extends AbstractOperation
         );
     }
 
-    private static <T> Tsr<T> _pad( Tsr<T> tensor, int[] ends, boolean newTsr ) {
+    private static <T> Tensor<T> _pad(Tensor<T> tensor, int[] ends, boolean newTensor ) {
 
         if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
             throw new IllegalArgumentException("Column major not yet supported for shape trimming!");
 
-        tensor = ( newTsr ? tensor.getAt(new ArrayList<>()) : tensor );
+        tensor = ( newTensor ? tensor.getAt(new ArrayList<>()) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
         List<Integer> newIndicesMap = new ArrayList<>();
@@ -118,12 +118,12 @@ public class DimTrim extends AbstractOperation
         return tensor;
     }
 
-    private static Tsr<?> _trim( Tsr<?> tensor, boolean newTsr )
+    private static Tensor<?> _trim(Tensor<?> tensor, boolean newTensor )
     {
         if ( tensor.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )
             throw new IllegalArgumentException("Column major not yet supported for shape trimming!");
 
-        tensor = ( newTsr ? tensor.getAt( new ArrayList<>() ).mut().setIsIntermediate( true ) : tensor );
+        tensor = ( newTensor ? tensor.getAt( new ArrayList<>() ).mut().setIsIntermediate( true ) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
         List<Integer> newIndicesMap = new ArrayList<>();

@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.other;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -36,8 +36,8 @@ public class Reshape extends AbstractOperation
             .setExecution(
                 ( caller, call ) ->
                 {
-                    Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
-                    Tsr<Object> input = (Tsr<Object>) inputs[0];
+                    Tensor<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
+                    Tensor<Object> input = (Tensor<Object>) inputs[0];
 
                     int[] foundShape = call.getValOf( Arg.Shape.class );
 
@@ -46,7 +46,7 @@ public class Reshape extends AbstractOperation
 
                     int[] shape = _resolveNewShape(input.size(), foundShape);
 
-                    Tsr reshaped = Tsr.of(
+                    Tensor reshaped = Tensor.of(
                                     input.getDataType(),
                                     NDConstructor.of( shape ),
                                     input.mut().getData()
@@ -64,8 +64,8 @@ public class Reshape extends AbstractOperation
 
                     return Result.of(reshaped.mut().setIsIntermediate(true))
                             .withADAction( target -> {
-                                Tsr<Object> error = (Tsr<Object>) target.error();
-                                return Tsr.of(
+                                Tensor<Object> error = (Tensor<Object>) target.error();
+                                return Tensor.of(
                                         error.getDataType(),
                                         NDConstructor.of( originalConfig ),
                                         error.mut().getData()

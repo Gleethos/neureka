@@ -1,11 +1,11 @@
 package neureka.fluent.building.states;
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 /**
  *  This step in the call transition graph of the fluent builder API is a followup call
  *  from the {@link IterByOrIterFromOrAll#andFillFrom(Object)} method which
- *  expects a range to be specified whose values will be used to populate the {@link Tsr} instance.
+ *  expects a range to be specified whose values will be used to populate the {@link Tensor} instance.
  *  This method allows one to set the end point of the range whose start has previously between set
  *  in the {@link IterByOrIterFromOrAll#andFillFrom(Object)} method...
  *
@@ -16,12 +16,12 @@ public interface To<V> {
     /**
      *  This step in the call transition graph of the fluent builder API is a followup call
      *  from the {@link IterByOrIterFromOrAll#andFillFrom(Object)} method which
-     *  expects a range to be specified whose values will be used to populate the {@link Tsr} instance.
+     *  expects a range to be specified whose values will be used to populate the {@link Tensor} instance.
      *  This method allows one to set the end point of the range whose start has previously between set
      *  in the {@link IterByOrIterFromOrAll#andFillFrom(Object)} method...
      *
      * @param index The end point of the range previously specified in {@link IterByOrIterFromOrAll#andFillFrom(Object)}.
-     * @return The last step in the call transition graph of the fluent builder API for building range based {@link Tsr} instances.
+     * @return The last step in the call transition graph of the fluent builder API for building range based {@link Tensor} instances.
      */
     Step<V> to( V index );
 

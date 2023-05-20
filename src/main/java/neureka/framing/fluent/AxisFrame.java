@@ -1,6 +1,7 @@
 package neureka.framing.fluent;
 
 
+import neureka.Tensor;
 import neureka.framing.NDFrame;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
  *  This class represents the labeled axis of an {@link NDFrame}.
  *
  * @param <G> The get type which represents the aliases for this axis.
- * @param <V> The value type which is the value type of the {@link neureka.Tsr} with this {@link AxisFrame}.
+ * @param <V> The value type which is the value type of the {@link Tensor} with this {@link AxisFrame}.
  */
 public final class AxisFrame<G, V> {
 

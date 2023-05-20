@@ -1,11 +1,11 @@
 package neureka.common.composition;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.BackendContext;
 
 /**
  *  This interface alongside the {@link AbstractComponentOwner} class define a simple component system.
- *  The component type defined by this interface is used to create components for the {@link Tsr} class
+ *  The component type defined by this interface is used to create components for the {@link Tensor} class
  *  as well as the {@link BackendContext} class which both directly or indirectly
  *  extend the {@link AbstractComponentOwner} class.
  *  The type parameter of this interface represents the "owner" of the {@link Component}.

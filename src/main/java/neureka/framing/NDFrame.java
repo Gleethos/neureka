@@ -1,6 +1,6 @@
 package neureka.framing;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.composition.Component;
 import neureka.common.utility.LogUtil;
 import neureka.framing.fluent.AxisFrame;
@@ -31,7 +31,7 @@ import java.util.function.Function;
  *
  * @param <V> The type parameter of the value type of the tensor type to whom this component should belong.
  */
-public final class NDFrame<V> implements Component<Tsr<V>>
+public final class NDFrame<V> implements Component<Tensor<V>>
 {
     private final List<Object> _hiddenKeys = new ArrayList<>();
     /**
@@ -46,7 +46,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
      */
     private final String _mainLabel;
 
-    public NDFrame( List<List<Object>> labels, Tsr<V> host, String mainLabel ) {
+    public NDFrame(List<List<Object>> labels, Tensor<V> host, String mainLabel ) {
         this(Collections.emptyMap(), host, mainLabel);
         _label(labels);
     }
@@ -64,13 +64,13 @@ public final class NDFrame<V> implements Component<Tsr<V>>
         return this;
     }
 
-    public NDFrame( Tsr<V> host, String tensorName ) {
+    public NDFrame(Tensor<V> host, String tensorName ) {
         this(Collections.emptyMap(), host, tensorName);
     }
 
     public NDFrame(
             Map<Object, List<Object>> labels,
-            Tsr<V> host,
+            Tensor<V> host,
             String ndaMainLabel
     ) {
         _mainLabel = ndaMainLabel;
@@ -305,7 +305,7 @@ public final class NDFrame<V> implements Component<Tsr<V>>
 
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tensor<V>> changeRequest ) {
         changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         // This component does not have anything to do when switching owner...
         return true;

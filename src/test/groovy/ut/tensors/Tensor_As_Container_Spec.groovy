@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.dtype.DataType
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
@@ -50,8 +50,8 @@ class Tensor_As_Container_Spec extends Specification
     def 'Plus operator on String tensors works element-wise.'()
     {
         given : 'Two tensors filled with String objects containing various letters.'
-            Tsr a = Tsr.of([2, 3], 'a'..'e')
-            Tsr b = Tsr.of([2, 3], 'f'..'k')
+            Tensor a = Tensor.of([2, 3], 'a'..'e')
+            Tensor b = Tensor.of([2, 3], 'f'..'k')
 
         expect : 'These two tensors then look as expected.'
             a.toString() == '(2x3):[a, b, c, d, e, a]'
@@ -62,7 +62,7 @@ class Tensor_As_Container_Spec extends Specification
             b.dataType == DataType.of( String.class )
 
         when : 'We now apply the "+" operator to the tensors...'
-            Tsr c = a + b
+            Tensor c = a + b
 
         then: 'This translates to the individual elements :'
             c.toString() == '(2x3):[af, bg, ch, di, ej, ak]'
@@ -75,8 +75,8 @@ class Tensor_As_Container_Spec extends Specification
             def c1 = new ComplexNumber(2.3, -1.54)
             def c2 = new ComplexNumber(1.0, 0.5)
         and : 'Then we use them to populate 2 matrices.'
-            Tsr a = Tsr.of([3, 2], c1)
-            Tsr b = Tsr.of([3, 2], c2)
+            Tensor a = Tensor.of([3, 2], c1)
+        Tensor b = Tensor.of([3, 2], c2)
 
         expect:
             a.toString() == "(3x2):[2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i]"
@@ -91,12 +91,12 @@ class Tensor_As_Container_Spec extends Specification
     def 'More tensor operations translate to custom data type "ComplexNumber".'()
     {
         given : 'We create 2 simple matrices of complex numbers using filler lambdas '
-            Tsr a = Tsr.of(
+            Tensor a = Tensor.of(
                         DataType.of(ComplexNumber.class),
                         [3, 2],
                         ( int i, int[] indices ) -> new ComplexNumber(indices[0], indices[1])
                     )
-            Tsr b = Tsr.of(
+            Tensor b = Tensor.of(
                         DataType.of(ComplexNumber.class),
                         [3, 2],
                         ( int i, int[] indices ) -> new ComplexNumber(indices[1], indices[0])
@@ -115,9 +115,9 @@ class Tensor_As_Container_Spec extends Specification
     def 'We can apply predicates on the values of a tensor.'()
     {
         given : 'We create 3 different kinds of tensors.'
-            var a = Tsr.of(Character).withShape(2, 3).andFill('x' as char, 'y' as char, 'z' as char)
-            var b = Tsr.of(String).withShape(3, 2).andFill("Hey", "how", "are", "you", "?")
-            var c = Tsr.ofDoubles().vector(42, 0.53, -2.5, 9, -12.92, 73)
+            var a = Tensor.of(Character).withShape(2, 3).andFill('x' as char, 'y' as char, 'z' as char)
+            var b = Tensor.of(String).withShape(3, 2).andFill("Hey", "how", "are", "you", "?")
+            var c = Tensor.ofDoubles().vector(42, 0.53, -2.5, 9, -12.92, 73)
 
         expect : 'We can check if every value of a tensor satisfies a condition.'
             a.every( item -> item instanceof Character )

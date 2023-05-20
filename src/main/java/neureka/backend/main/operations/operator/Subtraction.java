@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.operator;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -63,11 +63,11 @@ public class Subtraction extends AbstractOperation
                     {
                         if ( call.autogradMode().allowsForward() )
                             throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                        Tensor<?> ctxDerivative = (Tensor<?>) call.getValOf(Arg.Derivative.class);
                         assert ctxDerivative == null;
                         int d = call.getDerivativeIndex();
-                        Tsr<?> derivative = ElemWiseUtil.newTsrLike( call.input( d == 0 ? 1 : 0 ), 0 );
-                        Tsr<?> toBeDerived = ElemWiseUtil.newTsrLike( call.input( d ), 0 );
+                        Tensor<?> derivative = ElemWiseUtil.newTensorLike( call.input( d == 0 ? 1 : 0 ), 0 );
+                        Tensor<?> toBeDerived = ElemWiseUtil.newTensorLike( call.input( d ), 0 );
                         Device device = call.getDevice();
                         return
                             ADAction.of(
@@ -109,11 +109,11 @@ public class Subtraction extends AbstractOperation
                                                         .filter( i -> caller.getSubFunctions().get(i).dependsOn(d) )
                                                         .toArray();
 
-                Tsr[] results = new Tsr[ toBeDerived.length ];
+                Tensor[] results = new Tensor[ toBeDerived.length ];
                 Function neg = Neureka.get().backend().getFunction().neg();
                 for ( int i = 0; i < results.length; i++ ) {
                     Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );
-                    Tsr<?> deriv = noAD.execute( noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation()) );
+                    Tensor<?> deriv = noAD.execute( noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation()) );
                     if ( i > 0 ) deriv = neg.execute(deriv);
                     results[ i ] = deriv;
                 }

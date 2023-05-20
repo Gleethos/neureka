@@ -1,6 +1,6 @@
 package neureka.backend.main.algorithms;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
@@ -38,7 +38,7 @@ public final class BiElementwise extends AbstractFunDeviceAlgorithm<BiElementwis
                     int[] outShape = call.input( 1 ).getNDConf().shape();
 
                     Class<Object> type = (Class<Object>) call.input(  1 ).getItemType();
-                    Tsr<Object> output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).mut().setIsIntermediate( true );
+                    Tensor<Object> output = Tensor.of( type ).withShape( outShape ).all( 0.0 ).mut().setIsIntermediate( true );
                     output.mut().setIsVirtual( false );
                     try {
                         device.store( output );

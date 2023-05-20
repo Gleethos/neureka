@@ -1,6 +1,6 @@
 package neureka.devices.opencl;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import org.jocl.*;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class KernelCaller
 {
     private final cl_command_queue  _queue;
     private final cl_kernel         _kernel;
-    private final List<Tsr<Number>> _inputs;
+    private final List<Tensor<Number>> _inputs;
 
     private int _argId = 0;
 
@@ -38,7 +38,7 @@ public class KernelCaller
      * @param tensor The tensor whose data and configuration ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory pattern).
      */
-    public KernelCaller passAllOf( Tsr<Number> tensor ) {
+    public KernelCaller passAllOf( Tensor<Number> tensor ) {
         _inputs.add( tensor );
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
@@ -54,7 +54,7 @@ public class KernelCaller
      *  @param tensor The tensor whose ND configuration ought to be passed to the kernel.
      *  @return This very KernelCaller instance (factory pattern).
      */
-    public KernelCaller passConfOf( Tsr<Number> tensor ) {
+    public KernelCaller passConfOf( Tensor<Number> tensor ) {
         OpenCLDevice device = (OpenCLDevice) tensor.getDevice();
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( device.clConfigOf(tensor ).data ) );
         _argId++;
@@ -67,7 +67,7 @@ public class KernelCaller
      * @param tensor The tensor whose data ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory pattern).
      */
-    public <T extends Number> KernelCaller pass( Tsr<T> tensor ) {
+    public <T extends Number> KernelCaller pass( Tensor<T> tensor ) {
         _inputs.add( tensor.getMut().upcast(Number.class) );
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
@@ -177,10 +177,10 @@ public class KernelCaller
      */
     public void call( int globalWorkSize )
     {
-        cl_event[] events = _getWaitList( _inputs.toArray( new Tsr[ 0 ] ) );
+        cl_event[] events = _getWaitList( _inputs.toArray( new Tensor[ 0 ] ) );
         if ( events.length > 0 ) {
             clWaitForEvents( events.length, events );
-            _releaseEvents( _inputs.toArray( new Tsr[ 0 ] ) );
+            _releaseEvents( _inputs.toArray( new Tensor[ 0 ] ) );
         }
         clEnqueueNDRangeKernel(
                 _queue, _kernel,
@@ -215,10 +215,10 @@ public class KernelCaller
      */
     public void call( long[] globalWorkSizes, long[] localWorkSizes )
     {
-        cl_event[] events = _getWaitList( _inputs.toArray( new Tsr[ 0 ] ) );
+        cl_event[] events = _getWaitList( _inputs.toArray( new Tensor[ 0 ] ) );
         if ( events.length > 0 ) {
             clWaitForEvents( events.length, events );
-            _releaseEvents( _inputs.toArray( new Tsr[ 0 ] ) );
+            _releaseEvents( _inputs.toArray( new Tensor[ 0 ] ) );
         }
         assert localWorkSizes == null || globalWorkSizes.length == localWorkSizes.length;
         clEnqueueNDRangeKernel(
@@ -234,8 +234,8 @@ public class KernelCaller
     }
 
     
-    private void _releaseEvents( Tsr<Number>[] tensors ) {
-        for ( Tsr<Number> t : tensors ) {
+    private void _releaseEvents( Tensor<Number>[] tensors ) {
+        for ( Tensor<Number> t : tensors ) {
             if ( t.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.event != null ) {
                 clReleaseEvent(t.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.event);
                 t.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.event = null;
@@ -244,9 +244,9 @@ public class KernelCaller
     }
 
     
-    private cl_event[] _getWaitList( Tsr<Number>[] tensors ) {
+    private cl_event[] _getWaitList( Tensor<Number>[] tensors ) {
         List<cl_event> list = new ArrayList<>();
-        for ( Tsr<Number> t : tensors ) {
+        for ( Tensor<Number> t : tensors ) {
             cl_event event = t.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.event;
             if ( event != null && !list.contains(event) ) {
                 list.add( event );

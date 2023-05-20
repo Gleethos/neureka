@@ -159,7 +159,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The scalar value which ought to be represented as nd-array.
      * @return A scalar double nd-array.
      */
-    static Nda<Double> of( double value ) { return Tsr.of( Double.class, Shape.of( 1 ), value ); }
+    static Nda<Double> of( double value ) { return Tensor.of( Double.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -167,7 +167,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of floats from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of floats.
      */
-    static Nda<Float> of( float... value ) { return Tsr.of( Float.class, Shape.of( value.length ), value ); }
+    static Nda<Float> of( float... value ) { return Tensor.of( Float.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of doubles based on the provided array.
@@ -175,7 +175,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of doubles from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of doubles.
      */
-    static Nda<Double> of( double... value ) { return Tsr.of( Double.class, Shape.of( value.length ), value ); }
+    static Nda<Double> of( double... value ) { return Tensor.of( Double.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of bytes based on the provided array.
@@ -183,7 +183,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of bytes from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of bytes.
      */
-    static Nda<Byte> of( byte... value ) { return Tsr.of( Byte.class, Shape.of( value.length ), value ); }
+    static Nda<Byte> of( byte... value ) { return Tensor.of( Byte.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -191,7 +191,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of ints from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of ints.
      */
-    static Nda<Integer> of( int... value ) { return Tsr.of( Integer.class, Shape.of( value.length ), value ); }
+    static Nda<Integer> of( int... value ) { return Tensor.of( Integer.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of longs based on the provided array.
@@ -199,7 +199,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of longs from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of longs.
      */
-    static Nda<Long> of( long... value ) { return Tsr.of( Long.class, Shape.of( value.length ), value ); }
+    static Nda<Long> of( long... value ) { return Tensor.of( Long.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of shorts based on the provided array.
@@ -207,7 +207,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of shorts from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of shorts.
      */
-    static Nda<Short> of( short... value ) { return Tsr.of( Short.class, Shape.of( value.length ), value ); }
+    static Nda<Short> of( short... value ) { return Tensor.of( Short.class, Shape.of( value.length ), value ); }
 
     /**
      *  Constructs a vector of booleans based on the provided array.
@@ -215,7 +215,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param value The array of booleans from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of shorts.
      */
-    static Nda<Boolean> of( boolean... value ) { return Tsr.of( Boolean.class, Shape.of( value.length ), value ); }
+    static Nda<Boolean> of( boolean... value ) { return Tensor.of( Boolean.class, Shape.of( value.length ), value ); }
 
     /**
      * Constructs a vector of objects based on the provided array.
@@ -224,7 +224,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return A vector / 1D nd-array of objects.
      */
     @SafeVarargs
-    static <T> Nda<T> of( T... values ) { return Tsr.of(values); }
+    static <T> Nda<T> of( T... values ) { return Tensor.of(values); }
 
     /**
      *  Use this to construct and return a double based nd-array of the specified shape and initial values.
@@ -235,7 +235,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Nda<Double> of( Shape shape, double... values ) { return Tsr.ofAny( Double.class, shape, values ); }
+    static Nda<Double> of( Shape shape, double... values ) { return Tensor.ofAny( Double.class, shape, values ); }
 
     /**
      *  Use this to construct and return a float based nd-array of the specified shape and initial values.
@@ -246,7 +246,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Nda<Float> of( Shape shape, float... values ) { return Tsr.ofAny( Float.class, shape, values ); }
+    static Nda<Float> of( Shape shape, float... values ) { return Tensor.ofAny( Float.class, shape, values ); }
 
     /**
      *  Use this to construct and return a byte based nd-array of the specified shape and initial values.
@@ -257,7 +257,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Nda<Byte> of( Shape shape, byte... values ) { return Tsr.ofAny( Byte.class, shape, values ); }
+    static Nda<Byte> of( Shape shape, byte... values ) { return Tensor.ofAny( Byte.class, shape, values ); }
 
     /**
      *  Use this to construct and return a int based nd-array of the specified shape and initial values.
@@ -268,7 +268,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Nda<Integer> of( Shape shape, int... values ) { return Tsr.ofAny( Integer.class, shape, values ); }
+    static Nda<Integer> of( Shape shape, int... values ) { return Tensor.ofAny( Integer.class, shape, values ); }
 
     /**
      *  Use this to construct and return a long based nd-array of the specified shape and initial values.
@@ -279,7 +279,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Nda<Long> of( Shape shape, long... values ) { return Tsr.ofAny( Long.class, shape, values ); }
+    static Nda<Long> of( Shape shape, long... values ) { return Tensor.ofAny( Long.class, shape, values ); }
 
     /**
      *  Use this to construct and return a short based nd-array of the specified shape and initial values.
@@ -290,7 +290,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Nda<Short> of( Shape shape, short... values ) { return Tsr.ofAny( Short.class, shape, values ); }
+    static Nda<Short> of( Shape shape, short... values ) { return Tensor.ofAny( Short.class, shape, values ); }
 
     /**
      *  Use this to construct and return a boolean based nd-array of the specified shape and initial values.
@@ -301,7 +301,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param shape The shape of the resulting nd-array consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Nda<Boolean> of( Shape shape, boolean... values ) { return Tsr.ofAny( Boolean.class, shape, values ); }
+    static Nda<Boolean> of( Shape shape, boolean... values ) { return Tensor.ofAny( Boolean.class, shape, values ); }
 
     /**
      *  Use this to construct and return an object based nd-array of the specified shape and initial values.
@@ -313,7 +313,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param values The values which ought to be used to populate the tensor.
      */
     @SafeVarargs
-    static <T> Nda<T> of( Shape shape, T... values ) { return (Nda<T>) Tsr.of( values ).reshape( shape.toIntArray() ); }
+    static <T> Nda<T> of( Shape shape, T... values ) { return (Nda<T>) Tensor.of( values ).reshape( shape.toIntArray() ); }
 
     /**
      * Constructs a vector of objects based on the provided iterable.
@@ -321,7 +321,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param values The iterable of objects from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of objects.
      */
-    static <T> Nda<T> of( Iterable<T> values ) { return Tsr.of(values); }
+    static <T> Nda<T> of( Iterable<T> values ) { return Tensor.of(values); }
 
     /**
      * Constructs a vector of objects based on the provided list.
@@ -329,7 +329,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @param values The list of objects from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D nd-array of objects.
      */
-    static <T> Nda<T> of( List<T> values ) { return TsrImpl._of(values); }
+    static <T> Nda<T> of( List<T> values ) { return TensorImpl._of(values); }
 
     /**
      *  A nd-array can have a label. This label is used for example when printing the nd-array.
@@ -337,7 +337,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  will be taken from the cell where the header row and the first column intersect.
      *  @return The label/name of the nd-array.
      */
-    default String getLabel() { return ((TsrImpl<?>) this).find(NDFrame.class).map(NDFrame::getLabel).orElse(""); }
+    default String getLabel() { return ((TensorImpl<?>) this).find(NDFrame.class).map(NDFrame::getLabel).orElse(""); }
 
     /**
      *  A nd-array can have a label. This label is used for example when printing the nd-array.
@@ -560,7 +560,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
                 (Supplier<List<T>>) ArrayList::new,
                 List::add,
                 (left, right) -> { left.addAll(right); return left; },
-                list -> Tsr.of( Shape.of(shape), list )
+                list -> Tensor.of( Shape.of(shape), list )
             );
     }
 
@@ -571,7 +571,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return true if every item in the nd-array matches the predicate, false otherwise.
      */
     default boolean every( Predicate<V> predicate ) {
-        if ( ((Tsr<V>)this).isVirtual() ) return predicate.test( this.item() );
+        if ( ((Tensor<V>)this).isVirtual() ) return predicate.test( this.item() );
         return stream().allMatch(predicate);
     }
 
@@ -582,7 +582,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return true if any item in the nd-array matches the predicate, false otherwise.
      */
     default boolean any( Predicate<V> predicate ) {
-        if ( ((Tsr<V>)this).isVirtual() ) return predicate.test( this.item() );
+        if ( ((Tensor<V>)this).isVirtual() ) return predicate.test( this.item() );
         return stream().anyMatch(predicate);
     }
 
@@ -593,7 +593,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return true if none of the items in the nd-array match the predicate, false otherwise.
      */
     default boolean none( Predicate<V> predicate ) {
-        if ( ((Tsr<V>)this).isVirtual() ) return !predicate.test( this.item() );
+        if ( ((Tensor<V>)this).isVirtual() ) return !predicate.test( this.item() );
         return stream().noneMatch(predicate);
     }
 
@@ -614,7 +614,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return The number of items in the nd-array that match the predicate.
      */
     default int count( Predicate<V> predicate ) {
-        if ( ((Tsr<V>)this).isVirtual() ) return predicate.test( this.item() ) ? this.size() : 0;
+        if ( ((Tensor<V>)this).isVirtual() ) return predicate.test( this.item() ) ? this.size() : 0;
         return (int) stream().filter(predicate).count();
     }
 
@@ -626,7 +626,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return The minimum value in the nd-array.
      */
     default V minItem( Comparator<V> comparator ) {
-        if ( ((Tsr<V>)this).isVirtual() ) return this.item();
+        if ( ((Tensor<V>)this).isVirtual() ) return this.item();
         return stream().min( comparator ).orElse(null);
     }
 
@@ -638,7 +638,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      * @return The maximum value in the nd-array.
      */
     default V maxItem( Comparator<V> comparator ) {
-        if ( ((Tsr<V>)this).isVirtual() ) return this.item();
+        if ( ((Tensor<V>)this).isVirtual() ) return this.item();
         return stream().max( comparator ).orElse(null);
     }
 
@@ -648,7 +648,7 @@ public interface Nda<V> extends NDimensional, Iterable<V>
      *  into an array and returned by this method.
      *  Do not expect the returned array to be actually stored within the nd-array itself!
      *  Contrary to the {@link #getItems()} method, this one will
-     *  return the data in an unbiased form, where for example a virtual (see {@link Tsr#isVirtual()})
+     *  return the data in an unbiased form, where for example a virtual (see {@link Tensor#isVirtual()})
      *  nd-array will have this method return an array of length 1.
      *
      * @return An unbiased copy of the underlying data of this nd-array.

@@ -1,6 +1,7 @@
 package ut.utility
 
-import neureka.Tsr
+
+import neureka.Tensor
 import neureka.devices.DeviceCleaner
 import spock.lang.Specification
 import spock.lang.Title
@@ -32,16 +33,16 @@ class Cleaner_Testing extends Specification
         given :
             var cleaner = DeviceCleaner.getNewInstance()
             var refCount = 10
-            var r1 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            var r2 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            var r3 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            var r4 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            var r5 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            var r6 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            var r7 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            var r8 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            var r9 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)
-            var r10 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)
+            var r1 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)
+            var r2 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)
+            var r3 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)
+            var r4 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)
+            var r5 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)
+            var r6 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)
+            var r7 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)
+            var r8 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)
+            var r9 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)
+            var r10 = Tensor.ofDoubles().withShape( 2, 4 ).all(0)
 
             cleaner.register( r1, {refCount--} )
             cleaner.register( r2, {refCount--} )

@@ -2,7 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.dtype.DataType
 import neureka.dtype.custom.I8
 import neureka.view.NDPrintSettings
@@ -54,7 +54,7 @@ class Tensor_State_Spec extends Specification
             Class<Object> type, List<Object> list, List<Integer> shape, Object expected
     ) {
         given : 'We instantiate a tensor using a type and a list of things (or list of list of things, or..).'
-            var t = Tsr.of(type, list)
+            var t = Tensor.of(type, list)
 
         expect : 'The tensor has the item type, shape and data array!'
             t.itemType == type
@@ -74,7 +74,7 @@ class Tensor_State_Spec extends Specification
     def 'Tensors as String can be formatted on an entry based level.'()
     {
         given : 'A new tensor of rank 2 storing Strings:'
-            Tsr t = Tsr.of(DataType.of(String.class), [2, 3], (i, indices) -> {
+            Tensor t = Tensor.of(DataType.of(String.class), [2, 3], (i, indices) -> {
                 return ["sweet", "salty", "blue", "spinning", "confused", "shining"].get( (i + 17**i)%6 ) + ' ' +
                        ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6  )
             })
@@ -116,7 +116,7 @@ class Tensor_State_Spec extends Specification
     def 'Numeric tensors as String can be formatted on an entry based level.'()
     {
         given : 'A new tensor of rank 2 storing floats:'
-            var t = Tsr.of(DataType.of(Float.class), [2, 3], (i, indices) -> (i%4)/3 as float )
+            var t = Tensor.of(DataType.of(Float.class), [2, 3], (i, indices) -> (i%4)/3 as float )
 
         expect : 'When we convert the tensor to a String with scientific formatting.'
             t.toString(
@@ -154,11 +154,11 @@ class Tensor_State_Spec extends Specification
                             .setHasSlimNumbers(  false )
 
         and : 'Four tensors of various data types:'
-            Tsr<Float>   t1 = Tsr.of( Float.class,   shape, -4f..5f ).set( Tsr.of( shape, -7f..3f ) )
-            Tsr<Double>  t2 = Tsr.of( Double.class,  shape, -4d..5d ).set( Tsr.of( shape, -7d..3d ) )
-            Tsr<Integer> t3 = Tsr.of( Integer.class, shape, -4..5   ).set( Tsr.of( shape, -7..3   ) )
-            Tsr<Short>   t4 = Tsr.of( Short.class,   shape, (-4 as short)..(5 as short) ).set( Tsr.of( shape, (-7 as short)..(3 as short) ) )
-            Tsr<Byte>    t5 = Tsr.of( Byte.class,    shape, (-4 as byte )..(5 as byte ) ).set( Tsr.of( shape, (-7 as byte)..(3 as byte) ) )
+            Tensor<Float> t1 = Tensor.of( Float.class,   shape, -4f..5f ).set( Tensor.of( shape, -7f..3f ) )
+            Tensor<Double> t2 = Tensor.of( Double.class,  shape, -4d..5d ).set( Tensor.of( shape, -7d..3d ) )
+            Tensor<Integer> t3 = Tensor.of( Integer.class, shape, -4..5   ).set( Tensor.of( shape, -7..3   ) )
+            Tensor<Short> t4 = Tensor.of( Short.class,   shape, (-4 as short)..(5 as short) ).set( Tensor.of( shape, (-7 as short)..(3 as short) ) )
+            Tensor<Byte> t5 = Tensor.of( Byte.class,    shape, (-4 as byte )..(5 as byte ) ).set( Tensor.of( shape, (-7 as byte)..(3 as byte) ) )
 
         expect: 'The first tensor has the expected internals and produces the correct String representation.'
             t1.toString(settings) == expected
@@ -198,7 +198,7 @@ class Tensor_State_Spec extends Specification
     def 'We can create scalar tensors.'()
     {
         given: 'A new instance of a scalar tensor.'
-            Tsr<Double> t = Tsr.of( 6d )
+            Tensor<Double> t = Tensor.of( 6d )
         expect: 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
         and : 'The tensor contains the expected data.'
@@ -215,7 +215,7 @@ class Tensor_State_Spec extends Specification
     def 'Tensor created from shape and datatype has expected state.'()
     {
         given : 'A new vector tensor is being instantiated.'
-            Tsr<Byte> t = Tsr.of( DataType.of(I8.class ), Shape.of( 2 ) )
+            Tensor<Byte> t = Tensor.of( DataType.of(I8.class ), Shape.of( 2 ) )
         expect : 'The vector is initialized with zeros.'
             t.items == [0, 0] as List<Byte>
         and : 'We can access and verify this through the following ways as well:'
@@ -232,7 +232,7 @@ class Tensor_State_Spec extends Specification
         String device
     ) {
         given : 'We create a simple vector:'
-            var v = Tsr.ofFloats().withShape(3).andFill(-2, 4, 8)
+            var v = Tensor.ofFloats().withShape(3).andFill(-2, 4, 8)
         and : 'And then we store it on the device we want to test.'
             v.to(device)
 

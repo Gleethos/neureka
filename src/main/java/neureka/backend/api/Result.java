@@ -1,7 +1,6 @@
 package neureka.backend.api;
 
-import neureka.Tsr;
-import neureka.autograd.ADAction;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.fun.ADActionSupplier;
 import neureka.backend.api.fun.Execution;
@@ -13,15 +12,15 @@ import neureka.common.utility.LogUtil;
  */
 public final class Result
 {
-    private final Tsr<?> _tensor;
+    private final Tensor<?> _tensor;
     private final ADActionSupplier _agent;
 
-    public static Result of( Tsr<?> tensor ) {
-        LogUtil.nullArgCheck( tensor, "tensor", Tsr.class, "An operation may not return 'null'!" );
+    public static Result of( Tensor<?> tensor ) {
+        LogUtil.nullArgCheck( tensor, "tensor", Tensor.class, "An operation may not return 'null'!" );
         return new Result(tensor, null);
     }
 
-    private Result( Tsr<?> tensor, ADActionSupplier agent ) {
+    private Result(Tensor<?> tensor, ADActionSupplier agent ) {
         _tensor = tensor;
         _agent = agent;
     }
@@ -37,7 +36,7 @@ public final class Result
         return new Result( _tensor, agent );
     }
 
-    public <V> Tsr<V> get() { return (Tsr<V>) _tensor; }
+    public <V> Tensor<V> get() { return (Tensor<V>) _tensor; }
 
     public ADActionSupplier getAgentSupplier() { return _agent; }
 

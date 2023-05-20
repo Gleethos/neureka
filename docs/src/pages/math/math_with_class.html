@@ -234,12 +234,12 @@ class ComplexNumber(
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var a = Tsr.of(
+var a = Tensor.of(
             DataType.of( ComplexNumber.class ),
             [ 3, 2 ],
             ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
         )
-var b = Tsr.of(
+var b = Tensor.of(
             DataType.of( ComplexNumber.class ),
             [ 3, 2 ],
             ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
@@ -248,12 +248,12 @@ var b = Tsr.of(
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Tsr&#60;ComplexNumber&#62; a = new Tsr&#60;&#62;(
+Tensor&#60;ComplexNumber&#62; a = new Tensor&#60;&#62;(
                                         DataType.of( ComplexNumber.class ),
                                         new int[]{ 3, 2 },
                                         ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
                                     );
-Tsr&#60;ComplexNumber&#62; b = new Tsr&#60;&#62;(
+Tensor&#60;ComplexNumber&#62; b = new Tensor&#60;&#62;(
                                         DataType.of( ComplexNumber.class ),
                                         new int[]{ 3, 2 },
                                         ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
@@ -262,12 +262,12 @@ Tsr&#60;ComplexNumber&#62; b = new Tsr&#60;&#62;(
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val a : Tsr&#60;ComplexNumber&#62; = Tsr&#60;&#62;.of(
+val a : Tensor&#60;ComplexNumber&#62; = Tensor&#60;&#62;.of(
                                  DataType.of( ComplexNumber::class.java ),
                                  intArrayOf( 3, 2 ),
                                  { i Int, idx : IntArray -> new ComplexNumber( idx[0], idx[1] ) }
                              )
-val b : Tsr&#60;ComplexNumber&#62; = Tsr&#60;&#62;.of(
+val b : Tensor&#60;ComplexNumber&#62; = Tensor&#60;&#62;.of(
                                  DataType.of( ComplexNumber::class.java ),
                                  intArrayOf( 3, 2 ),
                                  { i Int, idx : IntArray -> new ComplexNumber( idx[1], idx[0] ) }

@@ -1,7 +1,7 @@
 package neureka.backend.api.template.algorithms;
 
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.*;
@@ -26,7 +26,7 @@ import java.util.Arrays;
  *  an instance of an implementation of the {@link Operation} interface. <br>
  *  The "+" operator for example has different {@link Algorithm} instances tailored to specific requirements
  *  originating from different {@link ExecutionCall} instances with unique arguments.
- *  {@link Tsr} instances within an execution call having the same shape would
+ *  {@link Tensor} instances within an execution call having the same shape would
  *  cause the {@link Operation} instance to choose an {@link Algorithm} instance which is responsible
  *  for performing element-wise operations, whereas otherwise the {@link neureka.backend.main.algorithms.Broadcast}
  *  algorithm might be called to perform the operation.
@@ -77,7 +77,7 @@ extends AbstractDeviceAlgorithm<C> implements ExecutionPreparation
     public final ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call ) {
         _checkReadiness();
         if ( call != null ) {
-            Tsr<?>[] inputs = call.inputs().clone();
+            Tensor<?>[] inputs = call.inputs().clone();
             ExecutionCall<? extends Device<?>> prepared = _instantiateNewTensorsForExecutionIn.prepare(call);
             Arrays.stream(prepared.inputs())
                     .filter(

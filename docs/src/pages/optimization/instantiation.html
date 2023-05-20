@@ -11,9 +11,9 @@ type, which is a subtype of `Optimization`. This `Optimizer` interface
 also exposes a simple API for configuring and creating the most common
 optimization algorithms.
 
-It is important to note that optimizations are `Tsr` components.
+It is important to note that optimizations are `Tensor` components.
 So a tensor will use an optimizer
-when its gradients should be applied (see `Tsr::applyGradients()`).
+when its gradients should be applied (see `Tensor::applyGradients()`).
 
 Here an example of how to use one of the most basic optimization algorithms,
 *stochastic gradient descent*:<br>
@@ -30,19 +30,19 @@ Here an example of how to use one of the most basic optimization algorithms,
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var w = Tsr.of(0f)
+var w = Tensor.of(0f)
 w.set(Optimizer.SGD.withLearningRate(0.01)) // 0.01 learning rate
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Tsr&#60;Float&#62; w = Tsr.of(0f);
+Tensor&#60;Float&#62; w = Tensor.of(0f);
 w.set(Optimizer.SGD.withLearningRate(0.01)); // 0.01 learning rate
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val w = Tsr.of(0f)
+val w = Tensor.of(0f)
 w.set(Optimizer.SGD.withLearningRate(0.01)) // 0.01 learning rate
                 </code></pre>
             </div>
@@ -73,21 +73,21 @@ w.set(Optimizer.SGD.withLearningRate(0.01)) // 0.01 learning rate
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var w = Tsr.of(0)
+var w = Tensor.of(0)
 w.set(Optimizer.ADAM)
 println w.find(ADAM).isPresent() // true
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-var w = Tsr.of(0);
+var w = Tensor.of(0);
 w.set(Optimizer.ADAM);
 System.out.println(w.find(ADAM.class).isPresent()); // true
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val w = Tsr.of(0)
+val w = Tensor.of(0)
 w.set(Optimizer.ADAM)
 println(w.find(ADAM::class.java).isPresent()) // true
                 </code></pre>

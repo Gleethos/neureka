@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.optimization.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
@@ -58,20 +58,20 @@ public final class ADAM<V extends Number> implements Optimizer<V>
     private final double lr; // learning rate
 
     // Variables:
-    private Tsr<V> m; // momentum
-    private Tsr<V> v; // velocity
+    private Tensor<V> m; // momentum
+    private Tensor<V> v; // velocity
     private long t; // time
 
-    ADAM( long t, double lr, Tsr<V> target ) {
+    ADAM( long t, double lr, Tensor<V> target ) {
         this(t, lr, // Step size/learning rate is 0.01 by default!
-            Tsr.of(target.getItemType(), target.shape(), 0), // momentum
-            Tsr.of(target.getItemType(), target.shape(), 0)  // velocity
+            Tensor.of(target.getItemType(), target.shape(), 0), // momentum
+            Tensor.of(target.getItemType(), target.shape(), 0)  // velocity
         );
     }
 
-    ADAM(long t, double lr, Tsr<V> m, Tsr<V> v ) {
-        LogUtil.nullArgCheck( m, "m", Tsr.class );
-        LogUtil.nullArgCheck( v, "v", Tsr.class );
+    ADAM(long t, double lr, Tensor<V> m, Tensor<V> v ) {
+        LogUtil.nullArgCheck( m, "m", Tensor.class );
+        LogUtil.nullArgCheck( v, "v", Tensor.class );
         this.m = m;
         this.v = v;
         this.t = t;
@@ -79,27 +79,27 @@ public final class ADAM<V extends Number> implements Optimizer<V>
     }
 
     @Override
-    public Tsr<V> optimize( Tsr<V> w ) {
-        LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
+    public Tensor<V> optimize(Tensor<V> w ) {
+        LogUtil.nullArgCheck( w, "w", Tensor.class ); // The input must not be null!
         t++;
-        Tsr<V> g = w.gradient().orElseThrow( () -> new IllegalStateException("Gradient missing! Cannot perform optimization.") );
+        Tensor<V> g = w.gradient().orElseThrow( () -> new IllegalStateException("Gradient missing! Cannot perform optimization.") );
         double b1Inverse = ( 1 - B1 );
         double b2Inverse = ( 1 - B2 );
         double b1hat = ( 1 - Math.pow( B1, t ) );
         double b2hat = ( 1 - Math.pow( B2, t ) );
-        m = Tsr.of(B1+" * ", m, " + "+b1Inverse+" * ", g);
-        v = Tsr.of(B2+" * ", v, " + "+b2Inverse+" * (", g,"**2 )");
-        Tsr<V> mh = Tsr.of(m, "/"+b1hat);
-        Tsr<V> vh = Tsr.of(v, "/"+b2hat);
-        Tsr<V> newg = Tsr.of("-"+ lr +" * ",mh," / (",vh,"**0.5 + "+E+")");
+        m = Tensor.of(B1+" * ", m, " + "+b1Inverse+" * ", g);
+        v = Tensor.of(B2+" * ", v, " + "+b2Inverse+" * (", g,"**2 )");
+        Tensor<V> mh = Tensor.of(m, "/"+b1hat);
+        Tensor<V> vh = Tensor.of(v, "/"+b2hat);
+        Tensor<V> newg = Tensor.of("-"+ lr +" * ",mh," / (",vh,"**0.5 + "+E+")");
         mh.getMut().delete();
         vh.getMut().delete();
         return newg;
     }
 
-    public final Tsr<V> getMomentum() { return m; }
+    public final Tensor<V> getMomentum() { return m; }
 
-    public final Tsr<V> getVelocity() { return v; }
+    public final Tensor<V> getVelocity() { return v; }
 
     public final long getTime() { return t; }
 

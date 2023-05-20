@@ -14,7 +14,7 @@ readability.
 
 > **Example :**
 >```java
->   Tsr<Double> tensor = Tsr.of(...);
+>   Tensor<Double> tensor = Tensor.of(...);
 >   int number = 345335;
 >   char letter = 'h';
 >```
@@ -25,7 +25,7 @@ readability.
 >   Sometimes the name of something that is generally well-known, widely-present and therefore 
 >   easy to understand can be shortened to improve readability by not bloating
 >   the code... <br>
->   The reason why the class ``Tsr`` is not called ``Tensor`` is the same reason
+>   The reason why the class ``Tensor`` is not called ``Tensor`` is the same reason
 >   as to why ``int`` is not called ``integer``. <br>
 >   **This tensor class is as essential to Neureka as the primitive integer type
 >   is to the Java language.** <br>

@@ -1,7 +1,7 @@
 package neureka.backend.main.operations;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
@@ -18,8 +18,8 @@ public class ConvUtil
         return new NDConvolution()
                 .setAutogradModeFor( call -> {
                     if ( call.getOperation().supports( NDConvolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;
-                    Tsr<?> last = null;
-                    for ( Tsr<?> t : call.inputs() ) {
+                    Tensor<?> last = null;
+                    for ( Tensor<?> t : call.inputs() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return AutoDiffMode.BACKWARD_ONLY;
                         last = t; // Note: shapes are cached!
                     }
@@ -32,9 +32,9 @@ public class ConvUtil
                         call ->
                         {
                             int offset = ( call.input(0) == null ? 1 : 0 );
-                            Tsr<?>[] tensors = new Tsr[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};
+                            Tensor<?>[] tensors = new Tensor[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};
                             Permute.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)
-                            for ( Tsr<?> t : tensors ) t.mut().setIsVirtual( false );
+                            for ( Tensor<?> t : tensors ) t.mut().setIsVirtual( false );
                             return AbstractDeviceAlgorithm.prepareAndExecute(
                                     ExecutionCall.of( tensors )
                                             .andArgs( Arg.DerivIdx.of(0) )
@@ -65,7 +65,7 @@ public class ConvUtil
         return Shape.of(shape);
     }
     
-    public static Tsr<?> executeRecursively(
+    public static Tensor<?> executeRecursively(
             String op,
             ExecutionCall<? extends Device<?>> call
     ) {

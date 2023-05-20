@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.broadcast;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.math.args.Arg;
@@ -12,12 +12,12 @@ public class CLScalarBroadcastAddition extends CLScalarBroadcast
     }
 
     @Override
-    public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
+    public Tensor<?> run(ExecutionCall<OpenCLDevice> call) {
         assert call.arity() == 3;
         if ( call.getDerivativeIndex() == 0 )
-            return Tsr.of( call.input(1).shape(), 1d ).mut().setIsIntermediate( true );
+            return Tensor.of( call.input(1).shape(), 1d ).mut().setIsIntermediate( true );
         else if ( call.getDerivativeIndex() == 1 )
-            return Tsr.of( call.input( 2 ).shape(), 1d ).mut().setIsIntermediate( true );
+            return Tensor.of( call.input( 2 ).shape(), 1d ).mut().setIsIntermediate( true );
         else {
             int gwz = call.input(Number.class, 0).size();
             float value = call.input(Number.class, 2).item(0).floatValue();

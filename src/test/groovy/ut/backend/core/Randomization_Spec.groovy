@@ -1,6 +1,7 @@
 package ut.backend.core
 
-import neureka.Tsr
+
+import neureka.Tensor
 import neureka.backend.main.implementations.elementwise.CPURandomization
 import neureka.math.Function
 import neureka.math.args.Arg
@@ -16,7 +17,7 @@ class Randomization_Spec extends Specification
         given :
             var r = Function.of("random(I[0])")
         and :
-            var t = Tsr.of(values)[1..<(values.length-1)] //
+            var t = Tensor.of(values)[1..<(values.length-1)] //
 
         when :
            r.with(Arg.Seed.of(73)).call(t)

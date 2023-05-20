@@ -1,6 +1,6 @@
 package neureka.optimization.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.optimization.OptimizerFactory;
 
 public class AdaGradFactory implements OptimizerFactory 
@@ -21,7 +21,7 @@ public class AdaGradFactory implements OptimizerFactory
     }
 
     @Override
-    public <V extends Number> AdaGrad<V> create(Tsr<V> target) {
+    public <V extends Number> AdaGrad<V> create(Tensor<V> target) {
         return new AdaGrad<>(target, _learningRate);
     }
 

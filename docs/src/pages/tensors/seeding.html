@@ -25,9 +25,9 @@
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
 
-        def t1 = Tsr.of([2, 3], "I am a seed! :)")
-        def t2 = Tsr.of([2, 3], "I am a seed! :)")
-        def t3 = Tsr.of([2, 3], "I am also a seed! But different. :)")
+        var t1 = Tensor.of([2, 3], "I am a seed! :)")
+        var t2 = Tensor.of([2, 3], "I am a seed! :)")
+        var t3 = Tensor.of([2, 3], "I am also a seed! But different. :)")
 
         // t1.toString() == t2.toString()
         // t3.toString() != t2.toString()
@@ -37,9 +37,9 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
 
-        Tsr&#60;Double&#62; t1 = Tsr.of(Double.class, new int[]{2, 3}, "I am a seed! :)");
-        Tsr&#60;Double&#62; t2 = Tsr.of(Double.class, new int[]{2, 3}, "I am a seed! :)");
-        Tsr&#60;Double&#62; t3 = Tsr.of(Double.class, new int[]{2, 3}, "I am also a seed! But different. :)");
+        Tensor&#60;Double&#62; t1 = Tensor.of(Double.class, new int[]{2, 3}, "I am a seed! :)");
+        Tensor&#60;Double&#62; t2 = Tensor.of(Double.class, new int[]{2, 3}, "I am a seed! :)");
+        Tensor&#60;Double&#62; t3 = Tensor.of(Double.class, new int[]{2, 3}, "I am also a seed! But different. :)");
 
         // t1.toString() == t2.toString()
         // t3.toString() != t2.toString()
@@ -49,9 +49,9 @@
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-        val t1 = Tsr.of(Double::class.java, intArrayOf(2, 3), "I am a seed! :)")
-        val t2 = Tsr.of(Double::class.java, intArrayOf(2, 3), "I am a seed! :)")
-        val t3 = Tsr.of(Double::class.java, intArrayOf(2, 3), "I am also a seed! But different. :)")
+        val t1 = Tensor.of(Double::class.java, intArrayOf(2, 3), "I am a seed! :)")
+        val t2 = Tensor.of(Double::class.java, intArrayOf(2, 3), "I am a seed! :)")
+        val t3 = Tensor.of(Double::class.java, intArrayOf(2, 3), "I am also a seed! But different. :)")
 
         // t1.toString() == t2.toString()
         // t3.toString() != t2.toString()
@@ -85,8 +85,8 @@
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
 
-        var t1 = Tsr.ofRandom(Double, 2, 3)
-        var t2 = Tsr.ofRandom(Double, 2, 3)
+        var t1 = Tensor.ofRandom(Double, 2, 3)
+        var t2 = Tensor.ofRandom(Double, 2, 3)
 
         // t1.toString() == t2.toString()
 
@@ -95,8 +95,8 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
 
-        Tsr&#60;Double&#62; t1 = Tsr.ofRandom(Double.class, 2, 3);
-        Tsr&#60;Double&#62; t2 = Tsr.ofRandom(Double.class, 2, 3);
+        Tensor&#60;Double&#62; t1 = Tensor.ofRandom(Double.class, 2, 3);
+        Tensor&#60;Double&#62; t2 = Tensor.ofRandom(Double.class, 2, 3);
 
         // t1.toString() == t2.toString()
 
@@ -105,8 +105,8 @@
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-        val t1 = Tsr.ofRandom(Double::class.java, 2, 3)
-        val t2 = Tsr.ofRandom(Double::class.java, 2, 3)
+        val t1 = Tensor.ofRandom(Double::class.java, 2, 3)
+        val t2 = Tensor.ofRandom(Double::class.java, 2, 3)
 
         // t1.toString() == t2.toString()
 

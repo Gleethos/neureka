@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -16,7 +16,7 @@ import spock.lang.Title
     This form of tensor instantiation is very useful to avoid boilerplate code.
     
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Expression_Based_Tensor_Instantiation_Spec extends Specification
 {
     def setup() {
@@ -41,17 +41,17 @@ class Expression_Based_Tensor_Instantiation_Spec extends Specification
     def 'A tensor can be created from a function as expression.'()
     {
         reportInfo """
-            The `Tsr.of` method can be used to instantiate a tensor
+            The `Tensor.of` method can be used to instantiate a tensor
             using a string expression which defines a function 
             followed by an arbitrary number of tensor arguments
             which are used as input for the function.
         """
 
         given : 'A simple scalar tensor containing the number "4".'
-            Tsr<Double> x = Tsr.of(4d)
+            Tensor<Double> x = Tensor.of(4d)
 
         when : 'We instantiate a tensor using a function expression and the scalar tensor as argument...'
-            Tsr<Double> y = Tsr.of("tanh(I[0])", x)
+            Tensor<Double> y = Tensor.of("tanh(I[0])", x)
 
         then : 'The resulting tensor should be the result of the "tanh" function applied to the scalar tensor.'
             y.toString() == "(1):[0.99932]"
@@ -65,23 +65,23 @@ class Expression_Based_Tensor_Instantiation_Spec extends Specification
     def 'We can instantiate tensors from various simple string expressions.'()
     {
         given : 'Three scalar tensors.'
-            Tsr<Double> a = Tsr.of(3d)
-            Tsr<Double> b = Tsr.of(2d)
-            Tsr<Double> c = Tsr.of(-1d)
+        Tensor<Double> a = Tensor.of(3d)
+            Tensor<Double> b = Tensor.of(2d)
+            Tensor<Double> c = Tensor.of(-1d)
 
-        when : var t = Tsr.of("1+", a, "*", b)
+        when : var t = Tensor.of("1+", a, "*", b)
         then : t.toString().contains("7.0")
-        when : t = Tsr.of("1", "+", a, "*", b)
+        when : t = Tensor.of("1", "+", a, "*", b)
         then : t.toString().contains("7.0")
-        when : t = Tsr.of("(","1+", a,")", "*", b)
+        when : t = Tensor.of("(","1+", a,")", "*", b)
         then : t.toString().contains("8.0")
-        when : t = Tsr.of("(","1", "+", a,")", "*", b)
+        when : t = Tensor.of("(","1", "+", a,")", "*", b)
         then : t.toString().contains("8.0")
-        when : t = Tsr.of("(", c, "*3)+", "(","1+", a,")", "*", b)
+        when : t = Tensor.of("(", c, "*3)+", "(","1+", a,")", "*", b)
         then : t.toString().contains("5.0")
-        when : t = Tsr.of("(", c, "*","3)+", "(","1+", a,")", "*", b)
+        when : t = Tensor.of("(", c, "*","3)+", "(","1+", a,")", "*", b)
         then : t.toString().contains("5.0")
-        when : t = Tsr.of("(", c, "*","3", ")+", "(","1+", a,")", "*", b)
+        when : t = Tensor.of("(", c, "*","3", ")+", "(","1+", a,")", "*", b)
         then : t.toString().contains("5.0")
     }
 

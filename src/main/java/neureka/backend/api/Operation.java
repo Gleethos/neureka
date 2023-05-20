@@ -39,7 +39,7 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
@@ -203,8 +203,8 @@ public interface Operation
                                         throw new IllegalArgumentException("Cannot derive w.r.t. to input index " + d + " in function '" + caller + "', because there is no input with index "+d+"!");
 
                                     if ( caller.getSubFunctions().stream().allMatch( f -> f instanceof FunctionConstant) ) {
-                                        if ( d < 0 ) return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(caller.call(new double[0])).mut().setIsIntermediate(true));
-                                        else         return Result.of(Tsr.like((Tsr<Number>)call.input(0)).all(0).mut().setIsIntermediate(true));
+                                        if ( d < 0 ) return Result.of(Tensor.like((Tensor<Number>)call.input(0)).all(caller.call(new double[0])).mut().setIsIntermediate(true));
+                                        else         return Result.of(Tensor.like((Tensor<Number>)call.input(0)).all(0).mut().setIsIntermediate(true));
                                     }
                                     Result result = call.getAlgorithm().execute( caller, call );
                                     if ( result != null ) return result;
@@ -215,7 +215,7 @@ public interface Operation
                                         );
                                 });
 
-        for ( Tsr<?> t : call.inputs() )
+        for ( Tensor<?> t : call.inputs() )
             if ( !t.graphNode().isPresent() )
                 new GraphNode<>( caller, null, () -> Result.of(t) );
 

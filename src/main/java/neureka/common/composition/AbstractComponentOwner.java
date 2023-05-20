@@ -31,13 +31,13 @@ SOFTWARE.
                                                                | |
                                                                |_|
 
-    An early precursor class of the AbstractNDArray class and the Tsr class...
+    An early precursor class of the AbstractNDArray class and the Tensor class...
 
 */
 
 package neureka.common.composition;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.BackendContext;
 import neureka.common.utility.LogUtil;
@@ -55,7 +55,7 @@ import java.util.Optional;
  *  This means that the {@link AbstractComponentOwner} can only reference a single
  *  instance of a concrete {@link Component} implementation class.                                   <br>
  *                                                                                                   <br>
- *  This class is also used as the root precursor class of the concrete {@link Tsr} class
+ *  This class is also used as the root precursor class of the concrete {@link Tensor} class
  *  from which tensor instances can be created, but also the precursor class of
  *  the {@link BackendContext} which is managed by thread local
  *  {@link neureka.Neureka} library context instances.
@@ -63,7 +63,7 @@ import java.util.Optional;
  *  hosts {@link neureka.backend.api.Operation}, {@link java.util.function.Function}
  *  and of course {@link Component} implementations.
  *  Tensors on the other hand use this component system to enable autograd
- *  via the {@link GraphNode} class and to reference gradients ({@link Tsr} is itself a {@link Component})
+ *  via the {@link GraphNode} class and to reference gradients ({@link Tensor} is itself a {@link Component})
  *  among other type of components...
  *
  * @param <C> The concrete class at the bottom end of the inheritance hierarchy. (Used to allow for method chaining)
@@ -153,7 +153,7 @@ public abstract class AbstractComponentOwner<C> implements ComponentOwner<C>
      *  During this process the transferred components will be notified of their new owner.
      *  This is important because some components might reference their owners... <br>
      *  <br>
-     *  This change happens for example in the {@link Tsr} class when tensors are being instantiated by
+     *  This change happens for example in the {@link Tensor} class when tensors are being instantiated by
      *  certain constructors which require the injection of the contents of another tensor into a new one.
      *
      * @param other The other owner which will be stripped of its components which are then incorporated into this owner.

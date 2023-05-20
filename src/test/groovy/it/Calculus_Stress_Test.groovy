@@ -1,7 +1,7 @@
 package it
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.ocl.CLBackend
 import neureka.math.Function
 import neureka.devices.Device
@@ -40,23 +40,23 @@ class Calculus_Stress_Test extends Specification
         given : 'For this test we tell the CL-Backend to auto-convert to floats.'
             Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
         and:
-            def stress = ( Tsr t ) -> {
-                t = t + Tsr.of( t.shape(), -3d..12d )
-                t = t * Tsr.of( t.shape(),  2d..3d  )
-                t = t / Tsr.of( t.shape(),  1d..2d  )
-                t = t **Tsr.of( t.shape(),  2d..1d  )
-                t = t - Tsr.of( t.shape(), -2d..2d  )
+            def stress = (Tensor t ) -> {
+                t = t + Tensor.of( t.shape(), -3d..12d )
+                t = t * Tensor.of( t.shape(),  2d..3d  )
+                t = t / Tensor.of( t.shape(),  1d..2d  )
+                t = t **Tensor.of( t.shape(),  2d..1d  )
+                t = t - Tensor.of( t.shape(), -2d..2d  )
                 return t
             }
         and :
-            Tsr source = Tsr.of( [3, 3, 3, 3], -1d ).to( device )
+            Tensor source = Tensor.of( [3, 3, 3, 3], -1d ).to( device )
 
         when :
-            source.mut[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4d..2d )
-            Tsr s = source[1..2, 0..2, 1..1, 0d..2d]
+            source.mut[1..2, 0..2, 1..1, 0..2] = Tensor.of( [2, 3, 1, 3], -4d..2d )
+            Tensor s = source[1..2, 0..2, 1..1, 0d..2d]
 
         then :
-            s.toString() == Tsr.of( [2, 3, 1, 3], -4d..2d ).toString()
+            s.toString() == Tensor.of( [2, 3, 1, 3], -4d..2d ).toString()
 
         when :
             s = stress(s)
@@ -92,7 +92,7 @@ class Calculus_Stress_Test extends Specification
             List<Integer> shape, String expected
     ) {
         given:
-            Tsr<Double> t = Tsr.of( shape, -4d..2d )
+            Tensor<Double> t = Tensor.of( shape, -4d..2d )
 
         when :
             t = t.convDot( t.T() )
@@ -118,11 +118,11 @@ class Calculus_Stress_Test extends Specification
         given : 'For this test we tell the CL-Backend to auto-convert to floats.'
             Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
         and :
-            Tsr<Double> t1 = Tsr.of( shape1, -4d..2d ).to( device )
-            Tsr<Double> t2 = Tsr.of( shape2, -3d..5d ).to( device )
+            Tensor<Double> t1 = Tensor.of( shape1, -4d..2d ).to( device )
+            Tensor<Double> t2 = Tensor.of( shape2, -3d..5d ).to( device )
 
         when :
-            Tsr t = Tsr.of( operation, [t1,t2] )
+            Tensor t = Tensor.of( operation, [t1, t2] )
 
         then :
             t.toString() == expected
@@ -173,8 +173,8 @@ class Calculus_Stress_Test extends Specification
             var PRIME_SIZE_1 = 7907
             var PRIME_SIZE_2 = 7919
         and : 'We create 2 tensors storing the same values, one sliced and the other a normal tensor.'
-            var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed("Tempeh")
-            var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[9..7915]
+            var t1 = Tensor.of(type).withShape(PRIME_SIZE_1).andSeed("Tempeh")
+            var t2 = Tensor.of(type).withShape(PRIME_SIZE_2).all(0)[9..7915]
             t2.mut[0..t2.size-1] = t1
 
         expect : 'The types of both tensors should match what was provided during instantiation.'
@@ -236,8 +236,8 @@ class Calculus_Stress_Test extends Specification
             var PRIME_SIZE_1 = 3
             var PRIME_SIZE_2 = 5
         and : 'We create 2 tensors storing the same values, one sliced and the other a normal tensor.'
-            var t1 = Tsr.of(type).withShape(PRIME_SIZE_1).andSeed("Seitan")
-            var t2 = Tsr.of(type).withShape(PRIME_SIZE_2).all(0)[1..3]
+            var t1 = Tensor.of(type).withShape(PRIME_SIZE_1).andSeed("Seitan")
+            var t2 = Tensor.of(type).withShape(PRIME_SIZE_2).all(0)[1..3]
             t2[0..t2.size-1] = t1
 
         expect : 'The types of both tensors should match what was provided during instantiation.'

@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
@@ -33,7 +33,7 @@ import spock.lang.Title
                 
 
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Tensor_Version_Spec extends Specification
 {
     def setupSpec() {
@@ -74,8 +74,8 @@ class Tensor_Version_Spec extends Specification
     ) {
         given : '2 tensors a and b.'
             Neureka.get().settings().autograd().setIsPreventingInlineOperations( safe_inline )
-            Tsr a = Tsr.of(4d) + Tsr.of(2d)
-            Tsr b = Tsr.of(-1d) + Tsr.of(-3d).setRqsGradient(true)
+            Tensor a = Tensor.of(4d) + Tensor.of(2d)
+            Tensor b = Tensor.of(-1d) + Tensor.of(-3d).setRqsGradient(true)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -85,7 +85,7 @@ class Tensor_Version_Spec extends Specification
             b.getVersion() == 0
 
         when : 'The groovy code (performing inline operations) is being evaluated.'
-            Tsr c = new GroovyShell(binding).evaluate((code))
+            Tensor c = new GroovyShell(binding).evaluate((code))
 
         then : 'The resulting tensor (toString) will contain the expected sub-string.'
             c.toString().contains(expected)
@@ -121,8 +121,8 @@ class Tensor_Version_Spec extends Specification
         given :
             Neureka.get().settings().autograd().setIsPreventingInlineOperations( no_inline )
         and : 'Two tensors, one requiring gradients and the other one not.'
-            Tsr a = Tsr.of(6d).setRqsGradient(true)
-            Tsr b = Tsr.of(-4d)
+            Tensor a = Tensor.of(6d).setRqsGradient(true)
+            Tensor b = Tensor.of(-4d)
         and : 'A binding for both tensors as preparation for calling the Groovy shell.'
             Binding binding = new Binding()
             binding.setVariable('a', a)
@@ -133,7 +133,7 @@ class Tensor_Version_Spec extends Specification
             b.getVersion() == 0
 
         when : 'The Groovy code is being evaluated inside the Groovy shell.'
-            Tsr c = new GroovyShell(binding).evaluate((code))
+            Tensor c = new GroovyShell(binding).evaluate((code))
 
         then : 'The resulting tensor (toString) will contain the expected String.'
             c.toString().contains(expected)
@@ -167,8 +167,8 @@ class Tensor_Version_Spec extends Specification
     ) {
         given :
             Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )
-            Tsr a = Tsr.of(4d) + Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-4d)
+            Tensor a = Tensor.of(4d) + Tensor.of(2d).setRqsGradient(true)
+            Tensor b = Tensor.of(-4d)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -178,7 +178,7 @@ class Tensor_Version_Spec extends Specification
             b.getVersion() == 0
 
         when : 'The groovy code is being evaluated.'
-            Tsr<Double> c = new GroovyShell( binding ).evaluate( code )
+            Tensor<Double> c = new GroovyShell( binding ).evaluate( code )
 
         then : 'An illegal state exception is being thrown.'
             def exception = thrown(IllegalStateException)
@@ -199,7 +199,7 @@ class Tensor_Version_Spec extends Specification
     def 'Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).'()
     {
         given :
-            var t = Tsr.ofFloats().withShape(5, 2).andSeed(42)
+            var t = Tensor.ofFloats().withShape(5, 2).andSeed(42)
         expect :
             t.version == 0
 

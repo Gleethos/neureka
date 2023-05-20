@@ -235,12 +235,12 @@ myTensor.set( device )
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var X = Tsr.of(
+var X = Tensor.of(
             [[0.6667, 1.0000],
              [0.3333, 0.5556],
              [1.0000, 0.6667]]
         )
-var y = Tsr.of(
+var y = Tensor.of(
                 [[0.9200],
                  [1.0000],
                  [0.8900]]
@@ -249,12 +249,12 @@ var y = Tsr.of(
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-var X = Tsr.of(new double[][]{
+var X = Tensor.of(new double[][]{
                  {0.6667, 1.0000},
                  {0.3333, 0.5556},
                  {1.0000, 0.6667}
             });
-var y = Tsr.of(new double[][]{
+var y = Tensor.of(new double[][]{
                 {0.9200},
                 {1.0000},
                 {0.8900}
@@ -263,12 +263,12 @@ var y = Tsr.of(new double[][]{
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val X = Tsr.of(arrayOf(
+val X = Tensor.of(arrayOf(
                  doubleArrayOf(0.6667, 1.0000),
                  doubleArrayOf(0.3333, 0.5556),
                  doubleArrayOf(1.0000, 0.6667)
             ))
-val y = Tsr.of(arrayOf(
+val y = Tensor.of(arrayOf(
                 doubleArrayOf(0.9200),
                 doubleArrayOf(1.0000),
                 doubleArrayOf(0.8900)
@@ -312,13 +312,13 @@ val y = Tsr.of(arrayOf(
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
 
-    var W1 = Tsr.of(
+    var W1 = Tensor.of(
                     [[-1.1843,  0.0146, -1.4647],
                      [-1.4020, -1.0129,  0.6256]]
                 )
                 .setRqsGradient(true)
 
-    var W2 = Tsr.of(
+    var W2 = Tensor.of(
                     [[ 1.8095],
                      [-0.4269],
                      [-1.1110]]
@@ -330,13 +330,13 @@ val y = Tsr.of(arrayOf(
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
 
-    var W1 = Tsr.of(new double[][]{
+    var W1 = Tensor.of(new double[][]{
                         {-1.1843,  0.0146, -1.4647},
                         {-1.4020, -1.0129,  0.6256}
                     })
                     .setRqsGradient(true);
 
-    var W2 = Tsr.of(new double[][]{
+    var W2 = Tensor.of(new double[][]{
                         {1.8095},
                         {-0.4269},
                         {-1.1110}
@@ -348,13 +348,13 @@ val y = Tsr.of(arrayOf(
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    val W1 = Tsr.of(arrayOf(
+    val W1 = Tensor.of(arrayOf(
                         doubleArrayOf(-1.1843,  0.0146, -1.4647),
                         doubleArrayOf(-1.4020, -1.0129,  0.6256)
                     ))
                     .setRqsGradient(true)
 
-    val W2 = Tsr.of(arrayOf(
+    val W2 = Tensor.of(arrayOf(
                         doubleArrayOf(1.8095),
                         doubleArrayOf(-0.4269),
                         doubleArrayOf(-1.1110)
@@ -436,7 +436,7 @@ val y = Tsr.of(arrayOf(
     def errors = []
     def losses = []
 
-    def forwardAndBackward = ( Tsr&#60;Double&#62; x ) ->
+    def forwardAndBackward = ( Tensor&#60;Double&#62; x ) ->
     {
         def z1 = x.dot(W1)
         def hidden = sig(z1)
@@ -460,7 +460,7 @@ val y = Tsr.of(arrayOf(
     private List errors = new ArrayList<>();
     private List losses = new ArrayList<>();
 
-    public Tsr&#60;Double&#62; forwardAndBackward( Tsr&#60;Double&#62; x )
+    public Tensor&#60;Double&#62; forwardAndBackward( Tensor&#60;Double&#62; x )
     {
         var z1 = x.dot(W1);
         var hidden = sig.call(z1);
@@ -484,7 +484,7 @@ val y = Tsr.of(arrayOf(
     val errors = new ArrayList<>()
     val losses = new ArrayList<>()
 
-    fun forwardAndBackward( x : Tsr&#60;Double&#62; ) : Tsr&#60;Double&#62;
+    fun forwardAndBackward( x : Tensor&#60;Double&#62; ) : Tensor&#60;Double&#62;
     {
         val z1 = x.dot(W1)
         val hidden = sig(z1)
@@ -539,7 +539,7 @@ val y = Tsr.of(arrayOf(
                 <pre><code class="hljs language-java">
 
     for ( int i = 0; i < 100; i++ ) {
-        Tsr&#60;Double&#62; loss = forwardAndBackward(X);
+        Tensor&#60;Double&#62; loss = forwardAndBackward(X);
         System.out.println(loss);
     }
 

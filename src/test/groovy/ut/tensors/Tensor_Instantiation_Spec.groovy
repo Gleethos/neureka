@@ -2,7 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -17,7 +17,7 @@ import spock.lang.Title
     Here we want to show how a tensor can be instantiated in different ways.
                     
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Tensor_Instantiation_Spec extends Specification
 {
     def setup() {
@@ -43,8 +43,8 @@ class Tensor_Instantiation_Spec extends Specification
         def data, Class<?> type, List<Integer> shape
     ) {
         given : 'We create a vector tensor using the "of" factory method.'
-            Tsr<?> t = Tsr.of(data)
-            // In practise this might be something like: Tsr.of(42, 666, 73, 64)
+            Tensor<?> t = Tensor.of(data)
+            // In practise this might be something like: Tensor.of(42, 666, 73, 64)
 
         expect : 'The resulting tensor has the expected item type class.'
             t.itemType == type
@@ -71,8 +71,8 @@ class Tensor_Instantiation_Spec extends Specification
         given : 'We make sure that the data is of the right type (based on the data table):'
             data = data.asType(type)
         and : 'We create a scalar tensor using the "of" factory method.'
-            Tsr<?> t = Tsr.of(data)
-            // In practise this might be something like: Tsr.of(42)
+            Tensor<?> t = Tensor.of(data)
+            // In practise this might be something like: Tensor.of(42)
         expect : 'The resulting tensor has the expected item type class.'
             t.itemType == type
         and : 'Also the expected shape.'
@@ -114,7 +114,7 @@ class Tensor_Instantiation_Spec extends Specification
             Note that that length of the values list does not need to match the product of the shape list.
             The values list will be repeatedly iterated over until the tensor is filled.
         """
-            Tsr<Integer> t = Tsr.of([2, 2], [2, 4, 4])
+            Tensor<Integer> t = Tensor.of([2, 2], [2, 4, 4])
         expect : 'We passed integers to the factory method, so the resulting tensor is expected to be a tensor of that type.'
             t.itemType == Integer
         and : 'The tensor has the expected shape and items.'
@@ -139,7 +139,7 @@ class Tensor_Instantiation_Spec extends Specification
             Note that that length of the values list does not need to match the product of the shape list.
             The values list will be repeatedly iterated over until the tensor is filled.
         """
-            Tsr<Integer> t = Tsr.of([2], [3, 5, 7])
+            Tensor<Integer> t = Tensor.of([2], [3, 5, 7])
         expect : 'We passed integers to the factory method, so the resulting tensor is expected to be a tensor of that type.'
             t.itemType == Integer
         and : 'The tensor has the expected shape and items.'
@@ -153,11 +153,11 @@ class Tensor_Instantiation_Spec extends Specification
     def 'Tensors can be instantiated based on arrays for both shapes and values.'()
     {
         given :
-            Tsr<Double> t = Tsr.of(Shape.of(2, 2), new double[]{2, 4, 4})
+            Tensor<Double> t = Tensor.of(Shape.of(2, 2), new double[]{2, 4, 4})
         expect :
             t.toString() == "(2x2):[2.0, 4.0, 4.0, 2.0]"
         when :
-            t = Tsr.of(Shape.of(2), new double[]{3, 5, 7})
+            t = Tensor.of(Shape.of(2), new double[]{3, 5, 7})
         then :
             t.toString() == "(2):[3.0, 5.0]"
             t.getItemsAs( double[].class ).length == 2
@@ -166,9 +166,9 @@ class Tensor_Instantiation_Spec extends Specification
     def 'Tensors can be instantiated with String seed.'()
     {
         given : 'Three seeded 2D tensors are being instantiated.'
-            Tsr<Double> t1 = Tsr.of([2, 3], "I am a seed! :)")
-            Tsr<Double> t2 = Tsr.of([2, 3], "I am a seed! :)")
-            Tsr<Double> t3 = Tsr.of([2, 3], "I am also a seed! But different. :)")
+            Tensor<Double> t1 = Tensor.of([2, 3], "I am a seed! :)")
+            Tensor<Double> t2 = Tensor.of([2, 3], "I am a seed! :)")
+            Tensor<Double> t3 = Tensor.of([2, 3], "I am also a seed! But different. :)")
 
         expect : 'Equal seeds produce equal values.'
             t1.toString() == t2.toString()
@@ -177,9 +177,9 @@ class Tensor_Instantiation_Spec extends Specification
 
     def 'Passing a seed in the form of a String to a tensor produces pseudo random items.'()
     {
-        when : Tsr r = Tsr.of([2, 2], "jnrejn")
+        when : Tensor r = Tensor.of([2, 2], "jnrejn")
         then : r.toString().contains("0.02847, -0.69068, 0.15386, 1.81382")
-        when : r = Tsr.of([2, 2], "jnrejn2")
+        when : r = Tensor.of([2, 2], "jnrejn2")
         then : !r.toString().contains("0.02600, -2.06129, -0.48373, 0.94884")
     }
 

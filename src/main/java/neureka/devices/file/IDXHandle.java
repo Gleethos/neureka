@@ -4,7 +4,7 @@ package neureka.devices.file;
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
@@ -66,7 +66,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
         }
     }
 
-    public IDXHandle(Tsr<Number> t, String filename ) {
+    public IDXHandle(Tensor<Number> t, String filename ) {
         super( filename, new IDXType() );
         _shape = t.shape();
         _dataType = t.getDataType();
@@ -103,7 +103,7 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
 
 
     @Override
-    public <T extends Number> IDXHandle store( Tsr<T> tensor )
+    public <T extends Number> IDXHandle store( Tensor<T> tensor )
     {
         Iterator<T> data = tensor.iterator();
         FileOutputStream fos;
@@ -180,13 +180,13 @@ public final class IDXHandle extends AbstractFileHandle<IDXHandle, Number>
     }
 
     @Override
-    public Tsr<Number> load() throws IOException
+    public Tensor<Number> load() throws IOException
     {
         Object value = _loadData();
         DataType<?> type = Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes()
                             ? DataType.of( _dataType.getTypeClassInstance(NumericType.class).getNumericTypeTarget() )
                             : _dataType;
-        return Tsr.of( type, _shape, value ).getMut().upcast(Number.class);
+        return Tensor.of( type, _shape, value ).getMut().upcast(Number.class);
     }
 
     @Override

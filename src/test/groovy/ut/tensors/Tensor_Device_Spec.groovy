@@ -1,8 +1,9 @@
 package ut.tensors
 
+
 import neureka.common.composition.Component
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.devices.Device
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
@@ -53,7 +54,7 @@ class Tensor_Device_Spec extends Specification
         given : 'We get a device instance representing the GPU.'
             Device gpu = Device.get("gpu")
         and : 'We create a simple tensor.'
-            Tsr t = Tsr.of([3, 4, 1], 3f)
+            Tensor t = Tensor.of([3, 4, 1], 3f)
 
         expect : 'The following is to be expected with respect to the given :'
             !t.has(Device.class)
@@ -75,7 +76,7 @@ class Tensor_Device_Spec extends Specification
     {
         given : 'A mock device and a simple tensor instance.'
             def device = Mock(Device)
-            var t = Tsr.of(2d)
+            var t = Tensor.of(2d)
             device.has(t) >>> [false, true, true]
 
         when : 'The mock device is being added to the tensor...'
@@ -96,7 +97,7 @@ class Tensor_Device_Spec extends Specification
         given : 'A simple tensor having a device as component'
             def device = Mock(Device)
             device.has(_) >>> [false, true, true] // Some realistic return values to simulate tensor reception!
-            var t = Tsr.of(1d)
+            var t = Tensor.of(1d)
 
         when :
             t.to(device)
@@ -123,7 +124,7 @@ class Tensor_Device_Spec extends Specification
     {
         given : 'A 2D tensor having a device as component'
             def device = Mock(Device)
-            var t = Tsr.of([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])
+            var t = Tensor.of([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])
             device.has(t) >>> [false, true]
 
         when : 'A slice is being created from the given tensor...'
@@ -138,7 +139,7 @@ class Tensor_Device_Spec extends Specification
         and : 'Instead the "update" method should be called...'
             1 * device.update(_)
 
-        and: 'Internally the Tsr may "asks" if it belongs to the Device. (before and after migration attempt)'
+        and: 'Internally the Tensor may "asks" if it belongs to the Device. (before and after migration attempt)'
             (0.._) * device.has(t)
     }
 

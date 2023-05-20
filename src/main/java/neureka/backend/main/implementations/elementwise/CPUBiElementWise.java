@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.elementwise;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
@@ -14,7 +14,7 @@ public abstract class CPUBiElementWise implements ImplementationFor<CPU>
     protected abstract CPUBiFun _getDeriveAt1();
 
     @Override
-    public Tsr<?> run(ExecutionCall<CPU> call) {
+    public Tensor<?> run(ExecutionCall<CPU> call) {
         if ( call.arity() < 3 )
             throw new IllegalArgumentException("The element-wise operation requires at least two arguments and one output!");
         call.getDevice()
@@ -53,7 +53,7 @@ public abstract class CPUBiElementWise implements ImplementationFor<CPU>
     }
 
     private static CPU.RangeWorkload _newWorkloadF64(
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
+            Tensor<?> t0_drn, Tensor<?> t1_src, Tensor<?> t2_src,
             CPUBiFun operation
     ) {
         t1_src.mut().setIsVirtual( false );
@@ -97,7 +97,7 @@ public abstract class CPUBiElementWise implements ImplementationFor<CPU>
     }
 
     private static CPU.RangeWorkload _newWorkloadF32(
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
+            Tensor<?> t0_drn, Tensor<?> t1_src, Tensor<?> t2_src,
             CPUBiFun operation
     ) {
         t1_src.mut().setIsVirtual( false );
@@ -142,7 +142,7 @@ public abstract class CPUBiElementWise implements ImplementationFor<CPU>
     }
 
     private static CPU.RangeWorkload _newWorkloadI32(
-            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
+            Tensor<?> t0_drn, Tensor<?> t1_src, Tensor<?> t2_src,
             CPUBiFun operation
     ) {
         t1_src.mut().setIsVirtual( false );

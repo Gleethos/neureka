@@ -2,7 +2,7 @@ package neureka.devices.file;
 
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
 import neureka.framing.NDFrame;
@@ -40,7 +40,7 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
     private Integer _numberOfBytes = null;
     private WeakReference<String[]> _rawData = null;
 
-    CSVHandle( Tsr<?> tensor, String filename )
+    CSVHandle(Tensor<?> tensor, String filename )
     {
         super( filename, new CSVType() );
         assert tensor.rank() == 2;
@@ -180,16 +180,16 @@ public final class CSVHandle extends AbstractFileHandle<CSVHandle, String>
     }
 
     @Override
-    public <T extends String> Storage<String> store( Tsr<T> tensor ) {
+    public <T extends String> Storage<String> store( Tensor<T> tensor ) {
         throw new UnsupportedOperationException( "CSVHandle does not support storing tensors!" );
     }
 
     @Override protected Object _loadData() { return _lazyLoad(); }
 
     @Override
-    public Tsr<String> load() throws IOException {
+    public Tensor<String> load() throws IOException {
         String[] data = _lazyLoad();
-        Tsr<String> loaded = Tsr.of(DataType.of( String.class ), getShape(), data);
+        Tensor<String> loaded = Tensor.of(DataType.of( String.class ), getShape(), data);
         String[] index;
         String[] labels;
 

@@ -1,8 +1,8 @@
 package ut.backend
 
-import neureka.MutateTsr
+import neureka.MutateTensor
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.api.Algorithm
 import neureka.backend.api.BackendContext
 import neureka.backend.api.Operation
@@ -35,8 +35,8 @@ class Backend_Extension_Spec extends Specification
             var children = [Mock(FunctionInput), Mock(FunctionInput)]
 
         and : 'A mock tensor which is the expected output'
-            Tsr output = Mock(Tsr)
-            var mutate = Mock(MutateTsr)
+        Tensor output = Mock(Tensor)
+            var mutate = Mock(MutateTensor)
 
         and : 'A mocked operation implementation.'
             var implementation = Mock(Algorithm)
@@ -50,7 +50,7 @@ class Backend_Extension_Spec extends Specification
             !function.isDoingAD()
 
         when : 'The function is being called with an empty tensor array...'
-            var result = function.call(new Tsr[0])
+            var result = function.call(new Tensor[0])
 
         then : 'The custom call hook should be accessed as outlined below.'
             (0.._) * op.getAlgorithmFor(_) >> implementation

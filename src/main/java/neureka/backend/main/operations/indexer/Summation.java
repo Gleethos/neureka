@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.indexer;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
@@ -43,7 +43,7 @@ public final class Summation extends AbstractOperation
     @Override
     public Result execute( final Function caller, final ExecutionCall<?> call )
     {
-        Tsr<?>[] inputs = new Tsr[ call.arity() ];
+        Tensor<?>[] inputs = new Tensor[ call.arity() ];
         for ( int i = 0; i < inputs.length; i++ ) {
             ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flattenForIndexer( caller, call.withArgs(Arg.VarIdx.of(i)) );
             inputs[ i ] = flatCall.input( 0 );

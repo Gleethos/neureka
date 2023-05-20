@@ -1,6 +1,6 @@
 package neureka.autograd;
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 /**
  *  This is simply a wrapper for useful information needed by implementations of
@@ -14,9 +14,9 @@ public final class ADTarget<V>
 {
     private final int _inputIndex;
     private final GraphNode<V> _node;
-    private final Tsr<V> _error;
+    private final Tensor<V> _error;
 
-    ADTarget( int inputIndex, GraphNode<V> node, Tsr<V> error ) {
+    ADTarget( int inputIndex, GraphNode<V> node, Tensor<V> error ) {
         _inputIndex = inputIndex;
         _node = node;
         _error = error;
@@ -32,6 +32,6 @@ public final class ADTarget<V>
      */
     public GraphNode<V> node() { return _node; }
 
-    public Tsr<V> error() { return _error; }
+    public Tensor<V> error() { return _error; }
 
 }

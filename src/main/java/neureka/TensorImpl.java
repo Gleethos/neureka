@@ -22,18 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- __________
- \__    ___\
-    |  |____ _ __
-    | /  ___/ '___\
-    | \___  \ |
-     \/_____/_|Impl      A long yet shallow class.
-
-    This is the the core work-horse class of Neureka. The 'Tsr' class!
-    It is a three-letter abbreviation of the word "Tensor"!
-
-------------------------------------------------------------------------------------------------------------------------
-
    'Any fool can write code that a computer can understand.
     Good programmers write code that humans can understand.'
     – Martin Fowler
@@ -68,7 +56,7 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.fluent.slicing.SliceBuilder;
 import neureka.fluent.slicing.SmartSlicer;
-import neureka.fluent.slicing.states.AxisOrGetTsr;
+import neureka.fluent.slicing.states.AxisOrGetTensor;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.fluent.AxisFrame;
@@ -89,14 +77,14 @@ import java.util.stream.Collectors;
 
 
 /**
- *  The implementation for the {@link Tsr} API.
+ *  The implementation for the {@link Tensor} API.
  *
  * @param <V> The type parameter for the individual value items within this tensor.
  */
-final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
+final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTensor<V>
 {
     static {
-        _LOG = LoggerFactory.getLogger( TsrImpl.class );
+        _LOG = LoggerFactory.getLogger( TensorImpl.class );
     }
 
     /**
@@ -122,11 +110,11 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     |   ---------------------------
     */
 
-    static <T> Tsr<T> _of( Object... args )
+    static <T> Tensor<T> _of(Object... args )
     {
-        if ( args == null || args.length == 0 ) return new TsrImpl<>();
+        if ( args == null || args.length == 0 ) return new TensorImpl<>();
         if ( args.length == 1 ) {
-            TsrImpl<T> t = new TsrImpl<>();
+            TensorImpl<T> t = new TensorImpl<>();
             boolean success = constructFor(t, CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
             if ( !success ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
@@ -140,7 +128,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
         Class<?> commonType = _extractCommonType(args);
         if ( commonType != null ) {
-            TsrImpl<T> t = new TsrImpl<>();
+            TensorImpl<T> t = new TensorImpl<>();
             constructFor(t, CPU.get(), NDConstructor.of( args.length ))
                 .tryConstructing(
                     DataType.of(commonType),
@@ -154,21 +142,21 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             alongside input tensors to the constructor.
             An example would be:
 
-                Tsr<?> t = Tsr.of( "tanh(", x, ") * 7 **", y );
+                Tensor<?> t = Tensor.of( "tanh(", x, ") * 7 **", y );
         */
         boolean containsString = false;
         int numberOfTensors = 0;
         for ( Object o : args ) {
             containsString = ( o instanceof String ) || containsString;
-            if ( o instanceof TsrImpl)
+            if ( o instanceof TensorImpl)
                 numberOfTensors++;
         }
-        TsrImpl<T>[] tensors = new TsrImpl[ numberOfTensors ];
+        TensorImpl<T>[] tensors = new TensorImpl[ numberOfTensors ];
         StringBuilder f = new StringBuilder();
         int ti = 0;
         for ( Object o : args ) {
-            if ( o instanceof TsrImpl) {
-                tensors[ ti ] = ( (TsrImpl<T>) o );
+            if ( o instanceof TensorImpl) {
+                tensors[ ti ] = ( (TensorImpl<T>) o );
                 f.append( "I[" ).append( ti ).append( "]" );
                 ti++;
             }
@@ -178,21 +166,21 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                     "Unexpected tensor construction argument of type '"+o.getClass().getSimpleName()+"'"
                 );
         }
-        if ( tensors.length == 0 || tensors[0] == null) return new TsrImpl<>();
+        if ( tensors.length == 0 || tensors[0] == null) return new TensorImpl<>();
         return Function.of( f.toString(), true ).call( tensors );
     }
 
-    static <T> Tsr<T> _of( Iterable<T> iterable )
+    static <T> Tensor<T> _of(Iterable<T> iterable )
     {
-        TsrImpl<T> t = new TsrImpl<>();
+        TensorImpl<T> t = new TensorImpl<>();
         List<T> list = new ArrayList<>();
         iterable.forEach( list::add );
         return _of( t );
     }
 
-    static <T> Tsr<T> _of( List<T> list )
+    static <T> Tensor<T> _of(List<T> list )
     {
-        TsrImpl<T> t = new TsrImpl<>();
+        TensorImpl<T> t = new TensorImpl<>();
         Class<?> commonType = _extractCommonType( list.toArray() );
         // We construct the tensor:
         constructFor(t, CPU.get(), NDConstructor.of( list.size() ))
@@ -223,14 +211,14 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /**
      *  This constructor creates a completely empty tensor which is void of any contents and meaning.
-     *  The use case for this would be to use the produced {@link Tsr}
+     *  The use case for this would be to use the produced {@link Tensor}
      *  instance as a target for an inline operation which fills this instance with an actual value. <br>
      *  An example of this approach would be to call the {@link #putAt(List, Nda)} method with an empty list as key.
      *  This will be interpreted as an inline copy of the contents of the
-     *  second parameter into this {@link Tsr} instance.
-     *  This constructor will be called by the {@link Tsr#newInstance()} factory method.
+     *  second parameter into this {@link Tensor} instance.
+     *  This constructor will be called by the {@link Tensor#newInstance()} factory method.
      */
-    TsrImpl() {
+    TensorImpl() {
         _setData(new Data<V>() {
             @Override public Device<V> owner() { return (Device<V>) CPU.get(); }
             @Override public Object getOrNull() { return null;}
@@ -242,7 +230,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         });
     }
 
-    public static <V> TsrImpl<V> _of( NDConstructor ndConstructor, Device device, DataType<V> dataType, Object value ) {
+    public static <V> TensorImpl<V> _of(NDConstructor ndConstructor, Device device, DataType<V> dataType, Object value ) {
         Object data = value;
         if ( List.class.isAssignableFrom( dataType.getItemTypeClass() ) )
             data = new Object[]{ value }; // Make an nd-array of lists possible"
@@ -256,52 +244,52 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
         }
-        TsrImpl<V> t = new TsrImpl<>();
+        TensorImpl<V> t = new TensorImpl<>();
         constructFor(t, device, ndConstructor).tryConstructing( dataType, data );
         return t;
     }
 
-    static <V> TsrImpl<V> _of( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
+    static <V> TensorImpl<V> _of(NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
         // We check if the type of the data is compatible with the type of the tensor:
         if ( !dataType.getItemTypeClass().isAssignableFrom( data.dataType().getItemTypeClass() ) )
             throw new IllegalArgumentException(
                     "The data type of the data is not compatible with the data type of the tensor!"
                 );
 
-        TsrImpl<V> t = new TsrImpl<>();
+        TensorImpl<V> t = new TensorImpl<>();
         constructFor(t, data.owner(), ndConstructor).constructTrusted( data );
         return t;
     }
 
     /**
-     *  see {@link Tsr#of(DataType, Shape, Filler)}
+     *  see {@link Tensor#of(DataType, Shape, Filler)}
      */
-    static <V> TsrImpl<V> _of( NDConstructor ndConstructor, DataType<V> type, Filler<V> filler ) {
+    static <V> TensorImpl<V> _of(NDConstructor ndConstructor, DataType<V> type, Filler<V> filler ) {
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
         LogUtil.nullArgCheck( type, "filler", Filler.class );
-        TsrImpl<V> t = new TsrImpl<>();
+        TensorImpl<V> t = new TensorImpl<>();
         constructFor(t, CPU.get(), ndConstructor).unpopulated( false, true, type );
         t._initDataArrayFrom( filler );
         return t;
     }
 
     /**
-     *  See {@link Tsr#of(Class, Shape, neureka.math.args.Arg.Seed)} and {@link #of(List, String)}
+     *  See {@link Tensor#of(Class, Shape, neureka.math.args.Arg.Seed)} and {@link #of(List, String)}
      */
-    static <V> TsrImpl<V> _of( Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
+    static <V> TensorImpl<V> _of(Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
         LogUtil.nullArgCheck( valueType, "valueType", Class.class );
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( seed, "seed", Arg.Seed.class );
-        TsrImpl<V> t = new TsrImpl<>();
+        TensorImpl<V> t = new TensorImpl<>();
         constructFor(t, CPU.get(), ndConstructor).newSeeded( valueType, seed );
         return t;
     }
 
-    static <V> TsrImpl<V> _of( NDConstructor ndConstructor, DataType<?> type ) {
+    static <V> TensorImpl<V> _of(NDConstructor ndConstructor, DataType<?> type ) {
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
-        TsrImpl<V> t = new TsrImpl<>();
+        TensorImpl<V> t = new TensorImpl<>();
         constructFor(t, CPU.get(), ndConstructor).unpopulated( true, true, type );
         return t;
     }
@@ -314,9 +302,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> setRqsGradient(boolean rqsGradient ) {
+    public Tensor<V> setRqsGradient(boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient ) {
-            if ( !rqsGradient ) this.remove( TsrImpl.class );
+            if ( !rqsGradient ) this.remove( TensorImpl.class );
             else if ( has(GraphNode.class) ) {
                 if ( getGraphNode().map( n -> n.getMode() == 0 ).orElse(false) )
                     remove(GraphNode.class);
@@ -352,7 +340,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      * @param isIntermediate The truth value determining if this tensor is not a user tensor but an internal
      *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
      */
-    private Tsr<V> _setIsIntermediate(boolean isIntermediate) {
+    private Tensor<V> _setIsIntermediate(boolean isIntermediate) {
         if ( isIntermediate() != isIntermediate ) {
             if ( isIntermediate ) _flags += IS_INTERMEDIATE_MASK;
             else                  _flags -= IS_INTERMEDIATE_MASK;
@@ -366,7 +354,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> setIsVirtual( boolean isVirtual )
+    public Tensor<V> setIsVirtual(boolean isVirtual )
     {
         if ( getNDConf() == null )
             throw new IllegalStateException(
@@ -386,8 +374,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
                 this.find( Relation.class )
                         .ifPresent( r ->
                             r.getChildren().forEach(c -> {
-                                ((TsrImpl<V>)c)._setData( _getData() );
-                                ((TsrImpl<V>)c).setIsVirtual( true );
+                                ((TensorImpl<V>)c)._setData( _getData() );
+                                ((TensorImpl<V>)c).setIsVirtual( true );
                             })
                         );
             else
@@ -401,7 +389,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     }
 
     /**
-     *  This method is the inner counterpart to the public "{@link MutateTsr#setIsVirtual}" method.
+     *  This method is the inner counterpart to the public "{@link MutateTensor#setIsVirtual}" method.
      *  It actually performs the bit flipping by applying the corresponding bit mask. <br>
      *  <br>
      * @param isVirtual The truth value which ought to be applied.
@@ -424,7 +412,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> setGradientApplyRequested(boolean applyRequested ) {
+    public Tensor<V> setGradientApplyRequested(boolean applyRequested ) {
         if ( gradientApplyRequested() != applyRequested ) {
             if ( applyRequested ) {
                 if (
@@ -444,14 +432,14 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  Although tensors will be garbage collected when they are not strongly referenced,
      *  there is also the option to manually free up the tensor and its associated data.
      *  This is especially useful when tensors are stored on a device like the OpenCLDevice.
-     *  In that case calling the "{@link MutateTsr#delete()}" method will free the memory reserved for this tensor.
+     *  In that case calling the "{@link MutateTensor#delete()}" method will free the memory reserved for this tensor.
      *  This manual memory freeing through this method can be faster than waiting for
      *  the garbage collector to kick in... <br>
      *  <br>
      *
      * @return This very tensor instance to allow for method chaining.
      */
-    private Tsr<V> _delete()
+    private Tensor<V> _delete()
     {
         if ( isDeleted() ) return this;
         getGraphNode().ifPresent( n -> {
@@ -465,7 +453,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         _setData( null );
         _setNDConf( null );
         _flags = 0;
-        this.find( TsrImpl.class ).ifPresent( t -> t.mut().delete() );
+        this.find( TensorImpl.class ).ifPresent(t -> t.mut().delete() );
         _deleteComponents();
         _flags += IS_DELETED_MASK;
         return this;
@@ -500,7 +488,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
-    protected < T extends Component<Tsr<V>> > T _setOrReject(T newComponent ) { return newComponent; }
+    protected < T extends Component<Tensor<V>> > T _setOrReject(T newComponent ) { return newComponent; }
 
     /**
      * This method is executed when a component is being removed from the tensor.
@@ -512,7 +500,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      * @return The unchanged object or when rejected: null (component rejected)
      */
     @Override
-    protected <T extends Component<Tsr<V>>> T _removeOrReject(T newComponent )
+    protected <T extends Component<Tensor<V>>> T _removeOrReject(T newComponent )
     {
         if ( newComponent instanceof Device ) {
             Device<V> device = (Device<V>) newComponent;
@@ -586,7 +574,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public MutateTsr<V> getMut() {
+    public MutateTensor<V> getMut() {
         _guardGet("unsafe API");
         return this;
     }
@@ -611,58 +599,58 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setNDConf(NDConfiguration configuration ) { TsrImpl.this._setNDConf( configuration ); return TsrImpl.this; }
+    public Tensor<V> setNDConf(NDConfiguration configuration ) { TensorImpl.this._setNDConf( configuration ); return TensorImpl.this; }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public <V> Tsr<V> toType( Class<V> typeClass ) {
+    public <V> Tensor<V> toType(Class<V> typeClass ) {
         LogUtil.nullArgCheck( typeClass, "typeClass", Class.class, "Cannot convert tensor to 'null' data type." );
-        return TsrImpl.this._toType( typeClass );
+        return TensorImpl.this._toType( typeClass );
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public <U> Tsr<U> upcast( Class<U> superType ) {
+    public <U> Tensor<U> upcast(Class<U> superType ) {
         LogUtil.nullArgCheck( superType, "superType", Class.class );
-        if ( superType.isAssignableFrom(TsrImpl.this.itemType()) )
-            return (Tsr<U>) TsrImpl.this;
+        if ( superType.isAssignableFrom(TensorImpl.this.itemType()) )
+            return (Tensor<U>) TensorImpl.this;
         else
-            throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TsrImpl.this.itemType()+"'.");
+            throw new IllegalArgumentException("Provided type '"+superType+"' is not a super type of '"+ TensorImpl.this.itemType()+"'.");
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> toLayout( NDConfiguration.Layout layout ) {
+    public Tensor<V> toLayout(NDConfiguration.Layout layout ) {
         ReLayout.toLayout( this, layout );
-        return TsrImpl.this;
+        return TensorImpl.this;
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> incrementVersion( ExecutionCall<?> call ) {
+    public Tensor<V> incrementVersion(ExecutionCall<?> call ) {
         LogUtil.nullArgCheck( call, "call", ExecutionCall.class );
         _incrementVersionBecauseOf( call );
-        return TsrImpl.this;
+        return TensorImpl.this;
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setIsIntermediate( boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
+    public Tensor<V> setIsIntermediate(boolean isIntermediate ) { return _setIsIntermediate( isIntermediate ); }
 
     /**
      *  {@inheritDoc}
      */
-    @Override public Tsr<V> delete() { return TsrImpl.this._delete(); }
+    @Override public Tensor<V> delete() { return TensorImpl.this._delete(); }
 
     /**
      *  {@inheritDoc}
@@ -681,90 +669,90 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setDataAt( int i, V o ) {
+    public Tensor<V> setDataAt(int i, V o ) {
         _guardMod("data object");
         _setDataAt( i, o );
-        return TsrImpl.this;
+        return TensorImpl.this;
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setData( Data<V> data ) {
-        TsrImpl.this._setData( data );
-        return TsrImpl.this;
+    public Tensor<V> setData(Data<V> data ) {
+        TensorImpl.this._setData( data );
+        return TensorImpl.this;
     }
 
     /**
      *  {@inheritDoc}
      */
-    @Override public Tsr<V> detach() { TsrImpl.this.remove( GraphNode.class ); return TsrImpl.this; }
+    @Override public Tensor<V> detach() { TensorImpl.this.remove( GraphNode.class ); return TensorImpl.this; }
 
     /** {@inheritDoc} */
-    @Override public Tsr<V> timesAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot multiply-assign 'null' to a tensor!");
-        return Neureka.get().backend().getFunction().mulAssign().call( TsrImpl.this, other );
+    @Override public Tensor<V> timesAssign(Tensor<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tensor.class, "Cannot multiply-assign 'null' to a tensor!");
+        return Neureka.get().backend().getFunction().mulAssign().call( TensorImpl.this, other );
     }
 
     /** {@inheritDoc} */
-    @Override public Tsr<V> timesAssign( V other ) {
-        LogUtil.nullArgCheck(other, "other", TsrImpl.this.getItemType(), "Cannot multiply-assign 'null' to a tensor!");
-        return this.timesAssign( Tsr.of( getItemType(), this.shape(), other ) );
+    @Override public Tensor<V> timesAssign(V other ) {
+        LogUtil.nullArgCheck(other, "other", TensorImpl.this.getItemType(), "Cannot multiply-assign 'null' to a tensor!");
+        return this.timesAssign( Tensor.of( getItemType(), this.shape(), other ) );
     }
 
     /** {@inheritDoc} */
-    @Override public Tsr<V> divAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
-        return Neureka.get().backend().getFunction().divAssign().call( TsrImpl.this, other );
+    @Override public Tensor<V> divAssign(Tensor<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tensor.class, "Cannot divide-assign a tensor by 'null' (In any sense of the word)!");
+        return Neureka.get().backend().getFunction().divAssign().call( TensorImpl.this, other );
     }
 
     /** {@inheritDoc} */
-    @Override public Tsr<V> modAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform tensor modulo 'null'!");
-        return Neureka.get().backend().getFunction().modAssign().call( TsrImpl.this, other );
+    @Override public Tensor<V> modAssign(Tensor<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tensor.class, "Cannot perform tensor modulo 'null'!");
+        return Neureka.get().backend().getFunction().modAssign().call( TensorImpl.this, other );
     }
 
     /** {@inheritDoc} */
-    @Override public Tsr<V> plusAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot add-assign 'null' to a tensor!");
-        return Neureka.get().backend().getFunction().plusAssign().call( TsrImpl.this, other );
+    @Override public Tensor<V> plusAssign(Tensor<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tensor.class, "Cannot add-assign 'null' to a tensor!");
+        return Neureka.get().backend().getFunction().plusAssign().call( TensorImpl.this, other );
     }
 
     /** {@inheritDoc} */
-    @Override public Tsr<V> minusAssign( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot subtract-assign 'null' from a tensor!");
-        return Neureka.get().backend().getFunction().minusAssign().call( TsrImpl.this, other );
+    @Override public Tensor<V> minusAssign(Tensor<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tensor.class, "Cannot subtract-assign 'null' from a tensor!");
+        return Neureka.get().backend().getFunction().minusAssign().call( TensorImpl.this, other );
     }
 
     /** {@inheritDoc} */
-    @Override public Tsr<V> minusAssign( V other ) {
-        LogUtil.nullArgCheck(other, "other", TsrImpl.this.getItemType(), "Cannot subtract-assign 'null' from a tensor!");
+    @Override public Tensor<V> minusAssign(V other ) {
+        LogUtil.nullArgCheck(other, "other", TensorImpl.this.getItemType(), "Cannot subtract-assign 'null' from a tensor!");
         return minusAssign(
-                Tsr.of( TsrImpl.this.getDataType().getItemTypeClass() )
-                        .withShape(TsrImpl.this.getNDConf().shape())
+                Tensor.of( TensorImpl.this.getDataType().getItemTypeClass() )
+                        .withShape(TensorImpl.this.getNDConf().shape())
                         .all(other)
         );
     }
 
     @Override
-    public Tsr<V> assign( V other ) {
-        LogUtil.nullArgCheck(other, "other", TsrImpl.this.getItemType(), "Cannot subtract-assign 'null' from a tensor!");
+    public Tensor<V> assign(V other ) {
+        LogUtil.nullArgCheck(other, "other", TensorImpl.this.getItemType(), "Cannot subtract-assign 'null' from a tensor!");
         return assign(
-                Tsr.of( TsrImpl.this.getDataType().getItemTypeClass() )
-                        .withShape(TsrImpl.this.getNDConf().shape())
+                Tensor.of( TensorImpl.this.getDataType().getItemTypeClass() )
+                        .withShape(TensorImpl.this.getNDConf().shape())
                         .all(other)
         );
     }
 
     @Override
-    public Tsr<V> assign( Nda<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot assign 'null' to a tensor!");
-        return Neureka.get().backend().getFunction().idy().call( TsrImpl.this, (Tsr<V>) other );
+    public Tensor<V> assign(Nda<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tensor.class, "Cannot assign 'null' to a tensor!");
+        return Neureka.get().backend().getFunction().idy().call( TensorImpl.this, (Tensor<V>) other );
     }
 
     @Override
-    public Tsr<V> labelAxes( String[]... labels ) {
+    public Tensor<V> labelAxes(String[]... labels ) {
         LogUtil.nullArgCheck(labels, "labels", String[][].class, "Tensors cannot be labeled 'null'!");
         if ( labels.length > this.rank() )
             throw new IllegalArgumentException(
@@ -790,33 +778,33 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> labelAxes( List<List<Object>> labels ) {
+    public Tensor<V> labelAxes(List<List<Object>> labels ) {
         LogUtil.nullArgCheck(labels, "labels", List.class, "Tensors cannot be labeled 'null'!");
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame<>( labels, this, null ) );
         else set( frame.withAxesLabels( labels ) );
-        return TsrImpl.this;
+        return TensorImpl.this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> label( String label ) {
+    public Tensor<V> label(String label ) {
         LogUtil.nullArgCheck( label, "label", List.class, "Tensors cannot be labeled 'null'!" );
         NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame<>( Collections.emptyList(), this, label ) );
         else set( frame.withLabel(label) );
-        return TsrImpl.this;
+        return TensorImpl.this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> labelAxes( Map<Object, List<Object>> labels )
+    public Tensor<V> labelAxes(Map<Object, List<Object>> labels )
     {
         LogUtil.nullArgCheck(labels, "labels", Map.class, "Tensors cannot be labeled 'null'!");
         String label = getLabel();
         label = label == null || label.isEmpty() ? null : label;
-        TsrImpl.this.set( new NDFrame<>( labels, TsrImpl.this, label ) );
-        return TsrImpl.this;
+        TensorImpl.this.set( new NDFrame<>( labels, TensorImpl.this, label ) );
+        return TensorImpl.this;
     }
 
     /*==================================================================================================================
@@ -837,14 +825,14 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         NDIterator _ndi = NDIterator.of( this );
         return new Iterator<V>()
         {
-            private final int _size = TsrImpl.this.size();
+            private final int _size = TensorImpl.this.size();
             private int _count = 0;
 
             @Override public boolean hasNext() { return _count != _size; }
 
             @Override
             public V next() {
-                V value = TsrImpl.this.getDataAt( _ndi.i() );
+                V value = TensorImpl.this.getDataAt( _ndi.i() );
                 _ndi.increment();
                 _count ++;
                 return value;
@@ -863,7 +851,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> to( Device<?> device ){
+    public Tensor<V> to(Device<?> device ){
         if ( this.getDevice() != device ) super._set( device );
         return this;
     }
@@ -873,9 +861,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *              may not be called if the error is not needed.
      *              This is to avoid unnecessary allocations and computations.
      */
-    void _backward( LazyRef<Tsr<V>> error ) {
-        LogUtil.nullArgCheck(error, "error", Tsr.class, "Cannot back-propagate 'null'!");
-        LazyRef<Tsr<V>> errorRef = this.isOutsourced()
+    void _backward( LazyRef<Tensor<V>> error ) {
+        LogUtil.nullArgCheck(error, "error", Tensor.class, "Cannot back-propagate 'null'!");
+        LazyRef<Tensor<V>> errorRef = this.isOutsourced()
                                       ? LazyRef.of(()->error.get().deepCopy().to(this.getDevice()))
                                       : error;
 
@@ -886,8 +874,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     }
 
     @Override
-    public Tsr<V> withLabel( String label ) {
-        Tsr<V> copy = this.shallowCopy();
+    public Tensor<V> withLabel(String label ) {
+        Tensor<V> copy = this.shallowCopy();
         if ( copy.label().endsWith(":slice") ) // We remove the slice postfix if it exists...
             copy = copy.shallowClone().mut().label( copy.label().substring(0, copy.label().length()-6) );
         return copy.mut().label( label );
@@ -895,8 +883,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> withLabels( String[]... labels ) {
-        Tsr<V> copy = this.shallowCopy();
+    public Tensor<V> withLabels(String[]... labels ) {
+        Tensor<V> copy = this.shallowCopy();
         if ( copy.label().endsWith(":slice") ) // We remove the slice postfix if it exists...
             copy = copy.shallowClone().mut().label( copy.label().substring(0, copy.label().length()-6) );
         return copy.mut().labelAxes( labels );
@@ -904,8 +892,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> withLabels( List<List<Object>> labels ) {
-        Tsr<V> copy = this.shallowCopy();
+    public Tensor<V> withLabels(List<List<Object>> labels ) {
+        Tensor<V> copy = this.shallowCopy();
         if ( copy.label().endsWith(":slice") ) // We remove the slice postfix if it exists...
             copy = copy.shallowClone().mut().label( copy.label().substring(0, copy.label().length()-6) );
         return copy.getMut().labelAxes( labels );
@@ -913,8 +901,8 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> withLabels( Map<Object, List<Object>> labels ) {
-        Tsr<V> copy = this.shallowCopy();
+    public Tensor<V> withLabels(Map<Object, List<Object>> labels ) {
+        Tensor<V> copy = this.shallowCopy();
         if ( copy.label().endsWith(":slice") ) // We remove the slice postfix if it exists...
             copy = copy.shallowClone().mut().label( copy.label().substring(0, copy.label().length()-6) );
         return copy.getMut().labelAxes( labels );
@@ -929,10 +917,10 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public boolean isCase( Tsr<V> other ) {
-        LogUtil.nullArgCheck(other, "other", Tsr.class, "Cannot perform 'is case' operation when second operand is 'null'!");
+    public boolean isCase( Tensor<V> other ) {
+        LogUtil.nullArgCheck(other, "other", Tensor.class, "Cannot perform 'is case' operation when second operand is 'null'!");
         return this.find( Relation.class )
-                    .map( r -> ((Relation<?>)r).getChildren().stream().anyMatch( (Tsr<?> c) -> c.equals(other) ))
+                    .map( r -> ((Relation<?>)r).getChildren().stream().anyMatch( (Tensor<?> c) -> c.equals(other) ))
                     .orElse(false);
     }
 
@@ -945,14 +933,14 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> getAt( int... indices ) {
+    public Tensor<V> getAt(int... indices ) {
         LogUtil.nullArgCheck(indices, "indices", int[].class, "Indices array must not be 'null'!");
         return getAt( Arrays.stream( indices ).boxed().toArray() );
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> getAt( Map<?,Integer> rangToSteps) {
+    public Tensor<V> getAt(Map<?,Integer> rangToSteps) {
         LogUtil.nullArgCheck(rangToSteps, "rankToSteps", Map.class, "Rank-to-steps map must not be 'null'!");
         // ...not a simple slice... Advanced:
         return SmartSlicer.slice(new Object[]{rangToSteps}, this);
@@ -962,7 +950,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> getAt( List<?> key ) {
+    public Tensor<V> getAt(List<?> key ) {
         LogUtil.nullArgCheck( key, "key", List.class );
         if ( key.stream().anyMatch( i -> i == null ) )
             throw new IllegalArgumentException("List of indices/ranges may not contain entries which are null!");
@@ -998,21 +986,21 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
 
     /** {@inheritDoc} */
      @Override
-    public TsrImpl<V> deepCopy() {
+    public TensorImpl<V> deepCopy() {
          return _clone( false );
     }
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<V> deepClone() {
+    public Tensor<V> deepClone() {
         return _clone( true );
     }
 
-    private TsrImpl<V> _clone(boolean autograd) {
+    private TensorImpl<V> _clone(boolean autograd) {
         Function cloner = autograd ? Neureka.get().backend().getAutogradFunction().idy() : Neureka.get().backend().getFunction().idy();
         boolean thisIsIntermediate = this.isIntermediate();
         _setIsIntermediate( false );
-        Tsr<V> clone = Tsr.like( this )
+        Tensor<V> clone = Tensor.like( this )
                 .all( (V) Double.valueOf(0.0) );
 
         if ( clone.itemType() != this.itemType() )
@@ -1021,35 +1009,35 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         clone = cloner.call( clone, this );
         clone.getMut().setIsIntermediate( thisIsIntermediate );
         _setIsIntermediate( thisIsIntermediate );
-        return (TsrImpl<V>) clone;
+        return (TensorImpl<V>) clone;
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public AxisOrGetTsr<V> slice() { return new SliceBuilder<>( this ); }
+    public AxisOrGetTensor<V> slice() { return new SliceBuilder<>( this ); }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> putAt( List<?> key, Nda<V> value ) {
-        _putAtCheckFor( (Tsr<?>) value );
-        Tsr<V> slice = ( key == null ) ? this : getAt( key );
+    public Tensor<V> putAt(List<?> key, Nda<V> value ) {
+        _putAtCheckFor( (Tensor<?>) value );
+        Tensor<V> slice = ( key == null ) ? this : getAt( key );
         Data<V> thisData = this.getMut().getData();
         Object thisDataRef = ( thisData != null ? thisData.getOrNull() : null );
         if ( thisDataRef != null && !thisDataRef.equals(slice.getMut().getData().getOrNull()) )
             throw new IllegalStateException("Failed to isolate slice for inline assignment!");
 
-        return _putAt( slice, (Tsr<V>) value );
+        return _putAt( slice, (Tensor<V>) value );
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> putAt( int[] indices, V item ) {
+    public Tensor<V> putAt(int[] indices, V item ) {
         if ( indices == null )
             throw new IllegalArgumentException( "Provided indices are null!" );
         if ( indices.length > this.rank() ) {
@@ -1072,13 +1060,13 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> putAt( Map<?,Integer> key, Nda<V> value ) {
-        _putAtCheckFor((Tsr<?>) value);
-        Tsr<V> slice = ( key == null ) ? this : getAt( key );
-        return _putAt( slice, (Tsr<V>) value);
+    public Tensor<V> putAt(Map<?,Integer> key, Nda<V> value ) {
+        _putAtCheckFor((Tensor<?>) value);
+        Tensor<V> slice = ( key == null ) ? this : getAt( key );
+        return _putAt( slice, (Tensor<V>) value);
     }
 
-    private void _putAtCheckFor( Tsr<?> value ) {
+    private void _putAtCheckFor( Tensor<?> value ) {
         if ( value.isEmpty() ) {
             String message = "Provided tensor is empty! Empty tensors cannot be injected.";
             _LOG.error( message );
@@ -1086,7 +1074,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
         }
     }
 
-    private Tsr<V> _putAt( Tsr<V> slice, Tsr<V> value )
+    private Tensor<V> _putAt(Tensor<V> slice, Tensor<V> value )
     {
         boolean valueIsDeviceVisitor = false;
         if ( slice.isOutsourced() && !value.isOutsourced() ) {
@@ -1119,7 +1107,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setItemAt( int i, V o ) {
+    public Tensor<V> setItemAt(int i, V o ) {
         _guardMod("data object");
         NDConfiguration ndc = this.getNDConf();
         _setDataAt( ndc.indexOfIndex( i ), o );
@@ -1127,15 +1115,15 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     }
 
     /** {@inheritDoc} */
-    @Override public Tsr<V> putAt( List<?> indices, V value ) {
+    @Override public Tensor<V> putAt(List<?> indices, V value ) {
         if ( indices.stream().allMatch( i -> i instanceof Number ) )
             return setItemAt( indexOfIndices(indices.stream().mapToInt( i -> ((Number)i).intValue() ).toArray()), value );
         else
-            return this.putAt( indices, Tsr.ofAny( this.getItemType(), shape(), value ) );
+            return this.putAt( indices, Tensor.ofAny( this.getItemType(), shape(), value ) );
     }
 
     /** {@inheritDoc} */
-    @Override public Tsr<V> putAt( int index, V value ) { return putAt( indicesOfIndex(index), value ); }
+    @Override public Tensor<V> putAt(int index, V value ) { return putAt( indicesOfIndex(index), value ); }
 
     private void _setDataAt( int i, V o ) {
         if ( this.isVirtual() && i > 0 )
@@ -1149,7 +1137,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> setItems( Object value )
+    public Tensor<V> setItems(Object value )
     {
         LogUtil.nullArgCheck( value, "value", Object.class );
         boolean success = true;
@@ -1276,9 +1264,9 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      *  {@inheritDoc}
      */
     @Override
-    public Tsr<V> addToGradient( Tsr<V> error ) {
+    public Tensor<V> addToGradient(Tensor<V> error ) {
         _guardSet("gradient");
-        Optional<Tsr> grad = this.find( Tsr.class );
+        Optional<Tensor> grad = this.find( Tensor.class );
         grad.ifPresent( gradient ->
                             this.set(
                                     MemUtil.keep( gradient, error, () ->
@@ -1310,7 +1298,7 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
     public <T> T asType( Class<T> typeClass )
     {
         LogUtil.nullArgCheck( typeClass, "typeClass", Class.class );
-        if ( typeClass == Tsr.class ) return (T) this;
+        if ( typeClass == Tensor.class ) return (T) this;
         if ( Number.class.isAssignableFrom( this.itemType()) && Number.class.isAssignableFrom(typeClass) ) {
             DataConverter converter = DataConverter.get();
             return converter.convert( mean().at(0).get(), typeClass );
@@ -1342,19 +1330,19 @@ final class TsrImpl<V> extends AbstractNda<Tsr<V>, V> implements MutateTsr<V>
      * @param <T> The type parameter for the returned tensor.
      * @return The same tensor instance whose data has been converted to hold a different type.
      */
-    private <T> Tsr<T> _toType( Class<T> typeClass )
+    private <T> Tensor<T> _toType(Class<T> typeClass )
     {
         DataType<V> newDataType = (DataType<V>) DataType.of( typeClass );
         if ( newDataType != this.getDataType() ) {
-            CPU.get().borrow((Tsr<Object>) this).in(()->{
+            CPU.get().borrow((Tensor<Object>) this).in(()->{
                 Object newData = _convertedDataOfType(typeClass);
                 _setData( null );
                 _setData( getDevice().allocateFromAll( newDataType, this.getNDConf(), newData) );
                 return null;
             });
         }
-        this.find( TsrImpl.class ).ifPresent( gradient -> gradient._toType( typeClass ) );
-        return (Tsr<T>) this;
+        this.find( TensorImpl.class ).ifPresent(gradient -> gradient._toType( typeClass ) );
+        return (Tensor<T>) this;
     }
 
     @Override

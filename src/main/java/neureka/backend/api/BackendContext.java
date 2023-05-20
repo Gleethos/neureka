@@ -2,6 +2,7 @@ package neureka.backend.api;
 
 
 import neureka.Neureka;
+import neureka.Tensor;
 import neureka.backend.api.ini.BackendLoader;
 import neureka.backend.api.ini.BackendRegistry;
 import neureka.backend.api.ini.ImplementationReceiver;
@@ -19,7 +20,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- *    Instances of this class are execution contexts hosting {@link Operation} instances which receive {@link neureka.Tsr}
+ *    Instances of this class are execution contexts hosting {@link Operation} instances which receive {@link Tensor}
  *    instances for execution.
  *    {@link BackendContext}s are managed by {@link Neureka}, a (thread-local) Singleton / Multiton library context.<br>
  *    Contexts are cloneable for testing purposes and to enable extending the backend dynamically.
@@ -137,7 +138,7 @@ public final class BackendContext implements Cloneable
     public int size() { return _size; }
 
     /**
-     * @return The {@link Function} and {@link neureka.Tsr} cache of this {@link BackendContext}
+     * @return The {@link Function} and {@link Tensor} cache of this {@link BackendContext}
      */
     public FunctionCache getFunctionCache() { return _functionCache; }
 
@@ -161,7 +162,7 @@ public final class BackendContext implements Cloneable
 
     /**
      *  This method registers {@link Operation} implementation instances in this {@link BackendContext}
-     *  which is the thread local execution context receiving and processing {@link neureka.Tsr} instances...         <br><br>
+     *  which is the thread local execution context receiving and processing {@link Tensor} instances...         <br><br>
      *
      * @param operation The {@link Operation} instance which ought to be registered as part of this execution context.
      * @return This very context instance to allow for method chaining.

@@ -2,7 +2,7 @@ package ut.backend
 
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.autograd.ADAction
 import neureka.backend.api.*
 import neureka.backend.api.fun.ADActionSupplier
@@ -40,8 +40,8 @@ class Backend_MatMul_Extension_Spec extends Specification
             run { testContext == Neureka.get().backend() }
 
         when:
-            Tsr t1 = Tsr.of([row_sze, com_sze], -3d..8d)
-            Tsr t2 = Tsr.of([com_sze, col_sze], -7d..4d)
+            Tensor t1 = Tensor.of([row_sze, com_sze], -3d..8d)
+            Tensor t2 = Tensor.of([com_sze, col_sze], -7d..4d)
             run {
                 Neureka.get().backend()
                     .addOperation(
@@ -76,7 +76,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                 ))
                                                 .withAutoDiff((ADActionSupplier){ Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ->
                                                     if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                    return ADAction.of((t, error) -> Function.of(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                    return ADAction.of((t, error) -> Function.of(f.toString(), false).derive(new Tensor[]{error}, 0));
                                                 })
                                             )
                                             .setCallPreparation(
@@ -85,7 +85,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                         if ( call.input( 0 ) == null ) // Creating a new tensor:
                                                         {
                                                             Shape shp = Shape.of(call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1))
-                                                            Tsr output = Tsr.of(shp, 0.0);
+                                                            Tensor output = Tensor.of(shp, 0.0);
                                                             output.mut.setIsVirtual(false);
                                                             device.store( output );
                                                             call = call.withInputAt( 0, output );
@@ -99,9 +99,9 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                         .withArity(3)
                                                         .andImplementation(
                                                             (call) -> {
-                                                                Tsr drn = call.input(Number.class, 0)
-                                                                Tsr src1 = call.input(Number.class, 1)
-                                                                Tsr src2 = call.input(Number.class, 2)
+                                                                Tensor drn = call.input(Number.class, 0)
+                                                                Tensor src1 = call.input(Number.class, 1)
+                                                                Tensor src2 = call.input(Number.class, 2)
                                                                 assert src1.shape(1) == src2.shape(0)
 
                                                                 //for ( int i=0; i<clContext.getGws(); i++ ) {
@@ -112,7 +112,7 @@ class Backend_MatMul_Extension_Spec extends Specification
                                                                 //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
                                                                 //            src2.getDataAs( float[].class ),                    //const __global float[] src2,
                                                                 //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
-                                                                //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
+                                                                //            //call.getTensorOfType( Number.class, 0).rank(),//int rank, == 2
                                                                 //            //-1, //const int d,
                                                                 //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
                                                                 //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,
@@ -137,7 +137,7 @@ class Backend_MatMul_Extension_Spec extends Specification
             testFun.toString() == "test_function(I[0], I[1])"
 
         when :
-            Tsr t3 = run { testFun([t1, t2]) }
+            Tensor t3 = run { testFun([t1, t2]) }
 
         then :
             t3 != null

@@ -1,7 +1,7 @@
 package ut.math
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.math.Functions
 import neureka.math.args.Args
 import spock.lang.Narrative
@@ -25,20 +25,20 @@ class Function_Spec extends Specification
     def 'Function implementations ensure that internally created tensors are flagged as "intermediate" initially!'()
     {
         given :
-            var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                            var outputs = [Tsr.of(1d)]
+            var fun1 = new DummyFunction((Args args, Tensor<?>[] tensors) -> {
+                                            var outputs = [Tensor.of(1d)]
                                             tensors.length.times { outputs.add(tensors[it]) }
                                             return outputs[0]
                                         })
         and :
-            var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                            var outputs = [Tsr.of(1d)]
+            var fun2 = new DummyFunction((Args args, Tensor<?>[] tensors) -> {
+                                            var outputs = [Tensor.of(1d)]
                                             tensors.length.times { outputs.add(tensors[it]) }
                                             return outputs[0].mut.setIsIntermediate(true)
                                         })
         and :
-            var a = Tsr.of(3d)
-            var b = Tsr.of(-2.5)
+            var a = Tensor.of(3d)
+            var b = Tensor.of(-2.5)
         expect :
             !a.isIntermediate()
             !b.isIntermediate()
@@ -65,14 +65,14 @@ class Function_Spec extends Specification
         Closure caller
     ) {
         given :
-            var fun1 = new DummyFunction((Args args, Tsr<?>[] tensors) -> tensors[0] )
+            var fun1 = new DummyFunction((Args args, Tensor<?>[] tensors) -> tensors[0] )
         and :
-            var fun2 = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
+            var fun2 = new DummyFunction((Args args, Tensor<?>[] tensors) -> {
                                     return tensors[0].mut.setIsIntermediate( true ) // This should fail!
                                 })
         and :
-            var a = Tsr.of(3.0)
-            var b = Tsr.of(-2.5)
+            var a = Tensor.of(3.0)
+            var b = Tensor.of(-2.5)
         expect :
             !a.isIntermediate()
             !b.isIntermediate()
@@ -99,13 +99,13 @@ class Function_Spec extends Specification
     def 'Function implementations will ensure the "call" and "invoke" does not return tensors flagged as "intermediate".'()
     {
         given :
-            var fun = new DummyFunction((Args args, Tsr<?>[] tensors) -> {
-                                        return Tsr.of(42f).mut.setIsIntermediate(true)
+            var fun = new DummyFunction((Args args, Tensor<?>[] tensors) -> {
+                                        return Tensor.of(42f).mut.setIsIntermediate(true)
                                     })
 
         and :
-            var a = Tsr.of(3d)
-            var b = Tsr.of(-2.5)
+            var a = Tensor.of(3d)
+            var b = Tensor.of(-2.5)
         expect :
             !a.isIntermediate()
             !b.isIntermediate()

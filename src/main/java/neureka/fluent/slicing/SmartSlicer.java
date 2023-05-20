@@ -1,7 +1,7 @@
 package neureka.fluent.slicing;
 
-import neureka.Tsr;
-import neureka.fluent.slicing.states.AxisOrGetTsr;
+import neureka.Tensor;
+import neureka.fluent.slicing.states.AxisOrGetTensor;
 import neureka.framing.NDFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +21,11 @@ public class SmartSlicer {
      */
     private static final Logger _LOG = LoggerFactory.getLogger(SmartSlicer.class); // Why is this not final ? : For unit testing!
 
-    public static <ValType> Tsr<ValType> slice(
+    public static <ValType> Tensor<ValType> slice(
             Object[] ranges,
-            Tsr<ValType> source
+            Tensor<ValType> source
     ) {
-        AxisOrGetTsr<ValType> sliceBuilder = new SliceBuilder<>(source);
+        AxisOrGetTensor<ValType> sliceBuilder = new SliceBuilder<>(source);
         List<Object> rangeList = new ArrayList<>();
         List<Integer> stepsList = new ArrayList<>();
         for (Object range : ranges ) {

@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.broadcast;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
 import neureka.devices.host.CPU;
@@ -8,12 +8,12 @@ import neureka.devices.host.CPU;
 public class CPUScalarBroadcastAddition extends CPUScalarBroadcast
 {
     @Override
-    public Tsr<?> run(ExecutionCall<CPU> call) {
+    public Tensor<?> run(ExecutionCall<CPU> call) {
         assert call.arity() == 3;
         if ( call.getDerivativeIndex() == 0 )
-            return Tsr.of( call.input( 1 ).shape(), 1d ).mut().setIsIntermediate( true );
+            return Tensor.of( call.input( 1 ).shape(), 1d ).mut().setIsIntermediate( true );
         else if ( call.getDerivativeIndex() == 1 )
-            return Tsr.of( call.input( 2 ).shape(), 1d ).mut().setIsIntermediate( true );
+            return Tensor.of( call.input( 2 ).shape(), 1d ).mut().setIsIntermediate( true );
         else
             return super.run(call);
     }

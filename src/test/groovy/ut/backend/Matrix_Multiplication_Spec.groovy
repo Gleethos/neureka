@@ -1,7 +1,7 @@
 package ut.backend
 
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -22,8 +22,8 @@ class Matrix_Multiplication_Spec extends Specification
     def 'The "matMul" method allows us to perform matrix multiplication.'(Class<?> type)
     {
         given : 'We create 2 simple tensors with the shapes (1x7) and (7x8).'
-            var a = Tsr.of(type).withShape(1,7).andFill(1, 2, 3)
-            var b = Tsr.of(type).withShape(7,8).andFill(2, -4, -1)
+            var a = Tensor.of(type).withShape(1,7).andFill(1, 2, 3)
+            var b = Tensor.of(type).withShape(7,8).andFill(2, -4, -1)
         when : 'We perform matrix multiplication.'
             var c = a.matMul(b)
         then : 'The result is a tensor with the shape (1x8).'
@@ -42,8 +42,8 @@ class Matrix_Multiplication_Spec extends Specification
             data types as well as data layouts!
         """
         given : 'We instantiate 2 matrices based on the data from the data table at the end of this method.'
-            Tsr<?> a = Tsr.of(type, Shape.of(M,K), A)
-            Tsr<?> b = Tsr.of(type, Shape.of(K,N), B)
+            Tensor<?> a = Tensor.of(type, Shape.of(M,K), A)
+            Tensor<?> b = Tensor.of(type, Shape.of(K,N), B)
         and : 'We create the data layout type based on the provided string...'
             var dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR
         and : 'After that we convert both matrices to the layout!'
@@ -54,7 +54,7 @@ class Matrix_Multiplication_Spec extends Specification
             b.NDConf.layout == dataLayout
 
         when : 'We now perform the matrix multiplication with the 2 matrix tensors...'
-            Tsr<?> c = a.matMul(b)
+            Tensor<?> c = a.matMul(b)
 
         then : 'The result will have the expected (M x N) shape.'
             c.shape == [M,N]

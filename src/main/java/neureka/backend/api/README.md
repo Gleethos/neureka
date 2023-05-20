@@ -63,7 +63,7 @@ Instances of the class contain important context information for a <br>
 given request for execution.
 This context information is composed of the following: <br>
 
-- `Tsr[]` : The tensor arguments for the operation.
+- `Tensor[]` : The tensor arguments for the operation.
 
 - `Operation` : The used operation for the execution.
 
@@ -259,13 +259,13 @@ ImplementationFor<OpenCLDevice> impl =
                                     .kernelPostfix( this.getFunction() )
                                     .execution(
                                         call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                            int offset = (call.getTensorOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                            int gwz = (call.getTensorOfType( Number.class, 0 ) != null) ? call.getTensorOfType( Number.class, 0 ).size() : call.getTensorOfType( Number.class, 1 ).size();
                                             call.getDevice().getKernel(call)
-                                            .passAllOf( call.getTsrOfType( Number.class, offset ) )
-                                            .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
-                                            .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
-                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                            .passAllOf( call.getTensorOfType( Number.class, offset ) )
+                                            .passAllOf( call.getTensorOfType( Number.class, offset + 1 ) )
+                                            .passAllOf( call.getTensorOfType( Number.class, offset + 2 ) )
+                                            .pass( call.getTensorOfType( Number.class, 0 ).rank() )
                                             .pass( call.getValOf( Arg.DerivIdx.class ) )
                                             .call( gwz );
                                         }

@@ -50,7 +50,7 @@ package neureka.devices.opencl;
 
 import neureka.Data;
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.*;
 import neureka.backend.main.implementations.CLImplementation;
 import neureka.backend.ocl.CLBackend;
@@ -313,7 +313,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @return This device, which enables method chaining.
      */
     @Override
-    public Device<Number> restore( Tsr<Number> tensor ) {
+    public Device<Number> restore( Tensor<Number> tensor ) {
         if ( !this.has( tensor ) ) {
             String message = "The passed tensor cannot be restored from this OpenCL device " +
                                 "because the tensor is not stored on the device.\n";
@@ -328,7 +328,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         value = DataConverter.get().convert( value, arrayType );
 
         this.free( tensor );
-        tensor.find( Tsr.class ).ifPresent( this::restore );
+        tensor.find( Tensor.class ).ifPresent( this::restore );
         tensor.getMut().setItems( value );
         return this;
     }
@@ -343,7 +343,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      *
      * @param tensor The tensor whose data ought to be stored.
      */
-    private <T extends Number> void _store( Tsr<T> tensor, Tsr<T> parent ) {
+    private <T extends Number> void _store(Tensor<T> tensor, Tensor<T> parent ) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add(
             tensor.getMut().upcast(Number.class),
@@ -353,7 +353,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     private <T extends Number> void _add(
-        Tsr<Number> tensor,
+        Tensor<Number> tensor,
         Data<T> parentData,
         Runnable migration // Causes the device to be a component of the tensor!
     ) {
@@ -415,7 +415,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return newClt;
     }
 
-    public cl_config clConfigOf(Tsr<?> t ) {
+    public cl_config clConfigOf(Tensor<?> t ) {
         return clConfigOf( t.getNDConf() );
     }
 
@@ -457,7 +457,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private void _store(
        JVMData jvmData,
-       cl_tsr<?, ?> newClTsr,
+       cl_tsr<?, ?> newClTensor,
        boolean allocateTarget
     ) {
         long bufferLength = allocateTarget ? jvmData.getTargetLength() : jvmData.getLength();
@@ -470,7 +470,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                         null
                     );
 
-        newClTsr.value.data = mem;
+        newClTensor.value.data = mem;
 
         // Virtual means that there is only a single value in the JVM array.
         // So we don't have to write the whole array to the device!
@@ -494,16 +494,16 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public final <T extends Number> Device<Number> free( Tsr<T> tensor ) {
+    public final <T extends Number> Device<Number> free( Tensor<T> tensor ) {
         cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         if ( clt == null ) return this;
         tensor.getMut().setData(null);
         tensor.find(Device.class).ifPresent(
             device -> {
                 tensor.remove( Device.class );
-                tensor.find(Tsr.class).ifPresent(
+                tensor.find(Tensor.class).ifPresent(
                     gradient ->
-                        ( (Tsr<Number>) gradient ).find(Device.class).ifPresent(
+                        ( (Tensor<Number>) gradient ).find(Device.class).ifPresent(
                             gradDevice -> {
                                 try {
                                     if ( this.has( gradient ) ) gradDevice.restore( gradient );
@@ -524,22 +524,28 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected final <T extends Number> T _readItem( Tsr<T> tensor, int index ) {
+    protected final <T extends Number> T _readItem( Tensor<T> tensor, int index ) {
         return (T) _read(JVMData.of(tensor.itemType(), 1), tensor.getMut().upcast(Number.class), index).getElementAt(0);
     }
 
     @Override
-    protected final <T extends Number, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size ) {
+    protected final <T extends Number, A> A _readArray( Tensor<T> tensor, Class<A> arrayType, int start, int size ) {
         return (A) _read(JVMData.of(tensor.itemType(), size), tensor.getMut().upcast(Number.class), start).getArray();
     }
 
     @Override
-    protected final <T extends Number> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
+    protected final <T extends Number> void _writeItem( Tensor<T> tensor, T item, int start, int size ) {
         _overwrite( tensor, start, JVMData.of(item, size, 0) );
     }
 
     @Override
-    protected final <T extends Number> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size ) {
+    protected final <T extends Number> void _writeArray(
+        Tensor<T> tensor,
+        Object array,
+        int offset,
+        int start,
+        int size
+    ) {
         _overwrite( tensor, start, JVMData.of(array, size, offset) );
     }
 
@@ -565,7 +571,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected Data<Number> _actualize( Tsr<?> tensor ) {
+    protected Data<Number> _actualize( Tensor<?> tensor ) {
         NDConfiguration ndc = tensor.getNDConf();
         Object initialValue = tensor.item();
         cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
@@ -576,7 +582,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected Data<Number> _virtualize( Tsr<?> tensor ) {
+    protected Data<Number> _virtualize( Tensor<?> tensor ) {
         NDConfiguration ndc = tensor.getNDConf();
         Object initialValue = tensor.item();
         cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
@@ -608,7 +614,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     private void _overwrite(
-            Tsr<?> tensor, long offset, JVMData jvmData
+        Tensor<?> tensor, long offset, JVMData jvmData
     ) {
         if ( jvmData.getLength() == 0 ) return;
         cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
@@ -626,17 +632,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected final <T extends Number> void _swap(Tsr<T> former, Tsr<T> replacement) {
-        cl_tsr<Number, T> clTsr = former.getMut().getData().as( cl_tsr.class);
+    protected final <T extends Number> void _swap( Tensor<T> former, Tensor<T> replacement) {
+        cl_tsr<Number, T> clTensor = former.mut().getData().as( cl_tsr.class);
         former.getMut().setData(null);
-        replacement.getMut().setData( _dataArrayOf(clTsr, (DataType<T>) _dataTypeOf(clTsr)) );
+        replacement.getMut().setData( _dataArrayOf(clTensor, (DataType<T>) _dataTypeOf(clTensor)) );
     }
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tensor<Number>> changeRequest ) {
         super.update(changeRequest);
-        if (changeRequest.type() == IsBeing.ADDED) {
-            Tsr<Number> newOwner = changeRequest.getNewOwner();
+        if ( changeRequest.type() == IsBeing.ADDED ) {
+            Tensor<Number> newOwner = changeRequest.getNewOwner();
             _updateInternal(newOwner, changeRequest::executeChange);
         } else
             changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
@@ -644,22 +650,22 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected <T extends Number> int _sizeOccupiedBy( Tsr<T> tensor ) { return tensor.getMut().getData().as( cl_tsr.class).value.size; }
+    protected <T extends Number> int _sizeOccupiedBy( Tensor<T> tensor ) { return tensor.getMut().getData().as( cl_tsr.class).value.size; }
 
     @Override
-    protected <T extends Number> Object _readAll( Tsr<T> tensor, boolean clone ) {
+    protected <T extends Number> Object _readAll( Tensor<T> tensor, boolean clone ) {
         cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         return _readArray( tensor, tensor.getDataType().dataArrayType(), 0, clt.value.size );
     }
 
-    private void _updateInternal(Tsr<Number> newOwner, Runnable migration) {
-        Tsr<Number> root = _findRoot( newOwner );
+    private void _updateInternal( Tensor<Number> newOwner, Runnable migration) {
+        Tensor<Number> root = _findRoot( newOwner );
         if (root != null) _store(newOwner, root);
         else _add( newOwner, null, migration );
     }
 
-    private Tsr<Number> _findRoot( Tsr<Number> newOwner ) {
-        Tsr<Number> root = null;
+    private Tensor<Number> _findRoot( Tensor<Number> newOwner ) {
+        Tensor<Number> root = null;
         Relation<Number> relation = newOwner.get(Relation.class);
         if ( relation != null )
             root = ((Relation<Number>) newOwner.get(Relation.class)).findRootTensor().orElse(null);
@@ -667,7 +673,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return root;
     }
 
-    private JVMData _read( JVMData jvmData, Tsr<Number> tensor, int offset ) {
+    private JVMData _read( JVMData jvmData, Tensor<Number> tensor, int offset ) {
         cl_tsr<?, ?> clt = tensor.getMut().getData().as( cl_tsr.class);
         clEnqueueReadBuffer(
                 _queue,
@@ -720,7 +726,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation type ) { return true; }
+    protected boolean _approveExecutionOf(Tensor<?>[] tensors, int d, Operation type ) { return true; }
 
 
     /*==================================================================================================================

@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.linear.internal.opencl;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.opencl.KernelCaller;
@@ -11,11 +11,11 @@ import java.util.function.Supplier;
 public class CLGEMM implements ImplementationFor<OpenCLDevice>
 {
     @Override
-    public Tsr<?> run(ExecutionCall<OpenCLDevice> call)
+    public Tensor<?> run(ExecutionCall<OpenCLDevice> call)
     {
-            Tsr<Float> c = call.input(Float.class, 0);
-            Tsr<Float> a = call.input(Float.class, 1);
-            Tsr<Float> b = call.input(Float.class, 2);
+            Tensor<Float> c = call.input(Float.class, 0);
+            Tensor<Float> a = call.input(Float.class, 1);
+            Tensor<Float> b = call.input(Float.class, 2);
 
             int M = a.shape(0);
             int K = a.shape(1);

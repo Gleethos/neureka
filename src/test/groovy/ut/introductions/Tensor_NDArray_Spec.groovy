@@ -1,7 +1,7 @@
 package ut.introductions
 
 import neureka.Nda
-import neureka.Tsr
+import neureka.Tensor
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
@@ -27,25 +27,25 @@ In that sense it is actually merely a more complex kind of number.
 This concept actually comes from the field of physics, 
 where it is used to represent a physical quantity.
 
-Neureka models both concepts through the `Tsr` and the `Nda` interfaces.
-`Nda` is an abbreviation of `NdArray`, and `Tsr` is an abbreviation of `Tensor`.
-The `Tsr` type is a subtype of the `Nda` type, exposing additional methods
+Neureka models both concepts through the `Tensor` and the `Nda` interfaces.
+`Nda` is an abbreviation of `NdArray`, and `Tensor` is an abbreviation of `Tensor`.
+The `Tensor` type is a subtype of the `Nda` type, exposing additional methods
 like for example `plus`, `minus`, `times` and `divide`.
 Both can be instantiated through static factory methods (and a fluent builder API).
 
 ''')
-@Subject([Nda, Tsr])
+@Subject([Nda, Tensor])
 class Tensor_NDArray_Spec extends Specification
 {
     def 'Tensor is a subtype of NdArray.'()
     {
         given : 'A tensor of floats and an nd-array of strings:'
-            Tsr<Float> t = Tsr.ofFloats().withShape(2, 3).andFill(1f, 4f, -2f)
+        Tensor<Float> t = Tensor.ofFloats().withShape(2, 3).andFill(1f, 4f, -2f)
             Nda<String> s = Nda.of(String.class).withShape(2, 3).andFill("a", "b", "c")
 
         when : 'Tensors are ND-arrays (but NdArrays are not Tensors):'
             Nda<Float> f = t // The other way around is not possible.
-            //Tsr<String> c = s // The nd-array of strings is also not a tensor.
+            //Tensor<String> c = s // The nd-array of strings is also not a tensor.
         then : 'We can confirm that all of them are ultimately just nd-arrays:'
             t instanceof Nda
             f instanceof Nda
@@ -55,11 +55,11 @@ class Tensor_NDArray_Spec extends Specification
     def 'We can use tensors for numeric calculations (but not nd-arrays).'()
     {
         given : 'A tensor of floats and an nd-array of strings:'
-            Tsr<Float>  a = Tsr.of(42f, -7f, 90f)
+            Tensor<Float> a = Tensor.of(42f, -7f, 90f)
             Nda<String> b = Nda.of("a", "b", "c")
 
         when : 'We perform some numeric operations on the tensor:'
-            Tsr<Float> c = a + 1f // This does not work with nd-arrays.
+            Tensor<Float> c = a + 1f // This does not work with nd-arrays.
         then : 'The involved variables consist of the following items:'
             a.items == [42f, -7f, 90f]
             b.items == ["a", "b", "c"]

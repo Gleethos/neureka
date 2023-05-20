@@ -1,5 +1,6 @@
 package neureka.backend.api.fun;
 
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.main.internal.FinalExecutor;
@@ -31,7 +32,7 @@ public interface Execution {
     /**
      * @param caller The caller {@link Function} from which the request for execution originated.
      * @param call The {@link ExecutionCall} which should be executed.
-     * @return A {@link Result} instance wrapping a {@link neureka.Tsr} and optionally also an {@link ADActionSupplier}.
+     * @return A {@link Result} instance wrapping a {@link Tensor} and optionally also an {@link ADActionSupplier}.
      */
     Result execute( Function caller, ExecutionCall<? extends Device<?>> call );
 

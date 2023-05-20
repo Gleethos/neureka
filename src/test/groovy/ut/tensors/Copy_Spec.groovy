@@ -1,6 +1,7 @@
 package ut.tensors
 
-import neureka.Tsr
+
+import neureka.Tensor
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
@@ -25,14 +26,14 @@ import spock.lang.Title
     will be covered in this specification as well.
 
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Copy_Spec extends Specification
 {
 
     def 'A deep copy of a tensor is also a deep copy of the underlying data array.'()
     {
         given : 'A tensor of ints with shape (2, 3).'
-            var t = Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)
+            var t = Tensor.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)
         expect : 'The underlying data array is as expected.'
             t.mut.data.get() == [1, 2, -9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
 
@@ -49,7 +50,7 @@ class Copy_Spec extends Specification
     }
 
     def 'A shallow copy of a tensor will be flagged as such.'(
-       Tsr<?> t
+            Tensor<?> t
     ) {
         expect : 'The tensor we will use for copying is not flagged as a shallow copy.'
             !t.isShallowCopy()
@@ -74,16 +75,16 @@ class Copy_Spec extends Specification
 
         where :
             t << [
-                    Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2),
-                    Tsr.ofBytes().withShape(5).andFill(8, 2, -7, 3, 0),
-                    Tsr.of(1d, 2d, 3d, 4d, 5d, 6d, 7d)[2..4]
+                    Tensor.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2),
+                    Tensor.ofBytes().withShape(5).andFill(8, 2, -7, 3, 0),
+                    Tensor.of(1d, 2d, 3d, 4d, 5d, 6d, 7d)[2..4]
             ]
     }
 
     def 'A deep copy of a slice tensor is also a deep copy of the underlying data array.'()
     {
         given : 'A slice of ints with shape (2, 2) sliced in-place from a tensor of shape (3, 3).'
-            var s = Tsr.ofInts().withShape(3, 3).andFill(1, 2, -9, 8, 3, -2)[0..1, 1..2]
+            var s = Tensor.ofInts().withShape(3, 3).andFill(1, 2, -9, 8, 3, -2)[0..1, 1..2]
         expect : 'The underlying items and data array is as expected.'
             s.items == [2, -9, 3, -2]
             s.rawData == [1, 2, -9, 8, 3, -2, 1, 2, -9]
@@ -107,10 +108,10 @@ class Copy_Spec extends Specification
             (0..<s.size).every({ int i -> deep.at(i) == s.at(i) }) // The values are the same!
     }
 
-    def 'A shallow copy will share the same underlying data as its original tensor.'(Closure<Tsr> cloner)
+    def 'A shallow copy will share the same underlying data as its original tensor.'(Closure<Tensor> cloner)
     {
         given : 'A tensor of ints with shape (2, 3).'
-            var t = Tsr.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)
+            var t = Tensor.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)
         expect : 'The underlying data array is as expected.'
             t.mut.data.get() == [1, 2, -9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!
 
@@ -125,14 +126,14 @@ class Copy_Spec extends Specification
             (0..<t.size).every({ int i -> shallow.at(i) == t.at(i) }) // The values are the same!
 
         where :
-            cloner << [{Tsr x -> x.shallowCopy()},{Tsr x -> x.shallowClone()}]
+            cloner << [{ Tensor x -> x.shallowCopy()}, { Tensor x -> x.shallowClone()}]
     }
 
     def 'We can deep copy various types of tensors.'(
         Class<?> type, Object expected
     ) {
         given : 'A simple vector tensor which we are going to copy.'
-            var t = Tsr.of(type).withShape(expected.length).andFill(expected)
+            var t = Tensor.of(type).withShape(expected.length).andFill(expected)
         and : 'A slice of the tensor, which we should also be able to deep copy.'
             var s = t[1..<(expected.length - 1)]
 

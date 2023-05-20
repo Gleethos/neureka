@@ -1,5 +1,6 @@
 package neureka.math;
 
+import neureka.Tensor;
 import neureka.backend.main.operations.functions.Tanh;
 
 import java.util.Arrays;
@@ -457,12 +458,12 @@ public class Functions
     public final Function cbrt() { return _cbrt; }
 
     /**
-     * @return The "concat" {@link Function} that concatenates two {@link neureka.Tsr}s alongside a specific axis.
+     * @return The "concat" {@link Function} that concatenates two {@link Tensor}s alongside a specific axis.
      */
     public final Function getConcat() { return _concat; }
 
     /**
-     * @return The "concat" {@link Function} that concatenates two {@link neureka.Tsr}s alongside a specific axis.
+     * @return The "concat" {@link Function} that concatenates two {@link Tensor}s alongside a specific axis.
      */
     public final Function concat() { return _concat; }
 

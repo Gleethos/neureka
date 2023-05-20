@@ -1,6 +1,6 @@
 package neureka.optimization.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.optimization.OptimizerFactory;
 
 public class ADAMFactory implements OptimizerFactory 
@@ -24,11 +24,11 @@ public class ADAMFactory implements OptimizerFactory
     public ADAMFactory withTime(long time) { return new ADAMFactory(_learningRate, time); }
 
     @Override
-    public <V extends Number> ADAM<V> create(Tsr<V> target) {
+    public <V extends Number> ADAM<V> create(Tensor<V> target) {
         return new ADAM<>(_time, _learningRate, target);
     }
 
-    public <V extends Number> ADAM<V> create(Tsr<V> momentum, Tsr<V> velocity) {
+    public <V extends Number> ADAM<V> create(Tensor<V> momentum, Tensor<V> velocity) {
         return new ADAM<>(_time, _learningRate, momentum, velocity);
     }
 

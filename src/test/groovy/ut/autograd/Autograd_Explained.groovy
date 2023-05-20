@@ -1,7 +1,7 @@
 package ut.autograd
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.autograd.GraphNode
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
@@ -17,7 +17,7 @@ import spock.lang.Title
     Neureka is a define-by-run library, which means that your backpropagation is defined by how             
     your code is run, and that every single iteration can be different.                                     
                                                                                                             
-    The class neureka.Tsr is the central class of the main package.                                         
+    The class neureka.Tensor is the central class of the main package.                                         
     If you set its attribute 'rqsGradient' to True, Neureka starts to track all operations on it.           
     When you finish the forward pass of your network                                                        
     you can call .backward() and have all the gradients computed                                            
@@ -30,23 +30,23 @@ import spock.lang.Title
     computation history, and to prevent future computation from being tracked.     
             
 ''')
-@Subject([Tsr, GraphNode])
+@Subject([Tensor, GraphNode])
 class Autograd_Explained extends Specification
 {
     def setupSpec()
     {
         reportHeader """
             There’s one more class which is very important for autograd implementation : the 'GraphNode class'!     
-            Tsr and GraphNode instances are interconnected and build up an acyclic graph,                              
+            Tensor and GraphNode instances are interconnected and build up an acyclic graph,                              
             that encodes a complete history of computation.                                                                        
             Each tensor has a .getGraphNode() attribute that references the GraphNode                                        
-            that has created a given Tsr instance.                                                                  
-            (except for Tsr created by the user or created by a "detached" Function instance... ).                  
+            that has created a given Tensor instance.                                                                  
+            (except for Tensor created by the user or created by a "detached" Function instance... ).                  
            
         """
         reportHeader """
             If you want to compute the derivatives, you can call .backward() on a Tensor.                           
-            If the given Tsr is a scalar (i.e. it holds one element and has shape "(1)"), you do not need to        
+            If the given Tensor is a scalar (i.e. it holds one element and has shape "(1)"), you do not need to        
             specify any arguments to backward(), however if it has more elements,                                   
             you should specify a gradient argument that is a tensor of matching shape.                              
         """
@@ -85,7 +85,7 @@ class Autograd_Explained extends Specification
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
 
         and : 'We create a simple tensor and set rqsGradient to true in order to track dependent computation.'
-            def x = Tsr.of([2, 2], 1d).setRqsGradient(true)
+            def x = Tensor.of([2, 2], 1d).setRqsGradient(true)
 
         expect : 'The tensor should look as follows : '
             x.toString().contains("(2x2):[1.0, 1.0, 1.0, 1.0]")
@@ -116,7 +116,7 @@ class Autograd_Explained extends Specification
             result.toString().contains("27.0")
 
         when : 'Any new tensor is created...'
-            def someTensor = Tsr.newInstance()
+            def someTensor = Tensor.newInstance()
 
         then : 'The autograd flag will always default to "false" :'
             someTensor.rqsGradient() == false
@@ -134,7 +134,7 @@ class Autograd_Explained extends Specification
 
         when : """
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(Tsr.of(1)).
+                result.backward() is equivalent to out.backward(Tensor.of(1)).
             """
             z.backward(0.25)
 

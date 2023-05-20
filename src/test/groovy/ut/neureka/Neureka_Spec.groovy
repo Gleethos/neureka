@@ -1,7 +1,7 @@
 package ut.neureka
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.autograd.JITProp
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
@@ -182,9 +182,9 @@ class Neureka_Spec extends Specification
                     Neureka.get().backend().getFunction(),
                     Neureka.get().backend(),
                     Neureka.get().backend().getFunctionCache(),
-                    ExecutionCall.of(Tsr.of(3d)).running(Neureka.get().backend().getOperation("+")).on(CPU.get()),
+                    ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation("+")).on(CPU.get()),
                     new CustomDeviceCleaner(),
-                    (Tsr.of(2d).setRqsGradient(true)*Tsr.of(-2d)).graphNode.get(),
+                    (Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get(),
                     FileDevice.at('.'),
                     NDConfiguration.of((int[])[2,3,8,4],(int[])[96, 32, 4, 1],(int[])[96, 32, 4, 1],(int[])[1,1,1,1],(int[])[0,0,0,0]),
                     NDConfiguration.of((int[])[2,3,8,4],(int[])[96, 200, 8, 1],(int[])[96, 32, 4, 1],(int[])[1,1,1,1],(int[])[0,0,0,0]),

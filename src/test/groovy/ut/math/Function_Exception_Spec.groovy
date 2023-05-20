@@ -1,6 +1,6 @@
 package ut.math
 
-import neureka.Tsr
+import neureka.Tensor
 import neureka.math.Function
 import spock.lang.Specification
 
@@ -11,7 +11,7 @@ class Function_Exception_Spec extends Specification {
         given :
             var fun = Function.of('I[0] + I[1]')
         and :
-            var t = Tsr.of(4d)
+            var t = Tensor.of(4d)
 
         when :
             fun(t)
@@ -28,7 +28,7 @@ class Function_Exception_Spec extends Specification {
         given :
             var fun = Function.of('I[0] @ I[1]')
         and :
-            var t = Tsr.of(4d)
+            var t = Tensor.of(4d)
 
         when :
             fun(t)

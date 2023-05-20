@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.operator;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -55,13 +55,13 @@ public class Power extends AbstractOperation
                 {
                     if ( call.autogradMode().allowsForward() )
                         throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                    Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                    Tensor<?> ctxDerivative = (Tensor<?>) call.getValOf(Arg.Derivative.class);
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
                         return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                     }
                     int d = call.getDerivativeIndex();
-                    Tsr<?> derivative = f.executeDerive( call.inputs(), d );
+                    Tensor<?> derivative = f.executeDerive( call.inputs(), d );
                     return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                 }
             )

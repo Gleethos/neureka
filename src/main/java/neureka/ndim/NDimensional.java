@@ -1,11 +1,9 @@
 package neureka.ndim;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.ndim.config.NDConfiguration;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,7 +54,7 @@ public interface NDimensional
     default List<Integer> offset() { return NDUtil.asList(getNDConf().offset()); }
 
     /**
-     * @return The {@link NDConfiguration} implementation instance of this {@link Tsr} storing dimensionality information.
+     * @return The {@link NDConfiguration} implementation instance of this {@link Tensor} storing dimensionality information.
      */
     NDConfiguration getNDConf();
 

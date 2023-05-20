@@ -1,26 +1,26 @@
 package ut.tensors
 
-import neureka.Tsr
+import neureka.Tensor
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Title
 
-@Title("Tsr Inline Assignment")
+@Title("Tensor Inline Assignment")
 @Narrative('''
 
     In this specification we cover the behaviour of tensors with respect to the assignment operation
     as well as the assignment of individual tensor items.
 
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Tensor_Assign_Spec extends Specification
 {
     def 'We can use the "mut" API to assign the contents of one tensor into another one.'()
     {
         given : 'We have two vector tensors:'
-            var a = Tsr.of(1L, 2L, 3L)
-            var b = Tsr.of(-3L, -2L, -1L)
+            var a = Tensor.of(1L, 2L, 3L)
+            var b = Tensor.of(-3L, -2L, -1L)
         when : 'We assign the contents of "b" into "a" using the "mut" API:'
             a.mut.assign( b )
         then : 'The contents of "a" should be the same as the contents of "b":'
@@ -30,13 +30,13 @@ class Tensor_Assign_Spec extends Specification
     def 'Assignment can be easily achieved through subscription operators.'()
     {
         given : 'An tensor of bytes with shape (2, 3).'
-            var n = Tsr.ofBytes().withShape(3, 2).andFill(5, 4, 3, 2, 1, 0)
+            var n = Tensor.ofBytes().withShape(3, 2).andFill(5, 4, 3, 2, 1, 0)
         and :
-            var a = Tsr.ofBytes().withShape(1, 2).andFill(-42, 42)
+            var a = Tensor.ofBytes().withShape(1, 2).andFill(-42, 42)
 
         when : 'We assign the tensor a to the tensor n.'
             n.mut[0..1, 1] = a
-        then : 'The Tsr n has the expected values.'
+        then : 'The Tensor n has the expected values.'
             n.items == [5, -42, 3, 42, 1, 0]
     }
 
@@ -49,8 +49,8 @@ class Tensor_Assign_Spec extends Specification
             Use the 'copy' operation on slices if you want to avoid this.
         """
         given :
-            var n1 = Tsr.ofShorts().vector(1, 2, 3, 4)
-            var n2 = Tsr.ofShorts().vector(6, 7, 8, 9, 10, 11)
+            var n1 = Tensor.ofShorts().vector(1, 2, 3, 4)
+            var n2 = Tensor.ofShorts().vector(6, 7, 8, 9, 10, 11)
 
         when : 'We create to very simple slices of 3 items in the above vectors.'
             var s1 = n1[0..2]

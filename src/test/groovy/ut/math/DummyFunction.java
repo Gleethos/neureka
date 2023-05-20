@@ -1,6 +1,6 @@
 package ut.math;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Operation;
 import neureka.math.Function;
 import neureka.math.args.Args;
@@ -10,14 +10,14 @@ import java.util.function.BiFunction;
 
 public class DummyFunction implements Function {
 
-    private final BiFunction<Object, Object, Tsr<?>> implementation;
+    private final BiFunction<Object, Object, Tensor<?>> implementation;
 
-    DummyFunction( BiFunction<Object, Object, Tsr<?>> implementation ) {
+    DummyFunction( BiFunction<Object, Object, Tensor<?>> implementation ) {
         this.implementation = implementation;
     }
 
     @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
+    public Tensor<?> execute(Args arguments, Tensor<?>... inputs ) {
         return implementation.apply( arguments, inputs.clone() );
     }
 

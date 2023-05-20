@@ -1,7 +1,7 @@
 package ut.autograd
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.autograd.GraphNode
 import neureka.backend.ocl.CLBackend
 import neureka.math.Function
@@ -25,7 +25,7 @@ import spock.lang.Title
     'torch.manual_seed(503672689411)'
 
 ''')
-@Subject([Tsr, GraphNode])
+@Subject([Tensor, GraphNode])
 class Autograd_NN_Spec extends Specification
 {
     def setupSpec()
@@ -61,22 +61,22 @@ class Autograd_NN_Spec extends Specification
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
-            var X = Tsr.of(
+            var X = Tensor.of(
                         [[0.6667d, 1.0000d],
                          [0.3333d, 0.5556d],
                          [1.0000d, 0.6667d]]
                     )
-            var y = Tsr.of(
+            var y = Tensor.of(
                         [[0.9200d],
                          [1.0000d],
                          [0.8900d]]
                     )
             var sig = Function.of("sig(I[0])")
-            var W1 = Tsr.of(
+            var W1 = Tensor.of(
                         [[-1.1843d,  0.0146d, -1.4647d],
                          [-1.4020d, -1.0129d,  0.6256d]]
                     ).setRqsGradient(true)
-            var W2 = Tsr.of(
+            var W2 = Tensor.of(
                         [[ 1.8095d],
                          [-0.4269d],
                          [-1.1110d]]
@@ -91,7 +91,7 @@ class Autograd_NN_Spec extends Specification
             var errors = []
             var losses = []
 
-            def forwardAndBackward = ( Tsr x ) ->
+            def forwardAndBackward = (Tensor x ) ->
             {
                 W1s.add(W1.toString())
                 var z1 = x.matMul(W1)
@@ -171,13 +171,13 @@ class Autograd_NN_Spec extends Specification
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
-            var X = Tsr.of(
+            var X = Tensor.of(
                                 [[0.6667d, 1.0000d],
                                  [0.3333d, 0.5556d],
                                  [1.0000d, 0.6667d]]
                             )
 
-            var y = Tsr.of(
+            var y = Tensor.of(
                                 [[0.9200d],
                                  [1.0000d],
                                  [0.8900d]]
@@ -185,13 +185,13 @@ class Autograd_NN_Spec extends Specification
 
             var sig = Function.of("sig(I[0])")
 
-            var W1 = Tsr.of(
+            var W1 = Tensor.of(
                                 [[-1.1843d,  0.0146d, -1.4647d],
                                  [-1.4020d, -1.0129d,  0.6256d]]
                             )
                             .setRqsGradient(true)
 
-            var W2 = Tsr.of(
+            var W2 = Tensor.of(
                                 [[ 1.8095d],
                                  [-0.4269d],
                                  [-1.1110d]]
@@ -207,7 +207,7 @@ class Autograd_NN_Spec extends Specification
             def errors = []
             def losses = []
 
-            def forwardAndBackward = ( Tsr x ) ->
+            def forwardAndBackward = (Tensor x ) ->
             {
                 W1s.add(W1.toString())
                 def z1 = x.convDot(W1)
@@ -299,13 +299,13 @@ class Autograd_NN_Spec extends Specification
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
-            var X = Tsr.of(
+            var X = Tensor.of(
                                     [[0.6667d, 1.0000d],
                                      [0.3333d, 0.5556d],
                                      [1.0000d, 0.6667d]]
                             )
 
-            var y = Tsr.of(
+            var y = Tensor.of(
                                     [[0.9200d],
                                      [1.0000d],
                                      [0.8900d]]
@@ -313,13 +313,13 @@ class Autograd_NN_Spec extends Specification
 
             var sig = Function.of("sig(I[0])")
 
-            var W1 = Tsr.of(
+            var W1 = Tensor.of(
                             [[-1.1843d,  0.0146d, -1.4647d],
                              [-1.4020d, -1.0129d,  0.6256d]]
                     )
                     .setRqsGradient(true)
 
-            var W2 = Tsr.of(
+            var W2 = Tensor.of(
                                 [[ 1.8095d],
                                  [-0.4269d],
                                  [-1.1110d]]
@@ -335,7 +335,7 @@ class Autograd_NN_Spec extends Specification
             def errors = []
             def losses = []
 
-            def forwardAndBackward = ( Tsr x ) ->
+            def forwardAndBackward = (Tensor x ) ->
             {
                 W1s.add(W1.toString())
                 def z1 = x.convDot(W1)
@@ -426,8 +426,8 @@ class Autograd_NN_Spec extends Specification
     def 'Autograd work for simple matrix multiplications.'( Class<?> type ) {
 
         given :
-            var a = Tsr.of([2, 3], -1f..4f).setRqsGradient(true).mut.toType(type)
-            var b = Tsr.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).mut.toType(type)
+            var a = Tensor.of([2, 3], -1f..4f).setRqsGradient(true).mut.toType(type)
+            var b = Tensor.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).mut.toType(type)
 
         when :
             var c = a.matMul(b)
@@ -451,7 +451,7 @@ class Autograd_NN_Spec extends Specification
             cStr.contains "->d(1x3):[-4.0, -2.0, 0.0]"
 
         when :
-            c.backward(Tsr.of(c.shape, [-1d, 1d]).mut.toType(type)) // (2x1):[-1, 1]
+            c.backward(Tensor.of(c.shape, [-1d, 1d]).mut.toType(type)) // (2x1):[-1, 1]
 
         then :
             a.toString() == "(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[4.0, 2.0, 0.0, -4.0, -2.0, 0.0]"
@@ -474,9 +474,9 @@ class Autograd_NN_Spec extends Specification
             only the first 2 require gradients, whereas the third one does not.
             We use these tensors to mimic 2 linear forward passes in a neural network.
         """
-            def a = Tsr.of([2, 3], -1d..4d).setRqsGradient(true).to(device)
-            def b = Tsr.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).to(device)
-            def x = Tsr.of([[0.5d, 0.5d]]).to(device)
+            def a = Tensor.of([2, 3], -1d..4d).setRqsGradient(true).to(device)
+            def b = Tensor.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).to(device)
+            def x = Tensor.of([[0.5d, 0.5d]]).to(device)
 
         expect : 'Initially none of the tensors requiring gradients have any (see "g:[null]").'
             a.toString() == "(2x3):[" +

@@ -1,7 +1,7 @@
 package ut.optimization
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.math.Function
 import neureka.optimization.Optimizer
 import neureka.view.NDPrintSettings
@@ -22,7 +22,7 @@ import spock.lang.Subject
 @Subject([Optimizer])
 class ADAM_Spec extends Specification
 {
-    @Shared Tsr<?> w = Tsr.of(0d)
+    @Shared Tensor<?> w = Tensor.of(0d)
     @Shared Optimizer<?> o = Optimizer.ADAM.create(w)
 
     def setupSpec()
@@ -32,7 +32,7 @@ class ADAM_Spec extends Specification
                 have the following 2 variables setup
                 throughout every data table iteration:
                 ```
-                    Tsr<?> w = Tsr.of(0d)
+                    Tensor<?> w = Tensor.of(0d)
                     Optimizer<?> o = Optimizer.ADAM.create(w)                   
                     w.set(o)                 
                 ```
@@ -64,9 +64,9 @@ class ADAM_Spec extends Specification
             int gradient, double expectedWeight
     ) {
         given : 'A new scalar gradient tensor is being created.'
-            Tsr g = Tsr.of(expectedWeight)
+            Tensor g = Tensor.of(expectedWeight)
         and : 'The following input is being applied to the tensor (and internal optimizer)...'
-            w.set( Tsr.of( (double)gradient ) )
+            w.set( Tensor.of( (double)gradient ) )
             w.applyGradient()
 
         expect : 'The following state emerges:'
@@ -96,11 +96,11 @@ class ADAM_Spec extends Specification
             String expression, Double[] inputs, String expected
     ) {
         given : 'We create tensors given an equation and array or list of input tensors...'
-            var t1 = Tsr.of( expression, inputs )
-            var t2 = Tsr.of( expression, inputs as Float[] )
-            var t3 = Tsr.of( expression, true, inputs.collect( it -> Tsr.of(it) ) )
-            var t4 = Tsr.of( expression, false, inputs.collect( it -> Tsr.of(it) ) )
-            var t5 = Tsr.of( expression, false, inputs.collect( it -> Tsr.of(it) ) as Tsr<Double>[] )
+            var t1 = Tensor.of( expression, inputs )
+            var t2 = Tensor.of( expression, inputs as Float[] )
+            var t3 = Tensor.of( expression, true, inputs.collect(it -> Tensor.of(it) ) )
+            var t4 = Tensor.of( expression, false, inputs.collect(it -> Tensor.of(it) ) )
+            var t5 = Tensor.of( expression, false, inputs.collect(it -> Tensor.of(it) ) as Tensor<Double>[] )
 
         expect : '...this produces the expected result String.'
             t1.toString().contains( expected )

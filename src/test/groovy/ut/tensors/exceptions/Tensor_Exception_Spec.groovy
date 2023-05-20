@@ -2,7 +2,7 @@ package ut.tensors.exceptions
 
 import groovy.transform.CompileDynamic
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import spock.lang.Narrative
 import spock.lang.Shared
 import spock.lang.Specification
@@ -13,9 +13,9 @@ import java.util.function.Consumer
 @Title('Tensors Exception Behavior')
 @Narrative('''
 
-    This specification covers the behavior of the $Tsr class in
+    This specification covers the behavior of the Tensor class in
     exceptional scenarios which are contrary to its intended use.
-    The purpose of this is to assert that the $Tsr class will provide
+    The purpose of this is to assert that the Tensor class will provide
     useful feedback to a user to explain that a misuse of its API
     occurred so that the user can correct this misuse.
 
@@ -50,10 +50,10 @@ class Tensor_Exception_Spec extends Specification
     def "Trying to inject an empty tensor into another causes fitting exception."()
     {
         given : 'A new tensor instance used for exception testing.'
-            Tsr<Integer> t = Tsr.of([6, 6], -1)
+            Tensor<Integer> t = Tensor.of([6, 6], -1)
 
         when : 'We try to inject an empty tensor whose size does of course not match...'
-            t.mut[[1..3], [1..3]] = Tsr.newInstance() as Tsr<Integer>
+            t.mut[[1..3], [1..3]] = Tensor.newInstance() as Tensor<Integer>
 
         then : 'The expected message is being thrown, which tells us that '
             def exception = thrown(IllegalArgumentException)
@@ -61,10 +61,10 @@ class Tensor_Exception_Spec extends Specification
     }
 
     def 'Passing null to various methods of the tensor API will throw exceptions.'(
-            Class<Exception> type, Consumer<Tsr<Integer>> errorCode
+            Class<Exception> type, Consumer<Tensor<Integer>> errorCode
     ) {
         given :
-            Tsr<Integer> t = Tsr.of(1, 2, 3)
+            Tensor<Integer> t = Tensor.of(1, 2, 3)
 
         when :
             errorCode(t)
@@ -76,30 +76,30 @@ class Tensor_Exception_Spec extends Specification
 
         where :
             type                        | errorCode
-            IllegalArgumentException    | { Tsr x -> x.times((Tsr)null) }
-            IllegalArgumentException    | { Tsr x -> x.div((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.plus((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.mod((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.mut.timesAssign((Tsr)null) }
-            IllegalArgumentException    | { Tsr x -> x.mut.divAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.mut.plusAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.mut.modAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.mut.minusAssign((Tsr)null)  }
-            IllegalArgumentException    | { Tsr x -> x.mut.labelAxes((String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.mut.labelAxes((String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.mut.labelAxes((Map)null) }
-            IllegalArgumentException    | { Tsr x -> x.mut.label(null) }
-            IllegalArgumentException    | { Tsr x -> x.withLabels((String[][])null) }
-            IllegalArgumentException    | { Tsr x -> x.withLabels(null, (String[])null) }
-            IllegalArgumentException    | { Tsr x -> x.withLabels((String[])null) }
-            IllegalArgumentException    | { Tsr x -> x.withLabels((Map)null) }
-            IllegalArgumentException    | { Tsr x -> x.withLabel(null) }
+            IllegalArgumentException    | { Tensor x -> x.times((Tensor)null) }
+            IllegalArgumentException    | { Tensor x -> x.div((Tensor)null)  }
+            IllegalArgumentException    | { Tensor x -> x.plus((Tensor)null)  }
+            IllegalArgumentException    | { Tensor x -> x.mod((Tensor)null)  }
+            IllegalArgumentException    | { Tensor x -> x.mut.timesAssign((Tensor)null) }
+            IllegalArgumentException    | { Tensor x -> x.mut.divAssign((Tensor)null)  }
+            IllegalArgumentException    | { Tensor x -> x.mut.plusAssign((Tensor)null)  }
+            IllegalArgumentException    | { Tensor x -> x.mut.modAssign((Tensor)null)  }
+            IllegalArgumentException    | { Tensor x -> x.mut.minusAssign((Tensor)null)  }
+            IllegalArgumentException    | { Tensor x -> x.mut.labelAxes((String[][])null) }
+            IllegalArgumentException    | { Tensor x -> x.mut.labelAxes((String[][])null) }
+            IllegalArgumentException    | { Tensor x -> x.mut.labelAxes((Map)null) }
+            IllegalArgumentException    | { Tensor x -> x.mut.label(null) }
+            IllegalArgumentException    | { Tensor x -> x.withLabels((String[][])null) }
+            IllegalArgumentException    | { Tensor x -> x.withLabels(null, (String[])null) }
+            IllegalArgumentException    | { Tensor x -> x.withLabels((String[])null) }
+            IllegalArgumentException    | { Tensor x -> x.withLabels((Map)null) }
+            IllegalArgumentException    | { Tensor x -> x.withLabel(null) }
     }
 
-    def 'Passing an invalid object into Tsr constructor causes descriptive exception.'()
+    def 'Passing an invalid object into Tensor constructor causes descriptive exception.'()
     {
         when : 'A tensor is being instantiated with a nonsensical parameter.'
-            Tsr.ofRandom(Scanner.class, 2, 4)
+            Tensor.ofRandom(Scanner.class, 2, 4)
         then : 'An exception is being thrown which tells us about it.'
             def exception = thrown(IllegalArgumentException)
             exception.message.contains(
@@ -111,7 +111,7 @@ class Tensor_Exception_Spec extends Specification
     def 'Passing an invalid key object into the "getAt" method causes a descriptive exception.'()
     {
         given : 'A new test tensor is being instantiated.'
-            var t = Tsr.of( [2, 3], -1..6 )
+            var t = Tensor.of( [2, 3], -1..6 )
 
         when : 'A nonsensical object is being passed to the tensor.'
             t[ [null] ]
@@ -125,8 +125,8 @@ class Tensor_Exception_Spec extends Specification
     def 'Out of dimension bound causes descriptive exception!'()
     {
         when : 'Some more complex slicing is being performed...'
-            var t = Tsr.of( [3, 3, 3, 3], 0 )
-            t.mut[1..2, 1..3, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )
+            var t = Tensor.of( [3, 3, 3, 3], 0 )
+            t.mut[1..2, 1..3, 1..1, 0..2] = Tensor.of( [2, 3, 1, 3], -4..2 )
 
         then : 'The slice range 1..3 causes and exception!'
             def exception = thrown(IllegalArgumentException)
@@ -138,7 +138,7 @@ class Tensor_Exception_Spec extends Specification
     def 'Building a tensor with 0 shape arguments throws an exception.'() {
 
         when :
-            var t = Tsr.ofInts().withShape().all(0)
+            var t = Tensor.ofInts().withShape().all(0)
 
         then :
             thrown(IllegalArgumentException)
@@ -147,7 +147,7 @@ class Tensor_Exception_Spec extends Specification
     def 'Casting a tensor as something unusual will cuas an exception to be thrown.'()
     {
         given : 'We have a regular tensor of 2 bytes!'
-            var t = Tsr.ofBytes().withShape(2).andFill(-1, 2)
+            var t = Tensor.ofBytes().withShape(2).andFill(-1, 2)
 
         when : 'We try to convert the tensor to an instance of type "Random"...'
             t as Random
@@ -159,12 +159,12 @@ class Tensor_Exception_Spec extends Specification
     def 'Building a tensor with "null" as shape argument throws an exception.'()
     {
         when :
-            Tsr.ofInts().withShape((List)null).all(0)
+            Tensor.ofInts().withShape((List)null).all(0)
         then :
             thrown(IllegalArgumentException)
 
         when :
-            Tsr.ofInts().withShape((int[])null).all(0)
+            Tensor.ofInts().withShape((int[])null).all(0)
         then :
             thrown(IllegalArgumentException)
     }

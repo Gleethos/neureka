@@ -1,7 +1,7 @@
 package neureka.math.args;
 
+import neureka.Tensor;
 import neureka.common.composition.Component;
-import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.ndim.config.NDConfiguration;
 
@@ -36,9 +36,9 @@ public abstract class Arg<T> implements Component<Args> {
     public boolean update(OwnerChangeRequest<Args> changeRequest) { return true; }
 
 
-    public static class Derivative<V> extends Arg<Tsr<V>> {
-        public static <V> Derivative<V> of(Tsr<V> arg) { return new Derivative<>(arg); }
-        private Derivative(Tsr<V> arg) { super(arg); }
+    public static class Derivative<V> extends Arg<Tensor<V>> {
+        public static <V> Derivative<V> of(Tensor<V> arg) { return new Derivative<>(arg); }
+        private Derivative(Tensor<V> arg) { super(arg); }
     }
 
     /**

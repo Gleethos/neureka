@@ -36,7 +36,7 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.math.args.Arg;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
@@ -93,15 +93,15 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      * @param <D> The device type parameter of the device which is targeted.
      * @return A builder for an {@link ExecutionCall}.
      */
-    public static <D extends Device<?>> Builder<D> of( Tsr<?>... inputs ) {
-        LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
+    public static <D extends Device<?>> Builder<D> of( Tensor<?>... inputs ) {
+        LogUtil.nullArgCheck( inputs, "inputs", Tensor[].class );
         return new Builder<D>(inputs);
     }
 
     private ExecutionCall(
             D device,
             Operation operation,
-            Tsr<?>[] tensors,
+            Tensor<?>[] tensors,
             List<Arg> arguments
     ) {
         super( tensors, device, arguments );
@@ -150,27 +150,27 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      * @param inputs The new array of input tensors for the new {@link ExecutionCall} returned by this.
      * @return A new {@link ExecutionCall} instance with the provided array of input tensors.
      */
-    public ExecutionCall<D> withInputs( Tsr<?>... inputs ) {
-        LogUtil.nullArgCheck( inputs, "inputs", Tsr[].class );
+    public ExecutionCall<D> withInputs( Tensor<?>... inputs ) {
+        LogUtil.nullArgCheck( inputs, "inputs", Tensor[].class );
         return new ExecutionCall<>( _device, _operation, inputs, _arguments.getAll(Arg.class) );
     }
 
-    public ExecutionCall<D> withAddedInputAt(int index, Tsr<?> added ) {
-        List<Tsr<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
+    public ExecutionCall<D> withAddedInputAt(int index, Tensor<?> added ) {
+        List<Tensor<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
         inputs.add(index, added);
-        return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );
+        return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tensor<?>[0]), _arguments.getAll(Arg.class) );
     }
 
-    public ExecutionCall<D> withInputAt( int index, Tsr<?> replacement ) {
-        List<Tsr<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
+    public ExecutionCall<D> withInputAt( int index, Tensor<?> replacement ) {
+        List<Tensor<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
         inputs.set(index, replacement);
-        return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );
+        return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tensor<?>[0]), _arguments.getAll(Arg.class) );
     }
 
     public ExecutionCall<D> withRemovedInputAt(int index) {
-        List<Tsr<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
+        List<Tensor<?>> inputs = new ArrayList<>(Arrays.asList(_inputs));
         inputs.remove(index);
-        return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tsr<?>[0]), _arguments.getAll(Arg.class) );
+        return new ExecutionCall<>( _device, _operation, inputs.toArray(new Tensor<?>[0]), _arguments.getAll(Arg.class) );
     }
 
     public ExecutionCall<D> withOperation( Operation operation ) {
@@ -230,11 +230,11 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
      */
     public static class Builder<D extends Device<?>>
     {
-        private final Tsr<?>[] _tensors;
+        private final Tensor<?>[] _tensors;
         private final List<Arg> _arguments = Stream.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1)).collect(Collectors.toList());
         private Operation _operation;
 
-        private Builder(Tsr<?>[] tensors) { _tensors = tensors; }
+        private Builder(Tensor<?>[] tensors) { _tensors = tensors; }
 
         public <D extends Device<?>> ExecutionCall<D> on( D device ) {
             LogUtil.nullArgCheck( device, "device", Device.class );

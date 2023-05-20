@@ -1,5 +1,4 @@
-
-   import neureka.Tsr
+import neureka.Tensor
    import neureka.devices.Device
    import testutility.Measure
 
@@ -31,8 +30,8 @@
          size = 1 * difficulty
          //-------------
          execute {
-            var A = Tsr.of([size, size, 1], "apple").to(device)
-            var B = Tsr.of([1, size, size], "banana").to(device)
+            var A = Tensor.of([size, size, 1], "apple").to(device)
+            var B = Tensor.of([1, size, size], "banana").to(device)
             measure "convolutional_matrix_multiplication", {
                for (int i=0; i < N; i++) tester("I[0] x I[1]" % [A, B])
             }
@@ -43,8 +42,8 @@
          size = 1 * difficulty
          //-------------
          execute {
-            var A = Tsr.of([size, size], "apple").to(device)
-            var B = Tsr.of([size, size], "banana").to(device)
+            var A = Tensor.of([size, size], "apple").to(device)
+            var B = Tensor.of([size, size], "banana").to(device)
             measure "matrix_multiplication", {
                for (int i=0; i < N; i++) tester("I[0] @ I[1]" % [A, B])
             }
@@ -55,8 +54,8 @@
          size = 1 * difficulty**2
          //-------------
          execute {
-            var C = Tsr.of([size], "blueberry").to(device)
-            var D = Tsr.of([size], "grapefruit").to(device)
+            var C = Tensor.of([size], "blueberry").to(device)
+            var D = Tensor.of([size], "grapefruit").to(device)
             measure "vector_multiplication", {
                for ( int i = 0; i < N; i++ ) tester("I[0]xI[1]" % [C, D])
             }
@@ -67,11 +66,11 @@
          size = 1 * difficulty
          //-------------
          execute {
-            Tsr a = Tsr.of([size, size], 3d..19d).to(device)
+            Tensor a = Tensor.of([size, size], 3d..19d).to(device)
             measure "manual_convolution", {
                for ( int i = 0; i < N; i++ ) {
-                  Tsr rowconvol = a[1..-2, 0..-1] + a[0..-3, 0..-1] + a[2..-1, 0..-1]//(98, 100) (98, 100) (98, 100)
-                  Tsr colconvol = rowconvol[0..-1, 1..-2] + rowconvol[0..-1, 0..-3] + rowconvol[0..-1, 2..-1] - 9 * a[1..-2, 1..-2]
+                  Tensor rowconvol = a[1..-2, 0..-1] + a[0..-3, 0..-1] + a[2..-1, 0..-1]//(98, 100) (98, 100) (98, 100)
+                   Tensor colconvol = rowconvol[0..-1, 1..-2] + rowconvol[0..-1, 0..-3] + rowconvol[0..-1, 2..-1] - 9 * a[1..-2, 1..-2]
                   tester(colconvol)
                   // Example for size = 100 : (98, 98)+(98, 98)+(98, 98)-9*(98, 98)
                }
@@ -87,8 +86,8 @@
             dim[0] = ((dim[0] == 0) ? 2 : dim[0])
             dim[1] = ((dim[1] == 0) ? 2 : dim[1])
             dim[2] = ((dim[2] == 0) ? 1 : dim[2])
-            var t1 = Tsr.ofDoubles().withShape(dim).all(0).to(device)
-            var t2 = Tsr.ofDoubles().withShape(dim).all(0).to(device)
+            var t1 = Tensor.ofDoubles().withShape(dim).all(0).to(device)
+            var t2 = Tensor.ofDoubles().withShape(dim).all(0).to(device)
             measure "tensor_math", {
                for ( int i = 0; i < N; i++ ) {
                   var v = t1 * 10

@@ -1,7 +1,7 @@
 package neureka.backend.main.operations;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;
 import org.slf4j.Logger;
@@ -16,8 +16,8 @@ public class ElemWiseUtil
 {
     private static final Logger _LOG = LoggerFactory.getLogger( ElemWiseUtil.class );
 
-    public static <V> Tsr<V> newTsrLike( Tsr<V> template, double value ) {
-        return newTsrLike(
+    public static <V> Tensor<V> newTensorLike( Tensor<V> template, double value ) {
+        return newTensorLike(
             template.itemType(),
             template.shape(),
             template.isOutsourced(),
@@ -26,10 +26,10 @@ public class ElemWiseUtil
         );
     }
 
-    public static <V> Tsr<V> newTsrLike(
+    public static <V> Tensor<V> newTensorLike(
         Class<V> type, Shape shape, boolean isOutsourced, Device<Object> device, double value
     ) {
-        Tsr<V> t = Tsr.of( type, shape, value ).mut().setIsIntermediate( true );
+        Tensor<V> t = Tensor.of( type, shape, value ).mut().setIsIntermediate( true );
         t.mut().setIsVirtual( false );
         t.mut().setItems( value );
         try {

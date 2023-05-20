@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.convolution;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
@@ -13,7 +13,7 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
     protected abstract CPUBiFun _getFun();
 
     @Override
-    public Tsr<?> run( ExecutionCall<CPU> call )
+    public Tensor<?> run(ExecutionCall<CPU> call )
     {
         SimpleCPUConvolution simpleConvolution = new SimpleCPUConvolution(call.input(1), call.input(2), call.input(0));
 
@@ -38,9 +38,9 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
     private CPU.RangeWorkload _workloadFor(
         ExecutionCall<CPU> call
     ) {
-        Tsr<Number> t0_drn = call.input( Number.class, 0 );
-        Tsr<Number> t1_src = call.input( Number.class, 1 ).mut().setIsVirtual(false);
-        Tsr<Number> t2_src = call.input( Number.class, 2 ).mut().setIsVirtual(false);
+        Tensor<Number> t0_drn = call.input( Number.class, 0 );
+        Tensor<Number> t1_src = call.input( Number.class, 1 ).mut().setIsVirtual(false);
+        Tensor<Number> t2_src = call.input( Number.class, 2 ).mut().setIsVirtual(false);
 
         Class<?> typeClass = t0_drn.getItemType();
 
@@ -68,7 +68,7 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
     }
 
     private static void _convolve64(
-            final Tsr<?> t0_drn, final Tsr<?> t1_src, final Tsr<?> t2_src,
+            final Tensor<?> t0_drn, final Tensor<?> t1_src, final Tensor<?> t2_src,
             final int start,
             final int end,
             final CPUBiFun operation
@@ -144,7 +144,7 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
 
 
     private static void _deConvolve64(
-            final Tsr<?> t0_drn, final Tsr<?> t1_src, final Tsr<?> t2_src,
+            final Tensor<?> t0_drn, final Tensor<?> t1_src, final Tensor<?> t2_src,
             final int start, final int end,
             final CPUBiFun operation
     ) {
@@ -243,9 +243,9 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
 
 
     private static void _convolve32(
-        final Tsr<?> t0_drn, final Tsr<?> t1_src, final Tsr<?> t2_src,
-        final int start, final int end,
-        final CPUBiFun operation
+            final Tensor<?> t0_drn, final Tensor<?> t1_src, final Tensor<?> t2_src,
+            final int start, final int end,
+            final CPUBiFun operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
@@ -317,7 +317,7 @@ public abstract class AbstractCPUConvolution implements ImplementationFor<CPU>
 
 
     private static void _deConvolve32(
-            final Tsr<?> t0_drn, final Tsr<?> t1_src, final Tsr<?> t2_src,
+            final Tensor<?> t0_drn, final Tensor<?> t1_src, final Tensor<?> t2_src,
             final int start, final int end,
             final CPUBiFun operation
     ) {

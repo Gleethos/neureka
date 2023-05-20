@@ -571,8 +571,8 @@ public final class Neureka
              *  Setting both flags to true will inhibit the effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
              *  unless a form of "permission" is being signaled to the autograd system.
              *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
-             *  be updated by its gradient</b>. This request can be dispatched to a {@link Tsr}
-             *  by setting {@link Tsr#setGradientApplyRequested(boolean)} to {@code true}.<br>
+             *  be updated by its gradient</b>. This request can be dispatched to a {@link Tensor}
+             *  by setting {@link Tensor#setGradientApplyRequested(boolean)} to {@code true}.<br>
              *
              * @return The truth value determining if gradients should be applied upon request.
              **/

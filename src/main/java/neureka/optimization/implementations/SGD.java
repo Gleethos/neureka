@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.optimization.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
@@ -59,10 +59,10 @@ public class SGD<V> implements Optimizer<V>
     }
 
     @Override
-    public Tsr<V> optimize( Tsr<V> w ) {
-        LogUtil.nullArgCheck( w, "w", Tsr.class ); // The input must not be null!
-        Tsr<V> g = w.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!"));
-        return Tsr.of("-" + _lr + " * i0", g);
+    public Tensor<V> optimize(Tensor<V> w ) {
+        LogUtil.nullArgCheck( w, "w", Tensor.class ); // The input must not be null!
+        Tensor<V> g = w.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!"));
+        return Tensor.of("-" + _lr + " * i0", g);
     }
 
     public double learningRate() { return _lr; }

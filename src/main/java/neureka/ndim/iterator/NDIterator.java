@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.ndim.iterator;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.permuted.Permuted2DConfiguration;
 import neureka.ndim.config.types.permuted.Permuted3DConfiguration;
@@ -78,7 +78,7 @@ public interface NDIterator
      * @param t The tensor for which an optimized {@link NDIterator} should be created.
      * @return A new {@link NDIterator} instance optimized for the provided tensor.
      */
-    static NDIterator of( Tsr<?> t ) {
+    static NDIterator of( Tensor<?> t ) {
         return of( t, NonVirtual.FALSE );
     }
 
@@ -90,7 +90,7 @@ public interface NDIterator
      * @param shouldNotBeVirtual The enum which determines if a virtual iterator is allowed.
      * @return A new {@link NDIterator} instance optimized for the provided tensor.
      */
-    static NDIterator of( Tsr<?> t, NonVirtual shouldNotBeVirtual ) {
+    static NDIterator of(Tensor<?> t, NonVirtual shouldNotBeVirtual ) {
         return of( t.getNDConf(), shouldNotBeVirtual );
     }
 

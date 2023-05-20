@@ -1,7 +1,7 @@
 package neureka.math.implementations;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.math.Function;
 import neureka.math.args.Arg;
@@ -65,14 +65,14 @@ public final class FunctionVariable implements Function, GradientProvider
     }
 
     @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
+    public Tensor<?> execute(Args arguments, Tensor<?>... inputs ) {
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );
         int j = ( arguments.has(Arg.VarIdx.class)   ? arguments.valOf(Arg.VarIdx.class)   : -1 );
         if ( d >= 0 ) {
             if ( j < 0 )
-                return Tsr.of( inputs[ 0 ].shape(), 1.0 ).getMut().setIsIntermediate( true );
+                return Tensor.of( inputs[ 0 ].shape(), 1.0 ).getMut().setIsIntermediate( true );
 
-            return j != d ? Tsr.of( inputs[ 0 ].shape(), 0.0 ).getMut().setIsIntermediate( true ) : executeDerive(inputs, d );
+            return j != d ? Tensor.of( inputs[ 0 ].shape(), 0.0 ).getMut().setIsIntermediate( true ) : executeDerive(inputs, d );
         }
         if ( j < 0 ) {
             StringBuilder exp = new StringBuilder("I[ 0 ]");

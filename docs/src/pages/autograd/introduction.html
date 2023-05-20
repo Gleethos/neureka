@@ -29,7 +29,7 @@ which can be traversed recursively.
 When computing the forwards pass,
 autograd simultaneously performs the requested computations
 and builds up a graph representing the function that computes
-the gradient (the `getGraphNode()` attribute of each `Tsr` is an entry point
+the gradient (the `getGraphNode()` attribute of each `Tensor` is an entry point
 into this graph).
 When the forwards pass is completed, we evaluate this graph in
 the backwards pass to compute the gradients.

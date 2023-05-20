@@ -1,7 +1,7 @@
 package neureka.backend.main.algorithms;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -43,7 +43,7 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
                         throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
                     Function matMul = Neureka.get().backend().getFunction().matMul();
                     int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
-                    Tsr<?> derivative = Util.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
+                    Tensor<?> derivative = Util.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                     derivative.to(adCall.getDevice());
                     return ADAction.of(target ->
                                 d == 1
@@ -70,7 +70,7 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
         Class<Number> type = (Class<Number>) call.input(  1 ).getDataType().getItemTypeClass();
 
         int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };
-        Tsr<Number> output = Tsr.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );
+        Tensor<Number> output = Tensor.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );
 
         call = _checkAndPrepareLayout( call, output );
 
@@ -78,10 +78,10 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
         return call.withInputAt( 0, output );
     }
 
-    private static ExecutionCall<?> _checkAndPrepareLayout( ExecutionCall<?> call, Tsr<?> c )
+    private static ExecutionCall<?> _checkAndPrepareLayout( ExecutionCall<?> call, Tensor<?> c )
     {
-        Tsr<?> a = call.input( 1 );
-        Tsr<?> b = call.input( 2 );
+        Tensor<?> a = call.input( 1 );
+        Tensor<?> b = call.input( 2 );
         // We need to make sure that the matrices have a common/compatible layout,
         // ..before we can before the actual a @ b = c matrix multiplication!
         NDConfiguration.Layout layoutA = a.getNDConf().getLayout();
@@ -121,7 +121,7 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
     }
 
     /**
-     *  This method will clone {@link Tsr} instances if they do not
+     *  This method will clone {@link Tensor} instances if they do not
      *  possess a simple {@link neureka.ndim.config.NDConfiguration}.
      *  This is usually the case when they are slices or permuted views on data...
      *  The reason for this is simply that we need inline data for the OpenCL kernels!
@@ -148,11 +148,11 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
         return call;
     }
 
-    private static boolean _isSimpleColumnMajorMatrix( Tsr<?> t ) {
+    private static boolean _isSimpleColumnMajorMatrix( Tensor<?> t ) {
         return t.rank() == 2 && t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;
     }
 
-    private static boolean _isSimpleRowMajorMatrix( Tsr<?> t ) {
+    private static boolean _isSimpleRowMajorMatrix( Tensor<?> t ) {
         return t.rank() == 2 && t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;
     }
 

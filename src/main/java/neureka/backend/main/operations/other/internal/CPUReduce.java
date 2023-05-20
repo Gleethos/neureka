@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.other.internal;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.host.CPU;
@@ -79,15 +79,15 @@ public class CPUReduce implements ImplementationFor<CPU>
 
 
     @Override
-    public Tsr<Integer> run(ExecutionCall<CPU> call) {
+    public Tensor<Integer> run(ExecutionCall<CPU> call) {
         if ( call.getDevice() != CPU.get() )
             throw new IllegalArgumentException("This implementation is only available for the CPU!");
-        Tsr<?> in = call.input(0) == null ? call.input(1) : call.input(0);
+        Tensor<?> in = call.input(0) == null ? call.input(1) : call.input(0);
         int index = _runRecursively(in, CPU.get());
-        return Tsr.of(Integer.class, Shape.of(1), index);
+        return Tensor.of(Integer.class, Shape.of(1), index);
     }
 
-    private int _runRecursively(Tsr<?> in, CPU device)
+    private int _runRecursively(Tensor<?> in, CPU device)
     {
         CPU.JVMExecutor executor = device.getExecutor();
         int RTS = 64;
@@ -130,7 +130,7 @@ public class CPUReduce implements ImplementationFor<CPU>
             if ( N > 1 ) {
                 float[] reduced = new float[out.length];
                 executor.threaded( out.length, (start, end) -> { for ( int i=start; i < end; ++i ) reduced[i] = inData[out[i]];});
-                return out[_runRecursively(Tsr.of(Float.class, Shape.of(out.length), reduced), device)];
+                return out[_runRecursively(Tensor.of(Float.class, Shape.of(out.length), reduced), device)];
             }
         }
         if ( type == Double.class ) {
@@ -153,7 +153,7 @@ public class CPUReduce implements ImplementationFor<CPU>
             if ( N > 1 ) {
                 double[] reduced = new double[out.length];
                 executor.threaded( out.length, (start, end) -> { for ( int i=start; i < end; ++i ) reduced[i] = inData[out[i]];});
-                return out[_runRecursively(Tsr.of(Double.class, Shape.of(out.length), reduced), device)];
+                return out[_runRecursively(Tensor.of(Double.class, Shape.of(out.length), reduced), device)];
             }
         }
         if ( type == Integer.class ) {
@@ -176,7 +176,7 @@ public class CPUReduce implements ImplementationFor<CPU>
             if ( N > 1 ) {
                 int[] reduced = new int[out.length];
                 executor.threaded( out.length, (start, end) -> { for ( int i=start; i < end; ++i ) reduced[i] = inData[out[i]];});
-                return out[_runRecursively(Tsr.of(Integer.class, Shape.of(out.length), reduced), device)];
+                return out[_runRecursively(Tensor.of(Integer.class, Shape.of(out.length), reduced), device)];
             }
         }
         if ( type == Long.class ) {
@@ -199,7 +199,7 @@ public class CPUReduce implements ImplementationFor<CPU>
             if ( N > 1 ) {
                 long[] reduced = new long[out.length];
                 executor.threaded( out.length, (start, end) -> { for ( int i=start; i < end; ++i ) reduced[i] = inData[out[i]];});
-                return out[_runRecursively(Tsr.of(Long.class, Shape.of(out.length), reduced), device)];
+                return out[_runRecursively(Tensor.of(Long.class, Shape.of(out.length), reduced), device)];
             }
         }
         if ( type == Short.class ) {
@@ -222,7 +222,7 @@ public class CPUReduce implements ImplementationFor<CPU>
             if ( N > 1 ) {
                 short[] reduced = new short[out.length];
                 executor.threaded( out.length, (start, end) -> { for ( int i=start; i < end; ++i ) reduced[i] = inData[out[i]];});
-                return out[_runRecursively(Tsr.of(Short.class, Shape.of(out.length), reduced), device)];
+                return out[_runRecursively(Tensor.of(Short.class, Shape.of(out.length), reduced), device)];
             }
         }
         if ( type == Byte.class ) {
@@ -245,7 +245,7 @@ public class CPUReduce implements ImplementationFor<CPU>
             if ( N > 1 ) {
                 byte[] reduced = new byte[out.length];
                 executor.threaded( out.length, (start, end) -> { for ( int i=start; i < end; ++i ) reduced[i] = inData[out[i]];});
-                return out[_runRecursively(Tsr.of(Byte.class, Shape.of(out.length), reduced), device)];
+                return out[_runRecursively(Tensor.of(Byte.class, Shape.of(out.length), reduced), device)];
             }
         }
 

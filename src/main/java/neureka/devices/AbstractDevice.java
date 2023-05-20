@@ -35,7 +35,7 @@ SOFTWARE.
 package neureka.devices;
 
 import neureka.Data;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -74,7 +74,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      * @param type The type of operation.
      * @return The truth value determining if the provided arguments can be executed.
      */
-    protected abstract boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation type );
+    protected abstract boolean _approveExecutionOf(Tensor<?>[] tensors, int d, Operation type );
 
     /**
      *  A {@link Device} is a component of a tensor. This method is used to inform the device
@@ -84,15 +84,15 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      * @return The truth value determining if the change should be executed.
      */
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        Tsr<V> oldOwner = changeRequest.getOldOwner();
-        Tsr<V> newOwner = changeRequest.getNewOwner();
+    public boolean update( OwnerChangeRequest<Tensor<V>> changeRequest ) {
+        Tensor<V> oldOwner = changeRequest.getOldOwner();
+        Tensor<V> newOwner = changeRequest.getNewOwner();
         if ( changeRequest.type() == IsBeing.REPLACED ) _swap( oldOwner, newOwner );
         else if ( changeRequest.type() == IsBeing.ADDED ) {
             if ( newOwner.has( Relation.class ) ) {
                 Relation<V> relation = newOwner.get(Relation.class);
                 if ( relation.hasParent() ) { // Root needs to be found ! :
-                    Tsr<V> root = relation.findRootTensor().orElseThrow(IllegalStateException::new);
+                    Tensor<V> root = relation.findRootTensor().orElseThrow(IllegalStateException::new);
                     if ( !this.has(root) || !root.isOutsourced() )
                         throw new IllegalStateException("Data parent is not outsourced!");
                 }
@@ -127,14 +127,14 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 
     /** {@inheritDoc} */
     @Override
-    public <T extends V> Storage<V> store( Tsr<T> tensor ) {
+    public <T extends V> Storage<V> store( Tensor<T> tensor ) {
         tensor.set( (Component) this ); // This way we move the storing procedure to the update function!
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public <T extends V> Access<T> access( Tsr<T> tensor ) {
+    public <T extends V> Access<T> access( Tensor<T> tensor ) {
         return new Access<T>() {
             @Override public Writer write( T item ) {
                 return new Writer() {
@@ -158,7 +158,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         };
     }
 
-    private  <T extends V> void _writeItemInternal( Tsr<T> tensor, T item, int start, int size ) {
+    private  <T extends V> void _writeItemInternal(Tensor<T> tensor, T item, int start, int size ) {
         Class<T> itemType = tensor.itemType();
         if ( !itemType.isAssignableFrom( item.getClass() ) )
             item = DataConverter.get().convert( item, itemType );
@@ -166,8 +166,8 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     }
 
     private <T extends V> void _writeArrayInternal(
-        Tsr<T> tensor, Object array,
-        int offset, int start, int size
+            Tensor<T> tensor, Object array,
+            int offset, int start, int size
     ) {
         DataType<?> dataType = tensor.getDataType();
         if ( dataType == null )
@@ -185,23 +185,23 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      * @param former The tensor whose associated data (on the device) ought to be assigned to the other tensor.
      * @param replacement The tensor which ought to receive the data of the former tensor internally.
      */
-    protected abstract <T extends V> void _swap( Tsr<T> former, Tsr<T> replacement );
+    protected abstract <T extends V> void _swap(Tensor<T> former, Tensor<T> replacement );
 
-    protected abstract <T extends V> int _sizeOccupiedBy( Tsr<T> tensor );
+    protected abstract <T extends V> int _sizeOccupiedBy( Tensor<T> tensor );
 
-    protected abstract <T extends V> Object _readAll( Tsr<T> tensor, boolean clone );
+    protected abstract <T extends V> Object _readAll(Tensor<T> tensor, boolean clone );
 
-    protected abstract <T extends V> T _readItem( Tsr<T> tensor, int index );
+    protected abstract <T extends V> T _readItem(Tensor<T> tensor, int index );
 
-    protected abstract <T extends V, A> A _readArray( Tsr<T> tensor, Class<A> arrayType, int start, int size );
+    protected abstract <T extends V, A> A _readArray(Tensor<T> tensor, Class<A> arrayType, int start, int size );
 
-    protected abstract <T extends V> void _writeItem( Tsr<T> tensor, T item, int start, int size );
+    protected abstract <T extends V> void _writeItem(Tensor<T> tensor, T item, int start, int size );
 
-    protected abstract <T extends V> void _writeArray( Tsr<T> tensor, Object array, int offset, int start, int size );
+    protected abstract <T extends V> void _writeArray(Tensor<T> tensor, Object array, int offset, int start, int size );
 
-    protected abstract Data<V> _actualize( Tsr<?> tensor );
+    protected abstract Data<V> _actualize( Tensor<?> tensor );
 
-    protected abstract Data<V> _virtualize( Tsr<?> tensor );
+    protected abstract Data<V> _virtualize( Tensor<?> tensor );
 
     protected abstract DataType<?> _dataTypeOf( Object rawData );
 

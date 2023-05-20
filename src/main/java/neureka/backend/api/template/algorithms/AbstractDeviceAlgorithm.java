@@ -2,7 +2,7 @@ package neureka.backend.api.template.algorithms;
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.main.algorithms.ElementwiseAlgorithm;
@@ -78,7 +78,7 @@ implements DeviceAlgorithm<C>
     }
 
 
-    public static Tsr<?> executeFor(
+    public static Tensor<?> executeFor(
             final Function caller,
             final ExecutionCall<? extends Device<?>> call,
             final FinalExecutor executor
@@ -94,7 +94,7 @@ implements DeviceAlgorithm<C>
             return _deepDerivative( call, nodes,  executor );
     }
 
-    public static Tsr<?> prepareAndExecute(
+    public static Tensor<?> prepareAndExecute(
             ExecutionCall<? extends Device<?>> executionCall,
             FinalExecutor executor
     ) {
@@ -104,7 +104,7 @@ implements DeviceAlgorithm<C>
                 Below is the core lambda of recursive preprocessing
                 which is defined for each Algorithm individually :
              */
-            Tsr<?> result = null;
+            Tensor<?> result = null;
             if ( executor != null )
                 result = executor.execute(call);
             return result;
@@ -116,7 +116,7 @@ implements DeviceAlgorithm<C>
         if ( currentAlgorithm instanceof ExecutionPreparation)
             executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );
 
-        for ( Tsr<?> t : executionCall.inputs() )
+        for ( Tensor<?> t : executionCall.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
                                 "Device arguments may not be null!\n" +
                                 "One or more tensor arguments within the given ExecutionCall instance is null."
@@ -124,10 +124,10 @@ implements DeviceAlgorithm<C>
         return executionCall;
     }
 
-    public static Tsr<?> executeDeviceAlgorithm(
+    public static Tensor<?> executeDeviceAlgorithm(
             ExecutionCall<? extends Device<?>> call
     ) {
-        for ( Tsr<?> t : call.inputs() )
+        for ( Tensor<?> t : call.inputs() )
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
                     "One or more tensor arguments within the given ExecutionCall instance is null."
@@ -178,12 +178,12 @@ implements DeviceAlgorithm<C>
             ExecutionCall<D> call, Function[] src, boolean ignoreJs
     ) {
         ExecutionCall<D> innerCall = !ignoreJs ? call : call.withArgs( Arg.DerivIdx.of(-1) );
-        Tsr<?>[] inputs = innerCall.inputs();
+        Tensor<?>[] inputs = innerCall.inputs();
         return MemUtil.keep( inputs, () ->
         {
             Shape tempShape = null;
             Class<?> tempType = null;
-            Tsr<?>[] tensors = new Tsr[src.length];
+            Tensor<?>[] tensors = new Tensor[src.length];
             for ( int i = 0; i < tensors.length; i++ ) {//constants need to be figured out!
                 if ( !( src[i] instanceof FunctionConstant) ) {
                     tensors[ i ] = src[i].execute(innerCall);
@@ -196,15 +196,15 @@ implements DeviceAlgorithm<C>
                 if ( tensors[ i ] == null )
                     tensors[ i ] =
                             j < 0
-                                ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).mut().setIsIntermediate( true ).to(call.getDevice())
-                                : Tsr.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).mut().setIsIntermediate( true ).to(call.getDevice());
+                                ? Tensor.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).mut().setIsIntermediate( true ).to(call.getDevice())
+                                : Tensor.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).mut().setIsIntermediate( true ).to(call.getDevice());
 
             return innerCall.withInputs(tensors);
         });
     }
 
     
-    private static Tsr<?> _deepActivation(
+    private static Tensor<?> _deepActivation(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
             final boolean isFlat,
@@ -228,8 +228,8 @@ implements DeviceAlgorithm<C>
                                             .mapToObj(i -> "I[" + i + "]")
                                             .toArray(String[]::new)
                                     );
-            Tsr<?>[] finalTensors = flattenedCall.inputs();
-            Tsr<?> result = MemUtil.keep(finalTensors, () -> new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));
+            Tensor<?>[] finalTensors = flattenedCall.inputs();
+            Tensor<?> result = MemUtil.keep(finalTensors, () -> new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));
             for ( int i = 1; i < finalTensors.length; i++ )
                 _deleteIfNotIn(call.inputs(), finalTensors[i]);
 
@@ -246,7 +246,7 @@ implements DeviceAlgorithm<C>
 
             boolean tooManyArgs = numberOfInputs > operationArity + 1;
 
-            Tsr<?>[] tensors;
+            Tensor<?>[] tensors;
 
             if ( !tooManyArgs || anyNumberOfInputs )
                 tensors = flattenedCall.withAddedInputAt(0, null).inputs();
@@ -271,10 +271,10 @@ implements DeviceAlgorithm<C>
      * @return The index of the tensor whose value is "1.0" (if all others are "0.0"), otherwise : -1
      */
     
-    private static int _indexOfFoundDerivative( final Tsr<?>[] tensors )
+    private static int _indexOfFoundDerivative( final Tensor<?>[] tensors )
     {
         boolean allVirtual = true;
-        for ( Tsr<?> t : tensors )
+        for ( Tensor<?> t : tensors )
             if ( t != null && !t.isVirtual() ) allVirtual = false;
 
         if ( allVirtual ) {
@@ -293,20 +293,20 @@ implements DeviceAlgorithm<C>
     }
 
     
-    private static Tsr<?> _deepDerivative(
+    private static Tensor<?> _deepDerivative(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
             final FinalExecutor executor
     ) {
-        Supplier<Tsr<?>> actor = () ->
+        Supplier<Tensor<?>> actor = () ->
                 MemUtil.keep( call.inputs(), () -> {
                     int d = call.getValOf( Arg.DerivIdx.class );
                     final int j = call.getValOf( Arg.VarIdx.class );
                     assert d >= 0;
 
-                    Tsr<?>[] tensors;
-                    if ( call.getOperation().isIndexer() ) tensors = new Tsr[ 1 + call.arity() ];
-                    else tensors = new Tsr[ 1 + nodes.length ];
+                    Tensor<?>[] tensors;
+                    if ( call.getOperation().isIndexer() ) tensors = new Tensor[ 1 + call.arity() ];
+                    else tensors = new Tensor[ 1 + nodes.length ];
 
                     // Chain-rule (forward AutoDiff):
                     // inner times outer means:
@@ -323,7 +323,7 @@ implements DeviceAlgorithm<C>
                                             : nodes[ i - 1 ].executeDerive( call.inputs(), d    );
 
                     //...then add them all together! (is possible because of linearity...)
-                    Tsr<?> inner;
+                    Tensor<?> inner;
                     if ( tensors.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
                         int index = _indexOfFoundDerivative( tensors );
                         if ( index >= 0 ) inner = tensors[ index ];
@@ -370,7 +370,7 @@ implements DeviceAlgorithm<C>
                                     );
                     // At the end:
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
-                    Tsr<?> result = _innerTimesOuter( inner, tensors, call );
+                    Tensor<?> result = _innerTimesOuter( inner, tensors, call );
                     // done!
 
                     _delete( inner );
@@ -379,7 +379,7 @@ implements DeviceAlgorithm<C>
                 });
 
         int d = call.getValOf( Arg.DerivIdx.class );
-        Tsr<?> out = null;
+        Tensor<?> out = null;
         for ( int i = 0; i < nodes.length; i++ )
         {
             // constants need to be figured out!
@@ -392,10 +392,10 @@ implements DeviceAlgorithm<C>
         return out;
     }
 
-    private static Tsr<?> _innerTimesOuter(Tsr<?> inner, Tsr<?>[] tensors, ExecutionCall<?> call)
+    private static Tensor<?> _innerTimesOuter(Tensor<?> inner, Tensor<?>[] tensors, ExecutionCall<?> call)
     {
         if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {
-            tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
+            tensors = new Tensor[]{ null, inner, tensors[ 0 ] };
             tensors[0] = prepareAndExecute(
                     ExecutionCall.of( tensors )
                             .andArgs( Arg.DerivIdx.of( -1 ) )
@@ -409,7 +409,7 @@ implements DeviceAlgorithm<C>
         return tensors[ 0 ];
     }
 
-    private static void _deleteIfNotIn( Tsr<?>[] array, Tsr<?> tensor ) {
+    private static void _deleteIfNotIn(Tensor<?>[] array, Tensor<?> tensor ) {
         if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
             for ( int i = 1; i < array.length; i++ )
                 if ( array[i] == tensor ) return;
@@ -418,7 +418,7 @@ implements DeviceAlgorithm<C>
         }
     }
 
-    private static void _delete( Tsr<?> tensor ) {
+    private static void _delete( Tensor<?> tensor ) {
         Neureka.Settings.Debug debug = Neureka.get().settings().debug();
         if (  !tensor.isDeleted() && debug.isDeletingIntermediateTensors() )
             tensor.mut().delete();
@@ -427,11 +427,11 @@ implements DeviceAlgorithm<C>
     public static <R> R executeOnCommonDevice( ExecutionCall<?> call, Supplier<R> execution ) {
         Device<Object> device = call.getDeviceFor(Object.class);
 
-        Consumer<Tsr<?>>[] rollbacks = new Consumer[ call.arity() ];
+        Consumer<Tensor<?>>[] rollbacks = new Consumer[ call.arity() ];
         for (int i = 0; i < call.arity(); i++ )
             if ( call.input( i ) != null && !call.input( i ).isOutsourced() ) {
                 device.store( call.input( i ) );
-                rollbacks[ i ] = tensor -> device.restore( (Tsr<Object>) tensor );
+                rollbacks[ i ] = tensor -> device.restore( (Tensor<Object>) tensor );
             }
             else
                 rollbacks[ i ] = t -> {};

@@ -1,7 +1,7 @@
 package ut.ndim
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.math.Function
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
@@ -18,7 +18,7 @@ import spock.lang.Title
     abstractions provided by the `NDConfiguration` interface and its various implementations.
 
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Tensor_Slice_Permute_Spec extends Specification
 {
     def setup() {
@@ -44,7 +44,7 @@ class Tensor_Slice_Permute_Spec extends Specification
     def 'A slice of a tensor changes as expected when reshaping it.'()
     {
         given : 'A parent tensor.'
-            Tsr A = Tsr.of([
+        Tensor A = Tensor.of([
                     [  1d,  5d,  3d, -6d, -3d,  8d, -9d,  4d  ],
                     [  0d, -2d,  2d,  1d, -1d,  0d,  5d,  4d  ],
                     [ -6d,  7d,  7d, -2d,  9d,  0d,  1d, -1d  ],
@@ -53,9 +53,9 @@ class Tensor_Slice_Permute_Spec extends Specification
             ])
 
         when : 'A slice of this tensor is being created...'
-            Tsr a = A[1..3, 4..5]
+            Tensor a = A[1..3, 4..5]
         and : 'And also a slice of "a" with the same dimensionality, namely : "b".'
-            Tsr b = a[]
+            Tensor b = a[]
 
         then : 'The slice and the parent are as expected.'
             A.toString() == "(5x8):[1.0, 5.0, 3.0, -6.0, -3.0, 8.0, -9.0, 4.0, 0.0, -2.0, 2.0, 1.0, -1.0, 0.0, 5.0, 4.0, -6.0, 7.0, 7.0, -2.0, 9.0, 0.0, 1.0, -1.0, 4.0, 4.0, -1.0, 8.0, 4.0, -3.0, 2.0, -9.0, 7.0, 5.0, -2.0, -3.0, 7.0, -8.0, 5.0, 0.0]"
@@ -65,7 +65,7 @@ class Tensor_Slice_Permute_Spec extends Specification
             a.toString() == b.toString()
 
         when : 'The slice "a" is being permuted... (transposed)'
-            Tsr c = a.T()
+            Tensor c = a.T()
 
         then : 'The returned tensor is a different one than "a".'
             a != c
@@ -82,7 +82,7 @@ class Tensor_Slice_Permute_Spec extends Specification
     def 'Two slices of one big tensor perform matrix multiplication flawless.'()
     {
         given : 'A parent tensor.'
-            var X = Tsr.of([
+            var X = Tensor.of([
                         [1000d, 1000d, 1000d, 1000d, 1000d, 1000d, 1000d, 1000d],
                         [1000d,   -2d,    2d, 1000d, 1000d, 1000d, 1000d, 1000d],
                         [1000d,    7d,    7d, 1000d, 1000d, 1000d, 1000d, 1000d],
@@ -118,7 +118,7 @@ class Tensor_Slice_Permute_Spec extends Specification
     def 'Reshaping a slice works as expected.'()
     {
         given : 'A parent tensor from which we want to create slices.'
-            var X = Tsr.of([
+            var X = Tensor.of([
                         [1000d, 1000d, 1000d, 1000d, ],
                         [1000d,   -1d,    4d, 1000d, ],
                         [1000d,    2d,    7d, 1000d, ],

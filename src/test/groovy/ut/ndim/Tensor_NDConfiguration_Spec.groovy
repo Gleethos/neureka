@@ -1,7 +1,7 @@
 package ut.ndim
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.ndim.config.types.simple.Simple1DConfiguration
 import neureka.ndim.config.types.simple.Simple0DConfiguration
 import neureka.ndim.config.types.sliced.Sliced0DConfiguration
@@ -24,7 +24,7 @@ class Tensor_NDConfiguration_Spec extends Specification
     def setupSpec()
     {
         reportHeader """
-                For certain situations the "Tsr" class should use the correct 
+                For certain situations the "Tensor" class should use the correct 
                 implementations of said interface as configuration for internal index mapping...
 
         """
@@ -49,8 +49,8 @@ class Tensor_NDConfiguration_Spec extends Specification
     def 'NDConfiguration instances of tensors have expected state.'()
     {
         given: 'Two scalar tensors "a" and "b" storing values "1" and "2".'
-            Tsr a = Tsr.of(1d)
-            Tsr b = Tsr.of(2d)
+            Tensor a = Tensor.of(1d)
+            Tensor b = Tensor.of(2d)
 
         expect: 'Tensor "a" contains an instance of the "SimpleScalarConfiguration".'
             a.NDConf instanceof Simple0DConfiguration
@@ -68,9 +68,9 @@ class Tensor_NDConfiguration_Spec extends Specification
     def 'NDConfiguration instances of tensors have expected state and behaviour.'()
     {
         given: 'Three vector tensors containing different numeric values.'
-            Tsr<Object> x = Tsr.of([1.0, 2.0, 3.1])
-            Tsr<Object> y = Tsr.of([3, 4.5, 2])
-            Tsr<Object> z = Tsr.of([1.4, 2, 4])
+            Tensor<Object> x = Tensor.of([1.0, 2.0, 3.1])
+            Tensor<Object> y = Tensor.of([3, 4.5, 2])
+            Tensor<Object> z = Tensor.of([1.4, 2, 4])
 
         expect : 'All of them possess "SimpleD1Configuration" NDConfiguration implementations.'
             x.NDConf instanceof Simple1DConfiguration

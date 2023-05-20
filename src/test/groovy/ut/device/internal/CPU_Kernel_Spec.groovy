@@ -1,6 +1,7 @@
 package ut.device.internal
 
-import neureka.Tsr
+
+import neureka.Tensor
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.backend.main.operations.other.internal.CPUReduce
@@ -18,7 +19,7 @@ class CPU_Kernel_Spec extends Specification
     ) {
         given :
             var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()
-            var a = Tsr.of(dataType)
+            var a = Tensor.of(dataType)
                                 .withShape(19, 7)
                                 .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})
             var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())
@@ -50,7 +51,7 @@ class CPU_Kernel_Spec extends Specification
     ) {
         given :
             var seed = dataType.getSimpleName().hashCode()
-            var a = Tsr.of(dataType)
+            var a = Tensor.of(dataType)
                                 .withShape(19, 7)
                                 .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})
             var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())

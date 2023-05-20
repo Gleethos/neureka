@@ -1,6 +1,6 @@
 package neureka.devices.file;
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ final class HandleFactory
 
     public interface Saver
     {
-        FileHandle save(String name, Tsr tensor, Map<String, Object> config);
+        FileHandle save(String name, Tensor tensor, Map<String, Object> config);
     }
 
     private final Map<String, Loader> _LOADERS = new HashMap<>();

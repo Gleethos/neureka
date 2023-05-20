@@ -82,7 +82,7 @@ The following code shows how to store tensors on a file device :
 def device = FileDevice.at( 'my/relative/path/to/directory' )
 
 // ... and a tensor which we want to persist :
-Tsr a = Tsr.of([2, 4, 3], 4)
+var a = Tensor.of([2, 4, 3], 4)
 
 // Initially the device does not know about the tensor "a" :
 assert !device.contains(a)
@@ -111,7 +111,7 @@ assert !new File( 'my/relative/path/to/directory/' + 'tensor-name.idx' ).exists(
 Device&#60;Object&#62; device = FileDevice.at( "my/relative/path/to/directory" );
 
 // ... and a tensor which we want to persist :
-Tsr&#60;Double&#62; a = Tsr.of(Double.class).withShape(2, 4, 3).all(4.0);
+Tensor&#60;Double&#62; a = Tensor.of(Double.class).withShape(2, 4, 3).all(4.0);
 
 // Initially the device does not know about the tensor "a" :
 assert !device.contains(a);
@@ -140,7 +140,7 @@ assert !new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists(
 val device : Device&#60;Object&#62; = FileDevice.at( "my/relative/path/to/directory" )
 
 // ... and a tensor which we want to persist :
-val a : Tsr&#60;Double&#62; = Tsr.of(Double.class).withShape(2, 4, 3).all(4.0)
+val a : Tensor&#60;Double&#62; = Tensor.of(Double.class).withShape(2, 4, 3).all(4.0)
 
 // Initially the device does not know about the tensor "a" :
 assert(!device.contains(a))

@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.linear.internal.opencl;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.opencl.KernelCaller;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class CLSum implements ImplementationFor<OpenCLDevice>
 {
     @Override
-    public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
+    public Tensor<?> run(ExecutionCall<OpenCLDevice> call) {
         return run(call.input(Float.class, 0), call.getDevice());
     }
 
@@ -20,8 +20,8 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
      *  This method compiles and executes the kernel that will return the sum of the
      *  elements in the {@code in} tensor.
      */
-    public static Tsr<Float> run(
-        Tsr<Float> in, OpenCLDevice device
+    public static Tensor<Float> run(
+            Tensor<Float> in, OpenCLDevice device
     ) {
         final long RTS = device.maxWorkGroupSize(); // Register tile size
         final int SIZE = in.size();
@@ -32,7 +32,7 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
         long[] local  = new long[]{ localSize };
         long[] global = new long[]{(long) SIZE };
 
-        Tsr<Float> out;
+        Tensor<Float> out;
 
         if ( localSize == 1 ) { // Oh, the user wants to process a prime number of elements... sigh! Ok let's do it (slower)!
             double fraction = (double) SIZE / (double) RTS;
@@ -44,19 +44,19 @@ public class CLSum implements ImplementationFor<OpenCLDevice>
             else
                 newN = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)
 
-            out = Tsr.of(Float.class, Shape.of(newN), 0).to(device).mut().setIsVirtual(false);
+            out = Tensor.of(Float.class, Shape.of(newN), 0).to(device).mut().setIsVirtual(false);
             KernelCaller caller = _processPrivate(RTS, device);
             caller.pass(SIZE).pass(in).pass(out).call(global, local);
         }
         else
         {
-            out = Tsr.of(Float.class, Shape.of( N ), 0).to(device).mut().setIsVirtual(false);
+            out = Tensor.of(Float.class, Shape.of( N ), 0).to(device).mut().setIsVirtual(false);
             KernelCaller caller = _processLocal(device);
             caller.pass(in).pass(out).passLocalFloats((int) localSize).call(global, local);
         }
 
         if ( N > 1 ) {
-            Tsr<Float> reduced = run(out, device);
+            Tensor<Float> reduced = run(out, device);
             out.mut().delete();
             return reduced;
         }

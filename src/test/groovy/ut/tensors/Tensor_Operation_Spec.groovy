@@ -3,7 +3,7 @@ package ut.tensors
 import neureka.Data
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.ocl.CLBackend
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
@@ -54,8 +54,8 @@ class Tensor_Operation_Spec extends Specification
     def 'The "dot" operation reshapes and produces valid "x" operation result.'( Class<?> type )
     {
         given : 'Two multi-dimensional tensors.'
-            var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).mut.toType(type)
-            var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).mut.toType(type)
+            var a = Tensor.of([1, 4, 4, 1   ], 4f..12f).mut.toType(type)
+            var b = Tensor.of([1, 3, 5, 2, 1], -5d..3d).mut.toType(type)
 
         when : 'The "dot" method is being called on "a" receiving "b"...'
             var c = a.convDot(b)
@@ -74,8 +74,8 @@ class Tensor_Operation_Spec extends Specification
             Class<?> type, Double[] A, Double[] B, int M, int K, int N, double[] expectedC
     ) {
         given : 'Two 2-dimensional tensors.'
-            var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)
-            var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)
+            var a = Tensor.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)
+            var b = Tensor.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)
 
         when : 'The "matMul" method is being called on "a" receiving "b"...'
             var c = a.matMul(b)
@@ -105,8 +105,8 @@ class Tensor_Operation_Spec extends Specification
     def 'You can do matrix multiplication using transposed matrices.'()
     {
         given : 'Two 2-dimensional tensors.'
-            var a = Tsr.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()
-            var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)
+            var a = Tensor.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()
+            var b = Tensor.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)
 
         when : 'The "matMul" method is being called on "a" receiving "b"...'
             var c = a.matMul(b)
@@ -138,8 +138,8 @@ class Tensor_Operation_Spec extends Specification
     def 'You can do matrix multiplication using transposed matrices as second operand.'()
     {
         given : 'Two 2-dimensional tensors.'
-            var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)
-            var b = Tsr.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()
+            var a = Tensor.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)
+            var b = Tensor.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()
 
         when : 'The "matMul" method is being called on "a" receiving "b"...'
             var c = a.matMul(b)
@@ -174,8 +174,8 @@ class Tensor_Operation_Spec extends Specification
     def 'You can do matrix multiplication using 2 transposed matrices.'()
     {
         given : 'Two 2-dimensional tensors.'
-            var a = Tsr.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()
-            var b = Tsr.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()
+            var a = Tensor.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()
+            var b = Tensor.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()
 
         when : 'The "matMul" method is being called on "a" receiving "b"...'
             println a.toString({it.isMultiline = true})
@@ -204,7 +204,7 @@ class Tensor_Operation_Spec extends Specification
             Class<?> type
     ) {
         given :
-            var t = Tsr.of(type).withShape(2,4).all(-42)
+            var t = Tensor.of(type).withShape(2,4).all(-42)
         and :
             var f = Function.of('random(I[0])')
         expect :
@@ -235,7 +235,7 @@ class Tensor_Operation_Spec extends Specification
     ) {
 
         given :
-            var t = Tsr.of(type).withShape(20, 40, 20).all(0)
+            var t = Tensor.of(type).withShape(20, 40, 20).all(0)
         and :
             var f = Function.of('random(I[0])')
 
@@ -255,8 +255,8 @@ class Tensor_Operation_Spec extends Specification
             Class<?> type, String code, String expected
     ) {
         given : 'We create two tensors and convert them to a desired type.'
-            var a = Tsr.of([1,2], [3d, 2d]).mut.toType(type)
-            var b = Tsr.of([2,1], [-1f, 4f]).mut.toType(type)
+            var a = Tensor.of([1, 2], [3d, 2d]).mut.toType(type)
+            var b = Tensor.of([2, 1], [-1f, 4f]).mut.toType(type)
         and : 'We prepare bindings for the Groovy shell.'
             Binding binding = new Binding()
             binding.setVariable('a', a)
@@ -267,7 +267,7 @@ class Tensor_Operation_Spec extends Specification
             b.itemType == type
 
         when : 'The groovy code is being evaluated.'
-            var c = new GroovyShell(binding).evaluate((code)) as Tsr
+            var c = new GroovyShell(binding).evaluate((code)) as Tensor
 
         then : 'The resulting tensor (toString) will contain the expected String.'
             c.toString().contains(expected)
@@ -291,14 +291,14 @@ class Tensor_Operation_Spec extends Specification
     ) {
         given :
             Neureka.get().settings().view().ndArrays({it.hasSlimNumbers=true})
-            Tsr a = Tsr.of(5d).mut.toType(type)
-            Tsr b = Tsr.of(3f).mut.toType(type)
+            Tensor a = Tensor.of(5d).mut.toType(type)
+            Tensor b = Tensor.of(3f).mut.toType(type)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
 
         when : '...calling methods on types like Double and Integer that receive Tsr instances...'
-            Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr
+            Tensor c = new GroovyShell(binding).evaluate((code)) as Tensor
 
         then : 'The resulting tensor (toString) will contain the expected String.'
             c.toString().endsWith("[$expected]")
@@ -336,9 +336,9 @@ class Tensor_Operation_Spec extends Specification
     {
         given :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            Tsr a = Tsr.of(2d).setRqsGradient(true)
-            Tsr b = Tsr.of(-4d)
-            Tsr c = Tsr.of(3d).setRqsGradient(true)
+            Tensor a = Tensor.of(2d).setRqsGradient(true)
+            Tensor b = Tensor.of(-4d)
+            Tensor c = Tensor.of(3d).setRqsGradient(true)
 
         expect :
             ( a / a                      ).toString().contains("[1]:(1.0)")
@@ -347,7 +347,7 @@ class Tensor_Operation_Spec extends Specification
             ( a *= b                     ).toString().contains("(-8.0)")
             ( a += -c                    ).toString().contains("(-11.0)")
             ( a -= c                     ).toString().contains("(-14.0)")
-            ( a /= Tsr.of(2d)      ).toString().contains("(-7.0)")
+            ( a /= Tensor.of(2d)      ).toString().contains("(-7.0)")
             ( a %= c                     ).toString().contains("(-1.0)")
     }
 
@@ -359,12 +359,12 @@ class Tensor_Operation_Spec extends Specification
             Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
         and :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
-            Tsr a = Tsr.of([11, 11], 3d..19d).to( device )
-            Tsr x = a[1..-2,0..-1]
-            Tsr y = a[0..-3,0..-1]
+            Tensor a = Tensor.of([11, 11], 3d..19d).to( device )
+            Tensor x = a[1..-2,0..-1]
+            Tensor y = a[0..-3,0..-1]
 
         when :
-            Tsr t = x + y
+            Tensor t = x + y
             String tAsStr = t.toString({it.setRowLimit(50)})
 
         then :
@@ -381,8 +381,8 @@ class Tensor_Operation_Spec extends Specification
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == 'GPU' })
     def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover more broadcasting operations!
-            Class<Object> type, boolean whichGrad, List<Integer> bShape,
-            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient, String device
+                                                                                       Class<Object> type, boolean whichGrad, List<Integer> bShape,
+                                                                                       BiFunction<Tensor<?>, Tensor<?>, Tensor<?>> operation, String cValue, String wGradient, String device
     ) {
         given :
             Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = true }
@@ -394,27 +394,27 @@ class Tensor_Operation_Spec extends Specification
         and :
             def aShape = [2, 2]
         and :
-            Tsr<Double> a = Tsr.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.get(device))
-            Tsr<Double> b = Tsr.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.get(device))
+            Tensor<Double> a = Tensor.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.get(device))
+            Tensor<Double> b = Tensor.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.get(device))
         and :
             a.mut.toType(type)
             b.mut.toType(type)
         and :
             String wShape = ( whichGrad ? bShape : aShape ).join("x")
-            Tsr    w      = ( whichGrad ? b      : a      )
+            Tensor w      = ( whichGrad ? b      : a      )
 
         expect :
             a.itemType == type || device == 'GPU' // The gpu backend will only be floats!
             b.itemType == type || device == 'GPU' // This is because kernels only work on floats...
 
         when :
-            Tsr c = operation.apply(a, b)
+            Tensor c = operation.apply(a, b)
         then :
             c.toString({it.hasSlimNumbers = true}).startsWith("[2x2]:($cValue)")
             w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:(null)"
 
         when :
-            c.backward(Tsr.of([2, 2], [5, -2, 7, 3]).mut.toType(type))
+            c.backward(Tensor.of([2, 2], [5, -2, 7, 3]).mut.toType(type))
         then :
             w.toString({it.hasSlimNumbers = true}) == "[$wShape]:($wValue):g:($wGradient)"
 
@@ -484,19 +484,19 @@ class Tensor_Operation_Spec extends Specification
     def 'Scalar broadcasting works across devices.'(
             String device,
             Class<Object> type,
-            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation,
+            BiFunction<Tensor<?>, Tensor<?>, Tensor<?>> operation,
             String cValue
     ) {
         given :
-            var a = Tsr.of(type).withShape(3, 2).andFill(-4..4).to(Device.get(device))
-            var b = Tsr.of(type).withShape(1, 1).andFill(3).to(Device.get(device))
+            var a = Tensor.of(type).withShape(3, 2).andFill(-4..4).to(Device.get(device))
+            var b = Tensor.of(type).withShape(1, 1).andFill(3).to(Device.get(device))
 
         expect :
             a.itemType == type
             b.itemType == type
 
         when :
-            Tsr c = operation.apply(a, b)
+            Tensor c = operation.apply(a, b)
         then :
             c.toString() == "(3x2):[$cValue]"
 
@@ -517,11 +517,11 @@ class Tensor_Operation_Spec extends Specification
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            Tsr x = Tsr.of(3d).setRqsGradient(true)
-            Tsr b = Tsr.of(-4d)
-            Tsr w = Tsr.of(2d)
+            Tensor x = Tensor.of(3d).setRqsGradient(true)
+            Tensor b = Tensor.of(-4d)
+            Tensor w = Tensor.of(2d)
 
-        when : Tsr y = ( (x+b)*w )**2
+        when : Tensor y = ( (x+b)*w )**2
 
         then : y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
@@ -531,10 +531,10 @@ class Tensor_Operation_Spec extends Specification
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)
 
         when :
-            y.backward(Tsr.of(1d))
+            y.backward(Tensor.of(1d))
         and :
-            Tsr t2 = Tsr.of( "Ig[0]", [x] )
-            Tsr t1 = Tsr.of( "Ig[0]", [y] ) // The input does not have a gradient!
+            Tensor t2 = Tensor.of( "Ig[0]", [x] )
+            Tensor t1 = Tensor.of( "Ig[0]", [y] ) // The input does not have a gradient!
 
         then :
             thrown(IllegalArgumentException)
@@ -546,7 +546,7 @@ class Tensor_Operation_Spec extends Specification
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
 
         when :
-            Tsr[] trs = new Tsr[]{x}
+            Tensor[] trs = new Tensor[]{x}
         and :
             def fun = Function.of("Ig[0]", false)
         then :
@@ -570,8 +570,8 @@ class Tensor_Operation_Spec extends Specification
         given : 'We create a function based on the provided expression.'
             var func = Function.of(funExpression)
         and : 'We create 2 tensors storing the same values, one sliced and the other a normal tensor.'
-            var t1 = Tsr.of(type).withShape(2, 3).andSeed("Tempeh")
-            var t2 = Tsr.of(type).withShape(4, 5).all(0)[1..2, 1..3]
+            var t1 = Tensor.of(type).withShape(2, 3).andSeed("Tempeh")
+            var t2 = Tensor.of(type).withShape(4, 5).all(0)[1..2, 1..3]
             t2.mut[0..1, 0..2] = t1
 
         expect : 'The types of both tensors should match what was provided during instantiation.'
@@ -642,7 +642,7 @@ class Tensor_Operation_Spec extends Specification
     def 'The transpose operation exposed by the "T()" method, supports autograd.'()
     {
         given : 'A simple 2d array'
-            var n = Tsr.of(Shape.of(3, 4), Data.of(6f, -5f, 2.4f)).setRqsGradient(true)
+            var n = Tensor.of(Shape.of(3, 4), Data.of(6f, -5f, 2.4f)).setRqsGradient(true)
         when : 'The transpose operation is applied'
             var t = n.T()
         and : 'We call the backward method on it...'

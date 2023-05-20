@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.common.utility;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 import org.slf4j.Logger;
@@ -371,7 +371,7 @@ public final class DataConverter
         private final NDConfiguration.IndexToIndexFunction _access;
         private final int _size;
 
-        public ForTensor( Tsr<?> t ) {
+        public ForTensor( Tensor<?> t ) {
             _access = t.getNDConf().getIndexToIndexAccessPattern();
             _size = t.size();
         }

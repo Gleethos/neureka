@@ -1,6 +1,6 @@
 package neureka.autograd;
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public interface ADAction
 {
     static ADAction of( ADAction action ) { return new DefaultADAction( action, null ); }
 
-    static ADAction of( Tsr<?> derivative, ADAction action ) { return new DefaultADAction( action, derivative ); }
+    static ADAction of(Tensor<?> derivative, ADAction action ) { return new DefaultADAction( action, derivative ); }
 
     /**
      *  The auto-differentiation forward or backward pass of an ADAction
@@ -37,33 +37,33 @@ public interface ADAction
      *               be performed and error which ought to be used for the forward or backward differentiation.
      * @return The result of a forward or backward mode auto differentiation.
      */
-    Tsr<?> act( ADTarget<?> target );
+    Tensor<?> act(ADTarget<?> target );
 
     /**
-     *  Finds captured {@link Tsr} instances in this current action
+     *  Finds captured {@link Tensor} instances in this current action
      *  using reflection (This is usually a partial derivative).
      *
-     * @return The captured {@link Tsr} instances.
+     * @return The captured {@link Tensor} instances.
      */
-    default Tsr<?>[] findCaptured() {
-        List<Tsr<?>> captured = new ArrayList<>();
+    default Tensor<?>[] findCaptured() {
+        List<Tensor<?>> captured = new ArrayList<>();
         for ( Class<?> c = this.getClass(); c != null; c = c.getSuperclass() ) {
             for ( java.lang.reflect.Field f : c.getDeclaredFields() ) {
-                if ( f.getType().equals(Tsr.class) ) {
+                if ( f.getType().equals(Tensor.class) ) {
                     f.setAccessible(true);
                     try {
-                        captured.add( (Tsr<?>) f.get(this) );
+                        captured.add( (Tensor<?>) f.get(this) );
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
-        return captured.toArray( new Tsr[0] );
+        return captured.toArray( new Tensor[0] );
     }
 
-    default Optional<Tsr<?>> partialDerivative() {
-        Tsr<?>[] captured = this.findCaptured();
+    default Optional<Tensor<?>> partialDerivative() {
+        Tensor<?>[] captured = this.findCaptured();
         if ( captured.length > 0 )
             return Optional.of(captured[captured.length - 1]);
 

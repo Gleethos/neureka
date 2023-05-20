@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.matmul;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.operations.linear.internal.blas.GEMM;
@@ -14,7 +14,7 @@ import neureka.ndim.config.NDConfiguration;
 public class CPUMatMul implements ImplementationFor<CPU>
 {
     @Override
-    public Tsr<?> run( ExecutionCall<CPU> call )
+    public Tensor<?> run(ExecutionCall<CPU> call )
     {
         if ( !call.validate().all( (t1, t2) -> t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )
             throw new IllegalArgumentException(
@@ -22,7 +22,7 @@ public class CPUMatMul implements ImplementationFor<CPU>
                         "All tensors must be of the same layout."
                     );
 
-        if ( !call.validate().allShare(Tsr::getDataType).isValid() )
+        if ( !call.validate().allShare(Tensor::getDataType).isValid() )
             throw new IllegalArgumentException(
                        "Type inconsistency between provided tensors encountered. " +
                        "All tensors must be of the same type."

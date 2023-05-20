@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.broadcast;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.math.args.Arg;
 import neureka.devices.opencl.OpenCLDevice;
@@ -20,7 +20,7 @@ public class CLScalarBroadcastDivision extends CLScalarBroadcast
     }
 
     @Override
-    public Tsr<?> run(ExecutionCall<OpenCLDevice> call) {
+    public Tensor<?> run(ExecutionCall<OpenCLDevice> call) {
         int offset = (call.input( Number.class, 2 ).isVirtual() || call.input( Number.class, 2 ).size() == 1)?1:0;
         int gwz = call.input( Number.class, 0 ).size();
         call.getDevice().getKernel(call)

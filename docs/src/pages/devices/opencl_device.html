@@ -38,7 +38,7 @@ not support autograd.
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
 def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]
-def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
+def someData = Tensor.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
 
 assert !device.hasAdHocKernel( 'dummy_kernel' )
 
@@ -67,7 +67,7 @@ assert someData.toString() == "(5):[-2.0, -9.0, -7.0, 5.0, -5.0]"
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
 OpenCLDevice device = Neureka.get().backend().get(CLContext.class).getPlatforms().getAt( 0 ).getDevices.getAt( 0 );
-Tsr&#60;Float&#62; someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device );
+Tensor&#60;Float&#62; someData = Tensor.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device );
 
 assert !device.hasAdHocKernel( "dummy_kernel" );
 
@@ -96,7 +96,7 @@ assert someData.toString().equals( "(5):[-2.0, -9.0, -7.0, 5.0, -5.0]" );
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 val device : OpenCLDevice = Neureka.get().context.get(CLContext::class.java).platforms[0].devices[0]
-val someData : Tsr&#60;Float&#62; = Tsr.of( floatArrayOf( 2f, -5f, -3f, 9f, -1f ) ).set( device )
+val someData : Tensor&#60;Float&#62; = Tensor.of( floatArrayOf( 2f, -5f, -3f, 9f, -1f ) ).set( device )
 
 assert( !device.hasAdHocKernel( "dummy_kernel" ) )
 

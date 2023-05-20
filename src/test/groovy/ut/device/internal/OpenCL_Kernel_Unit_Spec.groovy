@@ -1,7 +1,7 @@
 package ut.device.internal
 
 
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.api.ExecutionCall
 import neureka.backend.main.implementations.linear.CLDot
 import neureka.backend.main.operations.linear.internal.opencl.CLReduce
@@ -18,9 +18,9 @@ class OpenCL_Kernel_Unit_Spec extends Specification
     def 'The GEMM implementation for the OpenCLDevice has realistic behaviour'()
     {
         given :
-            var a = Tsr.ofFloats().withShape(3, 4).all(7)
-            var b = Tsr.ofFloats().withShape(4, 2).all(-5)
-            var c = Tsr.ofFloats().withShape(3, 2).all(0)
+            var a = Tensor.ofFloats().withShape(3, 4).all(7)
+            var b = Tensor.ofFloats().withShape(4, 2).all(-5)
+            var c = Tensor.ofFloats().withShape(3, 2).all(0)
             var call = Mock(ExecutionCall)
             var device = Mock(OpenCLDevice)
             var kernel = Mock(KernelCaller)
@@ -44,7 +44,7 @@ class OpenCL_Kernel_Unit_Spec extends Specification
     def 'The Reduce implementation for the OpenCLDevice has realistic behaviour'(CLReduce.Type type)
     {
         given :
-            var a = Tsr.ofFloats().withShape(19, 7).andWhere({i, _ -> (1+(7**i)%30)})
+            var a = Tensor.ofFloats().withShape(19, 7).andWhere({ i, _ -> (1+(7**i)%30)})
             var call = Mock(ExecutionCall)
             var device = Mock(OpenCLDevice)
             var kernel = Mock(KernelCaller)
@@ -79,7 +79,7 @@ class OpenCL_Kernel_Unit_Spec extends Specification
     def 'The Sum implementation for the OpenCLDevice has realistic behaviour'()
     {
         given :
-            var a = Tsr.ofFloats().withShape(19, 7).andWhere({i, _ -> (1+(7**i)%30)})
+            var a = Tensor.ofFloats().withShape(19, 7).andWhere({ i, _ -> (1+(7**i)%30)})
             var call = Mock(ExecutionCall)
             var device = Mock(OpenCLDevice)
             var kernel = Mock(KernelCaller)
@@ -106,7 +106,7 @@ class OpenCL_Kernel_Unit_Spec extends Specification
     def 'The Sum implementation for the OpenCLDevice has realistic behaviour for when the number of elements is a prime.'()
     {
         given :
-            var a = Tsr.ofFloats().withShape(31).andWhere({i, _ -> (1+(7**i)%30)})
+            var a = Tensor.ofFloats().withShape(31).andWhere({ i, _ -> (1+(7**i)%30)})
             var call = Mock(ExecutionCall)
             var device = Mock(OpenCLDevice)
             var kernel = Mock(KernelCaller)
@@ -138,9 +138,9 @@ class OpenCL_Kernel_Unit_Spec extends Specification
     def 'The CLDot implementation for the OpenCLDevice has realistic behaviour'()
     {
         given :
-            var a = Tsr.ofFloats().withShape(19).andWhere({i, _ -> (1+(7**i)%30)})
-            var b = Tsr.ofFloats().withShape(19).andWhere({i, _ -> (1+(7**i)%30)})
-            var c = Tsr.ofFloats().withShape(1).all(0)
+            var a = Tensor.ofFloats().withShape(19).andWhere({ i, _ -> (1+(7**i)%30)})
+            var b = Tensor.ofFloats().withShape(19).andWhere({ i, _ -> (1+(7**i)%30)})
+            var c = Tensor.ofFloats().withShape(1).all(0)
             var call = Mock(ExecutionCall)
             var device = Mock(OpenCLDevice)
             var kernel = Mock(KernelCaller)

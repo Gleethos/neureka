@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.functions;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
@@ -66,8 +66,8 @@ abstract class AbstractActivationOperation extends AbstractOperation
                 // The user wants the derivative! So we need to do inner times outer derivative! (because the function is not flat)
                 ExecutionCall<?> inner = AbstractDeviceAlgorithm.flatten( noAdFun, call.withArgs(Arg.DerivIdx.of(-1)) );
                 Result innerDerivResult = innerFun.getOperation().execute( innerFun, call.withOperation(innerFun.getOperation()) );
-                Tsr<?> innerDeriv = innerDerivResult.get();
-                Tsr<?> outerDeriv = super.execute( flat, inner.withArgs(Arg.DerivIdx.of(0)) ).get();
+                Tensor<?> innerDeriv = innerDerivResult.get();
+                Tensor<?> outerDeriv = super.execute( flat, inner.withArgs(Arg.DerivIdx.of(0)) ).get();
                 Operation mul = Neureka.get().backend().getOperation("*");
                 Function opFun = new FunctionParser(Neureka.get().backend()).parse( mul, 2, false );
                 return mul.execute(

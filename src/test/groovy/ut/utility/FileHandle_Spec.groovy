@@ -1,7 +1,7 @@
 package ut.utility
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.devices.file.CSVHandle
 import neureka.devices.file.FileHandle
 import neureka.devices.file.IDXHandle
@@ -41,7 +41,7 @@ class FileHandle_Spec extends Specification
     }
 
     def 'Test writing IDX file format.'(
-        Tsr<?> tensor, Class<NumericType<?,?,?,?>> type, String filename, String expected
+            Tensor<?> tensor, Class<NumericType<?,?,?,?>> type, String filename, String expected
     ) {
         given:
             Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->
@@ -66,7 +66,7 @@ class FileHandle_Spec extends Specification
             new File("build/test-can/"+filename).exists()
 
         when : 'The "load" method is being called in order to load the tensor into memory.'
-            Tsr loaded = idx.load()
+            Tensor loaded = idx.load()
 
         then : 'The loaded tensor is as expected...'
             loaded != null
@@ -75,17 +75,17 @@ class FileHandle_Spec extends Specification
 
         where : 'The following paths and file names are being used for testing : '
             tensor                      | type      | filename          || expected
-            Tsr.of([2, 4], -2d..4d)     | F64.class | "test.idx3-ubyte" || "(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]"
-            Tsr.of([2, 4], 2d)          | F64.class | "test2.idx"       || "(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
-            Tsr.of(Float, [8], -2f..4f) | F32.class | "test_f32_1.idx"  || "(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]"
-            Tsr.of([4, 2], 2f)          | F32.class | "test_f32_2.idx"  || "(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
-            Tsr.of(Integer, [3], 2..4)  | I32.class | "test_i32_1.idx"  || "(3):[2, 3, 4]"
-            Tsr.of([2, 2], 2)           | I32.class | "test_i32_2.idx"  || "(2x2):[2, 2, 2, 2]"
-            Tsr.of(Short, [2], 2..4)    | I16.class | "test_i16_1.idx"  || "(2):[2, 3]"
-            Tsr.of([2, 2], 2 as short)  | I16.class | "test_i16_2.idx"  || "(2x2):[2, 2, 2, 2]"
-            Tsr.of(Byte, [2], 2..4)     | I8.class  | "test_i8_1.idx"   || "(2):[2, 3]"
-            Tsr.of([1, 2], 2 as byte)   | I8.class  | "test_i8_2.idx"   || "(1x2):[2, 2]"
-            Tsr.of(Long, [6], -3..4)    | I64.class | "test_i64_1.idx"  || "(6):[-3, -2, -1, 0, 1, 2]"
+            Tensor.of([2, 4], -2d..4d)     | F64.class | "test.idx3-ubyte" || "(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]"
+            Tensor.of([2, 4], 2d)          | F64.class | "test2.idx"       || "(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
+            Tensor.of(Float, [8], -2f..4f) | F32.class | "test_f32_1.idx"  || "(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]"
+            Tensor.of([4, 2], 2f)          | F32.class | "test_f32_2.idx"  || "(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
+            Tensor.of(Integer, [3], 2..4)  | I32.class | "test_i32_1.idx"  || "(3):[2, 3, 4]"
+            Tensor.of([2, 2], 2)           | I32.class | "test_i32_2.idx"  || "(2x2):[2, 2, 2, 2]"
+            Tensor.of(Short, [2], 2..4)    | I16.class | "test_i16_1.idx"  || "(2):[2, 3]"
+            Tensor.of([2, 2], 2 as short)  | I16.class | "test_i16_2.idx"  || "(2x2):[2, 2, 2, 2]"
+            Tensor.of(Byte, [2], 2..4)     | I8.class  | "test_i8_1.idx"   || "(2):[2, 3]"
+            Tensor.of([1, 2], 2 as byte)   | I8.class  | "test_i8_2.idx"   || "(1x2):[2, 2]"
+            Tensor.of(Long, [6], -3..4)    | I64.class | "test_i64_1.idx"  || "(6):[-3, -2, -1, 0, 1, 2]"
     }
 
 
@@ -97,7 +97,7 @@ class FileHandle_Spec extends Specification
 
         when : 'The given idx file is being loaded by the "IDXHead" class into a new tensor...'
             IDXHandle idx = new IDXHandle( "build/resources/test/idx/" + filename )
-            Tsr loaded = idx.load()
+            Tensor loaded = idx.load()
         and : '... this new tensor is then hashed ...'
             loaded.forEach( e -> hash = ( hash + e ).digest("md5") )
             /*
@@ -147,7 +147,7 @@ class FileHandle_Spec extends Specification
 
         when :
             FileHandle handle = FileHandle.FACTORY.getLoader(type).load("build/resources/test/$type/" + filename, null)
-            Tsr loaded = handle.load()
+            Tensor loaded = handle.load()
             loaded.forEach(e -> hash = ( hash + e ).digest('md5') )
         /*
             // Use the following code to get an ASCII representation of the image (from the loaded tensor):
@@ -199,7 +199,7 @@ class FileHandle_Spec extends Specification
     ) {
         when :
             CSVHandle csv = new CSVHandle( "build/resources/test/csv/" + filename, params )
-            Tsr loaded = csv.load()
+            Tensor loaded = csv.load()
             var hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )
             //println(loaded)
         then :
@@ -230,7 +230,7 @@ class FileHandle_Spec extends Specification
     def 'Fully labeled tenors will be stored with their labels included when saving them as CSV.'()
     {
         given:
-            Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
+            Tensor t = Tensor.of(DataType.of(String.class), [2, 3], [
                             '1', 'hi', ':)',
                             '2', 'hey', ';)'
                         ])
@@ -249,7 +249,7 @@ class FileHandle_Spec extends Specification
 
         when:
             def csvHead = new CSVHandle( t, "build/resources/test/csv/test.csv" )
-            Tsr loaded = csvHead.load()
+            Tensor loaded = csvHead.load()
         then:
             loaded.toString() == "(2x3):[\n" +
                                  "   (        A       )(       B       )(       C        ):( test )\n" +
@@ -270,7 +270,7 @@ class FileHandle_Spec extends Specification
     def 'Partially labeled tenors will be stored with their labels included when saving them as CSV.'()
     {
         given:
-            Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
+        Tensor t = Tensor.of(DataType.of(String.class), [2, 3], [
                                 '1', 'hi', ':)',
                                 '2', 'hey', ';)'
                             ])
@@ -289,7 +289,7 @@ class FileHandle_Spec extends Specification
 
         when:
             def csvHead = new CSVHandle( t, "build/resources/test/csv/test.csv" )
-            Tsr loaded = csvHead.load()
+            Tensor loaded = csvHead.load()
         then:
             loaded.toString() == "(2x3):[\n" +
                                  "   (        A       )(       B       )(       C        ):( test )\n" +

@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.Result;
@@ -41,21 +41,21 @@ public class Min extends AbstractOperation
             )
             .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
             .setExecution( (caller, call) -> {
-                Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
+                Tensor<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
                 call = call.withInputs(inputs);
-                Tsr<Integer> index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
+                Tensor<Integer> index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
                 int i = index.item(0);
-                Tsr<?> in = inputs[0] == null ? inputs[1] : inputs[0];
+                Tensor<?> in = inputs[0] == null ? inputs[1] : inputs[0];
                 Class<Object> typeClass = (Class<Object>) in.itemType();
                 Shape shape = in.shape();
                 Device<Object> device = (Device<Object>) call.getDevice();
                 return Result.of(
-                            Tsr.of(in.itemType(), Shape.of( 1 ), in.item(i)).to(call.getDevice()).mut().setIsIntermediate(true)
+                            Tensor.of(in.itemType(), Shape.of( 1 ), in.item(i)).to(call.getDevice()).mut().setIsIntermediate(true)
                         )
                         .withADAction( target -> {
-                            Tsr<Object> error = (Tsr<Object>) target.error();
+                            Tensor<Object> error = (Tensor<Object>) target.error();
                             assert error.size() == 1;
-                            Tsr<Object> newError = ElemWiseUtil.newTsrLike(typeClass, shape, true, device, 0);
+                            Tensor<Object> newError = ElemWiseUtil.newTensorLike(typeClass, shape, true, device, 0);
                             newError.mut().setIsVirtual(false);
                             newError.mut().setItemAt(i, error.item(0));
                             return newError;

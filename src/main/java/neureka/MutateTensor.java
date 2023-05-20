@@ -17,49 +17,56 @@ import java.util.Map;
  * because the exposed state can easily lead to broken tensors and exceptions...<br>
  * <br>
  */
-public interface MutateTsr<T> extends MutateNda<T>
+public interface MutateTensor<T> extends MutateNda<T>
 {
     /** {@inheritDoc} */
-    @Override Tsr<T> putAt( Map<?,Integer> key, Nda<T> value );
+    @Override
+    Tensor<T> putAt(Map<?,Integer> key, Nda<T> value );
 
     /** {@inheritDoc} */
-    @Override Tsr<T> putAt( int[] indices, T value );
+    @Override
+    Tensor<T> putAt(int[] indices, T value );
 
     /** {@inheritDoc} */
-    @Override default Tsr<T> set( int[] indices, T value ) { return putAt( indices, value ); }
+    @Override default Tensor<T> set(int[] indices, T value ) { return putAt( indices, value ); }
 
     /** {@inheritDoc} */
-    @Override default Tsr<T> set( int i0, int i1, T value ) { return putAt( new int[]{i0, i1}, value ); }
+    @Override default Tensor<T> set(int i0, int i1, T value ) { return putAt( new int[]{i0, i1}, value ); }
 
     /** {@inheritDoc} */
-    @Override default Tsr<T> set( int i0, int i1, int i2, T value ) { return putAt( new int[]{i0, i1, i2}, value ); }
+    @Override default Tensor<T> set(int i0, int i1, int i2, T value ) { return putAt( new int[]{i0, i1, i2}, value ); }
 
     /** {@inheritDoc} */
-    @Override Tsr<T> putAt( int index, T value );
+    @Override
+    Tensor<T> putAt(int index, T value );
 
     /** {@inheritDoc} */
-    @Override default Tsr<T> set( int index, T value ) { return putAt( index, value ); }
+    @Override default Tensor<T> set(int index, T value ) { return putAt( index, value ); }
 
     /** {@inheritDoc} */
-    @Override Tsr<T> putAt( List<?> key, Nda<T> value );
+    @Override
+    Tensor<T> putAt(List<?> key, Nda<T> value );
 
     /** {@inheritDoc} */
-    @Override Tsr<T> putAt( List<?> indices, T value );
+    @Override
+    Tensor<T> putAt(List<?> indices, T value );
 
     /** {@inheritDoc} */
-    @Override Tsr<T> setItemAt( int i, T o );
+    @Override
+    Tensor<T> setItemAt(int i, T o );
 
     /** {@inheritDoc} */
-    @Override Tsr<T> setItems( Object value );
+    @Override
+    Tensor<T> setItems(Object value );
 
     /**
-     *  This method takes the provided {@link Tsr} instance and adds its
-     *  contents to the contents of the {@link Tsr} which is set as gradient of this very {@link Tsr}.
+     *  This method takes the provided {@link Tensor} instance and adds its
+     *  contents to the contents of the {@link Tensor} which is set as gradient of this very {@link Tensor}.
      *
      * @param error The error gradient which ought to be added to the gradient of this tensor.
      * @return This very tensor instance to enable method chaining.
      */
-    Tsr<T> addToGradient( Tsr<T> error );
+    Tensor<T> addToGradient(Tensor<T> error );
 
     /**
      * This method sets the NDConfiguration of this NDArray.
@@ -68,24 +75,24 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param configuration The new NDConfiguration instance which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    Tsr<T> setNDConf( NDConfiguration configuration );
+    Tensor<T> setNDConf(NDConfiguration configuration );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <V> Tsr<V> toType( Class<V> typeClass );
+    <V> Tensor<V> toType(Class<V> typeClass );
 
     /**
      * Use this to do a runtime checked upcast of the type parameter of the tensor.
-     * This is unsafe because it is in conflict with the {@link Tsr#itemType()}
+     * This is unsafe because it is in conflict with the {@link Tensor#itemType()}
      * method.
      *
      * @param superType The class of the super type of the tensor's value type.
      * @param <U>       The super type parameter of the value type of the tensor.
      * @return A tensor whose type parameter is upcast.
      */
-    <U/*super T*/> Tsr<U> upcast(Class<U> superType);
+    <U/*super T*/> Tensor<U> upcast(Class<U> superType);
 
     /**
      * This method allows you to modify the data-layout of this {@link AbstractNda}.
@@ -97,7 +104,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param layout The layout of the data array (row or column major).
      * @return The final instance type of this class which enables method chaining.
      */
-    Tsr<T> toLayout( NDConfiguration.Layout layout );
+    Tensor<T> toLayout(NDConfiguration.Layout layout );
 
     /**
      * This method is responsible for incrementing
@@ -109,7 +116,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param call The context object containing all relevant information that defines a call for tensor execution.
      * @return This very tensor instance. (factory pattern)
      */
-    Tsr<T> incrementVersion(ExecutionCall<?> call);
+    Tensor<T> incrementVersion(ExecutionCall<?> call);
 
     /**
      * Intermediate tensors are internal non-user tensors which may be eligible
@@ -120,7 +127,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
      * @return The tensor to which this unsafe API belongs.
      */
-    Tsr<T> setIsIntermediate(boolean isIntermediate);
+    Tensor<T> setIsIntermediate(boolean isIntermediate);
 
     /**
      * Although tensors will be garbage collected when they are not strongly referenced,
@@ -133,7 +140,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      *
      * @return The tensor wo which this unsafe API belongs to allow for method chaining.
      */
-    Tsr<T> delete();
+    Tensor<T> delete();
 
     /**
      * A tensor ought to have some way to selectively modify its underlying data array.
@@ -143,7 +150,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param o The object which ought to be placed at the requested position.
      * @return This very tensor in order to enable method chaining.
      */
-    Tsr<T> setDataAt(int i, T o);
+    Tensor<T> setDataAt(int i, T o);
 
     /**
      *  At the heart of every tensor is the {@link Data} object, which holds the actual data array,
@@ -158,7 +165,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param data The new data object which ought to be set.
      * @return The tensor in question, to allow for method chaining.
      */
-    Tsr<T> setData( Data<T> data );
+    Tensor<T> setData(Data<T> data );
 
     /**
      * Use this to access the underlying writable data of this tensor if
@@ -175,7 +182,7 @@ public interface MutateTsr<T> extends MutateNda<T>
         LogUtil.nullArgCheck(arrayTypeClass, "arrayTypeClass", Class.class, "Array type must not be null!");
         if (!arrayTypeClass.isArray())
             throw new IllegalArgumentException("Provided type is not an array type.");
-        Object data = MutateTsr.this.getData().getOrNull();
+        Object data = MutateTensor.this.getData().getOrNull();
         if (data == null)
             throw new IllegalStateException("Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).");
 
@@ -194,23 +201,23 @@ public interface MutateTsr<T> extends MutateNda<T>
      *
      * @return This very instance in order to allows for a more streamline usage of this method.
      */
-    Tsr<T> detach();
+    Tensor<T> detach();
 
     /**
      * @param other The tensor whose elements ought to be multiplied and assigned to elements in this tensor.
      * @return This instance where each value element was multiplied by the corresponding element in the provided tensor.
      */
-    Tsr<T> timesAssign(Tsr<T> other);
+    Tensor<T> timesAssign(Tensor<T> other);
 
     /**
      * @param other The value which ought to be multiplied and assigned to each element in this tensor.
      * @return This instance where each value element was multiplied by the provided element.
      */
-    Tsr<T> timesAssign(T other);
+    Tensor<T> timesAssign(T other);
 
-    Tsr<T> divAssign(Tsr<T> other);
+    Tensor<T> divAssign(Tensor<T> other);
 
-    Tsr<T> modAssign(Tsr<T> other);
+    Tensor<T> modAssign(Tensor<T> other);
 
     /**
      * Performs an addition of the passed tensor to this tensor.
@@ -219,22 +226,25 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param other The tensor which ought to be added to this tensor.
      * @return This tensor.
      */
-    Tsr<T> plusAssign(Tsr<T> other);
+    Tensor<T> plusAssign(Tensor<T> other);
 
-    Tsr<T> minusAssign(Tsr<T> other);
+    Tensor<T> minusAssign(Tensor<T> other);
 
     /**
      * @param other The scalar value which should be subtracted from the values of this tensor.
      * @return This tensor after the minus-assign inline operation was applied.
      */
-    Tsr<T> minusAssign(T other);
+    Tensor<T> minusAssign(T other);
 
-    @Override Tsr<T> assign( T other );
+    @Override
+    Tensor<T> assign(T other );
 
-    @Override Tsr<T> assign( Nda<T> other );
+    @Override
+    Tensor<T> assign(Nda<T> other );
 
     /** {@inheritDoc} */
-    @Override Tsr<T> label( String label );
+    @Override
+    Tensor<T> label(String label );
 
     /**
      * This method receives a label for this tensor and a
@@ -254,7 +264,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param labels     A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    Tsr<T> labelAxes( String[]... labels );
+    Tensor<T> labelAxes(String[]... labels );
 
     /**
      * This method receives a nested {@link String} list which
@@ -273,7 +283,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param labels A nested String list containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    Tsr<T> labelAxes( List<List<Object>> labels );
+    Tensor<T> labelAxes(List<List<Object>> labels );
 
     /**
      * This method provides the ability to
@@ -292,7 +302,7 @@ public interface MutateTsr<T> extends MutateNda<T>
      * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
      * @return This tensor (method chaining).
      */
-    Tsr<T> labelAxes( Map<Object, List<Object>> labels );
+    Tensor<T> labelAxes(Map<Object, List<Object>> labels );
 
     /**
      *  Virtualizing is the opposite to actualizing a tensor.
@@ -310,11 +320,11 @@ public interface MutateTsr<T> extends MutateNda<T>
      *  This only makes sense for homogeneously populated tensors.
      *  Passing {@code false} to this method will "actualize" a "virtual" tensor.
      *  Meaning the underlying data array will at least become as large as the size of the tensor
-     *  as is defined by {@link Tsr#size()}.
+     *  as is defined by {@link Tensor#size()}.
      *
      * @param isVirtual The truth value determining if this tensor should be "virtual" or "actual".
      * @return This concrete instance, to allow for method chaining.
      */
-    Tsr<T> setIsVirtual( boolean isVirtual );
+    Tensor<T> setIsVirtual(boolean isVirtual );
 
 }

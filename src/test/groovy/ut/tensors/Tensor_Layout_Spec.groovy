@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
 import neureka.ndim.config.NDConfiguration
@@ -49,7 +49,7 @@ class Tensor_Layout_Spec extends Specification
         given : 'We want to view tensors in the "[shape]:(value)" format so we set the corresponding flag.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'We instantiate a test tensor:'
-            var t = Tsr.of([2, 3], [
+            var t = Tensor.of([2, 3], [
                     1d, 2d, 3d,
                     4d, 5d, 6d
             ])
@@ -75,8 +75,8 @@ class Tensor_Layout_Spec extends Specification
         given : 'We want to view tensors in the "(shape:[value]" format so we set the corresponding flag.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
         and :
-            var a = Tsr.ofFloats().withShape(2, 3).andWhere({it, idx->((7**it)%11-5).floatValue()})
-            var b = Tsr.ofFloats().withShape(3, 4).andWhere({it, idx->((5**it)%11-5).floatValue()})
+            var a = Tensor.ofFloats().withShape(2, 3).andWhere({ it, idx->((7**it)%11-5).floatValue()})
+            var b = Tensor.ofFloats().withShape(3, 4).andWhere({ it, idx->((5**it)%11-5).floatValue()})
             Device.get(device).store(a).store(b)
         expect :
             a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString

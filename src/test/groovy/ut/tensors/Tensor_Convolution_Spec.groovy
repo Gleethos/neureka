@@ -2,7 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.ocl.CLBackend
 import neureka.common.utility.SettingsLoader
 import neureka.devices.Device
@@ -53,14 +53,14 @@ class Tensor_Convolution_Spec extends Specification
     {
         given: 'A 2D tensor with shape [3, 3] and values [1, 2, 3, ..., 9].'
             var x =
-                    Tsr.of(type, [3, 3], [
+                    Tensor.of(type, [3, 3], [
                             1, 2, 3,
                             4, 5, 6,
                             7, 8, 9
                     ])
         and: 'A 2D kernel with shape [2, 2] and values [1, 2, 0, -1].'
             var k =
-                    Tsr.of(type, [2, 2], [
+                    Tensor.of(type, [2, 2], [
                             1, 2,
                             0, -1
                     ])
@@ -86,13 +86,13 @@ class Tensor_Convolution_Spec extends Specification
     {
         given: 'A 2D tensor with shape [2, 2] and values [1, 3, 6, -8].'
             var x =
-                    Tsr.of(Float, [2, 2], [
+                    Tensor.of(Float, [2, 2], [
                                     1,  3,
                                     6, -8,
                                 ])
         and: 'A 2D kernel with shape [2, 2] and values [-2, 1, 4, 5].'
             var k =
-                    Tsr.of(Float, [2, 2], [
+                    Tensor.of(Float, [2, 2], [
                                     -2, 1,
                                      4, 5
                                 ])
@@ -114,13 +114,13 @@ class Tensor_Convolution_Spec extends Specification
     {
         given: 'A 2D tensor with shape [2, 3] and values [1, 3, 6, -8, 2, 4].'
             var x =
-                    Tsr.of(Float, [2, 3], [
+                    Tensor.of(Float, [2, 3], [
                                     1,  3,  6,
                                    -8,  2,  4,
                                 ])
         and: 'A 2D kernel with shape [1, 2] and values [-2, 1].'
             var k =
-                    Tsr.of(Float, [1, 2], [
+                    Tensor.of(Float, [1, 2], [
                                     -2, 1
                                 ])
         when: 'We perform a convolution operation on the tensor with the kernel `k`.'
@@ -142,7 +142,7 @@ class Tensor_Convolution_Spec extends Specification
     {
         given: 'A 3D tensor with shape [2, 2, 2] and values [1, 3, 6, -8, 2, 4, 5, 7].'
             var x =
-                    Tsr.of(Float, [2, 2, 2], [
+                    Tensor.of(Float, [2, 2, 2], [
                                     1,  3,
                                     6, -8,
                                     2,  4,
@@ -150,7 +150,7 @@ class Tensor_Convolution_Spec extends Specification
                                 ])
         and: 'A 2D kernel with shape [2, 2] and values [-2, 1, 4, 5].'
             var k =
-                    Tsr.of(Float, [1, 2, 2], [
+                    Tensor.of(Float, [1, 2, 2], [
                                     -2, 1,
                                      4, 5
                                 ])
@@ -181,7 +181,7 @@ class Tensor_Convolution_Spec extends Specification
         and: 'Tensor legacy view is set to true.'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
-            var x = Tsr.of(Shape.of(2, 3, 1),
+            var x = Tensor.of(Shape.of(2, 3, 1),
                                     new double[]{
                                         3,  2, -1,
                                         -2,  2,  4
@@ -189,7 +189,7 @@ class Tensor_Convolution_Spec extends Specification
                                 )
                                 .mut.toType(type)
 
-            var y = Tsr.of(Shape.of(1, 3, 2),
+            var y = Tensor.of(Shape.of(1, 3, 2),
                     new double[]{
                         4, -1,
                         3,  2,
@@ -199,12 +199,12 @@ class Tensor_Convolution_Spec extends Specification
                 .mut.toType(type)
 
         when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
-            var z = Tsr.of("I0xi1", x, y)
+            var z = Tensor.of("I0xi1", x, y)
         then: 'The result contains the expected String.'
             z.toString().contains(expected)
 
         when: 'The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.'
-            z = Tsr.of(new Object[]{x, "x", y})
+            z = Tensor.of(new Object[]{x, "x", y})
         then: 'The result contains the expected String.'
             z.toString().contains(expected)
 
@@ -219,18 +219,18 @@ class Tensor_Convolution_Spec extends Specification
     {
         given :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
-            Tsr a = Tsr.of([100, 100], 3d..19d)
-            Tsr x = a[1..-2,0..-1]
-            Tsr y = a[0..-3,0..-1]
-            Tsr z = a[2..-1,0..-1]
+        Tensor a = Tensor.of([100, 100], 3d..19d)
+            Tensor x = a[1..-2,0..-1]
+            Tensor y = a[0..-3,0..-1]
+            Tensor z = a[2..-1,0..-1]
 
         when :
-            Tsr rowconvol = x + y + z // (98, 100) (98, 100) (98, 100)
-            Tsr k = rowconvol[0..-1,1..-2]
-            Tsr v = rowconvol[0..-1,0..-3]
-            Tsr j = rowconvol[0..-1,2..-1]
-            Tsr u = a[1..-2,1..-2]
-            Tsr colconvol = k + v + j - 9 * u // (98, 98)+(98, 98)+(98, 98)-9*(98, 98)
+            Tensor rowconvol = x + y + z // (98, 100) (98, 100) (98, 100)
+            Tensor k = rowconvol[0..-1,1..-2]
+            Tensor v = rowconvol[0..-1,0..-3]
+            Tensor j = rowconvol[0..-1,2..-1]
+            Tensor u = a[1..-2,1..-2]
+            Tensor colconvol = k + v + j - 9 * u // (98, 98)+(98, 98)+(98, 98)-9*(98, 98)
             String xAsStr = x.toString()
             String yAsStr = y.toString()
             String zAsStr = z.toString()
@@ -262,19 +262,19 @@ class Tensor_Convolution_Spec extends Specification
             Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
         and :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)
-            Tsr a = Tsr.of([4, 4], 0d..16d).to( device )
+            Tensor a = Tensor.of([4, 4], 0d..16d).to( device )
 
-            Tsr x = a[1..-2,0..-1]
-            Tsr y = a[0..-3,0..-1]
-            Tsr z = a[2..-1,0..-1]
+            Tensor x = a[1..-2,0..-1]
+            Tensor y = a[0..-3,0..-1]
+            Tensor z = a[2..-1,0..-1]
 
         when :
-            Tsr rowconvol = x + y + z
-            Tsr k = rowconvol[0..-1,1..-2]
-            Tsr v = rowconvol[0..-1,0..-3]
-            Tsr j = rowconvol[0..-1,2..-1]
-            Tsr u = a[1..-2,1..-2]
-            Tsr colconvol = k + v + j - 9 * u
+            Tensor rowconvol = x + y + z
+            Tensor k = rowconvol[0..-1,1..-2]
+            Tensor v = rowconvol[0..-1,0..-3]
+            Tensor j = rowconvol[0..-1,2..-1]
+            Tensor u = a[1..-2,1..-2]
+            Tensor colconvol = k + v + j - 9 * u
             String xAsStr = x.toString()
             String yAsStr = y.toString()
             String zAsStr = z.toString()
@@ -309,32 +309,32 @@ class Tensor_Convolution_Spec extends Specification
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 
         when : 'The following calculations are being executed...'
-            Tsr<Double> i_a = Tsr.of([2, 1], [
+            Tensor<Double> i_a = Tensor.of([2, 1], [
                                                 1d,
                                                 2d
                                             ])
-            Tsr<Double> w_a = Tsr.of([2, 2], [
+            Tensor<Double> w_a = Tensor.of([2, 2], [
                                     1d, 3d,
                                     4d, -1d
                             ]).setRqsGradient(true)
-            Tsr<Double> o_a = Tsr.of(i_a, "x", w_a)
+            Tensor<Double> o_a = Tensor.of(i_a, "x", w_a)
             //[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0),
             //---
-            Tsr<Double> w_b = Tsr.of([2, 2], [
+            Tensor<Double> w_b = Tensor.of([2, 2], [
                                     -2d, 1d,  // 9, 1 -> -17
                                     2d, -1d   // ... -> 17
                             ]).setRqsGradient(true)
-            Tsr o_b = Tsr.of(o_a, "x", w_b)
+            Tensor o_b = Tensor.of(o_a, "x", w_b)
             //[2x1]:(-10.0, 5.0); ->d[2x2]:(-2.0, 1.0, 2.0, -1.0):g:(null), ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), ,
             //---
-            Tsr w_c = Tsr.of([2, 2], [
+            Tensor w_c = Tensor.of([2, 2], [
                                     0.5d, 3d,
                                     -2d, -0.5d
                             ]).setRqsGradient(true)
-            Tsr o_c = Tsr.of(o_a, "x", w_c)
+            Tensor o_c = Tensor.of(o_a, "x", w_c)
             //[2x1]:(-0.5, 20.0); ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), , ->d[2x2]:(0.5, 3.0, -2.0, -0.5):g:(null),
             //---
-            Tsr out = o_b * o_c
+            Tensor out = o_b * o_c
 
         then : 'The results are as expected.'
             o_a.toString().contains("(9.0, 1.0)")
@@ -346,7 +346,7 @@ class Tensor_Convolution_Spec extends Specification
             w_b.toString().contains("g:(null)")
 
         when : 'The "backward" method is being called on the "out" tensor...'
-            out.backward(Tsr.of([2, 1], 1d))
+            out.backward(Tensor.of([2, 1], 1d))
 
         then : 'The autograd system produces the expected results.'
             w_a.toString().contains("g:(null)")
@@ -375,20 +375,20 @@ class Tensor_Convolution_Spec extends Specification
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 
         when :
-            Tsr i_a = Tsr.of([2, 1], [1d, 2d])
-            Tsr w_a = Tsr.of([2, 2], [1d, 3d, 4d, -1d]).setRqsGradient(true)
-            Tsr o_a = Tsr.of(i_a,"x", w_a)
+            Tensor i_a = Tensor.of([2, 1], [1d, 2d])
+            Tensor w_a = Tensor.of([2, 2], [1d, 3d, 4d, -1d]).setRqsGradient(true)
+            Tensor o_a = Tensor.of(i_a,"x", w_a)
             //[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0),
             //---
-            Tsr w_b = Tsr.of([2, 2], [-2d, 1d, 2d, -1d]).setRqsGradient(true)
-            Tsr o_b = Tsr.of(o_a,"x", w_b)
+            Tensor w_b = Tensor.of([2, 2], [-2d, 1d, 2d, -1d]).setRqsGradient(true)
+            Tensor o_b = Tensor.of(o_a,"x", w_b)
             //[2x1]:(-10.0, 5.0); ->d[2x2]:(-2.0, 1.0, 2.0, -1.0):g:(null), ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), ,
             //---
-            Tsr w_c = Tsr.of([2, 2], [0.5d, 3d, -2d, -0.5d]).setRqsGradient(true)
-            Tsr o_c = Tsr.of(o_a, "x", w_c)
+            Tensor w_c = Tensor.of([2, 2], [0.5d, 3d, -2d, -0.5d]).setRqsGradient(true)
+            Tensor o_c = Tensor.of(o_a, "x", w_c)
             //[2x1]:(-0.5, 20.0); ->d[1x2]:(7.0, 2.0); ->d[2x1]:(1.0, 2.0), , ->d[2x2]:(0.5, 3.0, -2.0, -0.5):g:(null),
             //---
-            Tsr out = o_b*o_c
+            Tensor out = o_b*o_c
 
         then :
             o_a.toString().contains("(9.0, 1.0)")
@@ -400,7 +400,7 @@ class Tensor_Convolution_Spec extends Specification
             w_b.toString().contains("g:(null)")
 
         when :
-            out.backward(Tsr.of([2, 1], 1))
+            out.backward(Tensor.of([2, 1], 1))
 
         then :
             w_a.toString().contains("g:(null)")
@@ -422,12 +422,12 @@ class Tensor_Convolution_Spec extends Specification
     def 'Tensors have the correct layout after convolution.'()
     {
         given :
-            Tsr<Double> t0 = Tsr.of([3, 2, 1], [
+            Tensor<Double> t0 = Tensor.of([3, 2, 1], [
                                         1d, 2d,
                                         3d, 4d,
                                         5d, 6d
                                 ])
-            Tsr<Double> x0 = Tsr.of([1, 2, 3], [
+            Tensor<Double> x0 = Tensor.of([1, 2, 3], [
                                         1d, 2d, 3d,
                                         4d, 5d, 6d
                                 ])
@@ -443,7 +443,7 @@ class Tensor_Convolution_Spec extends Specification
             t0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
             x0.NDConf.layout == NDConfiguration.Layout.ROW_MAJOR
 
-        when : Tsr<Double> out0 = Tsr.of("i0xi1", [t0, x0] )
+        when : Tensor<Double> out0 = Tensor.of("i0xi1", [t0, x0] )
         then :
             out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"
 
@@ -459,7 +459,7 @@ class Tensor_Convolution_Spec extends Specification
             t0.toString() == "(3x2x1):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"
             x0.toString() == "(1x2x3):[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]"
 
-        when : out0 = Tsr.of("i0xi1", [t0, x0])
+        when : out0 = Tensor.of("i0xi1", [t0, x0])
         then :
             out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"
     }

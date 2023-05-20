@@ -2,7 +2,7 @@ package neureka.devices.file;
 
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
 
@@ -20,7 +20,7 @@ public interface FileHandle<FinalType, ValType> extends Storage<ValType>
      * @return A new tensor filled with the data from the targeted file.
      * @throws IOException If loading goes wrong an exception is being thrown.
      */
-    Tsr<ValType> load() throws IOException;
+    Tensor<ValType> load() throws IOException;
 
     /**
      *

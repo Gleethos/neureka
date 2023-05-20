@@ -35,7 +35,7 @@ SOFTWARE.
 package neureka.devices;
 
 import neureka.Data;
-import neureka.Tsr;
+import neureka.Tensor;
 
 /**
  * @param <V> The value type parameter representing a common super type for all values supported by the device.
@@ -64,7 +64,7 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
     public boolean isEmpty() { return this.numberOfStored() == 0; }
 
     @Override
-    public final boolean contains( Tsr<V> o ) {
+    public final boolean contains( Tensor<V> o ) {
         Data<V> data = o.mut().getData();
         if ( data == null ) return false;
         return data.owner() == this;
@@ -80,8 +80,8 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public <T extends V> boolean has( Tsr<T> tensor ) {
-        return this.contains((Tsr<V>) tensor);
+    public <T extends V> boolean has( Tensor<T> tensor ) {
+        return this.contains((Tensor<V>) tensor);
     }
 
 }

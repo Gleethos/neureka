@@ -2,7 +2,7 @@ package neureka.backend.main.operations.linear.internal.opencl;
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.ocl.CLBackend;
@@ -32,18 +32,18 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
     }
 
     @Override
-    public Tsr<Integer> run(ExecutionCall<OpenCLDevice> call) {
+    public Tensor<Integer> run(ExecutionCall<OpenCLDevice> call) {
         CLBackend context = Neureka.get().backend().find(CLBackend.class).orElse(null);
         CLSettings settings = context == null ? null : context.getSettings();
         boolean autoConvert = context == null || settings.isAutoConvertToFloat();
         if ( settings != null ) settings.setAutoConvertToFloat(false);
-        Tsr<Float> in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);
+        Tensor<Float> in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);
         int index = _runRecursively(in, call.getDevice());
         if ( settings != null ) settings.setAutoConvertToFloat(autoConvert);
-        return Tsr.of(Integer.class, Shape.of( 1 ), index);
+        return Tensor.of(Integer.class, Shape.of( 1 ), index);
     }
 
-    private int _runRecursively(Tsr<Float> in, OpenCLDevice device)
+    private int _runRecursively(Tensor<Float> in, OpenCLDevice device)
     {
         final long RTS = device.maxWorkGroupSize(); // Register tile size
         final int SIZE = in.size();
@@ -56,7 +56,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
         else
             N = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)
 
-        Tsr<Integer> out = Tsr.of(Integer.class, Shape.of(N), 0).to(device);
+        Tensor<Integer> out = Tensor.of(Integer.class, Shape.of(N), 0).to(device);
         out.mut().setIsVirtual(false);
 
         if ( in.size() == 1 ) {
@@ -101,7 +101,7 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
 
         int i;
         if ( N > 1 ) {
-            Tsr<Float> reduced = _fetch(in, out, device);
+            Tensor<Float> reduced = _fetch(in, out, device);
             i = out.at(_runRecursively(reduced, device)).get();
             reduced.mut().delete();
         }
@@ -118,10 +118,10 @@ public class CLReduce implements ImplementationFor<OpenCLDevice>
      *  argument.
      *  All of this is done on a simple index to array entry mapping kernel!
      */
-    private Tsr<Float> _fetch(
-            Tsr<Float> in, Tsr<Integer> indices, OpenCLDevice device
+    private Tensor<Float> _fetch(
+            Tensor<Float> in, Tensor<Integer> indices, OpenCLDevice device
     ) {
-        Tsr<Float> out = Tsr.of(Float.class, Shape.of(indices.size()), 0).to(device);
+        Tensor<Float> out = Tensor.of(Float.class, Shape.of(indices.size()), 0).to(device);
         out.mut().setIsVirtual(false);
 
         String kernelName = INDICES_MAPPER_ID;

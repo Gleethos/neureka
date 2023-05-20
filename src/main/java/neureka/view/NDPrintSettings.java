@@ -1,9 +1,11 @@
 package neureka.view;
 
+import neureka.Tensor;
+
 import java.util.function.Supplier;
 
 /**
- *  This is simply a mutable container for configuring how {@link neureka.Tsr}
+ *  This is simply a mutable container for configuring how {@link Tensor}
  *  instances ought to be converted to {@link String}s.
  */
 public final class NDPrintSettings
@@ -268,14 +270,14 @@ public final class NDPrintSettings
     }
 
     /**
-     * @return The {@link String} which will be prepended at the beginning of a {@link neureka.Tsr} string representation.
+     * @return The {@link String} which will be prepended at the beginning of a {@link Tensor} string representation.
      */
     public String getPrefix() {
         return _prefix;
     }
 
     /**
-     * @param prefix The {@link String} which will be prepended at the beginning of a {@link neureka.Tsr} string representation.
+     * @param prefix The {@link String} which will be prepended at the beginning of a {@link Tensor} string representation.
      */
     public NDPrintSettings setPrefix(String prefix ) {
         if ( _notModifiable.get() ) return this;
@@ -284,14 +286,14 @@ public final class NDPrintSettings
     }
 
     /**
-     * @return The {@link String} which will be appended at the end of a {@link neureka.Tsr} string representation.
+     * @return The {@link String} which will be appended at the end of a {@link Tensor} string representation.
      */
     public String getPostfix() {
         return _postfix;
     }
 
     /**
-     * @param postfix The {@link String} which will be appended at the end of a {@link neureka.Tsr} string representation.
+     * @param postfix The {@link String} which will be appended at the end of a {@link Tensor} string representation.
      */
     public NDPrintSettings setPostfix(String postfix ) {
         if ( _notModifiable.get() ) return this;

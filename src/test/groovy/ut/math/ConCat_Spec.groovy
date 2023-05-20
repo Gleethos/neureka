@@ -1,7 +1,7 @@
 package ut.math
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.math.Function
 import neureka.math.args.Arg
 import neureka.devices.Device
@@ -28,8 +28,8 @@ class ConCat_Spec extends Specification
     def 'We can concatenate 2 tensors alongside a specified axis!'()
     {
         given : 'We create 2 rank 3 tensors, which we want to concatenate, where the first one requires gradients.'
-            var a = Tsr.of(Double, [3, 4, 2], [-1.7, 2, 9.3, -3]).setRqsGradient(true)
-            var b = Tsr.ofDoubles().withShape(3, 2, 2).andFill(3,2.5,-6)
+            var a = Tensor.of(Double, [3, 4, 2], [-1.7, 2, 9.3, -3]).setRqsGradient(true)
+            var b = Tensor.ofDoubles().withShape(3, 2, 2).andFill(3,2.5,-6)
         and : 'A function which should perform the concatenation.'
             var cat = Function.of('concat(I[0], I[1])')
 
@@ -52,8 +52,8 @@ class ConCat_Spec extends Specification
     def 'We can concatenate 2 float tensors alongside a specified axis!'()
     {
         given : 'We create 2 rank 2 tensors, which we want to concatenate, where both require gradients.'
-            var a = Tsr.of(Float, [4, 2], [8f, -9f, 5f]).setRqsGradient(true)
-            var b = Tsr.ofFloats().withShape(4, 3).andFill(1,6,-6,3).setRqsGradient(true)
+            var a = Tensor.of(Float, [4, 2], [8f, -9f, 5f]).setRqsGradient(true)
+            var b = Tensor.ofFloats().withShape(4, 3).andFill(1,6,-6,3).setRqsGradient(true)
         and : 'A function which should perform the concatenation.'
             var cat = Function.of('concat(I[0], I[1])')
 
@@ -77,8 +77,8 @@ class ConCat_Spec extends Specification
     def 'We can concatenate 2 string tensors alongside a specified axis!'()
     {
         given : 'We create 2 rank 2 string tensors, which we want to concatenate, where both require gradients.'
-            var a = Tsr.of(String, [2, 5], [':)', ':P', 'B)'])
-            var b = Tsr.of(String).withShape(1, 5).andFill('O.o', '._.')
+            var a = Tensor.of(String, [2, 5], [':)', ':P', 'B)'])
+            var b = Tensor.of(String).withShape(1, 5).andFill('O.o', '._.')
         and : 'A function which should perform the concatenation.'
             var cat = Function.of('concat(I[0], I[1])')
 
@@ -98,8 +98,8 @@ class ConCat_Spec extends Specification
         Device<?> device
     ) {
         given : 'We create 2 rank 2 tensors, which we want to concatenate, where both require gradients.'
-            var a = Tsr.of(Float, [3, 1], [8, -4, 7]).setRqsGradient(true)
-            var b = Tsr.of(Float).withShape(3, 1).andFill(5, -1, 2).setRqsGradient(true)
+            var a = Tensor.of(Float, [3, 1], [8, -4, 7]).setRqsGradient(true)
+            var b = Tensor.of(Float).withShape(3, 1).andFill(5, -1, 2).setRqsGradient(true)
         and : 'A function which should perform the concatenation.'
             var cat = Function.of('concat(I[0], I[1])')
 
@@ -112,7 +112,7 @@ class ConCat_Spec extends Specification
         when :
             var y = c / 2
         and :
-            y.backward(Tsr.ofFloats().withShape(3,2).andFill(-1, 2, 0.5, 3, -0.1, 4))
+            y.backward(Tensor.ofFloats().withShape(3,2).andFill(-1, 2, 0.5, 3, -0.1, 4))
 
         then :
             a.gradient.get().items == [-0.5, 0.25, -0.05] as float[]
@@ -128,9 +128,9 @@ class ConCat_Spec extends Specification
             Device<?> device
     ) {
         given : 'We create 2 rank 2 tensors, which we want to concatenate, where both require gradients.'
-            var a = Tsr.of(Float, [1, 3], [8, -4, 7]).setRqsGradient(true)
-            var b = Tsr.of(Float).withShape(1, 3).andFill(5, -1, 2).setRqsGradient(true)
-            var c = Tsr.ofRandom(Float, 1, 3).setRqsGradient(true)
+            var a = Tensor.of(Float, [1, 3], [8, -4, 7]).setRqsGradient(true)
+            var b = Tensor.of(Float).withShape(1, 3).andFill(5, -1, 2).setRqsGradient(true)
+            var c = Tensor.ofRandom(Float, 1, 3).setRqsGradient(true)
         and : 'A function which should perform the concatenation.'
             var cat = Function.of('concat(I[0], I[1], I[2])')
 
@@ -143,7 +143,7 @@ class ConCat_Spec extends Specification
         when :
             var y = d ** 2
         and :
-            y.backward(Tsr.ofFloats().withShape(3,3).andFill(-1, 2, 0.5, 3, -0.1, 4))
+            y.backward(Tensor.ofFloats().withShape(3,3).andFill(-1, 2, 0.5, 3, -0.1, 4))
 
         then :
             a.gradient.get().items == [-16, -16, 7] as float[]

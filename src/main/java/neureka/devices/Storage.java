@@ -38,7 +38,7 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 
 /**
@@ -63,13 +63,13 @@ public interface Storage<V>
      * @param tensor The tensor whose data ought to be stored.
      * @return This {@link Storage} instance, to allow for method chaining.
      */
-    <T extends V> Storage<V> store( Tsr<T> tensor );
+    <T extends V> Storage<V> store( Tensor<T> tensor );
 
     /**
      * @param tensor The tensor whose data ought to be restored (loaded to RAM/CPU device).
      * @return This {@link Storage} instance, to allow for method chaining.
      */
-    Storage<V> restore( Tsr<V> tensor );
+    Storage<V> restore( Tensor<V> tensor );
 
     /**
      * @return The number of nd-array stored on this.
@@ -85,6 +85,6 @@ public interface Storage<V>
      * @param o The tensor which may or may not be stored on this.
      * @return The truth value determining if the provided tensor is stored on this.
      */
-    boolean contains( Tsr<V> o );
+    boolean contains( Tensor<V> o );
 
 }

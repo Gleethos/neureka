@@ -1,6 +1,6 @@
 package neureka.backend.main.operations.other;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -35,11 +35,11 @@ public class DimFit extends AbstractOperation
                 ( caller, call ) ->
                 {
                     assert call.getValOf( Arg.DerivIdx.class ) < 0;
-                    Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
+                    Tensor<?>[] inputs = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();
 
                     int largest = -1;
                     int[] shape = null;
-                    for ( Tsr<?> t : inputs ) if ( t.rank() > largest ) {
+                    for ( Tensor<?> t : inputs ) if ( t.rank() > largest ) {
                         largest = t.rank();
                         shape = t.getNDConf().shape();
                     }

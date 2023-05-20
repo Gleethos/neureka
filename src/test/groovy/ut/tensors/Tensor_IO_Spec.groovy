@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.math.Function
 import neureka.devices.host.CPU
 import neureka.view.NDPrintSettings
@@ -53,7 +53,7 @@ class Tensor_IO_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         and : 'A new tensor instance with the shape (4x3).'
-            var t1 = Tsr.of([4, 3], 1d..12d)
+            var t1 = Tensor.of([4, 3], 1d..12d)
 
         when : 'Recording the index behavior before and after a permute operation...'
             var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
@@ -89,7 +89,7 @@ class Tensor_IO_Spec extends Specification
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'A new tensor instance.'
-            var x = Tsr.of(3d)
+            var x = Tensor.of(3d)
 
         when : 'Setting the value of the tensor...'
             float[] floats = new float[1]
@@ -149,7 +149,7 @@ class Tensor_IO_Spec extends Specification
          String device, Class<?> type
     ) {
         given : 'A tensor of 3 numbers:'
-            var t = Tsr.of(type).vector(42, 666, 73)
+            var t = Tensor.of(type).vector(42, 666, 73)
         and : 'We store the tensor on the given device, to ensure that it work there as well.'
             t.to(device)
 
@@ -183,7 +183,7 @@ class Tensor_IO_Spec extends Specification
             String device, Class<?> type
     ) {
         given : 'A tensor of 3 numbers:'
-            var t = Tsr.of(type).vector(42, 66, 73)
+            var t = Tensor.of(type).vector(42, 66, 73)
         and : 'We store the tensor on the given device, to ensure that it work there as well.'
             t.to(device)
 
@@ -226,7 +226,7 @@ class Tensor_IO_Spec extends Specification
             String device, Class<?> type
     ) {
         given : 'A tensor of 3 numbers:'
-            var t = Tsr.of(type).vector(1, 1, 1)
+            var t = Tensor.of(type).vector(1, 1, 1)
         and : 'We store the tensor on the given device, to ensure that it work there as well.'
             t.to(device)
 
@@ -254,7 +254,7 @@ class Tensor_IO_Spec extends Specification
             'GPU'  | Float
     }
 
-    def 'A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.'()
+    def 'A tensor produced by the static "Tensor.newRandom(shape)" has expected "random" value.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
@@ -262,32 +262,32 @@ class Tensor_IO_Spec extends Specification
         when : 'Creating a simple shape array...'
             var shape = new int[]{4}
         and : '...and passing it to the "newRandom" factory method to produce tensor x...'
-            Tsr x = Tsr.ofRandom(Double, shape)
+            Tensor x = Tensor.ofRandom(Double, shape)
 
         then : '...the newly created variable x is as expected!'
             x.toString().contains("[4]:(-1.04829, -0.40245, -0.04347, -1.4921)")
         when : 'Again using the "andSeed" method with a long seed...'
-            x = Tsr.ofDoubles().withShape(shape).andSeed(106605040595L)
+            x = Tensor.ofDoubles().withShape(shape).andSeed(106605040595L)
         then : '...the newly created variable x is as expected!'
             x.toString().contains("[4]:(0.22266, 0.65678, -0.83154, 0.68019)")
 
         when : 'Again using the "andSeed" method with a long seed and with float as data type...'
-            x = Tsr.ofFloats().withShape(shape).andSeed(106605040595L)
+            x = Tensor.ofFloats().withShape(shape).andSeed(106605040595L)
         then : '...the newly created variable x is as expected!'
             x.toString().contains("[4]:(0.22266, 0.65678, -0.83154, 0.68019)")
     }
 
 
-    void 'Tensor values can be manipulated via static method calls within the "Tsr.IO" class.'()
+    void 'Tensor values can be manipulated'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'Two tensors which will be used for testing IO.'
-            var t = Tsr.of([2, 2], [
+            var t = Tensor.of([2, 2], [
                             1.0d, 4.0d,
                             2.0d, 7.0d,
                         ])
-            var v = Tsr.of([2, 2], [
+            var v = Tensor.of([2, 2], [
                             1.0d, -1.0d,
                             1.0d, -1.0d
                         ])
@@ -331,7 +331,7 @@ class Tensor_IO_Spec extends Specification
         then : 'The underlying data will have changed.'
             t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
 
-        when : t -= Tsr.of([2, 2], [1d, 2d, 3d, 4d])
+        when : t -= Tensor.of([2, 2], [1d, 2d, 3d, 4d])
         then : t.toString().contains("[2x2]:(1.0, 1.0, -3.0, -4.0)")
     }
 
@@ -339,7 +339,7 @@ class Tensor_IO_Spec extends Specification
             Class<Object> type, int[] shape, Object data, Object element, Object expected
     ) {
         given :
-            var t = Tsr.of(type).withShape(shape).andFill(data)
+            var t = Tensor.of(type).withShape(shape).andFill(data)
         when :
             t.mut.setDataAt( 1, element )
         then :
@@ -349,7 +349,7 @@ class Tensor_IO_Spec extends Specification
             t.rawData == expected
 
         when :
-            t = Tsr.of(type).withShape(shape).andFill(data)
+            t = Tensor.of(type).withShape(shape).andFill(data)
         and :
             t.mut.setItemAt( 1, element )
         then :

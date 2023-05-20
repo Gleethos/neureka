@@ -1,7 +1,7 @@
 package st
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.ocl.CLBackend
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -46,16 +46,16 @@ class Benchmark_System_Test extends Specification
 
     def 'Tensor can be constructed by passing List instances.'()
     {
-        when : var t = Tsr.ofDoubles().withShape(1, 3, 6 ).all(0)
+        when : var t = Tensor.ofDoubles().withShape(1, 3, 6 ).all(0)
         then :
             assert !t.toString().contains("empty")
             assert t.toString().contains("(1x3x6)")
 
-        when : t = Tsr.ofDoubles().withShape(1, 3, 6).all(0)
+        when : t = Tensor.ofDoubles().withShape(1, 3, 6).all(0)
         then :
             assert !t.toString().contains("empty")
             assert t.toString().contains("(1x3x6):[0.0, 0.0, 0.0")
-        when : t = Tsr.of([1, 3.3, 6])
+        when : t = Tensor.of([1, 3.3, 6])
         then :
             assert !t.toString().contains("empty")
             assert t.toString().contains("(3):[1.0, 3.3, 6.0]")
@@ -180,7 +180,7 @@ class Benchmark_System_Test extends Specification
                         "iterating":{
                         iterations, difficulty ->
                             iterations.times {
-                                Tsr t = Tsr.of([difficulty,difficulty], -5..9)
+                                Tensor t = Tensor.of([difficulty,difficulty], -5..9)
                                 t.forEach( n -> n )
                             }
                     }]

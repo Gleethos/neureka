@@ -1,6 +1,6 @@
 package st.attention;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 
@@ -17,7 +17,7 @@ public class QuasiMultiHeadAttention
     private final ReductiveAttentionHead _attentionHead4;
     private final ReductiveAttentionHead _outputHead;
 
-    private Tsr<Float> _lastPrediction = null;
+    private Tensor<Float> _lastPrediction = null;
 
     public QuasiMultiHeadAttention(
         int numberOfNeurons,
@@ -31,25 +31,25 @@ public class QuasiMultiHeadAttention
         _outputHead     = new ReductiveAttentionHead(numberOfNeurons, 4);
     }
 
-    public Tsr<Float> run( List<Tsr<Float>> inputs ) {
-        Tsr<Float>[] inputArray = new Tsr[inputs.size()];
+    public Tensor<Float> run(List<Tensor<Float>> inputs ) {
+        Tensor<Float>[] inputArray = new Tensor[inputs.size()];
         for ( int i = 0; i < inputs.size(); i++ )
             inputArray[i] = inputs.get(i);
 
-        Tsr<Float> input = inputArray.length == 1 ? inputArray[0] : _cat.with(Arg.Axis.of(0)).call(inputArray);
-        Tsr<Float> headAttention1 = _attentionHead1.run(input);
-        Tsr<Float> headAttention2 = _attentionHead2.run(input);
-        Tsr<Float> headAttention3 = _attentionHead3.run(input);
-        Tsr<Float> headAttention4 = _attentionHead4.run(input);
-        Tsr<Float> input2 = _cat.with(Arg.Axis.of(0)).call(headAttention1, headAttention2, headAttention3, headAttention4);
-        Tsr<Float> output = _outputHead.run(input2);
+        Tensor<Float> input = inputArray.length == 1 ? inputArray[0] : _cat.with(Arg.Axis.of(0)).call(inputArray);
+        Tensor<Float> headAttention1 = _attentionHead1.run(input);
+        Tensor<Float> headAttention2 = _attentionHead2.run(input);
+        Tensor<Float> headAttention3 = _attentionHead3.run(input);
+        Tensor<Float> headAttention4 = _attentionHead4.run(input);
+        Tensor<Float> input2 = _cat.with(Arg.Axis.of(0)).call(headAttention1, headAttention2, headAttention3, headAttention4);
+        Tensor<Float> output = _outputHead.run(input2);
         _lastPrediction = output;
         return output;
     }
 
 
-    public double train( Tsr<Float> y ) {
-        Tsr<Float> error = y.minus(_lastPrediction).power(2f).sum();
+    public double train( Tensor<Float> y ) {
+        Tensor<Float> error = y.minus(_lastPrediction).power(2f).sum();
         error.backward();
         _lastPrediction = null;
         _applyGradients();

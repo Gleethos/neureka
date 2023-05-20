@@ -34,6 +34,8 @@ SOFTWARE.
 
 package neureka.ndim.config;
 
+import neureka.Tensor;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -171,8 +173,8 @@ public interface NDConfiguration
 
     /**
      * This method returns the number of axis of
-     * a nd-array / {@link neureka.Tsr} which is equal to the
-     * length of the shape of an nd-array / {@link neureka.Tsr}.
+     * a nd-array / {@link Tensor} which is equal to the
+     * length of the shape of an nd-array / {@link Tensor}.
      *
      * @return The number of axis of an nd-array.
      */
@@ -391,7 +393,7 @@ public interface NDConfiguration
 
     /**
      * @return The truth value determining if this {@link NDConfiguration}
-     * represents virtual tensors (see {@link neureka.Tsr#isVirtual()}).
+     * represents virtual tensors (see {@link Tensor#isVirtual()}).
      */
     default boolean isVirtual() { return false; }
 

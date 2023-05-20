@@ -1,7 +1,7 @@
 package neureka.autograd;
 
+import neureka.Tensor;
 import neureka.common.composition.Component;
-import neureka.Tsr;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  *
  * @param <V> The type parameter of the involved tensors.
  */
-public final class JITProp<V> implements Component<Tsr<V>>
+public final class JITProp<V> implements Component<Tensor<V>>
 {
     private Set<GraphNode<V>> _finished;
 

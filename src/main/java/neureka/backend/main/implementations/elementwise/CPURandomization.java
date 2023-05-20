@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.elementwise;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.math.args.Arg;
@@ -15,7 +15,7 @@ public strictfp class CPURandomization implements ImplementationFor<CPU>
     private static final double DOUBLE_UNIT = 0x1.0p-53; // 1.0 / (1L << 53)
 
     @Override
-    public Tsr<?> run(ExecutionCall<CPU> call) {
+    public Tensor<?> run(ExecutionCall<CPU> call) {
         call
             .getDevice()
             .getExecutor()
@@ -65,7 +65,7 @@ public strictfp class CPURandomization implements ImplementationFor<CPU>
     }
 
     private static CPU.RangeWorkload _newWorkloadFor( ExecutionCall<?> call ) {
-        Tsr<?> tensor = call.input( 0 );
+        Tensor<?> tensor = call.input( 0 );
         tensor.mut().setIsVirtual(false);
         Class<?> type = tensor.getItemType();
         boolean isSimple = tensor.getNDConf().isSimple();

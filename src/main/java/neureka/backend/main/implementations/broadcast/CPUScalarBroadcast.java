@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.broadcast;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
@@ -14,7 +14,7 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
     protected abstract CPUBiFun _getDeriveAt1();
 
     @Override
-    public Tsr<?> run(ExecutionCall<CPU> call) {
+    public Tensor<?> run(ExecutionCall<CPU> call) {
         call.getDevice()
             .getExecutor()
             .threaded(
@@ -29,8 +29,8 @@ public abstract class CPUScalarBroadcast implements ImplementationFor<CPU>
             ExecutionCall<CPU> call
     ) {
         int offset = ( call.arity() == 3 ? 1 : 0 );
-        Tsr<?> t0_drn = call.input( 0 );
-        Tsr<?> src    = call.input( offset );
+        Tensor<?> t0_drn = call.input( 0 );
+        Tensor<?> src    = call.input( offset );
 
         Class<?> typeClass = call.input( 1 ).getItemType();
 

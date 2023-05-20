@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.broadcast;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
@@ -16,7 +16,7 @@ public abstract class CPUBroadcast implements ImplementationFor<CPU>
     protected abstract CPUBiFun _getDeriveAt1();
 
     @Override
-    public Tsr<?> run( ExecutionCall<CPU> call ) {
+    public Tensor<?> run(ExecutionCall<CPU> call ) {
         call.getDevice()
                 .getExecutor()
                 .threaded(
@@ -30,9 +30,9 @@ public abstract class CPUBroadcast implements ImplementationFor<CPU>
     private CPU.RangeWorkload _newWorkloadFor(
             ExecutionCall<CPU> call
     ) {
-        Tsr<Number> t0_drn = call.input( Number.class, 0 );
-        Tsr<Number> t1_src = call.input( Number.class, 1 );
-        Tsr<Number> t2_src = call.input( Number.class, 2 );
+        Tensor<Number> t0_drn = call.input( Number.class, 0 );
+        Tensor<Number> t1_src = call.input( Number.class, 1 );
+        Tensor<Number> t2_src = call.input( Number.class, 2 );
 
         t0_drn.mut().setIsVirtual(false);
 
@@ -60,11 +60,11 @@ public abstract class CPUBroadcast implements ImplementationFor<CPU>
 
 
     private static void _broadcastF64(
-            Tsr<Number> t0_drn, Tsr<Number> t1_src, Tsr<Number> t2_src,
+            Tensor<Number> t0_drn, Tensor<Number> t1_src, Tensor<Number> t2_src,
             int d, int i, int end,
             CPUBiFun operation
     ) {
-        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        int[] t0Shp = t0_drn.getNDConf().shape();//Tensor t0_origin, Tensor t1_handle, Tensor t2_drain ... when d>=0
         int[] t1Shp = t1_src.getNDConf().shape();
         int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
         int rank = t0Shp.length;
@@ -161,11 +161,11 @@ public abstract class CPUBroadcast implements ImplementationFor<CPU>
 
 
     private static void _broadcastF32(
-            Tsr<Number> t0_drn, Tsr<Number> t1_src, Tsr<Number> t2_src,
+            Tensor<Number> t0_drn, Tensor<Number> t1_src, Tensor<Number> t2_src,
             int d, int i, int end,
             CPUBiFun operation
     ) {
-        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        int[] t0Shp = t0_drn.getNDConf().shape();//Tensor t0_origin, Tensor t1_handle, Tensor t2_drain ... when d>=0
         int[] t1Shp = t1_src.getNDConf().shape();
         int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
         int rank = t0Shp.length;

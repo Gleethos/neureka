@@ -1,9 +1,9 @@
 package neureka.optimization;
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 public interface Optimization<V> {
 
-    Tsr<V> optimize( Tsr<V> w );
+    Tensor<V> optimize(Tensor<V> w );
 
 }

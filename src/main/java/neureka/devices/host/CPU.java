@@ -1,7 +1,7 @@
 package neureka.devices.host;
 
 import neureka.Data;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Operation;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
@@ -61,8 +61,8 @@ public class CPU extends AbstractDevice<Object>
 
     /**
      *  Use this method to access the singleton instance of this {@link CPU} class,
-     *  which is a {@link Device} type and default location for freshly instantiated {@link Tsr} instances.
-     *  {@link Tsr} instances located on the {@link CPU} device will reside in regular RAM
+     *  which is a {@link Device} type and default location for freshly instantiated {@link Tensor} instances.
+     *  {@link Tensor} instances located on the {@link CPU} device will reside in regular RAM
      *  causing operations to run on the JVM and thereby the CPU.
      *
      * @return The singleton instance of this {@link CPU} class.
@@ -79,7 +79,7 @@ public class CPU extends AbstractDevice<Object>
     public JVMExecutor getExecutor() { return _executor; }
     
     @Override
-    protected boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation operation ) { return true; }
+    protected boolean _approveExecutionOf(Tensor<?>[] tensors, int d, Operation operation ) { return true; }
 
     /**
      *  This method will shut down the internal thread-pool used by this
@@ -96,10 +96,10 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public CPU restore( Tsr<Object> tensor ) { return this; }
+    public CPU restore( Tensor<Object> tensor ) { return this; }
 
     @Override
-    public <T> CPU store( Tsr<T> tensor ) {
+    public <T> CPU store( Tensor<T> tensor ) {
         if ( !this.has( tensor ) )
             tensor.getMut().getData().owner().restore( tensor );
 
@@ -107,7 +107,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final <T> int _sizeOccupiedBy(Tsr<T> tensor) {
+    protected final <T> int _sizeOccupiedBy(Tensor<T> tensor) {
         Object data = tensor.getMut().getData().getOrNull();
         if      ( data instanceof float[]   ) return ( (float[])   data).length;
         else if ( data instanceof double[]  ) return ( (double[])  data).length;
@@ -121,7 +121,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final <T> Object _readAll(Tsr<T> tensor, boolean clone ) {
+    protected final <T> Object _readAll(Tensor<T> tensor, boolean clone ) {
         Object data = tensor.getMut().getData().getOrNull();
         if ( clone ) {
             if ( data instanceof double[]  ) return ( (double[])  data ).clone();
@@ -138,7 +138,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final <T> T _readItem( Tsr<T> tensor, int index ) {
+    protected final <T> T _readItem(Tensor<T> tensor, int index ) {
         Object data = tensor.getMut().getData().getOrNull();
         if      ( data instanceof float[]   ) return (T)Float.valueOf( ((float[])   data)[ index ] );
         else if ( data instanceof double[]  ) return (T)Double.valueOf( ((double[])  data)[ index ] );
@@ -153,7 +153,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T, A> A _readArray(
-            Tsr<T> tensor, Class<A> arrayType, int start, int size
+            Tensor<T> tensor, Class<A> arrayType, int start, int size
     ) {
         if ( arrayType == float[].class ) {
             float[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), float[].class);
@@ -197,7 +197,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final <T> void _writeItem( Tsr<T> tensor, T item, int start, int size ) {
+    protected final <T> void _writeItem(Tensor<T> tensor, T item, int start, int size ) {
         Object data = tensor.getMut().getData().getOrNull();
         Class<?> arrayType = data.getClass();
         if ( arrayType == float[].class ) {
@@ -244,7 +244,7 @@ public class CPU extends AbstractDevice<Object>
 
     @Override
     protected final <T> void _writeArray(
-            Tsr<T> tensor, Object array, int offset, int start, int size
+            Tensor<T> tensor, Object array, int offset, int start, int size
     ) {
         Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getOrNull();
         if ( data == null ) {
@@ -490,7 +490,7 @@ public class CPU extends AbstractDevice<Object>
 
 
     @Override
-    protected final Data<Object> _actualize( Tsr<?> tensor ) {
+    protected final Data<Object> _actualize( Tensor<?> tensor ) {
         Data<Object> data = (Data<Object>) tensor.getMut().getData();
         Object value = data.getOrNull();
         DataType<?> dataType = tensor.getDataType();
@@ -538,7 +538,7 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    protected final Data<Object> _virtualize( Tsr<?> tensor ) {
+    protected final Data<Object> _virtualize( Tensor<?> tensor ) {
         Class<?> typeClass = tensor.getDataType().getRepresentativeType();
         Data data = tensor.getMut().getData();
         Object value = data == null ? null : data.getOrNull();
@@ -578,14 +578,14 @@ public class CPU extends AbstractDevice<Object>
     }
 
     @Override
-    public <T> CPU free( Tsr<T> tensor ) {
-        LogUtil.nullArgCheck( tensor, "tensor", Tsr.class );
+    public <T> CPU free( Tensor<T> tensor ) {
+        LogUtil.nullArgCheck( tensor, "tensor", Tensor.class );
         tensor.getMut().setData(null);
         return this;
     }
 
     @Override
-    protected <T> void _swap( Tsr<T> former, Tsr<T> replacement ) {}
+    protected <T> void _swap(Tensor<T> former, Tensor<T> replacement ) {}
 
     @Override
     public <T> Data<T> allocate( DataType<T> dataType, NDConfiguration ndc ) {
@@ -620,14 +620,14 @@ public class CPU extends AbstractDevice<Object>
     public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }
 
     /**
-     *  This method is part of the component system built into the {@link Tsr} class.
+     *  This method is part of the component system built into the {@link Tensor} class.
      *  Do not use this as part of anything but said component system.
      *
      * @param changeRequest An API which describes the type of update and a method for executing said update.
      * @return The truth value determining if this {@link Device} ought to be added to a tensor (Here always false!).
      */
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<Object>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tensor<Object>> changeRequest ) {
         super.update( changeRequest );
         return false; // This type of device can not be a component simply because it is the default device
     }

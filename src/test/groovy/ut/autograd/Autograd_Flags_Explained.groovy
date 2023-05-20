@@ -1,7 +1,7 @@
 package ut.autograd
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.autograd.GraphNode
 import neureka.view.NDPrintSettings
 import spock.lang.Specification
@@ -106,14 +106,14 @@ class Autograd_Flags_Explained extends Specification
             Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT
 
         and :
-            def x = Tsr.of([2, 2], 1d).setRqsGradient(true)
+            def x = Tensor.of([2, 2], 1d).setRqsGradient(true)
             def y = x + 2
             Binding binding = new Binding()
             binding.setVariable('x', x)
             binding.setVariable('y', y)
 
         when : "The code snippet is being execute..."
-            Tsr z = new GroovyShell(binding).evaluate((code))
+        Tensor z = new GroovyShell(binding).evaluate((code))
 
         then : 'As expected, this new tensor contains four times 27 :'
             z.toString().contains("(2x2):[27.0, 27.0, 27.0, 27.0]")
@@ -130,7 +130,7 @@ class Autograd_Flags_Explained extends Specification
 
         when : """
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(Tsr.of(1)).
+                result.backward() is equivalent to out.backward(Tensor.of(1)).
             """
             z.backward(0.25)
             def xAsStr = x.toString()
@@ -181,7 +181,7 @@ class Autograd_Flags_Explained extends Specification
     def 'We can create a shallow copy of a tensor detached from the computation graph.'()
     {
         given :
-            var a = Tsr.ofFloats().withShape(2).andFill(-3, 1).setRqsGradient(true)
+            var a = Tensor.ofFloats().withShape(2).andFill(-3, 1).setRqsGradient(true)
         when :
             var b = a * 2
             var c = b.detached()

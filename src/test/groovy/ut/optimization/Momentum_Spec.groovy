@@ -1,7 +1,7 @@
 package ut.optimization
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.optimization.Optimizer
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
@@ -20,7 +20,7 @@ import spock.lang.Subject
 @Subject([Optimizer])
 class Momentum_Spec extends Specification
 {
-    @Shared Tsr<Double> w = Tsr.of(0d)
+    @Shared Tensor<Double> w = Tensor.of(0d)
     @Shared Optimizer<Double> o = Optimizer.Momentum.create(w)
 
     def setupSpec()
@@ -30,7 +30,7 @@ class Momentum_Spec extends Specification
                 have the following 2 variables setup
                 throughout every data table iteration:
                 ```
-                    Tsr<?> w = Tsr.of(0d)
+                    Tensor<?> w = Tensor.of(0d)
                     Optimizer<?> o = Optimizer.Momentum.create(w)        
                     w.set(o)        
                 ```
@@ -62,9 +62,9 @@ class Momentum_Spec extends Specification
             int gradient, double expectedWeight
     ) {
         given : 'A new scalar gradient tensor is being created.'
-            Tsr g = Tsr.of(expectedWeight)
+            Tensor g = Tensor.of(expectedWeight)
         and : 'The following input is being applied to the tensor (and internal optimizer)...'
-            w.set( Tsr.of( (double) gradient ) )
+            w.set( Tensor.of( (double) gradient ) )
             w.applyGradient()
 
         expect : 'The following state emerges:'

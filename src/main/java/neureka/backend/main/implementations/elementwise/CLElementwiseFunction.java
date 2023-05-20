@@ -1,7 +1,7 @@
 package neureka.backend.main.implementations.elementwise;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
@@ -24,7 +24,7 @@ public class CLElementwiseFunction extends ParsedCLImplementation
         );
     }
 
-    private static Tsr<?> _run( ExecutionCall<OpenCLDevice> call )
+    private static Tensor<?> _run(ExecutionCall<OpenCLDevice> call )
     {
         int offset = call.input( Number.class, 0 ) != null ? 0 : 1;
         int gwz = call.input( Number.class, 0 ) != null ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();

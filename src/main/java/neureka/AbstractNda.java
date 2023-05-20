@@ -53,21 +53,21 @@ import java.util.Arrays;
 
 
 /**
- *  This is the precursor class to the final {@link TsrImpl} class from which
+ *  This is the precursor class to the final {@link TensorImpl} class from which
  *  tensor instances can be created. <br>
  *  The inheritance model of a tensor is structured as follows: <br>
- *  {@link TsrImpl} inherits from {@link AbstractNda} which inherits from {@link AbstractComponentOwner}.
+ *  {@link TensorImpl} inherits from {@link AbstractNda} which inherits from {@link AbstractComponentOwner}.
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
  *  The above-mentioned classes are implementation details covered by
- *  the {@link Nda} and {@link Tsr} interfaces, which define various
+ *  the {@link Nda} and {@link Tensor} interfaces, which define various
  *  default methods spanning a rich API with good interoperability with
  *  different JVM languages...
  *
- * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
+ * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tensor} class).
  * @param <V> The value type of the individual items stored within this nd-array.
  */
-abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implements Tsr<V>
+abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tensor<V>> implements Tensor<V>
 {
     protected static Logger _LOG;
 
@@ -104,7 +104,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
 
     /**
      *  This method will guard the state of deleted tensors by throwing an {@link IllegalAccessError}
-     *  if this {@link Tsr} has already been deleted and whose state should no longer be exposed to
+     *  if this {@link Tensor} has already been deleted and whose state should no longer be exposed to
      *  anything but the garbage collector...
      *
      * @param message The message explaining to the outside which kind of access violation just occurred.
@@ -239,27 +239,27 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tsr<V>> implemen
     }
 
     /**
-     *  The internal implementation handling {@link MutateTsr#setIsVirtual(boolean)}.
+     *  The internal implementation handling {@link MutateTensor#setIsVirtual(boolean)}.
      *
      * @param isVirtual The truth value determining if this should be made virtual or actual.
      */
     protected abstract void _setIsVirtual( boolean isVirtual );
 
     /**
-     *  The {@link AbstractNda} is in essence a precursor class to the {@link Tsr} which encapsulates
+     *  The {@link AbstractNda} is in essence a precursor class to the {@link Tensor} which encapsulates
      *  and protects most of its state...
      *  This is especially important during constructing where a wider range of unexpected user input
      *  might lead to a wider variety of exceptions.
      *  The API returned by this method simplifies this greatly.
      *
-     * @return An {@link TsrConstructor} exposing a simple API for configuring a new {@link Tsr} instance.
+     * @return An {@link TensorConstructor} exposing a simple API for configuring a new {@link Tensor} instance.
      */
-    protected static TsrConstructor constructFor( AbstractNda<?, ?> nda, Device<?> targetDevice, NDConstructor ndConstructor )
+    protected static TensorConstructor constructFor(AbstractNda<?, ?> nda, Device<?> targetDevice, NDConstructor ndConstructor )
     {
         return
-            new TsrConstructor(
+            new TensorConstructor(
                 targetDevice, ndConstructor,
-                new TsrConstructor.API() {
+                new TensorConstructor.API() {
                     @Override public void setConf( NDConfiguration conf   ) { nda.mut().setNDConf( conf ); }
                     @Override public void setData( Data o                 ) { nda._setData( o ); }
                     @Override public void setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }

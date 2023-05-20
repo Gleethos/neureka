@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.dtype.DataType
 import neureka.view.NDPrintSettings
 import spock.lang.Narrative
@@ -47,7 +47,7 @@ class Tensor_Generics_Spec extends Specification
     def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {
 
         given : 'We create a completely uninitialized tensor instance.'
-            var t = Tsr.newInstance()
+            var t = Tensor.newInstance()
 
         expect :
             t.getRepresentativeItemClass() == Neureka.get().settings().dtype().defaultDataTypeClass
@@ -58,7 +58,7 @@ class Tensor_Generics_Spec extends Specification
     def 'We can create a tensor of strings.'()
     {
         given : 'We create a tensor of strings.'
-            Tsr<String> t = Tsr.of([2, 4], ["Hi", "I'm", "a", "String", "list"])
+        Tensor<String> t = Tensor.of([2, 4], ["Hi", "I'm", "a", "String", "list"])
 
         expect : 'The tensor has the correct item type.'
             t.itemType == String.class
@@ -74,7 +74,7 @@ class Tensor_Generics_Spec extends Specification
             int size, Object data, Class<?> expected
     ){
         given :
-            def t = Tsr.of(data)
+            def t = Tensor.of(data)
 
         expect :
             t.rank() == 1

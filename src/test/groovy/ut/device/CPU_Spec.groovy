@@ -3,7 +3,7 @@ package ut.device
 import neureka.Data
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.view.NDPrintSettings
@@ -64,8 +64,8 @@ class CPU_Spec extends Specification
         """
 
         given : 'Two 4 dimensional tensor instances.'
-            Tsr a = Tsr.of(Shape.of(100, 60, 1, 2),  4)
-            Tsr b = Tsr.of(Shape.of(100, 1, 60, 2), -2)
+            Tensor a = Tensor.of(Shape.of(100, 60, 1, 2),  4)
+            Tensor b = Tensor.of(Shape.of(100, 1, 60, 2), -2)
 
         and : 'The default device returned by the first tensor:'
             Device cpu = a.getDevice()
@@ -90,7 +90,7 @@ class CPU_Spec extends Specification
                     }
                 })
                 t.start()
-                Tsr c = ( a / b ) * 3
+                Tensor c = ( a / b ) * 3
                 assert c.shape() == [100,60,60,2]
                 int result = min[0]
                 try {
@@ -135,7 +135,7 @@ class CPU_Spec extends Specification
             cpu.numberOfStored() == initial
 
         when : 'We create a tensor from the data object...'
-            var t = Tsr.of( Shape.of(2, 2), data )
+            var t = Tensor.of( Shape.of(2, 2), data )
         then : 'The CPU should know about the existence of a new tensor.'
             CPU.get().numberOfStored() == initial + 1
         and : 'The number of data objects stored on the CPU should also be increased.'

@@ -37,9 +37,8 @@ SOFTWARE.
 package neureka.devices;
 
 import neureka.Data;
-import neureka.MutateTsr;
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -58,10 +57,10 @@ import java.util.stream.Collectors;
 
 /**
  * Implementations of this represent computational
- * devices for storing tensors (instances of the Tsr&lt;V&gt; class), which may
+ * devices for storing tensors (instances of the Tensor&lt;V&gt; class), which may
  * also expose a useful API for executing operations on tensors (used in backend operations).
  * Such instances are also components of tensors, which is why
- * this interface extends the Component&lt;Tsr&lt;V&gt;&gt; interface.                        <br><br>
+ * this interface extends the Component&lt;Tensor&lt;V&gt;&gt; interface.                        <br><br>
  *
  * Because devices store tensors, this interface extends the "{@link Storage}" interface
  * which defines the API for storing them.
@@ -71,7 +70,7 @@ import java.util.stream.Collectors;
  *
  * @param <V> The super type of all values that can be stored on a {@link Device} implementation...
  */
-public interface Device<V> extends Component<Tsr<V>>, Storage<V>
+public interface Device<V> extends Component<Tensor<V>>, Storage<V>
 {
     /**
      * This method returns {@link Device} instances matching
@@ -162,7 +161,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
      * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
      * @return The truth value determining if the provided tensor is stored on this {@link Device}.
      */
-    <T extends V> boolean has( Tsr<T> tensor );
+    <T extends V> boolean has( Tensor<T> tensor );
 
     /**
      *  Use this to remove the provided tensor from this {@link Device}!  <br><br>
@@ -171,7 +170,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
      * @param <T> The type parameter for the value type of the tensor, which must be supported by this {@link Device}.
      * @return This very instance to allow for method chaining.
      */
-    <T extends V> Device<V> free( Tsr<T> tensor );
+    <T extends V> Device<V> free( Tensor<T> tensor );
 
     /**
      *  This method exposes the tensor access API for reading from or writing to
@@ -183,7 +182,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
      * @param <T> The type parameter of the tensor for which the access API should be returned.
      * @return The tensor access API for reading from or writing to a tensor stored on this device.
      */
-    <T extends V> Access<T> access( Tsr<T> tensor );
+    <T extends V> Access<T> access( Tensor<T> tensor );
 
     /**
      *  This method is used internally to give {@link Device} implementations the opportunity
@@ -257,10 +256,10 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
      *         this very {@link Device}, execute the provided lambda, and then  migrate all the
      *         tensors back to their original devices!
      */
-    default In borrow( Tsr<V> first, Tsr<V>... rest ) {
-        LogUtil.nullArgCheck( first, "first", Tsr.class );
-        LogUtil.nullArgCheck( rest, "rest", Tsr[].class );
-        List<Tsr<V>> tensors = new ArrayList<>();
+    default In borrow(Tensor<V> first, Tensor<V>... rest ) {
+        LogUtil.nullArgCheck( first, "first", Tensor.class );
+        LogUtil.nullArgCheck( rest, "rest", Tensor[].class );
+        List<Tensor<V>> tensors = new ArrayList<>();
         if ( first != null ) tensors.add( first );
         if ( rest.length > 0 )
             tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );
@@ -268,8 +267,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
         return new In() {
             @Override
             public <R> R in( Supplier<R> lambda ) {
-                List<Device<?>> devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );
-                for ( Tsr<V> t : tensors ) t.to( thisDevice );
+                List<Device<?>> devices = tensors.stream().map( Tensor::getDevice ).collect( Collectors.toList() );
+                for ( Tensor<V> t : tensors ) t.to( thisDevice );
                 R result = lambda.get();
                 for ( int i = 0; i < tensors.size(); i++ ) {
                     if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );
@@ -365,7 +364,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>
         int getDataSize();
 
         /**
-         *  Use this to perform some custom memory cleanup for when the accessed {@link Tsr} gets garbage collected.   <br><br>
+         *  Use this to perform some custom memory cleanup for when the accessed {@link Tensor} gets garbage collected.   <br><br>
          *
          * @param action The {@link Runnable} action which ought to be performed when the tensor gets garbage collected.
          */

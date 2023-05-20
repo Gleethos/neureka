@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.convolution;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.devices.host.CPU;
 import neureka.ndim.config.NDConfiguration;
 
@@ -12,7 +12,7 @@ class SimpleCPUConvolution
 {
     Conv2DImpl _impl;
 
-    SimpleCPUConvolution( Tsr<?> in1, Tsr<?> in2, Tsr<?> out ) {
+    SimpleCPUConvolution(Tensor<?> in1, Tensor<?> in2, Tensor<?> out ) {
         Conv2DImpl impl = null;
         try {
             impl = _tryCreatingImplFor( in1, in2, out );
@@ -33,9 +33,9 @@ class SimpleCPUConvolution
     public boolean isSuitable() { return _impl != null; }
 
     private static Conv2DImpl _tryCreatingImplFor(
-            final Tsr<?> image,
-            final Tsr<?> kernel,
-            final Tsr<?> result
+            final Tensor<?> image,
+            final Tensor<?> kernel,
+            final Tensor<?> result
     ) {
         validate(image);
         validate(kernel);
@@ -222,7 +222,7 @@ class SimpleCPUConvolution
     }
 
 
-    private static void validate(Tsr<?> t) {
+    private static void validate(Tensor<?> t) {
         if ( t.getRank() != 2 && t.getRank() != 3 )
             throw new IllegalArgumentException("The rank of the tensor must be 2 or 3!");
 

@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.operator;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Call;
@@ -60,13 +60,13 @@ public class Division extends AbstractOperation
                     {
                         if ( call.autogradMode().allowsForward() )
                             throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+                        Tensor<?> ctxDerivative = (Tensor<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                         }
                         int d = call.getDerivativeIndex();
-                        Tsr<?> derivative = f.executeDerive( call.inputs(), d );
+                        Tensor<?> derivative = f.executeDerive( call.inputs(), d );
                         return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                     }
                 )
@@ -111,18 +111,18 @@ public class Division extends AbstractOperation
 
             if ( !deriveA && !deriveB ) return super.execute( reducedCaller, call );
 
-            Tsr<?> bResult = b.call((Call) call.withArgs(Arg.DerivIdx.of(-1)));
-            Tsr<?> derivOfA = null;
+            Tensor<?> bResult = b.call((Call) call.withArgs(Arg.DerivIdx.of(-1)));
+            Tensor<?> derivOfA = null;
             if ( deriveA ) {
                 Function div = Neureka.get().backend().getFunction().div();
                 // This is simple, we just derive the first sub-function and multiply it with the inverse of the second sub-function:
-                Tsr<?> aDeriv = a.call((Call)call);
-                derivOfA = div.call((Tsr<Object>)aDeriv, (Tsr<Object>)bResult);
+                Tensor<?> aDeriv = a.call((Call)call);
+                derivOfA = div.call((Tensor<Object>)aDeriv, (Tensor<Object>)bResult);
             }
             if ( !deriveB && deriveA )
                 return Result.of(derivOfA.mut().setIsIntermediate(true));
 
-            Tsr<?> aResult = a.call((Call)call.withArgs(Arg.DerivIdx.of(-1)));
+            Tensor<?> aResult = a.call((Call)call.withArgs(Arg.DerivIdx.of(-1)));
             if ( deriveB )
                 return _deriveB( call, b, deriveA, derivOfA, aResult, bResult );
         }
@@ -133,25 +133,25 @@ public class Division extends AbstractOperation
             ExecutionCall<?> call,
             Function b,
             boolean deriveA,
-            Tsr<?> derivOfA,
-            Tsr<?> aResult,
-            Tsr<?> bResult
+            Tensor<?> derivOfA,
+            Tensor<?> aResult,
+            Tensor<?> bResult
     ) {
         Function mul = Neureka.get().backend().getFunction().mul();
-        Tsr<?> innerDerivB = b.call((Call)call);
+        Tensor<?> innerDerivB = b.call((Call)call);
         // So we have something like this: a/b, where we want to derive b.
         // This is how it is really executed:  (a/b) = (a * (1/b))
         // So we can derive b and then later on add the derivative of 'a' to it (if it must be derived).
         // The derivative of 1/b is -1/b^2
         // Let's derive b:
         Function derive = Function.of("-I[0] / (I[1] ** 2)", false);
-        Tsr<?> derivOfB = derive.call( (Tsr<Object>)innerDerivB, (Tsr<Object>)bResult );
-        derivOfB = mul.call((Tsr<Object>)aResult, (Tsr<Object>)derivOfB);
+        Tensor<?> derivOfB = derive.call( (Tensor<Object>)innerDerivB, (Tensor<Object>)bResult );
+        derivOfB = mul.call((Tensor<Object>)aResult, (Tensor<Object>)derivOfB);
         if ( !deriveA )
             return Result.of(derivOfB.mut().setIsIntermediate(true));
         else {
             Function add = Neureka.get().backend().getFunction().add();
-            return Result.of( add.call((Tsr<Object>)derivOfA, (Tsr<Object>)derivOfB).mut().setIsIntermediate(true) );
+            return Result.of( add.call((Tensor<Object>)derivOfA, (Tensor<Object>)derivOfB).mut().setIsIntermediate(true) );
         }
     }
 

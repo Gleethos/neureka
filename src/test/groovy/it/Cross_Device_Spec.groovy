@@ -4,7 +4,7 @@ import groovy.transform.CompileDynamic
 import neureka.Data
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.ocl.CLBackend
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -62,14 +62,14 @@ class Cross_Device_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
 
         and : 'Two tensors, one requiring gradients and the other one does not.'
-            var tensor1 = Tsr.of(Shape.of(2, 2, 1),
+            var tensor1 = Tensor.of(Shape.of(2, 2, 1),
                                             Data.of(
                                                 1f,  2f, //  3, 1,
                                                 2f, -3f, // -2, -1,
                                             ))
                                             .setRqsGradient( true )
 
-            var tensor2 = Tsr.of(Shape.of(1, 2, 2),
+            var tensor2 = Tensor.of(Shape.of(1, 2, 2),
                                             Data.of(
                                                 -2f, 3f, //  0  7
                                                 1f, 2f,  // -7  0
@@ -77,8 +77,8 @@ class Cross_Device_Spec extends Specification
             device.store(tensor1).store(tensor2)
 
         and :
-            Tsr product = Tsr.of("i0xi1", tensor1, tensor2)
-            product.backward( Tsr.of(Shape.of(2, 1, 2), Data.of(1, 1, 1, 1)) )
+            Tensor product = Tensor.of("i0xi1", tensor1, tensor2)
+            product.backward( Tensor.of(Shape.of(2, 1, 2), Data.of(1, 1, 1, 1)) )
             String result = product.toString({
                 it.rowLimit = 15 // "rc"
                 it.isScientific = false
@@ -161,11 +161,11 @@ class Cross_Device_Spec extends Specification
         given : 'We use the legacy representation of tensors for this little test!'
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
         and : 'We create a small matrix of 4 fours which requires a gradient and is stored on the provided device!'
-            Tsr t = Tsr.of([2, 2], 4d).setRqsGradient(true).to(device)
+            Tensor t = Tensor.of([2, 2], 4d).setRqsGradient(true).to(device)
         when : 'We now call the backward method on the tensor directly without having done any operations...'
             t.backward(1)
         and : 'Then we take the gradient to see what happened.'
-            Tsr g = t.gradient.get()
+            Tensor g = t.gradient.get()
 
         then : 'We expect this gradient to be all ones with the shape of our matrix!'
             g.toString().contains("[2x2]:(1.0, 1.0, 1.0, 1.0)")
@@ -184,7 +184,7 @@ class Cross_Device_Spec extends Specification
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCLDevice() && data.device == null }) // We need to assure that this system supports OpenCL!
     def 'Mapping tensors works for every device (even if they are not used).'(
-              Tsr<?> tensor, Device<?> device, Class<?> target, Function<?,?> lambda, String expected
+            Tensor<?> tensor, Device<?> device, Class<?> target, Function<?,?> lambda, String expected
     ) {
         given : 'We first make a note of the type we started with.'
             var originalType = tensor.itemType()
@@ -205,7 +205,7 @@ class Cross_Device_Spec extends Specification
                     the tensor is outsourced (stored on a device), then we expect that the mapping method
                     temporarily migrates the tensor back and forth internally...
                """
-            Tsr<?> result = tensor.mapTo(target, lambda)
+            Tensor<?> result = tensor.mapTo(target, lambda)
 
         then : 'We expect the String representation of the tensor to be as expected!'
             result.toString() == expected
@@ -217,81 +217,81 @@ class Cross_Device_Spec extends Specification
 
         where : 'We use the following data to test this mapping for a wide range of types and values!'
             tensor                     | device               | target         | lambda   || expected
-            Tsr.of(3.5)                | CPU.get()            | String.class   | {"~$it"} || '(1):[~3.5]'
-            Tsr.of(3.5)                | Device.get('first')  | String.class   | {"~$it"} || '(1):[~3.5]'
-            Tsr.ofFloats().scalar(3.5f)| CPU.get()            | String.class   | {"~$it"} || '(1):[~3.5]'
-            Tsr.ofFloats().scalar(3.5f)| Device.get('first')  | String.class   | {"~$it"} || '(1):[~3.5]'
-            Tsr.ofShorts().scalar(3.5f)| CPU.get()            | String.class   | {"~$it"} || '(1):[~3]'
-            Tsr.ofShorts().scalar(3.5f)| Device.get('first')  | String.class   | {"~$it"} || '(1):[~3]'
-            Tsr.ofBytes().scalar(2.7)  | CPU.get()            | String.class   | {"~$it"} || '(1):[~2]'
-            Tsr.ofBytes().scalar(2.7)  | Device.get('first')  | String.class   | {"~$it"} || '(1):[~2]'
-            Tsr.ofInts().scalar(6.1f)  | CPU.get()            | String.class   | {"~$it"} || '(1):[~6]'
-            Tsr.ofInts().scalar(6.1f)  | Device.get('first')  | String.class   | {"~$it"} || '(1):[~6]'
+            Tensor.of(3.5)                 | CPU.get()           | String.class  | {"~$it"} || '(1):[~3.5]'
+            Tensor.of(3.5)                 | Device.get('first') | String.class  | {"~$it"} || '(1):[~3.5]'
+            Tensor.ofFloats().scalar(3.5f) | CPU.get()           | String.class  | {"~$it"} || '(1):[~3.5]'
+            Tensor.ofFloats().scalar(3.5f) | Device.get('first') | String.class  | {"~$it"} || '(1):[~3.5]'
+            Tensor.ofShorts().scalar(3.5f) | CPU.get()           | String.class  | {"~$it"} || '(1):[~3]'
+            Tensor.ofShorts().scalar(3.5f) | Device.get('first') | String.class  | {"~$it"} || '(1):[~3]'
+            Tensor.ofBytes().scalar(2.7)   | CPU.get()           | String.class  | {"~$it"} || '(1):[~2]'
+            Tensor.ofBytes().scalar(2.7)   | Device.get('first') | String.class  | {"~$it"} || '(1):[~2]'
+            Tensor.ofInts().scalar(6.1f)   | CPU.get()           | String.class  | {"~$it"} || '(1):[~6]'
+            Tensor.ofInts().scalar(6.1f)   | Device.get('first') | String.class  | {"~$it"} || '(1):[~6]'
 
-            Tsr.of( 3.0 )              | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.of(-1.0 )              | Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.of(0.5)                | Device.get('first')  | Integer.class  | {it*10}  || '(1):[5]'
-            Tsr.of(0.7)                | Device.get('first')  | Long.class     | {it*5}   || '(1):[3]'
-            Tsr.of(0.9)                | Device.get('first')  | Byte.class     | {it*2}   || '(1):[1]'
-            Tsr.of(3.8)                | Device.get('first')  | Short.class    | {it/2}   || '(1):[1]'
-            Tsr.of(3.0 )               | CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.of(-1.0)               | CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.of(0.5)                | CPU.get()            | Integer.class  | {it*10}  || '(1):[5]'
-            Tsr.of(0.7)                | CPU.get()            | Long.class     | {it*5}   || '(1):[3]'
-            Tsr.of(0.9)                | CPU.get()            | Byte.class     | {it*2}   || '(1):[1]'
-            Tsr.of(3.8)                | CPU.get()            | Short.class    | {it/2}   || '(1):[1]'
+            Tensor.of( 3.0 )               | Device.get('first') | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.of(-1.0 )               | Device.get('first') | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.of(0.5)                 | Device.get('first') | Integer.class | {it*10}  || '(1):[5]'
+            Tensor.of(0.7)                 | Device.get('first') | Long.class    | {it*5}   || '(1):[3]'
+            Tensor.of(0.9)                 | Device.get('first') | Byte.class    | {it*2}   || '(1):[1]'
+            Tensor.of(3.8)                 | Device.get('first') | Short.class   | {it/2}   || '(1):[1]'
+            Tensor.of(3.0 )                | CPU.get()           | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.of(-1.0)                | CPU.get()           | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.of(0.5)                 | CPU.get()           | Integer.class | {it*10}  || '(1):[5]'
+            Tensor.of(0.7)                 | CPU.get()           | Long.class    | {it*5}   || '(1):[3]'
+            Tensor.of(0.9)                 | CPU.get()           | Byte.class    | {it*2}   || '(1):[1]'
+            Tensor.of(3.8)                 | CPU.get()           | Short.class   | {it/2}   || '(1):[1]'
 
-            Tsr.ofFloats().scalar( 3f )| Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.ofFloats().scalar(-1f )| Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.ofFloats().scalar(0.5f)| Device.get('first')  | Integer.class  | {it*10}  || '(1):[5]'
-            Tsr.ofFloats().scalar(0.7f)| Device.get('first')  | Long.class     | {it*5}   || '(1):[3]'
-            Tsr.ofFloats().scalar(0.9f)| Device.get('first')  | Byte.class     | {it*2}   || '(1):[1]'
-            Tsr.ofFloats().scalar(3.8f)| Device.get('first')  | Short.class    | {it/2}   || '(1):[1]'
-            Tsr.ofFloats().scalar( 3f )| CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.ofFloats().scalar(-1f )| CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.ofFloats().scalar(0.5f)| CPU.get()            | Integer.class  | {it*10}  || '(1):[5]'
-            Tsr.ofFloats().scalar(0.7f)| CPU.get()            | Long.class     | {it*5}   || '(1):[3]'
-            Tsr.ofFloats().scalar(0.9f)| CPU.get()            | Byte.class     | {it*2}   || '(1):[1]'
-            Tsr.ofFloats().scalar(3.8f)| CPU.get()            | Short.class    | {it/2}   || '(1):[1]'
+            Tensor.ofFloats().scalar( 3f ) | Device.get('first') | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.ofFloats().scalar(-1f ) | Device.get('first') | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.ofFloats().scalar(0.5f) | Device.get('first') | Integer.class | {it*10}  || '(1):[5]'
+            Tensor.ofFloats().scalar(0.7f) | Device.get('first') | Long.class    | {it*5}   || '(1):[3]'
+            Tensor.ofFloats().scalar(0.9f) | Device.get('first') | Byte.class    | {it*2}   || '(1):[1]'
+            Tensor.ofFloats().scalar(3.8f) | Device.get('first') | Short.class   | {it/2}   || '(1):[1]'
+            Tensor.ofFloats().scalar( 3f ) | CPU.get()           | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.ofFloats().scalar(-1f ) | CPU.get()           | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.ofFloats().scalar(0.5f) | CPU.get()           | Integer.class | {it*10}  || '(1):[5]'
+            Tensor.ofFloats().scalar(0.7f) | CPU.get()           | Long.class    | {it*5}   || '(1):[3]'
+            Tensor.ofFloats().scalar(0.9f) | CPU.get()           | Byte.class    | {it*2}   || '(1):[1]'
+            Tensor.ofFloats().scalar(3.8f) | CPU.get()           | Short.class   | {it/2}   || '(1):[1]'
 
-            Tsr.ofInts().scalar( 3 )   | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.ofInts().scalar(-1 )   | Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.ofInts().scalar( 5 )   | Device.get('first')  | Integer.class  | {it*10}  || '(1):[50]'
-            Tsr.ofInts().scalar( 70)   | Device.get('first')  | Long.class     | {it*5}   || '(1):[350]'
-            Tsr.ofInts().scalar( 90)   | Device.get('first')  | Byte.class     | {it*2}   || '(1):[-76]'
-            Tsr.ofInts().scalar( 37)   | Device.get('first')  | Short.class    | {it/2}   || '(1):[18]'
-            Tsr.ofInts().scalar( 3 )   | CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.ofInts().scalar(-1 )   | CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.ofInts().scalar( 5 )   | CPU.get()            | Integer.class  | {it*10}  || '(1):[50]'
-            Tsr.ofInts().scalar( 70)   | CPU.get()            | Long.class     | {it*5}   || '(1):[350]'
-            Tsr.ofInts().scalar( 90)   | CPU.get()            | Byte.class     | {it*2}   || '(1):[-76]'
-            Tsr.ofInts().scalar( 37)   | CPU.get()            | Short.class    | {it/2}   || '(1):[18]'
+            Tensor.ofInts().scalar( 3 )    | Device.get('first') | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.ofInts().scalar(-1 )    | Device.get('first') | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.ofInts().scalar( 5 )    | Device.get('first') | Integer.class | {it*10}  || '(1):[50]'
+            Tensor.ofInts().scalar( 70)    | Device.get('first') | Long.class    | {it*5}   || '(1):[350]'
+            Tensor.ofInts().scalar( 90)    | Device.get('first') | Byte.class    | {it*2}   || '(1):[-76]'
+            Tensor.ofInts().scalar( 37)    | Device.get('first') | Short.class   | {it/2}   || '(1):[18]'
+            Tensor.ofInts().scalar( 3 )    | CPU.get()           | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.ofInts().scalar(-1 )    | CPU.get()           | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.ofInts().scalar( 5 )    | CPU.get()           | Integer.class | {it*10}  || '(1):[50]'
+            Tensor.ofInts().scalar( 70)    | CPU.get()           | Long.class    | {it*5}   || '(1):[350]'
+            Tensor.ofInts().scalar( 90)    | CPU.get()           | Byte.class    | {it*2}   || '(1):[-76]'
+            Tensor.ofInts().scalar( 37)    | CPU.get()           | Short.class   | {it/2}   || '(1):[18]'
 
-            Tsr.ofShorts().scalar( 3 ) | Device.get('first')  | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.ofShorts().scalar(-1 ) | Device.get('first')  | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.ofShorts().scalar( 5 ) | Device.get('first')  | Integer.class  | {it*10}  || '(1):[50]'
-            Tsr.ofShorts().scalar( 70) | Device.get('first')  | Long.class     | {it*5}   || '(1):[350]'
-            Tsr.ofShorts().scalar( 90) | Device.get('first')  | Byte.class     | {it*2}   || '(1):[-76]'
-            Tsr.ofShorts().scalar( 37) | Device.get('first')  | Short.class    | {it/2}   || '(1):[18]'
-            Tsr.ofShorts().scalar( 3 ) | CPU.get()            | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.ofShorts().scalar(-1 ) | CPU.get()            | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.ofShorts().scalar( 5 ) | CPU.get()            | Integer.class  | {it*10}  || '(1):[50]'
-            Tsr.ofShorts().scalar( 70) | CPU.get()            | Long.class     | {it*5}   || '(1):[350]'
-            Tsr.ofShorts().scalar( 90) | CPU.get()            | Byte.class     | {it*2}   || '(1):[-76]'
-            Tsr.ofShorts().scalar( 37) | CPU.get()            | Short.class    | {it/2}   || '(1):[18]'
+            Tensor.ofShorts().scalar( 3 )  | Device.get('first') | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.ofShorts().scalar(-1 )  | Device.get('first') | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.ofShorts().scalar( 5 )  | Device.get('first') | Integer.class | {it*10}  || '(1):[50]'
+            Tensor.ofShorts().scalar( 70)  | Device.get('first') | Long.class    | {it*5}   || '(1):[350]'
+            Tensor.ofShorts().scalar( 90)  | Device.get('first') | Byte.class    | {it*2}   || '(1):[-76]'
+            Tensor.ofShorts().scalar( 37)  | Device.get('first') | Short.class   | {it/2}   || '(1):[18]'
+            Tensor.ofShorts().scalar( 3 )  | CPU.get()           | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.ofShorts().scalar(-1 )  | CPU.get()           | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.ofShorts().scalar( 5 )  | CPU.get()           | Integer.class | {it*10}  || '(1):[50]'
+            Tensor.ofShorts().scalar( 70)  | CPU.get()           | Long.class    | {it*5}   || '(1):[350]'
+            Tensor.ofShorts().scalar( 90)  | CPU.get()           | Byte.class    | {it*2}   || '(1):[-76]'
+            Tensor.ofShorts().scalar( 37)  | CPU.get()           | Short.class   | {it/2}   || '(1):[18]'
 
-            Tsr.ofBytes().scalar( 3 )  | Device.get('first') | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.ofBytes().scalar(-1 )  | Device.get('first') | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.ofBytes().scalar( 5 )  | Device.get('first') | Integer.class  | {it*10}  || '(1):[50]'
-            Tsr.ofBytes().scalar( 70)  | Device.get('first') | Long.class     | {it*5}   || '(1):[350]'
-            Tsr.ofBytes().scalar( 90)  | Device.get('first') | Byte.class     | {it*2}   || '(1):[-76]'
-            Tsr.ofBytes().scalar( 37)  | Device.get('first') | Short.class    | {it/2}   || '(1):[18]'
-            Tsr.ofBytes().scalar( 3 )  | CPU.get()           | Double.class   | {it*it}  || '(1):[9.0]'
-            Tsr.ofBytes().scalar(-1 )  | CPU.get()           | Float.class    | {it/2}   || '(1):[-0.5]'
-            Tsr.ofBytes().scalar( 5 )  | CPU.get()           | Integer.class  | {it*10}  || '(1):[50]'
-            Tsr.ofBytes().scalar( 70)  | CPU.get()           | Long.class     | {it*5}   || '(1):[350]'
-            Tsr.ofBytes().scalar( 90)  | CPU.get()           | Byte.class     | {it*2}   || '(1):[-76]'
-            Tsr.ofBytes().scalar( 37)  | CPU.get()           | Short.class    | {it/2}   || '(1):[18]'
+            Tensor.ofBytes().scalar( 3 )   | Device.get('first') | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.ofBytes().scalar(-1 )   | Device.get('first') | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.ofBytes().scalar( 5 )   | Device.get('first') | Integer.class | {it*10}  || '(1):[50]'
+            Tensor.ofBytes().scalar( 70)   | Device.get('first') | Long.class    | {it*5}   || '(1):[350]'
+            Tensor.ofBytes().scalar( 90)   | Device.get('first') | Byte.class    | {it*2}   || '(1):[-76]'
+            Tensor.ofBytes().scalar( 37)   | Device.get('first') | Short.class   | {it/2}   || '(1):[18]'
+            Tensor.ofBytes().scalar( 3 )   | CPU.get()           | Double.class  | {it*it}  || '(1):[9.0]'
+            Tensor.ofBytes().scalar(-1 )   | CPU.get()           | Float.class   | {it/2}   || '(1):[-0.5]'
+            Tensor.ofBytes().scalar( 5 )   | CPU.get()           | Integer.class | {it*10}  || '(1):[50]'
+            Tensor.ofBytes().scalar( 70)   | CPU.get()           | Long.class    | {it*5}   || '(1):[350]'
+            Tensor.ofBytes().scalar( 90)   | CPU.get()           | Byte.class    | {it*2}   || '(1):[-76]'
+            Tensor.ofBytes().scalar( 37)   | CPU.get()           | Short.class   | {it/2}   || '(1):[18]'
     }
 
 

@@ -1,7 +1,7 @@
 package ut.autograd.internal
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.autograd.GraphNode
 import spock.lang.Shared
 import spock.lang.Specification
@@ -17,7 +17,7 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
             <h2> GraphNode Tensor Exceptions </h2>
             <p>
                 Specified below are strict tests covering the exception behavior
-                of the GraphNode class interacting with Tsr instances.
+                of the GraphNode class interacting with Tensor instances.
             </p>
         """
     }
@@ -36,7 +36,7 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
     def 'A tensor cannot be deleted if it is part of a graph and the tensor is used as derivative.'()
     {
         given : 'A new simple scalar tensor instance.'
-            Tsr<Double> t = Tsr.of( 1d )
+        Tensor<Double> t = Tensor.of( 1d )
         and : 'A GraphNode mock object which is being added to the tensor.'
             def node = Mock( GraphNode )
 

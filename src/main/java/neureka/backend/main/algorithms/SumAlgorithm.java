@@ -1,7 +1,7 @@
 package neureka.backend.main.algorithms;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.Result;
@@ -19,17 +19,17 @@ public class SumAlgorithm extends AbstractFunDeviceAlgorithm<SumAlgorithm>
         )
         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
         .setExecution( (caller, call) -> {
-            Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
+            Tensor<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
             call = call.withInputs(inputs);
-            Tsr<?> result = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
+            Tensor<?> result = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);
             Shape originalShape = call.input(0).shape();
             return Result.of(
                             result.mut().setIsIntermediate(true)
                     )
                     .withADAction( target -> {
-                        Tsr<Object> error = (Tsr<Object>) target.error();
+                        Tensor<Object> error = (Tensor<Object>) target.error();
                         assert error.size() == 1;
-                        return Tsr.of(error.itemType(), originalShape, error.item()).to(error.getDevice());
+                        return Tensor.of(error.itemType(), originalShape, error.item()).to(error.getDevice());
                     });
         })
         .setCallPreparation( call ->

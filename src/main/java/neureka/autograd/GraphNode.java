@@ -33,14 +33,14 @@ SOFTWARE.
 
     This class defines the nodes which form the computation graph used to track operations performed on tensors,
     or more precisely :
-    instances of the 'Tsr' class!
+    instances of the 'Tensor' class!
 
 */
 
 package neureka.autograd;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- *  Instances of the {@link GraphNode} class are components of tensors ({@link Tsr} instances)
+ *  Instances of the {@link GraphNode} class are components of tensors ({@link Tensor} instances)
  *  which model and record computations / operations between them.
  *  {@link GraphNode}s form a computation graph when operations are applied to tensors.
  *  This graph can then later on be used for traversal by an important algorithm implemented inside
@@ -73,7 +73,7 @@ import java.util.stream.IntStream;
  *  graph branches (child nodes) can be garbage collected...
  *  ...whereas parents are strongly referenced in order to grant successful traversal.
  */
-public class GraphNode<V> implements Component<Tsr<V>>
+public class GraphNode<V> implements Component<Tensor<V>>
 {
     /*
          mode state meaning:
@@ -132,9 +132,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
         if ( function != null && function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graphs!
             data = new NodePayload<>( out.get() );
-            ((Tsr<V>)out.get()).set(this);
+            ((Tensor<V>)out.get()).set(this);
             if ( call != null ) {
-                Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
+                Tensor<V>[] inputs = (Tensor<V>[]) call.inputs();
                 for ( int i = 0; i < inputs.length; i++ ) {
                     parents[i] = inputs[i].getGraphNode().orElseThrow(()->new IllegalStateException("Input tensors of a new graph-node must contain leave graph-nodes!"));
                     parents[i]._attachChild(this);
@@ -157,11 +157,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
             throw new IllegalArgumentException( "Branch graph nodes require a function!" );
 
         if ( call != null ) {
-            Tsr<?>[] inputs = call.inputs();
+            Tensor<?>[] inputs = call.inputs();
             /* Applying JITProp and gradients */
             Neureka.Settings.AutoGrad adSetting = Neureka.get().settings().autograd();
             if ( adSetting.isApplyingGradientWhenTensorIsUsed() ) {
-                for ( Tsr<?> t : inputs ) {
+                for ( Tensor<?> t : inputs ) {
                     if ( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRequested() ) {
                         t.applyGradient(); // activates JITProp if present and removes it...
                         t.setGradientApplyRequested( false );
@@ -172,7 +172,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         }
     }
 
-    private void _checkInputValidity( Tsr<?>[] inputs, Function function )
+    private void _checkInputValidity(Tensor<?>[] inputs, Function function )
     {
         for ( int i = 0; i < inputs.length; i++ ) {
             GraphNode<V> child = (GraphNode<V>) inputs[ i ].getGraphNode().orElse(null);
@@ -204,9 +204,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
 
         BackPropTargetCollector<V> collector = new BackPropTargetCollector<>();
 
-        Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
+        Tensor<V>[] inputs = (Tensor<V>[]) call.inputs();
         /* Returning if the above cannot form an AutoDiff computation graph! : */
-        for ( Tsr<V> t : inputs )
+        for ( Tensor<V> t : inputs )
             if ( t == output.get() ) return collector.getTargets(); // Output must be a unique tensor for AD!
 
         if ( this.usesAD() && function.isFlat() ) {
@@ -227,12 +227,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             int finalI = i;
-                            Tsr<V> localDerivative = function.derive( inputs, i );
+                            Tensor<V> localDerivative = function.derive( inputs, i );
                             srcNode._forEachTargetActionPair(
                                 ( targets, localADAction ) ->
                                 {
                                     // The agent multiplies the local derivative with its stored partial derivative...
-                                    Tsr<?> targetDerivative = localADAction.act( new ADTarget<>(targets.index(), this, localDerivative) );
+                                    Tensor<?> targetDerivative = localADAction.act( new ADTarget<>(targets.index(), this, localDerivative) );
                                     // ...this is now the new partial derivative with respect to the target node!
                                     ADAction agent = output.getAgentSupplier()
                                                             .supplyADActionFor(
@@ -284,7 +284,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @param e This is an error value passed to this method ba a backward traversal.
      */
-    private void _migrateAndOrApplyError( Tsr<V> e, Consumer<Tsr<V>> also ) {
+    private void _migrateAndOrApplyError(Tensor<V> e, Consumer<Tensor<V>> also ) {
         this.getPayload().ifPresent( payload -> {
             // It was not garbage collected:
             try {
@@ -294,7 +294,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     throw new IllegalStateException(
                             "An undefined payload tensor has been detected inside the computation graph!\n" +
                             "This is most likely due to an error occurring during tensor identity transfer (Also see AbstractComponentOwner).\n" +
-                            "One type of constructor in the 'Tsr' class enables passing a String expression for execution, " +
+                            "One type of constructor in the 'Tensor' class enables passing a String expression for execution, " +
                             "whose resulting tensor needs to be merged into the newly created one..."
                         );
                 else
@@ -376,10 +376,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return The tensor payload of this graph-node.
      */
-    public Optional<Tsr<V>> getPayload() { return Optional.ofNullable(_nodePayload.getPayload()); }
+    public Optional<Tensor<V>> getPayload() { return Optional.ofNullable(_nodePayload.getPayload()); }
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tensor<V>> changeRequest ) {
         changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
         return true;
     }
@@ -406,7 +406,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @param error The current error which is created by multiplying it with current size and traversing it.
      */
-    public void backward( Tsr<V> error ) {
+    public void backward( Tensor<V> error ) {
         Set<GraphNode<V>> pendingNodes = new HashSet<>();
         _backward( error, pendingNodes, false ); // Entry-point to private recursive back-propagation!
         if ( Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp() )
@@ -530,7 +530,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @param error A tensor which traverses the computation graph according to the rules of reverse mode AutoDiff.
      */
-    private void _backward( Tsr<V> error, Set<GraphNode<V>> pendingNodes, boolean allowPendingError )
+    private void _backward(Tensor<V> error, Set<GraphNode<V>> pendingNodes, boolean allowPendingError )
     {
         _migrateAndOrApplyError( error, null );
         if ( this.usesAD() ) {
@@ -597,12 +597,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @param error The error which ought to be back-propagated just-in-time.
      */
-    public void backwardJIT( Tsr<V> error ) {
+    public void backwardJIT( Tensor<V> error ) {
         _backwardJIT( error, this );
         _deleteDerivativesRecursively();// Cleanup after back-propagation!
     }
 
-    private void _backwardJIT( Tsr<V> error, GraphNode<V> source ) {
+    private void _backwardJIT(Tensor<V> error, GraphNode<V> source ) {
         _reliesOnJustInTimeProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!
         _migrateAndOrApplyError( error, payload -> {
             JITProp<V> jit = payload.get( JITProp.class );//Get JIT-Prop node.
@@ -707,12 +707,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param error The error which ought to be passed to the {@link ADAction}s.
      * @param action A lambda action providing derivative and target node as parameter.
      */
-    private void _forEachBackRef( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
+    private void _forEachBackRef(Tensor<V> error, BiConsumer<GraphNode<V>, Tensor<V>> action ) {
         if ( _targetsToAgents.isEmpty() ) return;
         error.getMut().setIsIntermediate( false );
         for ( BackPropTargets<V> ref : new ArrayList<>(_targetsToAgents) )
             for ( ADAction a : ref.actions() )
-                action.accept( ref.node(), (Tsr<V>) a.act( new ADTarget<>(ref.index(), ref.node(), error) ));
+                action.accept( ref.node(), (Tensor<V>) a.act( new ADTarget<>(ref.index(), ref.node(), error) ));
     }
 
     /**
@@ -752,8 +752,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  The absolute of a negative mode represents the number of
      *  referenced source nodes which have a mode state other than zero.
      *  This means that they directly or indirectly reference
-     *  a {@link GraphNode} instance which represents a {@link Tsr} instance
-     *  having the {@link Tsr#rqsGradient()} flag set to true!
+     *  a {@link GraphNode} instance which represents a {@link Tensor} instance
+     *  having the {@link Tensor#rqsGradient()} flag set to true!
      *                                                              <br>
      *  Mode state meaning:                                         <br>
      *  ----------------------------------------------------------- <br>
@@ -825,7 +825,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     public boolean canBeDeleted() {
-        Tsr<V> payload = _nodePayload.getPayload();
+        Tensor<V> payload = _nodePayload.getPayload();
         if ( payload == null ) return true;
         if ( !isUsedAsDerivative() ) return true;
         /*
@@ -865,7 +865,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 .sum();
     }
 
-    private long _numberOfDerivativeUsages( Tsr<V> derivative ) {
+    private long _numberOfDerivativeUsages( Tensor<V> derivative ) {
         return getChildren()
                 .stream()
                 .map( WeakReference::get )
@@ -946,7 +946,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     private String _compactToString() {
-        Optional<Tsr<V>> payload = getPayload();
+        Optional<Tensor<V>> payload = getPayload();
         String nid = this.getClass().getSimpleName();// + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
         return " " + nid + "[ "
                 + ( _function == null ? "" : _function + " => " )

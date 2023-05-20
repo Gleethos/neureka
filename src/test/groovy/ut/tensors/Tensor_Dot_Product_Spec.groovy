@@ -3,7 +3,7 @@ package ut.tensors
 import neureka.Data
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import spock.lang.*
 
 @Title("Tensor Dot Products")
@@ -13,14 +13,14 @@ import spock.lang.*
     This specification demonstrates how to perform dot products on tensors of rank 1.
     
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Tensor_Dot_Product_Spec extends Specification
 {
     def 'The "dot" method calculates the dot product between vectors.'()
     {
         given : 'two vectors, a and b, of length 2.'
-            var a = Tsr.of(3f, 2f)
-            var b = Tsr.of(1f, -0.5f)
+            var a = Tensor.of(3f, 2f)
+            var b = Tensor.of(1f, -0.5f)
         when : 'we calculate the dot product of a and b.'
             var result = a.dot(b)
         then : 'the result is a scalar.'
@@ -31,7 +31,7 @@ class Tensor_Dot_Product_Spec extends Specification
     def 'You can slice a Matrix into vectors and then used them for dot products.'()
     {
         given : 'A matrix we want to slice.'
-            var m = Tsr.of(1f..4f).reshape(2,2)
+            var m = Tensor.of(1f..4f).reshape(2,2)
         when : 'we slice the matrix into two vectors.'
             var a = m.slice().axis(0).at(0).get()
             var b = m.slice().axis(0).at(1).get()
@@ -51,8 +51,8 @@ class Tensor_Dot_Product_Spec extends Specification
             This is useful for when you want to build a neural network or some other machine learning model.
         """
         given : 'two vectors, a and b, of length 2.'
-            var a = Tsr.of(4f, -1f, 2f)
-            var w = Tsr.of(1f, 0f, 0f).setRqsGradient(true)
+            var a = Tensor.of(4f, -1f, 2f)
+            var w = Tensor.of(1f, 0f, 0f).setRqsGradient(true)
         when : 'we calculate the dot product of a and w.'
             var result = a.dot(w)
         then : 'the result is a scalar.'
@@ -75,8 +75,8 @@ class Tensor_Dot_Product_Spec extends Specification
             supports OpenCL (meaning that it has OpenCL drivers installed).
         """
         given : 'A pair of vector tensors which we move to the device!'
-            var a = Tsr.of(-1f, -3f, 0f, 4f, 2f).to( device )
-            var b = Tsr.of( 1f,  2f, 7f, -1f, 3f).to( device )
+            var a = Tensor.of(-1f, -3f, 0f, 4f, 2f).to( device )
+            var b = Tensor.of( 1f,  2f, 7f, -1f, 3f).to( device )
         when : 'we calculate the dot product of a and b.'
             var result = a.dot(b)
         then : 'the result is a scalar.'
@@ -91,8 +91,8 @@ class Tensor_Dot_Product_Spec extends Specification
     def 'The dot operation works for virtual tensors as well.'( String device )
     {
         given : 'A pair of vector tensors which we move to the device!'
-            var a = Tsr.of(Shape.of(8), 3f).to(device)
-            var b = Tsr.of(Shape.of(8), 3f).to(device)
+            var a = Tensor.of(Shape.of(8), 3f).to(device)
+            var b = Tensor.of(Shape.of(8), 3f).to(device)
         expect : 'the tensors are virtual.'
             a.isVirtual() // They are scalars in disguise!
             b.isVirtual()
@@ -109,8 +109,8 @@ class Tensor_Dot_Product_Spec extends Specification
     def 'The dot operation work even when one tensor is virtual.'( String device )
     {
         given : 'A pair of vector tensors which we move to the device!'
-            var a = Tsr.of(Shape.of(8), 3f).to(device)
-            var b = Tsr.of(Shape.of(8), Data.of(3f, 4f, -1f)).to(device)
+            var a = Tensor.of(Shape.of(8), 3f).to(device)
+            var b = Tensor.of(Shape.of(8), Data.of(3f, 4f, -1f)).to(device)
         expect : 'the tensors are virtual.'
             a.isVirtual() // They are scalars in disguise!
             !b.isVirtual()
@@ -128,8 +128,8 @@ class Tensor_Dot_Product_Spec extends Specification
         String device, Object data1, Object data2, List expected
     ) {
         given : 'A pair of vector tensors which we move to the device!'
-            var a = Tsr.of(data1).to(device)
-            var b = Tsr.of(data2).to(device)
+            var a = Tensor.of(data1).to(device)
+            var b = Tensor.of(data2).to(device)
         when : 'we calculate the dot product of a and b.'
             var result = a.dot(b)
         then : 'the result is a scalar.'

@@ -1,8 +1,7 @@
 package neureka.backend.main.memory;
 
 import neureka.Neureka;
-import neureka.Tsr;
-import neureka.autograd.GraphNode;
+import neureka.Tensor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.stream.Stream;
 /**
  *  Utility methods for deleting tensors or preventing thereof.
  *  In essence, it exposes convenience methods for setting and resetting
- *  the {@link Tsr#isIntermediate} flag or supplied tensors...
+ *  the {@link Tensor#isIntermediate} flag or supplied tensors...
  *  This is an internal library class which should not be used
  *  anywhere but in Neurekas backend.
  *  <b>Do not use this anywhere else!</b>
@@ -29,7 +28,7 @@ public class MemUtil {
      *
      * @param tensors The tensors which should be deleted if possible.
      */
-    public static void autoDelete( Tsr<?>... tensors ) {
+    public static void autoDelete( Tensor<?>... tensors ) {
         /*
              When we are purely in the JVM world, then the garbage
              collector will take care of freeing our memory,
@@ -40,7 +39,7 @@ public class MemUtil {
              to be no longer used.
         */
         if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {
-            for ( Tsr<?> t : tensors ) {
+            for ( Tensor<?> t : tensors ) {
                 // Tensors flagged as 'intermediate' will automatically be deleted!
                 if ( !t.isDeleted() && t.isIntermediate() ) {
                     if (
@@ -56,11 +55,11 @@ public class MemUtil {
 
     /**
      *  This method makes sure that the provided tensors do not get deleted
-     *  by setting the {@link Tsr#isIntermediate} flag to off
+     *  by setting the {@link Tensor#isIntermediate} flag to off
      *  during the execution of the provided {@link Supplier} lambda!
      *  In said lambda the supplied thing will ultimately be returned by
      *  this method...
-     *  All provided tensors will have the {@link Tsr#isIntermediate} flag
+     *  All provided tensors will have the {@link Tensor#isIntermediate} flag
      *  set to their original state after execution.
      *
      * @param tensors An array of tensors which should not be deleted during the execution of the supplied lambda.
@@ -68,8 +67,8 @@ public class MemUtil {
      * @param <T> The type of the result produced by the provided lambda.
      * @return The result produced by the provided lambda.
      */
-    public static <T> T keep( Tsr<?>[] tensors, Supplier<T> during ) {
-        List<Tsr<?>> doNotDelete = Arrays.stream(tensors).filter(Tsr::isIntermediate).collect(Collectors.toList());
+    public static <T> T keep(Tensor<?>[] tensors, Supplier<T> during ) {
+        List<Tensor<?>> doNotDelete = Arrays.stream(tensors).filter(Tensor::isIntermediate).collect(Collectors.toList());
         doNotDelete.forEach( t -> t.mut().setIsIntermediate( false ) );
         T result = during.get();
         // After having calculated the result we allow deletion of the provided tensors again:
@@ -79,11 +78,11 @@ public class MemUtil {
 
     /**
      *  This method makes sure that the provided tensors do not get deleted
-     *  by setting the {@link Tsr#isIntermediate} flag to off
+     *  by setting the {@link Tensor#isIntermediate} flag to off
      *  during the execution of the provided {@link Supplier} lambda!
      *  In said lambda the supplied thing will ultimately be returned by
      *  this method...
-     *  Both of the provided tensors will have the {@link Tsr#isIntermediate} flag
+     *  Both of the provided tensors will have the {@link Tensor#isIntermediate} flag
      *  set to their original state after execution.
      *
      * @param a The first tensor which should not be deleted during the execution of the provided lambda.
@@ -92,8 +91,8 @@ public class MemUtil {
      * @param <T> The type of the result produced by the provided lambda.
      * @return The result produced by the provided lambda.
      */
-    public static <T> T keep( Tsr<?> a, Tsr<?> b, Supplier<T> during ) {
-        List<Tsr<?>> doNotDelete = Stream.of(a, b).filter(Tsr::isIntermediate).collect(Collectors.toList());
+    public static <T> T keep(Tensor<?> a, Tensor<?> b, Supplier<T> during ) {
+        List<Tensor<?>> doNotDelete = Stream.of(a, b).filter(Tensor::isIntermediate).collect(Collectors.toList());
         doNotDelete.forEach( t -> t.mut().setIsIntermediate( false ) );
         T result = during.get();
         // After having calculated the result we allow deletion of the provided tensors again:

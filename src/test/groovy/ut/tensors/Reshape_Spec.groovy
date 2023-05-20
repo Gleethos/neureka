@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Subject
@@ -14,8 +14,8 @@ import spock.lang.Title
     which means to change the shape of a tensor.
 
     Note that immutability is a core concept of the Neureka library.
-    This means that the `Tsr` API does not expose mutability directly.
-    Instead, it exposes methods that return new instances of `Tsr`
+    This means that the `Tensor` API does not expose mutability directly.
+    Instead, it exposes methods that return new instances of `Tensor`
     that are derived from the original instance.
     
     This is also true for reshaping operations.
@@ -25,13 +25,13 @@ import spock.lang.Title
     as the original instance!
     
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Reshape_Spec extends Specification
 {
     def 'We can create a new tensor with a different shape.'()
     {
         given : 'We create a new tensor with a shape of [2, 3].'
-            Tsr<?> t = Tsr.of( 6..12 ).reshape( 2, 3 )
+            Tensor<?> t = Tensor.of( 6..12 ).reshape( 2, 3 )
         expect : 'The new instance will have the expected shape.'
             t.shape() == [2, 3]
         and : 'The new instance will have the expected items.'
@@ -43,9 +43,9 @@ class Reshape_Spec extends Specification
     def 'We can use `-1` in the desired shape if we want the axis size to be determined automatically.'()
     {
         given : 'We create a new tensor with a shape of [4, 2, 3].'
-            Tsr<Integer> t = Tsr.of(Shape.of(4, 2, 3), 1..24)
+            Tensor<Integer> t = Tensor.of(Shape.of(4, 2, 3), 1..24)
         when : 'We reshape the tensor to a new tensor with shape [4, -1, 2].'
-            Tsr<Integer> t2 = t.reshape( 4, -1, 2 )
+            Tensor<Integer> t2 = t.reshape( 4, -1, 2 )
         then : 'The new tensor will have the expected shape.'
             t2.shape() == [4, 3, 2]
         and : 'The new tensor will have the expected items.'
@@ -63,14 +63,14 @@ class Reshape_Spec extends Specification
             It is basically the reshape operation applied in reverse.
         """
         given : 'We create a new tensor with a shape of [3, 2] that requires gradients (so that we can capture the error).'
-            Tsr<?> a = Tsr.of( 1..6 ).reshape( 3, 2 ).setRqsGradient( true )
+        Tensor<?> a = Tensor.of( 1..6 ).reshape( 3, 2 ).setRqsGradient( true )
         when : 'We reshape the tensor to a new tensor with shape [2, 3].'
-            Tsr<?> b = a.reshape( 2, 3 )
+            Tensor<?> b = a.reshape( 2, 3 )
         then : 'The new tensor will have the expected shape.'
             b.shape() == [2, 3]
 
         when : 'We back-propagate an error of some random numbers...'
-            b.backward( Tsr.of( -1, 3, 42, 6, -3, 9 ).reshape( 2, 3 ) )
+            b.backward( Tensor.of( -1, 3, 42, 6, -3, 9 ).reshape( 2, 3 ) )
         then : '... the error of the original tensor will have the expected shape.'
             a.gradient().get().shape() == [3, 2]
         and : '... the error of the original tensor will have the expected items.'

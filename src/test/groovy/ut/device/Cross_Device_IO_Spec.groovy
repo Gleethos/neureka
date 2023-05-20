@@ -1,7 +1,7 @@
 package ut.device
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.devices.Device
 import neureka.dtype.DataType
 import spock.lang.*
@@ -16,7 +16,7 @@ import spock.lang.*
     enable reading to or writing from the tensors they store.
 
 ''')
-@Subject([Device, Tsr])
+@Subject([Device, Tensor])
 class Cross_Device_IO_Spec extends Specification
 {
 
@@ -29,7 +29,7 @@ class Cross_Device_IO_Spec extends Specification
         and : 'We fetch the array type of the tested data type!'
             var arrayType = DataType.of(type).dataArrayType()
         and : 'A tensor filled with 4 values which we are going to store on the previously fetched device.'
-            var t = Tsr.of(type).withShape(4).andFill(fill).to(device)
+            var t = Tensor.of(type).withShape(4).andFill(fill).to(device)
         and : 'A slice from the above tensor.'
             var s = t[1..2]
 
@@ -69,7 +69,7 @@ class Cross_Device_IO_Spec extends Specification
         and : 'We fetch the array type of the tested data type!'
             var arrayType = DataType.of(type).dataArrayType()
         and : 'A tensor filled with 4 values which we are going to store on the previously fetched device.'
-            var t = Tsr.of(type).withShape(4).andFill(fill).to(device)
+            var t = Tensor.of(type).withShape(4).andFill(fill).to(device)
         and : 'A slice from the above tensor.'
             var s = t[1..2]
 

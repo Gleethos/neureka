@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.common.utility.SettingsLoader
 import neureka.backend.ocl.CLBackend
 import neureka.dtype.DataType
@@ -52,7 +52,7 @@ class Functional_Tensor_Spec extends Specification
     def 'We can initialize a tensor using a filler lambda mapping indices to items.'()
     {
         when : 'We instantiate a tensor using an initializer lambda...'
-            Tsr<Integer> t = Tsr.of(
+            Tensor<Integer> t = Tensor.of(
                                     DataType.of( Integer.class ),
                                     [ 2, 3 ],
                                     ( int i, int[] indices ) -> { i - 2 }
@@ -67,7 +67,7 @@ class Functional_Tensor_Spec extends Specification
             String device
     ) {
         given : 'We create 2 tensors, where one is a slice of the other.'
-            var a = Tsr.ofInts().withShape(3, 2).andFill(2, 0, 1, 1, 8, 3)
+            var a = Tensor.ofInts().withShape(3, 2).andFill(2, 0, 1, 1, 8, 3)
             var b = a[1, 0..1]
 
         expect :
@@ -96,7 +96,7 @@ class Functional_Tensor_Spec extends Specification
     def 'We can use the "filter" method as a shortcut for "stream().filter(..)".'()
     {
         when : 'We create a tensor...'
-            Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)
+            Tensor<Integer> t = Tensor.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)
 
         then : 'The filter method returns a filtered stream which we can collect!'
             t.filter({it < 3})
@@ -106,7 +106,7 @@ class Functional_Tensor_Spec extends Specification
     def 'We can use the "flatMap" method as a shortcut for "stream().flatMap(..)".'()
     {
         when : 'We create a tensor...'
-            Tsr<Integer> t = Tsr.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)
+            Tensor<Integer> t = Tensor.ofInts().withShape(3, 2).andFill(9, 1, 0, 1, -4, 8)
 
         then : 'We can use the "flatMap" method as a shortcut for "stream().flatMap(..)"'
             t.flatMap({it < 3 ? [it, it] : []})
@@ -118,7 +118,7 @@ class Functional_Tensor_Spec extends Specification
        String device
     ) {
         when : 'Instantiating a tensor using an initializer lambda...'
-            Tsr t = Tsr.of(
+            Tensor t = Tensor.of(
                     DataType.of( Double.class ),
                         [ 2, 3 ],
                         ( int i, int[] indices ) -> { (i - 2) as Double }
@@ -146,7 +146,7 @@ class Functional_Tensor_Spec extends Specification
         String device
     ) {
         given : 'We create a tensor with a single element.'
-            var t = Tsr.of(
+            var t = Tensor.of(
                                     DataType.of( Integer.class ),
                                     [ 1 ],
                                     ( int i, int[] indices ) -> { 1 }
@@ -168,7 +168,7 @@ class Functional_Tensor_Spec extends Specification
     def 'We can find both min and max items in a tensor by providing a comparator.'()
     {
         given : 'We create a tensor of chars for which we want to find a min and max values:'
-            var t = Tsr.of(Character)
+            var t = Tensor.of(Character)
                                 .withShape(2, 13)
                                 .andWhere(( int i, int[] indices ) -> { (i+65) as char } )
 

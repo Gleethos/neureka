@@ -1,7 +1,7 @@
 package ut.device
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.backend.ocl.CLBackend
@@ -60,8 +60,8 @@ class OpenCLDevice_Spec extends Specification
         given: 'The first found OpenCLDevice instance.'
             Device<?> device = Device.get('first')
         and : 'We create 2 tensors with different default devices.'
-            Tsr<?> t = Tsr.of([4, 3], 2)
-            Tsr<?> s = Tsr.of([3, 2], -1).to(device)
+            Tensor<?> t = Tensor.of([4, 3], 2)
+            Tensor<?> s = Tensor.of([3, 2], -1).to(device)
 
         expect : 'At first, both tensors are stored where we said they should be.'
             !device.has(t)
@@ -92,7 +92,7 @@ class OpenCLDevice_Spec extends Specification
             Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
 
         and : 'A new tensor.'
-            Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
+            Tensor t = Tensor.ofDoubles().withShape( 1, 2 ).all(0)
 
         expect : 'This tensor is initially of type "Double", meaning it is backed by a "double[]" array internally...'
             t.dataType == DataType.of( Double.class )
@@ -114,7 +114,7 @@ class OpenCLDevice_Spec extends Specification
     def 'We can take a look at the underlying data array of an outsourced tensor through the unsafe API.'()
     {
         given : 'A new tensor belonging to the first found OpenCLDevice instance.'
-            Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)
+            Tensor t = Tensor.ofDoubles().withShape( 1, 2 ).all(0)
         and : 'The tensor value is being fetched...'
             def data = t.mut.data.get()
 
@@ -133,7 +133,7 @@ class OpenCLDevice_Spec extends Specification
 
         given :
             def device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]
-            def someData  = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )
+            def someData  = Tensor.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )
 
         expect : 'The OpenCL device initially does not have the "dummy_kernel" we are going to create.'
             !device.hasAdHocKernel( 'dummy_kernel' )
@@ -200,11 +200,11 @@ class OpenCLDevice_Spec extends Specification
             long[] global = new long[]{ (M/WPTM), (N/WPTN) }
             //println('TSM:'+TSM+' - TSN:'+TSN+' - TSK:'+TSK+' - WPTM'+WPTM+' - WPTN:'+WPTN+' |'+local+'|'+global)
 
-            Tsr A = Tsr.of( [M,K], 0f )
-            Tsr B = Tsr.of( [K,N], 0f )
-            Tsr C = Tsr.of( [M,N], 0f )
-            A.mut[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)
-            B.mut[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)
+            Tensor A = Tensor.of( [M, K], 0f )
+            Tensor B = Tensor.of( [K, N], 0f )
+            Tensor C = Tensor.of( [M, N], 0f )
+            A.mut[0..M-1,0..K-1] = Tensor.of([M, K], 3..1)
+            B.mut[0..K-1,0..N-1] = Tensor.of([K, N], -5..0)
 
             var reference = A.matMul(B).items // CPU execution for reference!
 
@@ -350,9 +350,9 @@ class OpenCLDevice_Spec extends Specification
             var data1 = data.collect( v -> ((v+5)%11)-5 as float )
             var data2 = data.collect( v -> ((v+7)%11)-5 as float )
 
-            Tsr A = Tsr.of( [M,K], data1  )
-            Tsr B = Tsr.of( [K,N], data2  )
-            Tsr C = Tsr.of( [M,N], 0f )
+            Tensor A = Tensor.of( [M, K], data1  )
+            Tensor B = Tensor.of( [K, N], data2  )
+            Tensor C = Tensor.of( [M, N], 0f )
 
             var reference = A.matMul(B).items // CPU execution for reference!
 
@@ -437,9 +437,9 @@ class OpenCLDevice_Spec extends Specification
             var data1 = data.collect( v -> ((v+5)%11)-5 as float )
             var data2 = data.collect( v -> ((v+7)%11)-5 as float )
 
-            Tsr A = Tsr.of( [M,K], data1  )
-            Tsr B = Tsr.of( [K,N], data2  )
-            Tsr C = Tsr.of( [M,N], 0f )
+            Tensor A = Tensor.of( [M, K], data1  )
+            Tensor B = Tensor.of( [K, N], data2  )
+            Tensor C = Tensor.of( [M, N], 0f )
 
             var reference = A.matMul(B).items // CPU execution for reference!
 
@@ -512,9 +512,9 @@ class OpenCLDevice_Spec extends Specification
             def data1 = data.collect( v -> ((v+5)%11)-5 as float )
             def data2 = data.collect( v -> ((v+7)%11)-5 as float )
         and : 'We create column major based matrices!'
-            Tsr A = Tsr.of( [M,K], data1 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-            Tsr B = Tsr.of( [K,N], data2 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
-            Tsr C = Tsr.of( [M,N], 0f    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            Tensor A = Tensor.of( [M, K], data1 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            Tensor B = Tensor.of( [K, N], data2 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
+            Tensor C = Tensor.of( [M, N], 0f    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)
 
             var reference = A.matMul(B).rawData // CPU execution for reference!
 

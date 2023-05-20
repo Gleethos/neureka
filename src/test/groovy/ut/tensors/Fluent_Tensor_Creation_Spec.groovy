@@ -1,12 +1,13 @@
 package ut.tensors
 
-import neureka.Tsr
+
+import neureka.Tensor
 import neureka.dtype.DataType
 import neureka.ndim.Filler
 import spock.lang.Specification
 import spock.lang.Subject
 
-@Subject([Tsr])
+@Subject([Tensor])
 class Fluent_Tensor_Creation_Spec extends Specification
 {
     def 'Tensors can be created fluently.'(
@@ -14,8 +15,8 @@ class Fluent_Tensor_Creation_Spec extends Specification
     ) {
         reportInfo "This feature is based on a fluent builder API!"
 
-        given : 'We create a new homogeneously filled Tsr instance using the fluent builder API.'
-            Tsr<?> t = Tsr.of( type )
+        given : 'We create a new homogeneously filled Tensor instance using the fluent builder API.'
+            Tensor<?> t = Tensor.of( type )
                                  .withShape( 3, 2 )
                                  .all( value )
 
@@ -54,8 +55,8 @@ class Fluent_Tensor_Creation_Spec extends Specification
     def 'Range based tensors can be created fluently.'(
             Class<Object> type, Number from, Number to, double step, Object data
     ) {
-        given : 'We create a range based Tsr instance using the fluent builder API.'
-            Tsr<?> t = Tsr.of( type )
+        given : 'We create a range based Tensor instance using the fluent builder API.'
+            Tensor<?> t = Tensor.of( type )
                             .withShape( 3, 2 )
                             .andFillFrom( from ).to( to ).step( step )
 
@@ -97,8 +98,8 @@ class Fluent_Tensor_Creation_Spec extends Specification
             Class<Object> type, Object data, Object expected
     ) {
 
-        given : 'We create a Tsr instance by passing an array of arguments which ought to iteratively fill the instance.'
-            Tsr<?> t = Tsr.of( type )
+        given : 'We create a Tensor instance by passing an array of arguments which ought to iteratively fill the instance.'
+            Tensor<?> t = Tensor.of( type )
                             .withShape( 3, 2 )
                             .andFill( data )
 
@@ -139,8 +140,8 @@ class Fluent_Tensor_Creation_Spec extends Specification
     def 'Seed based tensors can be created fluently.'(
             Class<Object> type, Object seed, Object expected
     ) {
-        given : 'We create a Tsr instance by passing an array of arguments which ought to be populated based on a seed.'
-            Tsr<?> t = Tsr.of( type )
+        given : 'We create a Tensor instance by passing an array of arguments which ought to be populated based on a seed.'
+        Tensor<?> t = Tensor.of( type )
                             .withShape( 3, 2 )
                             .andSeed( seed )
 
@@ -185,8 +186,8 @@ class Fluent_Tensor_Creation_Spec extends Specification
     def 'Initialization lambda based tensors can be created fluently.'(
             Class<Object> type, Filler initializer, Object expected
     ) {
-        given : 'We create a Tsr instance by passing an initialization lambda which ought to iteratively fill the instance.'
-            Tsr<?> t = Tsr.of( type )
+        given : 'We create a Tensor instance by passing an initialization lambda which ought to iteratively fill the instance.'
+            Tensor<?> t = Tensor.of( type )
                             .withShape( 3, 2 )
                             .andWhere( initializer )
 
@@ -229,7 +230,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
     ) {
 
         given : 'We create a new Tsr instance using the "vector" method in the fluent builder API.'
-            Tsr<?> t = Tsr.of( type ).vector( values )
+            Tensor<?> t = Tensor.of( type ).vector( values )
 
         expect : 'This new instance will have the expected data type...'
             t.dataType == DataType.of(type)
@@ -266,7 +267,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
     ) {
 
         given : 'We create a new Tsr instance using the "scalar" method in the fluent builder API.'
-            Tsr<?> t = Tsr.of( type ).scalar( value )
+            Tensor<?> t = Tensor.of( type ).scalar( value )
 
         expect : 'This new instance will have the expected data type...'
             t.dataType == DataType.of(type)

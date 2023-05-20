@@ -41,10 +41,10 @@
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
 
-def x = Tsr.of(3.0).setRqsGradient(true)
-def b = Tsr.of(-4.0)
-def w = Tsr.of(2.0)
-def y = Tsr.of('( ( i0 + i1 ) * i2 ) ** 2', x, b, w)
+var x = Tensor.of(3.0).setRqsGradient(true)
+var b = Tensor.of(-4.0)
+var w = Tensor.of(2.0)
+var y = Tensor.of('( ( i0 + i1 ) * i2 ) ** 2', x, b, w)
 
 //   f(x) = ((x-4)*2)**2; :=>  f(3) = 4
 //   f(x)' = 8*x - 32 ;  :=>  f(3)' = -8
@@ -64,10 +64,10 @@ x.applyGradient()
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
 
-Tsr&#60;Double&#62; x = Tsr.of(3.0).setRqsGradient(true);
-Tsr&#60;Double&#62; b = Tsr.of(-4.0);
-Tsr&#60;Double&#62; w = Tsr.of(2.0);
-Tsr&#60;Double&#62; y = Tsr.of("( ( i0 + i1 ) * i2 ) ** 2", x, b, w);
+Tensor&#60;Double&#62; x = Tensor.of(3.0).setRqsGradient(true);
+Tensor&#60;Double&#62; b = Tensor.of(-4.0);
+Tensor&#60;Double&#62; w = Tensor.of(2.0);
+Tensor&#60;Double&#62; y = Tensor.of("( ( i0 + i1 ) * i2 ) ** 2", x, b, w);
 
 //   f(x) = ((x-4)*2)**2; :=>  f(3) = 4
 //   f(x)' = 8*x - 32 ;   :=>  f(3)' = -8
@@ -87,10 +87,10 @@ x.applyGradient();
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-val x : Tsr&#60;Double&#62; = Tsr.of(3.0).setRqsGradient(true)
-val b : Tsr&#60;Double&#62; = Tsr.of(-4.0)
-val w : Tsr&#60;Double&#62; = Tsr.of(2.0)
-val y : Tsr&#60;Double&#62; = Tsr.of("( ( i0 + i1 ) * i2 ) ** 2", x, b, w)
+val x : Tensor&#60;Double&#62; = Tensor.of(3.0).setRqsGradient(true)
+val b : Tensor&#60;Double&#62; = Tensor.of(-4.0)
+val w : Tensor&#60;Double&#62; = Tensor.of(2.0)
+val y : Tensor&#60;Double&#62; = Tensor.of("( ( i0 + i1 ) * i2 ) ** 2", x, b, w)
 
 //   f(x) = ((x-4)*2)**2; :=>  f(3) = 4
 //   f(x)' = 8*x - 32 ;   :=>  f(3)' = -8
@@ -155,10 +155,10 @@ x.applyGradient()
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
 
-Tsr a = Tsr.of(-3).setRqsGradient(true)
-Tsr b = Tsr.of(4).setRqsGradient(true)
-Tsr c = Tsr.of(2)
-Tsr d = Tsr.of('( relu( i0 * i1 ) + i1 ) / i2', a, b, c);
+var a = Tensor.of(-3).setRqsGradient(true)
+var b = Tensor.of(4).setRqsGradient(true)
+var c = Tensor.of(2)
+var d = Tensor.of('( relu( i0 * i1 ) + i1 ) / i2', a, b, c);
 
 //  s:>>
 //  (1):[1.94];
@@ -183,10 +183,10 @@ Tsr d = Tsr.of('( relu( i0 * i1 ) + i1 ) / i2', a, b, c);
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
 
-     Tsr&#60;Double&#62; a = Tsr.of(-3).setRqsGradient(true);
-     Tsr&#60;Double&#62; b = Tsr.of(4).setRqsGradient(true);
-     Tsr&#60;Double&#62; c = Tsr.of(2);
-     Tsr&#60;Double&#62; d = Tsr.of("( relu( i0 * i1 ) + i1 ) / i2", a, b, c);
+     Tensor&#60;Double&#62; a = Tensor.of(-3).setRqsGradient(true);
+     Tensor&#60;Double&#62; b = Tensor.of(4).setRqsGradient(true);
+     Tensor&#60;Double&#62; c = Tensor.of(2);
+     Tensor&#60;Double&#62; d = Tensor.of("( relu( i0 * i1 ) + i1 ) / i2", a, b, c);
 
 //  s:>>
 //  (1):[1.94];
@@ -211,10 +211,10 @@ Tsr d = Tsr.of('( relu( i0 * i1 ) + i1 ) / i2', a, b, c);
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-val a : Tsr&#60;Double&#62; = Tsr.of(-3).setRqsGradient(true);
-val b : Tsr&#60;Double&#62; = Tsr.of(4).setRqsGradient(true);
-val c : Tsr&#60;Double&#62; = Tsr.of(2);
-val d : Tsr&#60;Double&#62; = Tsr.of("( relu( i0 * i1 ) + i1 ) / i2", a, b, c);
+val a : Tensor&#60;Double&#62; = Tensor.of(-3).setRqsGradient(true);
+val b : Tensor&#60;Double&#62; = Tensor.of(4).setRqsGradient(true);
+val c : Tensor&#60;Double&#62; = Tensor.of(2);
+val d : Tensor&#60;Double&#62; = Tensor.of("( relu( i0 * i1 ) + i1 ) / i2", a, b, c);
 
 //  s:>>
 //  (1):[1.94];

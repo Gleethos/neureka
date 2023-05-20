@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -39,17 +39,17 @@ public class ReLayout extends AbstractOperation
             .setExecution(
                 ( caller, call ) ->
                 {
-                    Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
-                    Tsr<Object> input = (Tsr<Object>) inputs[0];
+                    Tensor<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
+                    Tensor<Object> input = (Tensor<Object>) inputs[0];
 
                     NDConfiguration.Layout originalLayout = input.getNDConf().getLayout();
                     NDConfiguration.Layout newLayout = call.getValOf( Arg.Layout.class );
 
-                    Tsr<?> reLayout = toLayout( input.deepCopy(), newLayout );
+                    Tensor<?> reLayout = toLayout( input.deepCopy(), newLayout );
 
                     return Result.of(reLayout.mut().setIsIntermediate(true))
                             .withADAction( target -> {
-                                Tsr<Object> error = (Tsr<Object>) target.error().deepCopy();
+                                Tensor<Object> error = (Tensor<Object>) target.error().deepCopy();
                                 return error.mut().toLayout(originalLayout);
                             });
                 }
@@ -62,7 +62,7 @@ public class ReLayout extends AbstractOperation
     public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }
 
 
-    public static Tsr<?> toLayout( Tsr<?> t, NDConfiguration.Layout target )
+    public static Tensor<?> toLayout(Tensor<?> t, NDConfiguration.Layout target )
     {
         if ( target == t.getNDConf().getLayout() ) return t;
         if ( target == NDConfiguration.Layout.SYMMETRIC )
@@ -93,13 +93,13 @@ public class ReLayout extends AbstractOperation
     /**
      *  Converts this tensor from column major to column major layout.
      */
-    private static void _fromCMToRM( Tsr<?> t ) {
+    private static void _fromCMToRM( Tensor<?> t ) {
         if ( t.getNDConf().isVirtual() ) {
             t.mut().setIsVirtual( false ); // We actualized the tensor before conversion!
             if ( t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )
                 return;
         }
-        Tsr<?> clone = t.deepCopy(); // A clone will have by default a row major layout.
+        Tensor<?> clone = t.deepCopy(); // A clone will have by default a row major layout.
         t.mut().setNDConf( clone.getNDConf() );
         _assignIfActual( t, () -> clone );
     }
@@ -107,7 +107,7 @@ public class ReLayout extends AbstractOperation
     /**
      *  Converts this tensor from row major to column major layout.
      */
-    private static void _fromRMToCM( Tsr<?> t ) {
+    private static void _fromRMToCM( Tensor<?> t ) {
         _assignIfActual( t, () -> Util.transpose(t).deepCopy().getMut().detach() );
         NDConfiguration old = t.getNDConf();
         int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newStridesFor(old.shape());
@@ -122,9 +122,9 @@ public class ReLayout extends AbstractOperation
      *  This will only call the supplier and copy its result into this tensor
      *  if this tensor is not virtual (meaning this is an actual tensor).
      */
-    private static void _assignIfActual( Tsr<?> t, Supplier<Tsr<?>> provider ) {
+    private static void _assignIfActual(Tensor<?> t, Supplier<Tensor<?>> provider ) {
         if ( !t.isVirtual() ) {
-            Tsr<?> toBeAssigned = provider.get();
+            Tensor<?> toBeAssigned = provider.get();
             MemUtil.keep(t, toBeAssigned,
                     () -> Neureka.get().backend().getFunction().idy().execute( t, toBeAssigned )
             );

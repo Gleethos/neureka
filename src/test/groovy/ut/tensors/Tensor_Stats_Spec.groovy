@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.math.Function
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
@@ -20,7 +20,7 @@ import spock.lang.Title
     all of which are also differential (autograd support).
 
 ''')
-@Subject([Tsr])
+@Subject([Tensor])
 class Tensor_Stats_Spec extends Specification
 {
     @IgnoreIf({ data.device == "GPU" && !Neureka.get().canAccessOpenCLDevice() })
@@ -32,7 +32,7 @@ class Tensor_Stats_Spec extends Specification
         and : 'A seed, for some variability:'
             var seed = dataType.getSimpleName().hashCode() + reduceType.hashCode()
         and :
-            var a = Tsr.of(dataType)
+            var a = Tensor.of(dataType)
                                 .withShape(19, 7)
                                 .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})
         and : 'Before applying the function, we copy the tensor to the device:'
@@ -78,7 +78,7 @@ class Tensor_Stats_Spec extends Specification
         String device
     ) {
         given : 'We create a tensor:'
-            var a = Tsr.of(Float)
+            var a = Tensor.of(Float)
                                 .withShape(19, 7)
                                 .andWhere({ i, _ -> ((31**(i+42))%301)-151})
         and : 'Before applying the function, we copy the tensor to the device:'
@@ -99,7 +99,7 @@ class Tensor_Stats_Spec extends Specification
     def 'Both the min and max operation support autograd (back-propagation).'()
     {
         given : 'We create a simple tensor of floats which requires gradients:'
-            var a = Tsr.of(-3f, 6.42f, 2.065f, -8f, 0.2, 7.666f, 3.39f).setRqsGradient(true)
+            var a = Tensor.of(-3f, 6.42f, 2.065f, -8f, 0.2, 7.666f, 3.39f).setRqsGradient(true)
         and : 'We first do a simple operation to get another tensor:'
             var b = a * 3
         and : 'We then do min and max operations as well as 2 divisions:'
@@ -116,7 +116,7 @@ class Tensor_Stats_Spec extends Specification
     def 'We can use the "sum" method to sum the items of a tensor.'()
     {
         given : 'We create a tensor:'
-            var a = Tsr.of(Float)
+            var a = Tensor.of(Float)
                                 .withShape(13, 73, 11)
                                 .andWhere({ i, _ -> ((7**i) % 11)-5})
         and : 'We sum the items of the tensor:'
@@ -132,7 +132,7 @@ class Tensor_Stats_Spec extends Specification
     def 'The sum operation support autograd (back-propagation).'()
     {
         given : 'We create a simple tensor of floats which requires gradients:'
-            var a = Tsr.of(1f, 2f, 3f, 4f).setRqsGradient(true)
+            var a = Tensor.of(1f, 2f, 3f, 4f).setRqsGradient(true)
         and : 'We first do a simple operation to get another tensor:'
             var b = a * 3
         and : 'We then do a sum operation:'
@@ -148,7 +148,7 @@ class Tensor_Stats_Spec extends Specification
     def 'A tensor can be summed alongside a specific axis.'()
     {
         given : 'A simple 2 by 3 matrix.'
-            var m = Tsr.of(-3f..5f).reshape(2, 3)
+            var m = Tensor.of(-3f..5f).reshape(2, 3)
         when : 'We create a sum for every axis...'
             var s1 = m.sum(0)
             var s2 = m.sum(1)
@@ -169,7 +169,7 @@ class Tensor_Stats_Spec extends Specification
             This operation supports autograd.
         """
         given : 'A simple 2 by 3 by 4 matrix.'
-            var m = Tsr.of(-3f..23f).reshape(2, 3, 4)
+            var m = Tensor.of(-3f..23f).reshape(2, 3, 4)
         when : 'We create a sum for every axis...'
             var s = m.sum(1, 2)
         then : 'The sums are vectors with the expected state.'

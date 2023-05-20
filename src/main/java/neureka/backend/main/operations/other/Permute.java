@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -38,7 +38,7 @@ public class Permute extends AbstractOperation
             .setExecution(
                 ( caller, call ) ->
                 {
-                    Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
+                    Tensor<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
 
                     int[] axisIndicesOrder = call.getValOf( Arg.Indices.class );
 
@@ -57,21 +57,21 @@ public class Permute extends AbstractOperation
                         axisIndicesOrder = invert( axisIndicesOrder );
 
                     return Result.of(_rearrangeAxisOf( inputs[ inputs.length - 1 ], axisIndicesOrder, true ))
-                            .withADAction( target -> new FunctionParser( Neureka.get().backend() ).parse( caller.toString(), false ).derive( new Tsr[]{ target.error() },0 ) );
+                            .withADAction( target -> new FunctionParser( Neureka.get().backend() ).parse( caller.toString(), false ).derive( new Tensor[]{ target.error() },0 ) );
                 }
             )
             .buildFunAlgorithm()
         );
     }
 
-    private static Tsr<?> _rearrangeAxisOf( Tsr<?> tensor, int[] indicesOrder, boolean newTsr )
+    private static Tensor<?> _rearrangeAxisOf(Tensor<?> tensor, int[] indicesOrder, boolean newTensor )
     {
-        Tsr<?> parent = tensor;
-        tensor = newTsr ? tensor.shallowCopy().mut().setIsIntermediate( true ) : tensor;
+        Tensor<?> parent = tensor;
+        tensor = newTensor ? tensor.shallowCopy().mut().setIsIntermediate( true ) : tensor;
         NDConfiguration newNDC = tensor.getNDConf().newReshaped( indicesOrder );
         _shapeCheck( newNDC.shape(), tensor );
         tensor.mut().setNDConf( newNDC );
-        if ( newTsr ) {
+        if ( newTensor ) {
             Relation r = parent.get( Relation.class );
             r.addPermuteRelationFor( tensor, indicesOrder );
         }
@@ -79,11 +79,11 @@ public class Permute extends AbstractOperation
     }
 
 
-    public static void makeFit( Tsr<?>[] tensors, boolean doesAD )
+    public static void makeFit(Tensor<?>[] tensors, boolean doesAD )
     {
         int largest = -1;
         int[] shape = null;
-        for ( Tsr<?> t : tensors ) if ( t.rank() > largest ) {
+        for ( Tensor<?> t : tensors ) if ( t.rank() > largest ) {
             largest = t.rank();
             shape = t.getNDConf().shape();
         }
@@ -168,7 +168,7 @@ public class Permute extends AbstractOperation
 
 
     
-    private static void _shapeCheck( int[] newShp, Tsr<?> t ) {
+    private static void _shapeCheck( int[] newShp, Tensor<?> t ) {
         if ( NDConfiguration.Utility.sizeOfShape( newShp ) != t.size() ) {
             throw new IllegalArgumentException(
                     "New shape does not match tensor size!" +

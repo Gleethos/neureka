@@ -1,6 +1,6 @@
 package neureka.devices.file;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -17,12 +17,12 @@ final class JPEGHandle extends AbstractImageFileHandle<JPEGHandle>
 
     JPEGHandle( String fileName) { this( null, fileName ); }
 
-    JPEGHandle( Tsr<Number> tensor, String filename ) {
+    JPEGHandle(Tensor<Number> tensor, String filename ) {
         super(
                 tensor,
                 filename,
                 new ImageFileType() {
-                    @Override public Tsr.ImageType imageType() { return Tsr.ImageType.BGR_3BYTE; }
+                    @Override public Tensor.ImageType imageType() { return Tensor.ImageType.BGR_3BYTE; }
 
                     @Override public String imageTypeName() { return "jpeg"; }
 

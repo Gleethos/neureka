@@ -1,17 +1,17 @@
 package neureka.backend.main.algorithms;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.math.Function;
 
 public class Util {
 
-    public static <T> Tsr<T> transpose(Tsr<T> t ) {
+    public static <T> Tensor<T> transpose(Tensor<T> t ) {
         if ( t.rank() == 1 ) return t;
         if ( t.rank() == 2 ) {
             boolean wasIntermediate = t.isIntermediate();
             t.getMut().setIsIntermediate(false);
-            Tsr<T> result = Neureka.get().backend().getFunction().transpose2D().call(t);
+            Tensor<T> result = Neureka.get().backend().getFunction().transpose2D().call(t);
             t.getMut().setIsIntermediate(wasIntermediate);
             return result;
         }

@@ -4,7 +4,7 @@ This package contains a custom
 iterator interface type whose implementations 
 are used
 for efficient general purpose iterating
-over the data which is stored in `Tsr`
+over the data which is stored in `Tensor`
 instances...
 
 Iterating over an ND-Array data structure
@@ -39,7 +39,7 @@ for the JVM difficult, but after some warmup possible.
 Take a look at this example:
 
 ```
-public void iterateOver( Tsr t, int times ) 
+public void iterateOver( Tensor t, int times ) 
 {
     NDIterator iter = NDIterator.of( t );
     double[] tensorData = (double[]) t0_drn.getData();

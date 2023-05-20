@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.scalar;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUFun;
@@ -16,7 +16,7 @@ public class CPUScalarBroadcastFunction implements ImplementationFor<CPU>
     public CPUScalarBroadcastFunction(ScalarFun fun ) { _fun = fun; }
 
     @Override
-    public Tsr<?> run(ExecutionCall<CPU> call) {
+    public Tensor<?> run(ExecutionCall<CPU> call) {
         call.getDevice()
             .getExecutor()
             .threaded(
@@ -30,8 +30,8 @@ public class CPUScalarBroadcastFunction implements ImplementationFor<CPU>
     private CPU.RangeWorkload _workloadFor(
             ExecutionCall<CPU> call
     ) {
-        Tsr<Number> t0_drn = call.input( Number.class, 0 );
-        Tsr<Number> src    = call.input( Number.class, 1 );
+        Tensor<Number> t0_drn = call.input( Number.class, 0 );
+        Tensor<Number> src    = call.input( Number.class, 1 );
 
         Class<?> typeClass = t0_drn.getItemType();
 

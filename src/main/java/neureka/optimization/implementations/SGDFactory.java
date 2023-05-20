@@ -1,6 +1,6 @@
 package neureka.optimization.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.optimization.OptimizerFactory;
 
 public class SGDFactory implements OptimizerFactory
@@ -21,7 +21,7 @@ public class SGDFactory implements OptimizerFactory
     }
 
     @Override
-    public <V extends Number> SGD<V> create(Tsr<V> target) {
+    public <V extends Number> SGD<V> create(Tensor<V> target) {
         return new SGD<>(_learningRate);
     }
 

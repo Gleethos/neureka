@@ -1,6 +1,6 @@
 package neureka.optimization.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.optimization.OptimizerFactory;
 
 public class RMSPropFactory implements OptimizerFactory
@@ -30,8 +30,8 @@ public class RMSPropFactory implements OptimizerFactory
     }
 
     @Override
-    public <V extends Number> RMSProp<V> create(Tsr<V> target) {
-        return new RMSProp<>((Tsr<Number>) target, _learningRate, _decayRate);
+    public <V extends Number> RMSProp<V> create(Tensor<V> target) {
+        return new RMSProp<>((Tensor<Number>) target, _learningRate, _decayRate);
     }
 
 }

@@ -1,7 +1,7 @@
 package neureka.backend.main.algorithms;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
@@ -20,21 +20,21 @@ public class ScalarSumAlgorithm extends AbstractFunAlgorithm
         )
         .setAutogradModeFor( call -> AutoDiffMode.BACKWARD_ONLY )
         .setExecution( (caller, call) -> {
-            Tsr<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
+            Tensor<?>[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();
             call = call.withInputs(inputs);
             if ( call.input( 0 ) == null )
                 call = call.withInputAt( 0, call.input( 1 ) );
 
-            Tsr<?> in = call.input(0);
+            Tensor<?> in = call.input(0);
             Shape originalShape = in.shape();
             Number item = (Number) in.item();
             double sum = item.doubleValue() * in.size();
-            Tsr<?> result = Tsr.of( in.itemType(), Shape.of( 1 ), sum ).to( in.getDevice() );
+            Tensor<?> result = Tensor.of( in.itemType(), Shape.of( 1 ), sum ).to( in.getDevice() );
             return Result.of( result.mut().setIsIntermediate(true) )
                     .withADAction( target -> {
-                        Tsr<Object> error = (Tsr<Object>) target.error();
+                        Tensor<Object> error = (Tensor<Object>) target.error();
                         assert error.size() == 1;
-                        return Tsr.of(error.itemType(), originalShape, error.item()).to(error.getDevice());
+                        return Tensor.of(error.itemType(), originalShape, error.item()).to(error.getDevice());
                     });
         })
         .buildFunAlgorithm();

@@ -1,6 +1,6 @@
 package neureka.math.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.main.operations.other.Permute;
@@ -87,7 +87,7 @@ public final class FunctionNode implements Function
     public List<Function> getSubFunctions() { return Arrays.asList(_src); }
 
     @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... inputs )
+    public Tensor<?> execute(Args arguments, Tensor<?>... inputs )
     {
         if ( this.isDoingAD() )
             Permute.makeFit( inputs, this.isDoingAD() ); // reshaping if needed
@@ -101,12 +101,12 @@ public final class FunctionNode implements Function
     }
 
     /**
-     *  This method tries to find a common {@link Device} for the provided {@link Tsr}s.
+     *  This method tries to find a common {@link Device} for the provided {@link Tensor}s.
      *
-     * @param inputs The input {@link Tsr}s for which a {@link Device} ought to be found and returned.
+     * @param inputs The input {@link Tensor}s for which a {@link Device} ought to be found and returned.
      * @return A found {@link Device} implementation instance.
      */
-    private Device<?> _deviceFor( Tsr<?>[] inputs )
+    private Device<?> _deviceFor( Tensor<?>[] inputs )
     {
         if ( inputs.length == 0 ) return CPU.get();
         Device<?> device = inputs[ 0 ].get( Device.class );
@@ -119,15 +119,15 @@ public final class FunctionNode implements Function
      * @param tensors An array of tensors for which the most common {@link Device} should be determined.
      * @return The most common {@link Device} among the provided tensors.
      */
-    private static boolean _shareGuestDevice( Tsr<?>[] tensors )
+    private static boolean _shareGuestDevice( Tensor<?>[] tensors )
     {
         boolean onSameGuestDevice = true;
         Device<?> device = null;
-        for ( Tsr<?> tensor : tensors ) device = ( tensor.isOutsourced() ? tensor.get( Device.class ) : device );
+        for ( Tensor<?> tensor : tensors ) device = ( tensor.isOutsourced() ? tensor.get( Device.class ) : device );
 
         if ( device != null ) {
-            for ( Tsr<?> tsr : tensors ) {
-                onSameGuestDevice = ( !tsr.isVirtual() && device == tsr.get(Device.class) ) && onSameGuestDevice;
+            for ( Tensor<?> tensor : tensors ) {
+                onSameGuestDevice = ( !tensor.isVirtual() && device == tensor.get(Device.class) ) && onSameGuestDevice;
             }
         }
         else onSameGuestDevice = false;

@@ -1,7 +1,7 @@
 package neureka.devices.opencl.utility;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -78,13 +78,13 @@ public final class CLFunctionCompiler
                                     outerCaller, outerCall,
                                     call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call )
                                 ))
-                                .withAutoDiff((caller, call) -> ADAction.of( target -> Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) ))
+                                .withAutoDiff((caller, call) -> ADAction.of( target -> Function.of(caller.toString(), false).derive(new Tensor[]{target.error()}, 0) ))
                         )
                         .setCallPreparation(
                             call -> {
                                 if ( call.input( 0 ) == null ) // Creating a new tensor:
                                 {
-                                    Tsr<Number> output = Tsr.like( (Tsr<Number>) call.input( 1 ) ).all(0);
+                                    Tensor<Number> output = Tensor.like( (Tensor<Number>) call.input( 1 ) ).all(0);
                                     output.getMut().setIsVirtual( false );
                                     call.getDeviceFor(Number.class).store(output);
                                     call = call.withInputAt( 0, output );
@@ -98,9 +98,9 @@ public final class CLFunctionCompiler
     }
 
 
-    private Tsr<?> _adHocKernelFor( ExecutionCall<?> call ) {
+    private Tensor<?> _adHocKernelFor(ExecutionCall<?> call ) {
 
-        List<Tsr<Number>> args = Arrays.stream( _argPointer )
+        List<Tensor<Number>> args = Arrays.stream( _argPointer )
                                     .mapToObj( p -> call.input( p + 1 ).getMut().upcast(Number.class) )
                                     .collect(Collectors.toList());
 
@@ -198,7 +198,7 @@ public final class CLFunctionCompiler
         return call.input(0);
     }
 
-    private static String _clTypeOf( Tsr<?> tensor ) {
+    private static String _clTypeOf( Tensor<?> tensor ) {
         DataType<?> dtype = tensor.getDataType();
         java.util.function.Function<Class<?>, String> formatter = type -> type.getSimpleName()
                                                                                  .toLowerCase()

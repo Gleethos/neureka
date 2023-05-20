@@ -38,7 +38,7 @@ package neureka.view;
 
 import neureka.Nda;
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.GraphNode;
 import neureka.framing.NDFrame;
 import neureka.ndim.config.NDConfiguration;
@@ -80,7 +80,7 @@ public final class NdaAsString
     private final boolean _preferLeftPadding = true;
 
     private final int[]   _shape;
-    private final Tsr<?>  _tensor;
+    private final Tensor<?> _tensor;
     private final boolean _legacy;
 
     private final NDPrintSettings _config;
@@ -93,7 +93,7 @@ public final class NdaAsString
     public static Builder representing( Nda<?> t ) {
         return new Builder() {
             /**
-             * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+             * @param configMap The configuration map used as basis for turning the wrapped {@link Tensor} to a {@link String}.
              * @return A new {@link NdaAsString} based on the provided configuration.
              */
             @Override
@@ -101,7 +101,7 @@ public final class NdaAsString
                 return new NdaAsString( t, configMap );
             }
             /**
-             * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+             * @param config The configuration used as basis for turning the wrapped {@link Tensor} to a {@link String}.
              * @return A new {@link NdaAsString} based on the provided configuration.
              */
             @Override
@@ -122,7 +122,7 @@ public final class NdaAsString
             _shape = new int[0];
 
         _config = settings.clone();
-        _tensor = (Tsr<?>) tensor; // There is only one implementation for both Tsr and Nda...
+        _tensor = (Tensor<?>) tensor; // There is only one implementation for both Tensor and Nda...
 
         _isCompact          = _config.getIsScientific() ;
         _rowLimit           = _config.getRowLimit() ;
@@ -296,7 +296,7 @@ public final class NdaAsString
 
         if ( _hasGradient && ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {
             _$( ":g" );
-            Tsr<?> gradient = _tensor.gradient().orElse(null);
+            Tensor<?> gradient = _tensor.gradient().orElse(null);
             if ( gradient != null )
                 _$(
                     gradient.toString(
@@ -544,13 +544,13 @@ public final class NdaAsString
      */
     public interface Builder {
         /**
-         * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+         * @param configMap The configuration map used as basis for turning the wrapped {@link Tensor} to a {@link String}.
          * @return A new {@link NdaAsString} based on the provided configuration.
          */
         NdaAsString withConfig( NDPrintSettings configMap );
 
         /**
-         * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+         * @param config The configuration used as basis for turning the wrapped {@link Tensor} to a {@link String}.
          * @return A new {@link NdaAsString} based on the provided configuration.
          */
         NdaAsString withConfig( String config );

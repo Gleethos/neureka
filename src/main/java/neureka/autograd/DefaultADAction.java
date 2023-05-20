@@ -1,7 +1,7 @@
 package neureka.autograd;
 
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 import java.util.Optional;
 
@@ -28,12 +28,12 @@ final class DefaultADAction implements ADAction
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
     private final ADAction _action;
-    private final Tsr<?> _partialDerivative;
+    private final Tensor<?> _partialDerivative;
 
-    DefaultADAction( ADAction action, Tsr<?> derivative ) { _action = action; _partialDerivative = derivative; }
+    DefaultADAction( ADAction action, Tensor<?> derivative ) { _action = action; _partialDerivative = derivative; }
 
     @Override
-    public Tsr<?> act( ADTarget<?> target ) {
+    public Tensor<?> act(ADTarget<?> target ) {
         if ( _action == null )
             throw new IllegalStateException(
                 "Cannot perform propagation because this "+ADAction.class.getSimpleName()+" does have an auto-diff implementation."
@@ -42,11 +42,11 @@ final class DefaultADAction implements ADAction
     }
 
     @Override
-    public Optional<Tsr<?>> partialDerivative() {
+    public Optional<Tensor<?>> partialDerivative() {
         if ( _partialDerivative != null )
             return Optional.of( _partialDerivative );
 
-        Tsr<?>[] captured = _action.findCaptured();
+        Tensor<?>[] captured = _action.findCaptured();
         if ( captured.length > 0 )
             return Optional.of(captured[captured.length - 1]);
 

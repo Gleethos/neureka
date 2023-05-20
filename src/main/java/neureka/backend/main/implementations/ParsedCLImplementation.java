@@ -99,8 +99,8 @@ public class ParsedCLImplementation extends CLImplementation
             convcode = (isAdvanced) ? asAdvanced.apply(convcode) : convcode;
             code.put(preName + n, convcode);
         };
-        //Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-        //Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
+        //Tensor t0_origin, Tensor t1_handle, Tensor t2_drain ... when d>=0
+        //Tensor t0_drain,  Tensor t1_src1,   Tensor t2_src2
         //drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
         //default:  src1 o src2 -> drain
         //inverse:  src1/fdrn <-src2 <- drain

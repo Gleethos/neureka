@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -35,8 +35,8 @@ public class Cat extends AbstractOperation
             .withName("concat")
             .setIsSuitableFor( call -> {
                 Integer dim = call.getValOf(Arg.Axis.class);
-                Tsr<?> a = call.input(0);
-                Tsr<?> b = call.input(1);
+                Tensor<?> a = call.input(0);
+                Tensor<?> b = call.input(1);
                 if ( a.rank() != b.rank() ) return SuitabilityPredicate.UNSUITABLE;
                 for ( int i = 0; i < a.rank(); i++ )
                     if ( i != dim && a.shape(i) != b.shape(i) )
@@ -52,7 +52,7 @@ public class Cat extends AbstractOperation
                     Integer dim = call.getValOf(Arg.Axis.class);
 
                     // First let's find out the shape of the concatenated result:
-                    Tsr<?>[] inputs = call.inputs();
+                    Tensor<?>[] inputs = call.inputs();
                     List<Integer> axes = Arrays.stream(inputs).map( t -> t.shape(dim) ).collect(Collectors.toList());
                     int newAxisSize = axes.stream().mapToInt( i -> i ).sum();
                     List<Integer> newShape = new ArrayList<>();
@@ -60,7 +60,7 @@ public class Cat extends AbstractOperation
                         newShape.add( i == dim ? newAxisSize : call.input(0).shape(i) );
 
                     // We create the output tensor:
-                    Tsr<?> c = Tsr.of( call.input(0).getItemType(), newShape, 0 );
+                    Tensor<?> c = Tensor.of( call.input(0).getItemType(), newShape, 0 );
 
                     // We make the axes list entries cumulative:
                     for ( int i = 0; i < axes.size(); i++ )
@@ -70,7 +70,7 @@ public class Cat extends AbstractOperation
                     for ( int i = 0; i < inputs.length; i++ ) {
                         int start = i == 0 ? 0 : axes.get( i - 1 );
                         int end = ( axes.get( i ) - 1 );
-                        Tsr<?> slice = c.slice().axis( dim ).from( start ).to( end ).detached();
+                        Tensor<?> slice = c.slice().axis( dim ).from( start ).to( end ).detached();
                         Neureka.get().backend().getFunction().idy().execute( slice, call.input( i ) );
                     }
                     c.mut().setIsIntermediate(true);
@@ -104,7 +104,7 @@ public class Cat extends AbstractOperation
         return super.execute( caller, call );
     }
 
-    private void _catFrames( Tsr<?>[] inputs, Tsr<?> concat, int dim )
+    private void _catFrames(Tensor<?>[] inputs, Tensor<?> concat, int dim )
     {
         boolean inputsAreFramed = Arrays.stream(inputs).anyMatch( t -> t.frame().isPresent() );
 
@@ -112,7 +112,7 @@ public class Cat extends AbstractOperation
 
         String label =
                 Arrays.stream(inputs)
-                .map(Tsr::frame)
+                .map(Tensor::frame)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(NDFrame::getLabel)
@@ -122,7 +122,7 @@ public class Cat extends AbstractOperation
 
         List<Map<Object, List<Object>>> labels =
                                             Arrays.stream(inputs)
-                                                    .map(Tsr::frame)
+                                                    .map(Tensor::frame)
                                                     .filter(Optional::isPresent)
                                                     .map(Optional::get)
                                                     .map(NDFrame::getState)

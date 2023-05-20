@@ -1,7 +1,7 @@
 package neureka.devices.file;
 
 import neureka.Data;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.devices.Storage;
 import neureka.devices.host.CPU;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
 
     public boolean isEmpty() { return _size == 0; }
 
-    public boolean contains( Tsr<V> o ) {
+    public boolean contains( Tensor<V> o ) {
         throw new IllegalStateException("Not supported!");
     }
 
@@ -110,7 +110,7 @@ abstract class AbstractFileHandle<C, V> implements FileHandle<C, V>
     }
 
     @Override
-    public Storage<V> restore( Tsr<V> tensor ) {
+    public Storage<V> restore( Tensor<V> tensor ) {
         try {
             Object array = _loadData();
             Data<V> data;

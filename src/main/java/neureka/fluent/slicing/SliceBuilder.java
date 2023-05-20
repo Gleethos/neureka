@@ -1,10 +1,10 @@
 package neureka.fluent.slicing;
 
-import neureka.Tsr;
+import neureka.Tensor;
+import neureka.fluent.slicing.states.AxisOrGetTensor;
+import neureka.fluent.slicing.states.FromOrAtTensor;
 import neureka.math.args.Arg;
-import neureka.fluent.slicing.states.AxisOrGetTsr;
 import neureka.fluent.slicing.states.FromOrAt;
-import neureka.fluent.slicing.states.FromOrAtTsr;
 
 import java.util.function.Function;
 
@@ -12,7 +12,7 @@ import java.util.function.Function;
 /**
  *  This class is the heart of the slice builder API, collecting range configurations by
  *  exposing an API consisting of multiple interfaces which form a call state transition graph.
- *  Instances of this class do not perform the actual slicing of a {@link Tsr} instance themselves,
+ *  Instances of this class do not perform the actual slicing of a {@link Tensor} instance themselves,
  *  however instead they merely serve as collectors of slice configuration data.
  *  The API exposed by the {@link SliceBuilder} uses method chaining as well as a set of implemented interfaces
  *  which reference themselves in the form of the return types defined by the method signatures of said interfaces.
@@ -21,13 +21,13 @@ import java.util.function.Function;
  *
  * @param <V> The type of the value(s) held by the tensor which ought to be sliced with the help of this builder.
  */
-public class SliceBuilder<V> implements AxisOrGetTsr<V>
+public class SliceBuilder<V> implements AxisOrGetTensor<V>
 {
     private interface CreationCallback<V> {
-        Tsr<V> sliceOf(int[] newShape, int[] newOffset, int[] newSpread, boolean autograd);
+        Tensor<V> sliceOf(int[] newShape, int[] newOffset, int[] newSpread, boolean autograd);
     }
 
-    private final Function<Boolean, Tsr<V>> _create;
+    private final Function<Boolean, Tensor<V>> _create;
     private final AxisSliceBuilder<V>[]  _axisSliceBuilders;
 
     /**
@@ -36,16 +36,16 @@ public class SliceBuilder<V> implements AxisOrGetTsr<V>
      *  The actual slicing will be performed by the {@link CreationCallback} passed
      *  to this constructor.
      *
-     * @param toBeSliced The {@link Tsr} instance which ought to be sliced.
+     * @param toBeSliced The {@link Tensor} instance which ought to be sliced.
      */
-    public SliceBuilder( Tsr<V> toBeSliced )
+    public SliceBuilder( Tensor<V> toBeSliced )
     {
         CreationCallback<V> sliceCreator = // A callback lambda which receives the final slice configuration to perform the actual slicing.
         ( int[] newShape, int[] newOffset, int[] newSpread, boolean allowAutograd )->
         {
             boolean isIntermediate = toBeSliced.isIntermediate();
             toBeSliced.getMut().setIsIntermediate(false); // To avoid deletion!
-            Tsr<V> slice = neureka.math.Function.of("slice(I[0])", allowAutograd)
+            Tensor<V> slice = neureka.math.Function.of("slice(I[0])", allowAutograd)
                                 .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
                                 .call(toBeSliced);
 
@@ -97,7 +97,7 @@ public class SliceBuilder<V> implements AxisOrGetTsr<V>
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link FromOrAt} interface.
      */
     @Override
-    public FromOrAtTsr<V> axis(int axis ) {
+    public FromOrAtTensor<V> axis(int axis ) {
         if ( axis >= _axisSliceBuilders.length ) throw new IllegalArgumentException("");
         return _axisSliceBuilders[ axis ];
     }
@@ -110,12 +110,12 @@ public class SliceBuilder<V> implements AxisOrGetTsr<V>
      * @return The slice of the tensor supplied to the constructor of this {@link SliceBuilder} instance.
      */
     @Override
-    public Tsr<V> get() {
+    public Tensor<V> get() {
         return _create.apply(true);
     }
 
     @Override
-    public Tsr<V> detached() {
+    public Tensor<V> detached() {
         return _create.apply(false);
     }
 

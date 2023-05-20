@@ -2,7 +2,7 @@ package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -47,8 +47,8 @@ public class Slice extends AbstractOperation
                     int[] newShape    = call.getValOf(Arg.Shape.class);
                     int[] newOffset   = call.getValOf(Arg.Offset.class);
                     int[] newSpread   = call.getValOf(Arg.Stride.class);
-                    Tsr<Object> input = (Tsr<Object>) call.input(0);
-                    Tsr<?> subset     = _slice(newShape, newOffset, newSpread, input);
+                    Tensor<Object> input = (Tensor<Object>) call.input(0);
+                    Tensor<?> subset     = _slice(newShape, newOffset, newSpread, input);
                     //---
                     Class<?>       typeClass = input.itemType();
                     Shape          shape = input.shape();
@@ -59,10 +59,10 @@ public class Slice extends AbstractOperation
                     return
                         Result.of(subset.mut().setIsIntermediate(true))
                             .withADAction( t -> {
-                                Tsr<Object> newError = ElemWiseUtil.newTsrLike((Class<Object>) typeClass, shape, isOutsourced, device, 0);
+                                Tensor<Object> newError = ElemWiseUtil.newTensorLike((Class<Object>) typeClass, shape, isOutsourced, device, 0);
                                 boolean isIntermediate = newError.isIntermediate();
                                 newError.mut().setIsIntermediate(false); // To avoid deletion!
-                                Tsr<Object> slice = Function.of("slice(I[0])", false)
+                                Tensor<Object> slice = Function.of("slice(I[0])", false)
                                                     .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))
                                                     .call(newError);
 
@@ -77,11 +77,11 @@ public class Slice extends AbstractOperation
         );
     }
 
-    private static Tsr<?> _slice(
+    private static Tensor<?> _slice(
         int[] newShape,
         int[] newOffset,
         int[] newSpread,
-        Tsr<Object> input
+        Tensor<Object> input
     ) {
         input.mut().setIsVirtual( false );
         int[] newStrides    = input.getNDConf().strides();
@@ -94,8 +94,8 @@ public class Slice extends AbstractOperation
             newOffset[ i ] = newOffset[ i ] + input.getNDConf().offset( i ); // Offset is being inherited!
 
         Relation<?> inputRelation = input.get( Relation.class );
-        Tsr<?> rootTensor   = ( input.isSlice() ? inputRelation.findRootTensor().orElseThrow(IllegalStateException::new) : input );
-        Tsr<?> parentTensor = ( input.isSlice() ? inputRelation.getParent().orElseThrow(IllegalStateException::new)      : input );
+        Tensor<?> rootTensor   = ( input.isSlice() ? inputRelation.findRootTensor().orElseThrow(IllegalStateException::new) : input );
+        Tensor<?> parentTensor = ( input.isSlice() ? inputRelation.getParent().orElseThrow(IllegalStateException::new)      : input );
         /*
             The following code check the validity of the slice shape ranges with
             respect to the 'parentTensor' of this new slice.
@@ -131,7 +131,7 @@ public class Slice extends AbstractOperation
                 This is simply the 'permute array' which has been recorded inside the 'Relation' component
                 by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
 
-                The following would occur when : "Tsr.of(...).T().getAt(...);"
+                The following would occur when : "Tensor.of(...).T().getAt(...);"
                 Transposing a tensor performs an inline reshaping of an identical
                 slice of the original tensor! Then again slicing this tensor
                 via the 'getAt(...)' method leads us to a situation where
@@ -162,8 +162,8 @@ public class Slice extends AbstractOperation
             );
         }
 
-        Tsr<Object> subset =
-                        Tsr.of(
+        Tensor<Object> subset =
+                        Tensor.of(
                             input.getDataType(),
                             NDConstructor.of( newShape, newStrides, newIndicesMap, newSpread, newOffset ),
                             input.mut().getData()
@@ -183,7 +183,7 @@ public class Slice extends AbstractOperation
     }
 
     private void _sliceFrame(
-        Tsr<?> input, Tsr<?> subset, int[] newShape, int[] newOffset, int[] newSpread
+            Tensor<?> input, Tensor<?> subset, int[] newShape, int[] newOffset, int[] newSpread
     ) {
         // Now if the parent tensor has a name and or axes labels we carry them over to the subset:
         String label = input.label();

@@ -1,6 +1,6 @@
 package neureka.backend.main.algorithms;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -27,13 +27,13 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                     return SuitabilityPredicate.UNSUITABLE;
 
                 int maxRank = 0;
-                for ( Tsr<?> t : call.inputs() )
+                for ( Tensor<?> t : call.inputs() )
                     if ( t != null && t.rank() > maxRank ) maxRank = t.rank();
 
                 for ( int i = 0; i < maxRank; i++ )
                 {
                     int currentDim = -1;
-                    for( Tsr<?> t : call.inputs() )
+                    for( Tensor<?> t : call.inputs() )
                     {
                         if ( t != null && i < t.rank() ) {
                             if ( currentDim == -1 ) currentDim = t.shape( i );
@@ -66,9 +66,9 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                     call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()
                 )
                 {
-                    Tsr<?>[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };
+                    Tensor<?>[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };
                     Permute.makeFit( inputs, true );
-                    inputs = new Tsr[]{ null, inputs[0], inputs[1] };
+                    inputs = new Tensor[]{ null, inputs[0], inputs[1] };
                     call = call.withInputs( inputs );
                 }
 
@@ -88,7 +88,7 @@ public final class Broadcast extends AbstractFunDeviceAlgorithm<Broadcast>
                         outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );
 
                     Class<Object> type = (Class<Object>) call.input(  1 ).getItemType();
-                    Tsr<?> output = Tsr.of(type).withShape(outShape).all( 0.0 ).mut().setIsIntermediate( true );
+                    Tensor<?> output = Tensor.of(type).withShape(outShape).all( 0.0 ).mut().setIsIntermediate( true );
                     output.mut().setIsVirtual( false );
                     device.store( output );
                     call = call.withInputAt( 0, output );

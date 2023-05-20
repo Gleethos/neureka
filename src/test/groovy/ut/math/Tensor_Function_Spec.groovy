@@ -1,7 +1,7 @@
 package ut.math
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.ocl.CLBackend
 import neureka.devices.Device
 import neureka.math.Function
@@ -22,7 +22,7 @@ import java.util.stream.Stream
     all of the operations on the tensors for you.
 
 ''')
-@Subject([Tsr, Function])
+@Subject([Tensor, Function])
 class Tensor_Function_Spec extends Specification
 {
     def setupSpec()
@@ -55,7 +55,7 @@ class Tensor_Function_Spec extends Specification
     def 'The tensor API has built-in methods for applying functions.'()
     {
         given : 'A simple scalar tensor containing the number "4".'
-            var x = Tsr.of(4d)
+            var x = Tensor.of(4d)
 
         when: 'We use the following methods...'
             var sig  = x.sig()
@@ -93,7 +93,7 @@ class Tensor_Function_Spec extends Specification
     def 'The softmax function can be applied to tensors with more than one dimension.'()
     {
         given : 'A tensor with more than one dimension.'
-            var x = Tsr.of( -3f..7f ).reshape( 2, 3 )
+            var x = Tensor.of( -3f..7f ).reshape( 2, 3 )
 
         when: 'We apply the softmax function to it.'
             var softmax = x.softmax()
@@ -107,7 +107,7 @@ class Tensor_Function_Spec extends Specification
     def 'The softmax can be calculated for a particular axis.'()
     {
         given : 'A tensor with more than one dimension.'
-            var x = Tsr.of( -3f..7f ).reshape( 2, 3 )
+            var x = Tensor.of( -3f..7f ).reshape( 2, 3 )
 
         when: 'We apply the softmax function to it.'
             var softmax = x.softmax(1)
@@ -128,7 +128,7 @@ class Tensor_Function_Spec extends Specification
     def 'The softmax can be calculated alongside multiple axes.'()
     {
         given : 'A simple 2 by 3 by 4 matrix.'
-            var m = Tsr.of(-79f..43f).reshape(2, 3, 2, 4)
+            var m = Tensor.of(-79f..43f).reshape(2, 3, 2, 4)
         when : 'We create a softmax for every axis...'
             var s = m.softmax(1, 2)
         then : 'The resulting tensor will have the expected shape.'
@@ -144,7 +144,7 @@ class Tensor_Function_Spec extends Specification
         and : 'Based on that we instantiate the SGD optimization inline function.'
             var fun = Function.of("I[0] <- (I[0] * -$learningRate)")
         and : 'A tensor, which will be treated as gradient.'
-            var g = Tsr.of(1.0)
+            var g = Tensor.of(1.0)
 
         when : 'We apply the function to the gradient...'
             var result = fun(g)
@@ -158,7 +158,7 @@ class Tensor_Function_Spec extends Specification
 
     @IgnoreIf({ data.device == 'GPU' && !Neureka.get().canAccessOpenCLDevice() }) // We need to assure that this system supports OpenCL!
     def 'Tensor results of various Function instances return expected results.'(
-            String equation, List<Tsr> inputs, Integer index, Map<List<Integer>,List<Double>> expected
+            String equation, List<Tensor> inputs, Integer index, Map<List<Integer>,List<Double>> expected
     ) {
         given : 'We set the experimental "autoConvertToFloat" flag to true.'
             Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })
@@ -169,7 +169,7 @@ class Tensor_Function_Spec extends Specification
             inputs.each {it.to(Device.get(device))}
 
         and : 'The result is being calculated by invoking the Function instance.'
-            Tsr<?> result = ( index != null ? f.derive( inputs, index ) : f.call( inputs ) )
+            Tensor<?> result = ( index != null ? f.derive( inputs, index ) : f.call( inputs ) )
             List<Double> value = result.getItemsAs(double[].class) as List<Double>
 
         expect : "The calculated result ${result} should be (ruffly) equal to expected ${expected}."
@@ -181,49 +181,49 @@ class Tensor_Function_Spec extends Specification
         // Todo: unrecognized operation throws exception that is not recursion error
         where :
             device | equation                         | inputs                                                           | index || expected
-            'CPU'  | "quad(sumJs(Ij))"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -5d])]                    | null  || [[2]:[16d, 9d]]
-            'GPU'  | "quad(sumJs(Ij))"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -5d])]                    | null  || [[2]:[16d, 9d]]
-            'CPU'  | "tanh(sumJs(Ij))"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.9993292997390673, -0.9640275800758169]]
-            'GPU'  | "tanh(sumJs(Ij))"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.9993293285369873, -0.9640275835990906]]
-            'CPU'  | "tanh(i0*i1)"                    | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.0295981114963193, -1.8005623907413337E-6]]
-            'GPU'  | "tanh(i0*i1)"                    | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.029597997665405273, -1.9073486328125E-6]]
-            'CPU'  | "fast_tanh(i0*i1)"               | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.9486832980505138, -0.9922778767136677]]
-            'CPU'  | "fast_tanh(i0*i1)"               | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.09486832980505137, -0.00763290674395129]]
-            'CPU'  | "softsign(i0*i1)"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.75, -0.8888888888888888]]
-            'CPU'  | "softsign(i0*i1)"                | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[0.1875, -0.04938271604938271]]
-            'CPU'  | "fast_gaus(i0/i1)"               | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.8999999999999999, 0.8]]
-            'CPU'  | "fast_gaus(i0/i1)"               | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | 0     || [[2]:[-0.18, -0.16]]
-            'CPU'  | "softplus(prodJs(Ij-2))"         | [Tsr.of([2],[1d, 2d]), Tsr.of([2],[3d, -4d])]                    | null  || [[2]:[0.31326168751822286, 0.6931471805599453]]
-            'CPU'  | "softplus([-1, 0, -2, -2](Ij-2))"| [Tsr.of([2, 4], [10d,12d,16d,21d,33d,66d,222d,15d])]             | null  || [[1,2,2,2]:[8.000335406372896, 10.000045398899218, 14.000000831528373, 19.000000005602796, 31.000000000000036, 64.0, 220.0, 13.000002260326852]]
-            'CPU'  | "softplus(i0*i1)*i2"             | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[-0.0018221023888012908, 0.2845552390654007]]
-            'CPU'  | "sumJs(ij**3)"                   | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| null  || [[2]:[(-1+7*7*7+2*2*2), (3*3*3+-1+2*2*2)]]
-            'CPU'  | "sumJs(ij**3)"                   | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[3*Math.pow(7, 2), 3*Math.pow(-1, 2)]]
-            'CPU'  | "sumJs(ij*ij)"                   | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| null  || [[2]:[(1+7*7+2*2), (3*3+1+2*2)]]
-            'CPU'  | "sumJs(ij*ij)"                   | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[2*Math.pow(7, 1), 2*Math.pow(-1, 1)]]
-            'CPU'  | "sumJs(ij/2)"                    | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| null  || [[2]:[4,2]]
-            'CPU'  | "sumJs(ij/2)"                    | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[0.5, 0.5]]
-            'CPU'  | "sumJs(ij+2)"                    | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| null  || [[2]:[(1+9+4), (5+1+4)]]
-            'CPU'  | "sumJs(ij+2)"                    | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[1.0, 1.0]]
-            'CPU'  | "sumJs(ij-2)"                    | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| null  || [[2]:[(-3+5+0), (1+-3+0)]]
-            'CPU'  | "sumJs(ij-2)"                    | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[1.0, 1.0]]
-            'CPU'  | "sumJs(sumJs(ij))"               | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| null  || [[2]:[8.0*3.0, 4.0*3.0]]
-            'CPU'  | "sumJs(sumJs(ij))"               | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[3.0, 3.0]]
-            'CPU'  | "sumJs(prodJs(ij))"              | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| null  || [[2]:[(-14)*3, (-6)*3]]
-            'CPU'  | "(prodJs(ij))"                   | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[-2.0, 6.0]]
-            'CPU'  | "-(prodJs(ij))%3"                | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| null  || [[2]:[-(-14)%3, -0.0]]
-            'CPU'  | "sumJs(prodJs(ij))"              | [Tsr.of([2],[-1d,3d]),Tsr.of([2],[7d, -1d]), Tsr.of([2],[2d,2d])]| 1     || [[2]:[-2.0*3, 6.0*3]]
-            'CPU'  | "relu(I[0])"                     | [Tsr.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                     | null  || [[2,3]:[-0.04, 7.0, -0.01, 2.0, 3.0, 8.0]]
-            'CPU'  | "relu(I[0])"                     | [Tsr.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                     |  0    || [[2,3]:[0.01, 1.0, 0.01, 1.0, 1.0, 1.0]]
-            'CPU'  | "quad(I[0])"                     | [Tsr.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                     | null  || [[2,3]:[16.0, 49.0, 1.0, 4.0, 9.0, 64.0]]
-            'CPU'  | "quad(I[0])"                     | [Tsr.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                     |  0    || [[2,3]:[-8.0, 14.0, -2.0, 4.0, 6.0, 16.0]]
-            'CPU'  | "abs(I[0])"                      | [Tsr.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                     | null  || [[2,3]:[4.0, 7.0, 1.0, 2.0, 3.0, 8.0]]
-            'CPU'  | "abs(I[0])"                      | [Tsr.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                     |  0    || [[2,3]:[-1.0, 1.0, -1.0, 1.0, 1.0, 1.0]]
-            'CPU'  | "dimtrim(I[0])"                  | [Tsr.of([1, 3, 1],    [ 1d, 2d, 3d])]                            | null  || [[3]:[1, 2, 3]]
-            'CPU'  | "dimtrim(I[0])"                  | [Tsr.of([1, 3, 1, 1], [-4d, 2d, 5d])]                            | null  || [[3]:[-4, 2, 5]]
-            'CPU'  | "ln(i0)"                         | [Tsr.of(3d)]                                                     | null  || [[1]:[Math.log(3)]]
-            'CPU'  | "ln(i0)"                         | [Tsr.of(3d)]                                                     |  0    || [[1]:[0.3333333333333333]]
-            'CPU'  | "selu(I[0])"                     | [Tsr.ofDoubles().withShape(3).all(-1)]                           | null  || [[3]:[-1.1113307378125625, -1.1113307378125625, -1.1113307378125625]]
-            'GPU'  | "selu(I[0])"                     | [Tsr.ofDoubles().withShape(3).all(-1)]                           | null  || [[3]:[-1.1113307476043701, -1.1113307476043701, -1.1113307476043701]]
+            'CPU'  | "quad(sumJs(Ij))"                | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -5d])]                           | null || [[2]:[16d, 9d]]
+            'GPU'  | "quad(sumJs(Ij))"                | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -5d])]                           | null || [[2]:[16d, 9d]]
+            'CPU'  | "tanh(sumJs(Ij))"                | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | null || [[2]:[0.9993292997390673, -0.9640275800758169]]
+            'GPU'  | "tanh(sumJs(Ij))"                | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | null || [[2]:[0.9993293285369873, -0.9640275835990906]]
+            'CPU'  | "tanh(i0*i1)"                    | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | 0    || [[2]:[0.0295981114963193, -1.8005623907413337E-6]]
+            'GPU'  | "tanh(i0*i1)"                    | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | 0    || [[2]:[0.029597997665405273, -1.9073486328125E-6]]
+            'CPU'  | "fast_tanh(i0*i1)"               | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | null || [[2]:[0.9486832980505138, -0.9922778767136677]]
+            'CPU'  | "fast_tanh(i0*i1)"               | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | 0    || [[2]:[0.09486832980505137, -0.00763290674395129]]
+            'CPU'  | "softsign(i0*i1)"                | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | null || [[2]:[0.75, -0.8888888888888888]]
+            'CPU'  | "softsign(i0*i1)"                | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | 0    || [[2]:[0.1875, -0.04938271604938271]]
+            'CPU'  | "fast_gaus(i0/i1)"               | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | null || [[2]:[0.8999999999999999, 0.8]]
+            'CPU'  | "fast_gaus(i0/i1)"               | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | 0    || [[2]:[-0.18, -0.16]]
+            'CPU'  | "softplus(prodJs(Ij-2))"         | [Tensor.of([2],[1d, 2d]), Tensor.of([2],[3d, -4d])]                           | null || [[2]:[0.31326168751822286, 0.6931471805599453]]
+            'CPU'  | "softplus([-1, 0, -2, -2](Ij-2))"| [Tensor.of([2, 4], [10d, 12d, 16d, 21d, 33d, 66d, 222d, 15d])]                | null || [[1, 2, 2, 2]:[8.000335406372896, 10.000045398899218, 14.000000831528373, 19.000000005602796, 31.000000000000036, 64.0, 220.0, 13.000002260326852]]
+            'CPU'  | "softplus(i0*i1)*i2"             | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | 1    || [[2]:[-0.0018221023888012908, 0.2845552390654007]]
+            'CPU'  | "sumJs(ij**3)"                   | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | null || [[2]:[(-1+7*7*7+2*2*2), (3*3*3+-1+2*2*2)]]
+            'CPU'  | "sumJs(ij**3)"                   | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | 1    || [[2]:[3*Math.pow(7, 2), 3*Math.pow(-1, 2)]]
+            'CPU'  | "sumJs(ij*ij)"                   | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | null || [[2]:[(1+7*7+2*2), (3*3+1+2*2)]]
+            'CPU'  | "sumJs(ij*ij)"                   | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | 1    || [[2]:[2*Math.pow(7, 1), 2*Math.pow(-1, 1)]]
+            'CPU'  | "sumJs(ij/2)"                    | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | null || [[2]:[4, 2]]
+            'CPU'  | "sumJs(ij/2)"                    | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | 1    || [[2]:[0.5, 0.5]]
+            'CPU'  | "sumJs(ij+2)"                    | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | null || [[2]:[(1+9+4), (5+1+4)]]
+            'CPU'  | "sumJs(ij+2)"                    | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | 1    || [[2]:[1.0, 1.0]]
+            'CPU'  | "sumJs(ij-2)"                    | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | null || [[2]:[(-3+5+0), (1+-3+0)]]
+            'CPU'  | "sumJs(ij-2)"                    | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | 1    || [[2]:[1.0, 1.0]]
+            'CPU'  | "sumJs(sumJs(ij))"               | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | null || [[2]:[8.0*3.0, 4.0*3.0]]
+            'CPU'  | "sumJs(sumJs(ij))"               | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | 1    || [[2]:[3.0, 3.0]]
+            'CPU'  | "sumJs(prodJs(ij))"              | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | null || [[2]:[(-14)*3, (-6)*3]]
+            'CPU'  | "(prodJs(ij))"                   | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | 1    || [[2]:[-2.0, 6.0]]
+            'CPU'  | "-(prodJs(ij))%3"                | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | null || [[2]:[-(-14)%3, -0.0]]
+            'CPU'  | "sumJs(prodJs(ij))"              | [Tensor.of([2],[-1d, 3d]), Tensor.of([2],[7d, -1d]), Tensor.of([2],[2d, 2d])] | 1    || [[2]:[-2.0*3, 6.0*3]]
+            'CPU'  | "relu(I[0])"                     | [Tensor.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                               | null || [[2, 3]:[-0.04, 7.0, -0.01, 2.0, 3.0, 8.0]]
+            'CPU'  | "relu(I[0])"                     | [Tensor.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                               |  0   || [[2, 3]:[0.01, 1.0, 0.01, 1.0, 1.0, 1.0]]
+            'CPU'  | "quad(I[0])"                     | [Tensor.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                               | null || [[2, 3]:[16.0, 49.0, 1.0, 4.0, 9.0, 64.0]]
+            'CPU'  | "quad(I[0])"                     | [Tensor.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                               |  0   || [[2, 3]:[-8.0, 14.0, -2.0, 4.0, 6.0, 16.0]]
+            'CPU'  | "abs(I[0])"                      | [Tensor.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                               | null || [[2, 3]:[4.0, 7.0, 1.0, 2.0, 3.0, 8.0]]
+            'CPU'  | "abs(I[0])"                      | [Tensor.of([2, 3], [-4d, 7d, -1d, 2d, 3d, 8d])]                               |  0   || [[2, 3]:[-1.0, 1.0, -1.0, 1.0, 1.0, 1.0]]
+            'CPU'  | "dimtrim(I[0])"                  | [Tensor.of([1, 3, 1],    [1d, 2d, 3d])]                                       | null || [[3]:[1, 2, 3]]
+            'CPU'  | "dimtrim(I[0])"                  | [Tensor.of([1, 3, 1, 1], [-4d, 2d, 5d])]                                      | null || [[3]:[-4, 2, 5]]
+            'CPU'  | "ln(i0)"                         | [Tensor.of(3d)]                                                               | null || [[1]:[Math.log(3)]]
+            'CPU'  | "ln(i0)"                         | [Tensor.of(3d)]                                                               |  0   || [[1]:[0.3333333333333333]]
+            'CPU'  | "selu(I[0])"                     | [Tensor.ofDoubles().withShape(3).all(-1)]                                     | null || [[3]:[-1.1113307378125625, -1.1113307378125625, -1.1113307378125625]]
+            'GPU'  | "selu(I[0])"                     | [Tensor.ofDoubles().withShape(3).all(-1)]                                     | null || [[3]:[-1.1113307476043701, -1.1113307476043701, -1.1113307476043701]]
     }
 
 
@@ -233,7 +233,7 @@ class Tensor_Function_Spec extends Specification
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
             var f = Function.of("[2, 0, 1]:(I[0])")
 
-        when : var t = Tsr.of([3, 4, 2], 1d..5d)
+        when : var t = Tensor.of([3, 4, 2], 1d..5d)
         then : t.toString().contains("[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)")
 
         when : var r = f(t)
@@ -252,7 +252,7 @@ class Tensor_Function_Spec extends Specification
         """
 
         given :
-            var t = Tsr.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)
+            var t = Tensor.of([1, 1, 3, 2, 1], 8d).setRqsGradient(true)
 
         when :
             var trimmed = Function.of("dimtrim(I[0])")(t)
@@ -292,7 +292,7 @@ class Tensor_Function_Spec extends Specification
         given : 'We create a simple function taking one input.'
             var fun = Function.of('i0 * relu(i0) + 1')
         and : 'A vector tensor of 5 float numbers'
-            var t = Tsr.of(1f, -5f, -3f, 2f, 8f)
+            var t = Tensor.of(1f, -5f, -3f, 2f, 8f)
         expect : 'Both the tensor as well as the function were created successfully.'
             t.itemType == Float
             fun.toString() == "((I[0] * relu(I[0])) + 1.0)"
@@ -321,7 +321,7 @@ class Tensor_Function_Spec extends Specification
             var stream = Stream.of(1, 2, 3, 4, 5, 6)
 
         when : 'We collect the stream into a tensor.'
-            var t = stream.collect(Tsr.shaped(2, 3))
+            var t = stream.collect(Tensor.shaped(2, 3))
 
         then : 'The resulting tensor should have the same values as the stream.'
             t.toString() == "(2x3):[1, 2, 3, 4, 5, 6]"

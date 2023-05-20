@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.other.internal;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.host.CPU;
@@ -15,15 +15,15 @@ import neureka.devices.host.CPU;
 public class CPUSum implements ImplementationFor<CPU>
 {
     @Override
-    public Tsr<?> run( ExecutionCall<CPU> call ) {
+    public Tensor<?> run(ExecutionCall<CPU> call ) {
         if ( call.getDevice() != CPU.get() )
             throw new IllegalArgumentException("This implementation is only available for the CPU!");
-        Tsr<?> in = call.input(0) == null ? call.input(1) : call.input(0);
+        Tensor<?> in = call.input(0) == null ? call.input(1) : call.input(0);
         in.mut().setIsVirtual(false);
         return _runRecursively(in, CPU.get());
     }
 
-    private Tsr<?> _runRecursively(Tsr<?> in, CPU device)
+    private Tensor<?> _runRecursively(Tensor<?> in, CPU device)
     {
         CPU.JVMExecutor executor = device.getExecutor();
         int RTS = 128; // Register tile size
@@ -52,7 +52,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Float> reduced = Tsr.of(Float.class, Shape.of(N), out);
+            Tensor<Float> reduced = Tensor.of(Float.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -68,7 +68,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Double> reduced = Tsr.of(Double.class, Shape.of(N), out);
+            Tensor<Double> reduced = Tensor.of(Double.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -84,7 +84,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Integer> reduced = Tsr.of(Integer.class, Shape.of(N), out);
+            Tensor<Integer> reduced = Tensor.of(Integer.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -100,7 +100,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Long> reduced = Tsr.of(Long.class, Shape.of(N), out);
+            Tensor<Long> reduced = Tensor.of(Long.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -116,7 +116,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Short> reduced = Tsr.of(Short.class, Shape.of(N), out);
+            Tensor<Short> reduced = Tensor.of(Short.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -132,7 +132,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value += inData[i];
                 out[ni] = value;
             });
-            Tsr<Byte> reduced = Tsr.of(Byte.class, Shape.of(N), out);
+            Tensor<Byte> reduced = Tensor.of(Byte.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else
@@ -149,7 +149,7 @@ public class CPUSum implements ImplementationFor<CPU>
                 for ( int i = offset; i < limit; ++i ) value = value.doubleValue() + ((Number)inData[i]).doubleValue();
                 out[ni] = value;
             });
-            Tsr<Number> reduced = Tsr.of(Number.class, Shape.of(N), out);
+            Tensor<Number> reduced = Tensor.of(Number.class, Shape.of(N), out);
             if ( N > 1 )
                 return _runRecursively(reduced, device);
             else

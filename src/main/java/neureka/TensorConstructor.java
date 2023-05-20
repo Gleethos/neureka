@@ -4,7 +4,6 @@ import neureka.backend.main.implementations.elementwise.CPURandomization;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
-import neureka.devices.DeviceData;
 import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.math.args.Arg;
@@ -12,20 +11,20 @@ import neureka.ndim.NDConstructor;
 import neureka.ndim.config.NDConfiguration;
 
 /**
- *  The {@link TsrConstructor} is an <b>internal API</b> for receiving a wide range
+ *  The {@link TensorConstructor} is an <b>internal API</b> for receiving a wide range
  *  of different inputs and using them to populate the fields
- *  of freshly instantiated {@link neureka.Tsr} instances.
+ *  of freshly instantiated {@link Tensor} instances.
  *  The existence of this class is a symptom of the fact that there
  *  is a very large API for creating tensors in Neureka.
  *  This means that all the code dealing with verifying and converting
- *  API input (provided by various {@link neureka.Tsr#of} as well as {@link neureka.Tsr#of} methods)
+ *  API input (provided by various {@link Tensor#of} as well as {@link Tensor#of} methods)
  *  sits inside this class instead of polluting the already very large
- *  {@link neureka.TsrImpl} class.
+ *  {@link TensorImpl} class.
  */
-final class TsrConstructor
+final class TensorConstructor
 {
     /**
-     *  An interface defining methods for configuring a {@link neureka.Tsr}
+     *  An interface defining methods for configuring a {@link Tensor}
      *  in the making...
      */
     public interface API {
@@ -40,11 +39,11 @@ final class TsrConstructor
 
     /**
      *
-     * @param targetDevice The {@link Device} to be used for the construction of the {@link neureka.Tsr}
+     * @param targetDevice The {@link Device} to be used for the construction of the {@link Tensor}
      * @param ndConstructor A producer of the {@link NDConfiguration} interface implementation.
      * @param API An implementation of the {@link API} interface.
      */
-    public TsrConstructor( Device<?> targetDevice, NDConstructor ndConstructor, API API ) {
+    public TensorConstructor(Device<?> targetDevice, NDConstructor ndConstructor, API API ) {
         LogUtil.nullArgCheck( targetDevice, "targetDevice", Device.class, "Cannot construct a tensor without target device." );
         LogUtil.nullArgCheck( ndConstructor, "ndConstructor", NDConstructor.class, "Cannot construct tensor without shape information." );
         _targetDevice = (Device<Object>) targetDevice;

@@ -1,6 +1,6 @@
 package neureka.autograd;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.dtype.DataType;
 
 import java.lang.ref.WeakReference;
@@ -16,10 +16,10 @@ final class NodePayload<V> {
 
     private final DataType<V> _payloadDataType;
 
-    private final WeakReference<Tsr<V>> _payload;
+    private final WeakReference<Tensor<V>> _payload;
 
 
-    public NodePayload( Tsr<V> p ) {
+    public NodePayload( Tensor<V> p ) {
         if ( p == null ) {
             _payload = null;
             _payloadShape = null;
@@ -51,7 +51,7 @@ final class NodePayload<V> {
      *
      * @return The tensor payload of this graph-node.
      */
-    public Tsr<V> getPayload() { return ( _payload == null ? null : _payload.get() ); }
+    public Tensor<V> getPayload() { return ( _payload == null ? null : _payload.get() ); }
 
     /**
      *  Note: This method will never return null even if the actual payload tensor was garbage collected.

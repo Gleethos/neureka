@@ -1,6 +1,6 @@
 package neureka.math.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.math.Function;
 import neureka.math.args.Arg;
@@ -66,9 +66,9 @@ public final class FunctionConstant implements Function
 	@Override public double derive( double[] inputs, int index, int j ) { return 0; }
 
 	@Override
-	public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
+	public Tensor<?> execute(Args arguments, Tensor<?>... inputs ) {
 		if ( arguments.has(Arg.DerivIdx.class) && arguments.valOf(Arg.DerivIdx.class) >= 0 ) {
-			return Tsr.of(
+			return Tensor.of(
 						(Class<? extends Number>) inputs[ 0 ].getItemType(),
 						inputs[ 0 ].shape(),
 						0.0
@@ -76,7 +76,7 @@ public final class FunctionConstant implements Function
 					.getMut()
 					.setIsIntermediate( true );
 		}
-		return Tsr.of(
+		return Tensor.of(
 					(Class<? extends Number>) inputs[ 0 ].getItemType(),
 					inputs[ 0 ].shape(),
 					_value

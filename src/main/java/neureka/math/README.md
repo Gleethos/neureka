@@ -13,7 +13,7 @@ Generally speaking a tensor library has 3 core components: <br>
 3. ...and some glue code which marries these two concepts cleanly together. 
 
 This package is the **third one of these points**.
-It glues together the `Tsr`/`Nda` API, and the backend API which 
+It glues together the `Tensor`/`Nda` API, and the backend API which 
 consists of implementations of the `Operation` interface.
 This makes sense conceptionally because the mathematical 
 foundation boils down to tensors (numeric data) and a set of operations which may be applied to them.

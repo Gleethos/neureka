@@ -2,16 +2,16 @@ package neureka.fluent.slicing.states;
 
 
 import neureka.Nda;
-import neureka.Tsr;
+import neureka.Tensor;
 
 /**
  *  This is the starting point of the call transition graph exposed by the slice builder API.
  *  It simply defines those method signatures which ought to be called first when using the API.
  *  This interface defines 2 transition paths, namely a route to the end of the call state graph which
- *  triggers the slicing and returns the resulting {@link Tsr} instance... or a call to
+ *  triggers the slicing and returns the resulting {@link Tensor} instance... or a call to
  *  the {@link FromOrAt} interface which is the starting point for slicing individual axis of a tensor...
  *
- * @param <V> The type parameter for items of the {@link Tsr} which ought to be sliced.
+ * @param <V> The type parameter for items of the {@link Tensor} which ought to be sliced.
  */
 public interface AxisOrGet<V>  {
 
@@ -26,21 +26,21 @@ public interface AxisOrGet<V>  {
 
     /**
      *  This method concludes the slicing API by performing the actual slicing and
-     *  returning the resulting {@link Tsr} instance based on the previously
+     *  returning the resulting {@link Tensor} instance based on the previously
      *  specified slice configuration...
      *
-     * @return A new {@link Tsr} instance which is a slice of the original tensor.
+     * @return A new {@link Tensor} instance which is a slice of the original tensor.
      */
     Nda<V> get();
 
     /**
      *  This method concludes the slicing API by performing the actual slicing and
-     *  returning the resulting {@link Tsr} instance based on the previously
+     *  returning the resulting {@link Tensor} instance based on the previously
      *  specified slice configuration...
      *  Contrary to the {@link #get()} method, this method returns a slice which
      *  is not part of the computation graph of the original tensor (meaning no autograd).
      *
-     * @return A new {@link Tsr} instance which is a slice of the original tensor without autograd.
+     * @return A new {@link Tensor} instance which is a slice of the original tensor without autograd.
      */
     Nda<V> detached();
 

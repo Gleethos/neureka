@@ -1,7 +1,7 @@
 package ut.autograd
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.autograd.GraphNode
 import neureka.math.Function
 import neureka.view.NDPrintSettings
@@ -35,7 +35,7 @@ class AD_And_Computation_Graph_Spec extends Specification
     {
         given :
             Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)
-            Tsr<Double> a = Tsr.of([2, 3], [
+            Tensor<Double> a = Tensor.of([2, 3], [
                                 1d, 2d, 3d,
                                 4d, 5d, 6d
                             ]).setRqsGradient(true)
@@ -43,14 +43,14 @@ class AD_And_Computation_Graph_Spec extends Specification
             Function rs = Function.of("[1, 0]:(I[0])")
 
         when :
-            Tsr b = rs(a)
+            Tensor b = rs(a)
             GraphNode na = a.get( GraphNode.class )
             GraphNode nb = b.get( GraphNode.class )
 
         then :
             na.getChildren().size() == 1
             b.toString().contains("")//Todo!
-            b.backward(Tsr.of([3, 2],[
+            b.backward(Tensor.of([3, 2],[
                                 -1d, 2d,
                                  4d, 7d,
                                 -9d, 8d
@@ -73,11 +73,11 @@ class AD_And_Computation_Graph_Spec extends Specification
     def "Payloads and derivatives are null after garbage collection."()
     {
         given :
-            Tsr<Double> a = Tsr.of(2d).setRqsGradient(true)
-            Tsr<Double> b = a * 3 / 5
-            Tsr<Double> c = Tsr.of(3d)
-            Tsr<Double> d = b ** c
-            Tsr<Double> e = d * c
+            Tensor<Double> a = Tensor.of(2d).setRqsGradient(true)
+            Tensor<Double> b = a * 3 / 5
+            Tensor<Double> c = Tensor.of(3d)
+            Tensor<Double> d = b ** c
+        Tensor<Double> e = d * c
             GraphNode n = e.get( GraphNode.class )
             var strongRefs = n.parents.collect { it.payload.get() }
 

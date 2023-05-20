@@ -1,6 +1,6 @@
 package neureka.autograd;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.main.memory.MemUtil;
 
 /**
@@ -18,20 +18,20 @@ final class PendingError<V>
 {
     private final int _expectedToBeReceived;
     private int _received;
-    private final Tsr<V> _accumulatedError;
+    private final Tensor<V> _accumulatedError;
     private final int _generation;
 
-    public PendingError( Tsr<V> error, int toBeReceived, int generation ) {
+    public PendingError(Tensor<V> error, int toBeReceived, int generation ) {
         _expectedToBeReceived = toBeReceived;
         _received = 1; // 1 because the first error value is already given to the constructor.
         _accumulatedError = error;
         _generation = generation;
     }
 
-    public void accumulate( Tsr<?> error ) {
-        Tsr[] inputs = { _accumulatedError, error };
+    public void accumulate( Tensor<?> error ) {
+        Tensor[] inputs = { _accumulatedError, error };
         MemUtil.keep( inputs, () -> {
-                    _accumulatedError.mut().plusAssign((Tsr<V>)error);
+                    _accumulatedError.mut().plusAssign((Tensor<V>)error);
                     return null;
                 });
         _received++;
@@ -62,6 +62,6 @@ final class PendingError<V>
 
     public int getExpectedToBeReceived() { return _expectedToBeReceived; }
 
-    public Tsr<V> getAccumulatedError() { return _accumulatedError; }
+    public Tensor<V> getAccumulatedError() { return _accumulatedError; }
 
 }

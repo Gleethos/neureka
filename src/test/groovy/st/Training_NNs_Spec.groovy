@@ -1,6 +1,7 @@
 package st
 
-import neureka.Tsr
+
+import neureka.Tensor
 import neureka.optimization.Optimizer
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -35,8 +36,8 @@ class Training_NNs_Spec extends Specification
         """
         given :
             int trainingIterations = 60
-            var input  = Tsr.of( -2f, -1f, 0f, 1f, 2f ).reshape( 1, 5 )
-            var target = Tsr.of( 0.2f, 1f, 0f, -1f, -0.2f ).reshape( 1, 5 )
+            var input  = Tensor.of( -2f, -1f, 0f, 1f, 2f ).reshape( 1, 5 )
+            var target = Tensor.of( 0.2f, 1f, 0f, -1f, -0.2f ).reshape( 1, 5 )
         and :
             var model = new QuasiMultiHeadAttention(5, 1)
         when :
@@ -59,8 +60,8 @@ class Training_NNs_Spec extends Specification
     {
         given :
             var predictor = new SimpleFeedForwardNN(5, 42)
-            var input = Tsr.of( -0.2f, -0.1f, 0f, 0.1f, 0.2f ).reshape( 1, 5 )
-            var target = Tsr.of( 0.2f, 0.1f, 0f, -0.1f, -0.2f ).reshape( 1, 5 )
+            var input = Tensor.of( -0.2f, -0.1f, 0f, 0.1f, 0.2f ).reshape( 1, 5 )
+            var target = Tensor.of( 0.2f, 0.1f, 0f, -0.1f, -0.2f ).reshape( 1, 5 )
         when :
             var pred
             var loss = []
@@ -78,12 +79,12 @@ class Training_NNs_Spec extends Specification
             loss[99] < 0.005
     }
 
-    def 'A very simple 1 layer NN converges.'( Consumer<Tsr<Float>> applyOptimizer )
+    def 'A very simple 1 layer NN converges.'( Consumer<Tensor<Float>> applyOptimizer )
     {
         given :
-            var inputs = Tsr.ofFloats().withShape( 2, 6 ).andFill(-4f..3f)
-            var weights = Tsr.ofRandom(Float, 6, 1)
-            var targets = Tsr.of( 0.2f, -0.1f, 0.5f, 1.2f, -0.3f, 0.2f ).reshape( 2, 1 )
+            var inputs = Tensor.ofFloats().withShape( 2, 6 ).andFill(-4f..3f)
+            var weights = Tensor.ofRandom(Float, 6, 1)
+            var targets = Tensor.of( 0.2f, -0.1f, 0.5f, 1.2f, -0.3f, 0.2f ).reshape( 2, 1 )
         and :
             weights.setRqsGradient( true )
             applyOptimizer.accept(weights)

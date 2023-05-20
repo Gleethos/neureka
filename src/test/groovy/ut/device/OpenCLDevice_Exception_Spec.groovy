@@ -1,7 +1,7 @@
 package ut.device
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.devices.Device
 import neureka.backend.ocl.CLBackend
 import neureka.dtype.DataType
@@ -50,8 +50,8 @@ class OpenCLDevice_Exception_Spec extends Specification
         given: 'The first found OpenCLDevice instance.'
             Device device = Device.get('first')
         and : 'A tensor and a slice tensor of the prior.'
-            Tsr t = Tsr.of([4, 3], 2d)
-            Tsr s = t[1..3, 1..2]
+            Tensor t = Tensor.of([4, 3], 2d)
+            Tensor s = t[1..3, 1..2]
 
         expect : 'Both tensors share not only the same data but also the same data type.'
             t.mut.data.get() == s.mut.data.get()
@@ -148,7 +148,7 @@ class OpenCLDevice_Exception_Spec extends Specification
             def device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]
 
         when : 'We pass a new tensor to the restore method of the device, even though the tensor is not stored on it...'
-            device.restore( Tsr.newInstance() )
+            device.restore( Tensor.newInstance() )
 
         then : 'The previous attempt raises an illegal argument exception with an explanatory message.'
             def exception = thrown( IllegalArgumentException )

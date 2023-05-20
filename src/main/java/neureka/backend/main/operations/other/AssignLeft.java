@@ -1,7 +1,7 @@
 package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
@@ -43,7 +43,7 @@ public class AssignLeft extends AbstractOperation
                    if ( call.input( offset ).isVirtual() || call.input( offset ).size() == 1 )
                        return  call.validate()
                                        .allNotNull( t -> t.getDataType().typeClassImplements(Object.class) )
-                                       //.allNotNull( Tsr::isVirtual )
+                                       //.allNotNull( Tensor::isVirtual )
                                        .tensors( tensors -> tensors.length == 2 || tensors.length == 3 )
                                        .suitabilityIfValid(SuitabilityPredicate.PERFECT);
                    else
@@ -52,7 +52,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution( (caller, call) -> {
-                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );
+                Tensor<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );
                 t.mut().incrementVersion(call);
                 return Result.of(t);
             })
@@ -81,7 +81,7 @@ public class AssignLeft extends AbstractOperation
             )
             .setAutogradModeFor( call -> AutoDiffMode.NOT_SUPPORTED)
             .setExecution( (caller, call) -> {
-                Tsr<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );
+                Tensor<?> t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );
                 t.mut().incrementVersion(call);
                 return Result.of(t);
             })
@@ -106,7 +106,7 @@ public class AssignLeft extends AbstractOperation
 
         Function reducedCaller = reducePairwise(caller);
         ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
-        for (Tsr<?> t : call.inputs()) t.mut().setIsIntermediate(false);
+        for (Tensor<?> t : call.inputs()) t.mut().setIsIntermediate(false);
         Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), false );
         return super.execute( flat, flatCall );
     }

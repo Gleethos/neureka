@@ -2,7 +2,7 @@ package neureka.math.implementations;
 
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.math.Function;
 import neureka.math.args.Arg;
@@ -73,14 +73,14 @@ public class FunctionInput implements Function, GradientProvider
 
     @Override public List<Function> getSubFunctions() { return new ArrayList<>(); }
 
-    private Tsr<?> _extract( Tsr<?> t )
+    private Tensor<?> _extract(Tensor<?> t )
     {
         if ( this.providesGradient() ) {
-            Tsr<?> gradient = t.gradient().orElse(null);
+            Tensor<?> gradient = t.gradient().orElse(null);
             if ( t.rqsGradient() ) {
                 if ( gradient == null ) {
-                    gradient = Tsr.of( (Class<? extends Number>) t.getItemType(), t.shape(), 0.0 );
-                    t.set( (Tsr) gradient );
+                    gradient = Tensor.of( (Class<? extends Number>) t.getItemType(), t.shape(), 0.0 );
+                    t.set( (Tensor) gradient );
                 }
                 return gradient;
             }
@@ -111,12 +111,12 @@ public class FunctionInput implements Function, GradientProvider
     }
 
     @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... inputs ) {
+    public Tensor<?> execute(Args arguments, Tensor<?>... inputs ) {
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );
         if ( d >= 0 )
             return ( d == index() )
-                ? Tsr.of( (Class<? extends Number>) inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 1.0 ).getMut().setIsIntermediate( true )
-                : Tsr.of( (Class<? extends Number>) inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 0.0 ).getMut().setIsIntermediate( true );
+                ? Tensor.of( (Class<? extends Number>) inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 1.0 ).getMut().setIsIntermediate( true )
+                : Tensor.of( (Class<? extends Number>) inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 0.0 ).getMut().setIsIntermediate( true );
 
         if ( index() >= inputs.length )
             throw new IllegalArgumentException(

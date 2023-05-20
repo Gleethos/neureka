@@ -2,7 +2,7 @@ package testutility;
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.AutoDiffMode;
@@ -20,7 +20,6 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
-import neureka.ndim.NDUtil;
 import neureka.ndim.NDimensional;
 import neureka.ndim.config.NDConfiguration;
 
@@ -33,11 +32,11 @@ public class UnitTester_Tensor extends UnitTester
         super(name);
     }
 
-    public int testShareDevice( Device device, Tsr[] tsrs ){
+    public int testShareDevice( Device device, Tensor[] tensors){
         printSessionStart("Testing if tensors share device!");
         println(BAR +"  Device: "+device.toString());
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        for(Tsr t : tsrs){
+        for(Tensor t : tensors){
             Device found = t.getDevice();//((Device)t.get(Device.class));
             this.assertStringContains("result", (found==null)?"null":found.toString(), device.toString());
         }
@@ -45,7 +44,7 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testTensor(
-            Tsr tensor,
+            Tensor tensor,
             List<String> expected
     ){
         Object[] array = expected.toArray();
@@ -63,7 +62,7 @@ public class UnitTester_Tensor extends UnitTester
         return testTensor(tensor, strings);
     }
 
-    public int testTensor(Tsr tensor, String[] expected){
+    public int testTensor(Tensor tensor, String[] expected){
         printSessionStart("Testing Tensor!");
         String result = tensor.toString();
         println(BAR +"  Tensor: "+result);
@@ -74,29 +73,29 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensorAutoGrad(Tsr[] source, String operation, String[] expected){
-        printSessionStart("Testing Tsr: autograd!");
+    public int testTensorAutoGrad(Tensor[] source, String operation, String[] expected){
+        printSessionStart("Testing Tensor: autograd!");
         println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        Tsr product = Tsr.of(operation, source);
+        Tensor product = Tensor.of(operation, source);
         String result = product.toString("rc");
         for(String element : expected){
             this.assertStringContains("result", result, element);
         }
         boolean productInInputs = false;
-        for ( Tsr t : source ) productInInputs = (t == product || productInInputs);
+        for ( Tensor t : source ) productInInputs = (t == product || productInInputs);
         if ( !productInInputs ) product.getMut().delete();
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorAutoGrad(
-            Tsr[] source, String operation, String[] expected,
-            Tsr error, double[][] expectedGradient
+            Tensor[] source, String operation, String[] expected,
+            Tensor error, double[][] expectedGradient
     ){
-        printSessionStart("Testing Tsr: autograd!");
+        printSessionStart("Testing Tensor: autograd!");
         println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        Tsr product = Tsr.of(operation, source);
+        Tensor product = Tensor.of(operation, source);
         product.backward(error);
         String result = product.toString("rc");
         for(String element : expected){
@@ -105,12 +104,12 @@ public class UnitTester_Tensor extends UnitTester
         for(int i=0; i<source.length; i++){
             double[] gradient;
             if ( source[ i ].hasGradient() && source[ i ].is(Float.class) ) {
-                float[] data = (float[]) ((Tsr)source[i].get(Tsr.class)).getRawItems();
+                float[] data = (float[]) ((Tensor)source[i].get(Tensor.class)).getRawItems();
                 gradient = new double[data.length];
                 for ( int ii = 0; ii < data.length; ii++ ) gradient[ii] = data[ii];
             } else
                 gradient = source[ i ].hasGradient()
-                                ? (double[])((Tsr)source[ i ].get(Tsr.class)).getRawItems()
+                                ? (double[])((Tensor)source[ i ].get(Tensor.class)).getRawItems()
                                 : null;
             this.assertIsEqual(
                     stringified(gradient),
@@ -124,21 +123,21 @@ public class UnitTester_Tensor extends UnitTester
 
     public int testTensorUtility_permute(int[] dim, int[] newForm, int[] expected){
         int[] result = NDConfiguration.Utility.rearrange(dim, newForm);
-        printSessionStart("Testing Tsr.indexing: dimension reshaping!");
+        printSessionStart("Testing Tensor.indexing: dimension reshaping!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
         int [] result =  NDConfiguration.Layout.ROW_MAJOR.newStridesFor(dim);
-        printSessionStart("Testing Tsr.indexing: dimension _translation!");
+        printSessionStart("Testing Tensor.indexing: dimension _translation!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_makeFit( int[] a, int[] b, int[][] expected ){
         int [][] result =  makeFit( a, b );
-        printSessionStart("Testing Tsr.indexing: dimension _translation!");
+        printSessionStart("Testing Tensor.indexing: dimension _translation!");
         if ( result.length != 2 ) throw new AssertionError("Invalid result!");
         assertIsEqual(
                 stringified(result[0]),
@@ -189,9 +188,9 @@ public class UnitTester_Tensor extends UnitTester
                 .getImplementationFor( CPU.class )
                 .run(
                         ExecutionCall.of(
-                                    Tsr.of(drnMxd, rsltData),
-                                    Tsr.of(frstShp, frstData),
-                                    Tsr.of(scndShp, scondData)
+                                    Tensor.of(drnMxd, rsltData),
+                                    Tensor.of(frstShp, frstData),
+                                    Tensor.of(scndShp, scondData)
                                 )
                                 .andArgs(Arg.DerivIdx.of(-1))
                                 .running(Neureka.get().backend().getOperation("x"))
@@ -206,16 +205,16 @@ public class UnitTester_Tensor extends UnitTester
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
-        printSessionStart("Test Tsr.indexing: tensMul_mxd");
+        printSessionStart("Test Tensor.indexing: tensMul_mxd");
         Shape drnMxd  = _shpOfCon(frstShp, scndShp);
         Neureka.get().backend().getOperation(((char) 171)+"x")
                 .getAlgorithm(NDConvolution.class)
                 .getImplementationFor( CPU.class )
                 .run(
                         ExecutionCall.of(
-                                Tsr.of(frstShp, frstData),
-                                (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
-                                (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
+                                Tensor.of(frstShp, frstData),
+                                (first)? Tensor.of(scndShp, scondData): Tensor.of(drnMxd, drnData),
+                                (first)? Tensor.of(drnMxd, drnData): Tensor.of(scndShp, scondData)
                             )
                             .andArgs( Arg.DerivIdx.of(0) )
                             .running(Neureka.get().backend().getOperation(((char) 171)+"x"))
@@ -226,7 +225,7 @@ public class UnitTester_Tensor extends UnitTester
     }
 
     public int testTensBroadcast(Shape frstShp, Shape scndShp, double[] frstData, double[] scondData, double[] expctd){
-        printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
+        printSessionStart("Test Tensor.indexing: tensor broadcast_template.cl");
         Shape drnMxd  = _shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[NDConfiguration.Utility.sizeOfShape(drnMxd.toIntArray())];
 
@@ -235,9 +234,9 @@ public class UnitTester_Tensor extends UnitTester
                 .getImplementationFor( CPU.class )
                 .run(
                         ExecutionCall.of(
-                                Tsr.of(drnMxd, rsltData),
-                                Tsr.of(frstShp, frstData),
-                                Tsr.of(scndShp, scondData)
+                                Tensor.of(drnMxd, rsltData),
+                                Tensor.of(frstShp, frstData),
+                                Tensor.of(scndShp, scondData)
                             )
                             .andArgs(Arg.DerivIdx.of(-1))
                             .running(Neureka.get().backend().getOperation("*"))
@@ -252,7 +251,7 @@ public class UnitTester_Tensor extends UnitTester
             double[] frstData, double[] scondData, double[] drnData,
             double[] expctd, boolean first
     ){
-        printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
+        printSessionStart("Test Tensor.indexing: tensor broadcast_template.cl");
         Shape drnMxd  = _shpOfBrc(frstShp, scndShp);
 
         Broadcast right = new Broadcast()
@@ -270,13 +269,13 @@ public class UnitTester_Tensor extends UnitTester
                                     ))
                                     .withAutoDiff( ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                                     {
-                                        Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
+                                        Tensor<?> ctxDerivative = (Tensor<?>) adCall.getValOf(Arg.Derivative.class);
                                         Function mul = Neureka.get().backend().getFunction().mul();
                                         if ( ctxDerivative != null ) {
                                             return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                                         }
                                         int d = adCall.getDerivativeIndex();
-                                        Tsr<?> derivative = f.executeDerive( adCall.inputs(), d );
+                                        Tensor<?> derivative = f.executeDerive( adCall.inputs(), d );
                                         return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                                     })
                             )
@@ -310,22 +309,22 @@ public class UnitTester_Tensor extends UnitTester
                 ))
                 .withAutoDiff( ( Function f, ExecutionCall<? extends Device<?>> adCall ) ->
                 {
-                    Tsr<?> ctxDerivative = (Tsr<?>) adCall.getValOf(Arg.Derivative.class);
+                    Tensor<?> ctxDerivative = (Tensor<?>) adCall.getValOf(Arg.Derivative.class);
                     Function mul = Neureka.get().backend().getFunction().mul();
                     if ( ctxDerivative != null ) {
                         return ADAction.of( target -> mul.execute( target.error(), ctxDerivative ) );
                     }
-                    Tsr<?>[] inputs = adCall.inputs();
+                    Tensor<?>[] inputs = adCall.inputs();
                     int d = adCall.getDerivativeIndex();
-                    Tsr<?> derivative = f.executeDerive( inputs, d );
+                    Tensor<?> derivative = f.executeDerive( inputs, d );
                     return ADAction.of( target -> mul.execute( target.error(), derivative ) );
                 })
         )
         .setCallPreparation(
             call -> {
-                Tsr<?>[] tsrs = call.inputs();
-                int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
+                Tensor<?>[] tensors = call.inputs();
+                int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
+                return ExecutionCall.of(tensors[offset], tensors[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on( call.getDevice() );
             }
         )
         .buildFunAlgorithm()
@@ -341,9 +340,9 @@ public class UnitTester_Tensor extends UnitTester
         left.getImplementationFor( CPU.class )
                 .run(
                     ExecutionCall.of(
-                                Tsr.of(frstShp, frstData),
-                                (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
-                                (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
+                                Tensor.of(frstShp, frstData),
+                                (first)? Tensor.of(scndShp, scondData): Tensor.of(drnMxd, drnData),
+                                (first)? Tensor.of(drnMxd, drnData): Tensor.of(scndShp, scondData)
                         )
                         .andArgs( Arg.DerivIdx.of(0) )
                         .running(Neureka.get().backend().getOperation("*"))
@@ -354,9 +353,9 @@ public class UnitTester_Tensor extends UnitTester
         right.getImplementationFor( CPU.class )
                 .run(
                         ExecutionCall.of(
-                                    Tsr.of(frstShp, frstData),
-                                    (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
-                                    (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
+                                    Tensor.of(frstShp, frstData),
+                                    (first)? Tensor.of(scndShp, scondData): Tensor.of(drnMxd, drnData),
+                                    (first)? Tensor.of(drnMxd, drnData): Tensor.of(scndShp, scondData)
                             )
                             .andArgs( Arg.DerivIdx.of(0) )
                             .running(Neureka.get().backend().getOperation("*"))
@@ -373,11 +372,11 @@ public class UnitTester_Tensor extends UnitTester
      * @param f
      * @return
      */
-    public int testInjection( Tsr[] tensors, String f, String[][] expected )
+    public int testInjection(Tensor[] tensors, String f, String[][] expected )
     {
         printSessionStart("Test injection: I[0] <- I[1], I[0] -> I[1] : "+f);
-        Tsr[] result = new Tsr[tensors.length+1];
-        result[0] = Tsr.of( f, false, tensors );
+        Tensor[] result = new Tensor[tensors.length+1];
+        result[0] = Tensor.of( f, false, tensors );
         assert result[0] == null || result[0].get( GraphNode.class ) == null; // Because "doAD" is false!
         System.arraycopy(tensors, 0, result, 1, result.length - 1);
         for(int i=0; i<result.length; i++){

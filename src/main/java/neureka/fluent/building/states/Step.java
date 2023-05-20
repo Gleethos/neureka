@@ -1,22 +1,22 @@
 package neureka.fluent.building.states;
 
 import neureka.Nda;
-import neureka.Tsr;
+import neureka.Tensor;
 
 /**
  *  This interface defines the last step in the call transition graph of the fluent builder API when
- *  building a {@link Tsr} instance populated based on the values within a defined range.
+ *  building a {@link Tensor} instance populated based on the values within a defined range.
  *  This method embodies the last part of this range definition which consists of the chained
  *  methods {@link IterByOrIterFromOrAll#andFillFrom(Object)}, {@link To#to(Object)}
  *  and lastly the method defined in this interface, namely: {@link #step(double)}.
  *
- * @param <V> The type of the values wrapped by the {@link Tsr} which is about to be instantiated.
+ * @param <V> The type of the values wrapped by the {@link Tensor} which is about to be instantiated.
  */
 public interface Step<V>
 {
     /**
      *  This is the last step in the call transition graph of the fluent builder API when
-     *  building a {@link Tsr} instance populated based on the values within a defined range.
+     *  building a {@link Tensor} instance populated based on the values within a defined range.
      *  This method embodies the last part of this range definition which consists of the chained
      *  methods {@link IterByOrIterFromOrAll#andFillFrom(Object)}, {@link To#to(Object)}
      *  and lastly this very method {@link #step(double)}.
@@ -26,7 +26,7 @@ public interface Step<V>
      *  and what has been passed to {@link To#to(Object)}...
      *
      * @param size The size of the step within the range defined by this fluent builder API.
-     * @return A new {@link Tsr} instance whose contents are filled based on the provided range.
+     * @return A new {@link Tensor} instance whose contents are filled based on the provided range.
      */
     Nda<V> step( double size );
 

@@ -1,6 +1,6 @@
 package neureka.autograd;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.AutoDiffMode;
 import neureka.devices.Device;
@@ -26,7 +26,7 @@ final class GraphNodeUtility {
      */
     public static <V> int modeOf( AutoDiffMode adMode, ExecutionCall<? extends Device<?>> call )
     {
-        Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
+        Tensor<V>[] inputs = (Tensor<V>[]) call.inputs();
         int resultMode = 0;
         int[] modes = new int[ inputs.length ];
         int inputMode = 0;

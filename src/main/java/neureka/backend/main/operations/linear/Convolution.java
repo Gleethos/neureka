@@ -2,7 +2,7 @@ package neureka.backend.main.operations.linear;
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -37,8 +37,8 @@ public class Convolution extends AbstractOperation
             new NDConvolution()
             .setAutogradModeFor( call -> {
                 if ( call.getOperation().supports( NDConvolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;
-                Tsr<?> last = null;
-                for ( Tsr<?> t : call.inputs() ) {
+                Tensor<?> last = null;
+                for ( Tensor<?> t : call.inputs() ) {
                     if ( last != null && !last.shape().equals(t.shape()) ) return AutoDiffMode.BACKWARD_ONLY;
                     last = t; // Note: shapes are cached!
                 }
@@ -60,7 +60,7 @@ public class Convolution extends AbstractOperation
                                 "I[ 0 ] x>> I[ 1 ] x>> I[ 2 ]",
                                 false
                         );
-                        Tsr<?> derivative = f.derive( (Tsr[]) adCall.inputs(), d );
+                        Tensor<?> derivative = f.derive( (Tensor[]) adCall.inputs(), d );
                         assert d >= 0 && d <= 1;
                         assert derivative != null;
                         assert deConv != null;
@@ -83,7 +83,7 @@ public class Convolution extends AbstractOperation
                                 deConv.execute(
                                         target.error(),
                                         derivative,
-                                        Tsr.of(shape, zero).mut().setIsIntermediate( false )
+                                        Tensor.of(shape, zero).mut().setIsIntermediate( false )
                                 )
                         );
                     })
@@ -93,7 +93,7 @@ public class Convolution extends AbstractOperation
                      if ( call.arity() <= 2 ) call = call.withAddedInputAt( 0, null );
                      Device<Number> device = call.getDeviceFor(Number.class);
                      Shape shp = ConvUtil.shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());
-                     Tsr<Number> output = (Tsr<Number>) Tsr.of( call.input(1).getItemType(), shp, 0 )
+                     Tensor<Number> output = (Tensor<Number>) Tensor.of( call.input(1).getItemType(), shp, 0 )
                                                              .mut()
                                                              .setIsIntermediate( true );
                      output.mut().setIsVirtual( false );
@@ -114,7 +114,7 @@ public class Convolution extends AbstractOperation
             Function reducedCaller = reducePairwise(caller);
             ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
             Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
-            for ( Tsr<?> t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);
+            for ( Tensor<?> t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);
             return this.execute( flat, flatCall );
         }
         if ( call.getDerivativeIndex() >= 0 ) {
@@ -129,7 +129,7 @@ public class Convolution extends AbstractOperation
         Function reducedCaller = reducePairwise(caller);
         ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
         Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
-        for ( Tsr<?> t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);
+        for ( Tensor<?> t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);
         return super.execute( flat, flatCall );
     }
 

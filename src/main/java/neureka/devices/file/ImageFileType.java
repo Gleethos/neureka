@@ -1,6 +1,6 @@
 package neureka.devices.file;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.dtype.NumericType;
 
 import java.util.Objects;
@@ -17,7 +17,7 @@ interface ImageFileType extends FileType
         return this.numericTypeRepresentation().targetType();
     }
 
-    Tsr.ImageType imageType();
+    Tensor.ImageType imageType();
 
     String imageTypeName();
 }

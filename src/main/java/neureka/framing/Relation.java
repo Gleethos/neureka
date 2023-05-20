@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.framing;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.composition.Component;
 
 import java.lang.ref.WeakReference;
@@ -56,7 +56,7 @@ import java.util.Optional;
  *
  * @param <V> The data type class of the elements of the tensor to which this Relation belongs to.
  */
-public class Relation<V> implements Component<Tsr<V>>
+public class Relation<V> implements Component<Tensor<V>>
 {
     /**
      *  If the tensor owning this {@link Relation} component
@@ -68,14 +68,14 @@ public class Relation<V> implements Component<Tsr<V>>
      *  The answer is simple: The parent tensor (as well as its slices)
      *  might be outsourced to a device which may store the data itself in various ways...
      */
-    private Tsr<V> _parent; // Children need their parents. They shall not be garbage collected.
+    private Tensor<V> _parent; // Children need their parents. They shall not be garbage collected.
 
     /**
      *  This is an array of the weakly referenced slice children of the tensor
      *  to which this Relation component belongs. <br>
      *  Children are not referenced strongly so they can be garbage collected.
      */
-    private WeakReference<Tsr<V>>[] _children; // Children may be garbage collected if not needed anywhere.
+    private WeakReference<Tensor<V>>[] _children; // Children may be garbage collected if not needed anywhere.
 
     /**
      *  When creating permuted versions of slices then
@@ -97,16 +97,16 @@ public class Relation<V> implements Component<Tsr<V>>
         return new Relation<>( null );
     }
 
-    public static <T> Relation<T> newChildToParent( Tsr<T> parent ) {
+    public static <T> Relation<T> newChildToParent( Tensor<T> parent ) {
         return new Relation<>( parent );
     }
 
-    private Relation( Tsr<V> parent ) { _parent = parent; }
+    private Relation( Tensor<V> parent ) { _parent = parent; }
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        Tsr<V> oldOwner = changeRequest.getOldOwner();
-        Tsr<V> newOwner = changeRequest.getNewOwner();
+    public boolean update( OwnerChangeRequest<Tensor<V>> changeRequest ) {
+        Tensor<V> oldOwner = changeRequest.getOldOwner();
+        Tensor<V> newOwner = changeRequest.getNewOwner();
         if ( changeRequest.type() == IsBeing.ADDED || changeRequest.type() == IsBeing.REMOVED ) {
             changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!
             return true; // Initial/last update call: No action needed!
@@ -120,8 +120,8 @@ public class Relation<V> implements Component<Tsr<V>>
             }
         }
         if ( _children != null ) {
-            for ( WeakReference<Tsr<V>> c : _children ) {
-                Tsr<V> t = c.get();
+            for ( WeakReference<Tensor<V>> c : _children ) {
+                Tensor<V> t = c.get();
                 if ( t != null ) {
                     Relation<V> cr = (Relation<V>) t.get( Relation.class );
                     if ( cr != null ) cr._parent = newOwner;
@@ -132,13 +132,13 @@ public class Relation<V> implements Component<Tsr<V>>
         return true;
     }
 
-    public Relation<V> addChild( Tsr<V> child )
+    public Relation<V> addChild( Tensor<V> child )
     {
         if ( _children == null ) {
             _children = new WeakReference[]{ new WeakReference<>( child ) };
             _shapeRelations = new int[ 1 ][];
         } else {
-            WeakReference<Tsr<V>>[] newChildren = new WeakReference[ _children.length + 1 ];
+            WeakReference<Tensor<V>>[] newChildren = new WeakReference[ _children.length + 1 ];
             int[][] newShapeRelations = new int[ _children.length + 1 ][];
             System.arraycopy( _children, 0, newChildren, 0, _children.length );
             System.arraycopy( _shapeRelations, 0, newShapeRelations, 0, _children.length );
@@ -168,9 +168,9 @@ public class Relation<V> implements Component<Tsr<V>>
      * @param child   The child (slice) tensor which has a shape whose dimensions are in a different order.
      * @param permuteOrder The int array defining the axis order (dimension index mapping).
      */
-    public void addPermuteRelationFor(Tsr<V> child, int[] permuteOrder ) {
+    public void addPermuteRelationFor(Tensor<V> child, int[] permuteOrder ) {
         for ( int i = 0; i < _shapeRelations.length; i++ ) {
-            Tsr<V> c = _children[ i ].get();
+            Tensor<V> c = _children[ i ].get();
             if ( c != null && c == child )
                 _shapeRelations[ i ] = permuteOrder;
         }
@@ -194,21 +194,21 @@ public class Relation<V> implements Component<Tsr<V>>
      * @param child The child (slice) tensor which has a shape whose dimensions are in a different order.
      * @return The int array defining the reshaping (dimension index mapping).
      */
-    public int[] getPermuteRelationFor( Tsr<V> child )
+    public int[] getPermuteRelationFor( Tensor<V> child )
     {
         for ( int i = 0; i < _shapeRelations.length; i++ ) {
-            Tsr<V> c = _children[ i ].get();
+            Tensor<V> c = _children[ i ].get();
             if ( c != null && c == child )
                 return _shapeRelations[ i ];
         }
         return null;
     }
 
-    public List<Tsr<?>> getChildren() {
-        List<Tsr<?>> children = new ArrayList<>();
+    public List<Tensor<?>> getChildren() {
+        List<Tensor<?>> children = new ArrayList<>();
         if ( _children != null ) {
-            for ( WeakReference<Tsr<V>> r : _children ) {
-                Tsr<V> c = r.get();
+            for ( WeakReference<Tensor<V>> r : _children ) {
+                Tensor<V> c = r.get();
                 if ( c != null ) {
                     children.add(c);
                     Relation<V> relation = (Relation<V>) c.get( Relation.class );
@@ -226,7 +226,7 @@ public class Relation<V> implements Component<Tsr<V>>
      *
      * @return The root data parent which actually owns the data of the sliced data or null if the tensor is not a slice.
      */
-    public Optional<Tsr<V>> findRootTensor()
+    public Optional<Tensor<V>> findRootTensor()
     {
         if ( _parent == null ) return Optional.empty();
         else if ( !_parent.has( Relation.class ) ) return Optional.empty();
@@ -249,7 +249,7 @@ public class Relation<V> implements Component<Tsr<V>>
         return ( _children == null ? 0 : (int) Arrays.stream(_children).filter( c -> c.get() != null ).count() );
     }
 
-    public void removeChild( Tsr<V> child )
+    public void removeChild( Tensor<V> child )
     {
         if ( _children == null ) return;
         int found = -1;
@@ -264,7 +264,7 @@ public class Relation<V> implements Component<Tsr<V>>
                 _children = null;
                 _shapeRelations = null;
             } else {
-                WeakReference<Tsr<V>>[] newChildren = new WeakReference[ _children.length - 1 ];
+                WeakReference<Tensor<V>>[] newChildren = new WeakReference[ _children.length - 1 ];
                 int[][] newShapeRelations = new int[ _children.length - 1 ][];
                 System.arraycopy( _children, 0, newChildren, 0, found );
                 System.arraycopy( _shapeRelations, 0, newShapeRelations, 0, found );
@@ -281,7 +281,7 @@ public class Relation<V> implements Component<Tsr<V>>
         return "Relation[parent=" + _parent + ",children=" + java.util.Arrays.deepToString(_children) + ",shapeRelations=" + java.util.Arrays.deepToString(_shapeRelations) + "]";
     }
 
-    public Optional<Tsr<V>> getParent() {
+    public Optional<Tensor<V>> getParent() {
         return Optional.ofNullable( _parent );
     }
 }

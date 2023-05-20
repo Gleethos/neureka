@@ -1,6 +1,6 @@
 package neureka.backend.api.template.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;
@@ -16,7 +16,7 @@ public class AbstractImplementationFor< D extends Device<?> > implements Impleme
     }
 
     @Override
-    public Tsr<?> run(ExecutionCall<D> call ) {
+    public Tensor<?> run(ExecutionCall<D> call ) {
         if ( _arity >= 0 ) {
             int arity1 = call.arity();
             int arity2 = arity1 - 1; // The first tensor might be the output!

@@ -23,7 +23,7 @@ structure of the library as a whole and should be kept in mind when extending it
 These conceptual layers are the following:
 
 - 1. The data layer
-  - `Tsr` alongside packages `ndim`, `dtype` and `framing`
+  - `Tensor` alongside packages `ndim`, `dtype` and `framing`
   
 
 - 2. The routing layer: 

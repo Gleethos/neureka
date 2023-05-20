@@ -2,7 +2,7 @@ package neureka.backend.api.template.algorithms;
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -99,7 +99,7 @@ implements ExecutionPreparation, ADActionSupplier
     @Override
     public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         int[] shape = null;
-        for ( Tsr<?> t : call.inputs() ) {
+        for ( Tensor<?> t : call.inputs() ) {
             if ( t != null ) {
                 if ( shape == null ) shape = t.getNDConf().shape();
                 else if ( !Arrays.equals(shape, t.getNDConf().shape()) ) return 0.0f;
@@ -117,18 +117,18 @@ implements ExecutionPreparation, ADActionSupplier
 
     public static ADAction ADAction( Function function, ExecutionCall<? extends Device<?>> call )
     {
-        Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
+        Tensor<?> derivative = (Tensor<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().backend().getFunction().mul();
         if ( derivative != null )
             return ADAction.of( target -> mul.execute( target.error(), derivative ) );
 
-        Tsr<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
+        Tensor<?> localDerivative = MemUtil.keep( call.inputs(), () -> function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );
         localDerivative.mut().setIsIntermediate( false );
         return ADAction.of( target -> mul.execute( target.error(), localDerivative ) );
         // TODO: Maybe delete local derivative??
     }
 
-    public Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call ) {
+    public Tensor<?> dispatch(Function caller, ExecutionCall<? extends Device<?>> call ) {
         return AbstractDeviceAlgorithm.executeFor( caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm );
     }
 
@@ -139,12 +139,12 @@ implements ExecutionPreparation, ADActionSupplier
         if ( call.input( 0 ) == null ) // Creating a new tensor:
         {
             Shape shp = call.input( 1 ).shape();
-            Tsr<Object> output;
+            Tensor<Object> output;
 
             if ( call.getOperation().isInline() )
                 output = call.input( Object.class, 1 );
             else
-                output = (Tsr<Object>) Tsr.of( call.input( 1 ).getDataType(), shp )
+                output = (Tensor<Object>) Tensor.of( call.input( 1 ).getDataType(), shp )
                                                     .mut()
                                                     .setIsIntermediate(true);
             output.mut().setIsVirtual( false );
@@ -190,7 +190,7 @@ implements ExecutionPreparation, ADActionSupplier
             );
     }
 
-    private static void setAt( Tsr<Object> t, int i, Object o ) {
+    private static void setAt(Tensor<Object> t, int i, Object o ) {
         t.mut().setDataAt( t.getNDConf().indexOfIndex( i ), o );
     }
 

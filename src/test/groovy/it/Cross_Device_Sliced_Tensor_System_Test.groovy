@@ -2,7 +2,7 @@ package it
 
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.ocl.CLBackend
 import neureka.devices.Device
 import neureka.devices.host.CPU
@@ -58,7 +58,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         and: 'A tensor which ought to be sliced:'
-            var a = Tsr.of([4, 6], [
+            var a = Tensor.of([4, 6], [
                             1d, 2d, 3d, 4d, 5d, 6d,
                             7d, 8d, 9d, 1d, 2d, 3d,
                             4d, 5d, 6d, 7d, 8d, 9d,
@@ -120,32 +120,32 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return
 
         when :
-            var x = Tsr.of([1],  3d).setRqsGradient(true)
-            var b = Tsr.of([1], -4d)
-            var w = Tsr.of([1],  2d)
+            var x = Tensor.of([1],  3d).setRqsGradient(true)
+            var b = Tensor.of([1], -4d)
+            var w = Tensor.of([1],  2d)
             device.store(x).store(b).store(w)
             /*
                         ((3-4)*2)**2 = 4
                   dx:    8*3 - 32   = -8
              */
-            var y = Tsr.of("((i0+i1)*i2)**2", [x, b, w])
+            var y = Tensor.of("((i0+i1)*i2)**2", [x, b, w])
         then:
             y.indicesMap() != null
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when:
-            y.backward(Tsr.of(2d))
+            y.backward(Tensor.of(2d))
             y = ( ( x + b ) * w )**2
 
         then:
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when:
-            y.backward(Tsr.of(2d))
+            y.backward(Tensor.of(2d))
             x.toString().contains("-32.0")
             y = b + w * x
 
-            var a = Tsr.of([4, 6], [
+            var a = Tensor.of([4, 6], [
                                 1d, 2d, 3d, 4d, 5d, 6d,
                                 7d, 8d, 9d, 1d, 2d, 3d,
                                 4d, 5d, 6d, 7d, 8d, 9d,
@@ -195,7 +195,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                 a.getDataAs( double[].class )[1] = a.getDataAs( double[].class )[1] * 6
                 a.getDataAs( double[].class )[7] = a.getDataAs( double[].class )[7] * 2
             } else {
-                var k = Tsr.of([4, 6], [
+                var k = Tensor.of([4, 6], [
                                 1d, 6d, 1d, 1d,
                                 1d, 1d, 1d, 2d,
                                 1d, 1d, 1d, 1d,
@@ -211,7 +211,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             b.toString().contains("7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0")
 
         when:
-            var c = Tsr.of([3, 4], [
+            var c = Tensor.of([3, 4], [
                             -3d, 2d, 3d,
                              5d, 6d, 2d,
                             -1d, 1d, 2d,
@@ -274,8 +274,8 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              */
 
         when:
-            var p = Tsr.of([2,2], [2d, 55d, 4d, 7d]).to((device instanceof DummyDevice)?null:device)
-            var u = Tsr.of([2,2], [5d, 2d, 7d, 34d]).to((device instanceof DummyDevice)?null:device)
+            var p = Tensor.of([2, 2], [2d, 55d, 4d, 7d]).to((device instanceof DummyDevice)?null:device)
+            var u = Tensor.of([2, 2], [5d, 2d, 7d, 34d]).to((device instanceof DummyDevice)?null:device)
 
             p.mut[] = u
 
@@ -283,7 +283,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             p.toString().contains("5.0, 2.0, 7.0, 34.0")
 
         when:
-            a.mut[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1d, 2d, 3d, 4d])
+            a.mut[[[0..3]:2, [1..4]:2]] = Tensor.of([2, 2], [1d, 2d, 3d, 4d])
         then:
             b.toString().contains("1.0, 2.0, 3.0, 4.0")
             a.toString().contains(
@@ -301,7 +301,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              */
 
         when:
-            a.mut[1..2, 1..2] = Tsr.of([2, 2], [8, 8, 8, 8])
+            a.mut[1..2, 1..2] = Tensor.of([2, 2], [8, 8, 8, 8])
         then:
             b.toString().contains(
                     "1.0, 2.0, "+
@@ -325,12 +325,12 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         */
         when:
             b.setRqsGradient(true)
-            c = Tsr.of([2, 2], [
+            c = Tensor.of([2, 2], [
                             -2, 3,//-2 + 24 + 3 + 8
                              1, 2,
                         ])
             device.store(b).store(c) // -2 + 6 + 8 + 8 = 22
-            x = Tsr.of(b, "x", c) // This test is important because it tests convolution on slices!
+            x = Tensor.of(b, "x", c) // This test is important because it tests convolution on slices!
         then:
             x.item() == 20
         and :

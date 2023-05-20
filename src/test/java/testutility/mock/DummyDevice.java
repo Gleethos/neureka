@@ -1,7 +1,7 @@
 package testutility.mock;
 
 import neureka.Data;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.devices.AbstractBaseDevice;
@@ -17,23 +17,23 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public void dispose() { }
 
     @Override
-    public <T> Access<T> access(Tsr<T> tensor) {
+    public <T> Access<T> access(Tensor<T> tensor) {
         return CPU.get().access(tensor);
     }
 
     @Override
-    public Device<Object> restore( Tsr tensor ) { return this; }
+    public Device<Object> restore( Tensor tensor ) { return this; }
 
     @Override
-    public Device<Object> store( Tsr tensor ) { return this; }
+    public Device<Object> store( Tensor tensor ) { return this; }
 
     @Override
-    public boolean has( Tsr tensor ) {
+    public boolean has( Tensor tensor ) {
         return false;
     }
 
     @Override
-    public Device<Object> free( Tsr tensor ) { return this; }
+    public Device<Object> free( Tensor tensor ) { return this; }
 
     @Override
     public Device<Object> approve( ExecutionCall<? extends Device<?>> call ) { return this; }
@@ -53,7 +53,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<Object>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tensor<Object>> changeRequest ) {
         return true;
     }
 }

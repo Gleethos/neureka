@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.optimization;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.composition.Component;
 import neureka.optimization.implementations.*;
 
@@ -45,7 +45,7 @@ import neureka.optimization.implementations.*;
  *  A simple usage example would be the following:
  *  <pre>{@code
  *      Optimizer o = new SGD(0.01); // 0.01 learning rate
- *      Tsr<Float> w = Tsr.of(0f);
+ *      Tensor<Float> w = Tensor.of(0f);
  *      w.set(o);
  *  }</pre>
  *  <br>
@@ -53,7 +53,7 @@ import neureka.optimization.implementations.*;
  *  take a look at the following example:
  *  <pre>{@code
  *      Optimizer.of( t -> {
- *          Tsr<?> gradient = t.getGradient();
+ *          Tensor<?> gradient = t.getGradient();
  *          // ... apply algorithm ...
  *      })
  *  }</pre>
@@ -67,7 +67,7 @@ import neureka.optimization.implementations.*;
  *
  * @param <V> The value type parameter of the tensors processed by this optimizer.
  */
-public interface Optimizer<V> extends Component<Tsr<V>>, Optimization<V>
+public interface Optimizer<V> extends Component<Tensor<V>>, Optimization<V>
 {
     ADAMFactory ADAM     = new ADAMFactory();
     AdaGradFactory AdaGrad  = new AdaGradFactory();
@@ -82,8 +82,8 @@ public interface Optimizer<V> extends Component<Tsr<V>>, Optimization<V>
      */
     static <T> Optimizer<T> of( Optimization<T> o ) {
         return new Optimizer<T>() {
-            @Override public boolean update( OwnerChangeRequest<Tsr<T>> changeRequest ) { return true; }
-            @Override public Tsr<T> optimize( Tsr<T> w ) { return o.optimize(w); }
+            @Override public boolean update( OwnerChangeRequest<Tensor<T>> changeRequest ) { return true; }
+            @Override public Tensor<T> optimize(Tensor<T> w ) { return o.optimize(w); }
         };
     }
 
@@ -94,8 +94,8 @@ public interface Optimizer<V> extends Component<Tsr<V>>, Optimization<V>
      */
     static <T> Optimizer<T> ofGradient( Optimization<T> o ) {
         return new Optimizer<T>() {
-            @Override public boolean update( OwnerChangeRequest<Tsr<T>> changeRequest ) { return true; }
-            @Override public Tsr<T> optimize( Tsr<T> w ) { return o.optimize(w.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!"))); }
+            @Override public boolean update( OwnerChangeRequest<Tensor<T>> changeRequest ) { return true; }
+            @Override public Tensor<T> optimize(Tensor<T> w ) { return o.optimize(w.gradient().orElseThrow(()->new IllegalStateException("Gradient missing!"))); }
         };
     }
 

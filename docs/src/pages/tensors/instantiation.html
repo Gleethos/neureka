@@ -5,7 +5,7 @@
             Tensor instantiation:
         </h3>
         <p class="MarkdownMe">
-At the core of Neureka lies the `Tsr` class,<br>
+At the core of Neureka lies the `Tensor` class,<br>
 which is a three-letter abbreviation of the word <b>t</b>en<b>s</b>o<b>r</b>!<br>
         </p>
     </div>
@@ -14,9 +14,9 @@ which is a three-letter abbreviation of the word <b>t</b>en<b>s</b>o<b>r</b>!<br
 <div class="col-sm-12 col-md-5 col-lg-4">
     <div class="ContentBox">
         <p class="MarkdownMe">
-The most readable and type safe way of instantiating a `Tsr`
+The most readable and type safe way of instantiating a `Tensor`
 is by using the internal tensor builder which is exposed by
-the static `Tsr::of(T type)` factory method.
+the static `Tensor::of(T type)` factory method.
         </p>
     </div>
 </div>
@@ -30,7 +30,7 @@ the static `Tsr::of(T type)` factory method.
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var t = Tsr.of(Double)
+var t = Tensor.of(Double)
                 .withShape(2, 4)
                 .andFill(
                     1, 2, 3, 4,
@@ -40,7 +40,7 @@ var t = Tsr.of(Double)
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Tsr&#60;Double&#62; t = Tsr.of(Double.class)
+Tensor&#60;Double&#62; t = Tensor.of(Double.class)
                     .withShape(2, 4)
                     .andFill(
                         1, 2, 3, 4,
@@ -50,7 +50,7 @@ Tsr&#60;Double&#62; t = Tsr.of(Double.class)
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val t = Tsr.of(Double::class.java)
+val t = Tensor.of(Double::class.java)
                 .withShape(2, 4)
                 .andFill(
                     1.0, 2.0, 3.0, 4.0,
@@ -72,7 +72,7 @@ val t = Tsr.of(Double::class.java)
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var t = Tsr.of([2, 4],[
+var t = Tensor.of([2, 4],[
             1, 2, 3, 4,
             9, 8, 6, 5
         ])
@@ -80,7 +80,7 @@ var t = Tsr.of([2, 4],[
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Tsr&#60;Double&#62; t = Tsr.of(
+Tensor&#60;Double&#62; t = Tensor.of(
              new int[]{2, 4},
              new double[]{
                     1, 2, 3, 4,
@@ -90,7 +90,7 @@ Tsr&#60;Double&#62; t = Tsr.of(
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val t = Tsr.of(
+val t = Tensor.of(
      intArrayOf(2, 4),
      doubleArrayOf(
             1, 2, 3, 4,
@@ -121,17 +121,17 @@ val t = Tsr.of(
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var t = Tsr.of([2, 4], -5.0)
+var t = Tensor.of([2, 4], -5.0)
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Tsr&#60;Double&#62; t = Tsr.of(new int[]{2, 4}, -5d);
+Tensor&#60;Double&#62; t = Tensor.of(new int[]{2, 4}, -5d);
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val t = Tsr.of(intArrayOf(2, 4), -5.0)
+val t = Tensor.of(intArrayOf(2, 4), -5.0)
                 </code></pre>
             </div>
         </div>
@@ -156,17 +156,17 @@ val t = Tsr.of(intArrayOf(2, 4), -5.0)
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs language-java">
-var t = Tsr.of(-5)
+var t = Tensor.of(-5)
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs language-java">
-Tsr&#60;Integer&#62; t = Tsr.of(-5);
+Tensor&#60;Integer&#62; t = Tensor.of(-5);
                 </code></pre>
             </div>
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val t = Tsr.of(-5)
+val t = Tensor.of(-5)
                 </code></pre>
             </div>
         </div>

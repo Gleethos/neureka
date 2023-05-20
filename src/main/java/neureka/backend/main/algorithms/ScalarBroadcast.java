@@ -1,7 +1,7 @@
 package neureka.backend.main.algorithms;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -45,7 +45,7 @@ public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
                     assert call.input( 0 ) == null;  // Creating a new tensor:
                     Shape outShape = call.input( 1 ).shape();
                     Class<Object> type = (Class<Object>) call.input( 1 ).getItemType();
-                    Tsr output = Tsr.of( type, outShape, 0.0 ).mut().setIsIntermediate( true );
+                    Tensor output = Tensor.of( type, outShape, 0.0 ).mut().setIsIntermediate( true );
                     output.mut().setIsVirtual( false );
                     try {
                         device.store( output );
@@ -68,7 +68,7 @@ public class ScalarBroadcast extends AbstractFunDeviceAlgorithm<ScalarBroadcast>
                 int d = call.getValOf(Arg.DerivIdx.class);
                 CPUFun f = d < 0 ? fun.getActivation() : fun.getDerivative();
                 double value =  f.invoke( call.input( Number.class, 1 ).at(0).get().doubleValue() );
-                Tsr<Number> t = call.input( Number.class, 0 );
+                Tensor<Number> t = call.input( Number.class, 0 );
                 int gwz = t.size();
                 call.getDevice()
                         .getKernel("scalar_broadcast")

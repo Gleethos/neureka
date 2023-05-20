@@ -1,9 +1,9 @@
 package ut.device
 
 import neureka.Data
-import neureka.MutateTsr
+import neureka.MutateTensor
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.common.composition.Component
 import neureka.devices.Device
 import neureka.backend.ocl.CLBackend
@@ -93,12 +93,12 @@ class OpenCL_Spec extends Specification
             Device device = Device.get('first')
 
         and : 'A mocked tensor that is not outsourced.'
-            Tsr<?> t = Mock(Tsr) // Could be : Tsr.of([4, 3], 2)
+        Tensor<?> t = Mock(Tensor) // Could be : Tensor.of([4, 3], 2)
             t.isOutsourced() >> false
 
         and : 'Another mocked tensor that represents a slice of the prior one.'
-            Tsr<?> s = Mock(Tsr) // Could be : t[1..3, 1..2]
-            MutateTsr<?> u = Mock(MutateTsr)
+            Tensor<?> s = Mock(Tensor) // Could be : t[1..3, 1..2]
+        MutateTensor<?> u = Mock(MutateTensor)
             s.getMut() >> u
             u.getData() >> Mock(Data)
 
@@ -117,8 +117,8 @@ class OpenCL_Spec extends Specification
 
         when : 'If the tensor was not a mock it would then cause the following change request to be dispatched:'
             device.update(new Component.OwnerChangeRequest() {
-                @Override Tsr<?> getOldOwner() { return null }
-                @Override Tsr<?> getNewOwner() { return s }
+                @Override Tensor<?> getOldOwner() { return null }
+                @Override Tensor<?> getNewOwner() { return s }
                 @Override boolean executeChange() { return true }
             })
 

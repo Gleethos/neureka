@@ -1,6 +1,6 @@
 package neureka.optimization.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.optimization.OptimizerFactory;
 
 public class MomentumFactory implements OptimizerFactory 
@@ -30,7 +30,7 @@ public class MomentumFactory implements OptimizerFactory
     }
 
     @Override
-    public <V extends Number> Momentum<V> create(Tsr<V> target) {
+    public <V extends Number> Momentum<V> create(Tensor<V> target) {
         return new Momentum<>(target, _learningRate, _decayRate);
     }
     

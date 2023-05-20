@@ -1,7 +1,7 @@
 package ut.device.internal
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.api.Algorithm
 import neureka.backend.api.DeviceAlgorithm
 import neureka.backend.api.ExecutionCall
@@ -64,9 +64,9 @@ class CLFunctionCompiler_Spec extends Specification
         given : 'We get the first available OpenCLDevice we can find in the CLContext!'
             def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]
         and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
-            Tsr<Double> t1 = Tsr.of(-2d).to(device)
-            Tsr<Double> t2 = Tsr.of(5d).to(device)
-            Tsr<Double> t3 = Tsr.of(2d).to(device)
+            Tensor<Double> t1 = Tensor.of(-2d).to(device)
+            Tensor<Double> t2 = Tensor.of(5d).to(device)
+            Tensor<Double> t3 = Tensor.of(2d).to(device)
 
         and : 'A test function which will be the optimization target for this test.'
             def funToBeOptimized = Function.of("i2 + (i0 / i1)") // 2 + (-2 / 5)
@@ -78,7 +78,7 @@ class CLFunctionCompiler_Spec extends Specification
             !device.hasAdHocKernel("my_test_fun_F64\$1_F64\$1_F64\$1_F64\$1")
 
         when : 'We test the optimized function by calling it with three arguments...'
-            Tsr result = optimized( t1, t2, t3 )
+            Tensor result = optimized( t1, t2, t3 )
 
         then : '...the result should look as follows:'
             result.toString() == "(1):[1.6]"
@@ -93,9 +93,9 @@ class CLFunctionCompiler_Spec extends Specification
         given : 'We get the first available OpenCLDevice we can find in the CLContext!'
             def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]
         and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
-            Tsr<Float> t1 = Tsr.of(-3f).to(device)
-            Tsr<Float> t2 = Tsr.of(6f).to(device)
-            Tsr<Float> t3 = Tsr.of(2f).to(device)
+            Tensor<Float> t1 = Tensor.of(-3f).to(device)
+            Tensor<Float> t2 = Tensor.of(6f).to(device)
+            Tensor<Float> t3 = Tensor.of(2f).to(device)
 
         and : 'A test function which will be the optimization target for this test.'
             def funToBeOptimized = Function.of("i0 * (i1 / i2)") // -3 * (6 / 2)
@@ -107,7 +107,7 @@ class CLFunctionCompiler_Spec extends Specification
             !device.hasAdHocKernel("my_fun_F32\$1_F32\$1_F32\$1_F32\$1")
 
         when : 'We test the optimized function by calling it with three arguments...'
-            Tsr result = optimized( t1, t2, t3 )
+            Tensor result = optimized( t1, t2, t3 )
 
         then : '...the result should look as follows:'
             result.toString() == "(1):[-9.0]"
@@ -124,10 +124,10 @@ class CLFunctionCompiler_Spec extends Specification
         and : 'We get the first available OpenCLDevice we can find in the CLContext!'
         def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
         and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
-        Tsr<Double> t1 = Tsr.of([[1, 3, 2],[4, -2, 5]])[0..1, 1..2]
+        Tensor<Double> t1 = Tensor.of([[1, 3, 2],[4, -2, 5]])[0..1, 1..2]
         t1.set(device)
-        Tsr<Double> t2 = Tsr.of(5).set(device)
-        Tsr<Double> t3 = Tsr.of(2).set(device)
+        Tensor<Double> t2 = Tensor.of(5).set(device)
+        Tensor<Double> t3 = Tensor.of(2).set(device)
 
         and : 'A test function which will be the optimization target for this test.'
         def funToBeOptimized = Function.of("i2 + (i0 / i1)") // 2 + (-2 / 5)
@@ -139,7 +139,7 @@ class CLFunctionCompiler_Spec extends Specification
         !device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
 
         when :
-        Tsr result = optimized( t1, t2, t3 )
+        var result = optimized( t1, t2, t3 )
 
         then :
         result.toString() == "(1):[1.6E0]"
@@ -155,9 +155,9 @@ class CLFunctionCompiler_Spec extends Specification
         given : 'A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.'
             var mockDevice = Mock(OpenCLDevice)
         and : 'Three simple scalar tensors (of doubles) which we will keep in RAM (not outsource to a device).'
-            Tsr<Number> t1 = Tsr.of( 1d )
-            Tsr<Number> t2 = Tsr.of(-2d )
-            Tsr<Number> t3 = Tsr.of( 5d )
+            Tensor<Number> t1 = Tensor.of( 1d )
+            Tensor<Number> t2 = Tensor.of(-2d )
+            Tensor<Number> t3 = Tensor.of( 5d )
         and : 'A simple test function which will serve as the basis for the optimization.'
             var funToBeOptimized = Function.of("i2 - (i0 / i1)")
         and : 'Finally we instantiate the compiler which uses the mocked device and the test function for optimization.'
@@ -280,7 +280,7 @@ class CLFunctionCompiler_Spec extends Specification
             algorithm
                 .getImplementationFor(OpenCLDevice.class)
                 .run(
-                        ExecutionCall.of(Tsr.of(0d), Tsr.of(1d), Tsr.of(2d), Tsr.of(3d))
+                        ExecutionCall.of(Tensor.of(0d), Tensor.of(1d), Tensor.of(2d), Tensor.of(3d))
                                         .running(resultOperation)
                                         .on(mockDevice) as ExecutionCall<OpenCLDevice>
                 )

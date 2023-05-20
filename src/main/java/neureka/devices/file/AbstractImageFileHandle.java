@@ -1,7 +1,7 @@
 package neureka.devices.file;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Storage;
 import neureka.devices.host.CPU;
@@ -22,7 +22,7 @@ abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, Number>
     private int _height;
 
 
-    protected AbstractImageFileHandle( Tsr<Number> t, String filename, ImageFileType type ) {
+    protected AbstractImageFileHandle(Tensor<Number> t, String filename, ImageFileType type ) {
         super( filename, type );
         LogUtil.nullArgCheck( type, "type", ImageFileType.class );
         _type = type;
@@ -76,9 +76,9 @@ abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, Number>
 
     /** {@inheritDoc} */
     @Override
-    public Tsr<Number> load() throws IOException {
+    public Tensor<Number> load() throws IOException {
         Object value = _loadData(); // This is simply some kind of primitive array.
-        Tsr<?> t = Tsr.of(
+        Tensor<?> t = Tensor.of(
                         _type.targetedValueType(),
                         Shape.of(_height, _width, _type.numberOfChannels()),
                         value
@@ -133,9 +133,9 @@ abstract class AbstractImageFileHandle<C> extends AbstractFileHandle<C, Number>
 
     /** {@inheritDoc} */
     @Override
-    public <T extends Number> Storage<Number> store( Tsr<T> tensor )
+    public <T extends Number> Storage<Number> store( Tensor<T> tensor )
     {
-        LogUtil.nullArgCheck( tensor, "tensor", Tsr.class );
+        LogUtil.nullArgCheck( tensor, "tensor", Tensor.class );
 
         if ( _width != tensor.shape(1) )
             throw new IllegalArgumentException(

@@ -3,7 +3,7 @@ package ut.device
 import neureka.Data
 import neureka.Neureka
 import neureka.Shape
-import neureka.Tsr
+import neureka.Tensor
 import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm
@@ -156,7 +156,7 @@ class Cross_Device_Type_Spec extends Specification
         """
 
         given : 'A 2D tensor which we transfer to a device using the "to" method...'
-            Tsr t = Tsr.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)
+            Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)
 
         when : 'A numeric array is passed to said tensor...'
             t.mut.setItems(data1)
@@ -187,7 +187,7 @@ class Cross_Device_Type_Spec extends Specification
             if ( device == null ) return
 
         when : 'A 2D tensor is being instantiated by passing the given shape and data...'
-            Tsr t = Tsr.of(Shape.of(shape), data).to(device)
+            Tensor t = Tensor.of(Shape.of(shape), data).to(device)
 
         then : 'The tensor values (as List) are as expected.'
             Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))
@@ -237,7 +237,7 @@ class Cross_Device_Type_Spec extends Specification
         then : '...the implementation is being accessed in order to access the mocked lambda...'
             (1.._) * call.getAlgorithm() >> implementation
         and : 'The tensor array is being accessed to check for null. (For exception throwing)'
-            1 * call.inputs() >> new Tsr[]{ Mock(Tsr), null }
+            1 * call.inputs() >> new Tensor[]{ Mock(Tensor), null }
         and : 'The expected exception is being thrown alongside a descriptive message.'
             def exception = thrown(IllegalArgumentException)
             exception.message == "Device arguments may not be null!\n" +
@@ -267,8 +267,8 @@ class Cross_Device_Type_Spec extends Specification
             if ( device == null ) return
         and : 'Two tensors which will be transferred later on...'
             int initialNumber = device.numberOfStored()
-            Tsr a = Tsr.of([2, 3], ";)")
-            Tsr b = Tsr.of([3, 4], ":P")
+            Tensor a = Tensor.of([2, 3], ";)")
+        Tensor b = Tensor.of([3, 4], ":P")
 
         expect : 'The given device is initially empty.'
             device.isEmpty() == ( device.numberOfStored() == 0 )
@@ -324,8 +324,8 @@ class Cross_Device_Type_Spec extends Specification
             if ( device == null ) return
         and : 'Two tensors which will be transferred later on...'
             int initialNumber = device.numberOfStored()
-            Tsr a = Tsr.of([2, 3], ";)")
-            Tsr b = a[1, 0..2]
+            Tensor a = Tensor.of([2, 3], ";)")
+            Tensor b = a[1, 0..2]
 
         expect : 'The given device is initially empty.'
             device.isEmpty() == ( device.numberOfStored() == 0 )
@@ -374,7 +374,7 @@ class Cross_Device_Type_Spec extends Specification
             device.numberOfStored() == initial
 
         when : 'We create a tensor from the data object...'
-            var t = Tsr.of( Shape.of(2, 2), data ).to(device)
+            var t = Tensor.of( Shape.of(2, 2), data ).to(device)
         then : 'The device should know about the existence of a new tensor.'
             device.numberOfStored() == initial + 1
         and : 'The number of data objects stored on the device should also be increased.'
@@ -413,13 +413,13 @@ class Cross_Device_Type_Spec extends Specification
 
     @Ignore
     def 'Devices cannot store slices whose parents are not already stored.'(
-            Device device, BiConsumer<Device, Tsr> storageMethod
+            Device device, BiConsumer<Device, Tensor> storageMethod
     ) {
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
         and : 'Two tensors which will be transferred later on...'
-            Tsr a = Tsr.of([2, 3], ";)")
-            Tsr b = a[1, 0..2]
+            Tensor a = Tensor.of([2, 3], ";)")
+            Tensor b = a[1, 0..2]
         and :
             var initialSize = device.numberOfStored()
 
@@ -477,7 +477,7 @@ class Cross_Device_Type_Spec extends Specification
         """
 
         given : 'We create a homogeneously filled tensor, which is therefor "virtual".'
-            var t = Tsr.ofFloats().withShape(4,3).all(-0.54f)
+            var t = Tensor.ofFloats().withShape(4,3).all(-0.54f)
         and : 'We also get a device for testing...'
             var device = Device.get(deviceType)
 

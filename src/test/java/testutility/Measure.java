@@ -1,6 +1,6 @@
 package testutility;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.math.Function;
 
 public class Measure {
@@ -47,28 +47,28 @@ public class Measure {
     }
 
     private static Runnable _f32() {
-        Tsr<Float> a = Tsr.ofFloats().withShape(40, 300, 200).andFill(-1f, 5f, 0.7f, 9f, -14.75f);
-        Tsr<Float> b = Tsr.ofFloats().withShape(40, 300, 200).andWhere((i, indices) -> (float)((Math.pow(7,i)%11)-5));
-        Tsr<Float> c = Tsr.ofFloats().withShape(40, 300, 200).andSeed("I am a happy seed! :D");
+        Tensor<Float> a = Tensor.ofFloats().withShape(40, 300, 200).andFill(-1f, 5f, 0.7f, 9f, -14.75f);
+        Tensor<Float> b = Tensor.ofFloats().withShape(40, 300, 200).andWhere((i, indices) -> (float)((Math.pow(7,i)%11)-5));
+        Tensor<Float> c = Tensor.ofFloats().withShape(40, 300, 200).andSeed("I am a happy seed! :D");
         Function f = Function.of("relu(i0+i1*3)*i2");
         return  ()-> f.call(a, b, c);
     }
 
     private static Runnable _f64() {
-        Tsr<Double> a = Tsr.ofDoubles().withShape(40, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
-        Tsr<Double> b = Tsr.ofDoubles().withShape(40, 300, 200).andWhere((i, indices) -> ((Math.pow(7,i)%11)-5));
-        Tsr<Double> c = Tsr.ofDoubles().withShape(40, 300, 200).andSeed("I am a happy seed! :D");
+        Tensor<Double> a = Tensor.ofDoubles().withShape(40, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
+        Tensor<Double> b = Tensor.ofDoubles().withShape(40, 300, 200).andWhere((i, indices) -> ((Math.pow(7,i)%11)-5));
+        Tensor<Double> c = Tensor.ofDoubles().withShape(40, 300, 200).andSeed("I am a happy seed! :D");
         Function f = Function.of("relu(i0+i1*3)*i2");
         return  ()-> f.call(a, b, c);
     }
 
     private static Runnable _fun64() {
-        Tsr<Double> a = Tsr.ofDoubles().withShape(42, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
+        Tensor<Double> a = Tensor.ofDoubles().withShape(42, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
         Function f = Function.of("tanh(i0)");
         return  ()-> f.call(a);
     }
     private static Runnable _funi64() {
-        Tsr<Double> a = Tsr.ofDoubles().withShape(42, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
+        Tensor<Double> a = Tensor.ofDoubles().withShape(42, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
         Function f = Function.of("fast_tanh(i0)");
         return  ()-> f.call(a);
     }
@@ -85,20 +85,20 @@ public class Measure {
 
     private static Runnable _random1() {
         return  ()-> {
-            Tsr.ofRandom(Double.class, 40, 300, 200);
+            Tensor.ofRandom(Double.class, 40, 300, 200);
         };
     }
 
     private static Runnable _random2() {
         Function f = Function.of("random(I[0])");
         return  ()-> {
-            Tsr<Double> a = Tsr.ofDoubles().withShape(40, 300, 200).all(0d);
+            Tensor<Double> a = Tensor.ofDoubles().withShape(40, 300, 200).all(0d);
             f.call(a);
         };
     }
 
     private static Runnable _map() {
-        Tsr<Double> a = Tsr.ofDoubles().withShape(40, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
+        Tensor<Double> a = Tensor.ofDoubles().withShape(40, 300, 200).andFill(-1d, 5d, 0.7d, 9d, -14.75d);
         return  ()-> a.mapTo( Float.class, Double::floatValue );
     }
 

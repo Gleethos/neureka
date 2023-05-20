@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.elementwise;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUFun;
@@ -16,7 +16,7 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
     public CPUElementwiseFunction( ScalarFun fun ) { _fun = fun; }
 
     @Override
-    public Tsr<?> run( ExecutionCall<CPU> call ) {
+    public Tensor<?> run(ExecutionCall<CPU> call ) {
         call.getDevice()
             .getExecutor()
             .threaded(
@@ -30,8 +30,8 @@ public class CPUElementwiseFunction implements ImplementationFor<CPU>
     private CPU.RangeWorkload _workloadFor(
             ExecutionCall<CPU> call
     ) {
-        Tsr<?> t0_drn = call.input( 0 );
-        Tsr<?> t1_src = call.input( 1 );
+        Tensor<?> t0_drn = call.input( 0 );
+        Tensor<?> t1_src = call.input( 1 );
         Class<?> typeClass = t0_drn.getItemType();
         Class<?> rightTypeClass = t1_src.getItemType();
 

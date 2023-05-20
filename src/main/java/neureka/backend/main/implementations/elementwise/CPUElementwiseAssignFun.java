@@ -1,6 +1,6 @@
 package neureka.backend.main.implementations.elementwise;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
 import neureka.devices.host.CPU;
@@ -12,11 +12,11 @@ public class CPUElementwiseAssignFun extends CPUElementwiseFunction
 
 
     @Override
-    public Tsr<?> run( ExecutionCall<CPU> call )
+    public Tensor<?> run(ExecutionCall<CPU> call )
     {
         assert call.arity() == 2;
 
-        boolean allVirtual = call.validate().all( Tsr::isVirtual ).isValid();
+        boolean allVirtual = call.validate().all( Tensor::isVirtual ).isValid();
 
         if ( allVirtual ) {
             call.input(Object.class, 0).mut().setDataAt(0, call.input(1).item() );
@@ -28,7 +28,7 @@ public class CPUElementwiseAssignFun extends CPUElementwiseFunction
         call.input(0).mut().setIsVirtual(false);
 
         boolean isSimple = call.validate()
-                                .allShare(Tsr::isVirtual)
+                                .allShare(Tensor::isVirtual)
                                 .allShare(NDimensional::getNDConf)
                                 .all( t -> t.getNDConf().isSimple() )
                                 .isValid();

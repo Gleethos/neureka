@@ -3,7 +3,7 @@ package neureka.fluent.building;
 import neureka.Nda;
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.common.utility.DataConverter;
@@ -22,11 +22,11 @@ import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
- *  This is the implementation of the fluent builder API for creating {@link Nda}/{@link Tsr} instances.
+ *  This is the implementation of the fluent builder API for creating {@link Nda}/{@link Tensor} instances.
  *  A simple example would be:
  * <pre>{@code
  *
- *    Tsr.of(Double.class)
+ *    Tensor.of(Double.class)
  *          .withShape( 2, 3, 4 )
  *          .andFill( 5, 3, 5 )
  *
@@ -35,7 +35,7 @@ import java.util.stream.IntStream;
  * It is also possible to define a range using the API to populate the tensor with values:
  * <pre>{@code
  *
- *    Tsr.of(Double.class)
+ *    Tensor.of(Double.class)
  *          .withShape( 2, 3, 4 )
  *          .andFillFrom( 2 ).to( 9 ).step( 2 )
  *
@@ -44,27 +44,27 @@ import java.util.stream.IntStream;
  * If one needs a simple scalar then the following shortcut is possible:
  * <pre>{@code
  *
- *    Tsr.of(Float.class).scalar( 3f )
+ *    Tensor.of(Float.class).scalar( 3f )
  *
  * }</pre>
  *
  * This principle works for vectors as well:
  * <pre>{@code
  *
- *     Tsr.of(Byte.class).vector( 2, 5, 6, 7, 8 )
+ *     Tensor.of(Byte.class).vector( 2, 5, 6, 7, 8 )
  *
  * }</pre>
  * For more fine-grained control over the initialization one can
  * pass an initialization lambda to the API:
  * <pre>{@code
  *
- *     Tsr.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -> i * 5 - 30 )
+ *     Tensor.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -> i * 5 - 30 )
  *
  * }</pre>
  *
- * @param <V> The type of the values which ought to be represented by the {@link Tsr} built by this {@link NdaBuilder}.
+ * @param <V> The type of the values which ought to be represented by the {@link Tensor} built by this {@link NdaBuilder}.
  */
-public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAllTsr<V>, ToForTsr<V>, StepForTsr<V>
+public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>, IterByOrIterFromOrAllTensor<V>, ToForTensor<V>, StepForTensor<V>
 {
     private static final Logger _LOG = LoggerFactory.getLogger(NdaBuilder.class);
 
@@ -75,25 +75,25 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     private Device<V> _device = (Device<V>) CPU.get();
 
     /**
-     * @param typeClass The type of the values which ought to be represented by the {@link Tsr} built by this {@link NdaBuilder}.
+     * @param typeClass The type of the values which ought to be represented by the {@link Tensor} built by this {@link NdaBuilder}.
      */
     public NdaBuilder( Class<V> typeClass ) {
         LogUtil.nullArgCheck( typeClass, "typeClass", Class.class, "Cannot build tensor without data type information!" );
         _dataType = DataType.of( typeClass );
     }
 
-    private Tsr<V> _get( Object value ) {
+    private Tensor<V> _get(Object value ) {
         LogUtil.nullArgCheck( value, "value", Object.class, "Cannot build tensor where value is null!" );
-        return Tsr.of( _dataType, _device, _shape, value );
+        return Tensor.of( _dataType, _device, _shape, value );
     }
 
     /**
-     * @param values The values which will recurrently populate the returned {@link Tsr} with values until it is filled.
-     * @return A new {@link Tsr} instance populated by the array of values supplied to this method.
+     * @param values The values which will recurrently populate the returned {@link Tensor} with values until it is filled.
+     * @return A new {@link Tensor} instance populated by the array of values supplied to this method.
      */
     @SafeVarargs
     @Override
-    public final Tsr<V> andFill( V... values ) {
+    public final Tensor<V> andFill(V... values ) {
         LogUtil.nullArgCheck( values, "values", _dataType.getItemTypeClass(), "Cannot fill a tensor will a value array that is null!" );
         if ( _isAllOne(values) ) return _get( values[0] );
         return _get( values );
@@ -116,28 +116,28 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
 
     /**
      *  This method receives an {@link Filler} lambda which will be
-     *  used to populate the {@link Tsr} instance produced by this API with values.
+     *  used to populate the {@link Tensor} instance produced by this API with values.
      *
-     * @param filler The {@link Filler} which ought to populate the returned {@link Tsr}.
-     * @return A new {@link Tsr} instance populated by the lambda supplied to this method.
+     * @param filler The {@link Filler} which ought to populate the returned {@link Tensor}.
+     * @return A new {@link Tensor} instance populated by the lambda supplied to this method.
      */
     @Override
-    public Tsr<V> andWhere( Filler<V> filler ) {
-        return Tsr.of( _dataType, _shape, filler ).to( _device );
+    public Tensor<V> andWhere(Filler<V> filler ) {
+        return Tensor.of( _dataType, _shape, filler ).to( _device );
     }
 
     @Override
-    public ToForTsr<V> andFillFrom( V index ) {
+    public ToForTensor<V> andFillFrom(V index ) {
         LogUtil.nullArgCheck(index, "index", _dataType.getItemTypeClass(), "Cannot create a range where the last index is undefined!");
         _from = _checked(index);
         return this;
     }
 
     @Override
-    public Tsr<V> all( V value ) { return _get( value ); }
+    public Tensor<V> all(V value ) { return _get( value ); }
 
     @Override
-    public Tsr<V> andSeed( Object seed ) {
+    public Tensor<V> andSeed(Object seed ) {
         Class<V> type = _dataType.getItemTypeClass();
         Class<?> seedType = seed.getClass();
         try {
@@ -147,7 +147,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
             else if (type == Float.class && seedType == Long.class)
                 return random.with( Arg.Seed.of((Long) seed) ).call( _get( 0f ) );
             else
-                return Tsr.of( type, _shape, Arg.Seed.of(seed.toString()) ).to( _device );
+                return Tensor.of( type, _shape, Arg.Seed.of(seed.toString()) ).to( _device );
         } catch ( Exception e ) {
             IllegalArgumentException exception =
                     new IllegalArgumentException(
@@ -159,7 +159,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     }
 
     @Override
-    public IterByOrIterFromOrAllTsr<V> withShape( int... shape ) {
+    public IterByOrIterFromOrAllTensor<V> withShape(int... shape ) {
         LogUtil.nullArgCheck(shape, "shape", int[].class, "Cannot create a tensor without shape!");
         if ( shape.length == 0 )
             throw new IllegalArgumentException("Cannot instantiate a tensor without shape arguments.");
@@ -168,7 +168,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     }
 
     @Override
-    public Tsr<V> vector( Object[] values ) {
+    public Tensor<V> vector(Object[] values ) {
         LogUtil.nullArgCheck(values, "values", Object[].class, "Cannot create a vector without data array!");
         _shape = Shape.of( values.length );
         if ( _isAllOne(values) ) return _get( values[0] );
@@ -176,7 +176,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     }
 
     @Override
-    public Tsr<V> scalar( V value ) {
+    public Tensor<V> scalar(V value ) {
         if ( value != null ) {
             value = _checked( value );
             if ( !_dataType.getItemTypeClass().isAssignableFrom(value.getClass()) ) {
@@ -219,10 +219,10 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     }
 
     @Override
-    public StepForTsr<V> to( V index ) { _to = _checked(index); return this; }
+    public StepForTensor<V> to( V index ) { _to = _checked(index); return this; }
 
     @Override
-    public Tsr<V> step( double size ) {
+    public Tensor<V> step(double size ) {
         int tensorSize = _size();
         Object data = null;
         int itemLimit = _size();
@@ -299,7 +299,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     }
 
     @Override
-    public WithShapeOrScalarOrVectorTsr<V> on( Device<V> device ) {
+    public WithShapeOrScalarOrVectorTensor<V> on(Device<V> device ) {
         LogUtil.nullArgCheck(device, "device", Device.class, "Cannot create a tensor with an undefined device!");
         _device = device;
         return this;

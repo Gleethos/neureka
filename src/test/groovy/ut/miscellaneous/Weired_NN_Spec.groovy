@@ -1,7 +1,7 @@
 package ut.miscellaneous
 
 import neureka.Neureka
-import neureka.Tsr
+import neureka.Tensor
 import neureka.math.Function
 import neureka.ndim.config.types.views.SimpleReshapeView
 import neureka.optimization.Optimizer
@@ -17,7 +17,7 @@ import spock.lang.Subject
     an unusual usages of the Neureka library.
 
 ''')
-@Subject([Tsr, Optimizer])
+@Subject([Tensor, Optimizer])
 class Weired_NN_Spec extends Specification
 {
     def setup() {
@@ -42,22 +42,22 @@ class Weired_NN_Spec extends Specification
     def 'Dot based feed forward and activation produces expected result.'()
     {
         given :
-            def data = Tsr.of([8, 4], [ // a-b*c
-                                          1d,  2d,  2d, -3d,
-                                          3d, -1d, -1d,  4d,
-                                         -1d, -2d, -3d, -7d,
-                                         -2d, -3d,  4d,  10d,
-                                          4d,  5d, -1d,  9d,
-                                          6d,  2d,  3d,  0d,
-                                          7d,  3d,  2d,  1d,
-                                         -4d, -4d,  2d,  4d
+            def data = Tensor.of([8, 4], [ // a-b*c
+                                           1d, 2d, 2d, -3d,
+                                           3d, -1d, -1d, 4d,
+                                           -1d, -2d, -3d, -7d,
+                                           -2d, -3d, 4d, 10d,
+                                           4d, 5d, -1d, 9d,
+                                           6d, 2d, 3d, 0d,
+                                           7d, 3d, 2d, 1d,
+                                           -4d, -4d, 2d, 4d
                                     ])
 
             var X = data[0..-1, 0..2].T()
         and :
-            var w1 = Tsr.of([8, 3], ":-)").setRqsGradient(true)
-            var w2 = Tsr.of([7, 8], "O.o").setRqsGradient(true)
-            var w3 = Tsr.of([1, 7], ":P").setRqsGradient(true)
+            var w1 = Tensor.of([8, 3], ":-)").setRqsGradient(true)
+            var w2 = Tensor.of([7, 8], "O.o").setRqsGradient(true)
+            var w3 = Tensor.of([1, 7], ":P").setRqsGradient(true)
 
         expect:
             X.NDConf instanceof SimpleReshapeView

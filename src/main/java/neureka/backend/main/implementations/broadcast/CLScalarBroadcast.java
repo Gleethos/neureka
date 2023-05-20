@@ -1,7 +1,7 @@
 package neureka.backend.main.implementations.broadcast;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.math.args.Arg;
 import neureka.devices.opencl.KernelCode;
@@ -18,7 +18,7 @@ public class CLScalarBroadcast extends ParsedCLImplementation
     ) {
         super(
             call->{
-                Tsr<Number> t = call.input( Number.class, 0 );
+                Tensor<Number> t = call.input( Number.class, 0 );
                 int gwz = t.size();
                 call.getDevice()
                         .getKernel(call)
