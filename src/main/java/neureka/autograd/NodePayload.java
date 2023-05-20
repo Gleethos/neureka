@@ -19,7 +19,7 @@ final class NodePayload<V> {
     private final WeakReference<Tsr<V>> _payload;
 
 
-    public NodePayload( Tsr<V> p, Runnable cleanup ) {
+    public NodePayload( Tsr<V> p ) {
         if ( p == null ) {
             _payload = null;
             _payloadShape = null;
@@ -29,9 +29,6 @@ final class NodePayload<V> {
         else {
             assert !p.isUndefined();
             _payload = new WeakReference<>( p );
-            p.getDevice().access( p ).cleanup( () -> {
-                if ( this.getPayload() == null ) cleanup.run();
-            });
             _payloadShape = p.getNDConf().shape();
             _payloadReferenceVersion = p.getVersion();
             _payloadDataType = p.getDataType();

@@ -125,13 +125,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
         Result out = payloadSupplier.get();
         if ( out == null ) throw new NullPointerException( "The result must no be null!" );
 
-        NodePayload<V> data    = new NodePayload<>(null, null);
+        NodePayload<V> data    = new NodePayload<>( null );
         AutoDiffMode   adMode  = ( call != null ? call.autogradMode()                     : AutoDiffMode.NOT_SUPPORTED          );
         int            mode    = ( call != null ? GraphNodeUtility.modeOf( adMode, call ) : ( out.get().rqsGradient() ? 1 : 0 ) );
         GraphNode<V>[] parents = ( call != null ? new GraphNode[call.arity()]             : null                                );
 
         if ( function != null && function.isDoingAD() ) { // Only functions with AutoDiff enabled create computation graphs!
-            data = new NodePayload<>( out.get(), this::_performPayloadCleanup );
+            data = new NodePayload<>( out.get() );
             ((Tsr<V>)out.get()).set(this);
             if ( call != null ) {
                 Tsr<V>[] inputs = (Tsr<V>[]) call.inputs();
@@ -188,17 +188,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
                         "Please use detached functions instead! ( 'Function.create(\"" + function.getOperation().getIdentifier() + "(...)\", false)' )\n"
                     );
         }
-    }
-
-    private void _performPayloadCleanup() {
-        boolean allChildrenUseForwardAD = true;
-        if ( !_children.isEmpty() )
-            for ( WeakReference<GraphNode<V>> childRef : new ArrayList<>(_children) ) {
-                GraphNode<V> childNode = childRef.get();
-                if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
-            }
-
-        if ( allChildrenUseForwardAD && !_targetsToAgents.isEmpty() ) _targetsToAgents.clear();
     }
 
     /**
