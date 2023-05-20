@@ -58,7 +58,7 @@ plugins {
 compileJava { options.encoding = "UTF-8" } // Allows for '"' characters in comments for example...
 
 String PROJECT = "neureka"
-String VERSION = "0.20.1"
+String VERSION = "0.21.0"
 String GROUP_ID = "com.github.gleethos"
 String BASENAME = "neureka"
 
@@ -136,10 +136,10 @@ repositories {
 dependencies {
 
     // Core library dependencies :
-    implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
+    implementation 'org.jocl:jocl:2.0.5' //-> Internal dependency!
 
     // Logging :
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.3'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7'
 
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     //-----------------------------------------------------
