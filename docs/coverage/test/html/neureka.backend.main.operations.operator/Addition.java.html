@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-<span class="pc bpc" id="L27" title="1 of 2 branches missed.">public class Addition extends AbstractOperation {</span>
+<span class="fc" id="L27">public class Addition extends AbstractOperation {</span>
 
     public Addition()
     {
@@ -61,7 +61,7 @@ import java.util.stream.IntStream;
 <span class="pc bpc" id="L61" title="1 of 2 branches missed.">                    if ( call.autogradMode().allowsForward() )</span>
 <span class="nc" id="L62">                        throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
 <span class="fc" id="L63">                    Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
-<span class="pc bpc" id="L64" title="2 of 4 branches missed.">                    assert ctxDerivative == null;</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">                    assert ctxDerivative == null;</span>
 <span class="fc" id="L65">                    return _autogradBroadcast( call );</span>
                 }
             )
@@ -237,4 +237,4 @@ import java.util.stream.IntStream;
 
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

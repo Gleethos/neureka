@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPUSum.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other.internal</a> &gt; <span class="el_source">CPUSum.java</span></div><h1>CPUSum.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other.internal;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
@@ -11,152 +12,152 @@ import neureka.devices.host.CPU;
  *  are then reduced to local sum values.
  *  This happens iteratively until only a single value is left.
  */
-<span class="fc" id="L14">public class CPUSum implements ImplementationFor&lt;CPU&gt;</span>
+<span class="fc" id="L15">public class CPUSum implements ImplementationFor&lt;CPU&gt;</span>
 {
     @Override
     public Tsr&lt;?&gt; run( ExecutionCall&lt;CPU&gt; call ) {
-<span class="pc bpc" id="L18" title="1 of 2 branches missed.">        if ( call.getDevice() != CPU.get() )</span>
-<span class="nc" id="L19">            throw new IllegalArgumentException(&quot;This implementation is only available for the CPU!&quot;);</span>
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        Tsr&lt;?&gt; in = call.input(0) == null ? call.input(1) : call.input(0);</span>
-<span class="fc" id="L21">        in.mut().setIsVirtual(false);</span>
-<span class="fc" id="L22">        return _runRecursively(in, CPU.get());</span>
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        if ( call.getDevice() != CPU.get() )</span>
+<span class="nc" id="L20">            throw new IllegalArgumentException(&quot;This implementation is only available for the CPU!&quot;);</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        Tsr&lt;?&gt; in = call.input(0) == null ? call.input(1) : call.input(0);</span>
+<span class="fc" id="L22">        in.mut().setIsVirtual(false);</span>
+<span class="fc" id="L23">        return _runRecursively(in, CPU.get());</span>
     }
 
     private Tsr&lt;?&gt; _runRecursively(Tsr&lt;?&gt; in, CPU device)
     {
-<span class="fc" id="L27">        CPU.JVMExecutor executor = device.getExecutor();</span>
-<span class="fc" id="L28">        int RTS = 128; // Register tile size</span>
-<span class="fc" id="L29">        final int SIZE = in.size();</span>
+<span class="fc" id="L28">        CPU.JVMExecutor executor = device.getExecutor();</span>
+<span class="fc" id="L29">        int RTS = 128; // Register tile size</span>
+<span class="fc" id="L30">        final int SIZE = in.size();</span>
 
-<span class="fc" id="L31">        double fraction = (double) SIZE / (double) RTS;</span>
+<span class="fc" id="L32">        double fraction = (double) SIZE / (double) RTS;</span>
         // Determining optimal number of tiles!
         int N;
         // Check if fraction is an integer
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if ( fraction == Math.floor(fraction) )</span>
-<span class="nc" id="L36">            N = (int) fraction;</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if ( fraction == Math.floor(fraction) )</span>
+<span class="nc" id="L37">            N = (int) fraction;</span>
         else
-<span class="fc" id="L38">            N = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)</span>
+<span class="fc" id="L39">            N = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)</span>
 
-<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if ( in.size() == 1 )  return in;</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        if ( in.size() == 1 )  return in;</span>
 
-<span class="fc" id="L42">        Class&lt;?&gt; type = in.itemType();</span>
+<span class="fc" id="L43">        Class&lt;?&gt; type = in.itemType();</span>
 
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if ( type == Float.class ) {</span>
-<span class="fc" id="L45">            float[] inData = in.mut().getData().getRef(float[].class);</span>
-<span class="fc" id="L46">            float[] out = new float[N];</span>
-<span class="fc" id="L47">            executor.threaded( N, ni -&gt; {</span>
-<span class="fc" id="L48">                int offset = ni * RTS;</span>
-<span class="fc" id="L49">                int limit = Math.min( offset + RTS, SIZE );</span>
-<span class="fc" id="L50">                float value = 0;</span>
-<span class="fc bfc" id="L51" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
-<span class="fc" id="L52">                out[ni] = value;</span>
-<span class="fc" id="L53">            });</span>
-<span class="fc" id="L54">            Tsr&lt;Float&gt; reduced = Tsr.of(Float.class, new int[]{N}, out);</span>
-<span class="fc bfc" id="L55" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
-<span class="fc" id="L56">                return _runRecursively(reduced, device);</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if ( type == Float.class ) {</span>
+<span class="fc" id="L46">            float[] inData = in.mut().getData().as(float[].class);</span>
+<span class="fc" id="L47">            float[] out = new float[N];</span>
+<span class="fc" id="L48">            executor.threaded( N, ni -&gt; {</span>
+<span class="fc" id="L49">                int offset = ni * RTS;</span>
+<span class="fc" id="L50">                int limit = Math.min( offset + RTS, SIZE );</span>
+<span class="fc" id="L51">                float value = 0;</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
+<span class="fc" id="L53">                out[ni] = value;</span>
+<span class="fc" id="L54">            });</span>
+<span class="fc" id="L55">            Tsr&lt;Float&gt; reduced = Tsr.of(Float.class, Shape.of(N), out);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
+<span class="fc" id="L57">                return _runRecursively(reduced, device);</span>
             else
-<span class="fc" id="L58">                return reduced; // This is the final result!</span>
+<span class="fc" id="L59">                return reduced; // This is the final result!</span>
         }
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        else if ( type == Double.class ) {</span>
-<span class="fc" id="L61">            double[] inData = in.mut().getData().getRef(double[].class);</span>
-<span class="fc" id="L62">            double[] out = new double[N];</span>
-<span class="fc" id="L63">            executor.threaded( N, ni -&gt; {</span>
-<span class="fc" id="L64">                int offset = ni * RTS;</span>
-<span class="fc" id="L65">                int limit = Math.min( offset + RTS, SIZE );</span>
-<span class="fc" id="L66">                double value = 0;</span>
-<span class="fc bfc" id="L67" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
-<span class="fc" id="L68">                out[ni] = value;</span>
-<span class="fc" id="L69">            });</span>
-<span class="fc" id="L70">            Tsr&lt;Double&gt; reduced = Tsr.of(Double.class, new int[]{N}, out);</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
-<span class="fc" id="L72">                return _runRecursively(reduced, device);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        else if ( type == Double.class ) {</span>
+<span class="fc" id="L62">            double[] inData = in.mut().getData().as(double[].class);</span>
+<span class="fc" id="L63">            double[] out = new double[N];</span>
+<span class="fc" id="L64">            executor.threaded( N, ni -&gt; {</span>
+<span class="fc" id="L65">                int offset = ni * RTS;</span>
+<span class="fc" id="L66">                int limit = Math.min( offset + RTS, SIZE );</span>
+<span class="fc" id="L67">                double value = 0;</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
+<span class="fc" id="L69">                out[ni] = value;</span>
+<span class="fc" id="L70">            });</span>
+<span class="fc" id="L71">            Tsr&lt;Double&gt; reduced = Tsr.of(Double.class, Shape.of(N), out);</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
+<span class="fc" id="L73">                return _runRecursively(reduced, device);</span>
             else
-<span class="fc" id="L74">                return reduced; // This is the final result!</span>
+<span class="fc" id="L75">                return reduced; // This is the final result!</span>
         }
-<span class="fc bfc" id="L76" title="All 2 branches covered.">        else if ( type == Integer.class ) {</span>
-<span class="fc" id="L77">            int[] inData = in.mut().getData().getRef(int[].class);</span>
-<span class="fc" id="L78">            int[] out = new int[N];</span>
-<span class="fc" id="L79">            executor.threaded( N, ni -&gt; {</span>
-<span class="fc" id="L80">                int offset = ni * RTS;</span>
-<span class="fc" id="L81">                int limit = Math.min( offset + RTS, SIZE );</span>
-<span class="fc" id="L82">                int value = 0;</span>
-<span class="fc bfc" id="L83" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
-<span class="fc" id="L84">                out[ni] = value;</span>
-<span class="fc" id="L85">            });</span>
-<span class="fc" id="L86">            Tsr&lt;Integer&gt; reduced = Tsr.of(Integer.class, new int[]{N}, out);</span>
-<span class="fc bfc" id="L87" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
-<span class="fc" id="L88">                return _runRecursively(reduced, device);</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        else if ( type == Integer.class ) {</span>
+<span class="fc" id="L78">            int[] inData = in.mut().getData().as(int[].class);</span>
+<span class="fc" id="L79">            int[] out = new int[N];</span>
+<span class="fc" id="L80">            executor.threaded( N, ni -&gt; {</span>
+<span class="fc" id="L81">                int offset = ni * RTS;</span>
+<span class="fc" id="L82">                int limit = Math.min( offset + RTS, SIZE );</span>
+<span class="fc" id="L83">                int value = 0;</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
+<span class="fc" id="L85">                out[ni] = value;</span>
+<span class="fc" id="L86">            });</span>
+<span class="fc" id="L87">            Tsr&lt;Integer&gt; reduced = Tsr.of(Integer.class, Shape.of(N), out);</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
+<span class="fc" id="L89">                return _runRecursively(reduced, device);</span>
             else
-<span class="fc" id="L90">                return reduced; // This is the final result!</span>
+<span class="fc" id="L91">                return reduced; // This is the final result!</span>
         }
-<span class="fc bfc" id="L92" title="All 2 branches covered.">        else if ( type == Long.class ) {</span>
-<span class="fc" id="L93">            long[] inData = in.mut().getData().getRef(long[].class);</span>
-<span class="fc" id="L94">            long[] out = new long[N];</span>
-<span class="fc" id="L95">            executor.threaded( N, ni -&gt; {</span>
-<span class="fc" id="L96">                int offset = ni * RTS;</span>
-<span class="fc" id="L97">                int limit = Math.min( offset + RTS, SIZE );</span>
-<span class="fc" id="L98">                long value = 0;</span>
-<span class="fc bfc" id="L99" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
-<span class="fc" id="L100">                out[ni] = value;</span>
-<span class="fc" id="L101">            });</span>
-<span class="fc" id="L102">            Tsr&lt;Long&gt; reduced = Tsr.of(Long.class, new int[]{N}, out);</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
-<span class="fc" id="L104">                return _runRecursively(reduced, device);</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        else if ( type == Long.class ) {</span>
+<span class="fc" id="L94">            long[] inData = in.mut().getData().as(long[].class);</span>
+<span class="fc" id="L95">            long[] out = new long[N];</span>
+<span class="fc" id="L96">            executor.threaded( N, ni -&gt; {</span>
+<span class="fc" id="L97">                int offset = ni * RTS;</span>
+<span class="fc" id="L98">                int limit = Math.min( offset + RTS, SIZE );</span>
+<span class="fc" id="L99">                long value = 0;</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
+<span class="fc" id="L101">                out[ni] = value;</span>
+<span class="fc" id="L102">            });</span>
+<span class="fc" id="L103">            Tsr&lt;Long&gt; reduced = Tsr.of(Long.class, Shape.of(N), out);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
+<span class="fc" id="L105">                return _runRecursively(reduced, device);</span>
             else
-<span class="fc" id="L106">                return reduced; // This is the final result!</span>
+<span class="fc" id="L107">                return reduced; // This is the final result!</span>
         }
-<span class="fc bfc" id="L108" title="All 2 branches covered.">        else if ( type == Short.class ) {</span>
-<span class="fc" id="L109">            short[] inData = in.mut().getData().getRef(short[].class);</span>
-<span class="fc" id="L110">            short[] out = new short[N];</span>
-<span class="fc" id="L111">            executor.threaded( N, ni -&gt; {</span>
-<span class="fc" id="L112">                int offset = ni * RTS;</span>
-<span class="fc" id="L113">                int limit = Math.min( offset + RTS, SIZE );</span>
-<span class="fc" id="L114">                short value = 0;</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
-<span class="fc" id="L116">                out[ni] = value;</span>
-<span class="fc" id="L117">            });</span>
-<span class="fc" id="L118">            Tsr&lt;Short&gt; reduced = Tsr.of(Short.class, new int[]{N}, out);</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
-<span class="fc" id="L120">                return _runRecursively(reduced, device);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        else if ( type == Short.class ) {</span>
+<span class="fc" id="L110">            short[] inData = in.mut().getData().as(short[].class);</span>
+<span class="fc" id="L111">            short[] out = new short[N];</span>
+<span class="fc" id="L112">            executor.threaded( N, ni -&gt; {</span>
+<span class="fc" id="L113">                int offset = ni * RTS;</span>
+<span class="fc" id="L114">                int limit = Math.min( offset + RTS, SIZE );</span>
+<span class="fc" id="L115">                short value = 0;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
+<span class="fc" id="L117">                out[ni] = value;</span>
+<span class="fc" id="L118">            });</span>
+<span class="fc" id="L119">            Tsr&lt;Short&gt; reduced = Tsr.of(Short.class, Shape.of(N), out);</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
+<span class="fc" id="L121">                return _runRecursively(reduced, device);</span>
             else
-<span class="fc" id="L122">                return reduced; // This is the final result!</span>
+<span class="fc" id="L123">                return reduced; // This is the final result!</span>
         }
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        else if ( type == Byte.class ) {</span>
-<span class="fc" id="L125">            byte[] inData = in.mut().getData().getRef(byte[].class);</span>
-<span class="fc" id="L126">            byte[] out = new byte[N];</span>
-<span class="fc" id="L127">            executor.threaded( N, ni -&gt; {</span>
-<span class="fc" id="L128">                int offset = ni * RTS;</span>
-<span class="fc" id="L129">                int limit = Math.min( offset + RTS, SIZE );</span>
-<span class="fc" id="L130">                byte value = 0;</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
-<span class="fc" id="L132">                out[ni] = value;</span>
-<span class="fc" id="L133">            });</span>
-<span class="fc" id="L134">            Tsr&lt;Byte&gt; reduced = Tsr.of(Byte.class, new int[]{N}, out);</span>
-<span class="fc bfc" id="L135" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
-<span class="fc" id="L136">                return _runRecursively(reduced, device);</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        else if ( type == Byte.class ) {</span>
+<span class="fc" id="L126">            byte[] inData = in.mut().getData().as(byte[].class);</span>
+<span class="fc" id="L127">            byte[] out = new byte[N];</span>
+<span class="fc" id="L128">            executor.threaded( N, ni -&gt; {</span>
+<span class="fc" id="L129">                int offset = ni * RTS;</span>
+<span class="fc" id="L130">                int limit = Math.min( offset + RTS, SIZE );</span>
+<span class="fc" id="L131">                byte value = 0;</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value += inData[i];</span>
+<span class="fc" id="L133">                out[ni] = value;</span>
+<span class="fc" id="L134">            });</span>
+<span class="fc" id="L135">            Tsr&lt;Byte&gt; reduced = Tsr.of(Byte.class, Shape.of(N), out);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
+<span class="fc" id="L137">                return _runRecursively(reduced, device);</span>
             else
-<span class="fc" id="L138">                return reduced; // This is the final result!</span>
+<span class="fc" id="L139">                return reduced; // This is the final result!</span>
         }
-<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        else if ( Number.class.isAssignableFrom(type) ) {</span>
-<span class="fc" id="L141">            Object[] inData = in.mut().getData().getRef(Object[].class);</span>
-<span class="fc" id="L142">            Number[] out = new Number[N];</span>
-<span class="fc" id="L143">            executor.threaded( N, ni -&gt; {</span>
-<span class="fc" id="L144">                int offset = ni * RTS;</span>
-<span class="fc" id="L145">                int limit = Math.min( offset + RTS, SIZE );</span>
-<span class="fc" id="L146">                Number value = (Number) inData[offset];</span>
-<span class="fc" id="L147">                offset++;</span>
-<span class="fc bfc" id="L148" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value = value.doubleValue() + ((Number)inData[i]).doubleValue();</span>
-<span class="fc" id="L149">                out[ni] = value;</span>
-<span class="fc" id="L150">            });</span>
-<span class="fc" id="L151">            Tsr&lt;Number&gt; reduced = Tsr.of(Number.class, new int[]{N}, out);</span>
-<span class="fc bfc" id="L152" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
-<span class="fc" id="L153">                return _runRecursively(reduced, device);</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        else if ( Number.class.isAssignableFrom(type) ) {</span>
+<span class="fc" id="L142">            Object[] inData = in.mut().getData().as(Object[].class);</span>
+<span class="fc" id="L143">            Number[] out = new Number[N];</span>
+<span class="fc" id="L144">            executor.threaded( N, ni -&gt; {</span>
+<span class="fc" id="L145">                int offset = ni * RTS;</span>
+<span class="fc" id="L146">                int limit = Math.min( offset + RTS, SIZE );</span>
+<span class="fc" id="L147">                Number value = (Number) inData[offset];</span>
+<span class="fc" id="L148">                offset++;</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                for ( int i = offset; i &lt; limit; ++i ) value = value.doubleValue() + ((Number)inData[i]).doubleValue();</span>
+<span class="fc" id="L150">                out[ni] = value;</span>
+<span class="fc" id="L151">            });</span>
+<span class="fc" id="L152">            Tsr&lt;Number&gt; reduced = Tsr.of(Number.class, Shape.of(N), out);</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            if ( N &gt; 1 )</span>
+<span class="fc" id="L154">                return _runRecursively(reduced, device);</span>
             else
-<span class="fc" id="L155">                return reduced; // This is the final result!</span>
+<span class="fc" id="L156">                return reduced; // This is the final result!</span>
         }
         else
-<span class="nc" id="L158">            throw new IllegalArgumentException(&quot;Unsupported type: &quot; + type);</span>
+<span class="nc" id="L159">            throw new IllegalArgumentException(&quot;Unsupported type: &quot; + type);</span>
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

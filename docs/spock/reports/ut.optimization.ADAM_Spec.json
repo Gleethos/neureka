@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.056 seconds"
+    "duration":"0.064 seconds"
   },
   "headers":["\n                The code below assumes that for we\n                have the following 2 variables setup\n                throughout every data table iteration:\n                ```\n                    Tsr<?> w = Tsr.of(0d)\n                    Optimizer<?> o = Optimizer.ADAM.create(w)                   \n                    w.set(o)                 \n                ```\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"ADAM optimizes according to expected inputs",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.038 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tsr.of( (double)gradient ) )","w.applyGradient()"]},
 
-        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.translation().hashCode()==g.translation().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
 
         {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.009999999666666677","0.01999","0.02426","0.03034","0.03332","0.03409","0.03738","0.04194","0.04744","0.05112"]}}
       ],
@@ -35,7 +35,7 @@
     {
       "id":"Equations used by ADAM return expected result.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"Equations \"I[0]*I[1]+(1-I[2])*I[3]\" and \"(1-I[0])*I[1]\" used within ADAM return expected results.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

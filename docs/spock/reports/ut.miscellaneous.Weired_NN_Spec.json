@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.024 seconds"
+    "duration":"0.090 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Dot based feed forward and activation produces expected result.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.088 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"and","text":"","code":["var w1 = Tsr.of([8, 3], \":-)\").setRqsGradient(true)","var w2 = Tsr.of([7, 8], \"O.o\").setRqsGradient(true)","var w3 = Tsr.of([1, 7], \":P\").setRqsGradient(true)"]},
 
-        {"kind":"expect","text":"","code":["X.NDConf instanceof SimpleReshapeView","X.NDConf.indicesMap()  == [ 8,1  ] as int[]","X.NDConf.translation() == [ 1, 4 ] as int[]","X.NDConf.offset()      == [ 0,0  ] as int[]","X.NDConf.spread()      == [ 1,1  ] as int[]","X.NDConf.shape()       == [ 3, 8 ] as int[]"]},
+        {"kind":"expect","text":"","code":["X.NDConf instanceof SimpleReshapeView","X.NDConf.indicesMap()  == [ 8,1  ] as int[]","X.NDConf.strides() == [1, 4 ] as int[]","X.NDConf.offset()      == [ 0,0  ] as int[]","X.NDConf.spread()      == [ 1,1  ] as int[]","X.NDConf.shape()       == [ 3, 8 ] as int[]"]},
 
         {"kind":"and","text":"","code":["w1.items.collect({it.round(2)}) == [-0.22, 0.12, -0.65, -0.16, 0.96, -1.5, -0.33, 0.16, -0.62, -0.18, -1.24, 0.48, -0.41, 0.19, -0.58, -0.19, 0.41, 0.7, -0.47, 0.2, -0.54, -0.2, -0.65, -1.23]","w2.items.collect({it.round(2)}) == [-0.5, -0.36, 0.7, 0.35, 0.83, -0.32, 1.81, 0.36, 0.75, 0.34, 0.78, -0.33, -0.47, 0.77, 0.79, 0.33, 0.73, -0.34, -0.23, 0.59, 0.83, 0.31, 0.68, -0.35, -2.29, -1.63, 0.87, 0.28, 0.62, -0.34, -0.84, 0.5, 0.91, 0.25, 0.55, -0.33, 0.16, -0.7, 0.94, 0.22, 0.49, -0.31, -1.14, -0.43, 0.96, 0.18, 0.41, -0.28, 1.1, 0.79, 0.98, 0.14, 0.32, -0.24, -0.72, 0.91]","w3.items.collect({it.round(2)}) == [0.43, 0.38, 1.21, -0.12, 0.83, 1.86, 0.5]"]},
 

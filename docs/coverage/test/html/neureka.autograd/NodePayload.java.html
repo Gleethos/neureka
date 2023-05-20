@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-<span class="pc bpc" id="L11" title="1 of 2 branches missed.">final class NodePayload&lt;V&gt; {</span>
+<span class="fc" id="L11">final class NodePayload&lt;V&gt; {</span>
 
     private final int _payloadReferenceVersion;
 
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
     private final WeakReference&lt;Tsr&lt;V&gt;&gt; _payload;
 
 
-<span class="fc" id="L22">    public NodePayload( Tsr&lt;V&gt; p, Runnable cleanup ) {</span>
+<span class="fc" id="L22">    public NodePayload( Tsr&lt;V&gt; p ) {</span>
 <span class="fc bfc" id="L23" title="All 2 branches covered.">        if ( p == null ) {</span>
 <span class="fc" id="L24">            _payload = null;</span>
 <span class="fc" id="L25">            _payloadShape = null;</span>
@@ -27,20 +27,17 @@ import java.util.stream.Collectors;
 <span class="fc" id="L27">            _payloadDataType = null;</span>
         }
         else {
-<span class="pc bpc" id="L30" title="2 of 4 branches missed.">            assert !p.isUndefined();</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">            assert !p.isUndefined();</span>
 <span class="fc" id="L31">            _payload = new WeakReference&lt;&gt;( p );</span>
-<span class="fc" id="L32">            p.getDevice().access( p ).cleanup( () -&gt; {</span>
-<span class="pc bpc" id="L33" title="1 of 2 branches missed.">                if ( this.getPayload() == null ) cleanup.run();</span>
-<span class="fc" id="L34">            });</span>
-<span class="fc" id="L35">            _payloadShape = p.getNDConf().shape();</span>
-<span class="fc" id="L36">            _payloadReferenceVersion = p.getVersion();</span>
-<span class="fc" id="L37">            _payloadDataType = p.getDataType();</span>
+<span class="fc" id="L32">            _payloadShape = p.getNDConf().shape();</span>
+<span class="fc" id="L33">            _payloadReferenceVersion = p.getVersion();</span>
+<span class="fc" id="L34">            _payloadDataType = p.getDataType();</span>
         }
-<span class="fc" id="L39">    }</span>
+<span class="fc" id="L36">    }</span>
 
-<span class="nc" id="L41">    public DataType&lt;V&gt; payloadDataType() { return _payloadDataType; }</span>
+<span class="nc" id="L38">    public DataType&lt;V&gt; payloadDataType() { return _payloadDataType; }</span>
 
-<span class="fc" id="L43">    public int payloadReferenceVersion() { return _payloadReferenceVersion; }</span>
+<span class="fc" id="L40">    public int payloadReferenceVersion() { return _payloadReferenceVersion; }</span>
 
     /**
      *  The value of a graph node is the tensor to which it belongs (is a component of).  &lt;br&gt;&lt;br&gt;
@@ -54,7 +51,7 @@ import java.util.stream.Collectors;
      *
      * @return The tensor payload of this graph-node.
      */
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">    public Tsr&lt;V&gt; getPayload() { return ( _payload == null ? null : _payload.get() ); }</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">    public Tsr&lt;V&gt; getPayload() { return ( _payload == null ? null : _payload.get() ); }</span>
 
     /**
      *  Note: This method will never return null even if the actual payload tensor was garbage collected.
@@ -63,8 +60,8 @@ import java.util.stream.Collectors;
      *  @return The shape of the payload tensor represented by this {@link GraphNode}.
      */
     public List&lt;Integer&gt; getPayloadShape() {
-<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        return _payloadShape == null ? null : Arrays.stream(_payloadShape).boxed().collect(Collectors.toList());</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        return _payloadShape == null ? null : Arrays.stream(_payloadShape).boxed().collect(Collectors.toList());</span>
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

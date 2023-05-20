@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Utility for parsing function expressions.
  **/
-<span class="pc bpc" id="L14" title="1 of 2 branches missed.">public final class ParseUtil</span>
+<span class="fc" id="L14">public final class ParseUtil</span>
 {
     private ParseUtil() {}
 
@@ -300,10 +300,10 @@ import java.util.List;
 <span class="fc" id="L300">            Arrays.sort( weights );</span>
 <span class="fc" id="L301">            double similarity = 0;</span>
 <span class="fc bfc" id="L302" title="All 2 branches covered.">            for ( int i = 0; i &lt; ( delta + 1 ); i++ ) similarity += alignment[ i ] * ( weights[ i ] / weightSum );</span>
-<span class="pc bpc" id="L303" title="2 of 4 branches missed.">            assert similarity &lt;= 1.0;</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">            assert similarity &lt;= 1.0;</span>
 <span class="fc" id="L304">            return similarity;</span>
     }
 
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

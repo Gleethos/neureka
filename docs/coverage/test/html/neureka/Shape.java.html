@@ -59,7 +59,7 @@ public interface Shape extends Iterable&lt;Integer&gt;
 <span class="fc" id="L59">        return new Shape() {</span>
 <span class="fc" id="L60">            @Override public int size() { return data.length; }</span>
 <span class="fc" id="L61">            @Override public int get( int i ) { return data[i]; }</span>
-<span class="nc" id="L62">            @Override public String toString() { return java.util.Arrays.toString( data ); }</span>
+<span class="fc" id="L62">            @Override public String toString() { return java.util.Arrays.toString( data ); }</span>
             @Override public boolean equals( Object o ) {
 <span class="fc bfc" id="L64" title="All 2 branches covered.">                if ( o instanceof Shape ) {</span>
 <span class="fc" id="L65">                    Shape s = (Shape) o;</span>
@@ -93,6 +93,15 @@ public interface Shape extends Iterable&lt;Integer&gt;
     int size();
 
     /**
+     * @return The number of elements in the shape.
+     */
+    default int elements() {
+<span class="fc" id="L99">        int elements = 1;</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        for ( int i = 0; i &lt; size(); i++ ) elements *= get(i);</span>
+<span class="fc" id="L101">        return elements;</span>
+    }
+
+    /**
      * @param i The index of the dimension/axis.
      * @return The number of elements in the dimension/axis at the given index.
      */
@@ -102,9 +111,9 @@ public interface Shape extends Iterable&lt;Integer&gt;
      * @return This shape as an array of integers.
      */
     default int[] toIntArray() {
-<span class="fc" id="L105">        int[] arr = new int[ size() ];</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">        for ( int i = 0; i &lt; size(); i++ ) arr[i] = get(i);</span>
-<span class="fc" id="L107">        return arr;</span>
+<span class="fc" id="L114">        int[] arr = new int[ size() ];</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        for ( int i = 0; i &lt; size(); i++ ) arr[i] = get(i);</span>
+<span class="fc" id="L116">        return arr;</span>
     }
 
     /**
@@ -114,15 +123,15 @@ public interface Shape extends Iterable&lt;Integer&gt;
      *  @return A new {@link Shape} instance which is the result of the transformation.
      */
     default Shape map( java.util.function.Function&lt;Integer, Integer&gt; mapper ) {
-<span class="fc" id="L117">        int[] arr = new int[ size() ];</span>
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        for ( int i = 0; i &lt; size(); i++ ) arr[i] = mapper.apply( get(i) );</span>
-<span class="fc" id="L119">        return Shape.of( arr );</span>
+<span class="fc" id="L126">        int[] arr = new int[ size() ];</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        for ( int i = 0; i &lt; size(); i++ ) arr[i] = mapper.apply( get(i) );</span>
+<span class="fc" id="L128">        return Shape.of( arr );</span>
     }
 
     /**
      * @return This shape as a stream of integers.
      */
-<span class="fc" id="L125">    default Stream&lt;Integer&gt; stream() { return java.util.stream.IntStream.range(0, size()).mapToObj(this::get); }</span>
+<span class="fc" id="L134">    default Stream&lt;Integer&gt; stream() { return java.util.stream.IntStream.range(0, size()).mapToObj(this::get); }</span>
 
     /**
      * @param start The start index of the slice, inclusive.
@@ -130,28 +139,59 @@ public interface Shape extends Iterable&lt;Integer&gt;
      * @return A slice of this shape starting at the given start index and ending at the given end index.
      */
     default Shape slice( int start, int end ) {
-<span class="pc bpc" id="L133" title="3 of 6 branches missed.">        if ( start &lt; 0 || end &gt; size() || start &gt; end ) throw new IndexOutOfBoundsException();</span>
-<span class="fc" id="L134">        int[] arr = new int[ end - start ];</span>
-<span class="fc bfc" id="L135" title="All 2 branches covered.">        for ( int i = start; i &lt; end; i++ ) arr[ i - start ] = get(i);</span>
-<span class="fc" id="L136">        return Shape.of( arr );</span>
+<span class="pc bpc" id="L142" title="3 of 6 branches missed.">        if ( start &lt; 0 || end &gt; size() || start &gt; end ) throw new IndexOutOfBoundsException();</span>
+<span class="fc" id="L143">        int[] arr = new int[ end - start ];</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for ( int i = start; i &lt; end; i++ ) arr[ i - start ] = get(i);</span>
+<span class="fc" id="L145">        return Shape.of( arr );</span>
     }
 
     /**
      * @param start The start index of the slice, inclusive.
      * @return A slice of this shape starting at the given start index and ending at the end of the shape.
      */
-<span class="nc" id="L143">    default Shape slice( int start ) { return slice( start, size() ); }</span>
+<span class="nc" id="L152">    default Shape slice( int start ) { return slice( start, size() ); }</span>
 
     /**
      * @param predicate The predicate which is used to filter the shape.
      * @return A new shape which is the result of filtering this shape with the given predicate.
      */
     default Shape filter( java.util.function.Predicate&lt;Integer&gt; predicate ) {
-<span class="nc" id="L150">        int[] arr = new int[ size() ];</span>
-<span class="nc" id="L151">        int i = 0;</span>
-<span class="nc bnc" id="L152" title="All 2 branches missed.">        for ( int j = 0; j &lt; size(); j++ )</span>
-<span class="nc bnc" id="L153" title="All 2 branches missed.">            if ( predicate.test( get(j) ) ) arr[i++] = get(j);</span>
-<span class="nc" id="L154">        return Shape.of( java.util.Arrays.copyOf( arr, i ) );</span>
+<span class="nc" id="L159">        int[] arr = new int[ size() ];</span>
+<span class="nc" id="L160">        int i = 0;</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        for ( int j = 0; j &lt; size(); j++ )</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">            if ( predicate.test( get(j) ) ) arr[i++] = get(j);</span>
+<span class="nc" id="L163">        return Shape.of( java.util.Arrays.copyOf( arr, i ) );</span>
+    }
+
+    /**
+     * @param predicate The predicate which is used to count the elements of the shape for which it is true.
+     * @return The number of elements in the shape which satisfy the given predicate.
+     */
+    default int count( java.util.function.Predicate&lt;Integer&gt; predicate ) {
+<span class="fc" id="L171">        int count = 0;</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        for ( int i = 0; i &lt; size(); i++ )</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">            if ( predicate.test( get(i) ) ) count++;</span>
+<span class="fc" id="L174">        return count;</span>
+    }
+
+    /**
+     * @param predicate The predicate which is used to test the elements of the shape.
+     * @return True if the given predicate is true for all elements of the shape.
+     */
+    default boolean every( java.util.function.Predicate&lt;Integer&gt; predicate ) {
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        for ( int i = 0; i &lt; size(); i++ )</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">            if ( !predicate.test( get(i) ) ) return false;</span>
+<span class="nc" id="L184">        return true;</span>
+    }
+
+    /**
+     * @param predicate The predicate which is used to test the elements of the shape.
+     * @return True if the given predicate is true for at least one element of the shape.
+     */
+    default boolean any( java.util.function.Predicate&lt;Integer&gt; predicate ) {
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        for ( int i = 0; i &lt; size(); i++ )</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">            if ( predicate.test( get(i) ) ) return true;</span>
+<span class="nc" id="L194">        return false;</span>
     }
 
     /**
@@ -159,12 +199,12 @@ public interface Shape extends Iterable&lt;Integer&gt;
      */
     @Override
     default java.util.Iterator&lt;Integer&gt; iterator() {
-<span class="fc" id="L162">        return new java.util.Iterator&lt;Integer&gt;() {</span>
-<span class="fc" id="L163">            int i = 0;</span>
-<span class="fc bfc" id="L164" title="All 2 branches covered.">            @Override public boolean hasNext() { return i &lt; size(); }</span>
-<span class="fc" id="L165">            @Override public Integer next() { return get(i++); }</span>
+<span class="fc" id="L202">        return new java.util.Iterator&lt;Integer&gt;() {</span>
+<span class="fc" id="L203">            int i = 0;</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">            @Override public boolean hasNext() { return i &lt; size(); }</span>
+<span class="fc" id="L205">            @Override public Integer next() { return get(i++); }</span>
         };
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

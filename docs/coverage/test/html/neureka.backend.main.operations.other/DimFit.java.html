@@ -11,7 +11,7 @@ import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 
-<span class="nc bnc" id="L14" title="All 2 branches missed.">public class DimFit extends AbstractOperation</span>
+<span class="nc" id="L14">public class DimFit extends AbstractOperation</span>
 {
     public DimFit()
     {
@@ -34,7 +34,7 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 <span class="nc" id="L34">            .setExecution(</span>
                 ( caller, call ) -&gt;
                 {
-<span class="nc bnc" id="L37" title="All 4 branches missed.">                    assert call.getValOf( Arg.DerivIdx.class ) &lt; 0;</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">                    assert call.getValOf( Arg.DerivIdx.class ) &lt; 0;</span>
 <span class="nc" id="L38">                    Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten( caller, call ).inputs();</span>
 
 <span class="nc" id="L40">                    int largest = -1;</span>
@@ -77,4 +77,4 @@ import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 <span class="nc" id="L77">        return src[ 0 ].call( inputs, j );</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Util.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.operator</a> &gt; <span class="el_source">Util.java</span></div><h1>Util.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.operator;
+
+import neureka.Shape;
+
+<span class="nc" id="L5">class Util {</span>
+
+    static boolean canBeBroadcast(Shape a, Shape b) {
+<span class="pc bpc" id="L8" title="1 of 2 branches missed.">        if ( a.size() != b.size() ) return false;</span>
+<span class="fc" id="L9">        boolean areEqual = a.equals(b);</span>
+<span class="fc bfc" id="L10" title="All 2 branches covered.">        if ( areEqual ) return true;</span>
+<span class="fc bfc" id="L11" title="All 2 branches covered.">        for ( int i = 0; i &lt; a.size(); i++ )</span>
+<span class="pc bpc" id="L12" title="2 of 6 branches missed.">            if ( a.get(i) != b.get(i) &amp;&amp; a.get(i) != 1 &amp;&amp; b.get(i) != 1 )</span>
+<span class="nc" id="L13">                return false;</span>
+
+<span class="fc" id="L15">        return true;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

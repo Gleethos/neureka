@@ -1,0 +1,37 @@
+{
+  "className":"ut.ndas.Nda_Reshape_Spec",
+  "title":"Nda Reshaping",
+  "narrative":"Immutability is a core concept of the Neureka library.\n    This means that the Nda API does not expose mutability directly.\n    Instead, the API exposes methods that return new instances of Nda\n    that are derived from the original instance.\n\n    This is also true for reshaping operations, \n    meaning that the Nda API does not expose methods that mutate the shape of an Nda\n    but instead provides methods that return new instances of Nda\n    with a different shape.\n\n    Don't be concerned about the performance implications of this,\n    because in the vast majority of cases the new instance will be backed by the same data array\n    as the original instance!",
+  "subjects":["neureka.Nda"],
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.001 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"We can create a new Nda instance with a different shape.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a new Nda instance with a shape of [3, 2].","code":["Nda<?> nda = Nda.of( 1..6 ).reshape( 3, 2 )"]},
+
+        {"kind":"expect","text":"The new instance will have the expected shape.","code":["nda.shape() == [3, 2]"]},
+
+        {"kind":"and","text":"The new instance will have the expected items.","code":["nda.items() == [1, 2, 3, 4, 5, 6]"]},
+
+        {"kind":"and","text":"The new instance will have the same data type as the original instance.","code":["nda.itemType() == Integer"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

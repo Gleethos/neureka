@@ -316,21 +316,14 @@ public final class DeviceQuery
 <span class="fc" id="L316">                Pointer.to(buffer), null);</span>
 <span class="fc" id="L317">        long values[] = new long[numValues];</span>
 <span class="pc bpc" id="L318" title="1 of 2 branches missed.">        if (Sizeof.size_t == 4)</span>
-        {
-<span class="nc bnc" id="L320" title="All 2 branches missed.">            for ( int i=0; i&lt;numValues; i++)</span>
-            {
-<span class="nc" id="L322">                values[ i ] = buffer.getInt(i * Sizeof.size_t);</span>
-            }
-        }
+<span class="nc bnc" id="L319" title="All 2 branches missed.">            for ( int i = 0; i &lt; numValues; i++ )</span>
+<span class="nc" id="L320">                values[ i ] = buffer.getInt(i * Sizeof.size_t);</span>
         else
-        {
-<span class="fc bfc" id="L327" title="All 2 branches covered.">            for ( int i=0; i&lt;numValues; i++)</span>
-            {
-<span class="fc" id="L329">                values[ i ] = buffer.getLong(i * Sizeof.size_t);</span>
-            }
-        }
-<span class="fc" id="L332">        return values;</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">            for ( int i = 0; i &lt; numValues; i++ )</span>
+<span class="fc" id="L323">                values[ i ] = buffer.getLong(i * Sizeof.size_t);</span>
+
+<span class="fc" id="L325">        return values;</span>
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

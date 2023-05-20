@@ -5,8 +5,10 @@ import neureka.backend.main.operations.functions.Tanh;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class Functions {
-
+public class Functions
+{
+    private final Function _reshape;
+    private final Function _relayout;
     private final Function _permute;
     private final Function _dimTrim;
     private final Function _idy;
@@ -27,6 +29,7 @@ public class Functions {
     private final Function _modAssign;
     private final Function _neg;
 
+    private final Function _dot;
     private final Function _matMul;
     private final Function _transpose2D;
     private final Function _random;
@@ -59,168 +62,183 @@ public class Functions {
     private final Function _concat;
 
 
-<span class="fc" id="L62">    public Functions( boolean doingAD ) {</span>
-<span class="fc" id="L63">        _permute = Function.of( &quot;permute(I[ 0 ])&quot;,             doingAD );</span>
-<span class="fc" id="L64">        _dimTrim = Function.of( &quot;dimtrim(I[ 0 ])&quot;,             doingAD );</span>
-<span class="fc" id="L65">        _idy = Function.of( &quot;I[ 0 ] &lt;- I[ 1 ]&quot;,                doingAD );</span>
-<span class="fc" id="L66">        _conv = Function.of( &quot;I[ 0 ] x I[ 1 ]&quot;,                doingAD );</span>
-<span class="fc" id="L67">        _plus = Function.of( &quot;(I[ 0 ]+I[ 1 ])&quot;,                doingAD );</span>
-<span class="fc" id="L68">        _plusAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;,  doingAD );</span>
-<span class="fc" id="L69">        _minus = Function.of( &quot;(I[ 0 ]-I[ 1 ])&quot;,               doingAD );</span>
-<span class="fc" id="L70">        _minusAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]-I[ 1 ])&quot;, doingAD );</span>
-<span class="fc" id="L71">        _div = Function.of( &quot;(I[ 0 ]/I[ 1 ])&quot;,                 doingAD );</span>
-<span class="fc" id="L72">        _divAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]/I[ 1 ])&quot;,   doingAD );</span>
-<span class="fc" id="L73">        _pow = Function.of( &quot;(I[ 0 ]**I[ 1 ])&quot;,                doingAD );</span>
-<span class="fc" id="L74">        _powAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]**I[ 1 ])&quot;,  doingAD );</span>
-<span class="fc" id="L75">        _mul = Function.of( &quot;I[ 0 ]*I[ 1 ]&quot;,                   doingAD );</span>
-<span class="fc" id="L76">        _mulAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]*I[ 1 ])&quot;,   doingAD );</span>
-<span class="fc" id="L77">        _add = Function.of( &quot;I[ 0 ]+I[ 1 ]&quot;,                   doingAD );</span>
-<span class="fc" id="L78">        _addAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;,   doingAD );</span>
-<span class="fc" id="L79">        _mod = Function.of( &quot;(I[ 0 ]%I[ 1 ])&quot;,                 doingAD );</span>
-<span class="fc" id="L80">        _modAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]%I[ 1 ])&quot;,   doingAD );</span>
-<span class="fc" id="L81">        _neg = Function.of( &quot;(-1*I[ 0 ])&quot;,                     doingAD );</span>
-<span class="fc" id="L82">        _matMul = Function.of(&quot;I[0] @ I[1]&quot;,                   doingAD );</span>
-<span class="fc" id="L83">        _transpose2D = Function.of(&quot;[1, 0]:(I[0])&quot;,            doingAD );</span>
-<span class="fc" id="L84">        _random = Function.of(&quot;random(I[0])&quot;,                  doingAD );</span>
-<span class="fc" id="L85">        _tanh = Function.of( &quot;tanh(I[0])&quot;,                     doingAD );</span>
-<span class="fc" id="L86">        _fastTanh = Function.of( &quot;fast_tanh(I[0])&quot;,            doingAD );</span>
-<span class="fc" id="L87">        _softsign = Function.of( &quot;softsign(I[0])&quot;,            doingAD );</span>
-<span class="fc" id="L88">        _sigmoid = Function.of( &quot;sig(I[0])&quot;,                   doingAD );</span>
-<span class="fc" id="L89">        _gaus = Function.of(&quot;gaus(I[0])&quot;,                      doingAD );</span>
-<span class="fc" id="L90">        _fastGaus = Function.of(&quot;fast_gaus(I[0])&quot;,             doingAD );</span>
-<span class="fc" id="L91">        _ln = Function.of(&quot;ln(I[0])&quot;,                          doingAD );</span>
-<span class="fc" id="L92">        _quad = Function.of(&quot;quad(I[0])&quot;,                      doingAD );</span>
-<span class="fc" id="L93">        _relu = Function.of(&quot;relu(I[0])&quot;,                      doingAD );</span>
-<span class="fc" id="L94">        _abs  = Function.of(&quot;abs(I[0])&quot;,                       doingAD );</span>
-<span class="fc" id="L95">        _sin  = Function.of(&quot;sin(I[0])&quot;,                       doingAD );</span>
-<span class="fc" id="L96">        _cos  = Function.of(&quot;cos(I[0])&quot;,                       doingAD );</span>
-<span class="fc" id="L97">        _softplus  = Function.of(&quot;softplus(I[0])&quot;,             doingAD );</span>
-<span class="fc" id="L98">        _silu  = Function.of(&quot;silu(I[0])&quot;,                     doingAD );</span>
-<span class="fc" id="L99">        _gelu  = Function.of(&quot;gelu(I[0])&quot;,                     doingAD );</span>
-<span class="fc" id="L100">        _selu  = Function.of(&quot;selu(I[0])&quot;,                     doingAD );</span>
-<span class="fc" id="L101">        _min  = Function.of(&quot;min(I[0])&quot;,                       doingAD );</span>
-<span class="fc" id="L102">        _max  = Function.of(&quot;max(I[0])&quot;,                       doingAD );</span>
-<span class="fc" id="L103">        _sum  = Function.of(&quot;sumItems(I[0])&quot;,                  doingAD );</span>
-<span class="fc" id="L104">        _exp  = Function.of(&quot;exp(I[0])&quot;,                       doingAD );</span>
-<span class="fc" id="L105">        _log10  = Function.of(&quot;log10(I[0])&quot;,                   doingAD );</span>
-<span class="fc" id="L106">        _sqrt  = Function.of(&quot;sqrt(I[0])&quot;,                     doingAD );</span>
-<span class="fc" id="L107">        _cbrt  = Function.of(&quot;cbrt(I[0])&quot;,                     doingAD );</span>
-<span class="fc" id="L108">        _concat = Function.of(&quot;concat(I[0], I[1])&quot;,            doingAD );</span>
-<span class="fc" id="L109">    }</span>
+<span class="fc" id="L65">    public Functions( boolean doingAD ) {</span>
+<span class="fc" id="L66">        _reshape = Function.of( &quot;reshape(I[ 0 ])&quot;,             doingAD );</span>
+<span class="fc" id="L67">        _relayout = Function.of( &quot;relayout(I[ 0 ])&quot;,           doingAD );</span>
+<span class="fc" id="L68">        _permute = Function.of( &quot;permute(I[ 0 ])&quot;,             doingAD );</span>
+<span class="fc" id="L69">        _dimTrim = Function.of( &quot;dimtrim(I[ 0 ])&quot;,             doingAD );</span>
+<span class="fc" id="L70">        _idy = Function.of( &quot;I[ 0 ] &lt;- I[ 1 ]&quot;,                doingAD );</span>
+<span class="fc" id="L71">        _conv = Function.of( &quot;I[ 0 ] x I[ 1 ]&quot;,                doingAD );</span>
+<span class="fc" id="L72">        _plus = Function.of( &quot;(I[ 0 ]+I[ 1 ])&quot;,                doingAD );</span>
+<span class="fc" id="L73">        _plusAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;,  doingAD );</span>
+<span class="fc" id="L74">        _minus = Function.of( &quot;(I[ 0 ]-I[ 1 ])&quot;,               doingAD );</span>
+<span class="fc" id="L75">        _minusAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]-I[ 1 ])&quot;, doingAD );</span>
+<span class="fc" id="L76">        _div = Function.of( &quot;(I[ 0 ]/I[ 1 ])&quot;,                 doingAD );</span>
+<span class="fc" id="L77">        _divAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]/I[ 1 ])&quot;,   doingAD );</span>
+<span class="fc" id="L78">        _pow = Function.of( &quot;(I[ 0 ]**I[ 1 ])&quot;,                doingAD );</span>
+<span class="fc" id="L79">        _powAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]**I[ 1 ])&quot;,  doingAD );</span>
+<span class="fc" id="L80">        _mul = Function.of( &quot;I[ 0 ]*I[ 1 ]&quot;,                   doingAD );</span>
+<span class="fc" id="L81">        _mulAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]*I[ 1 ])&quot;,   doingAD );</span>
+<span class="fc" id="L82">        _add = Function.of( &quot;I[ 0 ]+I[ 1 ]&quot;,                   doingAD );</span>
+<span class="fc" id="L83">        _addAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;,   doingAD );</span>
+<span class="fc" id="L84">        _mod = Function.of( &quot;(I[ 0 ]%I[ 1 ])&quot;,                 doingAD );</span>
+<span class="fc" id="L85">        _modAssign = Function.of( &quot;I[ 0 ]&lt;-(I[ 0 ]%I[ 1 ])&quot;,   doingAD );</span>
+<span class="fc" id="L86">        _neg = Function.of( &quot;(-1*I[ 0 ])&quot;,                     doingAD );</span>
+<span class="fc" id="L87">        _dot = Function.of(&quot;dot(I[0], I[1])&quot;,                  doingAD );</span>
+<span class="fc" id="L88">        _matMul = Function.of(&quot;I[0] @ I[1]&quot;,                   doingAD );</span>
+<span class="fc" id="L89">        _transpose2D = Function.of(&quot;[1, 0]:(I[0])&quot;,            doingAD );</span>
+<span class="fc" id="L90">        _random = Function.of(&quot;random(I[0])&quot;,                  doingAD );</span>
+<span class="fc" id="L91">        _tanh = Function.of( &quot;tanh(I[0])&quot;,                     doingAD );</span>
+<span class="fc" id="L92">        _fastTanh = Function.of( &quot;fast_tanh(I[0])&quot;,            doingAD );</span>
+<span class="fc" id="L93">        _softsign = Function.of( &quot;softsign(I[0])&quot;,             doingAD );</span>
+<span class="fc" id="L94">        _sigmoid = Function.of( &quot;sig(I[0])&quot;,                   doingAD );</span>
+<span class="fc" id="L95">        _gaus = Function.of(&quot;gaus(I[0])&quot;,                      doingAD );</span>
+<span class="fc" id="L96">        _fastGaus = Function.of(&quot;fast_gaus(I[0])&quot;,             doingAD );</span>
+<span class="fc" id="L97">        _ln = Function.of(&quot;ln(I[0])&quot;,                          doingAD );</span>
+<span class="fc" id="L98">        _quad = Function.of(&quot;quad(I[0])&quot;,                      doingAD );</span>
+<span class="fc" id="L99">        _relu = Function.of(&quot;relu(I[0])&quot;,                      doingAD );</span>
+<span class="fc" id="L100">        _abs  = Function.of(&quot;abs(I[0])&quot;,                       doingAD );</span>
+<span class="fc" id="L101">        _sin  = Function.of(&quot;sin(I[0])&quot;,                       doingAD );</span>
+<span class="fc" id="L102">        _cos  = Function.of(&quot;cos(I[0])&quot;,                       doingAD );</span>
+<span class="fc" id="L103">        _softplus  = Function.of(&quot;softplus(I[0])&quot;,             doingAD );</span>
+<span class="fc" id="L104">        _silu  = Function.of(&quot;silu(I[0])&quot;,                     doingAD );</span>
+<span class="fc" id="L105">        _gelu  = Function.of(&quot;gelu(I[0])&quot;,                     doingAD );</span>
+<span class="fc" id="L106">        _selu  = Function.of(&quot;selu(I[0])&quot;,                     doingAD );</span>
+<span class="fc" id="L107">        _min  = Function.of(&quot;min(I[0])&quot;,                       doingAD );</span>
+<span class="fc" id="L108">        _max  = Function.of(&quot;max(I[0])&quot;,                       doingAD );</span>
+<span class="fc" id="L109">        _sum  = Function.of(&quot;sumItems(I[0])&quot;,                  doingAD );</span>
+<span class="fc" id="L110">        _exp  = Function.of(&quot;exp(I[0])&quot;,                       doingAD );</span>
+<span class="fc" id="L111">        _log10  = Function.of(&quot;log10(I[0])&quot;,                   doingAD );</span>
+<span class="fc" id="L112">        _sqrt  = Function.of(&quot;sqrt(I[0])&quot;,                     doingAD );</span>
+<span class="fc" id="L113">        _cbrt  = Function.of(&quot;cbrt(I[0])&quot;,                     doingAD );</span>
+<span class="fc" id="L114">        _concat = Function.of(&quot;concat(I[0], I[1])&quot;,            doingAD );</span>
+<span class="fc" id="L115">    }</span>
 
-<span class="nc" id="L111">    public final Function getPermute() { return _permute; }</span>
+<span class="nc" id="L117">    public final Function getReshape() { return _reshape; }</span>
 
-<span class="fc" id="L113">    public final Function permute() { return _permute; }</span>
+<span class="fc" id="L119">    public final Function reshape() { return _reshape; }</span>
 
-<span class="nc" id="L115">    public final Function getDimTrim() { return _dimTrim; }</span>
+<span class="nc" id="L121">    public final Function getRelayout() { return _relayout; }</span>
 
-<span class="fc" id="L117">    public final Function dimTrim() { return _dimTrim; }</span>
+<span class="fc" id="L123">    public final Function relayout() { return _relayout; }</span>
 
-<span class="nc" id="L119">    public final Function getIdy() { return _idy; }</span>
+<span class="nc" id="L125">    public final Function getPermute() { return _permute; }</span>
 
-<span class="fc" id="L121">    public final Function idy() { return _idy; }</span>
+<span class="fc" id="L127">    public final Function permute() { return _permute; }</span>
+
+<span class="nc" id="L129">    public final Function getDimTrim() { return _dimTrim; }</span>
+
+<span class="fc" id="L131">    public final Function dimTrim() { return _dimTrim; }</span>
+
+<span class="nc" id="L133">    public final Function getIdy() { return _idy; }</span>
+
+<span class="fc" id="L135">    public final Function idy() { return _idy; }</span>
 
     /**
      * @return A {@link Function} which represents the standard convolution operation without 0 padding.
      */
-<span class="nc" id="L126">    public final Function getConv() { return _conv; }</span>
+<span class="nc" id="L140">    public final Function getConv() { return _conv; }</span>
 
     /**
      * @return A {@link Function} which represents the standard convolution operation without 0 padding.
      */
-<span class="fc" id="L131">    public final Function conv() { return _conv; }</span>
+<span class="fc" id="L145">    public final Function conv() { return _conv; }</span>
 
-<span class="nc" id="L133">    public final Function getPlus() { return _plus; }</span>
+<span class="nc" id="L147">    public final Function getPlus() { return _plus; }</span>
 
-<span class="fc" id="L135">    public final Function plus() { return _plus; }</span>
+<span class="fc" id="L149">    public final Function plus() { return _plus; }</span>
 
-<span class="nc" id="L137">    public final Function getPlusAssign() { return _plusAssign; }</span>
+<span class="nc" id="L151">    public final Function getPlusAssign() { return _plusAssign; }</span>
 
-<span class="fc" id="L139">    public final Function plusAssign() { return _plusAssign; }</span>
+<span class="fc" id="L153">    public final Function plusAssign() { return _plusAssign; }</span>
 
-<span class="nc" id="L141">    public final Function getMinus() { return _minus; }</span>
+<span class="nc" id="L155">    public final Function getMinus() { return _minus; }</span>
 
-<span class="fc" id="L143">    public final Function minus() { return _minus; }</span>
+<span class="fc" id="L157">    public final Function minus() { return _minus; }</span>
 
-<span class="nc" id="L145">    public final Function getMinusAssign() { return _minusAssign; }</span>
+<span class="nc" id="L159">    public final Function getMinusAssign() { return _minusAssign; }</span>
 
-<span class="fc" id="L147">    public final Function minusAssign() { return _minusAssign; }</span>
+<span class="fc" id="L161">    public final Function minusAssign() { return _minusAssign; }</span>
 
-<span class="nc" id="L149">    public final Function getDiv() { return _div; }</span>
+<span class="nc" id="L163">    public final Function getDiv() { return _div; }</span>
 
-<span class="fc" id="L151">    public final Function div() { return _div; }</span>
+<span class="fc" id="L165">    public final Function div() { return _div; }</span>
 
-<span class="nc" id="L153">    public final Function getDivAssign() { return _divAssign; }</span>
+<span class="nc" id="L167">    public final Function getDivAssign() { return _divAssign; }</span>
 
-<span class="fc" id="L155">    public final Function divAssign() { return _divAssign; }</span>
+<span class="fc" id="L169">    public final Function divAssign() { return _divAssign; }</span>
 
-<span class="nc" id="L157">    public final Function getPow() { return _pow; }</span>
+<span class="nc" id="L171">    public final Function getPow() { return _pow; }</span>
 
-<span class="fc" id="L159">    public final Function pow() { return _pow; }</span>
+<span class="fc" id="L173">    public final Function pow() { return _pow; }</span>
 
-<span class="nc" id="L161">    public final Function getPowAssign() { return _powAssign; }</span>
+<span class="nc" id="L175">    public final Function getPowAssign() { return _powAssign; }</span>
 
-<span class="nc" id="L163">    public final Function powAssign() { return _powAssign; }</span>
+<span class="nc" id="L177">    public final Function powAssign() { return _powAssign; }</span>
 
-<span class="nc" id="L165">    public final Function getMul() { return _mul; }</span>
+<span class="nc" id="L179">    public final Function getMul() { return _mul; }</span>
 
-<span class="fc" id="L167">    public final Function mul() { return _mul; }</span>
+<span class="fc" id="L181">    public final Function mul() { return _mul; }</span>
 
-<span class="nc" id="L169">    public final Function getMulAssign() { return _mulAssign; }</span>
+<span class="nc" id="L183">    public final Function getMulAssign() { return _mulAssign; }</span>
 
-<span class="fc" id="L171">    public final Function mulAssign() { return _mulAssign; }</span>
+<span class="fc" id="L185">    public final Function mulAssign() { return _mulAssign; }</span>
 
-<span class="nc" id="L173">    public final Function getAdd() { return _add; }</span>
+<span class="nc" id="L187">    public final Function getAdd() { return _add; }</span>
 
-<span class="fc" id="L175">    public final Function add() { return _add; }</span>
+<span class="fc" id="L189">    public final Function add() { return _add; }</span>
 
-<span class="nc" id="L177">    public final Function getAddAssign() { return _addAssign; }</span>
+<span class="nc" id="L191">    public final Function getAddAssign() { return _addAssign; }</span>
 
-<span class="nc" id="L179">    public final Function addAssign() { return _addAssign; }</span>
+<span class="nc" id="L193">    public final Function addAssign() { return _addAssign; }</span>
 
-<span class="nc" id="L181">    public final Function getMod() { return _mod; }</span>
+<span class="nc" id="L195">    public final Function getMod() { return _mod; }</span>
 
-<span class="fc" id="L183">    public final Function mod() { return _mod; }</span>
+<span class="fc" id="L197">    public final Function mod() { return _mod; }</span>
 
-<span class="nc" id="L185">    public final Function getModAssign() { return _modAssign; }</span>
+<span class="nc" id="L199">    public final Function getModAssign() { return _modAssign; }</span>
 
-<span class="nc" id="L187">    public final Function modAssign() { return _modAssign; }</span>
+<span class="nc" id="L201">    public final Function modAssign() { return _modAssign; }</span>
 
-<span class="nc" id="L189">    public final Function getNeg() { return _neg; }</span>
+<span class="nc" id="L203">    public final Function getNeg() { return _neg; }</span>
 
-<span class="fc" id="L191">    public final Function neg() { return _neg; }</span>
+<span class="fc" id="L205">    public final Function neg() { return _neg; }</span>
 
-<span class="nc" id="L193">    public final Function getMatMul() { return _matMul; }</span>
+<span class="nc" id="L207">    public final Function getMatMul() { return _matMul; }</span>
 
-<span class="fc" id="L195">    public final Function matMul() { return _matMul; }</span>
+<span class="fc" id="L209">    public final Function matMul() { return _matMul; }</span>
 
-<span class="nc" id="L197">    public final Function getTranspose2D() { return _transpose2D; }</span>
+<span class="nc" id="L211">    public final Function getDot() { return _dot; }</span>
 
-<span class="fc" id="L199">    public final Function transpose2D() { return _transpose2D; }</span>
+<span class="fc" id="L213">    public final Function dot() { return _dot; }</span>
 
-<span class="nc" id="L201">    public final Function getRandom() { return _random; }</span>
+<span class="nc" id="L215">    public final Function getTranspose2D() { return _transpose2D; }</span>
 
-<span class="fc" id="L203">    public final Function random() { return _random; }</span>
+<span class="fc" id="L217">    public final Function transpose2D() { return _transpose2D; }</span>
+
+<span class="nc" id="L219">    public final Function getRandom() { return _random; }</span>
+
+<span class="fc" id="L221">    public final Function random() { return _random; }</span>
 
     /**
      * @return A tanh {@link Function} based on: {@code 2 / ( 1 + Math.exp( -x * 2 ) ) - 1}.
      */
-<span class="fc" id="L208">    public final Function getTanh() { return _tanh; }</span>
+<span class="fc" id="L226">    public final Function getTanh() { return _tanh; }</span>
 
     /**
      * @return A tanh {@link Function} based on: {@code 2 / ( 1 + Math.exp( -x * 2 ) ) - 1}.
      */
-<span class="fc" id="L213">    public final Function tanh() { return _tanh; }</span>
+<span class="fc" id="L231">    public final Function tanh() { return _tanh; }</span>
 
     /**
      * @return A fast quasi tanh {@link Function} based on: {@code x * FastFun.invSqrt( 1 + x * x )}.
      */
-<span class="fc" id="L218">    public final Function getFastTanh() { return _fastTanh; }</span>
+<span class="fc" id="L236">    public final Function getFastTanh() { return _fastTanh; }</span>
 
     /**
      * @return A fast quasi tanh {@link Function} based on: {@code x * FastFun.invSqrt( 1 + x * x )}.
      */
-<span class="fc" id="L223">    public final Function fastTanh() { return _fastTanh; }</span>
+<span class="fc" id="L241">    public final Function fastTanh() { return _fastTanh; }</span>
 
     /**
      *  The softsign function, defined as {@code x / ( 1 + Math.abs( x ) )},
@@ -231,7 +249,7 @@ public class Functions {
      *
      * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
      */
-<span class="fc" id="L234">    public final Function getSoftsign() { return _softsign; }</span>
+<span class="fc" id="L252">    public final Function getSoftsign() { return _softsign; }</span>
 
     /**
      *  The softsign function, defined as {@code x / ( 1 + Math.abs( x ) )},
@@ -242,97 +260,97 @@ public class Functions {
      *
      * @return A very fast quasi tanh {@link Function} based on: {@code x / ( 1 + Math.abs( x ) )}.
      */
-<span class="fc" id="L245">    public final Function softsign() { return _softsign; }</span>
+<span class="fc" id="L263">    public final Function softsign() { return _softsign; }</span>
 
     /**
      * @return A sigmoid {@link Function} based on: {@code 1 / ( 1 + Math.exp( -x ) )}.
      */
-<span class="fc" id="L250">    public final Function getSigmoid() { return _sigmoid; }</span>
+<span class="fc" id="L268">    public final Function getSigmoid() { return _sigmoid; }</span>
 
     /**
      * @return A sigmoid {@link Function} based on: {@code 1 / ( 1 + Math.exp( -x ) )}.
      */
-<span class="fc" id="L255">    public final Function sigmoid() { return _sigmoid; }</span>
+<span class="fc" id="L273">    public final Function sigmoid() { return _sigmoid; }</span>
 
     /**
      * @return A gaussian {@link Function} based on: {@code Math.exp( -( x * x ) )}.
      */
-<span class="fc" id="L260">    public final Function getGaus() { return _gaus; }</span>
+<span class="fc" id="L278">    public final Function getGaus() { return _gaus; }</span>
 
     /**
      * @return A gaussian {@link Function} based on: {@code Math.exp( -( x * x ) )}.
      */
-<span class="fc" id="L265">    public final Function gaus() { return _gaus; }</span>
+<span class="fc" id="L283">    public final Function gaus() { return _gaus; }</span>
 
     /**
      * @return A quasi gaussian {@link Function} based on: {@code 1 / ( 1 + x * x )}.
      */
-<span class="fc" id="L270">    public final Function getFastGaus () { return _fastGaus; }</span>
+<span class="fc" id="L288">    public final Function getFastGaus () { return _fastGaus; }</span>
 
     /**
      * @return A quasi gaussian {@link Function} based on: {@code 1 / ( 1 + x * x )}.
      */
-<span class="fc" id="L275">    public final Function fastGaus () { return _fastGaus; }</span>
+<span class="fc" id="L293">    public final Function fastGaus () { return _fastGaus; }</span>
 
     /**
      * @return A natural log {@link Function} based on: {@code Math.log( x )}.
      */
-<span class="fc" id="L280">    public final Function getLn() { return _ln; }</span>
+<span class="fc" id="L298">    public final Function getLn() { return _ln; }</span>
 
     /**
      * @return A natural log {@link Function} based on: {@code Math.log( x )}.
      */
-<span class="fc" id="L285">    public final Function ln() { return _ln; }</span>
+<span class="fc" id="L303">    public final Function ln() { return _ln; }</span>
 
     /**
      * @return A quadratic {@link Function} based on: {@code x * x}.
      */
-<span class="fc" id="L290">    public final Function getQuad() { return _quad; }</span>
+<span class="fc" id="L308">    public final Function getQuad() { return _quad; }</span>
 
     /**
      * @return A quadratic {@link Function} based on: {@code x * x}.
      */
-<span class="fc" id="L295">    public final Function quad() { return _quad; }</span>
+<span class="fc" id="L313">    public final Function quad() { return _quad; }</span>
 
     /**
      * @return A rectified linear unit {@link Function} based on: {@code ( x &gt;= 0 ? x : x * .01 )}.
      */
-<span class="fc" id="L300">    public final Function getRelu() { return _relu; }</span>
+<span class="fc" id="L318">    public final Function getRelu() { return _relu; }</span>
 
     /**
      * @return A rectified linear unit {@link Function} based on: {@code ( x &gt;= 0 ? x : x * .01 )}.
      */
-<span class="fc" id="L305">    public final Function relu() { return _relu; }</span>
+<span class="fc" id="L323">    public final Function relu() { return _relu; }</span>
 
     /**
      * @return An absolute {@link Function} based on: {@code Math.abs(x)}.
      */
-<span class="fc" id="L310">    public final Function getAbs() { return _abs; }</span>
+<span class="fc" id="L328">    public final Function getAbs() { return _abs; }</span>
 
     /**
      * @return An absolute {@link Function} based on: {@code Math.abs(x)}.
      */
-<span class="fc" id="L315">    public final Function abs() { return _abs; }</span>
+<span class="fc" id="L333">    public final Function abs() { return _abs; }</span>
 
     /**
      * @return A sine {@link Function} based on: {@code Math.sin(x)}.
      */
-<span class="fc" id="L320">    public final Function getSin() { return _sin; }</span>
+<span class="fc" id="L338">    public final Function getSin() { return _sin; }</span>
 
     /**
      * @return A sine {@link Function} based on: {@code Math.sin(x)}.
      */
-<span class="fc" id="L325">    public final Function sin() { return _sin; }</span>
+<span class="fc" id="L343">    public final Function sin() { return _sin; }</span>
 
     /**
      * @return A cosine {@link Function} based on: {@code Math.cos(x)}.
      */
-<span class="fc" id="L330">    public final Function getCos() { return _cos; }</span>
+<span class="fc" id="L348">    public final Function getCos() { return _cos; }</span>
 
     /**
      * @return A cosine {@link Function} based on: {@code Math.cos(x)}.
      */
-<span class="fc" id="L335">    public final Function cos() { return _cos; }</span>
+<span class="fc" id="L353">    public final Function cos() { return _cos; }</span>
 
     /**
      *  SoftPlus is a smooth approximation to the ReLU function and can be
@@ -340,7 +358,7 @@ public class Functions {
      *
      * @return A softplus {@link Function} based on: {@code Math.log( 1 + Math.exp( x ) )}.
      */
-<span class="fc" id="L343">    public final Function getSoftplus() { return _softplus; }</span>
+<span class="fc" id="L361">    public final Function getSoftplus() { return _softplus; }</span>
 
     /**
      *  SoftPlus is a smooth approximation to the ReLU function and can be
@@ -348,7 +366,7 @@ public class Functions {
      *
      * @return A softplus {@link Function} based on: {@code Math.log( 1 + Math.exp( x ) )}.
      */
-<span class="fc" id="L351">    public final Function softplus() { return _softplus; }</span>
+<span class="fc" id="L369">    public final Function softplus() { return _softplus; }</span>
 
     /**
      *  The SiLu activation function, also known as the swish function, is defined as {@code x * sigmoid(x)}.
@@ -358,7 +376,7 @@ public class Functions {
      *
      * @return A SiLu {@link Function} (also known as swish) based on: {@code x / ( 1 + Math.exp( -x ) )}.
      */
-<span class="fc" id="L361">    public final Function getSilu() { return _silu; }</span>
+<span class="fc" id="L379">    public final Function getSilu() { return _silu; }</span>
 
     /**
      *  The SiLu activation function, also known as the swish function, is defined as {@code x * sigmoid(x)}.
@@ -368,17 +386,17 @@ public class Functions {
      *
      * @return A SiLu {@link Function} (also known as swish) based on: {@code x / ( 1 + Math.exp( -x ) )}.
      */
-<span class="fc" id="L371">    public final Function silu() { return _silu; }</span>
+<span class="fc" id="L389">    public final Function silu() { return _silu; }</span>
 
     /**
      * @return A GeLU {@link Function} based on: {@code x / ( 1 + Math.exp( -x * 1.702 ) )}.
      */
-<span class="fc" id="L376">    public final Function getGelu() { return _gelu; }</span>
+<span class="fc" id="L394">    public final Function getGelu() { return _gelu; }</span>
 
     /**
      * @return A GeLU {@link Function} based on: {@code x / ( 1 + Math.exp( -x * 1.702 ) )}.
      */
-<span class="fc" id="L381">    public final Function gelu() { return _gelu; }</span>
+<span class="fc" id="L399">    public final Function gelu() { return _gelu; }</span>
 
     /**
      * The Scaled Exponential Linear Unit, or SELU, is an activation
@@ -393,7 +411,7 @@ public class Functions {
      *
      * @return A SeLU {@link Function}.
      */
-<span class="fc" id="L396">    public final Function getSelu() { return _selu; }</span>
+<span class="fc" id="L414">    public final Function getSelu() { return _selu; }</span>
 
     /**
      * The Scaled Exponential Linear Unit, or SELU, is an activation
@@ -408,61 +426,61 @@ public class Functions {
      *
      * @return A SeLU {@link Function}.
      */
-<span class="fc" id="L411">    public final Function selu() { return _selu; }</span>
+<span class="fc" id="L429">    public final Function selu() { return _selu; }</span>
 
-<span class="fc" id="L413">    public final Function getMin() { return _min; }</span>
+<span class="fc" id="L431">    public final Function getMin() { return _min; }</span>
 
-<span class="fc" id="L415">    public final Function min() { return _min; }</span>
+<span class="fc" id="L433">    public final Function min() { return _min; }</span>
 
-<span class="fc" id="L417">    public final Function getMax() { return _max; }</span>
+<span class="fc" id="L435">    public final Function getMax() { return _max; }</span>
 
-<span class="fc" id="L419">    public final Function max() { return _max; }</span>
+<span class="fc" id="L437">    public final Function max() { return _max; }</span>
 
-<span class="nc" id="L421">    public final Function getSum() { return _sum; }</span>
+<span class="nc" id="L439">    public final Function getSum() { return _sum; }</span>
 
-<span class="fc" id="L423">    public final Function sum() { return _sum; }</span>
+<span class="fc" id="L441">    public final Function sum() { return _sum; }</span>
 
-<span class="nc" id="L425">    public final Function getExp() { return _exp; }</span>
+<span class="nc" id="L443">    public final Function getExp() { return _exp; }</span>
 
-<span class="fc" id="L427">    public final Function exp() { return _exp; }</span>
+<span class="fc" id="L445">    public final Function exp() { return _exp; }</span>
 
-<span class="nc" id="L429">    public final Function getLog10() { return _log10; }</span>
+<span class="nc" id="L447">    public final Function getLog10() { return _log10; }</span>
 
-<span class="fc" id="L431">    public final Function log10() { return _log10; }</span>
+<span class="fc" id="L449">    public final Function log10() { return _log10; }</span>
 
-<span class="nc" id="L433">    public final Function getSqrt() { return _sqrt; }</span>
+<span class="nc" id="L451">    public final Function getSqrt() { return _sqrt; }</span>
 
-<span class="fc" id="L435">    public final Function sqrt() { return _sqrt; }</span>
+<span class="fc" id="L453">    public final Function sqrt() { return _sqrt; }</span>
 
-<span class="nc" id="L437">    public final Function getCbrt() { return _cbrt; }</span>
+<span class="nc" id="L455">    public final Function getCbrt() { return _cbrt; }</span>
 
-<span class="fc" id="L439">    public final Function cbrt() { return _cbrt; }</span>
-
-    /**
-     * @return The &quot;concat&quot; {@link Function} that concatenates two {@link neureka.Tsr}s alongside a specific axis.
-     */
-<span class="nc" id="L444">    public final Function getConcat() { return _concat; }</span>
+<span class="fc" id="L457">    public final Function cbrt() { return _cbrt; }</span>
 
     /**
      * @return The &quot;concat&quot; {@link Function} that concatenates two {@link neureka.Tsr}s alongside a specific axis.
      */
-<span class="fc" id="L449">    public final Function concat() { return _concat; }</span>
+<span class="nc" id="L462">    public final Function getConcat() { return _concat; }</span>
+
+    /**
+     * @return The &quot;concat&quot; {@link Function} that concatenates two {@link neureka.Tsr}s alongside a specific axis.
+     */
+<span class="fc" id="L467">    public final Function concat() { return _concat; }</span>
 
     @Override
     public final String toString() {
-<span class="fc" id="L453">        String state =</span>
-<span class="fc" id="L454">                Arrays.stream(this.getClass().getDeclaredFields())</span>
-<span class="fc" id="L455">                      .map( field -&gt; {</span>
+<span class="fc" id="L471">        String state =</span>
+<span class="fc" id="L472">                Arrays.stream(this.getClass().getDeclaredFields())</span>
+<span class="fc" id="L473">                      .map( field -&gt; {</span>
                           try {
-<span class="fc" id="L457">                              return field.getName()+&quot;=&quot;+field.get(this).toString()+&quot;&quot;;</span>
-<span class="nc" id="L458">                          } catch (IllegalAccessException e) {</span>
-<span class="nc" id="L459">                              return field.getName()+&quot;=?&quot;;</span>
+<span class="fc" id="L475">                              return field.getName()+&quot;=&quot;+field.get(this).toString()+&quot;&quot;;</span>
+<span class="nc" id="L476">                          } catch (IllegalAccessException e) {</span>
+<span class="nc" id="L477">                              return field.getName()+&quot;=?&quot;;</span>
                           }
                       })
-<span class="fc" id="L462">                      .collect(Collectors.joining(&quot;,&quot;));</span>
+<span class="fc" id="L480">                      .collect(Collectors.joining(&quot;,&quot;));</span>
 
-<span class="fc" id="L464">        return this.getClass().getSimpleName()+&quot;[&quot;+state+&quot;]&quot;;</span>
+<span class="fc" id="L482">        return this.getClass().getSimpleName()+&quot;[&quot;+state+&quot;]&quot;;</span>
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

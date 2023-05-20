@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLReduce.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear.internal.opencl</a> &gt; <span class="el_source">CLReduce.java</span></div><h1>CLReduce.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.linear.internal.opencl;
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
@@ -11,62 +12,62 @@ import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.function.Supplier;
 
-<span class="pc bpc" id="L14" title="1 of 2 branches missed.">public class CLReduce implements ImplementationFor&lt;OpenCLDevice&gt;</span>
+public class CLReduce implements ImplementationFor&lt;OpenCLDevice&gt;
 {
-<span class="fc" id="L16">    public static String INDICES_MAPPER_ID = &quot;indices_to_values_mapper&quot;;</span>
-<span class="fc" id="L17">    public enum Type { MIN, MAX }</span>
+<span class="fc" id="L17">    public static String INDICES_MAPPER_ID = &quot;indices_to_values_mapper&quot;;</span>
+<span class="fc" id="L18">    public enum Type { MIN, MAX }</span>
 
     private final Type _type;
     private final String _comparator;
 
-<span class="fc" id="L22">    public CLReduce(Type type) {</span>
+<span class="fc" id="L23">    public CLReduce(Type type) {</span>
         String comparator;
-<span class="pc bpc" id="L24" title="1 of 3 branches missed.">        switch (type) {</span>
-<span class="fc" id="L25">            case MIN: comparator = &quot;current &lt; value&quot;; break;</span>
-<span class="fc" id="L26">            case MAX: comparator = &quot;current &gt; value&quot;; break;</span>
-<span class="nc" id="L27">            default: throw new IllegalArgumentException(&quot;Unsupported reduction type: &quot;+type);</span>
+<span class="pc bpc" id="L25" title="1 of 3 branches missed.">        switch (type) {</span>
+<span class="fc" id="L26">            case MIN: comparator = &quot;current &lt; value&quot;; break;</span>
+<span class="fc" id="L27">            case MAX: comparator = &quot;current &gt; value&quot;; break;</span>
+<span class="nc" id="L28">            default: throw new IllegalArgumentException(&quot;Unsupported reduction type: &quot;+type);</span>
         }
-<span class="fc" id="L29">        _comparator = comparator;</span>
-<span class="fc" id="L30">        _type = type;</span>
-<span class="fc" id="L31">    }</span>
+<span class="fc" id="L30">        _comparator = comparator;</span>
+<span class="fc" id="L31">        _type = type;</span>
+<span class="fc" id="L32">    }</span>
 
     @Override
     public Tsr&lt;Integer&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
-<span class="fc" id="L35">        CLBackend context = Neureka.get().backend().find(CLBackend.class).orElse(null);</span>
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        CLSettings settings = context == null ? null : context.getSettings();</span>
-<span class="pc bpc" id="L37" title="2 of 4 branches missed.">        boolean autoConvert = context == null || settings.isAutoConvertToFloat();</span>
-<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if ( settings != null ) settings.setAutoConvertToFloat(false);</span>
-<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        Tsr&lt;Float&gt; in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);</span>
-<span class="fc" id="L40">        int index = _runRecursively(in, call.getDevice());</span>
-<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        if ( settings != null ) settings.setAutoConvertToFloat(autoConvert);</span>
-<span class="fc" id="L42">        return Tsr.of(Integer.class, new int[]{1}, index);</span>
+<span class="fc" id="L36">        CLBackend context = Neureka.get().backend().find(CLBackend.class).orElse(null);</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        CLSettings settings = context == null ? null : context.getSettings();</span>
+<span class="pc bpc" id="L38" title="1 of 4 branches missed.">        boolean autoConvert = context == null || settings.isAutoConvertToFloat();</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        if ( settings != null ) settings.setAutoConvertToFloat(false);</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        Tsr&lt;Float&gt; in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);</span>
+<span class="fc" id="L41">        int index = _runRecursively(in, call.getDevice());</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if ( settings != null ) settings.setAutoConvertToFloat(autoConvert);</span>
+<span class="fc" id="L43">        return Tsr.of(Integer.class, Shape.of( 1 ), index);</span>
     }
 
     private int _runRecursively(Tsr&lt;Float&gt; in, OpenCLDevice device)
     {
-<span class="fc" id="L47">        final long RTS = device.maxWorkGroupSize(); // Register tile size</span>
-<span class="fc" id="L48">        final int SIZE = in.size();</span>
-<span class="fc" id="L49">        double fraction = (double) SIZE / (double) RTS;</span>
+<span class="fc" id="L48">        final long RTS = device.maxWorkGroupSize(); // Register tile size</span>
+<span class="fc" id="L49">        final int SIZE = in.size();</span>
+<span class="fc" id="L50">        double fraction = (double) SIZE / (double) RTS;</span>
         // Determining optimal number of tiles!
         int N;
         // Check if fraction is an integer
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if ( fraction == Math.floor(fraction) )</span>
-<span class="nc" id="L54">            N = (int) fraction;</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if ( fraction == Math.floor(fraction) )</span>
+<span class="nc" id="L55">            N = (int) fraction;</span>
         else
-<span class="fc" id="L56">            N = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)</span>
+<span class="fc" id="L57">            N = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)</span>
 
-<span class="fc" id="L58">        Tsr&lt;Integer&gt; out = Tsr.of(Integer.class, new int[]{N}, 0).to(device);</span>
-<span class="fc" id="L59">        out.mut().setIsVirtual(false);</span>
+<span class="fc" id="L59">        Tsr&lt;Integer&gt; out = Tsr.of(Integer.class, Shape.of(N), 0).to(device);</span>
+<span class="fc" id="L60">        out.mut().setIsVirtual(false);</span>
 
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if ( in.size() == 1 ) {</span>
-<span class="nc bnc" id="L62" title="All 4 branches missed.">            assert out.size() == 1;</span>
-<span class="nc" id="L63">            return out.at(0).get();</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if ( in.size() == 1 ) {</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">            assert out.size() == 1;</span>
+<span class="nc" id="L64">            return out.at(0).get();</span>
         }
 
-<span class="fc" id="L66">        String kernelName = &quot;fast_&quot;+_type.name().toLowerCase()+&quot;_reduce_RTS&quot;+RTS;</span>
+<span class="fc" id="L67">        String kernelName = &quot;fast_&quot;+_type.name().toLowerCase()+&quot;_reduce_RTS&quot;+RTS;</span>
 
-<span class="fc" id="L68">        Supplier&lt;String&gt; code = () -&gt;</span>
-<span class="fc" id="L69">                        &quot;   #define RTS &quot;+RTS+&quot;                                                                             \n&quot; +</span>
+<span class="fc" id="L69">        Supplier&lt;String&gt; code = () -&gt;</span>
+<span class="fc" id="L70">                        &quot;   #define RTS &quot;+RTS+&quot;                                                                             \n&quot; +</span>
                         &quot;   __kernel void &quot;+kernelName+&quot;(                                                                   \n&quot; +
                         &quot;               const int size,                                                                     \n&quot; +
                         &quot;               const __global float* in,                                                           \n&quot; +
@@ -91,27 +92,24 @@ import java.util.function.Supplier;
                         &quot;       out[ni] = found_index;                                                                      \n&quot; +
                         &quot;   }                                                                                               \n&quot;;
 
-        KernelCaller caller =
-<span class="fc bfc" id="L95" title="All 2 branches covered.">                device.hasAdHocKernel(kernelName)</span>
-<span class="pc" id="L96">                        ? device.findAdHocKernel(kernelName).orElseThrow(()-&gt; new RuntimeException(&quot;Could not find kernel: &quot;+kernelName))</span>
-<span class="fc" id="L97">                        : device.compileAndGetAdHocKernel(kernelName, code.get());</span>
+<span class="fc" id="L95">        KernelCaller caller = device.findOrCompileAdHocKernel(kernelName, code);</span>
 
-<span class="fc" id="L99">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
-<span class="fc" id="L100">        long[] global = new long[]{ N };</span>
+<span class="fc" id="L97">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
+<span class="fc" id="L98">        long[] global = new long[]{ N };</span>
 
-<span class="fc" id="L102">        caller.pass(SIZE).pass( in ).pass( out ).call( global, local );</span>
+<span class="fc" id="L100">        caller.pass(SIZE).pass( in ).pass( out ).call( global, local );</span>
 
         int i;
-<span class="fc bfc" id="L105" title="All 2 branches covered.">        if ( N &gt; 1 ) {</span>
-<span class="fc" id="L106">            Tsr&lt;Float&gt; reduced = _fetch(in, out, device);</span>
-<span class="fc" id="L107">            i = out.at(_runRecursively(reduced, device)).get();</span>
-<span class="fc" id="L108">            reduced.mut().delete();</span>
-<span class="fc" id="L109">        }</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if ( N &gt; 1 ) {</span>
+<span class="fc" id="L104">            Tsr&lt;Float&gt; reduced = _fetch(in, out, device);</span>
+<span class="fc" id="L105">            i = out.at(_runRecursively(reduced, device)).get();</span>
+<span class="fc" id="L106">            reduced.mut().delete();</span>
+<span class="fc" id="L107">        }</span>
         else
-<span class="fc" id="L111">            i = out.at(0).get();</span>
+<span class="fc" id="L109">            i = out.at(0).get();</span>
 
-<span class="fc" id="L113">        out.mut().delete();</span>
-<span class="fc" id="L114">        return i;</span>
+<span class="fc" id="L111">        out.mut().delete();</span>
+<span class="fc" id="L112">        return i;</span>
     }
 
     /**
@@ -123,13 +121,13 @@ import java.util.function.Supplier;
     private Tsr&lt;Float&gt; _fetch(
             Tsr&lt;Float&gt; in, Tsr&lt;Integer&gt; indices, OpenCLDevice device
     ) {
-<span class="fc" id="L126">        Tsr&lt;Float&gt; out = Tsr.of(Float.class, new int[]{indices.size()}, 0).to(device);</span>
-<span class="fc" id="L127">        out.mut().setIsVirtual(false);</span>
+<span class="fc" id="L124">        Tsr&lt;Float&gt; out = Tsr.of(Float.class, Shape.of(indices.size()), 0).to(device);</span>
+<span class="fc" id="L125">        out.mut().setIsVirtual(false);</span>
 
-<span class="fc" id="L129">        String kernelName = INDICES_MAPPER_ID;</span>
+<span class="fc" id="L127">        String kernelName = INDICES_MAPPER_ID;</span>
 
-<span class="fc" id="L131">        Supplier&lt;String&gt; code = () -&gt;</span>
-<span class="fc" id="L132">                    &quot;   __kernel void &quot; + kernelName + &quot;(                         \n&quot; +</span>
+<span class="fc" id="L129">        Supplier&lt;String&gt; code = () -&gt;</span>
+<span class="fc" id="L130">                    &quot;   __kernel void &quot; + kernelName + &quot;(                         \n&quot; +</span>
                     &quot;               const __global int* indices,                  \n&quot; +
                     &quot;               const __global float* in,                     \n&quot; +
                     &quot;                     __global float* out                     \n&quot; +
@@ -139,18 +137,18 @@ import java.util.function.Supplier;
                     &quot;   }                                                         \n&quot;;
 
         KernelCaller caller =
-<span class="pc bpc" id="L142" title="1 of 2 branches missed.">                device.hasAdHocKernel(kernelName)</span>
-<span class="nc" id="L143">                        ? device.findAdHocKernel(kernelName).orElseThrow(()-&gt; new RuntimeException(&quot;Could not find kernel: &quot;+kernelName))</span>
-<span class="fc" id="L144">                        : device.compileAndGetAdHocKernel(kernelName, code.get());</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">                device.hasAdHocKernel(kernelName)</span>
+<span class="nc" id="L141">                        ? device.findAdHocKernel(kernelName).orElseThrow(()-&gt; new RuntimeException(&quot;Could not find kernel: &quot;+kernelName))</span>
+<span class="fc" id="L142">                        : device.compileAndGetAdHocKernel(kernelName, code.get());</span>
 
-<span class="fc" id="L146">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
-<span class="fc" id="L147">        long[] global = new long[]{ indices.size() };</span>
+<span class="fc" id="L144">        long[] local =  null; // This kernel does not have local memory (uses register/private memory instead)</span>
+<span class="fc" id="L145">        long[] global = new long[]{ indices.size() };</span>
 
-<span class="fc" id="L149">        caller.pass( indices ).pass( in ).pass( out ).call( global, local );</span>
-<span class="fc" id="L150">        return out;</span>
+<span class="fc" id="L147">        caller.pass( indices ).pass( in ).pass( out ).call( global, local );</span>
+<span class="fc" id="L148">        return out;</span>
     }
 
 }
 
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

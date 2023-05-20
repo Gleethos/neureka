@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractDeviceAlgorithm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.template.algorithms</a> &gt; <span class="el_source">AbstractDeviceAlgorithm.java</span></div><h1>AbstractDeviceAlgorithm.java</h1><pre class="source lang-java linenums">package neureka.backend.api.template.algorithms;
 
 import neureka.Neureka;
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
@@ -30,50 +31,50 @@ import java.util.stream.IntStream;
  *
  * @param &lt;C&gt; The type of the concrete extension of this class.
  */
-<span class="pc bpc" id="L33" title="1 of 2 branches missed.">public abstract class AbstractDeviceAlgorithm&lt;C extends DeviceAlgorithm&lt;C&gt;&gt;</span>
+public abstract class AbstractDeviceAlgorithm&lt;C extends DeviceAlgorithm&lt;C&gt;&gt;
 extends AbstractAlgorithm
 implements DeviceAlgorithm&lt;C&gt;
 {
-<span class="fc" id="L37">    private final static Logger _LOG = LoggerFactory.getLogger(AbstractDeviceAlgorithm.class);</span>
+<span class="fc" id="L38">    private final static Logger _LOG = LoggerFactory.getLogger(AbstractDeviceAlgorithm.class);</span>
 
-<span class="fc" id="L39">    protected final Map&lt;Class&lt;Device&lt;?&gt;&gt;, ImplementationFor&lt;Device&lt;?&gt;&gt;&gt; _implementations = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L40">    protected final Map&lt;Class&lt;Device&lt;?&gt;&gt;, ImplementationFor&lt;Device&lt;?&gt;&gt;&gt; _implementations = new HashMap&lt;&gt;();</span>
 
-<span class="fc" id="L41">    public AbstractDeviceAlgorithm( String name ) { super( name ); }</span>
+<span class="fc" id="L42">    public AbstractDeviceAlgorithm( String name ) { super( name ); }</span>
 
     @Override
     public &lt;D extends Device&lt;?&gt;, E extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor(
             Class&lt;D&gt; deviceClass, E implementation
     ) {
-<span class="pc bpc" id="L47" title="1 of 2 branches missed.">        if ( _implementations.containsKey( deviceClass ) )</span>
-<span class="nc" id="L48">            _LOG.info(</span>
-<span class="nc" id="L49">                &quot;Implementation for device '&quot; + deviceClass.getSimpleName() + &quot;' already defined!&quot;</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if ( _implementations.containsKey( deviceClass ) )</span>
+<span class="nc" id="L49">            _LOG.info(</span>
+<span class="nc" id="L50">                &quot;Implementation for device '&quot; + deviceClass.getSimpleName() + &quot;' already defined!&quot;</span>
             );
 
-<span class="fc" id="L52">        _implementations.put(</span>
+<span class="fc" id="L53">        _implementations.put(</span>
             (Class&lt;Device&lt;?&gt;&gt;) deviceClass,
             (ImplementationFor&lt;Device&lt;?&gt;&gt;) implementation
         );
-<span class="fc" id="L56">        return (C) this;</span>
+<span class="fc" id="L57">        return (C) this;</span>
     }
 
     @Override
     public &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor(Class&lt;D&gt; deviceClass )
     {
-<span class="fc" id="L62">        ImplementationFor&lt;D&gt; found = (ImplementationFor&lt;D&gt;) _implementations.get( deviceClass );</span>
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        if ( found == null )</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">            for ( Class&lt;Device&lt;?&gt;&gt; type : _implementations.keySet() )</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">                if ( type.isAssignableFrom(deviceClass) )</span>
-<span class="fc" id="L66">                    return (ImplementationFor&lt;D&gt;) _implementations.get(type);</span>
+<span class="fc" id="L63">        ImplementationFor&lt;D&gt; found = (ImplementationFor&lt;D&gt;) _implementations.get( deviceClass );</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if ( found == null )</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            for ( Class&lt;Device&lt;?&gt;&gt; type : _implementations.keySet() )</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                if ( type.isAssignableFrom(deviceClass) )</span>
+<span class="fc" id="L67">                    return (ImplementationFor&lt;D&gt;) _implementations.get(type);</span>
 
-<span class="fc" id="L68">        return found;</span>
+<span class="fc" id="L69">        return found;</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L73">        String algorithmString = getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode());</span>
-<span class="fc" id="L74">        String implementations = _implementations.keySet().stream().map(Class::getSimpleName).collect(Collectors.joining(&quot;,&quot;));</span>
-<span class="fc" id="L75">        algorithmString = ( algorithmString + &quot;[name=&quot; + getName() + &quot;,support=[&quot; + implementations + &quot;]]&quot; );</span>
-<span class="fc" id="L76">        return algorithmString;</span>
+<span class="fc" id="L74">        String algorithmString = getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode());</span>
+<span class="fc" id="L75">        String implementations = _implementations.keySet().stream().map(Class::getSimpleName).collect(Collectors.joining(&quot;,&quot;));</span>
+<span class="fc" id="L76">        algorithmString = ( algorithmString + &quot;[name=&quot; + getName() + &quot;,support=[&quot; + implementations + &quot;]]&quot; );</span>
+<span class="fc" id="L77">        return algorithmString;</span>
     }
 
 
@@ -82,74 +83,74 @@ implements DeviceAlgorithm&lt;C&gt;
             final ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
             final FinalExecutor executor
     ) {
-<span class="fc" id="L85">        Function[] nodes = caller.getSubFunctions().toArray(new Function[0]);</span>
-<span class="fc" id="L86">        Operation operation = caller.getOperation();</span>
-<span class="pc bpc" id="L87" title="2 of 4 branches missed.">        assert call.getOperation() == operation;</span>
-<span class="fc" id="L88">        boolean isFlat = caller.isFlat();</span>
-<span class="fc" id="L89">        boolean isDoingAD = caller.isDoingAD();</span>
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        if ( call.getValOf( Arg.DerivIdx.class ) &lt; 0 )</span>
-<span class="fc" id="L91">            return _deepActivation( call, nodes, isFlat, isDoingAD, executor );</span>
+<span class="fc" id="L86">        Function[] nodes = caller.getSubFunctions().toArray(new Function[0]);</span>
+<span class="fc" id="L87">        Operation operation = caller.getOperation();</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        assert call.getOperation() == operation;</span>
+<span class="fc" id="L89">        boolean isFlat = caller.isFlat();</span>
+<span class="fc" id="L90">        boolean isDoingAD = caller.isDoingAD();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if ( call.getValOf( Arg.DerivIdx.class ) &lt; 0 )</span>
+<span class="fc" id="L92">            return _deepActivation( call, nodes, isFlat, isDoingAD, executor );</span>
         else
-<span class="fc" id="L93">            return _deepDerivative( call, nodes,  executor );</span>
+<span class="fc" id="L94">            return _deepDerivative( call, nodes,  executor );</span>
     }
 
     public static Tsr&lt;?&gt; prepareAndExecute(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; executionCall,
             FinalExecutor executor
     ) {
-<span class="fc" id="L100">        ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call = _prepareForExecution(executionCall);</span>
-<span class="fc" id="L101">        return executeOnCommonDevice(call, ()-&gt;{</span>
+<span class="fc" id="L101">        ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call = _prepareForExecution(executionCall);</span>
+<span class="fc" id="L102">        return executeOnCommonDevice(call, ()-&gt;{</span>
              /*
                 Below is the core lambda of recursive preprocessing
                 which is defined for each Algorithm individually :
              */
-<span class="fc" id="L106">            Tsr&lt;?&gt; result = null;</span>
-<span class="pc bpc" id="L107" title="1 of 2 branches missed.">            if ( executor != null )</span>
-<span class="fc" id="L108">                result = executor.execute(call);</span>
-<span class="fc" id="L109">            return result;</span>
+<span class="fc" id="L107">            Tsr&lt;?&gt; result = null;</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">            if ( executor != null )</span>
+<span class="fc" id="L109">                result = executor.execute(call);</span>
+<span class="fc" id="L110">            return result;</span>
         });
     }
 
     public static ExecutionCall&lt;? extends Device&lt;?&gt;&gt; _prepareForExecution(ExecutionCall&lt;? extends Device&lt;?&gt;&gt; executionCall) {
-<span class="fc" id="L114">        Algorithm currentAlgorithm = executionCall.getAlgorithm();</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( currentAlgorithm instanceof ExecutionPreparation)</span>
-<span class="fc" id="L116">            executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );</span>
+<span class="fc" id="L115">        Algorithm currentAlgorithm = executionCall.getAlgorithm();</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if ( currentAlgorithm instanceof ExecutionPreparation)</span>
+<span class="fc" id="L117">            executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );</span>
 
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : executionCall.inputs() )</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">            if ( t == null ) throw new IllegalArgumentException(</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : executionCall.inputs() )</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            if ( t == null ) throw new IllegalArgumentException(</span>
                                 &quot;Device arguments may not be null!\n&quot; +
                                 &quot;One or more tensor arguments within the given ExecutionCall instance is null.&quot;
                             );
-<span class="fc" id="L123">        return executionCall;</span>
+<span class="fc" id="L124">        return executionCall;</span>
     }
 
     public static Tsr&lt;?&gt; executeDeviceAlgorithm(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call
     ) {
-<span class="fc bfc" id="L129" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.inputs() )</span>
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">            if ( t == null ) throw new IllegalArgumentException(</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.inputs() )</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if ( t == null ) throw new IllegalArgumentException(</span>
                     &quot;Device arguments may not be null!\n&quot; +
                     &quot;One or more tensor arguments within the given ExecutionCall instance is null.&quot;
                 );
 
-<span class="fc" id="L135">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L136">        Device&lt;?&gt; device = call.getDevice();</span>
 
-<span class="fc" id="L137">        Algorithm algorithm = call.getAlgorithm();</span>
-<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if ( algorithm == null ) {</span>
-<span class="nc" id="L139">            String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );</span>
-<span class="nc" id="L140">            _LOG.error( message );</span>
-<span class="nc" id="L141">            throw new IllegalStateException( message );</span>
+<span class="fc" id="L138">        Algorithm algorithm = call.getAlgorithm();</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if ( algorithm == null ) {</span>
+<span class="nc" id="L140">            String message = _couldNotFindSuitableAlgorithmFor( device.getClass() );</span>
+<span class="nc" id="L141">            _LOG.error( message );</span>
+<span class="nc" id="L142">            throw new IllegalStateException( message );</span>
         } else {
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">            DeviceAlgorithm&lt;?&gt; deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm&lt;?&gt;) algorithm) : null );</span>
-<span class="pc bpc" id="L144" title="1 of 2 branches missed.">            ImplementationFor&lt;Device&lt;?&gt;&gt; implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">            if ( implementation == null ) {</span>
-<span class="fc" id="L146">                String message = _couldNotFindSuitableImplementationFor( call.getOperation(), algorithm, device.getClass() );</span>
-<span class="fc" id="L147">                _LOG.error( message );</span>
-<span class="fc" id="L148">                throw new IllegalStateException( message );</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">            DeviceAlgorithm&lt;?&gt; deviceAlgorithm = ( algorithm instanceof DeviceAlgorithm ? ((DeviceAlgorithm&lt;?&gt;) algorithm) : null );</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">            ImplementationFor&lt;Device&lt;?&gt;&gt; implementation =  ( deviceAlgorithm == null ? null : deviceAlgorithm.getImplementationFor(device) );</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            if ( implementation == null ) {</span>
+<span class="fc" id="L147">                String message = _couldNotFindSuitableImplementationFor( call.getOperation(), algorithm, device.getClass() );</span>
+<span class="fc" id="L148">                _LOG.error( message );</span>
+<span class="fc" id="L149">                throw new IllegalStateException( message );</span>
             }
             else {
-<span class="fc" id="L151">                device.approve( call );</span>
-<span class="fc" id="L152">                return implementation.run( (ExecutionCall&lt;Device&lt;?&gt;&gt;) call );</span>
+<span class="fc" id="L152">                device.approve( call );</span>
+<span class="fc" id="L153">                return implementation.run( (ExecutionCall&lt;Device&lt;?&gt;&gt;) call );</span>
             }
         }
     }
@@ -157,48 +158,48 @@ implements DeviceAlgorithm&lt;C&gt;
     public static &lt;D extends Device&lt;?&gt;&gt; ExecutionCall&lt;D&gt; flatten(
             Function caller, ExecutionCall&lt;D&gt; call
     ) {
-<span class="fc" id="L160">        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]), true );</span>
+<span class="fc" id="L161">        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]), true );</span>
     }
 
     public static &lt;D extends Device&lt;?&gt;&gt; ExecutionCall&lt;D&gt; flattenForIndexer(
             Function caller, ExecutionCall&lt;D&gt; call
     ) {
-<span class="fc" id="L166">        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]), false );</span>
+<span class="fc" id="L167">        return _flatten( call, caller.getSubFunctions().toArray(new Function[0]), false );</span>
     }
 
     private static &lt;D extends Device&lt;?&gt;&gt; ExecutionCall&lt;D&gt; _flatten(
             ExecutionCall&lt;D&gt; call, Function[] src
     ) {
-<span class="fc" id="L172">        return _flatten( call, src, true );</span>
+<span class="fc" id="L173">        return _flatten( call, src, true );</span>
     }
 
     
     private static &lt;D extends Device&lt;?&gt;&gt; ExecutionCall&lt;D&gt; _flatten(
             ExecutionCall&lt;D&gt; call, Function[] src, boolean ignoreJs
     ) {
-<span class="fc bfc" id="L179" title="All 2 branches covered.">        ExecutionCall&lt;D&gt; innerCall = !ignoreJs ? call : call.withArgs( Arg.DerivIdx.of(-1) );</span>
-<span class="fc" id="L180">        Tsr&lt;?&gt;[] inputs = innerCall.inputs();</span>
-<span class="fc" id="L181">        return MemUtil.keep( inputs, () -&gt;</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        ExecutionCall&lt;D&gt; innerCall = !ignoreJs ? call : call.withArgs( Arg.DerivIdx.of(-1) );</span>
+<span class="fc" id="L181">        Tsr&lt;?&gt;[] inputs = innerCall.inputs();</span>
+<span class="fc" id="L182">        return MemUtil.keep( inputs, () -&gt;</span>
         {
-<span class="fc" id="L183">            int[] tempShape = null;</span>
-<span class="fc" id="L184">            Class&lt;?&gt; tempType = null;</span>
-<span class="fc" id="L185">            Tsr&lt;?&gt;[] tensors = new Tsr[src.length];</span>
-<span class="fc bfc" id="L186" title="All 2 branches covered.">            for ( int i = 0; i &lt; tensors.length; i++ ) {//constants need to be figured out!</span>
-<span class="fc bfc" id="L187" title="All 2 branches covered.">                if ( !( src[i] instanceof FunctionConstant) ) {</span>
-<span class="fc" id="L188">                    tensors[ i ] = src[i].execute(innerCall);</span>
-<span class="fc bfc" id="L189" title="All 2 branches covered.">                    tempShape = ( tempShape == null ? tensors[ i ].getNDConf().shape() : tempShape );</span>
-<span class="fc bfc" id="L190" title="All 2 branches covered.">                    tempType  = ( tempType  == null ? tensors[ i ].getItemType()     : tempType  );</span>
+<span class="fc" id="L184">            Shape tempShape = null;</span>
+<span class="fc" id="L185">            Class&lt;?&gt; tempType = null;</span>
+<span class="fc" id="L186">            Tsr&lt;?&gt;[] tensors = new Tsr[src.length];</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">            for ( int i = 0; i &lt; tensors.length; i++ ) {//constants need to be figured out!</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">                if ( !( src[i] instanceof FunctionConstant) ) {</span>
+<span class="fc" id="L189">                    tensors[ i ] = src[i].execute(innerCall);</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">                    tempShape = ( tempShape == null ? tensors[ i ].shape() : tempShape );</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">                    tempType  = ( tempType  == null ? tensors[ i ].getItemType()     : tempType  );</span>
                 }
             }
-<span class="fc" id="L193">            int j = innerCall.getValOf( Arg.VarIdx.class );</span>
-<span class="fc bfc" id="L194" title="All 2 branches covered.">            for ( int i = 0; i &lt; tensors.length; i++ )</span>
-<span class="fc bfc" id="L195" title="All 2 branches covered.">                if ( tensors[ i ] == null )</span>
-<span class="fc" id="L196">                    tensors[ i ] =</span>
-<span class="fc bfc" id="L197" title="All 2 branches covered.">                            j &lt; 0</span>
-<span class="fc" id="L198">                                ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).mut().setIsIntermediate( true ).to(call.getDevice())</span>
-<span class="fc" id="L199">                                : Tsr.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).mut().setIsIntermediate( true ).to(call.getDevice());</span>
+<span class="fc" id="L194">            int j = innerCall.getValOf( Arg.VarIdx.class );</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">            for ( int i = 0; i &lt; tensors.length; i++ )</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">                if ( tensors[ i ] == null )</span>
+<span class="fc" id="L197">                    tensors[ i ] =</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">                            j &lt; 0</span>
+<span class="fc" id="L199">                                ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).mut().setIsIntermediate( true ).to(call.getDevice())</span>
+<span class="fc" id="L200">                                : Tsr.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).mut().setIsIntermediate( true ).to(call.getDevice());</span>
 
-<span class="fc" id="L201">            return innerCall.withInputs(tensors);</span>
+<span class="fc" id="L202">            return innerCall.withInputs(tensors);</span>
         });
     }
 
@@ -210,50 +211,50 @@ implements DeviceAlgorithm&lt;C&gt;
             final boolean isDoingAD,
             final FinalExecutor executor
     ) {
-<span class="fc" id="L213">        int j = call.getValOf( Arg.VarIdx.class );</span>
-<span class="pc bpc" id="L214" title="2 of 4 branches missed.">        assert call.getValOf( Arg.DerivIdx.class ) == -1;</span>
+<span class="fc" id="L214">        int j = call.getValOf( Arg.VarIdx.class );</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        assert call.getValOf( Arg.DerivIdx.class ) == -1;</span>
 
-<span class="fc" id="L216">        ExecutionCall&lt;?&gt; flattenedCall = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes );</span>
+<span class="fc" id="L217">        ExecutionCall&lt;?&gt; flattenedCall = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes );</span>
 
-<span class="fc bfc" id="L218" title="All 4 branches covered.">        if (</span>
+<span class="fc bfc" id="L219" title="All 4 branches covered.">        if (</span>
                 !isFlat &amp;&amp; j &lt; 0 &amp;&amp; (
-<span class="pc bpc" id="L220" title="1 of 2 branches missed.">                        call.getOperation().isOperator()</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                        call.getOperation().isOperator()</span>
                                 ||
-<span class="nc bnc" id="L222" title="All 2 branches missed.">                        call.getOperation().supportsAlgorithm(ElementwiseAlgorithm.class)</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">                        call.getOperation().supportsAlgorithm(ElementwiseAlgorithm.class)</span>
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-<span class="fc" id="L225">            String asStr = call.getOperation().stringify(</span>
-<span class="fc" id="L226">                                        IntStream.range(0, nodes.length)</span>
-<span class="fc" id="L227">                                            .mapToObj(i -&gt; &quot;I[&quot; + i + &quot;]&quot;)</span>
-<span class="fc" id="L228">                                            .toArray(String[]::new)</span>
+<span class="fc" id="L226">            String asStr = call.getOperation().stringify(</span>
+<span class="fc" id="L227">                                        IntStream.range(0, nodes.length)</span>
+<span class="fc" id="L228">                                            .mapToObj(i -&gt; &quot;I[&quot; + i + &quot;]&quot;)</span>
+<span class="fc" id="L229">                                            .toArray(String[]::new)</span>
                                     );
-<span class="fc" id="L230">            Tsr&lt;?&gt;[] finalTensors = flattenedCall.inputs();</span>
-<span class="fc" id="L231">            Tsr&lt;?&gt; result = MemUtil.keep(finalTensors, () -&gt; new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">            for ( int i = 1; i &lt; finalTensors.length; i++ )</span>
-<span class="fc" id="L233">                _deleteIfNotIn(call.inputs(), finalTensors[i]);</span>
+<span class="fc" id="L231">            Tsr&lt;?&gt;[] finalTensors = flattenedCall.inputs();</span>
+<span class="fc" id="L232">            Tsr&lt;?&gt; result = MemUtil.keep(finalTensors, () -&gt; new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">            for ( int i = 1; i &lt; finalTensors.length; i++ )</span>
+<span class="fc" id="L234">                _deleteIfNotIn(call.inputs(), finalTensors[i]);</span>
 
-<span class="fc" id="L235">            return result;</span>
+<span class="fc" id="L236">            return result;</span>
         } else {
-<span class="fc" id="L237">            int numberOfInputs = flattenedCall.arity();</span>
-<span class="fc bfc" id="L238" title="All 2 branches covered.">            boolean anyNumberOfInputs = flattenedCall.getOperation().getArity() &lt; 0;</span>
-<span class="fc" id="L239">            int operationArity = flattenedCall.getOperation().getArity();</span>
-<span class="pc bpc" id="L240" title="1 of 2 branches missed.">            if (numberOfInputs &lt; operationArity)</span>
-<span class="nc" id="L241">                throw new IllegalArgumentException(</span>
-<span class="nc" id="L242">                        &quot;The number of inputs to the operation &quot; + flattenedCall.getOperation() + &quot; is &quot; + numberOfInputs +</span>
+<span class="fc" id="L238">            int numberOfInputs = flattenedCall.arity();</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">            boolean anyNumberOfInputs = flattenedCall.getOperation().getArity() &lt; 0;</span>
+<span class="fc" id="L240">            int operationArity = flattenedCall.getOperation().getArity();</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">            if (numberOfInputs &lt; operationArity)</span>
+<span class="nc" id="L242">                throw new IllegalArgumentException(</span>
+<span class="nc" id="L243">                        &quot;The number of inputs to the operation &quot; + flattenedCall.getOperation() + &quot; is &quot; + numberOfInputs +</span>
                         &quot; but the operation requires &quot; + operationArity + &quot; inputs.&quot;
                     );
 
-<span class="fc bfc" id="L246" title="All 2 branches covered.">            boolean tooManyArgs = numberOfInputs &gt; operationArity + 1;</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            boolean tooManyArgs = numberOfInputs &gt; operationArity + 1;</span>
 
             Tsr&lt;?&gt;[] tensors;
 
-<span class="pc bpc" id="L250" title="1 of 4 branches missed.">            if ( !tooManyArgs || anyNumberOfInputs )</span>
-<span class="fc" id="L251">                tensors = flattenedCall.withAddedInputAt(0, null).inputs();</span>
+<span class="pc bpc" id="L251" title="1 of 4 branches missed.">            if ( !tooManyArgs || anyNumberOfInputs )</span>
+<span class="fc" id="L252">                tensors = flattenedCall.withAddedInputAt(0, null).inputs();</span>
             else
-<span class="nc" id="L253">                tensors = flattenedCall.inputs();</span>
+<span class="nc" id="L254">                tensors = flattenedCall.inputs();</span>
 
-<span class="fc" id="L255">            return prepareAndExecute(</span>
-<span class="fc" id="L256">                        call.withInputs( tensors ).withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),</span>
+<span class="fc" id="L256">            return prepareAndExecute(</span>
+<span class="fc" id="L257">                        call.withInputs( tensors ).withArgs( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) ),</span>
                         executor
                     );
         }
@@ -272,23 +273,23 @@ implements DeviceAlgorithm&lt;C&gt;
     
     private static int _indexOfFoundDerivative( final Tsr&lt;?&gt;[] tensors )
     {
-<span class="fc" id="L275">        boolean allVirtual = true;</span>
-<span class="fc bfc" id="L276" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : tensors )</span>
-<span class="fc bfc" id="L277" title="All 4 branches covered.">            if ( t != null &amp;&amp; !t.isVirtual() ) allVirtual = false;</span>
+<span class="fc" id="L276">        boolean allVirtual = true;</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : tensors )</span>
+<span class="fc bfc" id="L278" title="All 4 branches covered.">            if ( t != null &amp;&amp; !t.isVirtual() ) allVirtual = false;</span>
 
-<span class="fc bfc" id="L279" title="All 2 branches covered.">        if ( allVirtual ) {</span>
-<span class="fc" id="L280">            int index = -1;</span>
-<span class="fc bfc" id="L281" title="All 2 branches covered.">            for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
-<span class="fc bfc" id="L282" title="All 2 branches covered.">                double value = ( tensors[ i ] == null ? 0.0 : tensors[ i ].getItemsAs( double[].class )[ 0 ] );</span>
-<span class="fc bfc" id="L283" title="All 2 branches covered.">                if ( value == 1.0 ) {</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">                    if ( index &gt;= 0 ) return -1;</span>
-<span class="fc" id="L285">                    index = i;</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">        if ( allVirtual ) {</span>
+<span class="fc" id="L281">            int index = -1;</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">            for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">                double value = ( tensors[ i ] == null ? 0.0 : tensors[ i ].getItemsAs( double[].class )[ 0 ] );</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">                if ( value == 1.0 ) {</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">                    if ( index &gt;= 0 ) return -1;</span>
+<span class="fc" id="L286">                    index = i;</span>
                 }
-<span class="pc bpc" id="L287" title="1 of 2 branches missed.">                else if ( value != 0.0 ) return -1;</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">                else if ( value != 0.0 ) return -1;</span>
             }
-<span class="fc" id="L289">            return index;</span>
+<span class="fc" id="L290">            return index;</span>
         }
-<span class="fc" id="L291">        return -1;</span>
+<span class="fc" id="L292">        return -1;</span>
     }
 
     
@@ -297,160 +298,160 @@ implements DeviceAlgorithm&lt;C&gt;
             final Function[] nodes,
             final FinalExecutor executor
     ) {
-<span class="fc" id="L300">        Supplier&lt;Tsr&lt;?&gt;&gt; actor = () -&gt;</span>
-<span class="fc" id="L301">                MemUtil.keep( call.inputs(), () -&gt; {</span>
-<span class="fc" id="L302">                    int d = call.getValOf( Arg.DerivIdx.class );</span>
-<span class="fc" id="L303">                    final int j = call.getValOf( Arg.VarIdx.class );</span>
-<span class="pc bpc" id="L304" title="2 of 4 branches missed.">                    assert d &gt;= 0;</span>
+<span class="fc" id="L301">        Supplier&lt;Tsr&lt;?&gt;&gt; actor = () -&gt;</span>
+<span class="fc" id="L302">                MemUtil.keep( call.inputs(), () -&gt; {</span>
+<span class="fc" id="L303">                    int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L304">                    final int j = call.getValOf( Arg.VarIdx.class );</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">                    assert d &gt;= 0;</span>
 
                     Tsr&lt;?&gt;[] tensors;
-<span class="pc bpc" id="L307" title="1 of 2 branches missed.">                    if ( call.getOperation().isIndexer() ) tensors = new Tsr[ 1 + call.arity() ];</span>
-<span class="fc" id="L308">                    else tensors = new Tsr[ 1 + nodes.length ];</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">                    if ( call.getOperation().isIndexer() ) tensors = new Tsr[ 1 + call.arity() ];</span>
+<span class="fc" id="L309">                    else tensors = new Tsr[ 1 + nodes.length ];</span>
 
                     // Chain-rule (forward AutoDiff):
                     // inner times outer means:
                     // first derive source!
                     // like so:
-<span class="pc bpc" id="L314" title="1 of 2 branches missed.">                    if ( call.getOperation().isIndexer() )</span>
-<span class="nc bnc" id="L315" title="All 2 branches missed.">                        for ( int i = 1; i &lt; tensors.length; i++ )</span>
-<span class="nc" id="L316">                            tensors[ i ] = nodes[ 0 ].executeDerive( call.inputs(), d, i - 1 );</span>
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">                    if ( call.getOperation().isIndexer() )</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">                        for ( int i = 1; i &lt; tensors.length; i++ )</span>
+<span class="nc" id="L317">                            tensors[ i ] = nodes[ 0 ].executeDerive( call.inputs(), d, i - 1 );</span>
                     else
-<span class="fc bfc" id="L318" title="All 2 branches covered.">                        for ( int i = 1; i &lt; tensors.length; i++ )</span>
-<span class="fc" id="L319">                            tensors[ i ] =</span>
-<span class="fc bfc" id="L320" title="All 2 branches covered.">                                        j &gt;= 0</span>
-<span class="fc" id="L321">                                            ? nodes[ i - 1 ].executeDerive( call.inputs(), d, j )</span>
-<span class="fc" id="L322">                                            : nodes[ i - 1 ].executeDerive( call.inputs(), d    );</span>
+<span class="fc bfc" id="L319" title="All 2 branches covered.">                        for ( int i = 1; i &lt; tensors.length; i++ )</span>
+<span class="fc" id="L320">                            tensors[ i ] =</span>
+<span class="fc bfc" id="L321" title="All 2 branches covered.">                                        j &gt;= 0</span>
+<span class="fc" id="L322">                                            ? nodes[ i - 1 ].executeDerive( call.inputs(), d, j )</span>
+<span class="fc" id="L323">                                            : nodes[ i - 1 ].executeDerive( call.inputs(), d    );</span>
 
                     //...then add them all together! (is possible because of linearity...)
                     Tsr&lt;?&gt; inner;
-<span class="pc bpc" id="L326" title="1 of 2 branches missed.">                    if ( tensors.length &gt; 2 ) {// Optimization: Finds index of &quot;1.0&quot; among otherwise all &quot;0.0&quot; virtual tensors!</span>
-<span class="fc" id="L327">                        int index = _indexOfFoundDerivative( tensors );</span>
-<span class="fc bfc" id="L328" title="All 2 branches covered.">                        if ( index &gt;= 0 ) inner = tensors[ index ];</span>
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">                    if ( tensors.length &gt; 2 ) {// Optimization: Finds index of &quot;1.0&quot; among otherwise all &quot;0.0&quot; virtual tensors!</span>
+<span class="fc" id="L328">                        int index = _indexOfFoundDerivative( tensors );</span>
+<span class="fc bfc" id="L329" title="All 2 branches covered.">                        if ( index &gt;= 0 ) inner = tensors[ index ];</span>
                         else {
                             // Optimization above did not apply, so we accumulate all the derivatives!
-<span class="fc" id="L331">                            tensors[0] = prepareAndExecute(</span>
-<span class="fc" id="L332">                                                ExecutionCall.of( tensors )</span>
-<span class="fc" id="L333">                                                        .andArgs( Arg.DerivIdx.of( -1 ) )</span>
-<span class="fc" id="L334">                                                        .running( Neureka.get().backend().getOperation(&quot;+&quot;) )</span>
-<span class="fc" id="L335">                                                        .on( call.getDevice() ),</span>
-<span class="fc" id="L336">                                                innerCall -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )</span>
+<span class="fc" id="L332">                            tensors[0] = prepareAndExecute(</span>
+<span class="fc" id="L333">                                                ExecutionCall.of( tensors )</span>
+<span class="fc" id="L334">                                                        .andArgs( Arg.DerivIdx.of( -1 ) )</span>
+<span class="fc" id="L335">                                                        .running( Neureka.get().backend().getOperation(&quot;+&quot;) )</span>
+<span class="fc" id="L336">                                                        .on( call.getDevice() ),</span>
+<span class="fc" id="L337">                                                innerCall -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )</span>
                                         );
-<span class="fc" id="L338">                            inner = tensors[ 0 ];//-&gt; this is now the inner derivative!</span>
+<span class="fc" id="L339">                            inner = tensors[ 0 ];//-&gt; this is now the inner derivative!</span>
                         }
-<span class="fc" id="L340">                    }</span>
-<span class="nc" id="L341">                    else inner = tensors[ 1 ];</span>
+<span class="fc" id="L341">                    }</span>
+<span class="nc" id="L342">                    else inner = tensors[ 1 ];</span>
 
-<span class="fc" id="L343">                    tensors[ 0 ] = null;</span>
+<span class="fc" id="L344">                    tensors[ 0 ] = null;</span>
                     //...then activate (No differentiation!) the source like so:
-<span class="pc bpc" id="L345" title="1 of 2 branches missed.">                    if ( call.getOperation().isIndexer() ) // Indexer pass an index j of course!</span>
-<span class="nc bnc" id="L346" title="All 2 branches missed.">                        for ( int i = 1; i &lt; tensors.length; i++ )</span>
-<span class="nc" id="L347">                            tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 ); // i - 1 := j</span>
+<span class="pc bpc" id="L346" title="1 of 2 branches missed.">                    if ( call.getOperation().isIndexer() ) // Indexer pass an index j of course!</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">                        for ( int i = 1; i &lt; tensors.length; i++ )</span>
+<span class="nc" id="L348">                            tensors[ i ] = nodes[ 0 ].execute( call.inputs(), i - 1 ); // i - 1 := j</span>
                     else
-<span class="fc bfc" id="L349" title="All 2 branches covered.">                        for ( int i = 1; i &lt; tensors.length; i++ )</span>
-<span class="fc" id="L350">                            tensors[ i ] =</span>
-<span class="fc bfc" id="L351" title="All 2 branches covered.">                                    j &gt;= 0</span>
-<span class="fc" id="L352">                                        ? nodes[ i - 1 ].execute( call.inputs(), j )</span>
-<span class="fc" id="L353">                                        : nodes[ i - 1 ].execute( call.inputs() );</span>
+<span class="fc bfc" id="L350" title="All 2 branches covered.">                        for ( int i = 1; i &lt; tensors.length; i++ )</span>
+<span class="fc" id="L351">                            tensors[ i ] =</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">                                    j &gt;= 0</span>
+<span class="fc" id="L353">                                        ? nodes[ i - 1 ].execute( call.inputs(), j )</span>
+<span class="fc" id="L354">                                        : nodes[ i - 1 ].execute( call.inputs() );</span>
 
                     //...get derivative index within src list:
-<span class="pc bpc" id="L356" title="1 of 2 branches missed.">                    for ( int i = 0; i &lt; nodes.length; i++ )</span>
-<span class="pc bpc" id="L357" title="1 of 4 branches missed.">                        if ( nodes[ i ].dependsOn( d ) &amp;&amp; !call.getOperation().isIndexer() ) {</span>
-<span class="fc" id="L358">                            d = i;</span>
-<span class="fc" id="L359">                            break;</span>
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">                    for ( int i = 0; i &lt; nodes.length; i++ )</span>
+<span class="pc bpc" id="L358" title="1 of 4 branches missed.">                        if ( nodes[ i ].dependsOn( d ) &amp;&amp; !call.getOperation().isIndexer() ) {</span>
+<span class="fc" id="L359">                            d = i;</span>
+<span class="fc" id="L360">                            break;</span>
                         }
 
                     // Use those tensors for the outer derivative:
-<span class="fc" id="L363">                    tensors[0] = prepareAndExecute(</span>
-<span class="fc" id="L364">                                        ExecutionCall.of( tensors )</span>
-<span class="fc" id="L365">                                                .andArgs( Arg.DerivIdx.of( d ) )</span>
-<span class="fc" id="L366">                                                .running( call.getOperation() )</span>
-<span class="fc" id="L367">                                                .on( call.getDevice() ),</span>
+<span class="fc" id="L364">                    tensors[0] = prepareAndExecute(</span>
+<span class="fc" id="L365">                                        ExecutionCall.of( tensors )</span>
+<span class="fc" id="L366">                                                .andArgs( Arg.DerivIdx.of( d ) )</span>
+<span class="fc" id="L367">                                                .running( call.getOperation() )</span>
+<span class="fc" id="L368">                                                .on( call.getDevice() ),</span>
                                         executor
                                     );
                     // At the end:
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
-<span class="fc" id="L372">                    Tsr&lt;?&gt; result = _innerTimesOuter( inner, tensors, call );</span>
+<span class="fc" id="L373">                    Tsr&lt;?&gt; result = _innerTimesOuter( inner, tensors, call );</span>
                     // done!
 
-<span class="fc" id="L375">                    _delete( inner );</span>
+<span class="fc" id="L376">                    _delete( inner );</span>
 
-<span class="fc" id="L377">                    return result;</span>
+<span class="fc" id="L378">                    return result;</span>
                 });
 
-<span class="fc" id="L380">        int d = call.getValOf( Arg.DerivIdx.class );</span>
-<span class="fc" id="L381">        Tsr&lt;?&gt; out = null;</span>
-<span class="fc bfc" id="L382" title="All 2 branches covered.">        for ( int i = 0; i &lt; nodes.length; i++ )</span>
+<span class="fc" id="L381">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L382">        Tsr&lt;?&gt; out = null;</span>
+<span class="fc bfc" id="L383" title="All 2 branches covered.">        for ( int i = 0; i &lt; nodes.length; i++ )</span>
         {
             // constants need to be figured out!
-<span class="fc bfc" id="L385" title="All 2 branches covered.">            int di = ( nodes[ i ].dependsOn( d ) ? i : -1 );</span>
-<span class="fc bfc" id="L386" title="All 2 branches covered.">            if ( di &gt;= 0 )</span>
-<span class="fc bfc" id="L387" title="All 2 branches covered.">                if ( out == null ) out = actor.get();</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">            int di = ( nodes[ i ].dependsOn( d ) ? i : -1 );</span>
+<span class="fc bfc" id="L387" title="All 2 branches covered.">            if ( di &gt;= 0 )</span>
+<span class="fc bfc" id="L388" title="All 2 branches covered.">                if ( out == null ) out = actor.get();</span>
                 else
                     break;
         }
-<span class="fc" id="L391">        return out;</span>
+<span class="fc" id="L392">        return out;</span>
     }
 
     private static Tsr&lt;?&gt; _innerTimesOuter(Tsr&lt;?&gt; inner, Tsr&lt;?&gt;[] tensors, ExecutionCall&lt;?&gt; call)
     {
-<span class="fc bfc" id="L396" title="All 6 branches covered.">        if ( !( ( inner.isVirtual() || inner.size() == 1 ) &amp;&amp; inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {</span>
-<span class="fc" id="L397">            tensors = new Tsr[]{ null, inner, tensors[ 0 ] };</span>
-<span class="fc" id="L398">            tensors[0] = prepareAndExecute(</span>
-<span class="fc" id="L399">                    ExecutionCall.of( tensors )</span>
-<span class="fc" id="L400">                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
-<span class="fc" id="L401">                            .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
-<span class="fc" id="L402">                            .on( call.getDevice() ),</span>
+<span class="fc bfc" id="L397" title="All 6 branches covered.">        if ( !( ( inner.isVirtual() || inner.size() == 1 ) &amp;&amp; inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {</span>
+<span class="fc" id="L398">            tensors = new Tsr[]{ null, inner, tensors[ 0 ] };</span>
+<span class="fc" id="L399">            tensors[0] = prepareAndExecute(</span>
+<span class="fc" id="L400">                    ExecutionCall.of( tensors )</span>
+<span class="fc" id="L401">                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
+<span class="fc" id="L402">                            .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
+<span class="fc" id="L403">                            .on( call.getDevice() ),</span>
                     AbstractDeviceAlgorithm::executeDeviceAlgorithm
             );
-<span class="fc bfc" id="L405" title="All 2 branches covered.">            for ( int i = 1; i &lt; tensors.length; i++ )</span>
-<span class="fc" id="L406">                _deleteIfNotIn( call.inputs(), tensors[ i ] );</span>
+<span class="fc bfc" id="L406" title="All 2 branches covered.">            for ( int i = 1; i &lt; tensors.length; i++ )</span>
+<span class="fc" id="L407">                _deleteIfNotIn( call.inputs(), tensors[ i ] );</span>
         }
-<span class="fc" id="L408">        return tensors[ 0 ];</span>
+<span class="fc" id="L409">        return tensors[ 0 ];</span>
     }
 
     private static void _deleteIfNotIn( Tsr&lt;?&gt;[] array, Tsr&lt;?&gt; tensor ) {
-<span class="pc bpc" id="L412" title="1 of 2 branches missed.">        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {</span>
-<span class="fc bfc" id="L413" title="All 2 branches covered.">            for ( int i = 1; i &lt; array.length; i++ )</span>
-<span class="fc bfc" id="L414" title="All 2 branches covered.">                if ( array[i] == tensor ) return;</span>
+<span class="pc bpc" id="L413" title="1 of 2 branches missed.">        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {</span>
+<span class="fc bfc" id="L414" title="All 2 branches covered.">            for ( int i = 1; i &lt; array.length; i++ )</span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">                if ( array[i] == tensor ) return;</span>
 
-<span class="pc bpc" id="L416" title="1 of 2 branches missed.">            if ( !tensor.isDeleted() ) tensor.mut().delete();</span>
+<span class="pc bpc" id="L417" title="1 of 2 branches missed.">            if ( !tensor.isDeleted() ) tensor.mut().delete();</span>
         }
-<span class="fc" id="L418">    }</span>
+<span class="fc" id="L419">    }</span>
 
     private static void _delete( Tsr&lt;?&gt; tensor ) {
-<span class="fc" id="L421">        Neureka.Settings.Debug debug = Neureka.get().settings().debug();</span>
-<span class="fc bfc" id="L422" title="All 4 branches covered.">        if (  !tensor.isDeleted() &amp;&amp; debug.isDeletingIntermediateTensors() )</span>
-<span class="fc" id="L423">            tensor.mut().delete();</span>
-<span class="fc" id="L424">    }</span>
+<span class="fc" id="L422">        Neureka.Settings.Debug debug = Neureka.get().settings().debug();</span>
+<span class="fc bfc" id="L423" title="All 4 branches covered.">        if (  !tensor.isDeleted() &amp;&amp; debug.isDeletingIntermediateTensors() )</span>
+<span class="fc" id="L424">            tensor.mut().delete();</span>
+<span class="fc" id="L425">    }</span>
 
     public static &lt;R&gt; R executeOnCommonDevice( ExecutionCall&lt;?&gt; call, Supplier&lt;R&gt; execution ) {
-<span class="fc" id="L427">        Device&lt;Object&gt; device = call.getDeviceFor(Object.class);</span>
+<span class="fc" id="L428">        Device&lt;Object&gt; device = call.getDeviceFor(Object.class);</span>
 
-<span class="fc" id="L429">        Consumer&lt;Tsr&lt;?&gt;&gt;[] rollbacks = new Consumer[ call.arity() ];</span>
-<span class="fc bfc" id="L430" title="All 2 branches covered.">        for (int i = 0; i &lt; call.arity(); i++ )</span>
-<span class="pc bpc" id="L431" title="1 of 4 branches missed.">            if ( call.input( i ) != null &amp;&amp; !call.input( i ).isOutsourced() ) {</span>
-<span class="fc" id="L432">                device.store( call.input( i ) );</span>
-<span class="fc" id="L433">                rollbacks[ i ] = tensor -&gt; device.restore( (Tsr&lt;Object&gt;) tensor );</span>
+<span class="fc" id="L430">        Consumer&lt;Tsr&lt;?&gt;&gt;[] rollbacks = new Consumer[ call.arity() ];</span>
+<span class="fc bfc" id="L431" title="All 2 branches covered.">        for (int i = 0; i &lt; call.arity(); i++ )</span>
+<span class="pc bpc" id="L432" title="1 of 4 branches missed.">            if ( call.input( i ) != null &amp;&amp; !call.input( i ).isOutsourced() ) {</span>
+<span class="fc" id="L433">                device.store( call.input( i ) );</span>
+<span class="fc" id="L434">                rollbacks[ i ] = tensor -&gt; device.restore( (Tsr&lt;Object&gt;) tensor );</span>
             }
             else
-<span class="fc" id="L436">                rollbacks[ i ] = t -&gt; {};</span>
+<span class="fc" id="L437">                rollbacks[ i ] = t -&gt; {};</span>
 
-<span class="fc" id="L438">        R result = execution.get();</span>
+<span class="fc" id="L439">        R result = execution.get();</span>
 
-<span class="pc bpc" id="L440" title="1 of 2 branches missed.">        if ( result == null )</span>
-<span class="nc" id="L441">            throw new IllegalStateException( &quot;Execution of &quot; + call + &quot; failed!&quot; );</span>
+<span class="pc bpc" id="L441" title="1 of 2 branches missed.">        if ( result == null )</span>
+<span class="nc" id="L442">            throw new IllegalStateException( &quot;Execution of &quot; + call + &quot; failed!&quot; );</span>
 
-<span class="fc bfc" id="L443" title="All 2 branches covered.">        for ( int i = 0; i &lt; rollbacks.length; i++ )</span>
-<span class="pc bpc" id="L444" title="3 of 6 branches missed.">            if ( call.input( i ) != null &amp;&amp; !call.input( i ).isDeleted() &amp;&amp; !call.input( i ).isUndefined() )</span>
-<span class="fc" id="L445">                rollbacks[ i ].accept( call.input( i ) );</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">        for ( int i = 0; i &lt; rollbacks.length; i++ )</span>
+<span class="pc bpc" id="L445" title="3 of 6 branches missed.">            if ( call.input( i ) != null &amp;&amp; !call.input( i ).isDeleted() &amp;&amp; !call.input( i ).isUndefined() )</span>
+<span class="fc" id="L446">                rollbacks[ i ].accept( call.input( i ) );</span>
 
-<span class="fc" id="L447">        return result;</span>
+<span class="fc" id="L448">        return result;</span>
     }
 
     private static String _couldNotFindSuitableAlgorithmFor( Class&lt;?&gt; type ) {
-<span class="nc" id="L451">        return LogUtil.format(</span>
-<span class="nc" id="L452">                &quot;No suitable '&quot;+ Algorithm.class.getSimpleName()+&quot;' found for device of type '{}'.&quot;,</span>
-<span class="nc" id="L453">                type.getSimpleName()</span>
+<span class="nc" id="L452">        return LogUtil.format(</span>
+<span class="nc" id="L453">                &quot;No suitable '&quot;+ Algorithm.class.getSimpleName()+&quot;' found for device of type '{}'.&quot;,</span>
+<span class="nc" id="L454">                type.getSimpleName()</span>
         );
     }
 
@@ -459,14 +460,14 @@ implements DeviceAlgorithm&lt;C&gt;
             Algorithm algorithm,
             Class&lt;?&gt; type
     ) {
-<span class="fc" id="L462">        return LogUtil.format(</span>
+<span class="fc" id="L463">        return LogUtil.format(</span>
                 &quot;No suitable implementation found for operation '{}', algorithm '{}' and device type '{}'.&quot;,
-<span class="fc" id="L464">                operation.getIdentifier(),</span>
-<span class="fc" id="L465">                algorithm.getName(),</span>
-<span class="fc" id="L466">                type.getSimpleName()</span>
+<span class="fc" id="L465">                operation.getIdentifier(),</span>
+<span class="fc" id="L466">                algorithm.getName(),</span>
+<span class="fc" id="L467">                type.getSimpleName()</span>
         );
     }
 
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

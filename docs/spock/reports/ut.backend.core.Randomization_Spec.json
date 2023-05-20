@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.025 seconds"
+    "duration":"0.052 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can make slices of tensors random.",
       "result":"PASS",
-      "duration":"0.009 seconds",
+      "duration":"0.037 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Randomization is in essence the same algorithm as JDKs \"Random\".",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,7 +56,7 @@
     {
       "id":"The Randomization class can fill various types of arrays with pseudo random numbers.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -73,7 +73,7 @@
 
         {"kind":"and","text":"","code":["CPURandomization.fillRandomly( new short[2], 42 ) == [-21223, -11844] as short[]","CPURandomization.fillRandomly( new short[2], \"I'm a seed!\" ) == [-1640, -22246] as short[]"]},
 
-        {"kind":"and","text":"","code":["CPURandomization.fillRandomly( new char[2], 42 ) == ['ê´™', 'í†¼'] as char[]","CPURandomization.fillRandomly( new char[2], \"I'm a seed!\" ) == ['ï¦˜', 'ê¤š'] as char[]"]},
+        {"kind":"and","text":"","code":["CPURandomization.fillRandomly( new char[2], 42 ) == ['괙', '톼'] as char[]","CPURandomization.fillRandomly( new char[2], \"I'm a seed!\" ) == ['輦', 'ꤚ'] as char[]"]},
 
         {"kind":"and","text":"","code":["CPURandomization.fillRandomly( new boolean[2], 42 ) == [false, false] as boolean[]","CPURandomization.fillRandomly( new boolean[2], \"I'm a seed!\" ) == [true, true] as boolean[]"]}
       ],

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.351 seconds"
+    "duration":"0.287 seconds"
   },
   "headers":["\n            Specified below are strict tests for covering the ability of \n            OpenCL devices to be able produce optimized functions given\n            a normal function instance created from a String...\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice produces a working optimized Function for doubles.",
       "result":"PASS",
-      "duration":"0.144 seconds",
+      "duration":"0.059 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"The OpenCLDevice produces a working optimized Function for floats.",
       "result":"PASS",
-      "duration":"0.111 seconds",
+      "duration":"0.039 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -70,7 +70,7 @@
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.144 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,7 +129,7 @@
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.023 seconds",
+      "duration":"0.041 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -154,7 +154,7 @@
 
         {"kind":"then","text":"We expect that the implementation first checks with an optimized kernel already exists...","code":["1 * mockDevice.hasAdHocKernel(\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\") >> false"]},
 
-        {"kind":"and","text":"The implementation will then also build and pass an \"adHoc\" kernel to the mocked device.","code":["            1 * mockDevice.compileAndGetAdHocKernel(\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\",","                    \"\"\"","    int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]","    {","        int* offset      = ( cfg + rank * 5 );","        int* strides     = ( cfg + rank * 4 );","        int* indices     = ( cfg + rank * 3 );","        int* translation = ( cfg + rank     );","        int i = 0;","        for ( int ii = 0; ii < rank; ii++ ) {","            i += ( indices[ ii ] * strides[ ii ] + offset[ ii ] ) * translation[ ii ];","        }","        return i;","    }","","    int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]","    {","        int* indices    = ( cfg + rank * 3 );","        int* indicesMap = ( cfg + rank * 2 );","        for( int ii = 0; ii < rank; ii++ ) {","            indices[ ii ] = ( i / indicesMap[ ii ] ); // is derived from the shape of a tensor. Translates scalar index to dim-Index","            i %= indicesMap[ ii ];","        }","        return _i_of_idx_on_tln( cfg, rank );","    }","","    __kernel void test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1(","        __global double* arg0, __global double* arg1, __global double* arg2, __global double* arg3","    ) {                                                                                     ","        int cfg0[] = {1,1,1,0,1};","        int cfg1[] = {1,1,1,0,1};","        int cfg2[] = {1,1,1,0,1};","        int cfg3[] = {1,1,1,0,1};                                                                                          ","        unsigned int i = get_global_id( 0 );                                              ","        double v1 = arg1[_i_of_i(i, cfg1, 1)];","        double v2 = arg2[_i_of_i(i, cfg2, 1)];","        double v3 = arg3[_i_of_i(i, cfg3, 1)];                                                                                          ","        arg0[_i_of_i(i, cfg0, 1)] = (v1 + (v2 / v3));                         ","    }                                                                                     ","","\"\"\") >> mockCaller"]},
+        {"kind":"and","text":"The implementation will then also build and pass an \"adHoc\" kernel to the mocked device.","code":["            1 * mockDevice.compileAndGetAdHocKernel(\"test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1\",","                    \"\"\"","    int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:spread | 5:offset ]","    {","        int* offset      = ( cfg + rank * 5 );","        int* spread      = ( cfg + rank * 4 );","        int* indices     = ( cfg + rank * 3 );","        int* translation = ( cfg + rank     );","        int i = 0;","        for ( int ii = 0; ii < rank; ii++ ) {","            i += ( indices[ ii ] * spread[ ii ] + offset[ ii ] ) * translation[ ii ];","        }","        return i;","    }","","    int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:spread | 5:offset ]","    {","        int* indices    = ( cfg + rank * 3 );","        int* indicesMap = ( cfg + rank * 2 );","        for( int ii = 0; ii < rank; ii++ ) {","            indices[ ii ] = ( i / indicesMap[ ii ] ); // is derived from the shape of a tensor. Translates scalar index to dim-Index","            i %= indicesMap[ ii ];","        }","        return _i_of_idx_on_tln( cfg, rank );","    }","","    __kernel void test_fun_F64\\$1_F64\\$1_F64\\$1_F64\\$1(","        __global double* arg0, __global double* arg1, __global double* arg2, __global double* arg3","    ) {                                                                                     ","        int cfg0[] = {1,1,1,0,1};","        int cfg1[] = {1,1,1,0,1};","        int cfg2[] = {1,1,1,0,1};","        int cfg3[] = {1,1,1,0,1};                                                                                          ","        unsigned int i = get_global_id( 0 );                                              ","        double v1 = arg1[_i_of_i(i, cfg1, 1)];","        double v2 = arg2[_i_of_i(i, cfg2, 1)];","        double v3 = arg3[_i_of_i(i, cfg3, 1)];                                                                                          ","        arg0[_i_of_i(i, cfg0, 1)] = (v1 + (v2 / v3));                         ","    }                                                                                     ","","\"\"\") >> mockCaller"]},
 
         {"kind":"and","text":"We expect that the caller receives 4 inputs, 1 output tensor and the 3 function arguments.","code":["4 * mockCaller.pass(_)"]},
 

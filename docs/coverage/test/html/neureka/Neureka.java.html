@@ -70,7 +70,7 @@ import java.util.function.Supplier;
  *    If one wishes to modify the default library settings it is possible to do so by editing
  *    the &quot;library_settings.groovy&quot; DSL file.
  */
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">public final class Neureka</span>
+public final class Neureka
 {
     private static final ThreadLocal&lt;Neureka&gt; _INSTANCES;
 <span class="fc" id="L76">    private static final Logger _LOG = org.slf4j.LoggerFactory.getLogger(Neureka.class);</span>
@@ -78,7 +78,7 @@ import java.util.function.Supplier;
     /**
      *  The current semantic version of this library build.
      */
-<span class="fc" id="L81">    private static String _VERSION = &quot;0.20.1&quot;;</span>
+<span class="fc" id="L81">    private static String _VERSION = &quot;0.21.0&quot;;</span>
 
     /**
      *  The truth value determining if OpenCL is available or not.
@@ -122,8 +122,8 @@ import java.util.function.Supplier;
 <span class="fc bfc" id="L122" title="All 2 branches covered.">                while ( operationIterator.hasNext() ) {</span>
                     try {
 <span class="fc" id="L124">                        Operation operation = operationIterator.next();</span>
-<span class="pc bpc" id="L125" title="2 of 4 branches missed.">                        assert operation.getIdentifier() != null;</span>
-<span class="pc bpc" id="L126" title="2 of 4 branches missed.">                        assert operation.getOperator() != null;</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                        assert operation.getIdentifier() != null;</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">                        assert operation.getOperator() != null;</span>
 <span class="pc bpc" id="L127" title="1 of 2 branches missed.">                        if ( operation.getIdentifier() == null ) _LOG.error(_illegalStateFor( &quot;function&quot; ) );</span>
 <span class="pc bpc" id="L128" title="1 of 2 branches missed.">                        if ( operation.getOperator() == null ) _LOG.error(_illegalStateFor( &quot;operator&quot; ) );</span>
 <span class="fc" id="L129">                        _backend.addOperation(operation);</span>
@@ -792,4 +792,4 @@ import java.util.function.Supplier;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

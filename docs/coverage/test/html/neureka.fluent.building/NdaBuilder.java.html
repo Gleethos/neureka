@@ -84,7 +84,7 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
 
     private Tsr&lt;V&gt; _get( Object value ) {
 <span class="fc" id="L86">        LogUtil.nullArgCheck( value, &quot;value&quot;, Object.class, &quot;Cannot build tensor where value is null!&quot; );</span>
-<span class="fc" id="L87">        return Tsr.of( _dataType, _shape, value ).to( _device );</span>
+<span class="fc" id="L87">        return Tsr.of( _dataType, _device, _shape, value );</span>
     }
 
     /**
@@ -305,4 +305,4 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
 <span class="fc" id="L305">        return this;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

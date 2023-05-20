@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.293 seconds"
+    "duration":"0.221 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The DeviceCleaner triggers registered cleaner actions when things are eligible for GC.",
       "result":"PASS",
-      "duration":"0.290 seconds",
+      "duration":"0.219 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var cleaner = DeviceCleaner.getInstance()","var refCount = 10","var r1 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r2 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r3 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r4 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r5 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r6 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r7 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r8 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r9 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r10 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","cleaner.register( r1, {refCount--} )","cleaner.register( r2, {refCount--} )","cleaner.register( r3, {refCount--} )","cleaner.register( r4, {refCount--} )","cleaner.register( r5, {refCount--} )","cleaner.register( r6, {refCount--} )","cleaner.register( r7, {refCount--} )","cleaner.register( r8, {refCount--} )","cleaner.register( r9, {refCount--} )","cleaner.register( r10,{refCount--} )"]},
+        {"kind":"given","text":"","code":["var cleaner = DeviceCleaner.getNewInstance()","var refCount = 10","var r1 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r2 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r3 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r4 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r5 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r6 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r7 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r8 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r9 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r10 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","cleaner.register( r1, {refCount--} )","cleaner.register( r2, {refCount--} )","cleaner.register( r3, {refCount--} )","cleaner.register( r4, {refCount--} )","cleaner.register( r5, {refCount--} )","cleaner.register( r6, {refCount--} )","cleaner.register( r7, {refCount--} )","cleaner.register( r8, {refCount--} )","cleaner.register( r9, {refCount--} )","cleaner.register( r10,{refCount--} )"]},
 
         {"kind":"when","text":"","code":["r1 = null","r3 = null","System.gc()"]},
 

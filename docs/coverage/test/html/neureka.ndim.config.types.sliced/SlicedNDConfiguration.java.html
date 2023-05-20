@@ -11,7 +11,7 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int[] _translation;
+    private final int[] _strides;
     /**
      *  The mapping of an index to an index array.
      *  The index array is created and filled
@@ -21,7 +21,7 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
      */
     private final int[] _indicesMap; // Maps index integer to array similar as translation. Used to avoid distortion when slicing!
     /**
-     *  Produces the strides of a tensor subset / slice
+     *  Produces the steps of a tensor subset / slice
      */
     private final int[] _spread;
     /**
@@ -32,13 +32,13 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     protected SlicedNDConfiguration(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap,
             int[] spread,
             int[] offset
 <span class="fc" id="L39">    ) {</span>
 <span class="fc" id="L40">        _shape       = _cacheArray(shape);</span>
-<span class="fc" id="L41">        _translation = _cacheArray(translation);</span>
+<span class="fc" id="L41">        _strides     = _cacheArray(strides);</span>
 <span class="fc" id="L42">        _indicesMap  = _cacheArray(indicesMap);</span>
 <span class="fc" id="L43">        _spread      = _cacheArray(spread);</span>
 <span class="fc" id="L44">        _offset      = _cacheArray(offset);</span>
@@ -46,12 +46,12 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     public static SlicedNDConfiguration construct(
             int[] shape,
-            int[] translation,
+            int[] strides,
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-<span class="fc" id="L54">        return _cached( new SlicedNDConfiguration(shape, translation, indicesMap, spread, offset) );</span>
+<span class="fc" id="L54">        return _cached( new SlicedNDConfiguration(shape, strides, indicesMap, spread, offset) );</span>
     }
 
     /** {@inheritDoc} */
@@ -70,10 +70,10 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
 <span class="nc" id="L70">    @Override public final int indicesMap( int i ) { return _indicesMap[ i ]; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L73">    @Override public final int[] translation() { return _translation.clone(); }</span>
+<span class="fc" id="L73">    @Override public final int[] strides() { return _strides.clone(); }</span>
 
     /** {@inheritDoc} */
-<span class="nc" id="L76">    @Override public final int translation( int i ) { return _translation[ i ]; }</span>
+<span class="nc" id="L76">    @Override public final int strides(int i ) { return _strides[ i ]; }</span>
 
     /** {@inheritDoc} */
 <span class="fc" id="L79">    @Override public final int[] spread() { return _spread.clone(); }</span>
@@ -94,9 +94,9 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
     @Override
     public final int[] indicesOfIndex( int index ) {
 <span class="fc" id="L96">        int[] indices = new int[ _shape.length ];</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
-<span class="fc" id="L98">            indices[ ii ] += index / _indicesMap[ ii ];</span>
-<span class="fc" id="L99">            index %= _indicesMap[ ii ];</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        for ( int i = 0; i &lt; rank(); i++ ) {</span>
+<span class="fc" id="L98">            indices[ i ] += index / _indicesMap[ i ];</span>
+<span class="fc" id="L99">            index %= _indicesMap[ i ];</span>
         }
 <span class="fc" id="L101">        return indices;</span>
     }
@@ -104,12 +104,12 @@ public class SlicedNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /** {@inheritDoc} */
     @Override
     public final int indexOfIndices( int[] indices ) {
-<span class="fc" id="L107">        int i = 0;</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ )</span>
-<span class="fc" id="L109">            i += ( indices[ ii ] * _spread[ ii ] + _offset[ ii ] ) * _translation[ ii ];</span>
-<span class="fc" id="L110">        return i;</span>
+<span class="fc" id="L107">        int index = 0;</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for ( int i = 0; i &lt; _shape.length; i++ )</span>
+<span class="fc" id="L109">            index += ( indices[ i ] * _spread[ i ] + _offset[ i ] ) * _strides[ i ];</span>
+<span class="fc" id="L110">        return index;</span>
     }
 
     
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

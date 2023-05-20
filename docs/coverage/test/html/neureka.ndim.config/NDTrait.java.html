@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NDTrait.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config</a> &gt; <span class="el_source">NDTrait.java</span></div><h1>NDTrait.java</h1><pre class="source lang-java linenums">package neureka.ndim.config;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
+
+<span class="fc" id="L7">public enum NDTrait</span>
+{
+<span class="fc" id="L9">    COMPACT(NDTrait::_isCompact),</span>
+<span class="fc" id="L10">    SIMPLE(NDTrait::_isSimple),</span>
+<span class="fc" id="L11">    ROW_MAJOR(NDTrait::_isRM),</span>
+<span class="fc" id="L12">    COL_MAJOR(NDTrait::_isCM),</span>
+<span class="fc" id="L13">    CONTINUOUS_MATRIX(NDTrait::_isContinuousMatrix),</span>
+<span class="fc" id="L14">    OFFSET_MATRIX(NDTrait::_isOffsetMatrix),;</span>
+
+    private final Predicate&lt;NDConfiguration&gt; _predicate;
+
+<span class="fc" id="L18">    NDTrait( Predicate&lt;NDConfiguration&gt; predicate ) { _predicate = Objects.requireNonNull(predicate); }</span>
+
+
+    static List&lt;NDTrait&gt; traitsOf( NDConfiguration ndc ) {
+<span class="fc" id="L22">        List&lt;NDTrait&gt; traits = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        for ( NDTrait trait : NDTrait.values() )</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">            if ( trait._predicate.test( ndc ) ) traits.add( trait );</span>
+
+<span class="fc" id="L26">        return Collections.unmodifiableList( traits );</span>
+    }
+
+    private static int _rightSpreadPadding(NDConfiguration ndc ) {
+<span class="fc" id="L30">        int numberOf0Spreads = 0;</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        for ( int i = ndc.rank() - 1; i &gt;= 0; i-- ) {</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">            if ( ndc.spread( i ) == 0 ) numberOf0Spreads++;</span>
+            else break;
+        }
+<span class="fc" id="L35">        return numberOf0Spreads;</span>
+    }
+
+    private static boolean _isCompact( NDConfiguration ndc ) {
+<span class="fc" id="L39">        return</span>
+<span class="pc bpc" id="L40" title="4 of 6 branches missed.">            IntStream.range(0, ndc.rank()).allMatch(i -&gt; ndc.spread(i) == 1 || ndc.spread(i) == 0 )</span>
+                    &amp;&amp;
+<span class="pc bpc" id="L42" title="2 of 4 branches missed.">            IntStream.range(0, ndc.rank()).allMatch(i -&gt; ndc.offset(i) == 0);</span>
+    }
+
+    private static boolean _isSimple( NDConfiguration ndc ) {
+<span class="fc" id="L46">        int[] simpleTranslation = ndc.getLayout().newStridesFor(ndc.shape());</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        return Arrays.equals(ndc.strides(), simpleTranslation)</span>
+                    &amp;&amp;
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                Arrays.equals(ndc.indicesMap(), simpleTranslation)</span>
+                    &amp;&amp;
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">                _isCompact(ndc);</span>
+    }
+
+    /**
+     *  What does it mean to be row major essentially? &lt;br&gt;
+     *  Well all it really means is that the last dimension of a nd-array configuration
+     *  has a stride of 1! &lt;br&gt;
+     *
+     * @param ndc The configuration to check.
+     * @return Whether the configuration is row major.
+     */
+    private static boolean _isRM( NDConfiguration ndc ) {
+        /*
+            We simply need to check if the last real dimension has a stride and spread of 1.
+            This tells us that at the last dimension we have all elements in
+            a contiguous block of memory.
+        */
+<span class="fc" id="L68">        int realRank = ndc.rank() - _rightSpreadPadding( ndc );</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if ( realRank &lt; 1 ) return false;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        boolean strides = ndc.strides( realRank - 1 ) == 1;</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        boolean spread  = ndc.spread(  realRank - 1 ) == 1;</span>
+<span class="pc bpc" id="L72" title="1 of 4 branches missed.">        return strides &amp;&amp; spread;</span>
+    }
+
+    /**
+     *  What does it mean to be column major essentially? &lt;br&gt;
+     *  Well all it really means is that the second last dimension of a nd-array configuration
+     *  has a stride of 1! &lt;br&gt;
+     *
+     * @param ndc The configuration to check.
+     * @return Whether the configuration is column major.
+     */
+    private static boolean _isCM( NDConfiguration ndc ) {
+        /*
+           We simply need to check if the second last real dimension has a stride and spread of 1.
+           This tells us that at the second last dimension we have all elements in
+           a contiguous block of memory.
+        */
+<span class="fc" id="L89">        int realRank = ndc.rank() - _rightSpreadPadding( ndc );</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if ( realRank &lt; 1 ) return false;</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        boolean strideIs1 = ndc.strides( realRank - 2 ) == 1;</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        boolean spreadIs1 = ndc.spread(      realRank - 2 ) == 1;</span>
+<span class="pc bpc" id="L93" title="1 of 4 branches missed.">        return strideIs1 &amp;&amp; spreadIs1;</span>
+    }
+
+    private static boolean _last2DimensionsAreNotPermuted( NDConfiguration ndc ) {
+<span class="fc" id="L97">        int realRank = ndc.rank() - _rightSpreadPadding( ndc );</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if ( realRank &lt; 2 ) return true;</span>
+<span class="fc" id="L99">        int strideCol = ndc.strides( realRank - 2 );</span>
+<span class="fc" id="L100">        int strideRow = ndc.strides( realRank - 1 );</span>
+<span class="pc bpc" id="L101" title="1 of 4 branches missed.">        return strideCol == 1 || strideRow == 1;</span>
+    }
+
+    private static boolean _isContinuousMatrix(NDConfiguration ndc ) {
+<span class="fc" id="L105">        boolean isMatrix = _isMatrix( ndc );</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if ( !isMatrix ) return false;</span>
+<span class="fc" id="L107">        int realRank = ndc.rank() - _rightSpreadPadding( ndc );</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if ( _isRM(ndc) ) {</span>
+            // We need to check if the there is no row offset!
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">            return ndc.offset( realRank - 1 ) == 0;</span>
+        } else {
+            // We need to check if the there is no column offset!
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">            return ndc.offset( realRank - 2 ) == 0;</span>
+        }
+    }
+
+    private static boolean _isOffsetMatrix(NDConfiguration ndc) {
+<span class="fc" id="L118">        boolean isMatrix = _isMatrix( ndc );</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        if ( !isMatrix ) return false;</span>
+<span class="fc" id="L120">        int realRank = ndc.rank() - _rightSpreadPadding( ndc );</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if ( _isRM(ndc) ) {</span>
+            // We need to check if the there is no row offset!
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">            return ndc.offset( realRank - 1 ) != 0;</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        } else if ( _isCM(ndc) ) {</span>
+            // We need to check if the there is no column offset!
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">            return ndc.offset( realRank - 2 ) != 0;</span>
+        }
+<span class="nc" id="L128">        return false;</span>
+    }
+
+    private static boolean _isMatrix( NDConfiguration ndc ) {
+<span class="fc" id="L132">        boolean last2DimsNotPermuted = _last2DimensionsAreNotPermuted( ndc );</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if ( !last2DimsNotPermuted ) return false;</span>
+<span class="fc" id="L134">        int realRank = ndc.rank() - _rightSpreadPadding( ndc );</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if ( realRank &lt; 2 ) return false;</span>
+        // Now we need to make sure the steps of the last 2 dimensions are both 1.
+<span class="fc" id="L137">        int spreadCol = ndc.spread( realRank - 2 );</span>
+<span class="fc" id="L138">        int spreadRow = ndc.spread( realRank - 1 );</span>
+<span class="pc bpc" id="L139" title="2 of 4 branches missed.">        return spreadCol == 1 &amp;&amp; spreadRow == 1;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

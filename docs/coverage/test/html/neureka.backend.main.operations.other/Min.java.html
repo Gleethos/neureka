@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Min.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">Min.java</span></div><h1>Min.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
@@ -15,65 +16,65 @@ import neureka.devices.Device;
 import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
-<span class="pc bpc" id="L18" title="1 of 2 branches missed.">public class Min extends AbstractOperation</span>
+<span class="fc" id="L19">public class Min extends AbstractOperation</span>
 {
     public Min()
     {
-<span class="fc" id="L22">        super(</span>
+<span class="fc" id="L23">        super(</span>
                 new OperationBuilder()
-<span class="fc" id="L24">                        .identifier(       &quot;min&quot;       )</span>
-<span class="fc" id="L25">                        .operator(         &quot;min&quot;       )</span>
-<span class="fc" id="L26">                        .arity(            1           )</span>
-<span class="fc" id="L27">                        .isOperator(       false       )</span>
-<span class="fc" id="L28">                        .isIndexer(        false       )</span>
-<span class="fc" id="L29">                        .isDifferentiable( true        )</span>
-<span class="fc" id="L30">                        .isInline(         false       )</span>
+<span class="fc" id="L25">                        .identifier(       &quot;min&quot;       )</span>
+<span class="fc" id="L26">                        .operator(         &quot;min&quot;       )</span>
+<span class="fc" id="L27">                        .arity(            1           )</span>
+<span class="fc" id="L28">                        .isOperator(       false       )</span>
+<span class="fc" id="L29">                        .isIndexer(        false       )</span>
+<span class="fc" id="L30">                        .isDifferentiable( true        )</span>
+<span class="fc" id="L31">                        .isInline(         false       )</span>
         );
 
-<span class="fc" id="L33">        setAlgorithm(</span>
+<span class="fc" id="L34">        setAlgorithm(</span>
             DeviceAlgorithm
-<span class="fc" id="L35">            .withName(&quot;min_algorithm&quot;)</span>
-<span class="fc" id="L36">            .setIsSuitableFor(</span>
-<span class="fc" id="L37">                    call -&gt; call.validate()</span>
-<span class="fc" id="L38">                            .allNotNull( t -&gt; Number.class.isAssignableFrom(t.getItemType()) )</span>
-<span class="fc" id="L39">                            .basicSuitability()</span>
+<span class="fc" id="L36">            .withName(&quot;min_algorithm&quot;)</span>
+<span class="fc" id="L37">            .setIsSuitableFor(</span>
+<span class="fc" id="L38">                    call -&gt; call.validate()</span>
+<span class="fc" id="L39">                            .allNotNull( t -&gt; Number.class.isAssignableFrom(t.getItemType()) )</span>
+<span class="fc" id="L40">                            .basicSuitability()</span>
             )
-<span class="fc" id="L41">            .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
-<span class="fc" id="L42">            .setExecution( (caller, call) -&gt; {</span>
-<span class="fc" id="L43">                Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();</span>
-<span class="fc" id="L44">                call = call.withInputs(inputs);</span>
-<span class="fc" id="L45">                Tsr&lt;Integer&gt; index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);</span>
-<span class="fc" id="L46">                int i = index.item(0);</span>
-<span class="pc bpc" id="L47" title="1 of 2 branches missed.">                Tsr&lt;?&gt; in = inputs[0] == null ? inputs[1] : inputs[0];</span>
-<span class="fc" id="L48">                Class&lt;Object&gt; typeClass = (Class&lt;Object&gt;) in.itemType();</span>
-<span class="fc" id="L49">                int[] shape = in.getNDConf().shape();</span>
-<span class="fc" id="L50">                Device&lt;Object&gt; device = (Device&lt;Object&gt;) call.getDevice();</span>
-<span class="fc" id="L51">                return Result.of(</span>
-<span class="fc" id="L52">                            Tsr.of(in.itemType(), new int[]{1}, in.item(i)).to(call.getDevice()).mut().setIsIntermediate(true)</span>
+<span class="fc" id="L42">            .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
+<span class="fc" id="L43">            .setExecution( (caller, call) -&gt; {</span>
+<span class="fc" id="L44">                Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();</span>
+<span class="fc" id="L45">                call = call.withInputs(inputs);</span>
+<span class="fc" id="L46">                Tsr&lt;Integer&gt; index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);</span>
+<span class="fc" id="L47">                int i = index.item(0);</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                Tsr&lt;?&gt; in = inputs[0] == null ? inputs[1] : inputs[0];</span>
+<span class="fc" id="L49">                Class&lt;Object&gt; typeClass = (Class&lt;Object&gt;) in.itemType();</span>
+<span class="fc" id="L50">                Shape shape = in.shape();</span>
+<span class="fc" id="L51">                Device&lt;Object&gt; device = (Device&lt;Object&gt;) call.getDevice();</span>
+<span class="fc" id="L52">                return Result.of(</span>
+<span class="fc" id="L53">                            Tsr.of(in.itemType(), Shape.of( 1 ), in.item(i)).to(call.getDevice()).mut().setIsIntermediate(true)</span>
                         )
-<span class="fc" id="L54">                        .withADAction( target -&gt; {</span>
-<span class="fc" id="L55">                            Tsr&lt;Object&gt; error = (Tsr&lt;Object&gt;) target.error();</span>
-<span class="pc bpc" id="L56" title="2 of 4 branches missed.">                            assert error.size() == 1;</span>
-<span class="fc" id="L57">                            Tsr&lt;Object&gt; newError = ElemWiseUtil.newTsrLike(typeClass, shape, true, device, 0);</span>
-<span class="fc" id="L58">                            newError.mut().setIsVirtual(false);</span>
-<span class="fc" id="L59">                            newError.mut().setItemAt(i, error.item(0));</span>
-<span class="fc" id="L60">                            return newError;</span>
+<span class="fc" id="L55">                        .withADAction( target -&gt; {</span>
+<span class="fc" id="L56">                            Tsr&lt;Object&gt; error = (Tsr&lt;Object&gt;) target.error();</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">                            assert error.size() == 1;</span>
+<span class="fc" id="L58">                            Tsr&lt;Object&gt; newError = ElemWiseUtil.newTsrLike(typeClass, shape, true, device, 0);</span>
+<span class="fc" id="L59">                            newError.mut().setIsVirtual(false);</span>
+<span class="fc" id="L60">                            newError.mut().setItemAt(i, error.item(0));</span>
+<span class="fc" id="L61">                            return newError;</span>
                         });
             })
-<span class="fc" id="L63">            .setCallPreparation( call -&gt;</span>
+<span class="fc" id="L64">            .setCallPreparation( call -&gt;</span>
             {
-<span class="nc bnc" id="L65" title="All 2 branches missed.">                if ( call.input( 0 ) == null )</span>
-<span class="nc" id="L66">                    call = call.withInputAt( 0, call.input( 1 ) );</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">                if ( call.input( 0 ) == null )</span>
+<span class="nc" id="L67">                    call = call.withInputAt( 0, call.input( 1 ) );</span>
 
-<span class="nc" id="L68">                return call;</span>
+<span class="nc" id="L69">                return call;</span>
             })
-<span class="fc" id="L70">            .buildFunAlgorithm()</span>
-<span class="fc" id="L71">            .setImplementationFor( CPU.class, new CPUReduce(CPUReduce.Type.MIN) )</span>
-<span class="fc" id="L72">            .setImplementationFor( OpenCLDevice.class, new CLReduce(CLReduce.Type.MIN) )</span>
+<span class="fc" id="L71">            .buildFunAlgorithm()</span>
+<span class="fc" id="L72">            .setImplementationFor( CPU.class, new CPUReduce(CPUReduce.Type.MIN) )</span>
+<span class="fc" id="L73">            .setImplementationFor( OpenCLDevice.class, new CLReduce(CLReduce.Type.MIN) )</span>
         );
-<span class="fc" id="L74">    }</span>
+<span class="fc" id="L75">    }</span>
 
     @Override
-<span class="nc" id="L77">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
+<span class="nc" id="L78">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

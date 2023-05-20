@@ -68,7 +68,7 @@ public interface MutateTsr&lt;T&gt; extends MutateNda&lt;T&gt;
      * @param configuration The new NDConfiguration instance which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    Tsr&lt;T&gt; setNDConf(NDConfiguration configuration);
+    Tsr&lt;T&gt; setNDConf( NDConfiguration configuration );
 
     /**
      * {@inheritDoc}
@@ -97,7 +97,7 @@ public interface MutateTsr&lt;T&gt; extends MutateNda&lt;T&gt;
      * @param layout The layout of the data array (row or column major).
      * @return The final instance type of this class which enables method chaining.
      */
-    Tsr&lt;T&gt; toLayout(NDConfiguration.Layout layout);
+    Tsr&lt;T&gt; toLayout( NDConfiguration.Layout layout );
 
     /**
      * This method is responsible for incrementing
@@ -175,7 +175,7 @@ public interface MutateTsr&lt;T&gt; extends MutateNda&lt;T&gt;
 <span class="fc" id="L175">        LogUtil.nullArgCheck(arrayTypeClass, &quot;arrayTypeClass&quot;, Class.class, &quot;Array type must not be null!&quot;);</span>
 <span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (!arrayTypeClass.isArray())</span>
 <span class="nc" id="L177">            throw new IllegalArgumentException(&quot;Provided type is not an array type.&quot;);</span>
-<span class="fc" id="L178">        Object data = MutateTsr.this.getData().getRef();</span>
+<span class="fc" id="L178">        Object data = MutateTsr.this.getData().getOrNull();</span>
 <span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if (data == null)</span>
 <span class="nc" id="L180">            throw new IllegalStateException(&quot;Could not find writable tensor data for this tensor (Maybe this tensor is stored on a device?).&quot;);</span>
 
@@ -318,4 +318,4 @@ public interface MutateTsr&lt;T&gt; extends MutateNda&lt;T&gt;
     Tsr&lt;T&gt; setIsVirtual( boolean isVirtual );
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

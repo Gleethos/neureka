@@ -4,19 +4,19 @@
   "narrative":"The `FileDevice` class, one of many implementations of the `Device` interface, \n    represents a file directory which can store and load tensors as files (`idx`, `jpg`, `png`...).",
   "subjects":["neureka.devices.file.FileDevice","neureka.devices.Device"],
   "statistics":{
-    "runs":"3",
+    "runs":"4",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.164 seconds"
+    "duration":"0.047 seconds"
   },
   "headers":["\n                    This specification covers the behavior of the `FileDevice`\n                    class, which enables the persistence of tensor data.      \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A file device stores tensors in idx files by default.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
 
         {"kind":"then","text":"The expected file is being created at the given path.","code":["new File( path + '/' + filename + '.idx' ).exists()"]},
 
-        {"kind":"and","text":"Tensor \"a\" does no longer have a value (stored in RAM).","code":["a.mut.data.ref == null"]},
+        {"kind":"and","text":"Tensor \"a\" does no longer have a value (stored in RAM).","code":["a.mut.data.getOrNull() == null"]},
 
         {"kind":"when","text":"Freeing the tensor...","code":["device.free( a )"]},
 
@@ -45,12 +45,12 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.098 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new tensor is being created for testing.","code":["var a = Tsr.of( shape, -8d..8d )"]},
+        {"kind":"given","text":"A new tensor is being created for testing.","code":["var a = Tsr.of( Shape.of(shape), -8d..8d )"]},
 
         {"kind":"and","text":"A String representation of the shape.","code":["var shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})"]},
 
@@ -62,7 +62,7 @@
 
         {"kind":"then","text":"The expected file is being created at the given path.","code":["new File( path + '/' + filename ).exists()","        ||","new File( path ).listFiles().any {","    it.name.startsWith('tensor_' + shapeStr + '_f64_') && it.name.endsWith('.idx')","}"]},
 
-        {"kind":"and","text":"Tensor \"a\" does no longer have a value (stored in RAM).","code":["a.mut.data.ref == null"]},
+        {"kind":"and","text":"Tensor \"a\" does no longer have a value (stored in RAM).","code":["a.mut.data.getOrNull() == null"]},
 
         {"kind":"and","text":"The tensor is now of the expected data-type.","code":["a.dataType == DataType.of( dataTypeClass )"]},
 
@@ -80,7 +80,7 @@
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.034 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -96,6 +96,39 @@
         {"kind":"when","text":"","code":["t = device.load('biostats.csv', [firstRowIsLabels:true]).get()"]},
 
         {"kind":"then","text":"","code":["device.loadable == []","device.loaded == ['biostats-without-head.csv', 'biostats.csv']","t.toString({ NDPrintSettings it ->","            it.setHasSlimNumbers(false)","                    .setIsScientific(true)","                    .setIsCellBound(false)","                    .setIsMultiline(true)","                    .setCellSize(15)","        }) == '(18x5):[\\n' +","        '   (      \"Name\"    )(        \"Sex\"  )(      \"Age\"    )(  \"Height (in)\")( \"Weight (lbs)\" ):( biostats )\\n' +","        '   [      \"Alex\"    ,           \"M\"  ,         41     ,           74   ,          170    ]:( 0 ),\\n' +","        '   [      \"Bert\"    ,           \"M\"  ,         42     ,           68   ,          166    ]:( 1 ),\\n' +","        '   [      \"Carl\"    ,           \"M\"  ,         32     ,           70   ,          155    ]:( 2 ),\\n' +","        '   [      \"Dave\"    ,           \"M\"  ,         39     ,           72   ,          167    ]:( 3 ),\\n' +","        '   [      \"Elly\"    ,           \"F\"  ,         30     ,           66   ,          124    ]:( 4 ),\\n' +","        '   [      \"Fran\"    ,           \"F\"  ,         33     ,           66   ,          115    ]:( 5 ),\\n' +","        '   [      \"Gwen\"    ,           \"F\"  ,         26     ,           64   ,          121    ]:( 6 ),\\n' +","        '   [      \"Hank\"    ,           \"M\"  ,         30     ,           71   ,          158    ]:( 7 ),\\n' +","        '   [      \"Ivan\"    ,           \"M\"  ,         53     ,           72   ,          175    ]:( 8 ),\\n' +","        '   [      \"Jake\"    ,           \"M\"  ,         32     ,           69   ,          143    ]:( 9 ),\\n' +","        '   [      \"Kate\"    ,           \"F\"  ,         47     ,           69   ,          139    ]:( 10 ),\\n' +","        '   [      \"Luke\"    ,           \"M\"  ,         34     ,           72   ,          163    ]:( 11 ),\\n' +","        '   [      \"Myra\"    ,           \"F\"  ,         23     ,           62   ,           98    ]:( 12 ),\\n' +","        '   [      \"Neil\"    ,           \"M\"  ,         36     ,           75   ,          160    ]:( 13 ),\\n' +","        '   [      \"Omar\"    ,           \"M\"  ,         38     ,           70   ,          145    ]:( 14 ),\\n' +","        '   [      \"Page\"    ,           \"F\"  ,         31     ,           67   ,          135    ]:( 15 ),\\n' +","        '   [      \"Quin\"    ,           \"M\"  ,         29     ,           71   ,          176    ]:( 16 ),\\n' +","        '   [      \"Ruth\"    ,           \"F\"  ,         28     ,           65   ,          131    ]:( 17 )\\n' +","        ']'"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A tensor loaded from a file device can be loaded again.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A file device instance is being accessed for a simple test path.","code":["def device = FileDevice.at( 'build/resources/test/idx2' )"]},
+
+        {"kind":"and","text":"We create a simple tensor which we want to save.","code":["var t = Tsr.of(shape, data)"]},
+
+        {"kind":"expect","text":"","code":["device.directory == 'build/resources/test/idx2'","t.getDevice() === CPU.get()","device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!","device.loaded == []"]},
+
+        {"kind":"when","text":"We save the tensor to the device.","code":["device.store( t, 'my-tensor-file.idx' )"]},
+
+        {"kind":"then","text":"The device contains the expected tensor.","code":["device.has( t )","t.isOutsourced()","t.getDevice() === device","device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!","device.loaded == []"]},
+
+        {"kind":"when","text":"We load the tensor from the device.","code":["device.restore( t )"]},
+
+        {"kind":"then","text":"The tensor is restored correctly.","code":["!device.has( t )","!t.isOutsourced()","t.getDevice() === CPU.get()","device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!","device.loaded == []"]},
+
+        {"kind":"when","text":"We store the tensor again.","code":["device.store( t, 'my-tensor-file.idx' )"]},
+
+        {"kind":"then","text":"The tensor is stored correctly.","code":["device.has( t )","device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!","device.loaded == []"]},
+
+        {"kind":"cleanup","text":"We delete the file again.","code":["new File( 'build/resources/test/idx2/my-tensor-file.idx' ).delete()"]},
+
+        {"kind":"where","text":"We use the following shapes and data arrays:","code":{"shape":["Shape.of(2, 3)","Shape.of(3, 2)","Shape.of(4)","Shape.of(5)","Shape.of(2)"],"data":["Data.of( 1, 2, 3, 4, 5, 6 )","Data.of( -1, -2, -3, -4, -5, -6 )","Data.of( 1.1, 2.2, 3.3, 4.4 )","Data.of( 0.3f, 0.4f, 0.5f, 0.6f, 0.7f )","Data.of( 42L, -7L )"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

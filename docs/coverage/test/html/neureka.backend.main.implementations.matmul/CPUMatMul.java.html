@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPUMatMul.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.matmul</a> &gt; <span class="el_source">CPUMatMul.java</span></div><h1>CPUMatMul.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.matmul;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.main.operations.linear.internal.blas.GEMM;
+import neureka.backend.main.operations.linear.internal.blas.IGEMM;
+import neureka.devices.host.CPU;
+import neureka.ndim.config.NDConfiguration;
+
+/**
+ *  This is a library internal class, do not depend on this.
+ */
+<span class="fc" id="L14">public class CPUMatMul implements ImplementationFor&lt;CPU&gt;</span>
+{
+    @Override
+    public Tsr&lt;?&gt; run( ExecutionCall&lt;CPU&gt; call )
+    {
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        if ( !call.validate().all( (t1, t2) -&gt; t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )</span>
+<span class="nc" id="L20">            throw new IllegalArgumentException(</span>
+                        &quot;Data layout inconsistency between provided tensors encountered. &quot; +
+                        &quot;All tensors must be of the same layout.&quot;
+                    );
+
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if ( !call.validate().allShare(Tsr::getDataType).isValid() )</span>
+<span class="nc" id="L26">            throw new IllegalArgumentException(</span>
+                       &quot;Type inconsistency between provided tensors encountered. &quot; +
+                       &quot;All tensors must be of the same type.&quot;
+                    );
+
+<span class="fc" id="L31">        NDConfiguration.Layout layout = call.input( 1 ).getNDConf().getLayout();</span>
+<span class="fc" id="L32">        NDConfiguration.Layout layout2 = call.input( 2 ).getNDConf().getLayout();</span>
+
+<span class="fc bfc" id="L34" title="All 4 branches covered.">        boolean bothRowMajor = ( layout == NDConfiguration.Layout.ROW_MAJOR &amp;&amp; layout2 == NDConfiguration.Layout.ROW_MAJOR );</span>
+<span class="pc bpc" id="L35" title="1 of 8 branches missed.">        boolean oneRMOneSym = ( layout == NDConfiguration.Layout.ROW_MAJOR &amp;&amp; layout2 == NDConfiguration.Layout.SYMMETRIC ) ||</span>
+                              ( layout == NDConfiguration.Layout.SYMMETRIC &amp;&amp; layout2 == NDConfiguration.Layout.ROW_MAJOR );
+<span class="pc bpc" id="L37" title="1 of 4 branches missed.">        boolean bothSym = ( layout == NDConfiguration.Layout.SYMMETRIC &amp;&amp; layout2 == NDConfiguration.Layout.SYMMETRIC );</span>
+
+<span class="pc bpc" id="L39" title="1 of 6 branches missed.">        boolean rowMajor = bothRowMajor || oneRMOneSym || bothSym;</span>
+
+<span class="fc" id="L41">        int[] shapeA = call.input( 1 ).getNDConf().shape();</span>
+<span class="fc" id="L42">        int[] shapeB = call.input( 2 ).getNDConf().shape();</span>
+<span class="fc" id="L43">        int[] shapeC = call.input( 0 ).getNDConf().shape();</span>
+
+        // A * B = C // [MxK]*[KxN] = [MxN]
+<span class="fc" id="L46">        int aRows = shapeA[0];</span>
+<span class="fc" id="L47">        int aCols = shapeA[1];</span>
+<span class="fc" id="L48">        int bRows = shapeB[0];</span>
+<span class="fc" id="L49">        int bCols = shapeB[1];</span>
+
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if ( aCols != bRows )</span>
+<span class="nc" id="L52">            throw new IllegalArgumentException(&quot;'A' matrix rows &quot; + aCols + &quot; did not match 'B' matrix columns &quot; + bRows + &quot;.&quot;);</span>
+
+<span class="fc" id="L54">        Class&lt;?&gt; type = call.input( 0 ).getDataType().getItemTypeClass();</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if ( type == Double.class ) {</span>
+<span class="fc" id="L56">            double[] A = call.input(Double.class, 1).mut().getDataAs(double[].class);</span>
+<span class="fc" id="L57">            double[] B = call.input(Double.class, 2).mut().getDataAs(double[].class);</span>
+<span class="fc" id="L58">            double[] C = call.input(Double.class, 0).mut().getDataForWriting(double[].class);</span>
+<span class="fc" id="L59">            execute( rowMajor, A, B, C, aRows, aCols, bCols );</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        } else if ( type == Float.class ) {</span>
+<span class="fc" id="L61">            float[] A = call.input(Float.class, 1).mut().getDataAs(float[].class);</span>
+<span class="fc" id="L62">            float[] B = call.input(Float.class, 2).mut().getDataAs(float[].class);</span>
+<span class="fc" id="L63">            float[] C = call.input(Float.class, 0).mut().getDataForWriting(float[].class);</span>
+<span class="fc" id="L64">            execute( rowMajor, A, B, C, aRows, aCols, bCols );</span>
+<span class="fc" id="L65">        }</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        else if ( type == Long.class ) {</span>
+<span class="fc" id="L67">            long[] A = call.input(Long.class, 1).mut().getDataAs(long[].class);</span>
+<span class="fc" id="L68">            long[] B = call.input(Long.class, 2).mut().getDataAs(long[].class);</span>
+<span class="fc" id="L69">            long[] C = call.input(Long.class, 0).mut().getDataForWriting(long[].class);</span>
+<span class="fc" id="L70">            execute( rowMajor, A, B, C, aRows, aCols, bCols );</span>
+<span class="fc" id="L71">        }</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        else if ( type == Integer.class ) {</span>
+<span class="fc" id="L73">            int[] A = call.input(Integer.class, 1).mut().getDataAs(int[].class);</span>
+<span class="fc" id="L74">            int[] B = call.input(Integer.class, 2).mut().getDataAs(int[].class);</span>
+<span class="fc" id="L75">            int[] C = call.input(Integer.class, 0).mut().getDataForWriting(int[].class);</span>
+<span class="fc" id="L76">            execute( rowMajor, A, B, C, aRows, aCols, bCols );</span>
+<span class="fc" id="L77">        }</span>
+        else
+<span class="nc" id="L79">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L80">                        &quot;Data type '&quot;+type.getSimpleName()+&quot;' not yet supported &quot; +</span>
+                        &quot;for CPU based matrix multiplication!&quot;
+                    );
+
+<span class="fc" id="L84">        return call.input( 0 );</span>
+    }
+
+    public static void execute(
+            boolean rowMajor, double[] A, double[] B, double[] C, int aRows, int aCols, int bCols
+    ) {
+<span class="fc" id="L90">        GEMM.operationForF64( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );</span>
+<span class="fc" id="L91">    }</span>
+
+    public static void execute(
+            boolean rowMajor, float[] A, float[] B, float[] C, int aRows, int aCols, int bCols
+    ) {
+<span class="fc" id="L96">        GEMM.operationForF32( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );</span>
+<span class="fc" id="L97">    }</span>
+
+    public static void execute(
+            boolean rowMajor, long[] A, long[] B, long[] C, int aRows, int aCols, int bCols
+    ) {
+<span class="fc" id="L102">        IGEMM.operationForI64( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );</span>
+<span class="fc" id="L103">    }</span>
+
+    public static void execute(
+            boolean rowMajor, int[] A, int[] B, int[] C, int aRows, int aCols, int bCols
+    ) {
+<span class="fc" id="L108">        IGEMM.operationForI32( rowMajor, aRows, bCols ).invoke( C, A, aCols, B );</span>
+<span class="fc" id="L109">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

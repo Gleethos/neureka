@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.010 seconds"
+    "duration":"0.021 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -42,11 +42,11 @@
 
         {"kind":"when","text":"","code":["when : x.mut.toType( Float.class )"]},
 
-        {"kind":"then","text":"","code":["x.rawItems instanceof float[]","x.mut.data.ref instanceof float[]","x.rawData instanceof float[]","x.getItemsAs( float[].class )[ 0 ] == 3.0f"]},
+        {"kind":"then","text":"","code":["x.rawItems instanceof float[]","x.mut.data.get() instanceof float[]","x.rawData instanceof float[]","x.getItemsAs( float[].class )[ 0 ] == 3.0f"]},
 
         {"kind":"when","text":"","code":["when : x.mut.toType( Double.class )"]},
 
-        {"kind":"then","text":"","code":["x.rawItems instanceof double[]","x.mut.data.ref instanceof double[]","x.rawData instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]}
+        {"kind":"then","text":"","code":["x.rawItems instanceof double[]","x.mut.data.get() instanceof double[]","x.rawData instanceof double[]","x.getItemsAs( float[].class )[ 0 ]==3.0f"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-<span class="pc bpc" id="L10" title="1 of 2 branches missed.">final class NumberReader</span>
+<span class="fc" id="L10">final class NumberReader</span>
 {
     private final FileInputStream _fileInputStream;
 <span class="fc" id="L13">    private int _bytesRead = 0;</span>
@@ -27,7 +27,7 @@ import java.util.Map;
     }
 
     public &lt;T&gt; T read( NumericType&lt;T, ?, ?, ?&gt; type ) throws IOException {
-<span class="pc bpc" id="L30" title="2 of 4 branches missed.">        assert _fileInputStream.read( _byteMap.get(type.numberOfBytes()) ) == type.numberOfBytes();</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        assert _fileInputStream.read( _byteMap.get(type.numberOfBytes()) ) == type.numberOfBytes();</span>
 <span class="fc" id="L31">        _bytesRead += type.numberOfBytes();</span>
 <span class="fc" id="L32">        return type.foreignHolderBytesToTarget(_byteMap.get(type.numberOfBytes()));</span>
         // return NumericType.Utility.unsignedByteArrayToInt(_byteMap.get(number));
@@ -40,4 +40,4 @@ import java.util.Map;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

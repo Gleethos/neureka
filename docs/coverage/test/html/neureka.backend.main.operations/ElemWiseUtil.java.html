@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ElemWiseUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations</a> &gt; <span class="el_source">ElemWiseUtil.java</span></div><h1>ElemWiseUtil.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations;
 
+import neureka.Shape;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;
@@ -11,34 +12,34 @@ import org.slf4j.LoggerFactory;
  *  in groups if their total number exceeds the arity of an operation.
  *  
  */
-<span class="nc" id="L14">public class ElemWiseUtil</span>
+<span class="nc" id="L15">public class ElemWiseUtil</span>
 {
-<span class="fc" id="L16">    private static final Logger _LOG = LoggerFactory.getLogger( ElemWiseUtil.class );</span>
+<span class="fc" id="L17">    private static final Logger _LOG = LoggerFactory.getLogger( ElemWiseUtil.class );</span>
 
     public static &lt;V&gt; Tsr&lt;V&gt; newTsrLike( Tsr&lt;V&gt; template, double value ) {
-<span class="fc" id="L19">        return newTsrLike(</span>
-<span class="fc" id="L20">            template.itemType(),</span>
-<span class="fc" id="L21">            template.getNDConf().shape(),</span>
-<span class="fc" id="L22">            template.isOutsourced(),</span>
-<span class="fc" id="L23">            template.get( Device.class ),</span>
+<span class="fc" id="L20">        return newTsrLike(</span>
+<span class="fc" id="L21">            template.itemType(),</span>
+<span class="fc" id="L22">            template.shape(),</span>
+<span class="fc" id="L23">            template.isOutsourced(),</span>
+<span class="fc" id="L24">            template.get( Device.class ),</span>
             value
         );
     }
 
     public static &lt;V&gt; Tsr&lt;V&gt; newTsrLike(
-        Class&lt;V&gt; type, int[] shape, boolean isOutsourced, Device&lt;Object&gt; device, double value
+        Class&lt;V&gt; type, Shape shape, boolean isOutsourced, Device&lt;Object&gt; device, double value
     ) {
-<span class="fc" id="L31">        Tsr&lt;V&gt; t = Tsr.of( type, shape, value ).mut().setIsIntermediate( true );</span>
-<span class="fc" id="L32">        t.mut().setIsVirtual( false );</span>
-<span class="fc" id="L33">        t.mut().setItems( value );</span>
+<span class="fc" id="L32">        Tsr&lt;V&gt; t = Tsr.of( type, shape, value ).mut().setIsIntermediate( true );</span>
+<span class="fc" id="L33">        t.mut().setIsVirtual( false );</span>
+<span class="fc" id="L34">        t.mut().setItems( value );</span>
         try {
-<span class="fc bfc" id="L35" title="All 2 branches covered.">            if ( isOutsourced ) device.store( t );</span>
-<span class="nc" id="L36">        } catch ( Exception exception ) {</span>
-<span class="nc" id="L37">            _LOG.error( &quot;Failed storing a newly created tensor from a template tensor to its host device.&quot;, exception );</span>
-<span class="nc" id="L38">            throw exception;</span>
-<span class="fc" id="L39">        }</span>
-<span class="fc" id="L40">        return t;</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            if ( isOutsourced ) device.store( t );</span>
+<span class="nc" id="L37">        } catch ( Exception exception ) {</span>
+<span class="nc" id="L38">            _LOG.error( &quot;Failed storing a newly created tensor from a template tensor to its host device.&quot;, exception );</span>
+<span class="nc" id="L39">            throw exception;</span>
+<span class="fc" id="L40">        }</span>
+<span class="fc" id="L41">        return t;</span>
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

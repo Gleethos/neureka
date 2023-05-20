@@ -16,7 +16,7 @@
     {
       "id":"The DataConverter can convert the given array data.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

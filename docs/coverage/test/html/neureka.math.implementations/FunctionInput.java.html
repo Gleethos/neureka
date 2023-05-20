@@ -33,12 +33,12 @@ public class FunctionInput implements Function, GradientProvider
     private final int _index;
 
 
-    public static Function of(String equation) {
+    public static Function of(String equation, boolean doAD) {
 <span class="fc bfc" id="L37" title="All 2 branches covered.">        if ( equation.charAt( 0 ) == '-' )</span>
 <span class="fc" id="L38">            return new FunctionParser( Neureka.get().backend() )</span>
 <span class="fc" id="L39">                    .parse(</span>
 <span class="fc" id="L40">                            equation.substring(1)+&quot;*-1&quot;,</span>
-                            true
+                            doAD
                     ); // TODO: This might be false!
 <span class="fc" id="L43">        int number = 0;</span>
 <span class="fc bfc" id="L44" title="All 2 branches covered.">        for ( int i = 0; i &lt; equation.length(); ++i) {</span>
@@ -131,4 +131,4 @@ public class FunctionInput implements Function, GradientProvider
 <span class="fc bfc" id="L131" title="All 2 branches covered.">    public String toString() { return &quot;I&quot; + ( this.providesGradient() ? &quot;g&quot; : &quot;&quot; ) + &quot;[&quot; + index() + &quot;]&quot;; }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

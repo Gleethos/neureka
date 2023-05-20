@@ -9,7 +9,7 @@ public final class Simple1DCIterator extends Simple1DConfiguration implements ND
     private int _d1;
 
     public Simple1DCIterator(Simple1DConfiguration ndc ) {
-<span class="fc" id="L12">        super( ndc.shape( 0 ), ndc.translation( 0 ));</span>
+<span class="fc" id="L12">        super( ndc.shape( 0 ), ndc.strides( 0 ));</span>
 <span class="fc" id="L13">    }</span>
 
 
@@ -35,4 +35,4 @@ public final class Simple1DCIterator extends Simple1DConfiguration implements ND
 <span class="fc" id="L35">    @Override public final void set( int[] indices) { _d1 = indices[0]; }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

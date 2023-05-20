@@ -4,12 +4,12 @@
   "narrative":"The `Shape` of an nd-array/tensor is in essence merely an immutable tuple of integers\n    which define the size of each dimension of the tensor.\n    So if you think of an nd-array as a grid of numbers, then the shape of the\n    tensor is the size of the grid in each dimension.\n\n    This specifications shows you how to create a shape and how to use it.",
   "subjects":["neureka.Shape"],
   "statistics":{
-    "runs":"5",
+    "runs":"7",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.005 seconds"
+    "duration":"0.004 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -88,6 +88,44 @@
         {"kind":"when","text":"We slice the shape from index 1 to index 2.","code":["var newShape = shape.slice( 1, 2 )"]},
 
         {"kind":"then","text":"The new shape has the expected size and values!","code":["newShape.size() == 1","newShape.get(0) == 3"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Use the \"any\" or \"every\" method to check if a predicate holds for any or every value of the shape.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            The `Shape` class allows you to check if a condition holds for any or every value of the shape\n            in a functional way by simply passing a predicate to the \"any\" or \"every\" method.\n            This allows for much more readable code than using a for-loop.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use the \"of\" method to create a shape from a list of integers.","code":["var shape = Shape.of( 2, 3, 4 )"]},
+
+        {"kind":"when","text":"We check if any value of the shape is greater than 3.","code":["var any = shape.any( (Predicate<Integer>){ it > 3 } )"]},
+
+        {"kind":"then","text":"The result is true.","code":["any == true"]},
+
+        {"kind":"when","text":"We check if every value of the shape is greater than 3.","code":["var every = shape.every( (Predicate<Integer>){ it > 3 } )"]},
+
+        {"kind":"then","text":"The result is false.","code":["every == false"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"You can use the \"count(Predicate)\" method to count the number of values that satisfy a predicate.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We use the \"of\" method to create a shape from a list of integers.","code":["var shape = Shape.of( 2, 3, 4 )"]},
+
+        {"kind":"when","text":"We count the number of values that are greater than 3.","code":["var count = shape.count( (Predicate<Integer>){ it > 3 } )"]},
+
+        {"kind":"then","text":"The result is 1.","code":["count == 1"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

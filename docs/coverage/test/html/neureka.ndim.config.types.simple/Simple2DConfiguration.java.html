@@ -13,25 +13,25 @@ public class Simple2DConfiguration extends D2C //:= IMMUTABLE
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation1;
-    private final int _translation2;
+    private final int _stride1;
+    private final int _stride2;
 
 
     protected Simple2DConfiguration(
             int[] shape,
-            int[] translation
+            int[] strides
 <span class="fc" id="L23">    ) {</span>
 <span class="fc" id="L24">        _shape1 = shape[ 0 ];</span>
 <span class="fc" id="L25">        _shape2 = shape[ 1 ];</span>
-<span class="fc" id="L26">        _translation1 = translation[ 0 ];</span>
-<span class="fc" id="L27">        _translation2 = translation[ 1 ];</span>
+<span class="fc" id="L26">        _stride1 = strides[ 0 ];</span>
+<span class="fc" id="L27">        _stride2 = strides[ 1 ];</span>
 <span class="fc" id="L28">    }</span>
 
     public static Simple2DConfiguration construct(
             int[] shape,
-            int[] translation
+            int[] strides
     ) {
-<span class="fc" id="L34">        return _cached( new Simple2DConfiguration(shape, translation) );</span>
+<span class="fc" id="L34">        return _cached( new Simple2DConfiguration(shape, strides) );</span>
     }
 
 
@@ -45,16 +45,16 @@ public class Simple2DConfiguration extends D2C //:= IMMUTABLE
 <span class="fc bfc" id="L45" title="All 2 branches covered.">    @Override public final int shape( int i ) { return ( i==0 ? _shape1 : _shape2 ); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L48">    @Override public final int[] indicesMap() { return new int[]{_translation1, _translation2}; }</span>
+<span class="fc" id="L48">    @Override public final int[] indicesMap() { return new int[]{_stride1, _stride2}; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L51">    @Override public final int indicesMap( int i ) { return 1; }</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">    @Override public final int indicesMap( int i ) { return ( i == 0 ? _stride1 : _stride2); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L54">    @Override public final int[] translation() { return new int[]{_translation1, _translation2}; }</span>
+<span class="fc" id="L54">    @Override public final int[] strides() { return new int[]{_stride1, _stride2}; }</span>
 
     /** {@inheritDoc} */
-<span class="fc bfc" id="L57" title="All 2 branches covered.">    @Override public final int translation( int i ) { return ( i==0 ? _translation1 : _translation2 ); }</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    @Override public final int strides(int i ) { return ( i==0 ? _stride1 : _stride2); }</span>
 
     /** {@inheritDoc} */
 <span class="fc" id="L60">    @Override public final int[] spread() { return new int[]{1, 1}; }</span>
@@ -70,33 +70,33 @@ public class Simple2DConfiguration extends D2C //:= IMMUTABLE
 
     /** {@inheritDoc} */
     @Override public final int indexOfIndex( int index ) {
-<span class="fc" id="L73">        return (index / _translation1) * _translation1 +</span>
-                ((index %_translation1) / _translation2) * _translation2;
+<span class="fc" id="L73">        return (index / _stride1) * _stride1 +</span>
+                ((index % _stride1) / _stride2) * _stride2;
     }
 
     /** {@inheritDoc} */
     @Override public final int[] indicesOfIndex( int index ) {
 <span class="fc" id="L79">        int[] indices = new int[ 2 ];</span>
-<span class="fc" id="L80">        indices[ 0 ] += index / _translation1;</span>
-<span class="fc" id="L81">        index %= _translation1;</span>
-<span class="fc" id="L82">        indices[ 1 ] += index / _translation2;</span>
+<span class="fc" id="L80">        indices[ 0 ] += index / _stride1;</span>
+<span class="fc" id="L81">        index %= _stride1;</span>
+<span class="fc" id="L82">        indices[ 1 ] += index / _stride2;</span>
 <span class="fc" id="L83">        return indices;</span>
     }
 
     /** {@inheritDoc} */
     @Override public final int indexOfIndices( int[] indices ) {
 <span class="fc" id="L88">        int i = 0;</span>
-<span class="fc" id="L89">        i += indices[ 0 ] * _translation1;</span>
-<span class="fc" id="L90">        i += indices[ 1 ] * _translation2;</span>
+<span class="fc" id="L89">        i += indices[ 0 ] * _stride1;</span>
+<span class="fc" id="L90">        i += indices[ 1 ] * _stride2;</span>
 <span class="fc" id="L91">        return i;</span>
     }
 
     /** {@inheritDoc} */
     @Override public final int indexOfIndices( int d1, int d2 ) {
 <span class="fc" id="L96">        int i = 0;</span>
-<span class="fc" id="L97">        i += d1 * _translation1;</span>
-<span class="fc" id="L98">        i += d2 * _translation2;</span>
+<span class="fc" id="L97">        i += d1 * _stride1;</span>
+<span class="fc" id="L98">        i += d2 * _stride2;</span>
 <span class="fc" id="L99">        return i;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

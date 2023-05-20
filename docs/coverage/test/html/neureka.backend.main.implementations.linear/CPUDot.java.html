@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPUDot.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.linear</a> &gt; <span class="el_source">CPUDot.java</span></div><h1>CPUDot.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.linear;
+
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.main.operations.linear.internal.blas.DOT;
+import neureka.devices.host.CPU;
+
+<span class="fc" id="L9">public class CPUDot implements ImplementationFor&lt;CPU&gt; {</span>
+
+    @Override
+    public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
+
+<span class="pc bpc" id="L14" title="1 of 2 branches missed.">        if ( !call.validate().all( (t1, t2) -&gt; t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )</span>
+<span class="nc" id="L15">            throw new IllegalArgumentException(</span>
+                        &quot;Data layout inconsistency between provided tensors encountered. &quot; +
+                        &quot;All tensors must be of the same layout.&quot;
+                    );
+
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        if ( !call.validate().allShare(Tsr::getDataType).isValid() )</span>
+<span class="nc" id="L21">            throw new IllegalArgumentException(</span>
+                       &quot;Type inconsistency between provided tensors encountered. &quot; +
+                       &quot;All tensors must be of the same type.&quot;
+                    );
+
+<span class="fc" id="L26">        int[] shapeA = call.input( 1 ).getNDConf().shape();</span>
+<span class="fc" id="L27">        int[] shapeB = call.input( 2 ).getNDConf().shape();</span>
+<span class="fc" id="L28">        int[] shapeC = call.input( 0 ).getNDConf().shape();</span>
+
+<span class="pc bpc" id="L30" title="3 of 6 branches missed.">        if ( shapeA.length != 1 || shapeB.length != 1 || shapeC.length != 1 )</span>
+<span class="nc" id="L31">            throw new IllegalArgumentException(&quot;Dot product only works on vectors.&quot;);</span>
+
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if ( shapeA[0] != shapeB[0] )</span>
+<span class="nc" id="L34">            throw new IllegalArgumentException(&quot;Dot product only works on vectors of the same length.&quot;);</span>
+
+        // A * B = C // [N]*[N] = [1]
+<span class="fc" id="L37">        int size = shapeA[0];</span>
+
+<span class="fc" id="L39">        Class&lt;?&gt; type = call.input( 0 ).getDataType().getItemTypeClass();</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if ( type == Double.class ) {</span>
+<span class="fc" id="L41">            double[] A = call.input(Double.class, 1).mut().getDataAs(double[].class);</span>
+<span class="fc" id="L42">            double[] B = call.input(Double.class, 2).mut().getDataAs(double[].class);</span>
+<span class="fc" id="L43">            double[] C = call.input(Double.class, 0).mut().getDataForWriting(double[].class);</span>
+<span class="fc" id="L44">            execute( A, B, C, size );</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        } else if ( type == Float.class ) {</span>
+<span class="fc" id="L46">            float[] A = call.input(Float.class, 1).mut().getDataAs(float[].class);</span>
+<span class="fc" id="L47">            float[] B = call.input(Float.class, 2).mut().getDataAs(float[].class);</span>
+<span class="fc" id="L48">            float[] C = call.input(Float.class, 0).mut().getDataForWriting(float[].class);</span>
+<span class="fc" id="L49">            execute( A, B, C, size );</span>
+<span class="fc" id="L50">        }</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        else if ( type == Long.class ) {</span>
+<span class="fc" id="L52">            long[] A = call.input(Long.class, 1).mut().getDataAs(long[].class);</span>
+<span class="fc" id="L53">            long[] B = call.input(Long.class, 2).mut().getDataAs(long[].class);</span>
+<span class="fc" id="L54">            long[] C = call.input(Long.class, 0).mut().getDataForWriting(long[].class);</span>
+<span class="fc" id="L55">            execute( A, B, C, size );</span>
+<span class="fc" id="L56">        }</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        else if ( type == Integer.class ) {</span>
+<span class="fc" id="L58">            int[] A = call.input(Integer.class, 1).mut().getDataAs(int[].class);</span>
+<span class="fc" id="L59">            int[] B = call.input(Integer.class, 2).mut().getDataAs(int[].class);</span>
+<span class="fc" id="L60">            int[] C = call.input(Integer.class, 0).mut().getDataForWriting(int[].class);</span>
+<span class="fc" id="L61">            execute( A, B, C, size );</span>
+<span class="fc" id="L62">        }</span>
+        else
+<span class="nc" id="L64">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L65">                        &quot;Data type '&quot;+type.getSimpleName()+&quot;' not yet supported &quot; +</span>
+                        &quot;for CPU based dot product!&quot;
+                    );
+
+<span class="fc" id="L69">        return call.input( 0 );</span>
+    }
+
+    private static void execute( double[] A, double[] B, double[] C, int size ) {
+<span class="fc" id="L73">        C[0] = DOT.invoke( A, 0, B, 0, 0, size );</span>
+<span class="fc" id="L74">    }</span>
+
+    private static void execute( float[] A, float[] B, float[] C, int size ) {
+<span class="fc" id="L77">        C[0] = DOT.invoke( A, 0, B, 0, 0, size );</span>
+<span class="fc" id="L78">    }</span>
+
+    private static void execute( long[] A, long[] B, long[] C, int size ) {
+<span class="fc" id="L81">        C[0] = DOT.invoke( A, 0, B, 0, 0, size );</span>
+<span class="fc" id="L82">    }</span>
+
+    private static void execute( int[] A, int[] B, int[] C, int size ) {
+<span class="fc" id="L85">        C[0] = DOT.invoke( A, 0, B, 0, 0, size );</span>
+<span class="fc" id="L86">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

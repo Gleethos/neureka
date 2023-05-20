@@ -12,7 +12,7 @@ public class SimpleReshapeView extends AbstractNDC
     private final int[] _form;
     private final int[] _formTranslator;
     private final int[] _shape;
-    private final int[] _translation;
+    private final int[] _strides;
     private final int[] _indicesMap;
     private final int[] _spread;
     private final int[] _offset;
@@ -37,11 +37,11 @@ public class SimpleReshapeView extends AbstractNDC
 
 
 <span class="fc" id="L39">        NDConfiguration ndc = _simpleReshape( form, toBeViewed );</span>
-<span class="fc" id="L40">        _shape       = ndc.shape();</span>
-<span class="fc" id="L41">        _translation = ndc.translation();</span>
-<span class="fc" id="L42">        _indicesMap  = ndc.indicesMap();</span>
-<span class="fc" id="L43">        _spread      = ndc.spread();</span>
-<span class="fc" id="L44">        _offset      = ndc.offset();</span>
+<span class="fc" id="L40">        _shape      = ndc.shape();</span>
+<span class="fc" id="L41">        _strides    = ndc.strides();</span>
+<span class="fc" id="L42">        _indicesMap = ndc.indicesMap();</span>
+<span class="fc" id="L43">        _spread     = ndc.spread();</span>
+<span class="fc" id="L44">        _offset     = ndc.offset();</span>
 <span class="fc" id="L45">    }</span>
 
     /** {@inheritDoc} */
@@ -60,10 +60,10 @@ public class SimpleReshapeView extends AbstractNDC
 <span class="nc" id="L60">    @Override public final int indicesMap(int i ) { return _indicesMap[ i ]; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L63">    @Override public final int[] translation() { return _translation; }</span>
+<span class="fc" id="L63">    @Override public final int[] strides() { return _strides; }</span>
 
     /** {@inheritDoc} */
-<span class="nc" id="L66">    @Override public final int translation( int i ) { return _translation[ i ]; }</span>
+<span class="nc" id="L66">    @Override public final int strides(int i ) { return _strides[ i ]; }</span>
 
     /** {@inheritDoc} */
 <span class="fc" id="L69">    @Override public final int[] spread() { return _spread; }</span>
@@ -107,4 +107,4 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

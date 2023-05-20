@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  *    context during the execution of provided lambdas.
  *
  */
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">public final class BackendContext implements Cloneable</span>
+public final class BackendContext implements Cloneable
 {
 <span class="fc" id="L46">    private static final Logger log = org.slf4j.LoggerFactory.getLogger(BackendContext.class);</span>
 
@@ -171,8 +171,8 @@ import java.util.function.Supplier;
 <span class="fc" id="L171">        _operations.add( operation );</span>
 <span class="fc" id="L172">        String function = operation.getIdentifier();</span>
 <span class="fc" id="L173">        String operator = operation.getOperator();</span>
-<span class="pc bpc" id="L174" title="2 of 4 branches missed.">        assert !_lookup.containsKey( operator );</span>
-<span class="pc bpc" id="L175" title="2 of 4 branches missed.">        assert !_lookup.containsKey( function );</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        assert !_lookup.containsKey( operator );</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        assert !_lookup.containsKey( function );</span>
 <span class="fc" id="L176">        _lookup.put( operator, operation );</span>
 <span class="fc" id="L177">        _lookup.put( function, operation );</span>
 <span class="fc" id="L178">        _lookup.put( operator.toLowerCase(), operation );</span>
@@ -444,4 +444,4 @@ import java.util.function.Supplier;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

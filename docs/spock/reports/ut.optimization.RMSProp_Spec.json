@@ -25,7 +25,7 @@
 
         {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tsr.of( (double) gradient ) )","w.applyGradient()"]},
 
-        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.translation().hashCode()==g.translation().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
 
         {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
       ],

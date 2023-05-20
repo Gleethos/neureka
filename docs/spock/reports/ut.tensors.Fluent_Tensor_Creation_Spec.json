@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.029 seconds"
+    "duration":"0.023 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -25,7 +25,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData.length == 1","t.items.size() == 6"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.get() == data","t.rawData.length == 1","t.items.size() == 6"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -33,7 +33,7 @@
 
         {"kind":"and","text":"\n                Based on the fact that the tensor is homogeneously filled it will be a \"virtual tensor\"\n                This means that the tensor will not have allocated the memory proportional to the size\n                of the tensor!\n            ","code":["t.isVirtual()"]},
 
-        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer","Double","Float","Long","Boolean","Character"],"value":["4   as int","4.0 as double","4f  as float","42L as Long","false","'Â°' as char"],"data":["new int[]   { 4   }","new double[]{ 4.0 }","new float[] { 4f  }","new long[]  { 42L }","new boolean[] { false }","new char[] { 'Â°' as char }"]}}
+        {"kind":"where","text":"The following data is being used to populate the builder API:","code":{"type":["Integer","Double","Float","Long","Boolean","Character"],"value":["4   as int","4.0 as double","4f  as float","42L as Long","false","'°' as char"],"data":["new int[]   { 4   }","new double[]{ 4.0 }","new float[] { 4f  }","new long[]  { 42L }","new boolean[] { false }","new char[] { '°' as char }"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -41,7 +41,7 @@
     {
       "id":"Range based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -50,7 +50,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData == data"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.get() == data","t.rawData == data"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -75,7 +75,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == expected","t.rawData == expected"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.get() == expected","t.rawData == expected"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -100,7 +100,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == expected","t.rawData == expected"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.get() == expected","t.rawData == expected"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -118,7 +118,7 @@
     {
       "id":"Initialization lambda based tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -127,7 +127,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == expected","t.rawData == expected"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.get() == expected","t.rawData == expected"]},
 
         {"kind":"and","text":"The tensor will have the shape we passed to the builder.","code":["t.shape() == [3, 2]"]},
 
@@ -152,7 +152,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData == data"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.get() == data","t.rawData == data"]},
 
         {"kind":"and","text":"The tensor will have a one dimensional shape of the same length as the provided data array.","code":["t.shape() == [values.length]"]},
 
@@ -177,7 +177,7 @@
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
-        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.ref == data","t.rawData == data"]},
+        {"kind":"and","text":"...also it will contain the expected data.","code":["t.mut.data.get() == data","t.rawData == data"]},
 
         {"kind":"and","text":"The tensor will have a one dimensional shape of 1.","code":["t.shape() == [1]"]},
 

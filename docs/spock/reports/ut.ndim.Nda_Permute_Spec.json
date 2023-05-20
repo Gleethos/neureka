@@ -1,0 +1,52 @@
+{
+  "className":"ut.ndim.Nda_Permute_Spec",
+  "title":"Reshaping Nd-Arrays",
+  "narrative":"Permuting an N-dimensional array means rearranging the dimensions/axes of the N-dimensional array.\n    It returns a new nd-array with the same data as the original nd-array, \n    but with the specified dimensions rearranged. \n    It is very useful for example when you want to\n    change the order of dimensions, for example, if you have a nd-array with dimensions (batch_size, channels, height, width), \n    you can use permute() to rearrange the dimensions to (batch_size, height, width, channels).\n    Another useful application of permute() is transposing a matrix.\n    For example, if you have a matrix with dimensions (rows, columns), \n    you can use permute() to rearrange the dimensions to (columns, rows).\n\n    Permuting is a very cheap operation because it does not copy any data but merely\n    creates a new view on the same data with a different access pattern.",
+  "subjects":["neureka.Nda"],
+  "statistics":{
+    "runs":"2",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.002 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"We can use the \"permute\" method to rearrange the dimensions of an nd-array.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            In Neureka `Nda::permute(int...)` rearranges the original nd-array according to the desired \n            ordering and returns a new multidimensional rotated nd-array. \n            The size of the returned nd-array remains the same as that of the original.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A nd-array with a shape of [7, 2, 4, 3]","code":["Nda t = Nda.of(-12..11).reshape(7, 2, 4, 3)"]},
+
+        {"kind":"when","text":"We create a new permuted nd-array with the shape of [4, 3, 7, 2] and store it as `t2`.","code":["var t2 = t.permute( 2, 3, 0, 1 )"]},
+
+        {"kind":"then","text":"The new nd-array has the shape of [4, 3, 7, 2].","code":["t2.shape == [4, 3, 7, 2]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can use the \"transpose\" method to transpose swap 2 dimensions.",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            The `transpose` method is a special case of the `permute` method\n            which only swaps 2 dimensions (instead of all of them).\n            It is based on the algorithm of the `permute` method.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A nd-array with a shape of [2, 1, 4, 5]","code":["Nda t = Nda.of(-12..11).reshape(2, 1, 4, 5)"]},
+
+        {"kind":"when","text":"We create a new transposed nd-array where the 2nd and 3rd dimensions are swapped and store it as `t2`.","code":["var t2 = t.transpose( 1, 2 )"]},
+
+        {"kind":"then","text":"The new nd-array has the shape of [2, 4, 1, 5].","code":["t2.shape == [2, 4, 1, 5]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

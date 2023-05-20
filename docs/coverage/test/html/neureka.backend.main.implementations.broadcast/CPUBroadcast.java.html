@@ -7,7 +7,7 @@ import neureka.backend.main.implementations.fun.api.CPUBiFun;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 
-<span class="pc bpc" id="L10" title="1 of 2 branches missed.">public abstract class CPUBroadcast implements ImplementationFor&lt;CPU&gt;</span>
+<span class="fc" id="L10">public abstract class CPUBroadcast implements ImplementationFor&lt;CPU&gt;</span>
 {
 <span class="fc" id="L12">    protected CPUBroadcast() {}</span>
 
@@ -68,7 +68,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L68">        int[] t1Shp = t1_src.getNDConf().shape();</span>
 <span class="pc bpc" id="L69" title="1 of 2 branches missed.">        int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;</span>
 <span class="fc" id="L70">        int rank = t0Shp.length;</span>
-<span class="pc bpc" id="L71" title="2 of 4 branches missed.">        assert t2_src != null;</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        assert t2_src != null;</span>
 <span class="fc" id="L72">        NDIterator t0Idx = NDIterator.of( t0_drn );</span>
 <span class="fc" id="L73">        NDIterator t1Idx = NDIterator.of( t1_src, NDIterator.NonVirtual.TRUE );</span>
 <span class="fc" id="L74">        t0Idx.set( t0_drn.indicesOfIndex( i ) );</span>
@@ -169,7 +169,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L169">        int[] t1Shp = t1_src.getNDConf().shape();</span>
 <span class="pc bpc" id="L170" title="1 of 2 branches missed.">        int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;</span>
 <span class="fc" id="L171">        int rank = t0Shp.length;</span>
-<span class="pc bpc" id="L172" title="2 of 4 branches missed.">        assert t2_src != null;</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        assert t2_src != null;</span>
 <span class="fc" id="L173">        NDIterator t0Idx = NDIterator.of( t0_drn );</span>
 <span class="fc" id="L174">        NDIterator t1Idx = NDIterator.of( t1_src, NDIterator.NonVirtual.TRUE );</span>
 <span class="fc" id="L175">        t0Idx.set( t0_drn.indicesOfIndex( i ) );</span>
@@ -261,4 +261,4 @@ import neureka.ndim.iterator.NDIterator;
 
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

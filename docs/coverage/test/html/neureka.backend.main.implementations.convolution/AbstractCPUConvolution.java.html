@@ -8,7 +8,7 @@ import neureka.math.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 
-<span class="pc bpc" id="L11" title="1 of 2 branches missed.">public abstract class AbstractCPUConvolution implements ImplementationFor&lt;CPU&gt;</span>
+<span class="fc" id="L11">public abstract class AbstractCPUConvolution implements ImplementationFor&lt;CPU&gt;</span>
 {
     protected abstract CPUBiFun _getFun();
 
@@ -55,10 +55,10 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L55">                workload = (i, end) -&gt; _deConvolve64( t0_drn, t1_src, t2_src, i, end, f );</span>
         }
 <span class="pc bpc" id="L57" title="1 of 2 branches missed.">        else if ( typeClass == Float.class ) {</span>
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">            if ( d &lt; 0 )</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            if ( d &lt; 0 )</span>
 <span class="fc" id="L59">                workload = (i, end) -&gt; _convolve32(t0_drn, t1_src, t2_src, i, end, f);</span>
             else
-<span class="nc" id="L61">                workload = (i, end) -&gt; _deConvolve32( t0_drn, t1_src, t2_src, i, end, f );</span>
+<span class="fc" id="L61">                workload = (i, end) -&gt; _deConvolve32( t0_drn, t1_src, t2_src, i, end, f );</span>
         }
 
 <span class="pc bpc" id="L64" title="1 of 2 branches missed.">        if ( workload == null )</span>
@@ -158,9 +158,9 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L158">        double[] t1_value = t1_src.mut().getDataAs( double[].class );</span>
 <span class="fc" id="L159">        double[] t2_value = t2_src.mut().getDataAs( double[].class );</span>
 
-<span class="pc bpc" id="L161" title="2 of 4 branches missed.">        assert t0_value != null;</span>
-<span class="pc bpc" id="L162" title="2 of 4 branches missed.">        assert t1_value != null;</span>
-<span class="pc bpc" id="L163" title="2 of 4 branches missed.">        assert t2_value != null;</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        assert t0_value != null;</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        assert t1_value != null;</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        assert t2_value != null;</span>
 
         // Incrementing if 'i&gt;0' so that all indexes match:
 <span class="pc bpc" id="L166" title="1 of 2 branches missed.">        for ( int ii = 0; ii &lt; start; ii++ ) {</span>
@@ -321,18 +321,18 @@ import neureka.ndim.iterator.NDIterator;
             final int start, final int end,
             final CPUBiFun operation
     ) {
-<span class="nc" id="L324">        NDIterator t0Idx = NDIterator.of( t0_drn );</span>
-<span class="nc" id="L325">        NDIterator t1Idx = NDIterator.of( t1_src );</span>
-<span class="nc" id="L326">        t0Idx.set( t0_drn.indicesOfIndex( start ) );</span>
-<span class="nc" id="L327">        NDIterator t2Idx = NDIterator.of( t2_src );</span>
-<span class="nc" id="L328">        int rank = t0Idx.rank();</span>
+<span class="fc" id="L324">        NDIterator t0Idx = NDIterator.of( t0_drn );</span>
+<span class="fc" id="L325">        NDIterator t1Idx = NDIterator.of( t1_src );</span>
+<span class="fc" id="L326">        t0Idx.set( t0_drn.indicesOfIndex( start ) );</span>
+<span class="fc" id="L327">        NDIterator t2Idx = NDIterator.of( t2_src );</span>
+<span class="fc" id="L328">        int rank = t0Idx.rank();</span>
 
-<span class="nc" id="L330">        float[] t0_value = t0_drn.mut().getDataForWriting( float[].class );</span>
-<span class="nc" id="L331">        float[] t1_value = t1_src.mut().getDataAs( float[].class );</span>
-<span class="nc" id="L332">        float[] t2_value = t2_src.mut().getDataAs( float[].class );</span>
+<span class="fc" id="L330">        float[] t0_value = t0_drn.mut().getDataForWriting( float[].class );</span>
+<span class="fc" id="L331">        float[] t1_value = t1_src.mut().getDataAs( float[].class );</span>
+<span class="fc" id="L332">        float[] t2_value = t2_src.mut().getDataAs( float[].class );</span>
 
         // Incrementing if 'i&gt;0' so that all indexes match:
-<span class="nc bnc" id="L335" title="All 2 branches missed.">        for ( int ii = 0; ii &lt; start; ii++ ) {</span>
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">        for ( int ii = 0; ii &lt; start; ii++ ) {</span>
 <span class="nc" id="L336">            int ri = 0;</span>
 <span class="nc bnc" id="L337" title="All 2 branches missed.">            while ( ri &lt; rank ) {</span>
 <span class="nc bnc" id="L338" title="All 2 branches missed.">                if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {</span>
@@ -349,63 +349,63 @@ import neureka.ndim.iterator.NDIterator;
             }
         }
 
-<span class="nc" id="L352">        int i = start;</span>
+<span class="fc" id="L352">        int i = start;</span>
 
         // Looping through given range :
-<span class="nc bnc" id="L355" title="All 2 branches missed.">        while ( i &lt; end ) { // increment on drain accordingly:</span>
-<span class="nc" id="L356">            int ri = 0;</span>
-<span class="nc bnc" id="L357" title="All 2 branches missed.">            while ( ri &lt; rank ) {</span>
-<span class="nc bnc" id="L358" title="All 2 branches missed.">                if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {//setting 0</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">        while ( i &lt; end ) { // increment on drain accordingly:</span>
+<span class="fc" id="L356">            int ri = 0;</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">            while ( ri &lt; rank ) {</span>
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">                if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {//setting 0</span>
 <span class="nc" id="L359">                    t1Idx.set( ri, t0Idx.get( ri ) );</span>
 <span class="nc" id="L360">                    t2Idx.set( ri, 0 );</span>
                 }
                 else
-<span class="nc bnc" id="L363" title="All 2 branches missed.">                    t1Idx.set( ri, (t0Idx.shape( ri ) &gt; t1Idx.shape( ri ))</span>
-<span class="nc" id="L364">                            ? (t0Idx.get( ri ) - t2Idx.get( ri ))</span>
-<span class="nc" id="L365">                            : (t0Idx.get( ri ) + t2Idx.get( ri ))</span>
+<span class="fc bfc" id="L363" title="All 2 branches covered.">                    t1Idx.set( ri, (t0Idx.shape( ri ) &gt; t1Idx.shape( ri ))</span>
+<span class="fc" id="L364">                            ? (t0Idx.get( ri ) - t2Idx.get( ri ))</span>
+<span class="fc" id="L365">                            : (t0Idx.get( ri ) + t2Idx.get( ri ))</span>
                     );
-<span class="nc" id="L367">                ri++;</span>
+<span class="fc" id="L367">                ri++;</span>
             }
             //----------
-<span class="nc" id="L370">            float value = 0;</span>
-<span class="nc" id="L371">            boolean running = true;</span>
-<span class="nc" id="L372">            boolean incrementing = false;</span>
-<span class="nc bnc" id="L373" title="All 2 branches missed.">            while ( running ) {</span>
-<span class="nc bnc" id="L374" title="All 2 branches missed.">                ri = ( ri == rank ? 0 : ri );</span>
-<span class="nc bnc" id="L375" title="All 2 branches missed.">                if ( !incrementing ) {// := testing for match and applying operation:</span>
-<span class="nc" id="L376">                    boolean isMatch = true;</span>
-<span class="nc bnc" id="L377" title="All 2 branches missed.">                    for ( int rii = 0; rii &lt; rank; rii++ )</span>
-<span class="nc bnc" id="L378" title="All 6 branches missed.">                        isMatch = ( t1Idx.get( rii ) &lt; t1Idx.shape( rii ) &amp;&amp; t1Idx.get( rii ) &gt;= 0 ) &amp;&amp; isMatch;</span>
+<span class="fc" id="L370">            float value = 0;</span>
+<span class="fc" id="L371">            boolean running = true;</span>
+<span class="fc" id="L372">            boolean incrementing = false;</span>
+<span class="fc bfc" id="L373" title="All 2 branches covered.">            while ( running ) {</span>
+<span class="fc bfc" id="L374" title="All 2 branches covered.">                ri = ( ri == rank ? 0 : ri );</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">                if ( !incrementing ) {// := testing for match and applying operation:</span>
+<span class="fc" id="L376">                    boolean isMatch = true;</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">                    for ( int rii = 0; rii &lt; rank; rii++ )</span>
+<span class="fc bfc" id="L378" title="All 6 branches covered.">                        isMatch = ( t1Idx.get( rii ) &lt; t1Idx.shape( rii ) &amp;&amp; t1Idx.get( rii ) &gt;= 0 ) &amp;&amp; isMatch;</span>
 
-<span class="nc bnc" id="L380" title="All 2 branches missed.">                    value += ( isMatch ? operation.invoke( t1_value[t1Idx.i()], t2_value[t2Idx.i()] ) : 0 );</span>
-<span class="nc" id="L381">                    incrementing = true;</span>
-<span class="nc" id="L382">                    ri = 0;</span>
-<span class="nc" id="L383">                } else { // incrementing:</span>
-<span class="nc bnc" id="L384" title="All 2 branches missed.">                    if ( t2Idx.get( ri ) &lt; t2Idx.shape( ri ) ) {</span>
-<span class="nc" id="L385">                        t2Idx.set( ri, t2Idx.get( ri ) + 1 );</span>
-<span class="nc bnc" id="L386" title="All 2 branches missed.">                        if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {</span>
-<span class="nc bnc" id="L387" title="All 2 branches missed.">                            running = ( ri != rank - 1 );</span>
-<span class="nc" id="L388">                            t1Idx.set( ri, t0Idx.get( ri ) );</span>
-<span class="nc" id="L389">                            t2Idx.set( ri, 0 );</span>
-<span class="nc" id="L390">                            ri++;</span>
+<span class="fc bfc" id="L380" title="All 2 branches covered.">                    value += ( isMatch ? operation.invoke( t1_value[t1Idx.i()], t2_value[t2Idx.i()] ) : 0 );</span>
+<span class="fc" id="L381">                    incrementing = true;</span>
+<span class="fc" id="L382">                    ri = 0;</span>
+<span class="fc" id="L383">                } else { // incrementing:</span>
+<span class="pc bpc" id="L384" title="1 of 2 branches missed.">                    if ( t2Idx.get( ri ) &lt; t2Idx.shape( ri ) ) {</span>
+<span class="fc" id="L385">                        t2Idx.set( ri, t2Idx.get( ri ) + 1 );</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">                        if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {</span>
+<span class="fc bfc" id="L387" title="All 2 branches covered.">                            running = ( ri != rank - 1 );</span>
+<span class="fc" id="L388">                            t1Idx.set( ri, t0Idx.get( ri ) );</span>
+<span class="fc" id="L389">                            t2Idx.set( ri, 0 );</span>
+<span class="fc" id="L390">                            ri++;</span>
                         } else {
-<span class="nc" id="L392">                            t1Idx.set( ri,</span>
-<span class="nc bnc" id="L393" title="All 2 branches missed.">                                    t0Idx.shape( ri ) &gt; t1Idx.shape( ri )</span>
-<span class="nc" id="L394">                                            ? (t0Idx.get( ri ) - t2Idx.get( ri ))</span>
-<span class="nc" id="L395">                                            : (t0Idx.get( ri ) + t2Idx.get( ri ))</span>
+<span class="fc" id="L392">                            t1Idx.set( ri,</span>
+<span class="fc bfc" id="L393" title="All 2 branches covered.">                                    t0Idx.shape( ri ) &gt; t1Idx.shape( ri )</span>
+<span class="fc" id="L394">                                            ? (t0Idx.get( ri ) - t2Idx.get( ri ))</span>
+<span class="fc" id="L395">                                            : (t0Idx.get( ri ) + t2Idx.get( ri ))</span>
                             );
-<span class="nc" id="L397">                            incrementing = false;</span>
+<span class="fc" id="L397">                            incrementing = false;</span>
                         }
 <span class="nc" id="L399">                    } else ri++;</span>
                 }
             }
             // set value in drain:
-<span class="nc" id="L403">            t0_value[ t0Idx.i() ] = value;</span>
+<span class="fc" id="L403">            t0_value[ t0Idx.i() ] = value;</span>
             // increment on drain:
-<span class="nc" id="L405">            t0Idx.increment();</span>
-<span class="nc" id="L406">            i++;</span>
-<span class="nc" id="L407">        }</span>
-<span class="nc" id="L408">    }</span>
+<span class="fc" id="L405">            t0Idx.increment();</span>
+<span class="fc" id="L406">            i++;</span>
+<span class="fc" id="L407">        }</span>
+<span class="fc" id="L408">    }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

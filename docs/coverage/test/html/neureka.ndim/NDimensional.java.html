@@ -40,11 +40,11 @@ public interface NDimensional
      */
 <span class="fc" id="L41">    default Shape getShape() { return shape(); }</span>
 
-<span class="fc" id="L43">    default List&lt;Integer&gt; indicesMap() { return Util.asList(getNDConf().indicesMap()); }</span>
+<span class="fc" id="L43">    default List&lt;Integer&gt; indicesMap() { return NDUtil.asList(getNDConf().indicesMap()); }</span>
 
-<span class="fc" id="L45">    default List&lt;Integer&gt; translation() { return Util.asList(getNDConf().translation()); }</span>
+<span class="fc" id="L45">    default List&lt;Integer&gt; strides() { return NDUtil.asList(getNDConf().strides()); }</span>
 
-<span class="fc" id="L47">    default List&lt;Integer&gt; spread() { return Util.asList(getNDConf().spread()); }</span>
+<span class="fc" id="L47">    default List&lt;Integer&gt; spread() { return NDUtil.asList(getNDConf().spread()); }</span>
 
     /**
      * The offset is the position of a slice within the n-dimensional
@@ -53,7 +53,7 @@ public interface NDimensional
      *
      * @return The offset position of the slice tensor inside the n-dimensional data array of the parent array.
      */
-<span class="fc" id="L56">    default List&lt;Integer&gt; offset() { return Util.asList(getNDConf().offset()); }</span>
+<span class="fc" id="L56">    default List&lt;Integer&gt; offset() { return NDUtil.asList(getNDConf().offset()); }</span>
 
     /**
      * @return The {@link NDConfiguration} implementation instance of this {@link Tsr} storing dimensionality information.
@@ -118,16 +118,5 @@ public interface NDimensional
      */
 <span class="fc" id="L119">    default int indexOfIndices( int[] indices ) { return getNDConf().indexOfIndices( indices ); }</span>
 
-
-<span class="nc" id="L122">    class Util {</span>
-
-        public static List&lt;Integer&gt; asList( int[] array ) {
-<span class="fc" id="L125">            List&lt;Integer&gt; intList = new ArrayList&lt;&gt;( array.length );</span>
-<span class="fc bfc" id="L126" title="All 2 branches covered.">            for ( int i : array ) intList.add( i );</span>
-<span class="fc" id="L127">            return Collections.unmodifiableList(intList);</span>
-        }
-
-    }
-
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

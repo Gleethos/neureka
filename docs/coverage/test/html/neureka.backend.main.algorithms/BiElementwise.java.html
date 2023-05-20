@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BiElementwise.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.algorithms</a> &gt; <span class="el_source">BiElementwise.java</span></div><h1>BiElementwise.java</h1><pre class="source lang-java linenums">package neureka.backend.main.algorithms;
+
+import neureka.Tsr;
+import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
+import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
+import neureka.devices.Device;
+import neureka.dtype.NumericType;
+import neureka.ndim.NDimensional;
+
+public final class BiElementwise extends AbstractFunDeviceAlgorithm&lt;BiElementwise&gt;
+{
+    public BiElementwise() {
+<span class="fc" id="L15">        super(&quot;elementwise&quot;);</span>
+<span class="fc" id="L16">        setIsSuitableFor(</span>
+<span class="fc" id="L17">            call -&gt; call</span>
+<span class="fc" id="L18">                    .validate()</span>
+<span class="fc" id="L19">                    .allNotNullHaveSame(NDimensional::size)</span>
+<span class="fc" id="L20">                    .allNotNullHaveSame(NDimensional::shape)</span>
+<span class="fc" id="L21">                    .allNotNull( t -&gt; t.getDataType().typeClassImplements( NumericType.class ) )</span>
+<span class="fc" id="L22">                    .basicSuitability()</span>
+        );
+<span class="fc" id="L24">        setAutogradModeFor( call -&gt; AutoDiffMode.FORWARD_AND_BACKWARD );</span>
+<span class="fc" id="L25">        setExecution(</span>
+            (outerCaller, outerCall) -&gt;
+<span class="fc" id="L27">                Result.of(AbstractDeviceAlgorithm.executeFor(</span>
+                        outerCaller, outerCall,
+<span class="fc" id="L29">                        innerCall -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )</span>
+                ))
+        );
+<span class="fc" id="L32">        setCallPreparation(</span>
+            call -&gt; {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">                if ( call.arity() &lt; 3 ) call = call.withAddedInputAt(0, null);</span>
+<span class="fc" id="L35">                Device&lt;Object&gt; device = (Device&lt;Object&gt;) call.getDevice();</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
+                {
+<span class="fc" id="L38">                    int[] outShape = call.input( 1 ).getNDConf().shape();</span>
+
+<span class="fc" id="L40">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getItemType();</span>
+<span class="fc" id="L41">                    Tsr&lt;Object&gt; output = Tsr.of( type ).withShape( outShape ).all( 0.0 ).mut().setIsIntermediate( true );</span>
+<span class="fc" id="L42">                    output.mut().setIsVirtual( false );</span>
+                    try {
+<span class="fc" id="L44">                        device.store( output );</span>
+<span class="nc" id="L45">                    } catch( Exception e ) {</span>
+<span class="nc" id="L46">                        e.printStackTrace();</span>
+<span class="fc" id="L47">                    }</span>
+<span class="fc" id="L48">                    call = call.withInputAt( 0, output );</span>
+                }
+<span class="fc" id="L50">                return call;</span>
+            }
+        );
+<span class="fc" id="L53">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

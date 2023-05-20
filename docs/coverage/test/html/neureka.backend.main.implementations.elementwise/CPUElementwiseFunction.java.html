@@ -9,7 +9,7 @@ import neureka.math.args.Arg;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 
-<span class="pc bpc" id="L12" title="1 of 2 branches missed.">public class CPUElementwiseFunction implements ImplementationFor&lt;CPU&gt;</span>
+<span class="fc" id="L12">public class CPUElementwiseFunction implements ImplementationFor&lt;CPU&gt;</span>
 {
     private final ScalarFun _fun;
 
@@ -38,8 +38,8 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L38">        int d = call.getValOf(Arg.DerivIdx.class);</span>
 <span class="fc bfc" id="L39" title="All 2 branches covered.">        CPUFun f = d &lt; 0 ? _fun.getActivation() : _fun.getDerivative();</span>
 
-<span class="pc bpc" id="L41" title="2 of 4 branches missed.">        assert !t0_drn.isVirtual();</span>
-<span class="pc bpc" id="L42" title="2 of 4 branches missed.">        assert !t1_src.isVirtual();</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        assert !t0_drn.isVirtual();</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        assert !t1_src.isVirtual();</span>
 
 <span class="fc bfc" id="L44" title="All 4 branches covered.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple();</span>
 
@@ -51,7 +51,7 @@ import neureka.ndim.iterator.NDIterator;
 
 <span class="fc bfc" id="L52" title="All 2 branches covered.">            if ( rightTypeClass == Integer.class )</span>
             {
-<span class="fc" id="L54">                int[] t1_value = (int[]) t1_src.mut().getData().getRef();</span>
+<span class="fc" id="L54">                int[] t1_value = t1_src.mut().getData().as(int[].class);</span>
 <span class="fc" id="L55">                workload = (i, end) -&gt; {</span>
 <span class="fc" id="L56">                    NDIterator t0Idx = NDIterator.of(t0_drn);</span>
 <span class="fc" id="L57">                    NDIterator t1Idx = NDIterator.of(t1_src);</span>
@@ -117,7 +117,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L117">        }</span>
 <span class="fc bfc" id="L118" title="All 2 branches covered.">        else if ( typeClass == Integer.class )</span>
         {
-<span class="fc" id="L120">            int[] t0_value = (int[]) t0_drn.mut().getData().getRef();</span>
+<span class="fc" id="L120">            int[] t0_value = t0_drn.mut().getData().as(int[].class);</span>
 <span class="fc" id="L121">            int[] t1_value = t1_src.mut().getDataAs(int[].class);</span>
 <span class="fc bfc" id="L122" title="All 2 branches covered.">            if ( isSimple )</span>
 <span class="fc" id="L123">                workload = (start, end) -&gt; {</span>
@@ -141,7 +141,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L141">        }</span>
 <span class="fc bfc" id="L142" title="All 2 branches covered.">        else if ( typeClass == Long.class )</span>
         {
-<span class="fc" id="L144">            long[] t0_value = (long[]) t0_drn.mut().getData().getRef();</span>
+<span class="fc" id="L144">            long[] t0_value = t0_drn.mut().getData().as(long[].class);</span>
 <span class="fc" id="L145">            long[] t1_value = t1_src.mut().getDataAs(long[].class);</span>
 <span class="fc bfc" id="L146" title="All 2 branches covered.">            if ( isSimple )</span>
 <span class="fc" id="L147">                workload = (start, end) -&gt; {</span>
@@ -165,7 +165,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L165">        }</span>
 <span class="fc bfc" id="L166" title="All 2 branches covered.">        else if ( typeClass == Byte.class )</span>
         {
-<span class="fc" id="L168">            byte[] t0_value = (byte[]) t0_drn.mut().getData().getRef();</span>
+<span class="fc" id="L168">            byte[] t0_value = t0_drn.mut().getData().as(byte[].class);</span>
 <span class="fc" id="L169">            byte[] t1_value = t1_src.mut().getDataAs(byte[].class);</span>
 <span class="fc bfc" id="L170" title="All 2 branches covered.">            if ( isSimple )</span>
 <span class="fc" id="L171">                workload = (start, end) -&gt; {</span>
@@ -189,7 +189,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L189">        }</span>
 <span class="fc bfc" id="L190" title="All 2 branches covered.">        else if ( typeClass == Short.class )</span>
         {
-<span class="fc" id="L192">            short[] t0_value = (short[]) t0_drn.mut().getData().getRef();</span>
+<span class="fc" id="L192">            short[] t0_value = t0_drn.mut().getData().as(short[].class);</span>
 <span class="fc" id="L193">            short[] t1_value = t1_src.mut().getDataAs(short[].class);</span>
 <span class="pc bpc" id="L194" title="1 of 2 branches missed.">            if ( isSimple )</span>
 <span class="nc" id="L195">                workload = (start, end) -&gt; {</span>
@@ -213,7 +213,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L213">        }</span>
 <span class="fc bfc" id="L214" title="All 2 branches covered.">        else if ( typeClass == Boolean.class )</span>
         {
-<span class="fc" id="L216">            boolean[] t0_value = (boolean[]) t0_drn.mut().getData().getRef();</span>
+<span class="fc" id="L216">            boolean[] t0_value = t0_drn.mut().getData().as(boolean[].class);</span>
 <span class="fc" id="L217">            boolean[] t1_value = t1_src.mut().getDataAs(boolean[].class);</span>
 <span class="pc bpc" id="L218" title="1 of 2 branches missed.">            if ( isSimple )</span>
 <span class="nc" id="L219">                workload = (start, end) -&gt; {</span>
@@ -237,7 +237,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L237">        }</span>
 <span class="fc bfc" id="L238" title="All 2 branches covered.">        else if ( typeClass == Character.class )</span>
         {
-<span class="fc" id="L240">            char[] t0_value = (char[]) t0_drn.mut().getData().getRef();</span>
+<span class="fc" id="L240">            char[] t0_value = t0_drn.mut().getData().as(char[].class);</span>
 <span class="fc" id="L241">            char[] t1_value = t1_src.mut().getDataAs(char[].class);</span>
 <span class="pc bpc" id="L242" title="1 of 2 branches missed.">            if ( isSimple )</span>
 <span class="nc" id="L243">                workload = (start, end) -&gt; {</span>
@@ -260,7 +260,7 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L260">                };</span>
 <span class="fc" id="L261">        } else {</span>
             try {
-<span class="fc" id="L263">                Object[] t0_value = (Object[]) t0_drn.mut().getData().getRef();</span>
+<span class="fc" id="L263">                Object[] t0_value = t0_drn.mut().getData().as(Object[].class);</span>
 <span class="fc" id="L264">                Object[] t1_value = t1_src.mut().getDataAs(Object[].class);</span>
 <span class="fc bfc" id="L265" title="All 2 branches covered.">                if (isSimple)</span>
 <span class="fc" id="L266">                    workload = (start, end) -&gt; {</span>
@@ -295,4 +295,4 @@ import neureka.ndim.iterator.NDIterator;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

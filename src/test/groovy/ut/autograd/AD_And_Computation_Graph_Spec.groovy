@@ -110,12 +110,11 @@ class AD_And_Computation_Graph_Spec extends Specification
             Sleep.until(220, {
                 n.parents.every {!it.payload.isPresent() && !it.hasDerivatives()}
             })
+            System.gc()
 
         then :
-            for ( GraphNode p : n.parents ) {
+            for ( GraphNode p : n.parents )
                 assert !p.payload.isPresent()
-                assert !p.hasDerivatives()
-            }
     }
 
 

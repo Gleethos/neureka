@@ -68,19 +68,6 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
 <span class="fc" id="L68">    private final static Logger _LOG = LoggerFactory.getLogger(ExecutionCall.class);</span>
 
     /**
-     *  Use this factory method to build {@link ExecutionCall} instances in a readable fashion.
-     *
-     * @param inputs The input tensors for the {@link ExecutionCall}.
-     * @param &lt;D&gt; The device type parameter of the device which is targeted.
-     * @return A builder for an {@link ExecutionCall}.
-     */
-    public static &lt;D extends Device&lt;?&gt;&gt; Builder&lt;D&gt; of( Tsr&lt;?&gt;... inputs ) {
-<span class="fc" id="L78">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tsr[].class );</span>
-<span class="fc" id="L79">        return new Builder&lt;D&gt;(inputs);</span>
-    }
-
-
-    /**
      *  This is the operation type which will be applied to this execution call.
      *  It contains multiple implementations, one of which might be applicable to this call...
      */
@@ -95,8 +82,21 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
      */
     private final LazyRef&lt;Algorithm&gt; _algorithm;
+
     private final LazyRef&lt;AutoDiffMode&gt; _autogradMode;
 
+
+    /**
+     *  Use this factory method to build {@link ExecutionCall} instances in a readable fashion.
+     *
+     * @param inputs The input tensors for the {@link ExecutionCall}.
+     * @param &lt;D&gt; The device type parameter of the device which is targeted.
+     * @return A builder for an {@link ExecutionCall}.
+     */
+    public static &lt;D extends Device&lt;?&gt;&gt; Builder&lt;D&gt; of( Tsr&lt;?&gt;... inputs ) {
+<span class="fc" id="L97">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tsr[].class );</span>
+<span class="fc" id="L98">        return new Builder&lt;D&gt;(inputs);</span>
+    }
 
     private ExecutionCall(
             D device,
@@ -161,7 +161,7 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
 <span class="fc" id="L161">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tsr&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
     }
 
-    public ExecutionCall&lt;D&gt; withInputAt(int index, Tsr&lt;?&gt; replacement) {
+    public ExecutionCall&lt;D&gt; withInputAt( int index, Tsr&lt;?&gt; replacement ) {
 <span class="fc" id="L165">        List&lt;Tsr&lt;?&gt;&gt; inputs = new ArrayList&lt;&gt;(Arrays.asList(_inputs));</span>
 <span class="fc" id="L166">        inputs.set(index, replacement);</span>
 <span class="fc" id="L167">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tsr&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
@@ -262,4 +262,4 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

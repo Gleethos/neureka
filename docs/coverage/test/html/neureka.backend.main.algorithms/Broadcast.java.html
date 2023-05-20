@@ -10,7 +10,7 @@ import neureka.backend.main.operations.other.Permute;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 
-<span class="pc bpc" id="L13" title="1 of 2 branches missed.">public final class Broadcast extends AbstractFunDeviceAlgorithm&lt;Broadcast&gt;</span>
+<span class="fc" id="L13">public final class Broadcast extends AbstractFunDeviceAlgorithm&lt;Broadcast&gt;</span>
 {
     public Broadcast()
     {
@@ -78,11 +78,11 @@ import neureka.dtype.NumericType;
 <span class="fc" id="L78">                    int[] s1 = call.input( 1 ).getNDConf().shape();</span>
 <span class="fc" id="L79">                    int[] s2 = call.input( 2 ).getNDConf().shape();</span>
 
-<span class="pc bpc" id="L81" title="2 of 4 branches missed.">                    assert s1.length == s2.length;</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                    assert s1.length == s2.length;</span>
 <span class="fc" id="L82">                    int[] outShape = new int[s1.length];</span>
 
 <span class="fc bfc" id="L84" title="All 2 branches covered.">                    for ( int i = 0; i &lt; outShape.length; i++ )</span>
-<span class="pc bpc" id="L85" title="2 of 8 branches missed.">                        assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];</span>
+<span class="pc bpc" id="L85" title="1 of 6 branches missed.">                        assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];</span>
 
 <span class="fc bfc" id="L87" title="All 2 branches covered.">                    for ( int i = 0; i &lt; outShape.length; i++ )</span>
 <span class="fc bfc" id="L88" title="All 2 branches covered.">                        outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );</span>
@@ -99,4 +99,4 @@ import neureka.dtype.NumericType;
 <span class="fc" id="L99">    }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

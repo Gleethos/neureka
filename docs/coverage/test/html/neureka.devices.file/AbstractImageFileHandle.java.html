@@ -80,7 +80,7 @@ abstract class AbstractImageFileHandle&lt;C&gt; extends AbstractFileHandle&lt;C,
 <span class="fc" id="L80">        Object value = _loadData(); // This is simply some kind of primitive array.</span>
 <span class="fc" id="L81">        Tsr&lt;?&gt; t = Tsr.of(</span>
 <span class="fc" id="L82">                        _type.targetedValueType(),</span>
-<span class="fc" id="L83">                        new int[]{_height, _width, _type.numberOfChannels()},</span>
+<span class="fc" id="L83">                        Shape.of(_height, _width, _type.numberOfChannels()),</span>
                         value
                     );
 
@@ -163,4 +163,4 @@ abstract class AbstractImageFileHandle&lt;C&gt; extends AbstractFileHandle&lt;C,
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

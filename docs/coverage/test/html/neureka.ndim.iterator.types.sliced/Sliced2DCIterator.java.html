@@ -9,7 +9,7 @@ public final class Sliced2DCIterator extends Sliced2DConfiguration implements ND
 <span class="fc" id="L9">    private int _d2 = 0;</span>
 
     public Sliced2DCIterator(Sliced2DConfiguration ndc) {
-<span class="fc" id="L12">        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );</span>
+<span class="fc" id="L12">        super( ndc.shape(), ndc.strides(), ndc.indicesMap(), ndc.spread(), ndc.offset() );</span>
 <span class="fc" id="L13">    }</span>
 
 
@@ -53,4 +53,4 @@ public final class Sliced2DCIterator extends Sliced2DConfiguration implements ND
 <span class="fc" id="L53">    }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

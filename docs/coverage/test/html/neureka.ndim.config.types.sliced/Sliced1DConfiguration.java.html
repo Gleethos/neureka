@@ -2,7 +2,7 @@
 
 import neureka.ndim.config.types.D1C;
 
-<span class="pc bpc" id="L5" title="1 of 2 branches missed.">public class Sliced1DConfiguration extends D1C //:= IMMUTABLE</span>
+<span class="fc" id="L5">public class Sliced1DConfiguration extends D1C //:= IMMUTABLE</span>
 {
     /**
      *  The shape of the NDArray.
@@ -11,13 +11,13 @@ import neureka.ndim.config.types.D1C;
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation;
+    private final int _stride;
     /**
      *  The mapping of the indices array.
      */
     private final int _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
-     *  Produces the strides of a tensor subset / slice
+     *  Produces the steps of a tensor subset / slice
      */
     private final int _spread;
     /**
@@ -27,30 +27,30 @@ import neureka.ndim.config.types.D1C;
 
 
     public static Sliced1DConfiguration construct(
-            int[] shape,
-            int[] translation,
-            int[] indicesMap,
-            int[] spread,
-            int[] offset
+        int[] shape,
+        int[] strides,
+        int[] indicesMap,
+        int[] spread,
+        int[] offset
     ) {
-<span class="fc" id="L36">        return _cached( new Sliced1DConfiguration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ], spread[ 0 ], offset[ 0 ]) );</span>
+<span class="fc" id="L36">        return _cached( new Sliced1DConfiguration(shape[ 0 ], strides[ 0 ],  indicesMap[ 0 ], spread[ 0 ], offset[ 0 ]) );</span>
     }
 
     protected Sliced1DConfiguration(
-            int shape,
-            int translation,
-            int indicesMap,
-            int spread,
-            int offset
+        int shape,
+        int stride,
+        int indicesMap,
+        int spread,
+        int offset
 <span class="fc" id="L45">    ) {</span>
-<span class="fc" id="L46">        _shape = shape;</span>
-<span class="fc" id="L47">        _translation = translation;</span>
+<span class="fc" id="L46">        _shape      = shape;</span>
+<span class="fc" id="L47">        _stride     = stride;</span>
 <span class="fc" id="L48">        _indicesMap = indicesMap;</span>
-<span class="fc" id="L49">        _spread = spread;</span>
-<span class="fc" id="L50">        _offset = offset;</span>
-<span class="pc bpc" id="L51" title="2 of 4 branches missed.">        assert translation != 0;</span>
-<span class="pc bpc" id="L52" title="2 of 4 branches missed.">        assert indicesMap != 0;</span>
-<span class="pc bpc" id="L53" title="2 of 4 branches missed.">        assert spread != 0;</span>
+<span class="fc" id="L49">        _spread     = spread;</span>
+<span class="fc" id="L50">        _offset     = offset;</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        assert stride != 0;</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        assert indicesMap != 0;</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        assert spread != 0;</span>
 <span class="fc" id="L54">    }</span>
 
     /** {@inheritDoc} */
@@ -69,10 +69,10 @@ import neureka.ndim.config.types.D1C;
 <span class="fc" id="L69">    @Override public final int indicesMap(int i ) { return _indicesMap; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L72">    @Override public final int[] translation() { return new int[]{_translation}; }</span>
+<span class="fc" id="L72">    @Override public final int[] strides() { return new int[]{_stride}; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L75">    @Override public final int translation( int i ) { return _translation; }</span>
+<span class="fc" id="L75">    @Override public final int strides(int i ) { return _stride; }</span>
 
     /** {@inheritDoc} */
 <span class="fc" id="L78">    @Override public final int[] spread() { return new int[]{_spread}; }</span>
@@ -87,16 +87,16 @@ import neureka.ndim.config.types.D1C;
 <span class="fc" id="L87">    @Override public final int offset( int i ) { return _offset; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L90">    @Override public final int indexOfIndex( int index ) { return ( ( index / _indicesMap ) * _spread + _offset ) * _translation; }</span>
+<span class="fc" id="L90">    @Override public final int indexOfIndex( int index ) { return ( ( index / _indicesMap ) * _spread + _offset ) * _stride; }</span>
 
     /** {@inheritDoc} */
 <span class="fc" id="L93">    @Override public final int[] indicesOfIndex( int index ) { return new int[]{index / _indicesMap}; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L96">    @Override public final int indexOfIndices( int[] indices ) { return ( indices[ 0 ] * _spread + _offset ) * _translation; }</span>
+<span class="fc" id="L96">    @Override public final int indexOfIndices( int[] indices ) { return ( indices[ 0 ] * _spread + _offset ) * _stride; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L99">    @Override public final int indexOfIndices( int d1 ) { return ( d1 * _spread + _offset ) * _translation; }</span>
+<span class="fc" id="L99">    @Override public final int indexOfIndices( int d1 ) { return ( d1 * _spread + _offset ) * _stride; }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

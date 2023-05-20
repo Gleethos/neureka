@@ -159,10 +159,10 @@ import neureka.ndim.iterator.NDIterator;
                 }
 <span class="fc" id="L160">            };</span>
         }
-<span class="fc bfc" id="L162" title="All 2 branches covered.">        if ( t0_drn.mut().getData().getRef().getClass() == Object[].class ) {</span>
-<span class="fc" id="L163">            Object value = call.input( 1 + offset ).at(0).get();</span>
-<span class="fc" id="L164">            Object[] t0_value = t0_drn.mut().getDataForWriting(Object[].class);</span>
-<span class="fc" id="L165">            Object[] t1_value = src.mut().getDataAs(Object[].class);</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if ( typeClass == Character.class ) {</span>
+<span class="fc" id="L163">            char value = call.input(Character.class, 1 + offset).at(0).get();</span>
+<span class="fc" id="L164">            char[] t0_value = t0_drn.mut().getDataForWriting(char[].class);</span>
+<span class="fc" id="L165">            char[] t1_value = src.mut().getDataAs(char[].class);</span>
 <span class="fc" id="L166">            workload = ( i, end ) -&gt; {</span>
 <span class="fc" id="L167">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
 <span class="fc" id="L168">                NDIterator srcIdx = NDIterator.of(src);</span>
@@ -179,13 +179,53 @@ import neureka.ndim.iterator.NDIterator;
                 }
 <span class="fc" id="L180">            };</span>
         }
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        if ( typeClass == Boolean.class ) {</span>
+<span class="fc" id="L183">            boolean value = call.input(Boolean.class, 1 + offset).at(0).get();</span>
+<span class="fc" id="L184">            boolean[] t0_value = t0_drn.mut().getDataForWriting(boolean[].class);</span>
+<span class="fc" id="L185">            boolean[] t1_value = src.mut().getDataAs(boolean[].class);</span>
+<span class="fc" id="L186">            workload = ( i, end ) -&gt; {</span>
+<span class="fc" id="L187">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L188">                NDIterator srcIdx = NDIterator.of(src);</span>
+<span class="fc" id="L189">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L190">                srcIdx.set(src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">                while (i &lt; end) // increment on drain accordingly:</span>
+                {
+                    // setInto _value in drn:
+<span class="fc" id="L194">                    t0_value[t0Idx.i()] = f.invoke(t1_value[srcIdx.i()], value);</span>
+                    // increment on drain:
+<span class="fc" id="L196">                    t0Idx.increment();</span>
+<span class="fc" id="L197">                    srcIdx.increment();</span>
+<span class="fc" id="L198">                    i++;</span>
+                }
+<span class="fc" id="L200">            };</span>
+        }
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        if ( t0_drn.mut().getData().getOrNull().getClass() == Object[].class ) {</span>
+<span class="fc" id="L203">            Object value = call.input( 1 + offset ).at(0).get();</span>
+<span class="fc" id="L204">            Object[] t0_value = t0_drn.mut().getDataForWriting(Object[].class);</span>
+<span class="fc" id="L205">            Object[] t1_value = src.mut().getDataAs(Object[].class);</span>
+<span class="fc" id="L206">            workload = ( i, end ) -&gt; {</span>
+<span class="fc" id="L207">                NDIterator t0Idx = NDIterator.of(t0_drn);</span>
+<span class="fc" id="L208">                NDIterator srcIdx = NDIterator.of(src);</span>
+<span class="fc" id="L209">                t0Idx.set(t0_drn.indicesOfIndex(i));</span>
+<span class="fc" id="L210">                srcIdx.set(src.indicesOfIndex(i));</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">                while (i &lt; end) // increment on drain accordingly:</span>
+                {
+                    // setInto _value in drn:
+<span class="fc" id="L214">                    t0_value[t0Idx.i()] = f.invoke(t1_value[srcIdx.i()], value);</span>
+                    // increment on drain:
+<span class="fc" id="L216">                    t0Idx.increment();</span>
+<span class="fc" id="L217">                    srcIdx.increment();</span>
+<span class="fc" id="L218">                    i++;</span>
+                }
+<span class="fc" id="L220">            };</span>
+        }
 
-<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if ( workload == null )</span>
-<span class="nc" id="L184">            throw new IllegalArgumentException(&quot;Unsupported type: &quot; + typeClass);</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        if ( workload == null )</span>
+<span class="nc" id="L224">            throw new IllegalArgumentException(&quot;Unsupported type: &quot; + typeClass);</span>
         else
-<span class="fc" id="L186">            return workload;</span>
+<span class="fc" id="L226">            return workload;</span>
     }
 
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BackPropTargetCollector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">BackPropTargetCollector.java</span></div><h1>BackPropTargetCollector.java</h1><pre class="source lang-java linenums">package neureka.autograd;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-<span class="fc" id="L8">class BackPropTargetCollector&lt;V&gt; {</span>
+<span class="fc" id="L9">class BackPropTargetCollector&lt;V&gt; {</span>
 
     private TreeMap&lt;GraphNode&lt;V&gt;, Value&gt; _targetsToAgents;
 
@@ -14,37 +15,37 @@ import java.util.stream.Collectors;
      * @param agent ADAction's are used during back-propagation in order to distribute an error throughout the graph.
      */
     public void put( int index, GraphNode&lt;V&gt; target, ADAction agent ) {
-<span class="fc bfc" id="L17" title="All 2 branches covered.">        if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap&lt;&gt;((a, b) -&gt; a.hashCode() - b.hashCode());</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap&lt;&gt;((a, b) -&gt; a.hashCode() - b.hashCode());</span>
 
-<span class="fc bfc" id="L19" title="All 2 branches covered.">        if ( _targetsToAgents.containsKey( target ) )</span>
-<span class="fc" id="L20">            _targetsToAgents.get( target ).agents().add( agent );</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        if ( _targetsToAgents.containsKey( target ) )</span>
+<span class="fc" id="L21">            _targetsToAgents.get( target ).agents().add( agent );</span>
         else
-<span class="fc" id="L22">            _targetsToAgents.put( target, new Value(index, agent) );</span>
-<span class="fc" id="L23">    }</span>
+<span class="fc" id="L23">            _targetsToAgents.put( target, new Value(index, agent) );</span>
+<span class="fc" id="L24">    }</span>
 
     public List&lt;BackPropTargets&lt;V&gt;&gt; getTargets() {
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        if ( _targetsToAgents == null ) return null;</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if ( _targetsToAgents == null ) return Collections.emptyList();</span>
         else
-<span class="fc" id="L28">            return _targetsToAgents.entrySet()</span>
-<span class="fc" id="L29">                    .stream()</span>
-<span class="fc" id="L30">                    .map( e -&gt; new BackPropTargets&lt;&gt;( e.getValue().index(), e.getKey(), e.getValue().agents() ) )</span>
-<span class="fc" id="L31">                    .collect(Collectors.toList());</span>
+<span class="fc" id="L29">            return _targetsToAgents.entrySet()</span>
+<span class="fc" id="L30">                    .stream()</span>
+<span class="fc" id="L31">                    .map( e -&gt; new BackPropTargets&lt;&gt;( e.getValue().index(), e.getKey(), e.getValue().agents() ) )</span>
+<span class="fc" id="L32">                    .collect(Collectors.toList());</span>
     }
 
 
     private static class Value {
         private final int _index;
-<span class="fc" id="L37">        private final List&lt;ADAction&gt; _agents = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L38">        private final List&lt;ADAction&gt; _agents = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L39">        private Value(int index, ADAction agent) {</span>
-<span class="fc" id="L40">            _index = index;</span>
-<span class="fc" id="L41">            _agents.add(agent);</span>
-<span class="fc" id="L42">        }</span>
+<span class="fc" id="L40">        private Value(int index, ADAction agent) {</span>
+<span class="fc" id="L41">            _index = index;</span>
+<span class="fc" id="L42">            _agents.add(agent);</span>
+<span class="fc" id="L43">        }</span>
 
-<span class="fc" id="L44">        public int index() { return _index; }</span>
+<span class="fc" id="L45">        public int index() { return _index; }</span>
 
-<span class="fc" id="L46">        public List&lt;ADAction&gt; agents() { return _agents; }</span>
+<span class="fc" id="L47">        public List&lt;ADAction&gt; agents() { return _agents; }</span>
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

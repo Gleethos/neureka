@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.140 seconds"
+    "duration":"0.700 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Reshaping produces expected computation graph and also works with reverse mode AD.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.084 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"Payloads and derivatives are null after garbage collection.",
       "result":"PASS",
-      "duration":"0.131 seconds",
+      "duration":"0.600 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -48,9 +48,9 @@
 
         {"kind":"and","text":"","code":["for ( int i = 0; i < n.parents.size(); i++ ) {","    assert n.parents[ i ].payload.isPresent()","    boolean[] exists = {false}","    n.parents[ i ].forEachTarget({ t -> exists[0] = true })","    assert exists[0]","}"]},
 
-        {"kind":"when","text":"","code":["strongRefs = null","a = null","b = null","c = null","d = null","e = null","System.gc()","Sleep.until(220, {","    n.parents.every {!it.payload.isPresent() && !it.hasDerivatives()}","})","System.gc()","Sleep.until(220, {","    n.parents.every {!it.payload.isPresent() && !it.hasDerivatives()}","})"]},
+        {"kind":"when","text":"","code":["strongRefs = null","a = null","b = null","c = null","d = null","e = null","System.gc()","Sleep.until(220, {","    n.parents.every {!it.payload.isPresent() && !it.hasDerivatives()}","})","System.gc()","Sleep.until(220, {","    n.parents.every {!it.payload.isPresent() && !it.hasDerivatives()}","})","System.gc()"]},
 
-        {"kind":"then","text":"","code":["for ( GraphNode p : n.parents ) {","    assert !p.payload.isPresent()","    assert !p.hasDerivatives()","}"]}
+        {"kind":"then","text":"","code":["for ( GraphNode p : n.parents )","    assert !p.payload.isPresent()"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

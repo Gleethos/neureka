@@ -4,11 +4,11 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.main.operations.other.Permute;
+import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.math.args.Args;
-import neureka.devices.Device;
-import neureka.devices.host.CPU;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,43 +52,52 @@ public final class FunctionNode implements Function
 <span class="fc" id="L52">        _isFlat = isFlat;</span>
 <span class="fc" id="L53">        _src = sources.toArray( new Function[0] );</span>
 <span class="fc" id="L54">        _isDoingAD = doAD;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        for ( int i = 0; i &lt; _src.length; i++ ) {</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            if ( _src[i] == null )</span>
+<span class="nc" id="L57">                throw new IllegalArgumentException(&quot;The function node '&quot; + this + &quot;' has a null source at index &quot; + i + &quot;!&quot;);</span>
+<span class="pc bpc" id="L58" title="1 of 4 branches missed.">            if ( _src[i] instanceof FunctionNode &amp;&amp; _src[i].isDoingAD() != _isDoingAD )</span>
+<span class="nc" id="L59">                throw new IllegalArgumentException(</span>
+                        &quot;Detected an attempt to mix autograd and non-autograd functions in the same function graph!\n&quot; +
+                        &quot;A function can either be doing autograd or not doing autograd!&quot;
+                    );
+        }
+<span class="fc" id="L64">    }</span>
 
     @Override
     public String toString()
     {
-<span class="fc" id="L60">        return _operation.stringify(</span>
-<span class="fc" id="L61">                Arrays.stream( _src )</span>
-<span class="pc bpc" id="L62" title="1 of 2 branches missed.">                        .map( e -&gt; e == null ? &quot;(null)&quot; : e.toString() )</span>
-<span class="fc" id="L63">                        .toArray( String[]::new )</span>
+<span class="fc" id="L69">        return _operation.stringify(</span>
+<span class="fc" id="L70">                Arrays.stream( _src )</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">                        .map( e -&gt; e == null ? &quot;(null)&quot; : e.toString() )</span>
+<span class="fc" id="L72">                        .toArray( String[]::new )</span>
         );
     }
 
     @Override
     public boolean dependsOn( int index ) {
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        for ( Function f : _src )</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">            if ( f.dependsOn( index ) ) return true;</span>
-<span class="fc" id="L71">        return false;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        for ( Function f : _src )</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            if ( f.dependsOn( index ) ) return true;</span>
+<span class="fc" id="L80">        return false;</span>
     }
 
     @Override
-<span class="fc" id="L75">    public Function getDerivative( int index ) { return Function.of( _operation.asDerivative( _src, index ) ); }</span>
+<span class="fc" id="L84">    public Function getDerivative( int index ) { return Function.of( _operation.asDerivative( _src, index ) ); }</span>
 
     @Override
-<span class="fc" id="L78">    public List&lt;Function&gt; getSubFunctions() { return Arrays.asList(_src); }</span>
+<span class="fc" id="L87">    public List&lt;Function&gt; getSubFunctions() { return Arrays.asList(_src); }</span>
 
     @Override
     public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... inputs )
     {
-<span class="fc bfc" id="L83" title="All 2 branches covered.">        if ( this.isDoingAD() )</span>
-<span class="fc" id="L84">            Permute.makeFit( inputs, this.isDoingAD() ); // reshaping if needed</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if ( this.isDoingAD() )</span>
+<span class="fc" id="L93">            Permute.makeFit( inputs, this.isDoingAD() ); // reshaping if needed</span>
 
-<span class="fc" id="L86">        ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call = ExecutionCall.of(inputs)</span>
-<span class="fc" id="L87">                                                                .andArgs(arguments.getAll(Arg.class))</span>
-<span class="fc" id="L88">                                                                .running(_operation)</span>
-<span class="fc" id="L89">                                                                .on(_deviceFor(inputs));</span>
-<span class="fc" id="L90">        return call.getOperation()</span>
-<span class="fc" id="L91">                .execute( this, call ).get();</span>
+<span class="fc" id="L95">        ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call = ExecutionCall.of(inputs)</span>
+<span class="fc" id="L96">                                                                .andArgs(arguments.getAll(Arg.class))</span>
+<span class="fc" id="L97">                                                                .running(_operation)</span>
+<span class="fc" id="L98">                                                                .on(_deviceFor(inputs));</span>
+<span class="fc" id="L99">        return call.getOperation()</span>
+<span class="fc" id="L100">                .execute( this, call ).get();</span>
     }
 
     /**
@@ -99,11 +108,11 @@ public final class FunctionNode implements Function
      */
     private Device&lt;?&gt; _deviceFor( Tsr&lt;?&gt;[] inputs )
     {
-<span class="fc bfc" id="L102" title="All 2 branches covered.">        if ( inputs.length == 0 ) return CPU.get();</span>
-<span class="fc" id="L103">        Device&lt;?&gt; device = inputs[ 0 ].get( Device.class );</span>
-<span class="fc" id="L104">        boolean onSameDevice = _shareGuestDevice( inputs );</span>
-<span class="fc bfc" id="L105" title="All 4 branches covered.">        boolean doAccel = !_operation.getOperator().equals(&quot;,&quot;) &amp;&amp; onSameDevice;</span>
-<span class="fc bfc" id="L106" title="All 4 branches covered.">        return ( doAccel &amp;&amp; device != null ? device : inputs[ 0 ].getDevice() );</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if ( inputs.length == 0 ) return CPU.get();</span>
+<span class="fc" id="L112">        Device&lt;?&gt; device = inputs[ 0 ].get( Device.class );</span>
+<span class="fc" id="L113">        boolean onSameDevice = _shareGuestDevice( inputs );</span>
+<span class="fc bfc" id="L114" title="All 4 branches covered.">        boolean doAccel = !_operation.getOperator().equals(&quot;,&quot;) &amp;&amp; onSameDevice;</span>
+<span class="fc bfc" id="L115" title="All 4 branches covered.">        return ( doAccel &amp;&amp; device != null ? device : inputs[ 0 ].getDevice() );</span>
     }
 
     /**
@@ -112,44 +121,44 @@ public final class FunctionNode implements Function
      */
     private static boolean _shareGuestDevice( Tsr&lt;?&gt;[] tensors )
     {
-<span class="fc" id="L115">        boolean onSameGuestDevice = true;</span>
-<span class="fc" id="L116">        Device&lt;?&gt; device = null;</span>
-<span class="fc bfc" id="L117" title="All 4 branches covered.">        for ( Tsr&lt;?&gt; tensor : tensors ) device = ( tensor.isOutsourced() ? tensor.get( Device.class ) : device );</span>
+<span class="fc" id="L124">        boolean onSameGuestDevice = true;</span>
+<span class="fc" id="L125">        Device&lt;?&gt; device = null;</span>
+<span class="fc bfc" id="L126" title="All 4 branches covered.">        for ( Tsr&lt;?&gt; tensor : tensors ) device = ( tensor.isOutsourced() ? tensor.get( Device.class ) : device );</span>
 
-<span class="fc bfc" id="L119" title="All 2 branches covered.">        if ( device != null ) {</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; tsr : tensors ) {</span>
-<span class="fc bfc" id="L121" title="All 6 branches covered.">                onSameGuestDevice = ( !tsr.isVirtual() &amp;&amp; device == tsr.get(Device.class) ) &amp;&amp; onSameGuestDevice;</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        if ( device != null ) {</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; tsr : tensors ) {</span>
+<span class="fc bfc" id="L130" title="All 6 branches covered.">                onSameGuestDevice = ( !tsr.isVirtual() &amp;&amp; device == tsr.get(Device.class) ) &amp;&amp; onSameGuestDevice;</span>
             }
         }
-<span class="fc" id="L124">        else onSameGuestDevice = false;</span>
+<span class="fc" id="L133">        else onSameGuestDevice = false;</span>
 
-<span class="fc bfc" id="L126" title="All 6 branches covered.">        if ( device != null &amp;&amp; tensors.length == 2 &amp;&amp; tensors[ 1 ].size() == 1 ) onSameGuestDevice = true;</span>
-<span class="fc" id="L127">        return onSameGuestDevice;</span>
+<span class="fc bfc" id="L135" title="All 6 branches covered.">        if ( device != null &amp;&amp; tensors.length == 2 &amp;&amp; tensors[ 1 ].size() == 1 ) onSameGuestDevice = true;</span>
+<span class="fc" id="L136">        return onSameGuestDevice;</span>
     }
 
     @Override
     public double call( final double[] inputs, int j ) {
-<span class="fc" id="L132">        return this.getOperation().calculate( inputs, j, -1, _src );</span>
+<span class="fc" id="L141">        return this.getOperation().calculate( inputs, j, -1, _src );</span>
     }
 
     @Override
     public double derive( final double[] inputs, final int d, final int j ) {
-<span class="fc" id="L137">        return this.getOperation().calculate( inputs, j, d, _src );</span>
+<span class="fc" id="L146">        return this.getOperation().calculate( inputs, j, d, _src );</span>
     }
 
     @Override
     public double derive( final double[] inputs, final int d ) {
-<span class="fc" id="L142">        return this.getOperation().calculate( inputs, -1, d, _src );</span>
+<span class="fc" id="L151">        return this.getOperation().calculate( inputs, -1, d, _src );</span>
     }
 
     @Override
-<span class="fc" id="L146">    public Operation getOperation() { return _operation; }</span>
+<span class="fc" id="L155">    public Operation getOperation() { return _operation; }</span>
 
     @Override
-<span class="fc" id="L149">    public boolean isFlat() { return _isFlat; }</span>
+<span class="fc" id="L158">    public boolean isFlat() { return _isFlat; }</span>
 
     @Override
-<span class="fc" id="L152">    public boolean isDoingAD() { return _isDoingAD; }</span>
+<span class="fc" id="L161">    public boolean isDoingAD() { return _isDoingAD; }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

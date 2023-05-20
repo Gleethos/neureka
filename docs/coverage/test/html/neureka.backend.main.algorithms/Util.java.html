@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Util.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.algorithms</a> &gt; <span class="el_source">Util.java</span></div><h1>Util.java</h1><pre class="source lang-java linenums">package neureka.backend.main.algorithms;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.math.Function;
+
+<span class="nc" id="L7">public class Util {</span>
+
+    public static &lt;T&gt; Tsr&lt;T&gt; transpose(Tsr&lt;T&gt; t ) {
+<span class="fc bfc" id="L10" title="All 2 branches covered.">        if ( t.rank() == 1 ) return t;</span>
+<span class="fc bfc" id="L11" title="All 2 branches covered.">        if ( t.rank() == 2 ) {</span>
+<span class="fc" id="L12">            boolean wasIntermediate = t.isIntermediate();</span>
+<span class="fc" id="L13">            t.getMut().setIsIntermediate(false);</span>
+<span class="fc" id="L14">            Tsr&lt;T&gt; result = Neureka.get().backend().getFunction().transpose2D().call(t);</span>
+<span class="fc" id="L15">            t.getMut().setIsIntermediate(wasIntermediate);</span>
+<span class="fc" id="L16">            return result;</span>
+        }
+<span class="fc" id="L18">        StringBuilder operation = new StringBuilder();</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        for ( int i = 0; i &lt; t.rank()-2; i++ )</span>
+<span class="fc" id="L20">            operation.append( i ).append( &quot;, &quot; );</span>
+
+        // The last 2 dimensions are swapped:
+<span class="fc" id="L23">        operation.append( t.rank()-1 ).append( &quot;, &quot; ).append( t.rank()-2 );</span>
+<span class="fc" id="L24">        operation = new StringBuilder( &quot;[&quot; + operation + &quot;]:(I[ 0 ])&quot; );</span>
+<span class="fc" id="L25">        return Function.of( operation.toString(), false ).call( t );</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

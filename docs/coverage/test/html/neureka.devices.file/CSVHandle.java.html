@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  *  Like other {@link FileHandle} implementations this class represents a file
  *  of a given type, in this case it represents a CSV file.
 */
-<span class="pc bpc" id="L25" title="1 of 2 branches missed.">public final class CSVHandle extends AbstractFileHandle&lt;CSVHandle, String&gt;</span>
+public final class CSVHandle extends AbstractFileHandle&lt;CSVHandle, String&gt;
 {
     static {
 <span class="fc" id="L28">        _LOG = LoggerFactory.getLogger( CSVHandle.class );</span>
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
     CSVHandle( Tsr&lt;?&gt; tensor, String filename )
     {
 <span class="fc" id="L45">        super( filename, new CSVType() );</span>
-<span class="pc bpc" id="L46" title="2 of 4 branches missed.">        assert tensor.rank() == 2;</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        assert tensor.rank() == 2;</span>
 <span class="fc" id="L47">        _delimiter = &quot;,&quot;;</span>
 <span class="fc" id="L48">        NDFrame&lt;?&gt; alias = tensor.get( NDFrame.class );</span>
 <span class="fc bfc" id="L49" title="All 2 branches covered.">        List&lt;Object&gt; index  = ( alias != null ? alias.atAxis( 0 ).getAllAliases() : null );</span>
@@ -59,8 +59,8 @@ import java.util.stream.Collectors;
 <span class="fc" id="L59">                 .append(&quot;\n&quot;);</span>
         }
 <span class="fc" id="L61">        int[] shape = tensor.getNDConf().shape();</span>
-<span class="pc bpc" id="L62" title="2 of 4 branches missed.">        assert shape.length == 2;</span>
-<span class="pc bpc" id="L63" title="2 of 6 branches missed.">        if ( _firstColIsIndex ) assert index.size() == shape[ 0 ];</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        assert shape.length == 2;</span>
+<span class="pc bpc" id="L63" title="1 of 4 branches missed.">        if ( _firstColIsIndex ) assert index.size() == shape[ 0 ];</span>
 <span class="fc" id="L64">        int[] indices = new int[ 2 ];</span>
 <span class="fc bfc" id="L65" title="All 2 branches covered.">        for ( int i = 0; i &lt; shape[ 0 ]; i++ ) {</span>
 <span class="fc" id="L66">            indices[ 0 ] = i;</span>
@@ -279,4 +279,4 @@ import java.util.stream.Collectors;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -103,7 +103,7 @@ public class CPUScalarBroadcastFunction implements ImplementationFor&lt;CPU&gt;
                 }
 <span class="nc" id="L104">            };</span>
         }
-<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if ( t0_drn.mut().getData().getRef().getClass() == Object[].class ) {</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if ( t0_drn.mut().getData().getOrNull().getClass() == Object[].class ) {</span>
 <span class="nc" id="L107">            Object value = src.at(0).get();</span>
 <span class="nc" id="L108">            Object[] t0_value = t0_drn.mut().getDataForWriting(Object[].class);</span>
 <span class="nc" id="L109">            Object finalValue = f.invoke(value);</span>
@@ -132,4 +132,4 @@ public class CPUScalarBroadcastFunction implements ImplementationFor&lt;CPU&gt;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

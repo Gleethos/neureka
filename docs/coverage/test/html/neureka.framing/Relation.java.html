@@ -82,7 +82,7 @@ public class Relation&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
      *  there must be a translation between the shape configuration between
      *  this new slice and the original parent tensor from which both slices
      *  have been derived. &lt;br&gt;
-     *  This translation is in essence merely an int array which
+     *  This translation, referred to as 'strides', is in essence merely an int array which
      *  contains the index mapping to a new shape.
      *  When accessing data for a permuted slice then this
      *  translation will be necessary for getting the right data. &lt;br&gt;
@@ -285,4 +285,4 @@ public class Relation&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="fc" id="L285">        return Optional.ofNullable( _parent );</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

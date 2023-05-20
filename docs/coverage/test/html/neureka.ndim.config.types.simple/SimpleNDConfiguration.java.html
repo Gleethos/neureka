@@ -13,21 +13,21 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /**
      *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int[] _translation_and_indicesMap;
+    private final int[] _strides_and_indicesMap;
 
 
     protected SimpleNDConfiguration(
-            int[] shape, int[] translation
+            int[] shape, int[] strides
 <span class="fc" id="L21">    ) {</span>
 <span class="fc" id="L22">        _shape = _cacheArray( shape );</span>
-<span class="fc" id="L23">        _translation_and_indicesMap = _cacheArray( translation );</span>
+<span class="fc" id="L23">        _strides_and_indicesMap = _cacheArray( strides );</span>
 <span class="fc" id="L24">    }</span>
 
     public static SimpleNDConfiguration construct(
             int[] shape,
-            int[] translation
+            int[] strides
     ) {
-<span class="fc" id="L30">        return _cached( new SimpleNDConfiguration( shape, translation ) );</span>
+<span class="fc" id="L30">        return _cached( new SimpleNDConfiguration( shape, strides ) );</span>
     }
 
     /** {@inheritDoc} */
@@ -40,16 +40,16 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
 <span class="fc" id="L40">    @Override public final int shape( int i ) { return _shape[ i ]; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L43">    @Override public final int[] indicesMap() { return _translation_and_indicesMap.clone(); }</span>
+<span class="fc" id="L43">    @Override public final int[] indicesMap() { return _strides_and_indicesMap.clone(); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L46">    @Override public final int indicesMap( int i ) { return _translation_and_indicesMap[ i ]; }</span>
+<span class="fc" id="L46">    @Override public final int indicesMap( int i ) { return _strides_and_indicesMap[ i ]; }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L49">    @Override public final int[] translation() { return _translation_and_indicesMap.clone(); }</span>
+<span class="fc" id="L49">    @Override public final int[] strides() { return _strides_and_indicesMap.clone(); }</span>
 
     /** {@inheritDoc} */
-<span class="fc" id="L52">    @Override public final int translation( int i ) { return _translation_and_indicesMap[ i ]; }</span>
+<span class="fc" id="L52">    @Override public final int strides(int i ) { return _strides_and_indicesMap[ i ]; }</span>
 
     /** {@inheritDoc} */
     @Override public final int[] spread() {
@@ -73,8 +73,8 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /** {@inheritDoc} */
 <span class="fc" id="L74">    @Override public final int[] indicesOfIndex( int index ) { int[] indices = new int[ _shape.length ];</span>
 <span class="fc bfc" id="L75" title="All 2 branches covered.">        for ( int ii=0; ii&lt;rank(); ii++ ) {</span>
-<span class="fc" id="L76">            indices[ ii ] += index / _translation_and_indicesMap[ ii ];</span>
-<span class="fc" id="L77">            index %= _translation_and_indicesMap[ ii ];</span>
+<span class="fc" id="L76">            indices[ ii ] += index / _strides_and_indicesMap[ ii ];</span>
+<span class="fc" id="L77">            index %= _strides_and_indicesMap[ ii ];</span>
         }
 <span class="fc" id="L79">        return indices;</span>
     }
@@ -82,10 +82,10 @@ public final class SimpleNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /** {@inheritDoc} */
     @Override public int indexOfIndices( int[] indices ) {
 <span class="fc" id="L84">        int i = 0;</span>
-<span class="fc bfc" id="L85" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ ) i += indices[ ii ] * _translation_and_indicesMap[ ii ];</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ ) i += indices[ ii ] * _strides_and_indicesMap[ ii ];</span>
 <span class="fc" id="L86">        return i;</span>
     }
 
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

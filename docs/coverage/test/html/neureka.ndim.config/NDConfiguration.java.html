@@ -35,6 +35,7 @@ SOFTWARE.
 package neureka.ndim.config;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -43,59 +44,95 @@ import java.util.stream.IntStream;
 public interface NDConfiguration
 {
     static NDConfiguration of(
-            int[] shape,
-            int[] translation,
+            int[] shape, // The shape of the tensor.
+            int[] strides, // Strides are the distances between elements of a tensor in each dimension.
             int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-<span class="fc" id="L52">        return AbstractNDC.construct(shape, translation, indicesMap, spread, offset);</span>
+<span class="fc" id="L53">        return AbstractNDC.construct(shape, strides, indicesMap, spread, offset);</span>
     }
 
     /**
-     * Types of common data layouts.
+     * Types of common data layouts: &lt;br&gt;
+     * &lt;ul&gt;
+     *     &lt;li&gt;ROW_MAJOR
+     *          &lt;p&gt;
+     *              Row major means that row elements are right next to one another
+     *              in the underlying data array of a tensor.
+     *              This is the default layout for tensors.
+     *          &lt;/p&gt;
+     *     &lt;/li&gt;
+     *     &lt;li&gt;COLUMN_MAJOR
+     *          &lt;p&gt;
+     *               Column major means that column elements are right next to one another
+     *               in the underlying data array of a tensor.
+     *          &lt;/p&gt;
+     *     &lt;/li&gt;
+     *     &lt;li&gt;SYMMETRIC
+     *          &lt;p&gt;
+     *               Symmetric means that the tensor can either be interpreted as a row vector or a column vector.
+     *               Row major means that items are stored in a row-wise fashion
+     *               and column major means that items are stored in a column-wise fashion.
+     *               A vector can be interpreted as a row vector or a column vector and thus is symmetric.
+     *          &lt;/p&gt;
+     *     &lt;/li&gt;
+     *     &lt;li&gt;UNSPECIFIC
+     *          &lt;p&gt;
+     *              Unspecific means that the tensor is not row major or column major.
+     *              This is the case for tensors which are slices of other tensors or tensors which have been permuted.
+     *          &lt;/p&gt;
+     *     &lt;/li&gt;
+     * &lt;/ul&gt;
      */
-<span class="fc" id="L58">    enum Layout {</span>
-<span class="fc" id="L59">        ROW_MAJOR,</span>
-<span class="fc" id="L60">        COLUMN_MAJOR,</span>
-<span class="fc" id="L61">        SYMMETRIC, // Both row- and column-major compatible!</span>
-<span class="fc" id="L62">        UNSPECIFIC; // Possibly a slice or something reshaped/permuted or whatnot...</span>
+<span class="fc" id="L88">    enum Layout</span>
+    {
+<span class="fc" id="L90">        ROW_MAJOR,</span>
+<span class="fc" id="L91">        COLUMN_MAJOR,</span>
+<span class="fc" id="L92">        SYMMETRIC, // Both row- and column-major compatible!</span>
+<span class="fc" id="L93">        UNSPECIFIC; // Possibly a slice or something reshaped/permuted or whatnot...</span>
 
         public boolean isCompatible(Layout other) {
-<span class="pc bpc" id="L65" title="2 of 4 branches missed.">            if (this == UNSPECIFIC || other == UNSPECIFIC) return false;</span>
-<span class="fc bfc" id="L66" title="All 4 branches covered.">            if (this == SYMMETRIC || other == SYMMETRIC) return true;</span>
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">            return this == other;</span>
+<span class="pc bpc" id="L96" title="2 of 4 branches missed.">            if (this == UNSPECIFIC || other == UNSPECIFIC) return false;</span>
+<span class="fc bfc" id="L97" title="All 4 branches covered.">            if (this == SYMMETRIC || other == SYMMETRIC) return true;</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">            return this == other;</span>
         }
 
-        
-        public int[] newTranslationFor(int[] shape) {
-<span class="fc" id="L72">            int[] translation = new int[shape.length];</span>
-<span class="fc" id="L73">            int prod = 1;</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">            if (this == COLUMN_MAJOR) {</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">                for (int i = 0; i &lt; translation.length; i++) {</span>
-<span class="fc" id="L76">                    translation[i] = prod;</span>
-<span class="fc" id="L77">                    prod *= shape[i];</span>
-                }
-<span class="pc bpc" id="L79" title="1 of 6 branches missed.">            } else if (this == ROW_MAJOR || this == UNSPECIFIC || this == SYMMETRIC) {</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">                for (int i = translation.length - 1; i &gt;= 0; i--) {</span>
-<span class="fc" id="L81">                    translation[i] = prod;</span>
-<span class="fc" id="L82">                    prod *= shape[i];</span>
+
+        public int[] newStridesFor(int[] shape) {
+<span class="fc" id="L103">            int[] order = new int[shape.length];</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            for ( int i = 0; i &lt; shape.length; i++ )</span>
+<span class="fc" id="L105">                order[i] = shape.length - 1 - i;</span>
+
+<span class="fc bfc" id="L107" title="All 4 branches covered.">            if ( this == COLUMN_MAJOR &amp;&amp; shape.length &gt; 1 ) {</span>
+                // Swap the first two elements of the order array:
+<span class="fc" id="L109">                int tmp  = order[0];</span>
+<span class="fc" id="L110">                order[0] = order[1];</span>
+<span class="fc" id="L111">                order[1] = tmp;</span>
+            }
+
+<span class="fc" id="L114">            int[] strides = new int[shape.length];</span>
+<span class="fc" id="L115">            int prod = 1;</span>
+<span class="pc bpc" id="L116" title="1 of 8 branches missed.">            if ( this == COLUMN_MAJOR || this == ROW_MAJOR || this == UNSPECIFIC || this == SYMMETRIC) {</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                for ( int i : order ) {</span>
+<span class="fc" id="L118">                    strides[i] = prod;</span>
+<span class="fc" id="L119">                    prod *= shape[i];</span>
                 }
             } else
-<span class="nc" id="L85">                throw new IllegalStateException(&quot;Unknown data layout!&quot;);</span>
+<span class="nc" id="L122">                throw new IllegalStateException(&quot;Unknown data layout!&quot;);</span>
 
-<span class="fc" id="L87">            return translation;</span>
+<span class="fc" id="L124">            return strides;</span>
         }
 
         
         public int[] rearrange(int[] tln, int[] shape, int[] newForm) {
-<span class="fc" id="L92">            int[] shpTln = this.newTranslationFor(shape);</span>
-<span class="fc" id="L93">            int[] newTln = new int[newForm.length];</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">                if (newForm[i] &lt; 0) newTln[i] = shpTln[i];</span>
-<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newTln[i] = tln[newForm[i]];</span>
+<span class="fc" id="L129">            int[] shpTln = this.newStridesFor(shape);</span>
+<span class="fc" id="L130">            int[] newTln = new int[newForm.length];</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">                if (newForm[i] &lt; 0) newTln[i] = shpTln[i];</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">                else if (newForm[i] &gt;= 0) newTln[i] = tln[newForm[i]];</span>
             }
-<span class="fc" id="L98">            return newTln;</span>
+<span class="fc" id="L135">            return newTln;</span>
         }
     }
 
@@ -111,34 +148,26 @@ public interface NDConfiguration
      * @return The layout of the underlying data array of a tensor.
      */
     default Layout getLayout() {
-<span class="fc bfc" id="L114" title="All 2 branches covered.">        if ( !this.isCompact() ) // Non-compact tensors have at least 1 stride greater than 1 AND at least 1 offset greater than 0!</span>
-<span class="fc" id="L115">            return Layout.UNSPECIFIC;</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if ( !this.isCompact() ) // Non-compact tensors have at least 1 step/spread greater than 1 AND at least 1 offset greater than 0!</span>
+<span class="fc" id="L152">            return Layout.UNSPECIFIC;</span>
         else {
-<span class="fc" id="L117">            int[] translationRM = Layout.ROW_MAJOR.newTranslationFor(this.shape());</span>
-<span class="fc" id="L118">            boolean hasRMIndices = Arrays.equals(translationRM, indicesMap());</span>
-<span class="fc bfc" id="L119" title="All 4 branches covered.">            boolean isRM = (Arrays.equals(translationRM, translation()) &amp;&amp; hasRMIndices);</span>
+<span class="fc" id="L154">            int[] stridesRM = Layout.ROW_MAJOR.newStridesFor(this.shape());</span>
+<span class="fc" id="L155">            boolean hasRMIndices = Arrays.equals(stridesRM, indicesMap());</span>
+<span class="fc bfc" id="L156" title="All 4 branches covered.">            boolean isRM = (Arrays.equals(stridesRM, strides()) &amp;&amp; hasRMIndices);</span>
 
-<span class="fc" id="L121">            int[] translationCM = Layout.COLUMN_MAJOR.newTranslationFor(this.shape());</span>
-<span class="fc bfc" id="L122" title="All 4 branches covered.">            boolean isCM = (Arrays.equals(translationCM, translation()) &amp;&amp; hasRMIndices);</span>
+<span class="fc" id="L158">            int[] stridesCM = Layout.COLUMN_MAJOR.newStridesFor(this.shape());</span>
+<span class="fc bfc" id="L159" title="All 4 branches covered.">            boolean isCM = (Arrays.equals(stridesCM, strides()) &amp;&amp; hasRMIndices);</span>
 
-<span class="fc bfc" id="L124" title="All 4 branches covered.">            if ( isRM &amp;&amp; isCM ) return Layout.SYMMETRIC;</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">            if ( isRM         ) return Layout.ROW_MAJOR;</span>
-<span class="fc bfc" id="L126" title="All 2 branches covered.">            if (         isCM ) return Layout.COLUMN_MAJOR;</span>
+<span class="fc bfc" id="L161" title="All 4 branches covered.">            if ( isRM &amp;&amp; isCM ) return Layout.SYMMETRIC;</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            if ( isRM         ) return Layout.ROW_MAJOR;</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (         isCM ) return Layout.COLUMN_MAJOR;</span>
         }
-<span class="fc" id="L128">        return Layout.UNSPECIFIC;</span>
+<span class="fc" id="L165">        return Layout.UNSPECIFIC;</span>
     }
 
-    /**
-     * A slice has a unique kind of access pattern which require
-     * a the {@link neureka.ndim.iterator.NDIterator} for iterating over their data.
-     * This is contrary to the {@link #isSimple()} flag which guarantees
-     * a simple access pattern.
-     * &lt;b&gt;Note: The flag returned by this method does not necessarily
-     * mean that this is the {@link NDConfiguration} of a slice!&lt;/b&gt;
-     *
-     * @return The truth value determining if this ND-Configuration models a slice index pattern.
-     */
-<span class="nc bnc" id="L141" title="All 2 branches missed.">    default boolean isNotSimple() { return !this.isSimple(); }</span>
+<span class="fc" id="L168">    default List&lt;NDTrait&gt; getTraits() { return NDTrait.traitsOf(this); }</span>
+
+<span class="nc" id="L170">    default boolean has( NDTrait trait ) { return NDTrait.traitsOf(this).contains(trait); }</span>
 
     /**
      * This method returns the number of axis of
@@ -149,7 +178,7 @@ public interface NDConfiguration
      */
     int rank();
 
-<span class="fc" id="L152">    default int size() { return Arrays.stream(shape()).reduce(1, (a, b) -&gt; a * b); }</span>
+<span class="fc" id="L181">    default int size() { return Arrays.stream(shape()).reduce(1, (a, b) -&gt; a * b); }</span>
 
     /**
      * This method returns an array of axis sizes.
@@ -201,7 +230,7 @@ public interface NDConfiguration
      *
      * @return An array of values used to translate the axes indices to a data array index.
      */
-    int[] translation();
+    int[] strides();
 
     /**
      * This method receives an axis index and returns the
@@ -212,7 +241,7 @@ public interface NDConfiguration
      * @param i The index of the axis whose translation ought to be returned.
      * @return The axis translation targeted by the provided index.
      */
-    int translation(int i);
+    int strides( int i );
 
     /**
      * The spread is the access step size of a slice within the n-dimensional
@@ -292,20 +321,20 @@ public interface NDConfiguration
      * define this nd-configuration in a compact manner.
      * The array consists of the following arrays joined
      * in the following order:
-     * [ shape | translation | indicesMap | offsets | strides ]
+     * [ shape | translation | indicesMap | offsets | spreads ]
      *
      * @return An array of flattened arrays which define this nd-configuration in a compact manner.
      */
     default int[] asInlineArray() {
-<span class="fc" id="L300">        int rank = rank();</span>
-<span class="fc" id="L301">        int[] inline = new int[rank * 5];</span>
-        //config format: [ shape | translation | indicesMap | offsets | strides ]
-<span class="fc" id="L303">        System.arraycopy(shape(),       0, inline, rank * 0, rank); //=&gt; SHAPE</span>
-<span class="fc" id="L304">        System.arraycopy(translation(), 0, inline, rank * 1, rank); //=&gt; TRANSLATION (translates n-dimensional indices to an index)</span>
-<span class="fc" id="L305">        System.arraycopy(indicesMap(),  0, inline, rank * 2, rank); //=&gt; INDICES MAP (translates scalar to n-dimensional index)</span>
-<span class="fc" id="L306">        System.arraycopy(offset(),      0, inline, rank * 3, rank); //=&gt; SPREAD / STRIDES (step size for dimensions in underlying parent tensor)</span>
-<span class="fc" id="L307">        System.arraycopy(spread(),      0, inline, rank * 4, rank); //=&gt; OFFSET (nd-position inside underlying parent tensor)</span>
-<span class="fc" id="L308">        return inline;</span>
+<span class="fc" id="L329">        int rank = rank();</span>
+<span class="fc" id="L330">        int[] inline = new int[rank * 5];</span>
+        //config format: [ shape | translation | indicesMap | offsets | spreads ]
+<span class="fc" id="L332">        System.arraycopy(shape(),       0, inline, rank * 0, rank); //=&gt; SHAPE</span>
+<span class="fc" id="L333">        System.arraycopy(strides(), 0, inline, rank * 1, rank); //=&gt; TRANSLATION (translates n-dimensional indices to an index)</span>
+<span class="fc" id="L334">        System.arraycopy(indicesMap(),  0, inline, rank * 2, rank); //=&gt; INDICES MAP (translates scalar to n-dimensional index)</span>
+<span class="fc" id="L335">        System.arraycopy(offset(),      0, inline, rank * 3, rank); //=&gt; SPREAD / STRIDES (step size for dimensions in underlying parent tensor)</span>
+<span class="fc" id="L336">        System.arraycopy(spread(),      0, inline, rank * 4, rank); //=&gt; OFFSET (nd-position inside underlying parent tensor)</span>
+<span class="fc" id="L337">        return inline;</span>
     }
 
     int hashCode();
@@ -338,38 +367,38 @@ public interface NDConfiguration
      * @return The truth value determining if this configuration is not modeling more complex indices like permuted views or slices...
      */
     default boolean isSimple() {
-<span class="fc" id="L341">        int[] simpleTranslation = this.getLayout().newTranslationFor(this.shape());</span>
-<span class="fc bfc" id="L342" title="All 2 branches covered.">        return Arrays.equals(this.translation(), simpleTranslation)</span>
-                &amp;&amp;
-<span class="fc bfc" id="L344" title="All 2 branches covered.">                Arrays.equals(this.indicesMap(), simpleTranslation)</span>
-                &amp;&amp;
-<span class="fc bfc" id="L346" title="All 2 branches covered.">                isCompact();</span>
+<span class="fc" id="L370">        int[] simpleTranslation = this.getLayout().newStridesFor(this.shape());</span>
+<span class="fc bfc" id="L371" title="All 2 branches covered.">        return Arrays.equals(this.strides(), simpleTranslation)</span>
+                    &amp;&amp;
+<span class="fc bfc" id="L373" title="All 2 branches covered.">                Arrays.equals(this.indicesMap(), simpleTranslation)</span>
+                    &amp;&amp;
+<span class="fc bfc" id="L375" title="All 2 branches covered.">                isCompact();</span>
     }
 
     /**
      * {@link NDConfiguration} instance where this flag is true
      * will most likely not be slices because they have no offset (all 0)
-     * and a compact spread / stride array (all 1).
+     * and a compact spread / step array (all 1).
      *
-     * @return The truth value determining if this configuration has no offset and spread/strides larger than 1.
+     * @return The truth value determining if this configuration has no offset and spread/steps larger than 1.
      */
     default boolean isCompact() {
-<span class="fc" id="L357">        return</span>
-<span class="fc bfc" id="L358" title="All 4 branches covered.">                IntStream.range(0, this.rank()).allMatch(i -&gt; this.spread(i) == 1)</span>
-                        &amp;&amp;
-<span class="fc bfc" id="L360" title="All 4 branches covered.">                IntStream.range(0, this.rank()).allMatch(i -&gt; this.offset(i) == 0);</span>
+<span class="fc" id="L386">        return</span>
+<span class="fc bfc" id="L387" title="All 6 branches covered.">            IntStream.range(0, this.rank()).allMatch( i -&gt; this.spread(i) == 1 || this.spread(i) == 0 )</span>
+                    &amp;&amp;
+<span class="fc bfc" id="L389" title="All 4 branches covered.">            IntStream.range(0, this.rank()).allMatch(i -&gt; this.offset(i) == 0);</span>
     }
 
     /**
      * @return The truth value determining if this {@link NDConfiguration}
      * represents virtual tensors (see {@link neureka.Tsr#isVirtual()}).
      */
-<span class="fc" id="L367">    default boolean isVirtual() { return false; }</span>
+<span class="fc" id="L396">    default boolean isVirtual() { return false; }</span>
 
     /**
      * @return A function which can map tensor indices to the indices of its data array.
      */
-<span class="fc" id="L372">    default IndexToIndexFunction getIndexToIndexAccessPattern() { return this::indexOfIndex; }</span>
+<span class="fc" id="L401">    default IndexToIndexFunction getIndexToIndexAccessPattern() { return this::indexOfIndex; }</span>
 
     /**
      *  Implementations of this are produced and returned by the {@link #getIndexToIndexAccessPattern()}
@@ -385,62 +414,62 @@ public interface NDConfiguration
      * for nd-configuration related operations like reshaping,
      * incrementing or decrementing index arrays...
      */
-<span class="nc" id="L388">    class Utility {</span>
+<span class="nc" id="L417">    class Utility {</span>
         
         public static int[] rearrange(int[] array, int[] pointers) {
-<span class="fc" id="L391">            int[] newShp = new int[pointers.length];</span>
-<span class="fc bfc" id="L392" title="All 2 branches covered.">            for (int i = 0; i &lt; pointers.length; i++) {</span>
-<span class="fc bfc" id="L393" title="All 2 branches covered.">                if (pointers[i] &lt; 0) newShp[i] = Math.abs(pointers[i]);</span>
-<span class="pc bpc" id="L394" title="1 of 2 branches missed.">                else if (pointers[i] &gt;= 0) newShp[i] = array[pointers[i]];</span>
+<span class="fc" id="L420">            int[] newShp = new int[pointers.length];</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">            for (int i = 0; i &lt; pointers.length; i++) {</span>
+<span class="fc bfc" id="L422" title="All 2 branches covered.">                if (pointers[i] &lt; 0) newShp[i] = Math.abs(pointers[i]);</span>
+<span class="pc bpc" id="L423" title="1 of 2 branches missed.">                else if (pointers[i] &gt;= 0) newShp[i] = array[pointers[i]];</span>
             }
-<span class="fc" id="L396">            return newShp;</span>
+<span class="fc" id="L425">            return newShp;</span>
         }
 
         
         public static void increment(int[] indices, int[] shape) {
-<span class="fc" id="L401">            int i = shape.length - 1;</span>
-<span class="pc bpc" id="L402" title="1 of 4 branches missed.">            while (i &gt;= 0 &amp;&amp; i &lt; shape.length) i = _incrementAt(i, indices, shape);</span>
-<span class="fc" id="L403">        }</span>
+<span class="fc" id="L430">            int i = shape.length - 1;</span>
+<span class="pc bpc" id="L431" title="1 of 4 branches missed.">            while (i &gt;= 0 &amp;&amp; i &lt; shape.length) i = _incrementAt(i, indices, shape);</span>
+<span class="fc" id="L432">        }</span>
 
         
         private static int _incrementAt(int i, int[] indices, int[] shape) {
-<span class="pc bpc" id="L407" title="1 of 2 branches missed.">            if (indices[i] &lt; shape[i]) {</span>
-<span class="fc" id="L408">                indices[i]++;</span>
-<span class="fc bfc" id="L409" title="All 2 branches covered.">                if (indices[i] == shape[i]) {</span>
-<span class="fc" id="L410">                    indices[i] = 0;</span>
-<span class="fc" id="L411">                    i--;</span>
-<span class="fc" id="L412">                } else i = -1;</span>
-<span class="nc" id="L413">            } else i--;</span>
-<span class="fc" id="L414">            return i;</span>
+<span class="pc bpc" id="L436" title="1 of 2 branches missed.">            if (indices[i] &lt; shape[i]) {</span>
+<span class="fc" id="L437">                indices[i]++;</span>
+<span class="fc bfc" id="L438" title="All 2 branches covered.">                if (indices[i] == shape[i]) {</span>
+<span class="fc" id="L439">                    indices[i] = 0;</span>
+<span class="fc" id="L440">                    i--;</span>
+<span class="fc" id="L441">                } else i = -1;</span>
+<span class="nc" id="L442">            } else i--;</span>
+<span class="fc" id="L443">            return i;</span>
         }
 
         
         public static void decrement(int[] indices, int[] shape) {
-<span class="fc" id="L419">            int i = shape.length - 1;</span>
-<span class="pc bpc" id="L420" title="1 of 4 branches missed.">            while (i &gt;= 0 &amp;&amp; i &lt; shape.length) i = _decrementAt(i, indices, shape);</span>
-<span class="fc" id="L421">        }</span>
+<span class="fc" id="L448">            int i = shape.length - 1;</span>
+<span class="pc bpc" id="L449" title="1 of 4 branches missed.">            while (i &gt;= 0 &amp;&amp; i &lt; shape.length) i = _decrementAt(i, indices, shape);</span>
+<span class="fc" id="L450">        }</span>
 
         
         private static int _decrementAt(int i, int[] indices, int[] shape) {
-<span class="pc bpc" id="L425" title="1 of 2 branches missed.">            if (indices[i] &gt;= 0) {</span>
-<span class="fc" id="L426">                indices[i]--;</span>
-<span class="fc bfc" id="L427" title="All 2 branches covered.">                if (indices[i] == -1) {</span>
-<span class="fc" id="L428">                    indices[i] = shape[i] - 1;</span>
-<span class="fc" id="L429">                    i--;</span>
-<span class="fc" id="L430">                } else i = -1;</span>
-<span class="nc" id="L431">            } else i--;</span>
-<span class="fc" id="L432">            return i;</span>
+<span class="pc bpc" id="L454" title="1 of 2 branches missed.">            if (indices[i] &gt;= 0) {</span>
+<span class="fc" id="L455">                indices[i]--;</span>
+<span class="fc bfc" id="L456" title="All 2 branches covered.">                if (indices[i] == -1) {</span>
+<span class="fc" id="L457">                    indices[i] = shape[i] - 1;</span>
+<span class="fc" id="L458">                    i--;</span>
+<span class="fc" id="L459">                } else i = -1;</span>
+<span class="nc" id="L460">            } else i--;</span>
+<span class="fc" id="L461">            return i;</span>
         }
 
 
         
         public static int sizeOfShape( int[] shape ) {
-<span class="fc" id="L438">            int size = 1;</span>
-<span class="fc bfc" id="L439" title="All 2 branches covered.">            for (int i : shape) size *= i;</span>
-<span class="fc" id="L440">            return size;</span>
+<span class="fc" id="L467">            int size = 1;</span>
+<span class="fc bfc" id="L468" title="All 2 branches covered.">            for (int i : shape) size *= i;</span>
+<span class="fc" id="L469">            return size;</span>
         }
 
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

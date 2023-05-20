@@ -28,12 +28,12 @@ final class HandleFactory
 <span class="fc" id="L28">    public HandleFactory() {</span>
 <span class="pc" id="L29">        _LOADERS.put(&quot;idx&quot;, (name, conf) -&gt; new IDXHandle(name));</span>
 <span class="fc" id="L30">        _LOADERS.put(&quot;jpg&quot;, (name, conf) -&gt; new JPEGHandle(name));</span>
-<span class="fc" id="L31">        _LOADERS.put(&quot;png&quot;, (name, conf) -&gt; new PNGHandle(name)); // TODO!</span>
+<span class="fc" id="L31">        _LOADERS.put(&quot;png&quot;, (name, conf) -&gt; new PNGHandle(name));</span>
 <span class="fc" id="L32">        _LOADERS.put(&quot;csv&quot;, (name, conf) -&gt; new CSVHandle(name, conf));</span>
 
 <span class="fc" id="L34">        _SAVERS.put(&quot;idx&quot;, (name, tensor, conf) -&gt; new IDXHandle(tensor, name));</span>
 <span class="fc" id="L35">        _SAVERS.put(&quot;jpg&quot;, (name, tensor, conf) -&gt; new JPEGHandle(tensor, name));</span>
-<span class="fc" id="L36">        _SAVERS.put(&quot;png&quot;, (name, tensor, conf) -&gt; new PNGHandle(tensor, name)); // TODO!</span>
+<span class="fc" id="L36">        _SAVERS.put(&quot;png&quot;, (name, tensor, conf) -&gt; new PNGHandle(tensor, name));</span>
 <span class="fc" id="L37">        _SAVERS.put(&quot;csv&quot;, (name, tensor, conf) -&gt; new CSVHandle(tensor, name));</span>
 <span class="fc" id="L38">    }</span>
 
@@ -53,4 +53,4 @@ final class HandleFactory
 <span class="fc" id="L53">        return _SAVERS.get(name);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

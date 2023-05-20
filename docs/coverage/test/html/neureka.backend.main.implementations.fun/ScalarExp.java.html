@@ -21,17 +21,17 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
     public CPUFun getActivation() {
 <span class="fc" id="L22">        return new CPUFun() {</span>
 <span class="fc" id="L23">            @Override public double invoke(double x) { return Math.exp( x ); }</span>
-<span class="nc" id="L24">            @Override public float invoke(float x) { return (float) Math.exp( x ); }</span>
+<span class="fc" id="L24">            @Override public float invoke(float x) { return (float) Math.exp( x ); }</span>
         };
     }
 
     @Override
     public CPUFun getDerivative() {
-<span class="nc" id="L30">        return new CPUFun() {</span>
+<span class="fc" id="L30">        return new CPUFun() {</span>
 <span class="nc" id="L31">            @Override public double invoke(double x) { return Math.exp( x ); }</span>
-<span class="nc" id="L32">            @Override public float invoke(float x) { return (float) Math.exp( x ); }</span>
+<span class="fc" id="L32">            @Override public float invoke(float x) { return (float) Math.exp( x ); }</span>
         };
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

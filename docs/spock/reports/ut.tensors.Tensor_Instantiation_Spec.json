@@ -16,7 +16,7 @@
     {
       "id":"Vector tensors can be instantiated via factory methods.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -29,7 +29,7 @@
 
         {"kind":"and","text":"The tensor contains the expected items.","code":["t.items == data"]},
 
-        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.ref == data // This exposes the internal data array"]},
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.get() == data // This exposes the internal data array"]},
 
         {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["new double[]{1.1, 2.2, 3.3}","new float[]{-0.21, 543.3}","new boolean[]{true, false}","new short[]{1, 2, 99, -123}","new long[]{3, 8, 4, 2, 3, 0}","new int[]{66, 1, 4, 42, -40}"],"type":["Double","Float","Boolean","Short","Long","Integer"],"shape":["[ 3 ]","[ 2 ]","[ 2 ]","[ 4 ]","[ 6 ]","[ 5 ]"]}}
       ],
@@ -52,7 +52,7 @@
 
         {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
 
-        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.ref == [data] // Internal data","t.rawData == [data]"]},
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
 
         {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
 

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.026 seconds"
+    "duration":"0.018 seconds"
   },
   "headers":["\n                    This specification covers the behavior\n                    of tensors with respect to specifying aliases for\n                    indices and then using them for slicing.     \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can add labels to tensors through lists or maps passed to the \"label()\" method.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"A matrix (rank 2 tensor) can be labeled and their labels can be used to extract slices / subsets.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -97,7 +97,7 @@
 
         {"kind":"and","text":"When the tensor is converted to a String then the labels will be included:","code":["t.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[2x3x4]:(\\n\" +","      \"   [ 1 ]:(\\n\" +","      \"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\\n\" +","      \"      (  -7.0 ,  -6.0 ,  -5.0 ,  -4.0  ):[ a ],\\n\" +","      \"      (  -3.0 ,  -2.0 ,  -1.0 ,   0.0  ):[ b ],\\n\" +","      \"      (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ y ]\\n\" +","      \"   ),\\n\" +","      \"   [ 2 ]:(\\n\" +","      \"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\\n\" +","      \"      (   5.0 ,   6.0 ,   7.0 ,  -7.0  ):[ a ],\\n\" +","      \"      (  -6.0 ,  -5.0 ,  -4.0 ,  -3.0  ):[ b ],\\n\" +","      \"      (  -2.0 ,  -1.0 ,   0.0 ,   1.0  ):[ y ]\\n\" +","      \"   )\\n\" +","      \")\""]},
 
-        {"kind":"when","text":"Creating a slice by passing a single label, a range of labels and a range with stride...","code":["var s = t[\"2\", \"b\"..\"y\", [[\"tim\",\"tanya\"]:2]]"]},
+        {"kind":"when","text":"Creating a slice by passing a single label, a range of labels and a range with steps...","code":["var s = t[\"2\", \"b\"..\"y\", [[\"tim\",\"tanya\"]:2]]"]},
 
         {"kind":"then","text":"This new slice \"x\" then will yield true when using the \"contains\" operator on t.","code":["s in t"]},
 
@@ -111,11 +111,11 @@
 
         {"kind":"and","text":"The slice is not virtual.","code":["!s.isVirtual() // This might change if possible (technically difficult)"]},
 
-        {"kind":"when","text":"We slice the tensor t by passing a map of start and end labels as keys and strides as values.","code":["s = t[\"2\", [[\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
+        {"kind":"when","text":"We slice the tensor t by passing a map of start and end labels as keys and steps as values.","code":["s = t[\"2\", [[\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
 
         {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","        \"   [ 2 ]:(\\n\" +","        \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","        \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","        \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","        \"   )\\n\" +","        \")\"","!s.isVirtual() // This might change if possible (technically difficult)","s.isSlice()","t.isSliceParent()","t.sliceCount()==2"]},
 
-        {"kind":"when","text":"We slice the tensor t by passing a map of start and end labels as keys and strides as values.","code":["s = t[[[\"2\"]:1, [\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
+        {"kind":"when","text":"We slice the tensor t by passing a map of start and end labels as keys and steps as values.","code":["s = t[[[\"2\"]:1, [\"b\"..\"y\"]:1, [\"tim\",\"tanya\"]:2]]"]},
 
         {"kind":"then","text":"","code":["s in t","t.contains(s)","s.toString({","    it.rowLimit = 15","    it.isScientific = false","    it.isMultiline = true","    it.hasGradient = false","    it.cellSize = 6","    it.hasValue = true","    it.hasRecursiveGraph = false","    it.hasDerivatives = false","    it.hasShape =  true","    it.isCellBound = false","    it.postfix = \"\"","    it.prefix = \"\"","    it.hasSlimNumbers = false","}) == \"[1x2x2]:(\\n\" +","        \"   [ 2 ]:(\\n\" +","        \"      [   tim ][ tina  ]:[ My Tensor:slice ]\\n\" +","        \"      (  -6.0 ,  -4.0  ):[ b ],\\n\" +","        \"      (  -2.0 ,   0.0  ):[ y ]\\n\" +","        \"   )\\n\" +","        \")\"","!s.isVirtual() // This might change if possible (technically difficult)","s.isSlice()","t.isSliceParent()","t.sliceCount()==3"]},
 

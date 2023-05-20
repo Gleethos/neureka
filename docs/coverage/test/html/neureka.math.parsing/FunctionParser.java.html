@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
  *  The information needed for parsing is being provided by the {@link Operation}s within the formerly
  *  mentioned {@link BackendContext}...
  */
-<span class="pc bpc" id="L26" title="1 of 2 branches missed.">public class FunctionParser</span>
+public class FunctionParser
 {
 <span class="fc" id="L28">    private static final Logger _LOG = LoggerFactory.getLogger(FunctionParser.class);</span>
 
@@ -219,7 +219,7 @@ import java.util.stream.IntStream;
                                                                         foundComponent,
 <span class="fc" id="L220">                                                                        possibleFunction.length()</span>
                                                                 );
-<span class="pc bpc" id="L222" title="2 of 4 branches missed.">                    assert parameters != null;</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                    assert parameters != null;</span>
 <span class="fc bfc" id="L223" title="All 2 branches covered.">                    for ( String p : parameters ) sources.add(parse(p, doAD));</span>
 <span class="fc" id="L224">                    return new FunctionNode( _context.getOperation( oi ), sources, doAD );</span>
                 }
@@ -229,7 +229,7 @@ import java.util.stream.IntStream;
 <span class="fc" id="L229">        String component = ParseUtil.unpackAndCorrect( foundComponent );</span>
 
 <span class="fc bfc" id="L231" title="All 2 branches covered.">        if ( _constantPattern.matcher( component ).matches()   ) return new FunctionConstant( component );</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">        else if ( _inputPattern.matcher( component ).find()    ) return FunctionInput.of( component );</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        else if ( _inputPattern.matcher( component ).find()    ) return FunctionInput.of( component, doAD );</span>
 <span class="fc bfc" id="L233" title="All 2 branches covered.">        else if ( _variablePattern.matcher( component ).find() ) return new FunctionVariable( component );</span>
 <span class="fc bfc" id="L234" title="All 2 branches covered.">        else if ( component.startsWith(&quot;-&quot;) ) {</span>
 <span class="fc" id="L235">            component = &quot;-1 * &quot;+component.substring(1);</span>
@@ -330,4 +330,4 @@ import java.util.stream.IntStream;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

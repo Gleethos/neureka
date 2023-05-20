@@ -1,0 +1,77 @@
+{
+  "className":"st.Training_NNs_Spec",
+  "title":"Training a Neural Network Class",
+  "narrative":"When designing larger neural network architectures, what you would usually do is\n    to create a class that represents the whole model (which itself might be composed\n    of smaller models). \n\n    This class would then represent something that can be executed and then trained.\n    This Specification shows how to instantiate, execute and train various \n    pre-defined example neural network models.",
+  "subjects":[],
+  "statistics":{
+    "runs":"3",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"11.949 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"We can run the attention head test model.",
+      "result":"PASS",
+      "duration":"9.091 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            This little test simply executes the `QuasiMultiHeadAttention` model class\n            and checks if the loss is decreasing over time.\n            You can check out how this is implemented in the `QuasiMultiHeadAttention` class.\n            Here you will only see how the training is executed.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["int trainingIterations = 60","var input  = Tsr.of( -2f, -1f, 0f, 1f, 2f ).reshape( 1, 5 )","var target = Tsr.of( 0.2f, 1f, 0f, -1f, -0.2f ).reshape( 1, 5 )"]},
+
+        {"kind":"and","text":"","code":["var model = new QuasiMultiHeadAttention(5, 1)"]},
+
+        {"kind":"when","text":"","code":["var pred = null","var loss = []","trainingIterations.times {","    pred = model.run( [input] )","    loss << model.train( target )","    //println( \"Loss: ${loss[loss.size()-1]} Prediction: ${pred.items()}\" )","}"]},
+
+        {"kind":"then","text":"","code":["pred.shape == [1, 5]","loss.size() == trainingIterations","loss[0] > loss[trainingIterations-1]","loss[0].round(3) == 9.127","loss[trainingIterations-1] < 0.75"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A simple 3 layer neural network converges.",
+      "result":"PASS",
+      "duration":"2.137 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var predictor = new SimpleFeedForwardNN(5, 42)","var input = Tsr.of( -0.2f, -0.1f, 0f, 0.1f, 0.2f ).reshape( 1, 5 )","var target = Tsr.of( 0.2f, 0.1f, 0f, -0.1f, -0.2f ).reshape( 1, 5 )"]},
+
+        {"kind":"when","text":"","code":["var pred","var loss = []","100.times {","    pred = predictor.forward( input )","    loss << predictor.train( target )","    //println( \"Loss: ${loss.last()}\" )","    //println( \"Prediction: ${pred}\" )","}"]},
+
+        {"kind":"then","text":"","code":["pred.shape == [1, 5]","loss.size() == 100","loss[0] > loss[99]","loss[0] > 1","loss[99] < 0.005"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A very simple 1 layer NN converges.",
+      "result":"PASS",
+      "duration":"0.714 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var inputs = Tsr.ofFloats().withShape( 2, 6 ).andFill(-4f..3f)","var weights = Tsr.ofRandom(Float, 6, 1)","var targets = Tsr.of( 0.2f, -0.1f, 0.5f, 1.2f, -0.3f, 0.2f ).reshape( 2, 1 )"]},
+
+        {"kind":"and","text":"","code":["weights.setRqsGradient( true )","applyOptimizer.accept(weights)"]},
+
+        {"kind":"and","text":"","code":["var pred","var losses = []"]},
+
+        {"kind":"when","text":"","code":["100.times {","    pred = inputs.matMul( weights ).tanh()","    var loss = ((pred - targets)**2).sum()","    loss.backward()","    weights.applyGradient()","    losses << loss.item()","}"]},
+
+        {"kind":"then","text":"","code":["pred.shape == [2, 1]","losses[0] > losses[losses.size()-1]","losses[0] > 2","losses[losses.size()-1] < 0.5"]},
+
+        {"kind":"where","text":"","code":{"applyOptimizer":["{ it.set(Optimizer.SGD.withLearningRate(0.03)) }","{ it.set(Optimizer.ADAM) }","{ it.set(Optimizer.RMSProp.withLearningRate(0.05)) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

@@ -12,10 +12,10 @@ import java.util.function.Supplier;
  */
 public final class LazyRef&lt;V&gt;
 {
-<span class="fc" id="L15">    public static &lt;V&gt; LazyRef&lt;V&gt; of( Supplier&lt;V&gt; source ) { return new LazyRef&lt;&gt;(source); }</span>
-
     private Supplier&lt;V&gt; _source;
-<span class="fc" id="L18">    private V _variable = null;</span>
+<span class="fc" id="L16">    private V _variable = null;</span>
+
+<span class="fc" id="L18">    public static &lt;V&gt; LazyRef&lt;V&gt; of( Supplier&lt;V&gt; source ) { return new LazyRef&lt;&gt;(source); }</span>
 
 <span class="fc" id="L20">    private LazyRef(Supplier&lt;V&gt; source) { _source = source; }</span>
 
@@ -41,4 +41,4 @@ public final class LazyRef&lt;V&gt;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

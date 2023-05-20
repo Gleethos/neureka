@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DotProduct.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear</a> &gt; <span class="el_source">DotProduct.java</span></div><h1>DotProduct.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.linear;
+
+import neureka.backend.api.template.operations.AbstractOperation;
+import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.backend.main.algorithms.DotProductAlgorithm;
+import neureka.math.Function;
+
+public class DotProduct extends AbstractOperation
+{
+    public DotProduct() {
+<span class="fc" id="L11">        super(</span>
+            new OperationBuilder()
+<span class="fc" id="L13">            .identifier(       &quot;dot&quot;       )</span>
+<span class="fc" id="L14">            .operator(         &quot;dot&quot;       )</span>
+<span class="fc" id="L15">            .arity(            2           )</span>
+<span class="fc" id="L16">            .isOperator(       false       )</span>
+<span class="fc" id="L17">            .isIndexer(        false       )</span>
+<span class="fc" id="L18">            .isDifferentiable( true        )</span>
+<span class="fc" id="L19">            .isInline(         false       )</span>
+        );
+<span class="fc" id="L21">        setAlgorithm(</span>
+<span class="fc" id="L22">            new DotProductAlgorithm().buildFunAlgorithm()</span>
+        );
+<span class="fc" id="L24">    }</span>
+
+    @Override
+    public double calculate(double[] inputs, int j, int d, Function[] src) {
+<span class="nc" id="L28">        throw new UnsupportedOperationException();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

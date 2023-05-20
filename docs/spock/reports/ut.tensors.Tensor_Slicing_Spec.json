@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.031 seconds"
+    "duration":"0.020 seconds"
   },
   "headers":["\n                This specification covers the behavior of tensors when being sliced\n                on multiple different device types using the slice builder API.           \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,7 +45,7 @@
     {
       "id":"The \"at\" method and the \"from\" / \"to\" methods can be mixed when slicing a tensor.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -74,7 +74,7 @@
     {
       "id":"A tensor can be sliced by passing ranges in the form of primitive arrays.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -103,7 +103,7 @@
     {
       "id":"A tensor can be sliced by passing ranges in the form of lists (Groovy ranges).",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -159,14 +159,14 @@
     {
       "id":"Slicing is also a Function with autograd support!",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A 2 dimensional tensor requiring gradients.","code":["var t = Tsr.ofBytes().withShape(4, 4).andFill(-1, 7, 3).setRqsGradient(true)"]},
 
-        {"kind":"and","text":"3 arrays we need to slice (the slice shape, offset and spread/strides).","code":["int[] newShape  = [2, 2]","int[] newOffset = [1, 1]","int[] newSpread = [1, 1]"]},
+        {"kind":"and","text":"3 arrays we need to slice (the slice shape, offset and spread/steps).","code":["int[] newShape  = [2, 2]","int[] newOffset = [1, 1]","int[] newSpread = [1, 1]"]},
 
         {"kind":"when","text":"Slicing the tensor using the slice function.","code":["Tsr<Object> slice = Function.of(\"slice(I[0])\", true)","                        .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))","                        .call(t)"]},
 

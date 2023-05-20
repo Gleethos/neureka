@@ -353,13 +353,13 @@ public final class NdaAsString
     private void _stringifyAllValues()
     {
 <span class="fc" id="L355">        int max = _rowLimit;</span>
-<span class="fc bfc" id="L356" title="All 2 branches covered.">        Object data = ( _tensor.isOutsourced() ? _tensor.getRawData() : _tensor.getMut().getData().getRef() );</span>
+<span class="fc bfc" id="L356" title="All 2 branches covered.">        Object data = ( _tensor.isOutsourced() ? _tensor.getRawData() : _tensor.getMut().getData().getOrNull() );</span>
 <span class="fc" id="L357">        ValStringifier getter = _createValStringifierAndFormatter( data );</span>
 <span class="fc" id="L358">        int size = _tensor.size();</span>
 <span class="fc" id="L359">        int trim = ( size - max );</span>
 <span class="fc bfc" id="L360" title="All 2 branches covered.">        size = ( trim &gt; 0 ? max : size );</span>
 <span class="fc bfc" id="L361" title="All 2 branches covered.">        for ( int i = 0; i &lt; size; i++ ) {</span>
-<span class="fc bfc" id="L362" title="All 2 branches covered.">            String vStr = getter.stringify( ( _tensor.isVirtual() ) ? 0 : _tensor.indexOfIndex( i ) );</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">            String vStr = getter.stringify( _tensor.isVirtual() ? 0 : _tensor.indexOfIndex( i ) );</span>
 <span class="fc" id="L363">            _$( vStr );</span>
 <span class="fc bfc" id="L364" title="All 2 branches covered.">            if ( i &lt; size - 1 ) _$( &quot;, &quot; );</span>
 <span class="fc bfc" id="L365" title="All 2 branches covered.">            else if ( trim &gt; 0 ) _$( &quot;, ... + &quot; )._$( trim )._$( &quot; more&quot; );</span>
@@ -608,4 +608,4 @@ public final class NdaAsString
 
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -7,7 +7,7 @@ import neureka.backend.main.implementations.fun.api.CPUBiFun;
 import neureka.devices.host.CPU;
 import neureka.ndim.iterator.NDIterator;
 
-<span class="pc bpc" id="L10" title="1 of 2 branches missed.">public abstract class CPUBiElementWise implements ImplementationFor&lt;CPU&gt;</span>
+<span class="fc" id="L10">public abstract class CPUBiElementWise implements ImplementationFor&lt;CPU&gt;</span>
 {
     protected abstract CPUBiFun _getFun();
     protected abstract CPUBiFun _getDeriveAt0();
@@ -62,9 +62,9 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L62">        double[] t1_val = t1_src.mut().getDataAs( double[].class );</span>
 <span class="fc" id="L63">        double[] t2_val = t2_src.mut().getDataAs( double[].class );</span>
 
-<span class="pc bpc" id="L65" title="2 of 4 branches missed.">        assert t0_val != null;</span>
-<span class="pc bpc" id="L66" title="2 of 4 branches missed.">        assert t1_val != null;</span>
-<span class="pc bpc" id="L67" title="2 of 4 branches missed.">        assert t2_val != null;</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        assert t0_val != null;</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        assert t1_val != null;</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        assert t2_val != null;</span>
 
 <span class="fc bfc" id="L69" title="All 6 branches covered.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
 
@@ -107,9 +107,9 @@ import neureka.ndim.iterator.NDIterator;
 <span class="fc" id="L107">        float[] t1_val = t1_src.mut().getDataAs( float[].class );</span>
 <span class="fc" id="L108">        float[] t2_val = t2_src.mut().getDataAs( float[].class );</span>
 
-<span class="pc bpc" id="L110" title="2 of 4 branches missed.">        assert t0_val != null;</span>
-<span class="pc bpc" id="L111" title="2 of 4 branches missed.">        assert t1_val != null;</span>
-<span class="pc bpc" id="L112" title="2 of 4 branches missed.">        assert t2_val != null;</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        assert t0_val != null;</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        assert t1_val != null;</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        assert t2_val != null;</span>
 
 <span class="pc bpc" id="L114" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
 
@@ -147,13 +147,13 @@ import neureka.ndim.iterator.NDIterator;
     ) {
 <span class="fc" id="L148">        t1_src.mut().setIsVirtual( false );</span>
 <span class="fc" id="L149">        t2_src.mut().setIsVirtual( false );</span>
-<span class="fc" id="L150">        int[] t0_val = (int[]) t0_drn.mut().getData().getRef();</span>
+<span class="fc" id="L150">        int[] t0_val = t0_drn.mut().getData().as(int[].class);</span>
 <span class="fc" id="L151">        int[] t1_val = t1_src.mut().getDataAs( int[].class );</span>
 <span class="fc" id="L152">        int[] t2_val = t2_src.mut().getDataAs( int[].class );</span>
 
-<span class="pc bpc" id="L154" title="2 of 4 branches missed.">        assert t0_val != null;</span>
-<span class="pc bpc" id="L155" title="2 of 4 branches missed.">        assert t1_val != null;</span>
-<span class="pc bpc" id="L156" title="2 of 4 branches missed.">        assert t2_val != null;</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        assert t0_val != null;</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        assert t1_val != null;</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        assert t2_val != null;</span>
 
 <span class="pc bpc" id="L158" title="1 of 6 branches missed.">        boolean isSimple = t0_drn.getNDConf().isSimple() &amp;&amp; t1_src.getNDConf().isSimple() &amp;&amp; t2_src.getNDConf().isSimple();</span>
 
@@ -186,4 +186,4 @@ import neureka.ndim.iterator.NDIterator;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

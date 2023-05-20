@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"1.422 seconds"
+    "duration":"0.905 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.421 seconds",
+      "duration":"0.048 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
 
         {"kind":"then","text":"","code":["s.toString({it.hasSlimNumbers = true}) ==","        \"(2x3x1x3):[\" +","            \"198, -6.5, \" +","            \"36, -2.5, \" +","            \"2, 6.5, \" +","            \"\" +","            \"101, 0, \" +","            \"15, 4, \" +","            \"146, 13, \" +","            \"\" +","            \"400, 17, \" +","            \"194, 15.5, \" +","            \"101, -4.5\" +","        \"]\""]},
 
-        {"kind":"and","text":"","code":["(device instanceof OpenCLDevice) || s.mut.data.ref == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]","(device instanceof OpenCLDevice) || source.mut.data.ref == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]"]},
+        {"kind":"and","text":"","code":["(device instanceof OpenCLDevice) || s.mut.data.get() == [198.0, -6.5, 36.0, -2.5, 2.0, 6.5, 101.0, 0.0, 15.0, 4.0, 146.0, 13.0, 400.0, 17.0, 194.0, 15.5, 101.0, -4.5]","(device instanceof OpenCLDevice) || source.mut.data.get() == [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -4.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 2.0, -4.0, -3.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 2.0, -4.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -3.0, -2.0, -1.0, -1.0, -1.0, -1.0]"]},
 
         {"kind":"cleanup","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }"]},
 
@@ -47,7 +47,7 @@
     {
       "id":"Dot operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.044 seconds",
+      "duration":"0.031 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"The broadcast operation stress test runs error free and produces expected result",
       "result":"PASS",
-      "duration":"0.079 seconds",
+      "duration":"0.037 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
 
         {"kind":"cleanup","text":"","code":["Neureka.get().backend.find(CLBackend).ifPresent { it.settings.autoConvertToFloat = false }"]},
 
-        {"kind":"where","text":"","code":{"device":["CPU.get()","CPU.get()","CPU.get()","CPU.get()","Device.get('gpu')","Device.get('gpu')","CPU.get()","CPU.get()","Device.get('gpu')","Device.get('gpu')","CPU.get()","CPU.get()","Device.get('gpu')","Device.get('gpu')","CPU.get()","CPU.get()"],"shape1":["[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]"],"shape2":["[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]"],"operation":["'i0%i1'","'i0%i1'","'i0*i1'","'i0*i1'","'i0*i1'","'i0*i1'","'i0+i1'","'i0+i1'","'i0+i1'","'i0+i1'","'i0-i1'","'i0-i1'","'i0-i1'","'i0-i1'","'i0/i1'","'i0/i1'"],"expected":["\"(2x2):[-1.0, -0.0, -0.0, NaN]\"","\"(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]\"","\"(2x2):[12.0, 8.0, 3.0, -0.0]\"","\"(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]\"","\"(2x2):[12.0, 8.0, 3.0, -0.0]\"","\"(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]\"","\"(2x2):[-7.0, -6.0, -4.0, -3.0]\"","\"(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]\"","\"(2x2):[-7.0, -6.0, -4.0, -3.0]\"","\"(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]\"","\"(2x2):[-1.0, -2.0, -2.0, -3.0]\"","\"(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]\"","\"(2x2):[-1.0, -2.0, -2.0, -3.0]\"","\"(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]\"","\"(2x2):[1.33333, 2.0, 3.0, -âˆž]\"","\"(2x3x2):[1.33333, 2.0, 3.0, -âˆž, -2.0, -1.0, 0.33333, 0.5, -0.0, NaN, 1.0, 0.5]\""]}}
+        {"kind":"where","text":"","code":{"device":["CPU.get()","CPU.get()","CPU.get()","CPU.get()","Device.get('gpu')","Device.get('gpu')","CPU.get()","CPU.get()","Device.get('gpu')","Device.get('gpu')","CPU.get()","CPU.get()","Device.get('gpu')","Device.get('gpu')","CPU.get()","CPU.get()"],"shape1":["[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]","[2, 1]","[2, 3, 1]"],"shape2":["[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]","[2, 2]","[1, 3, 2]"],"operation":["'i0%i1'","'i0%i1'","'i0*i1'","'i0*i1'","'i0*i1'","'i0*i1'","'i0+i1'","'i0+i1'","'i0+i1'","'i0+i1'","'i0-i1'","'i0-i1'","'i0-i1'","'i0-i1'","'i0/i1'","'i0/i1'"],"expected":["\"(2x2):[-1.0, -0.0, -0.0, NaN]\"","\"(2x3x2):[-1.0, -0.0, -0.0, NaN, -0.0, -0.0, -1.0, -1.0, 0.0, NaN, 0.0, 1.0]\"","\"(2x2):[12.0, 8.0, 3.0, -0.0]\"","\"(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]\"","\"(2x2):[12.0, 8.0, 3.0, -0.0]\"","\"(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]\"","\"(2x2):[-7.0, -6.0, -4.0, -3.0]\"","\"(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]\"","\"(2x2):[-7.0, -6.0, -4.0, -3.0]\"","\"(2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0]\"","\"(2x2):[-1.0, -2.0, -2.0, -3.0]\"","\"(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]\"","\"(2x2):[-1.0, -2.0, -2.0, -3.0]\"","\"(2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0]\"","\"(2x2):[1.33333, 2.0, 3.0, -∞]\"","\"(2x3x2):[1.33333, 2.0, 3.0, -∞, -2.0, -1.0, 0.33333, 0.5, -0.0, NaN, 1.0, 0.5]\""]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -89,7 +89,7 @@
     {
       "id":"Activation functions work across types, on large prime sized 1D slices and non sliced 1D tensors.",
       "result":"PASS",
-      "duration":"0.597 seconds",
+      "duration":"0.608 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -102,7 +102,7 @@
 
         {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType == DataType.of(type)","t1.itemType == type","t2.dataType == DataType.of(type)","t2.itemType == type"]},
 
-        {"kind":"when","text":"We apply the function to both tensors...","code":["var result1 = func(t1)","var result2 = func(t2)","var data1 = result1.mut.data.ref","var data2 = result2.mut.data.ref"]},
+        {"kind":"when","text":"We apply the function to both tensors...","code":["var result1 = func(t1)","var result2 = func(t2)","var data1 = result1.mut.data.get()","var data2 = result2.mut.data.get()"]},
 
         {"kind":"then","text":"First we ensure that both tensors have the correct value/element type.","code":["result1.itemType == type","result2.itemType == type"]},
 
@@ -118,7 +118,7 @@
     {
       "id":"Activation functions work across types.",
       "result":"PASS",
-      "duration":"0.092 seconds",
+      "duration":"0.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -135,7 +135,7 @@
 
         {"kind":"then","text":"First we ensure that both tensors have the correct value/element type.","code":["result1.itemType == type","result2.itemType == type"]},
 
-        {"kind":"and","text":"The underlying data object should match the data array type as is defined by the data type!","code":["result1.mut.data.ref.class == result1.dataType.dataArrayType()","result2.mut.data.ref.class == result2.dataType.dataArrayType()"]},
+        {"kind":"and","text":"The underlying data object should match the data array type as is defined by the data type!","code":["result1.mut.data.get().class == result1.dataType.dataArrayType()","result2.mut.data.get().class == result2.dataType.dataArrayType()"]},
 
         {"kind":"and","text":"The data of the first non slice tensor as well as its slice should be as expected.","code":["result1.items == expected","result2.items == expected"]},
 

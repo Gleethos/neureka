@@ -8,7 +8,7 @@ import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.function.Supplier;
 
-<span class="pc bpc" id="L11" title="1 of 2 branches missed.">public class CLGEMM implements ImplementationFor&lt;OpenCLDevice&gt;</span>
+<span class="fc" id="L11">public class CLGEMM implements ImplementationFor&lt;OpenCLDevice&gt;</span>
 {
     @Override
     public Tsr&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call)
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 <span class="fc" id="L24">            int K1 = b.shape(0);</span>
 
-<span class="pc bpc" id="L26" title="2 of 4 branches missed.">            assert K == K1;</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">            assert K == K1;</span>
 
 <span class="fc" id="L28">            String kernelName = &quot;fast_CM_MM_&quot;+M+&quot;x&quot;+K+&quot;x&quot;+N+&quot;&quot;;</span>
 
@@ -100,4 +100,4 @@ import java.util.function.Supplier;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

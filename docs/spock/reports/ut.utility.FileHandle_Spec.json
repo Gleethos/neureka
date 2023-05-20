@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.569 seconds"
+    "duration":"0.900 seconds"
   },
   "headers":["\n            This specification covers the expected functionality of\n            various \"FileHandle\" implementations.\n            Such implementations ought to be able to save tensors to\n            a given directory in the file format that they represent.\n            Functionalities like : \"store\", \"restore\" and \"free\" must\n            behave as expected.\n            (For more information take a look a the \"FileHandle\" & \"Storage\" interface)\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test writing IDX file format.",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Test reading IDX file format.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.013 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
 
         {"kind":"and","text":"The loaded tensor has the expected data type.","code":["loaded.dataType.getRepresentativeType() == I16.class","loaded.dataType == DataType.of( I16.class )"]},
 
-        {"kind":"and","text":"It contains the correct array type.","code":["loaded.mut.data.ref instanceof short[]"]},
+        {"kind":"and","text":"It contains the correct array type.","code":["loaded.mut.data.get() instanceof short[]"]},
 
         {"kind":"and","text":"The \"IDXHead\" instance has the expected state :","code":["idx.valueSize == 28 * 28","idx.valueSize == 28 * 28 * 1 // 1 := ubyte","idx.fileName == filename","idx.location.endsWith( filename )","idx.totalSize == 28 * 28 * 1 + 16","idx.dataType != loaded.dataType","idx.dataType == DataType.of( UI8.class ) // The underlying data is unsigned byte! (Not supported by JVM)"]},
 
@@ -66,7 +66,7 @@
     {
       "id":"We can load image files as tensors.",
       "result":"PASS",
-      "duration":"0.464 seconds",
+      "duration":"0.855 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,7 +87,7 @@
     {
       "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors.",
       "result":"PASS",
-      "duration":"0.018 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,7 +106,7 @@
     {
       "id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,7 +129,7 @@
     {
       "id":"Partially labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

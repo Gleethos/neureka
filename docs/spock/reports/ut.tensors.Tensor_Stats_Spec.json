@@ -4,19 +4,19 @@
   "narrative":"Various kinds of operations reduce tensors to scalars,\n    the most common ones being the min and max operations \n    which find the smallest as well as largest number among all \n    items of a tensor.\n    Neureka exposes various different ways to achieve this,\n    all of which are also differential (autograd support).",
   "subjects":["neureka.Tsr"],
   "statistics":{
-    "runs":"6",
+    "runs":"8",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.406 seconds"
+    "duration":"0.221 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.227 seconds",
+      "duration":"0.087 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,7 +100,7 @@
     {
       "id":"We can use the \"sum\" method to sum the items of a tensor.",
       "result":"PASS",
-      "duration":"0.157 seconds",
+      "duration":"0.106 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -111,7 +111,7 @@
 
         {"kind":"expect","text":"The result is correct:","code":["sum.item() == 5217.0"]},
 
-        {"kind":"and","text":"The result can be verified using other methods:","code":["sum.item() == sum.items.stream().reduce(0,(x,y)->x+y)","sum.item() == a.mut.data.ref.sum()"]}
+        {"kind":"and","text":"The result can be verified using other methods:","code":["sum.item() == sum.items.stream().reduce(0,(x,y)->x+y)","sum.item() == a.mut.data.get().sum()"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -133,6 +133,40 @@
         {"kind":"when","text":"We back-propagate the path by calling backward:","code":["x.backward()"]},
 
         {"kind":"then","text":"The gradient is correct:","code":["a.gradient.get().items == [3f, 3f, 3f, 3f]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A tensor can be summed alongside a specific axis.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple 2 by 3 matrix.","code":["var m = Tsr.of(-3f..5f).reshape(2, 3)"]},
+
+        {"kind":"when","text":"We create a sum for every axis...","code":["var s1 = m.sum(0)","var s2 = m.sum(1)"]},
+
+        {"kind":"then","text":"The sums are vectors with the expected state.","code":["s1.items == [-3.0, -1.0, 1.0]","s2.items == [-6.0, 3.0]","s1.shape == [1, 3]","s2.shape == [2, 1]"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Multiple dimensions of a tensor can selectively be summed up.",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Given a tensor with a shape of (x, y, z) and the request to sum up axis 1 and 2,\n            then the result will be a tensor with a shape of (x, 1, 1) because the\n            sum of all values along the axis 1 and 2 is a single value for each of the two\n            first dimensions.\n            This operation supports autograd.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple 2 by 3 by 4 matrix.","code":["var m = Tsr.of(-3f..23f).reshape(2, 3, 4)"]},
+
+        {"kind":"when","text":"We create a sum for every axis...","code":["var s = m.sum(1, 2)"]},
+
+        {"kind":"then","text":"The sums are vectors with the expected state.","code":["s.items == [30.0, 174.0]","s.shape == [2, 1, 1]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

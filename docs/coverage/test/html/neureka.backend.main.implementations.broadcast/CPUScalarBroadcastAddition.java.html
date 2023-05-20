@@ -5,11 +5,11 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
 import neureka.devices.host.CPU;
 
-<span class="pc bpc" id="L8" title="1 of 2 branches missed.">public class CPUScalarBroadcastAddition extends CPUScalarBroadcast</span>
+<span class="fc" id="L8">public class CPUScalarBroadcastAddition extends CPUScalarBroadcast</span>
 {
     @Override
     public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
-<span class="pc bpc" id="L12" title="2 of 4 branches missed.">        assert call.arity() == 3;</span>
+<span class="pc bpc" id="L12" title="1 of 2 branches missed.">        assert call.arity() == 3;</span>
 <span class="pc bpc" id="L13" title="1 of 2 branches missed.">        if ( call.getDerivativeIndex() == 0 )</span>
 <span class="nc" id="L14">            return Tsr.of( call.input( 1 ).shape(), 1d ).mut().setIsIntermediate( true );</span>
 <span class="pc bpc" id="L15" title="1 of 2 branches missed.">        else if ( call.getDerivativeIndex() == 1 )</span>
@@ -47,4 +47,4 @@ import neureka.devices.host.CPU;
 <span class="nc" id="L47">        return _getDeriveAt0();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

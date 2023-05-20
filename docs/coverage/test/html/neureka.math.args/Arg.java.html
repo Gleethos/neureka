@@ -3,6 +3,7 @@
 import neureka.common.composition.Component;
 import neureka.Tsr;
 import neureka.devices.Device;
+import neureka.ndim.config.NDConfiguration;
 
 /**
  *  Extend this class to define additional meta arguments for {@link neureka.math.Functions}.
@@ -17,27 +18,27 @@ public abstract class Arg&lt;T&gt; implements Component&lt;Args&gt; {
 
     private final T _value;
 
-<span class="fc" id="L20">    public Arg( T arg ) { _value = arg; }</span>
+<span class="fc" id="L21">    public Arg( T arg ) { _value = arg; }</span>
 
     public T get() {
-<span class="fc bfc" id="L23" title="All 2 branches covered.">        if ( _value instanceof int[]     ) return (T) ((int[])    _value).clone();</span>
-<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if ( _value instanceof float[]   ) return (T) ((float[])  _value).clone();</span>
-<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if ( _value instanceof double[]  ) return (T) ((double[]) _value).clone();</span>
-<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if ( _value instanceof long[]    ) return (T) ((long[])   _value).clone();</span>
-<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if ( _value instanceof short[]   ) return (T) ((short[])  _value).clone();</span>
-<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if ( _value instanceof byte[]    ) return (T) ((byte[])   _value).clone();</span>
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if ( _value instanceof char[]    ) return (T) ((char[])   _value).clone();</span>
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if ( _value instanceof boolean[] ) return (T) ((boolean[])_value).clone();</span>
-<span class="fc" id="L31">        return _value;</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        if ( _value instanceof int[]     ) return (T) ((int[])    _value).clone();</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if ( _value instanceof float[]   ) return (T) ((float[])  _value).clone();</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if ( _value instanceof double[]  ) return (T) ((double[]) _value).clone();</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if ( _value instanceof long[]    ) return (T) ((long[])   _value).clone();</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if ( _value instanceof short[]   ) return (T) ((short[])  _value).clone();</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if ( _value instanceof byte[]    ) return (T) ((byte[])   _value).clone();</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if ( _value instanceof char[]    ) return (T) ((char[])   _value).clone();</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if ( _value instanceof boolean[] ) return (T) ((boolean[])_value).clone();</span>
+<span class="fc" id="L32">        return _value;</span>
     }
 
     @Override
-<span class="fc" id="L35">    public boolean update(OwnerChangeRequest&lt;Args&gt; changeRequest) { return true; }</span>
+<span class="fc" id="L36">    public boolean update(OwnerChangeRequest&lt;Args&gt; changeRequest) { return true; }</span>
 
 
     public static class Derivative&lt;V&gt; extends Arg&lt;Tsr&lt;V&gt;&gt; {
-<span class="fc" id="L39">        public static &lt;V&gt; Derivative&lt;V&gt; of(Tsr&lt;V&gt; arg) { return new Derivative&lt;&gt;(arg); }</span>
-<span class="fc" id="L40">        private Derivative(Tsr&lt;V&gt; arg) { super(arg); }</span>
+<span class="fc" id="L40">        public static &lt;V&gt; Derivative&lt;V&gt; of(Tsr&lt;V&gt; arg) { return new Derivative&lt;&gt;(arg); }</span>
+<span class="fc" id="L41">        private Derivative(Tsr&lt;V&gt; arg) { super(arg); }</span>
     }
 
     /**
@@ -51,23 +52,23 @@ public abstract class Arg&lt;T&gt; implements Component&lt;Args&gt; {
      * however 0... when targeting an input to calculate the derivative of.
      */
     public static class DerivIdx extends Arg&lt;Integer&gt; {
-<span class="fc" id="L54">        public static DerivIdx of( int index ) { return new DerivIdx(index); }</span>
-<span class="fc" id="L55">        private DerivIdx(int arg) { super(arg); }</span>
+<span class="fc" id="L55">        public static DerivIdx of( int index ) { return new DerivIdx(index); }</span>
+<span class="fc" id="L56">        private DerivIdx(int arg) { super(arg); }</span>
     }
 
     public static class Axis extends Arg&lt;Integer&gt; {
-<span class="fc" id="L59">        public static Axis of(int index ) { return new Axis(index); }</span>
-<span class="fc" id="L60">        private Axis(int arg) { super(arg); }</span>
+<span class="fc" id="L60">        public static Axis of(int index ) { return new Axis(index); }</span>
+<span class="fc" id="L61">        private Axis(int arg) { super(arg); }</span>
     }
 
     public static class Ends extends Arg&lt;int[]&gt; {
-<span class="nc" id="L64">        public static Ends of( int[] arg ) { return new Ends(arg); }</span>
-<span class="nc" id="L65">        private Ends(int[] arg) { super(arg); }</span>
+<span class="nc" id="L65">        public static Ends of( int[] arg ) { return new Ends(arg); }</span>
+<span class="nc" id="L66">        private Ends(int[] arg) { super(arg); }</span>
     }
 
     public static class TargetDevice extends Arg&lt;Device&lt;?&gt;&gt; {
-<span class="fc" id="L69">        public static TargetDevice of( Device&lt;?&gt; arg ) { return new TargetDevice(arg); }</span>
-<span class="fc" id="L70">        private TargetDevice(Device&lt;?&gt; arg) { super(arg); }</span>
+<span class="fc" id="L70">        public static TargetDevice of( Device&lt;?&gt; arg ) { return new TargetDevice(arg); }</span>
+<span class="fc" id="L71">        private TargetDevice(Device&lt;?&gt; arg) { super(arg); }</span>
     }
 
     /**
@@ -77,53 +78,57 @@ public abstract class Arg&lt;T&gt; implements Component&lt;Args&gt; {
      *  If a particular index is not targeted however this variable will simply default to -1.
      */
     public static class VarIdx extends Arg&lt;Integer&gt; {
-<span class="fc" id="L80">        public static VarIdx of( int arg ) { return new VarIdx( arg ); }</span>
-<span class="fc" id="L81">        private VarIdx(int arg) { super(arg); }</span>
+<span class="fc" id="L81">        public static VarIdx of( int arg ) { return new VarIdx( arg ); }</span>
+<span class="fc" id="L82">        private VarIdx(int arg) { super(arg); }</span>
     }
 
     public static class MinRank extends Arg&lt;Integer&gt; {
-<span class="nc" id="L85">        public static MinRank of( int arg ) { return new MinRank( arg ); }</span>
-<span class="nc" id="L86">        private MinRank( int arg ) { super(arg); }</span>
+<span class="nc" id="L86">        public static MinRank of( int arg ) { return new MinRank( arg ); }</span>
+<span class="nc" id="L87">        private MinRank( int arg ) { super(arg); }</span>
     }
 
     public static class Seed extends Arg&lt;Long&gt; {
-<span class="fc" id="L90">        public static Seed of( String arg ) { return new Seed( _longStringHash( arg ) ); }</span>
-<span class="fc" id="L91">        public static Seed of( long arg ) { return new Seed( arg ); }</span>
-<span class="fc" id="L92">        private Seed( long arg ) { super(arg); }</span>
+<span class="fc" id="L91">        public static Seed of( String arg ) { return new Seed( _longStringHash( arg ) ); }</span>
+<span class="fc" id="L92">        public static Seed of( long arg ) { return new Seed( arg ); }</span>
+<span class="fc" id="L93">        private Seed( long arg ) { super(arg); }</span>
 
 
         private static long _longStringHash( String string )
         {
-<span class="fc" id="L97">            long h = 1125899906842597L; // prime</span>
-<span class="fc" id="L98">            int len = string.length();</span>
-<span class="fc bfc" id="L99" title="All 2 branches covered.">            for ( int i = 0; i &lt; len; i++ ) h = 31 * h + string.charAt( i );</span>
-<span class="fc" id="L100">            return h;</span>
+<span class="fc" id="L98">            long h = 1125899906842597L; // prime</span>
+<span class="fc" id="L99">            int len = string.length();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            for ( int i = 0; i &lt; len; i++ ) h = 31 * h + string.charAt( i );</span>
+<span class="fc" id="L101">            return h;</span>
         }
 
     }
 
     public static class Shape extends Arg&lt;int[]&gt; {
-<span class="fc" id="L106">        public static Shape of( int... arg ) { return new Shape( arg ); }</span>
-<span class="fc" id="L107">        private Shape( int[] arg ) { super(arg); }</span>
+<span class="fc" id="L107">        public static Shape of( int... arg ) { return new Shape( arg ); }</span>
+<span class="fc" id="L108">        private Shape( int[] arg ) { super(arg); }</span>
     }
 
     public static class Offset extends Arg&lt;int[]&gt; {
-<span class="fc" id="L111">        public static Offset of( int... arg ) { return new Offset( arg ); }</span>
-<span class="fc" id="L112">        private Offset( int[] arg ) { super(arg); }</span>
+<span class="fc" id="L112">        public static Offset of( int... arg ) { return new Offset( arg ); }</span>
+<span class="fc" id="L113">        private Offset( int[] arg ) { super(arg); }</span>
     }
 
     public static class Stride extends Arg&lt;int[]&gt; {
-<span class="fc" id="L116">        public static Stride of( int... arg ) { return new Stride( arg ); }</span>
-<span class="fc" id="L117">        private Stride( int[] arg ) { super(arg); }</span>
+<span class="fc" id="L117">        public static Stride of( int... arg ) { return new Stride( arg ); }</span>
+<span class="fc" id="L118">        private Stride( int[] arg ) { super(arg); }</span>
     }
 
     public static class Indices extends Arg&lt;int[]&gt; {
-<span class="fc" id="L121">        public static Indices of( int... arg ) { return new Indices( arg ); }</span>
-<span class="fc" id="L122">        private Indices( int[] arg ) { super(arg); }</span>
+<span class="fc" id="L122">        public static Indices of( int... arg ) { return new Indices( arg ); }</span>
+<span class="fc" id="L123">        private Indices( int[] arg ) { super(arg); }</span>
+    }
+    public static class Layout extends Arg&lt;NDConfiguration.Layout&gt; {
+<span class="fc" id="L126">        public static Layout of(NDConfiguration.Layout arg) { return new Layout( arg ); }</span>
+<span class="fc" id="L127">        private Layout( NDConfiguration.Layout arg ) { super(arg); }</span>
     }
 
     @Override
-<span class="fc" id="L126">    public String toString() { return this.getClass().getSimpleName() + &quot;[&quot; + _value + &quot;]&quot;; }</span>
+<span class="fc" id="L131">    public String toString() { return this.getClass().getSimpleName() + &quot;[&quot; + _value + &quot;]&quot;; }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
