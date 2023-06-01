@@ -21,7 +21,7 @@ final class PendingError<V>
     private final Tensor<V> _accumulatedError;
     private final int _generation;
 
-    public PendingError(Tensor<V> error, int toBeReceived, int generation ) {
+    public PendingError( Tensor<V> error, int toBeReceived, int generation ) {
         _expectedToBeReceived = toBeReceived;
         _received = 1; // 1 because the first error value is already given to the constructor.
         _accumulatedError = error;
