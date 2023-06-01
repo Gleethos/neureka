@@ -295,7 +295,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of the value list and returned tensor.
      * @return A new {@link Tensor} instance constructed based on the provided shape and value list.
      */
-    static <V> Tensor<V> of(List<? extends Number> shape, List<V> items ) {
+    static <V> Tensor<V> of( List<? extends Number> shape, List<V> items ) {
         LogUtil.nullArgCheck( shape, "shape", List.class, "Null is not a valid shape!" );
         LogUtil.nullArgCheck( items, "value", List.class, "Null is not a valid value list!" );
         Class<V> typeClass = (Class<V>) Object.class;
@@ -320,7 +320,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of the value list and returned tensor.
      * @return A new {@link Tensor} instance constructed based on the provided shape and value list.
      */
-    static <V> Tensor<V> of(Shape shape, List<V> items ) {
+    static <V> Tensor<V> of( Shape shape, List<V> items ) {
         Class<V> typeClass = (Class<V>) Object.class;
         if ( items.size() > 0 ) typeClass = (Class<V>) items.get(0).getClass();
         return of( DataType.of(typeClass), shape, items );
@@ -333,7 +333,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param conf A list of either values or nested lists which are themselves either or.
      * @return A new {@link Tensor} instance whose shape and data is based on the provided list structure.
      */
-    static Tensor<Object> of(List<Object> conf ) { return of( (Class<Object>) null, conf ); }
+    static Tensor<Object> of( List<Object> conf ) { return of( (Class<Object>) null, conf ); }
 
     /**
      *  This factory method will turn a list of values or nested lists of values into a {@link Tensor}
@@ -345,7 +345,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <T> The type parameter of the tensor returned by this factory method.
      * @return A new {@link Tensor} instance whose shape and data is based on the provided list structure.
      */
-    static <T> Tensor<T> of(Class<T> type, List<Object> conf ) {
+    static <T> Tensor<T> of( Class<T> type, List<Object> conf ) {
         ListReader.Result result = null;
         try {
             result = ListReader.read( conf, o -> o );
@@ -485,13 +485,13 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value The array of doubles from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of doubles.
      */
-    static Tensor<Double> of(double... value ) { return of( Double.class, Shape.of( value.length ), value ); }
+    static Tensor<Double> of( double... value ) { return of( Double.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar double tensor.
      */
-    static Tensor<Double> of(double value ) { return of( Double.class, Shape.of( 1 ), value ); }
+    static Tensor<Double> of( double value ) { return of( Double.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of floats based on the provided array.
@@ -499,13 +499,13 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value The array of floats from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of floats.
      */
-    static Tensor<Float> of(float... value ) { return of( Float.class, Shape.of( value.length ), value ); }
+    static Tensor<Float> of( float... value ) { return of( Float.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar float tensor.
      */
-    static Tensor<Float> of(float value ) { return of( Float.class, Shape.of( 1 ), value ); }
+    static Tensor<Float> of( float value ) { return of( Float.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of bytes based on the provided array.
@@ -513,13 +513,13 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value The array of bytes from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of bytes.
      */
-    static Tensor<Byte> of(byte... value ) { return of( Byte.class, Shape.of( value.length ), value ); }
+    static Tensor<Byte> of( byte... value ) { return of( Byte.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar byte tensor.
      */
-    static Tensor<Byte> of(byte value ) { return of( Byte.class, Shape.of( 1 ), value ); }
+    static Tensor<Byte> of( byte value ) { return of( Byte.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of ints based on the provided array.
@@ -527,13 +527,13 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value The array of ints from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of ints.
      */
-    static Tensor<Integer> of(int... value ) { return of( Integer.class, Shape.of( value.length ), value ); }
+    static Tensor<Integer> of( int... value ) { return of( Integer.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar int tensor.
      */
-    static Tensor<Integer> of(int value ) { return of( Integer.class, Shape.of( 1 ), value ); }
+    static Tensor<Integer> of( int value ) { return of( Integer.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of longs based on the provided array.
@@ -541,13 +541,13 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value The array of longs from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of longs.
      */
-    static Tensor<Long> of(long... value ) { return of( Long.class, Shape.of( value.length ), value ); }
+    static Tensor<Long> of( long... value ) { return of( Long.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar long tensor.
      */
-    static Tensor<Long> of(long value ) { return of( Long.class, Shape.of( 1 ), value ); }
+    static Tensor<Long> of( long value ) { return of( Long.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of shorts based on the provided array.
@@ -555,13 +555,13 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value The array of shorts from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    static Tensor<Short> of(short... value ) { return of( Short.class, Shape.of( value.length ), value ); }
+    static Tensor<Short> of( short... value ) { return of( Short.class, Shape.of( value.length ), value ); }
 
     /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar short tensor.
      */
-    static Tensor<Short> of(short value ) { return of( Short.class, Shape.of( 1 ), value ); }
+    static Tensor<Short> of( short value ) { return of( Short.class, Shape.of( 1 ), value ); }
 
     /**
      *  Constructs a vector of booleans based on the provided array.
@@ -569,7 +569,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value The array of booleans from which a 1D tensor ought to be constructed.
      * @return A vector / 1D tensor of shorts.
      */
-    static Tensor<Boolean> of(boolean... value ) { return of( Boolean.class, Shape.of( value.length ), value ); }
+    static Tensor<Boolean> of( boolean... value ) { return of( Boolean.class, Shape.of( value.length ), value ); }
 
     /**
      *  Use this to construct and return a seeded tensor of the specified type.
@@ -580,7 +580,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created and seeded tensor of the provided type and shape.
      */
-    static <V> Tensor<V> of(Class<V> valueType, Shape shape, Arg.Seed seed ) { return TensorImpl._of( valueType, NDConstructor.of(shape), seed ); }
+    static <V> Tensor<V> of( Class<V> valueType, Shape shape, Arg.Seed seed ) { return TensorImpl._of( valueType, NDConstructor.of(shape), seed ); }
 
     /**
      *  Use this to construct and return a homogeneously populated double tensor of the specified shape.
@@ -589,7 +589,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value The value which ought to be used to populate the tensor homogeneously.
      * @return A new tensor instance with the provided shape and initial value.
      */
-    static Tensor<Double> of(Shape shape, double value ) { return ofAny( Double.class, shape, value ); }
+    static Tensor<Double> of( Shape shape, double value ) { return ofAny( Double.class, shape, value ); }
 
     /**
      *  Use this to construct and return a double tensor of the specified shape and initial values.
@@ -600,7 +600,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tensor<Double> of(Shape shape, double[] values ) { return ofAny( Double.class, shape, values ); }
+    static Tensor<Double> of( Shape shape, double[] values ) { return ofAny( Double.class, shape, values ); }
 
     /**
      *  Use this to construct and return an int tensor of the specified shape and initial values.
@@ -611,7 +611,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tensor<Integer> of(Shape shape, int[] values ) { return ofAny( Integer.class, shape, values ); }
+    static Tensor<Integer> of( Shape shape, int[] values ) { return ofAny( Integer.class, shape, values ); }
 
     /**
      *  Use this to construct and return a byte tensor of the specified shape and initial values.
@@ -622,7 +622,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tensor<Byte> of(Shape shape, byte[] values ) { return ofAny( Byte.class, shape, values ); }
+    static Tensor<Byte> of( Shape shape, byte[] values ) { return ofAny( Byte.class, shape, values ); }
 
     /**
      *  Use this to construct and return a long tensor of the specified shape and initial values.
@@ -633,7 +633,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tensor<Long> of(Shape shape, long[] values ) { return ofAny( Long.class, shape, values ); }
+    static Tensor<Long> of( Shape shape, long[] values ) { return ofAny( Long.class, shape, values ); }
 
     /**
      *  Use this to construct and return a short tensor of the specified shape and initial values.
@@ -644,7 +644,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tensor<Short> of(Shape shape, short[] values ) { return ofAny( Short.class, shape, values ); }
+    static Tensor<Short> of( Shape shape, short[] values ) { return ofAny( Short.class, shape, values ); }
 
     /**
      *  Use this to construct and return a float tensor of the specified shape and initial values.
@@ -655,7 +655,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tensor<Float> of(Shape shape, float[] values ) { return ofAny( Float.class, shape, values ); }
+    static Tensor<Float> of( Shape shape, float[] values ) { return ofAny( Float.class, shape, values ); }
 
     /**
      *  Use this to construct and return a homogeneously populated float tensor of the specified shape.
@@ -664,7 +664,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value The value which ought to be used to populate the tensor homogeneously.
      * @return A new tensor instance with the provided shape and initial value.
      */
-    static Tensor<Float> of(Shape shape, float value ) { return ofAny( Float.class, shape, value ); }
+    static Tensor<Float> of( Shape shape, float value ) { return ofAny( Float.class, shape, value ); }
 
     /**
      *  Use this to construct and return a boolean tensor of the specified shape and initial values.
@@ -675,7 +675,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
      * @param values The values which ought to be used to populate the tensor.
      */
-    static Tensor<Boolean> of(Shape shape, boolean[] values ) { return ofAny( Boolean.class, shape, values ); }
+    static Tensor<Boolean> of( Shape shape, boolean[] values ) { return ofAny( Boolean.class, shape, values ); }
 
     /**
      *  Use this to construct and return a tensor of the specified shape and data object.<br>
@@ -690,7 +690,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @return A newly created tensor of the provided shape and data.
      * @param <V> The type parameter of individual tensor items.
      */
-    static <V> Tensor<V> of(Shape shape, Data<V> data ) {
+    static <V> Tensor<V> of( Shape shape, Data<V> data ) {
         return Tensor.of( data.dataType().getItemTypeClass(), shape, data.getOrNull() );
     }
 
@@ -702,7 +702,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type and shape.
      */
-    static <V> Tensor<V> of(DataType<V> type, Shape shape ) { return TensorImpl._of( NDConstructor.of(shape), type ); }
+    static <V> Tensor<V> of( DataType<V> type, Shape shape ) { return TensorImpl._of( NDConstructor.of(shape), type ); }
 
     /**
      *  Use this to construct and return a tensor of the specified type, shape and data object.
@@ -713,7 +713,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tensor<V> of(Class<V> type, Shape shape, Object data ) {
+    static <V> Tensor<V> of( Class<V> type, Shape shape, Object data ) {
         return of( DataType.of(type), shape, data );
     }
 
@@ -726,7 +726,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tensor<V> of(Class<V> type, List<Integer> shape, Object data ) {
+    static <V> Tensor<V> of( Class<V> type, List<Integer> shape, Object data ) {
         return of( DataType.of(type), Shape.of(shape), data );
     }
 
@@ -739,7 +739,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V extends Number> Tensor<V> of(Class<V> type, Shape shape, Number data ) {
+    static <V extends Number> Tensor<V> of( Class<V> type, Shape shape, Number data ) {
         return of( DataType.of(type), shape, data );
     }
 
@@ -752,7 +752,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tensor<V> ofAny(Class<V> type, Shape shape, Object data ) {
+    static <V> Tensor<V> ofAny( Class<V> type, Shape shape, Object data ) {
         return of( DataType.of(type), shape, data );
     }
 
@@ -765,7 +765,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tensor<V> of(Class<V> type, List<Integer> shape, List<V> data ) {
+    static <V> Tensor<V> of( Class<V> type, List<Integer> shape, List<V> data ) {
         return of( DataType.of( type ), Shape.of(shape), data );
     }
 
@@ -782,7 +782,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tensor<V> of(Class<V> type, Shape shape, List<V> data ) {
+    static <V> Tensor<V> of( Class<V> type, Shape shape, List<V> data ) {
         return of( DataType.of( type ), shape, data );
     }
 
@@ -795,7 +795,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tensor<V> of(DataType<V> dataType, List<Integer> shape, List<V> data ) {
+    static <V> Tensor<V> of( DataType<V> dataType, List<Integer> shape, List<V> data ) {
         return of( dataType, Shape.of(shape), data.toArray() );
     }
 
@@ -812,7 +812,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tensor<V> of(DataType<V> dataType, Shape shape, List<V> data ) {
+    static <V> Tensor<V> of( DataType<V> dataType, Shape shape, List<V> data ) {
         LogUtil.nullArgCheck( dataType, "dataType", DataType.class, "Null is not a valid data type!" );
         LogUtil.nullArgCheck( shape, "shape", Shape.class, "Null is not a valid shape!" );
         LogUtil.nullArgCheck( data, "data", List.class, "Null is not a valid data object!" );
@@ -831,7 +831,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param data The data for the {@link Tensor} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tensor} instance of the specified type, shape and containing the provided data.
      */
-    static <V> Tensor<V> of(DataType<V> dataType, int[] shape, Object data ) {
+    static <V> Tensor<V> of( DataType<V> dataType, int[] shape, Object data ) {
         return TensorImpl._of( NDConstructor.of(shape), CPU.get(), dataType, data );
     }
 
@@ -847,7 +847,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param data The data for the {@link Tensor} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tensor} instance of the specified type, shape and containing the provided data.
      */
-    static <V> Tensor<V> of(DataType<V> dataType, Shape shape, Object data ) {
+    static <V> Tensor<V> of( DataType<V> dataType, Shape shape, Object data ) {
         return TensorImpl._of( NDConstructor.of(shape), CPU.get(), dataType, data );
     }
 
@@ -864,7 +864,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param data The data for the {@link Tensor} that is about to be created, which can be a list, an array or scalar.
      * @return A new {@link Tensor} instance of the specified type, shape and containing the provided data.
      */
-    static <V extends N, N> Tensor<V> of(DataType<V> dataType, Device<N> device, Shape shape, Object data ) {
+    static <V extends N, N> Tensor<V> of( DataType<V> dataType, Device<N> device, Shape shape, Object data ) {
         return TensorImpl._of( NDConstructor.of(shape), device, dataType, data );
     }
 
@@ -880,7 +880,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @return A new {@link Tensor} instance of the specified type, shape and containing the provided data.
      * @param <V> The type parameter of individual tensor items.
      */
-    static <V> Tensor<V> of(DataType<V> dataType, NDConstructor ndConstructor, Data<V> data ) { return TensorImpl._of( ndConstructor, dataType, data ); }
+    static <V> Tensor<V> of( DataType<V> dataType, NDConstructor ndConstructor, Data<V> data ) { return TensorImpl._of( ndConstructor, dataType, data ); }
 
     /**
      *  This factory method allows the creation of tensors with an additional initialization
@@ -897,7 +897,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    static <T> Tensor<T> of(DataType<T> type, List<Integer> shape, Filler<T> filler) {
+    static <T> Tensor<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler) {
         LogUtil.nullArgCheck( shape, "shape", List.class );
         return of( type, Shape.of(shape), filler );
     }
@@ -921,9 +921,28 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    static <T> Tensor<T> of(DataType<T> type, Shape shape, Filler<T> filler) {
+    static <T> Tensor<T> of( DataType<T> type, Shape shape, Filler<T> filler) {
         LogUtil.nullArgCheck( shape, "shape", Shape.class );
         return TensorImpl._of( NDConstructor.of(shape), type, filler );
+    }
+
+    /**
+     *  This factory method allows the creation of tensors with an additional initialization
+     *  lambda for filling the underlying data array with desired values.
+     *  Other than regular numeric types it is also possible to initialize the
+     *  tensor with regular Objects like String instances or custom data types like complex
+     *  numbers for example... <br>
+     *  Therefore the constructor requires not only a shape as argument but also
+     *  the data type which ought to be allocated as well as the initialization
+     *  lambda which will be called iteratively.
+     *
+     * @param type The data type class the items of this tensor ought to have.
+     * @param shape The shape of this new tensor ought to have.
+     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param <T> The type parameter for the actual data array items.
+     */
+    static <T> Tensor<T> of( Class<T> type, Shape shape, Filler<T> filler ) {
+        return of( DataType.of(type), shape, filler );
     }
 
     /**
@@ -941,7 +960,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    static <T> Tensor<T> of(DataType<T> type, int[] shape, Filler<T> filler ) {
+    static <T> Tensor<T> of( DataType<T> type, int[] shape, Filler<T> filler ) {
         return TensorImpl._of( NDConstructor.of(shape), type, filler );
     }
 
@@ -1377,7 +1396,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param applyRequested The truth value determining if the application of the gradient of this tensor is requested.
      * @return This very tensor instance in order to enable method chaining.
      */
-    Tensor<V> setGradientApplyRequested(boolean applyRequested );
+    Tensor<V> setGradientApplyRequested( boolean applyRequested );
 
     /*==================================================================================================================
     |
@@ -1516,13 +1535,13 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param device The {@link Device} which should host this {@link Tensor} as well as be added to its components list.
      * @return This very class to enable method chaining.
      */
-    Tensor<V> to(Device<?> device );
+    Tensor<V> to( Device<?> device );
 
     /**
      * @param deviceType A search key identifying the device onto which this tensor should be stored.
      * @return This very tensor instance in order to enable method chaining.
      */
-    default Tensor<V> to(String deviceType ) { return this.to(Device.get(deviceType)); }
+    default Tensor<V> to( String deviceType ) { return this.to(Device.get(deviceType)); }
 
     /**
      *  Configures an {@link Optimizer} for this tensor based on the given {@link OptimizerFactory}
@@ -1761,7 +1780,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
     /**
      *  This method will create a new {@link Tensor}
      *  with the provided double scalar added to all elements of this {@link Tensor}.
-     *
+     * <p>
      *  The shapes of this tensor is irrelevant as the provided value will
      *  simply be broadcast to any possible shape.
      *
@@ -1794,7 +1813,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
     /**
      *  This method will create a new {@link Tensor}
      *  with the provided item subtracted from all elements of this {@link Tensor}.
-     *
+     * <p>
      *  The shapes of this tensor is irrelevant as the provided item will
      *  simply be broadcast to all items od this tensor, irrespective of any shape.
      *
@@ -2425,7 +2444,8 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      */
     default Tensor<V> softmax(int axis ) {
         // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
-        return exp().div( exp().sum(axis) );
+        Tensor<V> exp = exp();
+        return exp.div( exp.sum(axis) );
     }
 
     /**
