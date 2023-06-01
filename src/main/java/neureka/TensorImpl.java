@@ -1264,18 +1264,18 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
      *  {@inheritDoc}
      */
     @Override
-    public Tensor<V> addToGradient(Tensor<V> error ) {
+    public Tensor<V> addToGradient( Tensor<V> error ) {
         _guardSet("gradient");
         Optional<Tensor> grad = this.find( Tensor.class );
         grad.ifPresent( gradient ->
                             this.set(
-                                    MemUtil.keep( gradient, error, () ->
-                                            Neureka.get()
-                                                    .backend()
-                                                    .getFunction()
-                                                    .plusAssign()
-                                                    .call(gradient, error)
-                                    )
+                                MemUtil.keep( gradient, error, () ->
+                                    Neureka.get()
+                                            .backend()
+                                            .getFunction()
+                                            .plusAssign()
+                                            .call(gradient, error)
+                                )
                             ));
         if ( !grad.isPresent() ) {
             this.set( error );

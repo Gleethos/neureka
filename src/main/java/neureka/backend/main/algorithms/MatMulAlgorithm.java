@@ -45,11 +45,20 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm<MatMulAlgorithm>
                     int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;
                     Tensor<?> derivative = Util.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...
                     derivative.to(adCall.getDevice());
-                    return ADAction.of(target ->
-                                d == 1
-                                    ? matMul.execute( target.error(), derivative )
-                                    : matMul.execute( derivative, target.error() )
-                            );
+                    return ADAction.of(target -> {
+                        Tensor<?> result;
+                        switch ( d ) {
+                            case 0:
+                                result = matMul.execute(derivative, target.error());
+                                break;
+                            case 1:
+                                result = matMul.execute(target.error(), derivative);
+                                break;
+                            default:
+                                throw new IllegalStateException("This should never happen!");
+                        }
+                        return result;
+                    });
                 })
         );
         setCallPreparation(MatMulAlgorithm::_prepare);

@@ -284,7 +284,7 @@ public class GraphNode<V> implements Component<Tensor<V>>
      *
      * @param e This is an error value passed to this method ba a backward traversal.
      */
-    private void _migrateAndOrApplyError(Tensor<V> e, Consumer<Tensor<V>> also ) {
+    private void _migrateAndOrApplyError( Tensor<V> e, Consumer<Tensor<V>> also ) {
         this.getPayload().ifPresent( payload -> {
             // It was not garbage collected:
             try {
@@ -530,7 +530,7 @@ public class GraphNode<V> implements Component<Tensor<V>>
      *
      * @param error A tensor which traverses the computation graph according to the rules of reverse mode AutoDiff.
      */
-    private void _backward(Tensor<V> error, Set<GraphNode<V>> pendingNodes, boolean allowPendingError )
+    private void _backward( Tensor<V> error, Set<GraphNode<V>> pendingNodes, boolean allowPendingError )
     {
         _migrateAndOrApplyError( error, null );
         if ( this.usesAD() ) {
