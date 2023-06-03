@@ -217,7 +217,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param args The arguments which ought to be interpreted.
      * @return The result of the interpretation in the form of a {@link Tensor} instance of typ {@link Object}.
      */
-    static <T> Tensor<T> of(Object... args ) {
+    static <T> Tensor<T> of( Object... args ) {
         LogUtil.nullArgCheck( args, "args", Object[].class );
         return TensorImpl._of( args );
     }
@@ -228,7 +228,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param iterable The iterable of objects from which a 1D nd-array ought to be constructed.
      * @return A vector / 1D tensor of objects.
      */
-    static <T> Tensor<T> of(Iterable<T> iterable ) {
+    static <T> Tensor<T> of( Iterable<T> iterable ) {
         LogUtil.nullArgCheck( iterable, "iterable", Iterable.class );
         return TensorImpl._of( iterable );
     }
@@ -243,7 +243,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param item An object of type {@link T} which will populate the data array of the new instance.
      * @return A new {@link Tensor} instance for the generic type {@link T}.
      */
-    static <T> Tensor<T> of(List<Integer> shape, T item ) {
+    static <T> Tensor<T> of( List<Integer> shape, T item ) {
         LogUtil.nullArgCheck( shape, "shape", List.class );
         LogUtil.nullArgCheck( item, "value", Object.class );
         return of( (Class<T>) item.getClass(), shape, item );
@@ -264,7 +264,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value An object of type {@link T} which will populate the data array of the new instance.
      * @return A new {@link Tensor} instance for the generic type {@link T}.
      */
-    static <T> Tensor<T> of(Shape shape, T value ) {
+    static <T> Tensor<T> of( Shape shape, T value ) {
         LogUtil.nullArgCheck( shape, "shape", List.class );
         LogUtil.nullArgCheck( value, "value", Object.class );
         return ofAny( (Class<T>) value.getClass(), shape, value );
@@ -713,9 +713,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of individual tensor items.
      * @return A newly created tensor of the provided type, shape and data.
      */
-    static <V> Tensor<V> of( Class<V> type, Shape shape, Object data ) {
-        return of( DataType.of(type), shape, data );
-    }
+    static <V> Tensor<V> of( Class<V> type, Shape shape, Object data ) { return of( DataType.of(type), shape, data ); }
 
     /**
      *  Use this to construct and return a tensor of the specified type, shape and data object.
@@ -822,22 +820,6 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
     /**
      *  This factory method is among the most flexible and forgiving ways to create a {@link Tensor} instance.
      *  It receives a {@link DataType} for type safety and to ensure that the produced {@link Tensor} instance
-     *  will contain elements of the correct type, a shape array which stores the sizes of the axes that the
-     *  instance ought to possess, and finally it receives a data {@link Object} which can be anything ranging from
-     *  a {@link List} to an array or simply a single value which ought to fill out the entire {@link Tensor}.
-     *
-     * @param dataType The data type of the data represented by {@link Tensor} instance created by this method.
-     * @param shape An array of axis sizes describing the dimensionality of the {@link Tensor} created by this method.
-     * @param data The data for the {@link Tensor} that is about to be created, which can be a list, an array or scalar.
-     * @return A new {@link Tensor} instance of the specified type, shape and containing the provided data.
-     */
-    static <V> Tensor<V> of( DataType<V> dataType, int[] shape, Object data ) {
-        return TensorImpl._of( NDConstructor.of(shape), CPU.get(), dataType, data );
-    }
-
-    /**
-     *  This factory method is among the most flexible and forgiving ways to create a {@link Tensor} instance.
-     *  It receives a {@link DataType} for type safety and to ensure that the produced {@link Tensor} instance
      *  will contain elements of the correct type, and a {@link Shape} tuple which stores the sizes of the axes that the
      *  instance ought to possess, and finally it receives a data {@link Object} which can be anything ranging from
      *  a {@link List} to an array or simply a single value which ought to fill out the entire {@link Tensor}.
@@ -897,7 +879,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    static <T> Tensor<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler) {
+    static <T> Tensor<T> of( DataType<T> type, List<Integer> shape, Filler<T> filler ) {
         LogUtil.nullArgCheck( shape, "shape", List.class );
         return of( type, Shape.of(shape), filler );
     }
@@ -946,25 +928,6 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
     }
 
     /**
-     *  This factory method allows the creation of tensors with an additional initialization
-     *  lambda for filling the underlying data array with desired values.
-     *  Besides regular numeric types it is also possible to initialize the
-     *  tensor with regular objects like {@link String} instances or custom data types like complex
-     *  numbers for example... <br>
-     *  Therefore the constructor requires not only a shape as argument but also
-     *  the data type which ought to be allocated as well as the initialization
-     *  lambda which will be called iteratively.
-     *
-     * @param type The data type this tensor ought to have.
-     * @param shape The shape of this new tensor ought to have.
-     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
-     * @param <T> The type parameter for the actual data array items.
-     */
-    static <T> Tensor<T> of( DataType<T> type, int[] shape, Filler<T> filler ) {
-        return TensorImpl._of( NDConstructor.of(shape), type, filler );
-    }
-
-    /**
      *  This factory method allows for the creation and execution of {@link Function} instances
      *  without actually instantiating them manually,
      *  where the result will then be returned by this factory method. <br><br>
@@ -984,7 +947,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param inputs An array of inputs which can be tensors or numeric types.
      */
     @SafeVarargs
-    static <V extends Number> Tensor<V> of(String expression, V... inputs ) {
+    static <V extends Number> Tensor<V> of( String expression, V... inputs ) {
         return Function.of( expression, true ).call( Arrays.stream(inputs).map(args -> TensorImpl._of(args)).toArray(Tensor[]::new) );
     }
 
@@ -1007,7 +970,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param expression A String which will be used for parsing a Function AST.
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
-    static <V> Tensor<V> of(String expression, List<Tensor<V>> inputs ) {
+    static <V> Tensor<V> of( String expression, List<Tensor<V>> inputs ) {
         return Function.of( expression, true ).call( inputs );
     }
 
@@ -1033,7 +996,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
      * @param tensors A list of tensors used as inputs to the Function instance parsed from the provided expression.
      */
-    static <V> Tensor<V> of(String expression, boolean doAD, List<Tensor<V>> tensors ) {
+    static <V> Tensor<V> of( String expression, boolean doAD, List<Tensor<V>> tensors ) {
         return Function.of( expression, doAD ).call( tensors );
     }
 
@@ -1054,7 +1017,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
      */
-    static <V> Tensor<V> of(String expression, Tensor<V> tensor ) {
+    static <V> Tensor<V> of( String expression, Tensor<V> tensor ) {
         return Function.of( expression, true ).call( tensor );
     }
 
@@ -1075,7 +1038,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      */
     @SafeVarargs
-    static <V> Tensor<V> of(String expression, Tensor<V>... tensors ) {
+    static <V> Tensor<V> of( String expression, Tensor<V>... tensors ) {
         return Function.of( expression, true ).call( tensors );
     }
 
@@ -1102,7 +1065,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      */
     @SafeVarargs
-    static <V> Tensor<V> of(String expression, boolean doAD, Tensor<V>... tensors ) {
+    static <V> Tensor<V> of( String expression, boolean doAD, Tensor<V>... tensors ) {
         return Function.of( expression, doAD ).call( tensors );
     }
 
@@ -1119,7 +1082,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter of the values stored by the returned tensor.
      * @return A randomly filled tensor of the provided type.
      */
-    static <V> Tensor<V> ofRandom(Class<V> valueTypeClass, int... shape ) {
+    static <V> Tensor<V> ofRandom( Class<V> valueTypeClass, int... shape ) {
         return of( valueTypeClass )
                 .withShape( shape )
                 .andSeed( 8701252152903546L );// If the user does not provide a seed, we use this.
@@ -1133,7 +1096,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param <V> The type parameter defining the value type of the provided as well as returned tensor.
      * @return A new {@link Tensor} instance with the same data type, shape and memory location as the provided template.
      */
-    static <V> IterByOrIterFromOrAllTensor<V> like(Tensor<V> template ) {
+    static <V> IterByOrIterFromOrAllTensor<V> like( Tensor<V> template ) {
         return of( template.getDataType().getItemTypeClass() )
                 .on( template.getDevice() )
                 .withShape( template.getNDConf().shape() );
@@ -1153,7 +1116,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @return a {@code Collector} which collects all the input elements into a
      *          {@link Tensor}, in encounter order.
      */
-    static <T> Collector<T, ?, Tensor<T>> shaped(int... shape ) { return shaped( Shape.of(shape) ); }
+    static <T> Collector<T, ?, Tensor<T>> shaped( int... shape ) { return shaped( Shape.of(shape) ); }
 
     /**
      * Returns a {@code Collector} that accumulates the input elements into a
@@ -1483,7 +1446,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
     @Override default MutateTensor<V> mut() { return getMut(); }
 
     /** {@inheritDoc} */
-    @Override default Tensor<V> reshape(int... shape ) {
+    @Override default Tensor<V> reshape( int... shape ) {
         return Neureka.get()
                 .backend()
                 .getAutogradFunction()
@@ -1494,7 +1457,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
 
     /** {@inheritDoc} */
     @Override
-    default Tensor<V> permute(int... dims ) {
+    default Tensor<V> permute( int... dims ) {
         return Neureka.get()
                 .backend()
                 .getAutogradFunction()
@@ -1505,7 +1468,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
 
     /** {@inheritDoc} */
     @Override
-    default Tensor<V> transpose(int dim1, int dim2 ) {
+    default Tensor<V> transpose( int dim1, int dim2 ) {
         // Transpose is based on permute, so we can just call permute with the correct arguments!
         int[] dims = new int[ this.rank() ];
         for ( int i = 0; i < dims.length; i++ ) dims[i] = i;
@@ -1561,7 +1524,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param optimizerFactory The {@link OptimizerFactory} which will be used to create a new {@link Optimizer} instance.
      * @return This tensor instance to allow for method chaining.
      */
-    default Tensor<V> set(OptimizerFactory optimizerFactory) {
+    default Tensor<V> set( OptimizerFactory optimizerFactory ) {
         this.set( optimizerFactory.create( (Tensor) this ) );
         return this;
     }
@@ -1597,7 +1560,7 @@ public interface Tensor<V> extends Nda<V>, Component<Tensor<V>>, ComponentOwner<
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor, to allow for method chaining.
      */
-    default Tensor<V> backward(double value ) {
+    default Tensor<V> backward( double value ) {
         ((TensorImpl<V>)this)._backward( LazyRef.of( () -> Tensor.of( this.getItemType(), shape(), value )) );
         return this;
     }

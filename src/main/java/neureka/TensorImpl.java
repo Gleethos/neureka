@@ -110,7 +110,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
     |   ---------------------------
     */
 
-    static <T> Tensor<T> _of(Object... args )
+    static <T> Tensor<T> _of( Object... args )
     {
         if ( args == null || args.length == 0 ) return new TensorImpl<>();
         if ( args.length == 1 ) {
@@ -123,8 +123,6 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
             }
             return t;
         }
-        args[ 0 ] = ( args[ 0 ] instanceof List ) ? ( (List<?>) args[ 0 ] ).toArray() : args[ 0 ];
-        args[ 1 ] = ( args[ 1 ] instanceof List ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
 
         Class<?> commonType = _extractCommonType(args);
         if ( commonType != null ) {
