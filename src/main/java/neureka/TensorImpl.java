@@ -168,15 +168,14 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         return Function.of( f.toString(), true ).call( tensors );
     }
 
-    static <T> Tensor<T> _of(Iterable<T> iterable )
+    static <T> Tensor<T> _of( Iterable<T> iterable )
     {
-        TensorImpl<T> t = new TensorImpl<>();
         List<T> list = new ArrayList<>();
         iterable.forEach( list::add );
-        return _of( t );
+        return _of( list );
     }
 
-    static <T> Tensor<T> _of(List<T> list )
+    static <T> Tensor<T> _of( List<T> list )
     {
         TensorImpl<T> t = new TensorImpl<>();
         Class<?> commonType = _extractCommonType( list.toArray() );
@@ -228,12 +227,12 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         });
     }
 
-    public static <V> TensorImpl<V> _of(NDConstructor ndConstructor, Device device, DataType<V> dataType, Object value ) {
+    public static <V> TensorImpl<V> _of( NDConstructor ndConstructor, Device device, DataType<V> dataType, Object value ) {
         Object data = value;
         if ( List.class.isAssignableFrom( dataType.getItemTypeClass() ) )
-            data = new Object[]{ value }; // Make an nd-array of lists possible"
+            data = new Object[]{ value }; // Make a nd-array of lists possible
         if ( Object[].class.isAssignableFrom( dataType.getItemTypeClass() ) )
-            data = new Object[]{ value }; // Make an nd-array of arrays possible"
+            data = new Object[]{ value }; // Make a nd-array of arrays possible
         if ( Object.class == dataType.getItemTypeClass() ) {
             if ( value.getClass() != Object[].class )
                 data = new Object[]{ value };
@@ -247,7 +246,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         return t;
     }
 
-    static <V> TensorImpl<V> _of(NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
+    static <V> TensorImpl<V> _of( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
         // We check if the type of the data is compatible with the type of the tensor:
         if ( !dataType.getItemTypeClass().isAssignableFrom( data.dataType().getItemTypeClass() ) )
             throw new IllegalArgumentException(
@@ -262,7 +261,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
     /**
      *  see {@link Tensor#of(DataType, Shape, Filler)}
      */
-    static <V> TensorImpl<V> _of(NDConstructor ndConstructor, DataType<V> type, Filler<V> filler ) {
+    static <V> TensorImpl<V> _of( NDConstructor ndConstructor, DataType<V> type, Filler<V> filler ) {
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
         LogUtil.nullArgCheck( type, "filler", Filler.class );
@@ -275,7 +274,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
     /**
      *  See {@link Tensor#of(Class, Shape, neureka.math.args.Arg.Seed)} and {@link #of(List, String)}
      */
-    static <V> TensorImpl<V> _of(Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
+    static <V> TensorImpl<V> _of( Class<V> valueType, NDConstructor ndConstructor, Arg.Seed seed ) {
         LogUtil.nullArgCheck( valueType, "valueType", Class.class );
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( seed, "seed", Arg.Seed.class );
@@ -300,7 +299,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
 
     /** {@inheritDoc} */
     @Override
-    public Tensor<V> setRqsGradient(boolean rqsGradient ) {
+    public Tensor<V> setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient ) {
             if ( !rqsGradient ) this.remove( TensorImpl.class );
             else if ( has(GraphNode.class) ) {
@@ -320,7 +319,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
     /** {@inheritDoc} */
     @Override public boolean rqsGradient() { return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK; }
 
-    private void _setRqsGradient(boolean rqsGradient) {
+    private void _setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient ) {
             if ( rqsGradient ) _flags += RQS_GRADIENT_MASK;
             else               _flags -= RQS_GRADIENT_MASK;
@@ -338,7 +337,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
      * @param isIntermediate The truth value determining if this tensor is not a user tensor but an internal
      *                       tensor which may be eligible for deletion by {@link Function}s consuming it.
      */
-    private Tensor<V> _setIsIntermediate(boolean isIntermediate) {
+    private Tensor<V> _setIsIntermediate( boolean isIntermediate ) {
         if ( isIntermediate() != isIntermediate ) {
             if ( isIntermediate ) _flags += IS_INTERMEDIATE_MASK;
             else                  _flags -= IS_INTERMEDIATE_MASK;
@@ -1328,7 +1327,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
      * @param <T> The type parameter for the returned tensor.
      * @return The same tensor instance whose data has been converted to hold a different type.
      */
-    private <T> Tensor<T> _toType(Class<T> typeClass )
+    private <T> Tensor<T> _toType( Class<T> typeClass )
     {
         DataType<V> newDataType = (DataType<V>) DataType.of( typeClass );
         if ( newDataType != this.getDataType() ) {

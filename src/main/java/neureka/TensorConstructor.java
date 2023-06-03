@@ -52,7 +52,7 @@ final class TensorConstructor
     }
 
     /**
-     *  Constructs the tensor without any initial {@link Data}.
+     *  Constructs the tensor without any initial (filled) {@link Data}.
      *
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
@@ -66,11 +66,8 @@ final class TensorConstructor
         if ( autoAllocate ) _API.setData( _targetDevice.allocate( type, ndc ) );
     }
 
-    public void constructTrusted(
-            Data<?> data
-    ) {
-        NDConfiguration ndc = _ndConstructor.produceNDC( false );
-        _API.setConf( ndc );
+    public void constructTrusted( Data<?> data ) {
+        _API.setConf( _ndConstructor.produceNDC( false ) );
         _API.setData( data );
     }
 
@@ -109,17 +106,12 @@ final class TensorConstructor
     {
         int size = _ndConstructor.getSize();
         NDConfiguration ndc = _ndConstructor.produceNDC(_ndConstructor.getSize() > 1);
-        Data<?> array = _constructAllFromOne( singleItem, ndc, type );
+        DataType<Object> dataType = (DataType<Object>) DataType.of( type );
+        Data<?> array = _targetDevice.allocateFromOne( dataType, ndc, singleItem );
         _API.setIsVirtual( size > 1 );
         _API.setConf( ndc );
         _API.setData( array );
         return singleItem != null;
-    }
-
-    private Data<?> _constructAllFromOne( Object singleItem, NDConfiguration ndc, Class<?> type )
-    {
-        DataType<Object> dataType = (DataType<Object>) DataType.of( type );
-        return _targetDevice.allocateFromOne( dataType, ndc, singleItem );
     }
 
     public <V> void newSeeded( Class<V> valueType, Arg.Seed seed )

@@ -256,7 +256,7 @@ public interface Device<V> extends Component<Tensor<V>>, Storage<V>
      *         this very {@link Device}, execute the provided lambda, and then  migrate all the
      *         tensors back to their original devices!
      */
-    default In borrow(Tensor<V> first, Tensor<V>... rest ) {
+    default In borrow( Tensor<V> first, Tensor<V>... rest ) {
         LogUtil.nullArgCheck( first, "first", Tensor.class );
         LogUtil.nullArgCheck( rest, "rest", Tensor[].class );
         List<Tensor<V>> tensors = new ArrayList<>();
