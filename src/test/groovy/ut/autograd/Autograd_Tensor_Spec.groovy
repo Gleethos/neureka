@@ -155,8 +155,8 @@ class Autograd_Tensor_Spec extends Specification
 
         when :
             x = Tensor.of(Shape.of(1), 4d).setRqsGradient(true).mut.toType(type)
-            b = Tensor.of(Shape.of(1), 0.5).mut.toType(type)
-            w = Tensor.of(Shape.of(1), 0.5).mut.toType(type)
+            b = Tensor.of(Shape.of(1), 0.5d).mut.toType(type)
+            w = Tensor.of(Shape.of(1), 0.5d).mut.toType(type)
             y = Tensor.of("(2**i0**i1**i2**2", x, b, w)
         then :
             y.toString().contains("[1]:(9.24238);")

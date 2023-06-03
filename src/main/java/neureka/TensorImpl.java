@@ -284,7 +284,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         return t;
     }
 
-    static <V> TensorImpl<V> _of(NDConstructor ndConstructor, DataType<?> type ) {
+    static <V> TensorImpl<V> _of( NDConstructor ndConstructor, DataType<?> type ) {
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
         TensorImpl<V> t = new TensorImpl<>();

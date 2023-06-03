@@ -118,25 +118,7 @@ final class TensorConstructor
 
     private Data<?> _constructAllFromOne( Object singleItem, NDConfiguration ndc, Class<?> type )
     {
-        if ( type == Double   .class ) return _constructAll(singleItem, ndc, type );
-        if ( type == Float    .class ) return _constructAll(singleItem, ndc, type );
-        if ( type == Integer  .class ) return _constructAll(singleItem, ndc, type );
-        if ( type == Short    .class ) return _constructAll(singleItem, ndc, type );
-        if ( type == Byte     .class ) return _constructAll(singleItem, ndc, type );
-        if ( type == Long     .class ) return _constructAll(singleItem, ndc, type );
-        if ( type == Boolean  .class ) return _constructAll(singleItem, ndc, type );
-        if ( type == Character.class ) return _constructAll(singleItem, ndc, type );
-        if ( Number.class.isAssignableFrom( type ) )
-            return _constructAll(((Number)singleItem).doubleValue(), ndc, Double.class );
-        else if ( !type.isArray() )
-            return _constructAll(singleItem, ndc, type );
-        else
-            return null;
-    }
-
-    private Data<?> _constructAll( Object singleItem, NDConfiguration ndc, Class<?> typeClass )
-    {
-        DataType<Object> dataType = (DataType<Object>) DataType.of( typeClass );
+        DataType<Object> dataType = (DataType<Object>) DataType.of( type );
         return _targetDevice.allocateFromOne( dataType, ndc, singleItem );
     }
 
