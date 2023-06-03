@@ -412,10 +412,28 @@ public class GraphNode<V> implements Component<Tensor<V>>
         if ( Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp() )
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients( pendingNodes ) );
         else {
+            /*
+                Now we have a set of pending graph nodes with their respective error accumulations.
+                However, some of them may not be accumulated fully yet, and that is not necessarily a problem.
+                One un-accumulated error may only be un-accumulated because another (fully accumulated) pending error
+                is not yet back-propagated to the gradients of the tensor owning the un-accumulated error.
+                So we first need to back-propagate all fully accumulated errors recursively
+                and then check if there are still un-accumulated errors left:
+            */
+            long numberOfFullyAccumulated;
+            do {
+                for ( GraphNode<V> n : new ArrayList<>(pendingNodes) )
+                    if ( n._pendingError.isFullyAccumulated() ) {
+                        n.backward(n._pendingError.getAccumulatedError()); // Continue back-propagation recursively!
+                        pendingNodes.remove( n );
+                    }
+
+                numberOfFullyAccumulated = pendingNodes.stream().filter( n -> n._pendingError.isFullyAccumulated() ).count();
+            }
+            while ( numberOfFullyAccumulated > 0 ); // Repeat until all fully accumulated errors are back-propagated!
+
+            // Now we can check if there are still un-accumulated errors left (there shouldn't be any!):
             _verifyErrorAccumulation( pendingNodes );
-            pendingNodes.forEach( n -> {
-                n.backward( n._pendingError.getAccumulatedError() ); // Continue back-propagation recursively!
-            });
         }
         _deleteDerivativesRecursively(); // Cleanup after back-propagation!
     }
@@ -423,9 +441,9 @@ public class GraphNode<V> implements Component<Tensor<V>>
     private void _verifyErrorAccumulation( Set<GraphNode<V>> pendingNodes )
     {
         List<GraphNode<V>> notFullyAccumulated = pendingNodes
-                                                        .stream()
-                                                        .filter( n -> !n._pendingError.isFullyAccumulated() )
-                                                        .collect(Collectors.toList());
+                                                    .stream()
+                                                    .filter( n -> !n._pendingError.isFullyAccumulated() )
+                                                    .collect(Collectors.toList());
 
         if ( !notFullyAccumulated.isEmpty() ) {
             String explanation = "Not all graph nodes have received the expected amount of errors from their children!\n" +
@@ -707,7 +725,7 @@ public class GraphNode<V> implements Component<Tensor<V>>
      * @param error The error which ought to be passed to the {@link ADAction}s.
      * @param action A lambda action providing derivative and target node as parameter.
      */
-    private void _forEachBackRef(Tensor<V> error, BiConsumer<GraphNode<V>, Tensor<V>> action ) {
+    private void _forEachBackRef( Tensor<V> error, BiConsumer<GraphNode<V>, Tensor<V>> action ) {
         if ( _targetsToAgents.isEmpty() ) return;
         error.getMut().setIsIntermediate( false );
         for ( BackPropTargets<V> ref : new ArrayList<>(_targetsToAgents) )
