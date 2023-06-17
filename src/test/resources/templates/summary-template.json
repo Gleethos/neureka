@@ -5,9 +5,9 @@ def noSingleBreaks = { String s ->
   return s.replaceAll("\\n+\\s+\\n+", "\n\n").replaceAll("(\\n\\n)\\n*", "\n\n")
 }
 def simpleEsc = { text ->
+    if ( text == null )  return "";
     text = text.toString();
-    if ( text == null )  return ""
-    final StringWriter writer = new StringWriter()
+    final StringWriter writer = new StringWriter();
     ( 0 ..< text.length() ).each { i ->
         final char c = text.charAt(i)
         switch (c) {
@@ -56,7 +56,7 @@ def stats = utils.aggregateStats( data )
     %>{
       "className":"$name",
       "title":"${esc(map.title)}",
-      "narrative":"${esc(map.narrative.stripIndent())}",
+      "narrative":"${esc(map.narrative)}",
       "featureCount":"${s.totalFeatures}",
       "failures":"${s.failures}",
       "errors":"${s.errors}",

@@ -202,12 +202,10 @@ function printSearchResults(target, results) {
 
 function createNarrativeParagraphs(narrative) {
     if ( narrative.length === 0 ) return [];
-    //return [$('<div style="font-size:95%"></div>').html(marked.parse(narrative.replace(/���/g, "")))]
-    let paragraphs = narrative.replace(/\n \n/g, "\n\n").split("\n\n");
-    paragraphs = paragraphs.map((paragraph)=>{
-        return $('<div style="font-size:95%"></div>').html(marked.parse(paragraph).replace(/���/g, ""));
-    });
-    return paragraphs;
+    narrative = narrative.replace(/\n \n/g, "\n\n");
+    return [
+        $('<div style="font-size:95%"></div>').html(removeIndentationAndTurnIntoMarkdown(narrative))
+    ];
 }
 
 // Creates a drop down menu for the given specification feature.
@@ -219,7 +217,10 @@ function createLoaderDropDownFor(specName, expandableFeature) {
     let wrapper = $('<div></div>');
     let button = $('<button class="ContentOption" style="text-align:center"></button>');
     button.addClass('CollapsibleField');
-    button.text(expandableFeature);
+    let title = $(removeIndentationAndTurnIntoMarkdown(expandableFeature));
+    // We remove margin from the title:
+    title.css("margin", "0em");
+    button.append(title);
     let content = $('<div></div>');
     content.addClass('CollapsibleContent');
 
@@ -284,6 +285,7 @@ function buildFeatureListFor(expandableFeature, data, content) {
     setTimeout(() => {
             hljs.initHighlighting.called = false;
             hljs.highlightAll();
+            applyMarkdown();
         },
         50
     );
@@ -325,7 +327,8 @@ function createUIForFeature(featureData) {
     let blocks = $('<div></div>');
     if ( featureData['iterations']['extraInfo'].length > 0 ) {
         // We attach the extra info to the wrapper:
-        wrapper.append("<p>" + featureData['iterations']['extraInfo'][0] + "</p>");
+        let info = removeIndentationAndTurnIntoMarkdown(featureData['iterations']['extraInfo'][0]);
+        wrapper.append("<p>" + info + "</p>");
         //(only the first one because we don't care about all the iterations)
     }
     // We iterate over the blocks:
@@ -351,6 +354,36 @@ function createUIForFeature(featureData) {
         blocks.append(blockDiv);
     });
     return wrapper.append(blocks);
+}
+
+function removeIndentationAndTurnIntoMarkdown(info) {
+    // First we split the info into lines:
+    let lines = info.split("\n");
+    // Now we remove leading and trailing empty lines:
+    while ( lines.length > 0 && lines[0].trim() === '' ) lines.shift();
+    while ( lines.length > 0 && lines[lines.length-1].trim() === '' ) lines.pop();
+    // Now we determine the lowest indentation:
+    let lowestIndentation = 1000;
+    lines.forEach((line)=>{
+        // We ignore line which are empty when trimmed:
+        if ( line.trim() === '' ) return;
+
+        let indentation = 0;
+        while ( line.startsWith(" ") ) {
+            indentation++;
+            line = line.substring(1);
+        }
+        if ( indentation < lowestIndentation ) lowestIndentation = indentation;
+    });
+    // Now we remove the indentation:
+    let result = "";
+    lines.forEach((line)=>{
+        if ( line.trim() === '' )
+            result += "\n";
+        else
+            result += line.substring(lowestIndentation) + "\n";
+    });
+    return marked.parse(result).replace(/���/g, "");
 }
 
 function autoCompleteMissingBlockData(block, seed) {
