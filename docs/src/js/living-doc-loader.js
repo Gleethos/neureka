@@ -203,9 +203,11 @@ function printSearchResults(target, results) {
 function createNarrativeParagraphs(narrative) {
     if ( narrative.length === 0 ) return [];
     narrative = narrative.replace(/\n \n/g, "\n\n");
-    return [
-        $('<div style="font-size:95%"></div>').html(removeIndentationAndTurnIntoMarkdown(narrative))
-    ];
+    return narrative
+            .split("\n\n")
+            .map((paragraph)=>{
+                return $('<div style="font-size:95%"></div>').html(removeIndentationAndTurnIntoMarkdown(paragraph));
+            });
 }
 
 // Creates a drop down menu for the given specification feature.
