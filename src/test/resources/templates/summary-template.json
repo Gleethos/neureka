@@ -1,4 +1,6 @@
 <%
+var INCLUDE_DURATION = false
+
 println("Generating summary json now!")
 
 def noSingleBreaks = { String s ->
@@ -47,7 +49,7 @@ def stats = utils.aggregateStats( data )
     "failed":"${stats.failed}",
     "featureFailures":"${stats.fFails}",
     "successRate":"${stats.successRate}",
-    "duration":"${stats.time}"
+    "duration":"${INCLUDE_DURATION ? stats.time : '?'}"
   },
   "specifications": [<%
     def i = 0
@@ -62,7 +64,7 @@ def stats = utils.aggregateStats( data )
       "errors":"${s.errors}",
       "skipped":"${s.skipped}" ,
       "successRate":"${s.successRate}",
-      "duration":"${s.time}",
+      "duration":"${INCLUDE_DURATION ? s.time : '?'}",
       "executedFeatures":[<% strFeatures(map.executedFeatures) %>],
       "ignoredFeatures":[<% strFeatures(map.ignoredFeatures) %>]
     }<%
