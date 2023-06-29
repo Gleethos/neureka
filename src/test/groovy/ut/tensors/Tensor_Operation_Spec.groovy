@@ -297,7 +297,7 @@ class Tensor_Operation_Spec extends Specification
             binding.setVariable('a', a)
             binding.setVariable('b', b)
 
-        when : '...calling methods on types like Double and Integer that receive Tsr instances...'
+        when : '...calling methods on types like Double and Integer that receive `Tensor` instances...'
             Tensor c = new GroovyShell(binding).evaluate((code)) as Tensor
 
         then : 'The resulting tensor (toString) will contain the expected String.'

@@ -2,11 +2,11 @@
 
 Simple scalar calculation:
 ```java
-    Tsr<Double> x = Tsr.of(3).setRqsGradient(true);
-    Tsr<Double> b = Tsr.of(-4);
-    Tsr<Double> w = Tsr.of(2);
-        
-    Tsr<Double> y = Tsr.of("((i0 + i1) * i2) ** 2", x, b, w);
+    Tensor<Double> x = Tensor.of(3).setRqsGradient(true);
+    Tensor<Double> b = Tensor.of(-4);
+    Tensor<Double> w = Tensor.of(2);
+
+    Tensor<Double> y = Tensor.of("((i0 + i1) * i2) ** 2", x, b, w);
     
     /*
      *   f(x) = ((x-4)*2)**2; :=>  f(3) = 4
@@ -21,14 +21,14 @@ Simple scalar calculation:
 ```
 Matrix multiplication:
 ```java
-    var x = Tsr.of(Double.class)
+    var x = Tensor.of(Double.class)
                     .withShape(2, 3)
                     .andFill(
                           3.0,   2.0, -1.0,
                           -2.0,  2.0,  4.0
                     );
                     
-    var y = Tsr.of(Double.class)
+    var y = Tensor.of(Double.class)
                 .withShape(3, 2)
                 .andFill(
                         4.0, -1.0,  
@@ -36,7 +36,7 @@ Matrix multiplication:
                         3.0, -1.0
                 );
             
-    Tsr<Double> z = x.matMul(y);
+    Tensor<Double> z = x.matMul(y);
     
     System.out.println(z); 
     /*
@@ -48,7 +48,7 @@ Matrix multiplication:
 ```
 Convolution:
 ```java
-        var x = Tsr.of(Double.class)
+        var x = Tensor.of(Double.class)
                     .withShape(3, 3)
                     .andFill(
                             1.0, 2.0, 5.0,
@@ -56,7 +56,7 @@ Convolution:
                             -2.0, 3.0, 4.0
                     );
                     
-        var y = Tsr.of(Double.class)
+        var y = Tensor.of(Double.class)
                     .withShape(2, 2)
                     .andFill(
                             -1.0, 3.0,
@@ -65,7 +65,7 @@ Convolution:
 
         y.setRqsGradient(true);
 
-        var z = Tsr.of("i0 x i1", x, y);
+        var z = Tensor.of("i0 x i1", x, y);
 
         System.out.println(z); // "(2x2):[15.0, 15.0, 18.0, 8.0)]"
 

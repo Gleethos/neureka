@@ -225,9 +225,9 @@
                                         <div class="TabBody">
                                             <div class="groovyTab">
                 <pre><code class="hljs java">
-var x = Tsr.of(3d).setRqsGradient(true)
-var b = Tsr.of(-4d)
-var w = Tsr.of(2d)
+var x = Tensor.of(3d).setRqsGradient(true)
+var b = Tensor.of(-4d)
+var w = Tensor.of(2d)
 var y = ((x+b)*w)**2
 y.backward(1)
 // x.getGradient(): "(1):[-8]"
@@ -235,20 +235,20 @@ y.backward(1)
                                             </div>
                                             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
-var x = Tsr.of(3d).setRqsGradient(true);
-var b = Tsr.of(-4d);
-var w = Tsr.of(2d);
-var y = Tsr.of("((i0+i1)*i2)^2", x, b, w);
+var x = Tensor.of(3d).setRqsGradient(true);
+var b = Tensor.of(-4d);
+var w = Tensor.of(2d);
+var y = Tensor.of("((i0+i1)*i2)^2", x, b, w);
 y.backward(1);
 // x.getGradient(): "(1):[-8]"
                 </code></pre>
                                             </div>
                                             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
-val x = Tsr.of(3.0).setRqsGradient(true)
-val b = Tsr.of(-4.0)
-val w = Tsr.of(2.0)
-val y = Tsr.of("((i0+i1)*i2)^2", x, b, w)
+val x = Tensor.of(3.0).setRqsGradient(true)
+val b = Tensor.of(-4.0)
+val w = Tensor.of(2.0)
+val y = Tensor.of("((i0+i1)*i2)^2", x, b, w)
 y.backward(1.0)
 // x.getGradient(): "(1):[-8]"
                 </code></pre>

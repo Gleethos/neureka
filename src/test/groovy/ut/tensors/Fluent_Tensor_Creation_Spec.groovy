@@ -229,7 +229,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
             Class<Object> type, Object[] values, Object data
     ) {
 
-        given : 'We create a new Tsr instance using the "vector" method in the fluent builder API.'
+        given : 'We create a new `Tensor` instance using the "vector" method in the fluent builder API.'
             Tensor<?> t = Tensor.of( type ).vector( values )
 
         expect : 'This new instance will have the expected data type...'
@@ -266,7 +266,7 @@ class Fluent_Tensor_Creation_Spec extends Specification
             Class<Object> type, Object value, Object data
     ) {
 
-        given : 'We create a new Tsr instance using the "scalar" method in the fluent builder API.'
+        given : 'We create a new `Tensor` instance using the "scalar" method in the fluent builder API.'
             Tensor<?> t = Tensor.of( type ).scalar( value )
 
         expect : 'This new instance will have the expected data type...'

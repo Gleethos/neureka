@@ -79,7 +79,7 @@ Put the following code at the beginning of your script to load Neureka (or any o
 import neureka.*
  
 // Now we can start using Neureka:
-println Tsr.of(1f, 2f, 0.34f, -9.3f) 
+println Tensor.of(1f, 2f, 0.34f, -9.3f) 
 
 ```
 

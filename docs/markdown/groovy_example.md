@@ -2,9 +2,9 @@
 
 Simple scalar calculation:
 ```groovy
-    def x = Tsr.of(3).setRqsGradient(true) 
-    def b = Tsr.of(-4)
-    def w = Tsr.of(2)
+    def x = Tensor.of(3).setRqsGradient(true) 
+    def b = Tensor.of(-4)
+    def w = Tensor.of(2)
         
     def y = ((x + b) * w)**2
     
@@ -17,7 +17,7 @@ Simple scalar calculation:
 ```
 Matrix multiplication:
 ```groovy
-    def x = Tsr.of(
+    def x = Tensor.of(
                 [2, 3],
                 [
                         3,   2, -1,
@@ -25,7 +25,7 @@ Matrix multiplication:
                 ]
             )
             
-    def y = Tsr.of(
+    def y = Tensor.of(
                 [3, 2],
                 [
                         4, -1,  
@@ -42,7 +42,7 @@ Matrix multiplication:
 ```
 Convolution:
 ```groovy
-        x = Tsr.of(
+        x = Tensor.of(
                 [3, 3],
                 [
                          1, 2, 5,
@@ -50,18 +50,18 @@ Convolution:
                         -2, 3, 4,
                 ]
         );
-        y = Tsr.of(
+        y = Tensor.of(
                 [2, 2],
                 [
                        -1, 3,
                         2, 3,
                 ]);
                 
-        z = Tsr.of('i0 x i1', x, y) 
+        z = Tensor.of('i0 x i1', x, y) 
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0)]"
 
-        z.backward(Tsr.of([2, 2], 1));
+        z.backward(Tensor.of([2, 2], 1));
         /*
          *   y.toString(): "(2x2):[-1.0, 3.0, 2.0, 3.0]:g:[6.0, 9.0, 4.0, 9.0]"    
          */
@@ -70,7 +70,7 @@ Convolution:
 GPU execution:
 ```groovy
         def gpu = Device.find('nvidia')
-        x = Tsr.of(
+        x = Tensor.of(
                 [3, 3],
                 [
                         1, 2, 5,
@@ -78,7 +78,7 @@ GPU execution:
                         -2, 3, 4,
                 ]
         )
-        y = Tsr.of(
+        y = Tensor.of(
                 [2, 2],
                 [
                         -1, 3,
@@ -86,11 +86,11 @@ GPU execution:
                 ])
                 
         gpu.store(x).store(y)      
-        z = Tsr.of('i0 x i1', x, y); // <= executed on gpu!
+        z = Tensor.of('i0 x i1', x, y); // <= executed on gpu!
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0], "
 
-        z.backward(Tsr.of([2, 2], 1))
+        z.backward(Tensor.of([2, 2], 1))
         /*
          *   y.toString(): "(2x2):[-1.0, 3.0, 2.0, 3.0]:g:[6.0, 9.0, 4.0, 9.0]"    
          */

@@ -21,16 +21,16 @@ where it is used to represent a physical quantity.
 
 ## Instantiating Them ##
 
-Neureka models both concepts through the `Tsr` and the `Nda` interfaces.
-`Nda` is an abbreviation of `NdArray`, and `Tsr` is an abbreviation of `Tensor`.
-The `Tsr` type is a subtype of the `Nda` type, exposing additional methods
+Neureka models both concepts through the `Tensor` and the `Nda` interfaces.
+`Nda` is an abbreviation of `NdArray`, and `Tensor` is
+a subtype of the `Nda` type, exposing additional methods
 like for example `plus`, `minus`, `times` and `divide`.
 Both can be instantiated through static factory methods (and a fluent builder API).
 
 Here an example:
 ````java
 // Tensor:
-Tsr<Float>  t = Tsr.of(Float.class).withShape(2, 3).andFill(1f, 4f, -2f);
+Tensor<Float>  t = Tensor.of(Float.class).withShape(2, 3).andFill(1f, 4f, -2f);
 // NdArray:
 Nda<String> s = Nda.of(String.class).withShape(2, 3).andFill("a", "b", "c");
 
