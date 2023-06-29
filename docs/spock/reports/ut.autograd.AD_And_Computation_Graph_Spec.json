@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.610 seconds"
+    "duration":"0.605 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -37,7 +37,7 @@
     {
       "id":"Payloads and derivatives are null after garbage collection.",
       "result":"PASS",
-      "duration":"0.606 seconds",
+      "duration":"0.601 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

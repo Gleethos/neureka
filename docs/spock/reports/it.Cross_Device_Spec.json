@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"8.738 seconds"
+    "duration":"9.011 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Convolution can model matrix multiplications across devices.",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.014 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -39,7 +39,7 @@
     {
       "id":"Cross device system test runs successfully.",
       "result":"PASS",
-      "duration":"5.360 seconds",
+      "duration":"5.629 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"Test simple NN implementation with manual backprop",
       "result":"PASS",
-      "duration":"3.288 seconds",
+      "duration":"3.281 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -81,7 +81,7 @@
     {
       "id":"A gradient of ones can be set by calling the backward method on a tensor sitting on any device.",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -108,7 +108,7 @@
     {
       "id":"Mapping tensors works for every device (even if they are not used).",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

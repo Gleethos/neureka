@@ -5,18 +5,18 @@
   "subjects":["neureka.devices.host.CPU","neureka.devices.Device"],
   "statistics":{
     "runs":"4",
-    "successRate":"100.0%",
-    "failures":"0",
+    "successRate":"75.0%",
+    "failures":"1",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.643 seconds"
+    "duration":"5.400 seconds"
   },
   "headers":[" \n                <p>\n                    The thread pool of the class neureka.devices.host.CPU executor becomes\n                    more active when receiving larger workloads which\n                    benefit from parallelization.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Thread pool executes given workload in parallel",
       "result":"PASS",
-      "duration":"0.454 seconds",
+      "duration":"0.313 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Warning! This test is flaky simply because it relies on the behaviour of threads\n            which may or may not behave as expected. \n        "]
       },
@@ -66,8 +66,8 @@
   
     {
       "id":"The CPU device will keep track of the amount of tensors it stores.",
-      "result":"PASS",
-      "duration":"0.174 seconds",
+      "result":"FAIL",
+      "duration":"5.079 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,7 +100,7 @@
 
         {"kind":"and","text":"The CPU should have forgotten about the data objects as well.","code":["CPU.get().numberOfDataObjects() == initialDataObjects"]}
       ],
-      "problems":{"dataValues":[], "errors":[]}
+      "problems":{"dataValues":["[]"], "errors":["[Condition not satisfied:\n\ncpu.numberOfStored() == initial\n|   |                |  |\n|   362              |  363\nCPU[cores=32]        false\n]"]}
     }
   
   ],

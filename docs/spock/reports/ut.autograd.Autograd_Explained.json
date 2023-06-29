@@ -16,7 +16,7 @@
     {
       "id":"Simple automatic differentiation and propagation.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            How can I compute gradients with Neureka automatically?\n        "]
       },

@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"6.897 seconds"
+    "duration":"7.000 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can run the attention head test model.",
       "result":"PASS",
-      "duration":"5.121 seconds",
+      "duration":"5.195 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            This little test simply executes the `QuasiMultiHeadAttention` model class\n            and checks if the loss is decreasing over time.\n            You can check out how this is implemented in the `QuasiMultiHeadAttention` class.\n            Here you will only see how the training is executed.\n        "]
       },
@@ -35,7 +35,7 @@
     {
       "id":"A simple 3 layer neural network converges.",
       "result":"PASS",
-      "duration":"1.312 seconds",
+      "duration":"1.300 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"A very simple 1 layer NN converges.",
       "result":"PASS",
-      "duration":"0.457 seconds",
+      "duration":"0.498 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

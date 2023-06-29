@@ -229,6 +229,7 @@ pitest {
 // 10. CUSTOM DEPLOYMENT TASKS :
 
 tasks.register('releaseJDocs', Copy) {
+    dependsOn 'javadoc'
     from "$rootDir/build/docs/javadoc"
     into "$rootDir/docs/jdocs"
 }
@@ -250,7 +251,6 @@ tasks.register('deploy') {
 
     dependsOn 'check'
     dependsOn 'jar'
-    dependsOn 'javadoc'
     dependsOn 'releaseJDocs'
 
     dependsOn 'publishToSonatype'

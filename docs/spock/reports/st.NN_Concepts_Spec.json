@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.136 seconds"
+    "duration":"0.132 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The attention mechanism (found in the commonly known transformer) demonstrated.",
       "result":"PASS",
-      "duration":"0.135 seconds",
+      "duration":"0.130 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The attention mechanism is a core component of the transformer architecture and\n            most likely the reason why it is so successful in natural language processing.\n\n            Here you can see that the query and key weight matrices are trained\n            if there is only one input vector.\n        "]
       },
