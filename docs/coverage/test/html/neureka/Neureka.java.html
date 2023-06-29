@@ -78,7 +78,7 @@ public final class Neureka
     /**
      *  The current semantic version of this library build.
      */
-<span class="fc" id="L81">    private static String _VERSION = &quot;0.21.0&quot;;</span>
+<span class="fc" id="L81">    private static String _VERSION = &quot;1.0.0&quot;;</span>
 
     /**
      *  The truth value determining if OpenCL is available or not.
@@ -571,8 +571,8 @@ public final class Neureka
              *  Setting both flags to true will inhibit the effect of the second setting &lt;i&gt;'isApplyingGradientWhenTensorIsUsed'&lt;/i&gt;
              *  unless a form of &quot;permission&quot; is being signaled to the autograd system.
              *  This signal comes in the form of a &quot;request&quot; flag which marks a tensor as &lt;b&gt;allowed to
-             *  be updated by its gradient&lt;/b&gt;. This request can be dispatched to a {@link Tsr}
-             *  by setting {@link Tsr#setGradientApplyRequested(boolean)} to {@code true}.&lt;br&gt;
+             *  be updated by its gradient&lt;/b&gt;. This request can be dispatched to a {@link Tensor}
+             *  by setting {@link Tensor#setGradientApplyRequested(boolean)} to {@code true}.&lt;br&gt;
              *
              * @return The truth value determining if gradients should be applied upon request.
              **/

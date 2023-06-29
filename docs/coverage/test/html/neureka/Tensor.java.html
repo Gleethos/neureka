@@ -1,0 +1,2707 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tensor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka</a> &gt; <span class="el_source">Tensor.java</span></div><h1>Tensor.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   'Any fool can write code that a computer can understand.
+    Good programmers write code that humans can understand.'
+    – Martin Fowler
+
+    Use the following as search keys :)
+
+    §(1) : CONSTRUCTION
+    §(2) : FLAGS
+    §(3) : COMPONENT SYSTEM
+    §(4) : PROPERTIES
+    §(5) : OBJECT STATE MODIFICATION
+    §(6) : ND-ITERATOR LOGIC
+    §(7) : COMPONENT SPECIFIC
+    §(8) : (OVERLOADABLE) OPERATORS &amp; OPERATIONS
+    §(9) : SLICING, INDEXING &amp; INJECTING
+    §(10) : MAPPING
+
+*/
+
+
+package neureka;
+
+import neureka.autograd.GraphNode;
+import neureka.autograd.JITProp;
+import neureka.backend.api.LazyRef;
+import neureka.common.composition.Component;
+import neureka.common.composition.ComponentOwner;
+import neureka.common.utility.DataConverter;
+import neureka.common.utility.ListReader;
+import neureka.common.utility.LogUtil;
+import neureka.devices.Device;
+import neureka.devices.host.CPU;
+import neureka.dtype.DataType;
+import neureka.dtype.NumericType;
+import neureka.dtype.custom.UI16;
+import neureka.dtype.custom.UI32;
+import neureka.dtype.custom.UI8;
+import neureka.fluent.building.NdaBuilder;
+import neureka.fluent.building.states.IterByOrIterFromOrAllTensor;
+import neureka.fluent.building.states.WithShapeOrScalarOrVector;
+import neureka.fluent.building.states.WithShapeOrScalarOrVectorOnDevice;
+import neureka.fluent.slicing.states.AxisOrGetTensor;
+import neureka.framing.NDFrame;
+import neureka.framing.Relation;
+import neureka.math.Function;
+import neureka.math.Functions;
+import neureka.math.args.Arg;
+import neureka.ndim.Filler;
+import neureka.ndim.NDConstructor;
+import neureka.ndim.NDUtil;
+import neureka.ndim.config.NDConfiguration;
+import neureka.optimization.Optimizer;
+import neureka.optimization.OptimizerFactory;
+import neureka.view.NDPrintSettings;
+import neureka.view.NdaAsString;
+
+import java.awt.image.BufferedImage;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+/**
+ *  A {@link Tensor} is a mathematical concept and type of multidimensional
+ *  data-structure with certain transformation properties.
+ *  Technically however, it is mostly a simple container / data-structure which can house data indexed by N dimensions.
+ *  Therefore, it is often also described as a nd-array.
+ *  Elements of a tensor are also mostly numeric.&lt;br&gt;
+ *  This means that: &lt;br&gt;
+ *  &lt;i&gt;&lt;b&gt;
+ *      ...a tensor of rank 0 is a scalar, a tensor of rank 1 is
+ *      a vector and a tensor of rank 2 is a matrix, etc...
+ *  &lt;/b&gt;&lt;/i&gt;
+ *  &lt;br&gt;&lt;br&gt;
+ *  Consequently, tensors are a perfect fit for applying various operations on them.
+ *  Such operations might be simple element-wise operations or more complex linear operations like
+ *  the dot-product, matrix- or even tensor multiplications. &lt;br&gt;
+ *  &lt;br&gt;
+ * @param &lt;V&gt; The type parameter for the individual value items within this tensor.
+ */
+public interface Tensor&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tensor&lt;V&gt;&gt;, ComponentOwner&lt;Tensor&lt;V&gt;&gt;
+{
+    /*==================================================================================================================
+    |
+    |       §(1) : CONSTRUCTION
+    |   ---------------------------
+    */
+
+    /**
+     *  This static factory method creates and return a completely empty and undefined tensor
+     *  which is void of any contents and meaning.
+     *  The use case for this would be to use the produced {@link Tensor}
+     *  instance as a target for an inline operations which fills the instance with an actual value. &lt;br&gt;
+     *  An example of this approach would be to call the {@link MutateTensor#putAt(List, Nda)} method with an empty list as key.
+     *  This will be interpreted as an inline copy of the contents of the
+     *  second parameter into this {@link Tensor} instance.
+     *
+     * @return A new and completely empty / uninitialized {@link Tensor} instance.
+     */
+<span class="fc" id="L126">    static Tensor&lt;Object&gt; newInstance() { return new TensorImpl&lt;&gt;(); }</span>
+
+    /**
+     *  Use this to conveniently operate on 2 tensors.
+     *  A simple example would be: {@code of(a,'*',b)}.
+     *
+     * @param a The left operand.
+     * @param o The operator, which may be '+', '-', '*'...
+     * @param b The right operand.
+     * @param &lt;T&gt; The value item type parameter for the involved tensors.
+     * @return The result of the operation defined by the provided character.
+     */
+<span class="nc" id="L138">    static &lt;T&gt; Tensor&lt;T&gt; of(Tensor&lt;T&gt; a, char o, Tensor&lt;T&gt; b ) { return TensorImpl._of( a, String.valueOf(o), b ); }</span>
+
+    /**
+     *  Use this to conveniently operate on 3 tensors.
+     *  A simple example would be: {@code of(a,'*',b,'+',c)}.
+     *
+     * @param a The first and left most operand.
+     * @param o1 The first operator, which may be '+', '-', '*'...
+     * @param b The second operand.
+     * @param o2 The second operator, which may also be '+', '-', '*'...
+     * @param c The third and last operand.
+     * @param &lt;T&gt; The value item type parameter for the involved tensors.
+     * @return The result of the operations defined by the 2 provided characters.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of(Tensor&lt;T&gt; a, char o1, Tensor&lt;T&gt; b, char o2, Tensor&lt;T&gt; c ) {
+<span class="nc" id="L153">        return TensorImpl._of( a, String.valueOf(o1), b, String.valueOf(o2), c );</span>
+    }
+
+    /**
+     *  Use this to conveniently operate on a tensor.
+     *  A simple example would be: {@code of(&quot;sig(tanh(&quot;,a,&quot;))&quot;)}.
+     *
+     * @param e1 The first part of the string expression defining how the provided tensor should be processed.
+     * @param a The tensor which ought to be sent to whatever is defined by the provided expressions.
+     * @param e2 The latter part of the expression defining how the provided tensor should be executed.
+     * @param &lt;T&gt; The value item type parameter for the involved tensor.
+     * @return The result of the operation(s) defined by the provided strings.
+     */
+<span class="fc" id="L166">    static &lt;T&gt; Tensor&lt;T&gt; of(String e1, Tensor&lt;T&gt; a, String e2 ) { return TensorImpl._of( e1, a, e2 ); }</span>
+
+    /**
+     *  Use this to conveniently operate on 2 tensors.
+     *  A simple example would be: {@code of(&quot;relu(&quot;,a,'-',b,&quot;)*2&quot;)}.
+     *
+     * @param e1 The first part of the string expression defining how the provided tensor should be processed.
+     * @param a The first tensor which ought to be sent to whatever function is defined by the provided expressions.
+     * @param o An operator combining both {@code a} and {@code b} to form a result.
+     * @param b The second tensor and right operand which ought to be sent to whatever function is defined by the provided expressions.
+     * @param e2 The latter part of the expression defining how the provided tensor should be executed.
+     * @param &lt;T&gt; The value item type parameter for the involved tensor.
+     * @return The result of the operation(s) defined by the provided strings.
+     *
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of(String e1, Tensor&lt;T&gt; a, char o, Tensor&lt;T&gt; b, String e2 ) {
+<span class="fc" id="L182">        return TensorImpl._of( e1, a, String.valueOf(o), b, e2 );</span>
+    }
+
+    /**
+     *  Use this to conveniently operate on 3 tensors.
+     *  A simple example would be:
+     *  {@code of(&quot;abs((&quot;,a,&quot;-&quot;,b,&quot;) * &quot;,c,&quot;)&quot;)}.
+     *
+     * @param e1 The first part of the expression which would typically be used to define a function name.
+     * @param a The first argument.
+     * @param e2 The second part of the expression, which might be an operation.
+     * @param b The second argument.
+     * @param e3 The third part of the expression...
+     * @param c The third argument.
+     * @param e4 The last part of the expression which should syntactically match the other expression...
+     * @param &lt;T&gt; The type parameter for the involved tensors.
+     * @return The result of the calculation defined by the provided expressions and arguments.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of(
+            String e1, Tensor&lt;T&gt; a, String e2, Tensor&lt;T&gt; b, String e3, Tensor&lt;T&gt; c, String e4
+    ) {
+<span class="fc" id="L203">        LogUtil.nullArgCheck( e1, &quot;e1&quot;, String.class, &quot;The first expression must not be null.&quot; );</span>
+<span class="fc" id="L204">        LogUtil.nullArgCheck( a, &quot;a&quot;, Tensor.class, &quot;The first tensor must not be null.&quot; );</span>
+<span class="fc" id="L205">        LogUtil.nullArgCheck( e2, &quot;e2&quot;, String.class, &quot;The second expression part must not be null.&quot; );</span>
+<span class="fc" id="L206">        LogUtil.nullArgCheck( b, &quot;b&quot;, Tensor.class, &quot;The second tensor must not be null.&quot; );</span>
+<span class="fc" id="L207">        LogUtil.nullArgCheck( e3, &quot;e3&quot;, String.class, &quot;The third expression part must not be null.&quot; );</span>
+<span class="fc" id="L208">        LogUtil.nullArgCheck( c, &quot;c&quot;, Tensor.class, &quot;The third tensor must not be null.&quot; );</span>
+<span class="fc" id="L209">        LogUtil.nullArgCheck( e4, &quot;e4&quot;, String.class, &quot;The fourth expression part must not be null.&quot; );</span>
+<span class="fc" id="L210">        return TensorImpl._of( e1, a, e2, b, e3, c, e4 );</span>
+    }
+
+    /**
+     *  This static {@link Tensor} factory method tries to interpret the provided
+     *  arguments to create the instance the use might wants.
+     *
+     * @param args The arguments which ought to be interpreted.
+     * @return The result of the interpretation in the form of a {@link Tensor} instance of typ {@link Object}.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of( Object... args ) {
+<span class="fc" id="L221">        LogUtil.nullArgCheck( args, &quot;args&quot;, Object[].class );</span>
+<span class="fc" id="L222">        return TensorImpl._of( args );</span>
+    }
+
+    /**
+     * Constructs a vector of objects based on the provided iterable.
+     *
+     * @param iterable The iterable of objects from which a 1D nd-array ought to be constructed.
+     * @return A vector / 1D tensor of objects.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of( Iterable&lt;T&gt; iterable ) {
+<span class="nc" id="L232">        LogUtil.nullArgCheck( iterable, &quot;iterable&quot;, Iterable.class );</span>
+<span class="nc" id="L233">        return TensorImpl._of( iterable );</span>
+    }
+
+    /**
+     *  This is a convenient factory method for creating {@link Tensor} instances for
+     *  values of type {@link T} based on a list of integers
+     *  defining a shape made up of axes sizes as well as a scalar value of type {@link T}
+     *  which will fill out the data array spanned by the provided shape information.
+     *
+     * @param shape A list of integers whose values ought to define the size of the axes of the shape of the new {@link Tensor}.
+     * @param item An object of type {@link T} which will populate the data array of the new instance.
+     * @return A new {@link Tensor} instance for the generic type {@link T}.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of( List&lt;Integer&gt; shape, T item ) {
+<span class="fc" id="L247">        LogUtil.nullArgCheck( shape, &quot;shape&quot;, List.class );</span>
+<span class="fc" id="L248">        LogUtil.nullArgCheck( item, &quot;value&quot;, Object.class );</span>
+<span class="fc" id="L249">        return of( (Class&lt;T&gt;) item.getClass(), shape, item );</span>
+    }
+
+    /**
+     *  This is a convenient factory method for creating {@link Tensor} instances for
+     *  representing items of type {@link T}. The factory method
+     *  instantiates tensors based on a {@link Shape} tuple of integers
+     *  defining axes sizes, and a scalar item of type {@link T}
+     *  which will fill out the data array spanned by the provided shape information.
+     *  A simple usage example would be:
+     *  &lt;pre&gt;{@code
+     *     Tensor.of(Shape.of( 4, 3, 6 ), 42);
+     *  }&lt;/pre&gt;
+     *
+     * @param shape An immutable tuple of integers whose values ought to define the size of the axes of the shape of the new {@link Tensor}.
+     * @param value An object of type {@link T} which will populate the data array of the new instance.
+     * @return A new {@link Tensor} instance for the generic type {@link T}.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of( Shape shape, T value ) {
+<span class="fc" id="L268">        LogUtil.nullArgCheck( shape, &quot;shape&quot;, List.class );</span>
+<span class="fc" id="L269">        LogUtil.nullArgCheck( value, &quot;value&quot;, Object.class );</span>
+<span class="fc" id="L270">        return ofAny( (Class&lt;T&gt;) value.getClass(), shape, value );</span>
+    }
+
+    /**
+     *  This factory method will create and return a {@link Tensor} instance
+     *  based on a list of {@link Number} instances whose rounded values will be interpreted as
+     *  the shape of this new {@link Tensor} instance and a seed which will serve
+     *  as a source of pseudo randomness to generate the values for the new instance.
+     *
+     * @param shape A list of {@link Number} instances which will be interpreted as a shape array.
+     * @param seed A source of pseudo randomness for the {@link Tensor} instance created by this method.
+     * @return A new {@link Tensor} instance created based on a shape and a seed.
+     */
+    static Tensor&lt;Double&gt; of(List&lt;? extends Number&gt; shape, String seed ) {
+<span class="fc" id="L284">        int[] shapeArray = new int[ shape.size() ];</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        for ( int i = 0; i &lt; shapeArray.length; i++ ) shapeArray[ i ] = shape.get( i ).intValue();</span>
+<span class="fc" id="L286">        return of( Double.class, Shape.of(shapeArray), Arg.Seed.of(seed) );</span>
+    }
+
+    /**
+     *  Creates a new {@link Tensor} instance based on a list of numbers representing the shape,
+     *  and a list of values representing the value of the resulting tensor.
+     *
+     * @param shape A list of numbers whose integer values will be used to form the shape of the resulting {@link Tensor}.
+     * @param items A list of values which will be used to populate the data array of the resulting {@link Tensor}.
+     * @param &lt;V&gt; The type parameter of the value list and returned tensor.
+     * @return A new {@link Tensor} instance constructed based on the provided shape and value list.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( List&lt;? extends Number&gt; shape, List&lt;V&gt; items ) {
+<span class="fc" id="L299">        LogUtil.nullArgCheck( shape, &quot;shape&quot;, List.class, &quot;Null is not a valid shape!&quot; );</span>
+<span class="fc" id="L300">        LogUtil.nullArgCheck( items, &quot;value&quot;, List.class, &quot;Null is not a valid value list!&quot; );</span>
+<span class="fc" id="L301">        Class&lt;V&gt; typeClass = (Class&lt;V&gt;) Object.class;</span>
+<span class="pc bpc" id="L302" title="1 of 2 branches missed.">        if ( items.size() &gt; 0 ) typeClass = (Class&lt;V&gt;) items.get(0).getClass();</span>
+<span class="fc" id="L303">        return of(</span>
+<span class="fc" id="L304">                    DataType.of(typeClass),</span>
+<span class="fc" id="L305">                    Shape.of(shape),</span>
+                    items
+                );
+    }
+
+    /**
+     *  Creates a new {@link Tensor} instance based on a shape tuple of numbers representing the nd-array shape,
+     *  and a list of items representing the value of the resulting tensor. &lt;br&gt;
+     *  A simple usage example would be:
+     *  &lt;pre&gt;{@code
+     *     Tensor.of(Shape.of( 2, 3, 4 ), myListOfItems);
+     *  }&lt;/pre&gt;
+     *
+     * @param shape A shape tuple of numbers whose integer values will be used to form the shape of the resulting {@link Tensor}.
+     * @param items A list of values which will be used to populate the data array of the resulting {@link Tensor}.
+     * @param &lt;V&gt; The type parameter of the value list and returned tensor.
+     * @return A new {@link Tensor} instance constructed based on the provided shape and value list.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( Shape shape, List&lt;V&gt; items ) {
+<span class="fc" id="L324">        Class&lt;V&gt; typeClass = (Class&lt;V&gt;) Object.class;</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">        if ( items.size() &gt; 0 ) typeClass = (Class&lt;V&gt;) items.get(0).getClass();</span>
+<span class="fc" id="L326">        return of( DataType.of(typeClass), shape, items );</span>
+    }
+
+    /**
+     *  This factory method will turn a list of values or nested lists of values into a {@link Tensor}
+     *  instance with the corresponding rank and shape.
+     *
+     * @param conf A list of either values or nested lists which are themselves either or.
+     * @return A new {@link Tensor} instance whose shape and data is based on the provided list structure.
+     */
+<span class="fc" id="L336">    static Tensor&lt;Object&gt; of( List&lt;Object&gt; conf ) { return of( (Class&lt;Object&gt;) null, conf ); }</span>
+
+    /**
+     *  This factory method will turn a list of values or nested lists of values into a {@link Tensor}
+     *  instance with the corresponding rank and shape and whose values
+     *  are of the provided type.
+     *
+     * @param type The type of the tensor produced by this factory method.
+     * @param conf A list of either values or nested lists which are themselves either or.
+     * @param &lt;T&gt; The type parameter of the tensor returned by this factory method.
+     * @return A new {@link Tensor} instance whose shape and data is based on the provided list structure.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of( Class&lt;T&gt; type, List&lt;Object&gt; conf ) {
+<span class="fc" id="L349">        ListReader.Result result = null;</span>
+        try {
+<span class="fc" id="L351">            result = ListReader.read( conf, o -&gt; o );</span>
+<span class="fc" id="L352">        } catch (Exception e) {</span>
+            // We don't care about the first attempt...
+<span class="fc" id="L354">        }</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">        if ( result == null )</span>
+<span class="pc bpc" id="L356" title="1 of 2 branches missed.">            result = ListReader.read( conf, o -&gt; ( o instanceof Number ? ((Number)o).doubleValue() : o ) );</span>
+        Class&lt;T&gt; resultType;
+        Object[] resultData;
+<span class="fc" id="L359">        Shape shape = Shape.of(result.getShape());</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">        if ( type == null ) {</span>
+<span class="fc" id="L361">            resultType = (Class&lt;T&gt;) result.getType();</span>
+<span class="fc" id="L362">            resultData = result.getData().toArray();</span>
+        } else {
+<span class="fc" id="L364">            DataConverter converter = DataConverter.get();</span>
+<span class="fc" id="L365">            resultType = type;</span>
+<span class="fc" id="L366">            resultData = result.getData().parallelStream().map( v -&gt; converter.convert(v, type) ).toArray();</span>
+        }
+<span class="fc" id="L368">        return of( DataType.of(resultType), shape, resultData );</span>
+    }
+
+    /**
+     *  This is the entry point to the fluent tensor builder API for building
+     *  {@link Tensor} instances in a readable and type safe fashion.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tensor} builder API which will lead to the creation
+     *  of a tensor storing values defined by the provided type class.
+     *  A simple usage example would be:
+     *   &lt;pre&gt;{@code
+     *      Tensor.of(Double.class)
+     *            .withShape( 2, 3, 4 )
+     *            .andFill( 5, 3, 5 )
+     *   }&lt;/pre&gt;
+     *
+     *   It is also possible to define a range using the API to populate the tensor with values:
+     *   &lt;pre&gt;{@code
+     *      Tensor.of(Double.class)
+     *            .withShape( 2, 3, 4 )
+     *            .andFillFrom( 2 ).to( 9 ).step( 2 )
+     *   }&lt;/pre&gt;
+     *
+     *   If one needs a simple scalar then the following shortcut is possible:
+     *   &lt;pre&gt;{@code
+     *      Tensor.of(Float.class).scalar( 3f )
+     *   }&lt;/pre&gt;
+     *
+     *   This principle works for vectors as well:
+     *   &lt;pre&gt;{@code
+     *       Tensor.of(Byte.class).vector( 2, 5, 6, 7, 8 )
+     *   }&lt;/pre&gt;
+     *   For more fine-grained control over the initialization one can
+     *   pass an initialization lambda to the API:
+     *   &lt;pre&gt;{@code
+     *       Tensor.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -&gt; i * 5 - 30 )
+     *   }&lt;/pre&gt;
+     *   &lt;br&gt;
+     *   Consider using the following convenience methods:
+     *   {@link #ofFloats()}, {@link #ofDoubles()}, {@link #ofInts()}, {@link #ofBytes()}, {@link #ofShorts()}
+     *
+     * @param type The type class of the items stored by the tensor built by the exposed builder API.
+     * @return The next step of the {@link Tensor} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L412">    static &lt;V&gt; WithShapeOrScalarOrVectorOnDevice&lt;V&gt; of( Class&lt;V&gt; type ) { return new NdaBuilder&lt;&gt;( type ); }</span>
+
+    /**
+     *  This is a simple convenience method which is simply calling the {@link Tensor#of(Class)}
+     *  method like so: {@code of(Double.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tensor} builder API which in this case will lead to the creation
+     *  of a tensor storing doubles. &lt;br&gt;
+     *  A simple usage example would be:
+     *  &lt;pre&gt;{@code
+     *     Tensor.ofDoubles()
+     *           .withShape( 2, 3, 4 )
+     *           .andFill( 5d, 3d, 5d )
+     *  }&lt;/pre&gt;
+     *
+     * @return The next step of the {@link Tensor} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L429">    static WithShapeOrScalarOrVectorOnDevice&lt;Double&gt; ofDoubles() { return of(Double.class); }</span>
+
+    /**
+     *  This is a simple convenience method which is simply calling the {@link Tensor#of(Class)}
+     *  method like so: {@code of(Float.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tensor} builder API which in this case will lead to the creation
+     *  of a tensor storing floats.&lt;br&gt;
+     *  A simple usage example would be:
+     *  &lt;pre&gt;{@code
+     *     Tensor.ofFloats()
+     *           .withShape( 2, 3, 4 )
+     *           .andFill( 5f, 7f, 11f )
+     *  }&lt;/pre&gt;
+     *
+     *
+     * @return The next step of the {@link Tensor} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L447">    static WithShapeOrScalarOrVectorOnDevice&lt;Float&gt; ofFloats() { return of(Float.class); }</span>
+
+    /**
+     *  This is a simple convenience method which is simply calling the {@link Tensor#of(Class)}
+     *  method like so: {@code of(Integer.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tensor} builder API which in this case will lead to the creation
+     *  of a tensor storing integers.
+     *
+     * @return The next step of the {@link Tensor} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L458">    static WithShapeOrScalarOrVectorOnDevice&lt;Integer&gt; ofInts() { return of(Integer.class); }</span>
+
+    /**
+     *  This is a simple convenience method which is simply calling the {@link Tensor#of(Class)}
+     *  method like so: {@code of(Short.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tensor} builder API which in this case will lead to the creation
+     *  of a tensor storing shorts.
+     *
+     * @return The next step of the {@link Tensor} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L469">    static WithShapeOrScalarOrVectorOnDevice&lt;Short&gt; ofShorts() { return of(Short.class); }</span>
+
+    /**
+     *  This is a simple convenience method which is simply calling the {@link Tensor#of(Class)}
+     *  method like so: {@code of(Byte.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tensor} builder API which in this case will lead to the creation
+     *  of a tensor storing bytes.
+     *
+     * @return The next step of the {@link Tensor} builder API which exposes methods for defining shapes.
+     */
+<span class="fc" id="L480">    static WithShapeOrScalarOrVectorOnDevice&lt;Byte&gt; ofBytes() { return of(Byte.class); }</span>
+
+    /**
+     *  Constructs a vector of doubles based on the provided array.
+     *
+     * @param value The array of doubles from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of doubles.
+     */
+<span class="fc" id="L488">    static Tensor&lt;Double&gt; of( double... value ) { return of( Double.class, Shape.of( value.length ), value ); }</span>
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar double tensor.
+     */
+<span class="fc" id="L494">    static Tensor&lt;Double&gt; of( double value ) { return of( Double.class, Shape.of( 1 ), value ); }</span>
+
+    /**
+     *  Constructs a vector of floats based on the provided array.
+     *
+     * @param value The array of floats from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of floats.
+     */
+<span class="fc" id="L502">    static Tensor&lt;Float&gt; of( float... value ) { return of( Float.class, Shape.of( value.length ), value ); }</span>
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar float tensor.
+     */
+<span class="fc" id="L508">    static Tensor&lt;Float&gt; of( float value ) { return of( Float.class, Shape.of( 1 ), value ); }</span>
+
+    /**
+     *  Constructs a vector of bytes based on the provided array.
+     *
+     * @param value The array of bytes from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of bytes.
+     */
+<span class="fc" id="L516">    static Tensor&lt;Byte&gt; of( byte... value ) { return of( Byte.class, Shape.of( value.length ), value ); }</span>
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar byte tensor.
+     */
+<span class="fc" id="L522">    static Tensor&lt;Byte&gt; of( byte value ) { return of( Byte.class, Shape.of( 1 ), value ); }</span>
+
+    /**
+     *  Constructs a vector of ints based on the provided array.
+     *
+     * @param value The array of ints from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of ints.
+     */
+<span class="fc" id="L530">    static Tensor&lt;Integer&gt; of( int... value ) { return of( Integer.class, Shape.of( value.length ), value ); }</span>
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar int tensor.
+     */
+<span class="fc" id="L536">    static Tensor&lt;Integer&gt; of( int value ) { return of( Integer.class, Shape.of( 1 ), value ); }</span>
+
+    /**
+     *  Constructs a vector of longs based on the provided array.
+     *
+     * @param value The array of longs from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of longs.
+     */
+<span class="fc" id="L544">    static Tensor&lt;Long&gt; of( long... value ) { return of( Long.class, Shape.of( value.length ), value ); }</span>
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar long tensor.
+     */
+<span class="fc" id="L550">    static Tensor&lt;Long&gt; of( long value ) { return of( Long.class, Shape.of( 1 ), value ); }</span>
+
+    /**
+     *  Constructs a vector of shorts based on the provided array.
+     *
+     * @param value The array of shorts from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of shorts.
+     */
+<span class="fc" id="L558">    static Tensor&lt;Short&gt; of( short... value ) { return of( Short.class, Shape.of( value.length ), value ); }</span>
+
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar short tensor.
+     */
+<span class="fc" id="L564">    static Tensor&lt;Short&gt; of( short value ) { return of( Short.class, Shape.of( 1 ), value ); }</span>
+
+    /**
+     *  Constructs a vector of booleans based on the provided array.
+     *
+     * @param value The array of booleans from which a 1D tensor ought to be constructed.
+     * @return A vector / 1D tensor of shorts.
+     */
+<span class="fc" id="L572">    static Tensor&lt;Boolean&gt; of( boolean... value ) { return of( Boolean.class, Shape.of( value.length ), value ); }</span>
+
+    /**
+     *  Use this to construct and return a seeded tensor of the specified type.
+     *
+     * @param valueType The type class of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param seed An arbitrary {@link String} whose hash will be used to as a seed.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created and seeded tensor of the provided type and shape.
+     */
+<span class="fc" id="L583">    static &lt;V&gt; Tensor&lt;V&gt; of( Class&lt;V&gt; valueType, Shape shape, Arg.Seed seed ) { return TensorImpl._of( valueType, NDConstructor.of(shape), seed ); }</span>
+
+    /**
+     *  Use this to construct and return a homogeneously populated double tensor of the specified shape.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param value The value which ought to be used to populate the tensor homogeneously.
+     * @return A new tensor instance with the provided shape and initial value.
+     */
+<span class="fc" id="L592">    static Tensor&lt;Double&gt; of( Shape shape, double value ) { return ofAny( Double.class, shape, value ); }</span>
+
+    /**
+     *  Use this to construct and return a double tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided double array.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="fc" id="L603">    static Tensor&lt;Double&gt; of( Shape shape, double[] values ) { return ofAny( Double.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return an int tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided int array.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="fc" id="L614">    static Tensor&lt;Integer&gt; of( Shape shape, int[] values ) { return ofAny( Integer.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a byte tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided byte array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="fc" id="L625">    static Tensor&lt;Byte&gt; of( Shape shape, byte[] values ) { return ofAny( Byte.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a long tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided long array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="fc" id="L636">    static Tensor&lt;Long&gt; of( Shape shape, long[] values ) { return ofAny( Long.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a short tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided short array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="fc" id="L647">    static Tensor&lt;Short&gt; of( Shape shape, short[] values ) { return ofAny( Short.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a float tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided float array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="fc" id="L658">    static Tensor&lt;Float&gt; of( Shape shape, float[] values ) { return ofAny( Float.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a homogeneously populated float tensor of the specified shape.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param value The value which ought to be used to populate the tensor homogeneously.
+     * @return A new tensor instance with the provided shape and initial value.
+     */
+<span class="fc" id="L667">    static Tensor&lt;Float&gt; of( Shape shape, float value ) { return ofAny( Float.class, shape, value ); }</span>
+
+    /**
+     *  Use this to construct and return a boolean tensor of the specified shape and initial values.
+     *  The length of the provided array does not have to match the number of elements
+     *  defined by the provided shape, the tensor will be populated based on repeated iteration over the
+     *  provided boolean array..
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param values The values which ought to be used to populate the tensor.
+     */
+<span class="fc" id="L678">    static Tensor&lt;Boolean&gt; of( Shape shape, boolean[] values ) { return ofAny( Boolean.class, shape, values ); }</span>
+
+    /**
+     *  Use this to construct and return a tensor of the specified shape and data object.&lt;br&gt;
+     *  This method is typically used like this:&lt;br&gt;
+     *  &lt;pre&gt;{@code
+     *      Tsr&lt;Integer&gt; tensor = Tsr.of( Shape.of(2,3), Data.of(1,2,3,4,5,6) );
+     *  }&lt;/pre&gt;
+     *  The resulting tensor will have the shape {@code [2,3]} and the values {@code [1,2,3,4,5,6]}.
+     *
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param data The data object which contains the values to be used to populate the tensor.
+     * @return A newly created tensor of the provided shape and data.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( Shape shape, Data&lt;V&gt; data ) {
+<span class="fc" id="L694">        return Tensor.of( data.dataType().getItemTypeClass(), shape, data.getOrNull() );</span>
+    }
+
+    /**
+     *  Use this to construct and return a tensor of the specified type and shape.
+     *
+     * @param type The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of any number of axis-sizes.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type and shape.
+     */
+<span class="fc" id="L705">    static &lt;V&gt; Tensor&lt;V&gt; of( DataType&lt;V&gt; type, Shape shape ) { return TensorImpl._of( NDConstructor.of(shape), type ); }</span>
+
+    /**
+     *  Use this to construct and return a tensor of the specified type, shape and data object.
+     *
+     * @param type The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of an array of axis-sizes.
+     * @param data The data object which will be used to populate the tensor.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type, shape and data.
+     */
+<span class="fc" id="L716">    static &lt;V&gt; Tensor&lt;V&gt; of( Class&lt;V&gt; type, Shape shape, Object data ) { return of( DataType.of(type), shape, data ); }</span>
+
+    /**
+     *  Use this to construct and return a tensor of the specified type, shape and data object.
+     *
+     * @param type The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of list of axis-sizes.
+     * @param data The data object which will be used to populate the tensor.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type, shape and data.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( Class&lt;V&gt; type, List&lt;Integer&gt; shape, Object data ) {
+<span class="fc" id="L728">        return of( DataType.of(type), Shape.of(shape), data );</span>
+    }
+
+    /**
+     *  Use this to construct and return a tensor of the specified type, shape and number.
+     *
+     * @param type The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of a immutable tuple of axis-sizes.
+     * @param data The data object which will be used to populate the tensor.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type, shape and data.
+     */
+    static &lt;V extends Number&gt; Tensor&lt;V&gt; of( Class&lt;V&gt; type, Shape shape, Number data ) {
+<span class="fc" id="L741">        return of( DataType.of(type), shape, data );</span>
+    }
+
+    /**
+     *  Use this to construct and return a tensor of the specified type, shape and data object.
+     *
+     * @param type The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of a immutable tuple of axis-sizes.
+     * @param data The data object which will be used to populate the tensor.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type, shape and data.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; ofAny( Class&lt;V&gt; type, Shape shape, Object data ) {
+<span class="fc" id="L754">        return of( DataType.of(type), shape, data );</span>
+    }
+
+    /**
+     *  Use this to construct and return a tensor of the specified type, shape and data object.
+     *
+     * @param type The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of a list of axis-sizes.
+     * @param data The list of items which will be used to populate the tensor.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type, shape and data.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( Class&lt;V&gt; type, List&lt;Integer&gt; shape, List&lt;V&gt; data ) {
+<span class="fc" id="L767">        return of( DataType.of( type ), Shape.of(shape), data );</span>
+    }
+
+    /**
+     *  Use this to construct and return a tensor of the specified type, shape and list of items.
+     *  Here a simple usage example:  &lt;br&gt;
+     *  &lt;pre&gt;{@code
+     *      Tsr&lt;Float&gt; tensor = Tsr.of( Float.class, Shape.of(2,3), List.of(1f,2f,3f,4f,5f,6f) );
+     *  }&lt;/pre&gt;
+     *
+     * @param type The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of an immutable tuple of axis-sizes.
+     * @param data The list of items which will be used to populate the tensor.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type, shape and data.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( Class&lt;V&gt; type, Shape shape, List&lt;V&gt; data ) {
+<span class="nc" id="L784">        return of( DataType.of( type ), shape, data );</span>
+    }
+
+    /**
+     *  Use this to construct and return a tensor of the specified type, shape and data object.
+     *
+     * @param dataType The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of a list of axis-sizes.
+     * @param data The data object which will be used to populate the tensor.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type, shape and data.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( DataType&lt;V&gt; dataType, List&lt;Integer&gt; shape, List&lt;V&gt; data ) {
+<span class="fc" id="L797">        return of( dataType, Shape.of(shape), data.toArray() );</span>
+    }
+
+    /**
+     *  Use this to construct and return a tensor of the specified type, shape and a list of items.
+     *  Here a simple usage example:  &lt;br&gt;
+     *  &lt;pre&gt;{@code
+     *      Tsr&lt;Integer&gt; tensor = Tsr.of( DataType.F32, Shape.of(2,3), List.of(1,2,3,4,5,6) );
+     *  }&lt;/pre&gt;
+     *
+     * @param dataType The type of the items stored by the resulting tensor.
+     * @param shape The shape of the resulting tensor consisting of an immutable tuple of axis-sizes.
+     * @param data The list of items which will be used to populate the tensor.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     * @return A newly created tensor of the provided type, shape and data.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( DataType&lt;V&gt; dataType, Shape shape, List&lt;V&gt; data ) {
+<span class="fc" id="L814">        LogUtil.nullArgCheck( dataType, &quot;dataType&quot;, DataType.class, &quot;Null is not a valid data type!&quot; );</span>
+<span class="fc" id="L815">        LogUtil.nullArgCheck( shape, &quot;shape&quot;, Shape.class, &quot;Null is not a valid shape!&quot; );</span>
+<span class="fc" id="L816">        LogUtil.nullArgCheck( data, &quot;data&quot;, List.class, &quot;Null is not a valid data object!&quot; );</span>
+<span class="fc" id="L817">        return of( dataType, shape, data.toArray() );</span>
+    }
+
+    /**
+     *  This factory method is among the most flexible and forgiving ways to create a {@link Tensor} instance.
+     *  It receives a {@link DataType} for type safety and to ensure that the produced {@link Tensor} instance
+     *  will contain elements of the correct type, and a {@link Shape} tuple which stores the sizes of the axes that the
+     *  instance ought to possess, and finally it receives a data {@link Object} which can be anything ranging from
+     *  a {@link List} to an array or simply a single value which ought to fill out the entire {@link Tensor}.
+     *
+     * @param dataType The data type of the data represented by {@link Tensor} instance created by this method.
+     * @param shape An immutable tuple of axis sizes describing the dimensionality of the {@link Tensor} created by this method.
+     * @param data The data for the {@link Tensor} that is about to be created, which can be a list, an array or scalar.
+     * @return A new {@link Tensor} instance of the specified type, shape and containing the provided data.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( DataType&lt;V&gt; dataType, Shape shape, Object data ) {
+<span class="fc" id="L833">        return TensorImpl._of( NDConstructor.of(shape), CPU.get(), dataType, data );</span>
+    }
+
+    /**
+     *  This factory method is among the most flexible and forgiving ways to create a {@link Tensor} instance.
+     *  It receives a {@link DataType} for type safety and to ensure that the produced {@link Tensor} instance
+     *  will contain elements of the correct type, and a {@link Shape} tuple which stores the sizes of the axes that the
+     *  instance ought to possess, and finally it receives a data {@link Object} which can be anything ranging from
+     *  a {@link List} to an array or simply a single value which ought to fill out the entire {@link Tensor}.
+     *
+     * @param dataType The data type of the data represented by {@link Tensor} instance created by this method.
+     * @param device The device on which the tensor will be stored.
+     * @param shape An immutable tuple of axis sizes describing the dimensionality of the {@link Tensor} created by this method.
+     * @param data The data for the {@link Tensor} that is about to be created, which can be a list, an array or scalar.
+     * @return A new {@link Tensor} instance of the specified type, shape and containing the provided data.
+     */
+    static &lt;V extends N, N&gt; Tensor&lt;V&gt; of( DataType&lt;V&gt; dataType, Device&lt;N&gt; device, Shape shape, Object data ) {
+<span class="fc" id="L850">        return TensorImpl._of( NDConstructor.of(shape), device, dataType, data );</span>
+    }
+
+    /**
+     *  This factory method a raw tensor constructor which will not perform any type checking
+     *  or data conversion on the data provided to it.
+     *  It constructs the tensor expecting that the data provided to it is of the correct type
+     *  and an array of axis sizes.
+     *
+     * @param dataType The data type of the data represented by {@link Tensor} instance created by this method.
+     * @param ndConstructor The {@link NDConstructor} that will be used to construct the {@link Tensor} instance.
+     * @param data The data for the {@link Tensor} that is about to be created, which is expected to be an array.
+     * @return A new {@link Tensor} instance of the specified type, shape and containing the provided data.
+     * @param &lt;V&gt; The type parameter of individual tensor items.
+     */
+<span class="fc" id="L865">    static &lt;V&gt; Tensor&lt;V&gt; of( DataType&lt;V&gt; dataType, NDConstructor ndConstructor, Data&lt;V&gt; data ) { return TensorImpl._of( ndConstructor, dataType, data ); }</span>
+
+    /**
+     *  This factory method allows the creation of tensors with an additional initialization
+     *  lambda for filling the underlying data array with desired values.
+     *  Other than regular numeric types it is also possible to initialize the
+     *  tensor with regular Objects like String instances or custom data types like complex
+     *  numbers for example... &lt;br&gt;
+     *  Therefore the constructor requires not only a shape as argument but also
+     *  the data type which ought to be allocated as well as the initialization
+     *  lambda which will be called iteratively.
+     *
+     * @param type The data type this tensor ought to have.
+     * @param shape The shape of this new tensor ought to have.
+     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param &lt;T&gt; The type parameter for the actual data array items.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of( DataType&lt;T&gt; type, List&lt;Integer&gt; shape, Filler&lt;T&gt; filler ) {
+<span class="fc" id="L883">        LogUtil.nullArgCheck( shape, &quot;shape&quot;, List.class );</span>
+<span class="fc" id="L884">        return of( type, Shape.of(shape), filler );</span>
+    }
+
+    /**
+     *  This factory method allows the creation of tensors with an additional initialization
+     *  lambda for filling the underlying data array with desired values.
+     *  Other than regular numeric types it is also possible to initialize the
+     *  tensor with regular Objects like String instances or custom data types like complex
+     *  numbers for example... &lt;br&gt;
+     *  Therefore the constructor requires not only a shape as argument but also
+     *  the data type which ought to be allocated as well as the initialization
+     *  lambda which will be called iteratively.
+     *  Here a simple usage example:  &lt;br&gt;
+     *  &lt;pre&gt;{@code
+     *      Tsr&lt;Double&gt; tensor = Tsr.of( DataType.F64, Shape.of(2, 3), (i, j) -&gt; i + j );
+     *  }&lt;/pre&gt;
+     *
+     * @param type The data type this tensor ought to have.
+     * @param shape The shape of this new tensor ought to have.
+     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param &lt;T&gt; The type parameter for the actual data array items.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of( DataType&lt;T&gt; type, Shape shape, Filler&lt;T&gt; filler) {
+<span class="fc" id="L907">        LogUtil.nullArgCheck( shape, &quot;shape&quot;, Shape.class );</span>
+<span class="fc" id="L908">        return TensorImpl._of( NDConstructor.of(shape), type, filler );</span>
+    }
+
+    /**
+     *  This factory method allows the creation of tensors with an additional initialization
+     *  lambda for filling the underlying data array with desired values.
+     *  Other than regular numeric types it is also possible to initialize the
+     *  tensor with regular Objects like String instances or custom data types like complex
+     *  numbers for example... &lt;br&gt;
+     *  Therefore the constructor requires not only a shape as argument but also
+     *  the data type which ought to be allocated as well as the initialization
+     *  lambda which will be called iteratively.
+     *
+     * @param type The data type class the items of this tensor ought to have.
+     * @param shape The shape of this new tensor ought to have.
+     * @param filler The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param &lt;T&gt; The type parameter for the actual data array items.
+     */
+    static &lt;T&gt; Tensor&lt;T&gt; of( Class&lt;T&gt; type, Shape shape, Filler&lt;T&gt; filler ) {
+<span class="fc" id="L927">        return of( DataType.of(type), shape, filler );</span>
+    }
+
+    /**
+     *  This factory method allows for the creation and execution of {@link Function} instances
+     *  without actually instantiating them manually,
+     *  where the result will then be returned by this factory method. &lt;br&gt;&lt;br&gt;
+     *  The passed {@link String} will be parsed into a {@link Function} AST which will be cached
+     *  using the expression as key in case it will be used in future constructor calls
+     *  like this one, or elsewhere...
+     *  The created / retrieved {@link Function} will then be called with the supplied input list
+     *  in order to trigger an execution.
+     *  The result of which will be used for the population of the fields of this
+     *  very instance.                                                                      &lt;br&gt;
+     *  An example would be the following :                                                 &lt;br&gt;
+     * &lt;ul&gt;
+     *      &lt;li&gt;&lt;i&gt; 'var a = Tsr.of( &quot;sin( I[0] ) / I[1]&quot;, 12f, -6.34f )'&lt;/i&gt;&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     * @param expression A String which will be used for parsing a Function AST.
+     * @param inputs An array of inputs which can be tensors or numeric types.
+     */
+    @SafeVarargs
+    static &lt;V extends Number&gt; Tensor&lt;V&gt; of( String expression, V... inputs ) {
+<span class="fc" id="L951">        return Function.of( expression, true ).call( Arrays.stream(inputs).map(args -&gt; TensorImpl._of(args)).toArray(Tensor[]::new) );</span>
+    }
+
+    /**
+     *  This factory method allows for the creation and execution of {@link Function} instances
+     *  without actually instantiating them manually,
+     *  where the result will then be returned by this factory method. &lt;br&gt;&lt;br&gt;
+     *  The passed {@link String} will be parsed into a {@link Function} AST which will be cached
+     *  using the expression as key in case it will be used in future constructor calls
+     *  like this one, or elsewhere...
+     *  The created / retrieved {@link Function} will then be called with the supplied input list
+     *  in order to trigger an execution.
+     *  The result of which will be used for the population of the fields of this
+     *  very instance.                                                                      &lt;br&gt;
+     *  An example would be the following :                                                 &lt;br&gt;
+     * &lt;ul&gt;
+     *      &lt;li&gt;&lt;i&gt; 'var a = Tsr.of( &quot;sin( I[0] ) / I[1]&quot;, List.of(b, c) )'&lt;/i&gt;&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     * @param expression A String which will be used for parsing a Function AST.
+     * @param inputs A list of inputs which can be tensors or numeric types.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( String expression, List&lt;Tensor&lt;V&gt;&gt; inputs ) {
+<span class="fc" id="L974">        return Function.of( expression, true ).call( inputs );</span>
+    }
+
+    /**
+     *  This method takes a list of tensors and a String expression describing
+     *  operations which ought to be applied to the tensors in said list.
+     *  It also receives a boolean flag which determines if the defined function
+     *  should be executed with autograd enabled.
+     *  The provided expression will be parsed to a {@link Function} instance expecting as many inputs
+     *  as there are array entries, namely : &quot;I[0]&quot;, &quot;I[1]&quot;, &quot;I[2]&quot;, ...                    &lt;br&gt;
+     *  An example would be the following :                                                 &lt;br&gt;
+     * &lt;ul&gt;
+     *      &lt;li&gt;&lt;i&gt; 'var a = Tsr.of( &quot;sin( I[0] ) / I[1]&quot;, true, List.of(b, c) )'&lt;/i&gt;&lt;/li&gt;
+     * &lt;/ul&gt;
+     *  Which takes the tensor 'b' and 'c' and applies the function &quot;f(x,y) = sin(x) / y&quot;
+     *  element-wise to produce a new tensor 'a'!
+     *  Additionally, there is a helpful flag which allows one to specify if the
+     *  parsed {@link Function} instance emerging from the provided expression
+     *  should also allow the tracking of computations via a computation graph ({@link GraphNode} instances).
+     *  This history tracking then enables auto-differentiation. &lt;br&gt;
+     *
+     * @param expression The expression describing operations applied to the provided tensors.
+     * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
+     * @param tensors A list of tensors used as inputs to the Function instance parsed from the provided expression.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( String expression, boolean doAD, List&lt;Tensor&lt;V&gt;&gt; tensors ) {
+<span class="fc" id="L1000">        return Function.of( expression, doAD ).call( tensors );</span>
+    }
+
+    /**
+     *  This method takes a tensor and a String expression describing
+     *  operations which ought to be applied to said tensor.
+     *  This expression will be parsed to a {@link Function} instance expecting one input,
+     *  namely : &quot;I[0]&quot; &lt;br&gt;
+     *  An example would be the following :
+     * &lt;ul&gt;
+     *      &lt;li&gt;&lt;i&gt; 'var a = Tsr.of( &quot;sin( I[0] ) * 2&quot;, b )'&lt;/i&gt;&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     *  Which takes the tensor 'b' and applies the function &quot;f(x) = sin(x) * 2&quot;
+     *  element-wise to produce a new tensor 'a'! &lt;br&gt;
+     *  &lt;br&gt;
+     *
+     * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
+     * @param expression The expression describing operations applied to the provided tensor.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; of( String expression, Tensor&lt;V&gt; tensor ) {
+<span class="fc" id="L1021">        return Function.of( expression, true ).call( tensor );</span>
+    }
+
+    /**
+     *  This method takes an array of tensors and a String expression describing
+     *  operations which ought to be applied to the tensors in said array.
+     *  This expression will be parsed to a {@link Function} instance expecting as many inputs
+     *  as there are array entries, namely : &quot;I[0]&quot;, &quot;I[1]&quot;, &quot;I[2]&quot;, ... &lt;br&gt;
+     *  An example would be the following :
+     * &lt;ul&gt;
+     *      &lt;li&gt;&lt;i&gt; 'var a = Tsr.of( &quot;sin( I[0] ) / I[1]&quot;, b, c )'&lt;/i&gt;&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     *  Which takes the tensor 'b' and 'c' and applies the function &quot;f(x,y) = sin(x) / y&quot;
+     *  element-wise to produce a new tensor 'a'! &lt;br&gt;
+     *
+     * @param expression The expression describing operations applied to the provided tensors.
+     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
+     */
+    @SafeVarargs
+    static &lt;V&gt; Tensor&lt;V&gt; of( String expression, Tensor&lt;V&gt;... tensors ) {
+<span class="fc" id="L1042">        return Function.of( expression, true ).call( tensors );</span>
+    }
+
+    /**
+     *  This method takes an array of tensors and a String expression describing
+     *  operations which ought to be applied to the tensors in said array.
+     *  It also receives a boolean flag which determines if the defined function
+     *  should be executed with autograd enabled.
+     *  The provided expression will be parsed to a {@link Function} instance expecting as many inputs
+     *  as there are array entries, namely : &quot;I[0]&quot;, &quot;I[1]&quot;, &quot;I[2]&quot;, ...                    &lt;br&gt;
+     *  An example would be the following :                                                 &lt;br&gt;
+     * &lt;ul&gt;
+     *      &lt;li&gt;&lt;i&gt; 'var a = Tsr.of( &quot;sin( I[0] ) / I[1]&quot;, true, b, c )'&lt;/i&gt;&lt;/li&gt;
+     * &lt;/ul&gt;
+     *  Which takes the tensor 'b' and 'c' and applies the function &quot;f(x,y) = sin(x) / y&quot;
+     *  element-wise to produce a new tensor 'a'!
+     *  Additionally, there is a helpful flag which allows one to specify if the
+     *  parsed {@link Function} instance emerging from the provided expression
+     *  should also allow the tracking of computations via a computation graph ({@link GraphNode} instances).
+     *  This history tracking then enables auto-differentiation. &lt;br&gt;
+     *
+     * @param expression The expression describing operations applied to the provided tensors.
+     * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
+     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
+     */
+    @SafeVarargs
+    static &lt;V&gt; Tensor&lt;V&gt; of( String expression, boolean doAD, Tensor&lt;V&gt;... tensors ) {
+<span class="fc" id="L1069">        return Function.of( expression, doAD ).call( tensors );</span>
+    }
+
+    /**
+     *  This factory method produces a randomly populated tensor of the provided
+     *  type and shape using a hard coded default seed.
+     *  If the provided type class is representing a
+     *  floating point number type (like {@link Double} or {@link Float}) then the random numbers will
+     *  be gaussian (&quot;normally&quot;) distributed values with mean {@code 0.0} and standard
+     *  deviation {@code 1.0}.
+     *
+     * @param valueTypeClass The type class of the values stored by the returned tensor.
+     * @param shape The shape of the tensor produced by this factory method.
+     * @param &lt;V&gt; The type parameter of the values stored by the returned tensor.
+     * @return A randomly filled tensor of the provided type.
+     */
+    static &lt;V&gt; Tensor&lt;V&gt; ofRandom( Class&lt;V&gt; valueTypeClass, int... shape ) {
+<span class="fc" id="L1086">        return of( valueTypeClass )</span>
+<span class="fc" id="L1087">                .withShape( shape )</span>
+<span class="fc" id="L1088">                .andSeed( 8701252152903546L );// If the user does not provide a seed, we use this.</span>
+    }
+
+    /**
+     *  Use this factory method to instantiate a new tensor with the same data type, shape
+     *  and memory location ({@link Device} instance) as the provided template tensor.
+     *
+     * @param template The template tensor whose type, shape and location should be taken to construct a new tensor.
+     * @param &lt;V&gt; The type parameter defining the value type of the provided as well as returned tensor.
+     * @return A new {@link Tensor} instance with the same data type, shape and memory location as the provided template.
+     */
+    static &lt;V&gt; IterByOrIterFromOrAllTensor&lt;V&gt; like( Tensor&lt;V&gt; template ) {
+<span class="fc" id="L1100">        return of( template.getDataType().getItemTypeClass() )</span>
+<span class="fc" id="L1101">                .on( template.getDevice() )</span>
+<span class="fc" id="L1102">                .withShape( template.getNDConf().shape() );</span>
+    }
+
+    /**
+     * Returns a {@code Collector} that accumulates the input elements into a
+     * new {@link Tensor} with the specified shape. &lt;br&gt;
+     * Usage example : &lt;br&gt;
+     * &lt;pre&gt;{@code
+     *    var tensor = Stream.of( 1, 2, 3, 4, 5, 6 )
+     *                      .collect( Tsr.shaped( 2, 3 ) );
+     * }&lt;/pre&gt;
+     *
+     * @param shape The shape of the tensor to be returned.
+     * @param &lt;T&gt; the type of the input elements
+     * @return a {@code Collector} which collects all the input elements into a
+     *          {@link Tensor}, in encounter order.
+     */
+<span class="fc" id="L1119">    static &lt;T&gt; Collector&lt;T, ?, Tensor&lt;T&gt;&gt; shaped( int... shape ) { return shaped( Shape.of(shape) ); }</span>
+
+    /**
+     * Returns a {@code Collector} that accumulates the input elements into a
+     * new {@link Tensor} with the specified shape. &lt;br&gt;
+     * Usage example : &lt;br&gt;
+     * &lt;pre&gt;{@code
+     *    var tensor = Stream.of( 1, 2, 3, 4, 5, 6 )
+     *                      .collect( Tsr.shaped( otherTensor.shape() ) );
+     * }&lt;/pre&gt;
+     *
+     * @param shape The shape of the tensor to be returned.
+     * @param &lt;T&gt; the type of the input elements
+     * @return a {@code Collector} which collects all the input elements into a
+     *          {@link Tensor}, in encounter order.
+     */
+    static &lt;T&gt; Collector&lt;T, ?, Tensor&lt;T&gt;&gt; shaped(Shape shape ) {
+<span class="fc" id="L1136">        return Collector.of(</span>
+                    (Supplier&lt;List&lt;T&gt;&gt;) ArrayList::new,
+                    List::add,
+<span class="nc" id="L1139">                    (left, right) -&gt; { left.addAll(right); return left; },</span>
+<span class="fc" id="L1140">                    list -&gt; Tensor.of( shape, list )</span>
+                );
+    }
+
+    /*==================================================================================================================
+    |
+    |       §(2) : FLAGS
+    |   ----------------------
+    */
+
+    /**
+     *  Setting this flag to {@code true} will tell the autograd system to accumulate gradients at this tensor.
+     *  This is achieved by allowing for the recording of a computation graph
+     *  for when this tensor is used in any autograd supporting operations.
+     *  This allows the autograd / auto-differentiation system to traverse said graph
+     *  for when the {@link #backward()} method is called
+     *  on any descendant tensor at the most recent end of the computation graph.
+     *
+     * @param rqsGradient The truth value determining if this tensor ought to receive gradients via
+     *                     the built-in automatic backpropagation system.
+     * @return This very {@link Tensor} instance in order to enable method chaining.
+     */
+    Tensor&lt;V&gt; setRqsGradient(boolean rqsGradient );
+
+    /**
+     *  This flag will indirectly trigger the activation of the autograd / auto-differentiation system of this library!
+     *  If the flag is set to 'true' and the tensor is used for computation then
+     *  it will also receive gradients when the {@link #backward()} method is being called
+     *  on any descendant tensor within the computation graph.
+     *
+     * @return The truth value determining if this tensor ought to receive gradients via
+     *         the built-in automatic backpropagation system.
+     */
+    boolean rqsGradient();
+
+    /**
+     *  Intermediate tensors are internal non-user tensors which may be eligible
+     *  for deletion when further consumed by a {@link Function}.
+     *  For the casual user of Neureka, this flag should always be false!
+     *
+     * @return The truth value determining if this tensor is not a user tensor but an internal
+     *         tensor which may be eligible for deletion by {@link Function}s consuming it.
+     */
+    boolean isIntermediate();
+
+    /**
+     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance which is not the {@link CPU}.
+     *
+     * @return The truth value determining if the data of this tensor is not actually stored inside it
+     *         in the form of a traditional primitive JVM array!
+     */
+<span class="fc bfc" id="L1191" title="All 2 branches covered.">    default boolean isOutsourced() { return !(this.getDevice() instanceof CPU); }</span>
+
+    /**
+     *  A Virtual tensor is a tensor whose underlying data array is of size 1, holding only a single value. &lt;br&gt;
+     *  This only makes sense for homogeneously populated tensors.
+     *  An example of such a tensor would be: &lt;br&gt;
+     *  {@code Tsr.ofInts().withShape(x,y).all(n)}                           &lt;br&gt;&lt;br&gt;
+     *  The reasons for this feature is that it greatly improves performance in certain cases.
+     *  In essence this feature is a form of lazy loading.
+     *  &lt;p&gt;
+     *  Use {@link MutateTensor#setIsVirtual(boolean)} to &quot;actualize&quot; a &quot;virtual&quot; tensor, and vise versa.
+     *
+     * @return The truth value determining if this tensor is &quot;virtual&quot; or &quot;actual&quot;.
+     */
+    boolean isVirtual();
+
+    /**
+     *  This will check if the {@link MutateTensor#delete()} method was previously called on this tensor.
+     *  This means that the tensor data was freed on every device
+     *  and any references inside the tensor are null (to be eligable for garbage collection).
+     *
+     * @return The truth value determining if the {@link MutateTensor#delete()} method has been called oin this instance.
+     */
+    boolean isDeleted();
+
+    /**
+     *  A tensor is empty if it's {@link Data} storage is null.
+     *  This is true for deleted tensors or tensors which have not been initialized yet.
+     *
+     * @return The truth value determining if this tensor has no {@link Data}.
+     */
+<span class="pc bpc" id="L1222" title="1 of 4 branches missed.">    default boolean isEmpty() { return getMut().getData() == null || getMut().getData().getOrNull() == null; }</span>
+
+    /**
+     *  A tensor is &quot;undefined&quot; if it has either no {@link NDConfiguration} implementation instance
+     *  or this instance does not have a shape set for this {@link Tensor} which is needed for
+     *  a tensor to also have a rank and dimensionality...
+     *
+     * @return The truth value determining if this tensor has an {@link NDConfiguration} stored internally.
+     */
+<span class="pc bpc" id="L1231" title="2 of 4 branches missed.">    default boolean isUndefined() { return getNDConf() == null || getNDConf().shape() == null; }</span>
+
+    /** {@inheritDoc} */
+    @Override
+    default boolean isSlice() {
+<span class="fc" id="L1236">        return this.find(Relation.class).map(Relation::hasParent).orElse(false);</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default boolean isShallowCopy() {
+<span class="fc" id="L1242">        return this</span>
+<span class="fc" id="L1243">                .find( Relation.class )</span>
+<span class="fc" id="L1244">                .map( r -&gt; (Relation&lt;V&gt;) r )</span>
+<span class="fc" id="L1245">                .map( child -&gt;</span>
+<span class="fc" id="L1246">                        child.getParent()</span>
+<span class="fc" id="L1247">                                .map( p -&gt; p.getNDConf().equals(this.getNDConf()) )</span>
+<span class="fc" id="L1248">                                .orElse(false)</span>
+                    /*
+                        Note:
+                        A shallow copy is conceptually always a &quot;full slice&quot; of the parent tensor.
+                        This means that the parent tensor and the shallow copy
+                        share the same nd-configurations (shape and data access pattern).
+                     */
+                )
+<span class="fc" id="L1256">                .orElse(false);</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default boolean isPartialSlice() {
+<span class="fc" id="L1262">        return this</span>
+<span class="fc" id="L1263">                .find( Relation.class )</span>
+<span class="fc" id="L1264">                .map( r -&gt; (Relation&lt;V&gt;) r )</span>
+<span class="fc" id="L1265">                .map( child -&gt; child.getParent()</span>
+<span class="fc bfc" id="L1266" title="All 2 branches covered.">                                    .map( p -&gt; p.size() &gt; this.size() )</span>
+<span class="fc" id="L1267">                                    .orElse(false)</span>
+                    /*
+                        Note:
+                        A partial slice is a slice which does not have the same size as the parent tensor
+                        but still sharing the same underlying data as the parent tensor.
+                     */
+                )
+<span class="fc" id="L1274">                .orElse(false);</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override
+<span class="fc" id="L1279">    default int sliceCount() { return this.find(Relation.class).map(Relation::childCount).orElse(0); }</span>
+
+    /** {@inheritDoc} */
+    @Override
+<span class="fc" id="L1283">    default boolean isSliceParent() { return this.find( Relation.class ).map(Relation::hasChildren).orElse(false); }</span>
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  This autograd system however, will only be triggered by {@link Function} implementations which
+     *  are not &quot;detached&quot;, meaning they have their &quot;{@link Function#isDoingAD()}&quot; flags set to true! &lt;br&gt;
+     *  Detached functions (like those pre-instantiated in Function.Detached.*) will not attach {@link GraphNode}
+     *  instances to involved tensors which will prevent the formation of a computation graph.
+     *
+     * @return The truth value determining if this tensor belongs to a recorded computation graph.
+     */
+<span class="fc" id="L1295">    default boolean belongsToGraph() { return this.graphNode().isPresent(); }</span>
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  This autograd system however, will only be triggered by {@link Function} implementations which
+     *  are not &quot;detached&quot;, meaning they have their &quot;{@link Function#isDoingAD()}&quot; flags set to true! &lt;br&gt;
+     *  A tensor is a leave if it is attached to a computation graph in which it is not an intermediate / branch node
+     *  but input / branch node.
+     *
+     * @return The truth value determining if this tensor is attached to a computation graph as leave node.
+     */
+<span class="pc bpc" id="L1307" title="1 of 4 branches missed.">    default boolean isLeave() { return (!this.belongsToGraph() || this.graphNode().map(GraphNode::isLeave).orElse(false) ); }</span>
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  This autograd system however, will only be triggered by {@link Function} implementations which
+     *  are not &quot;detached&quot;, meaning they have their &quot;{@link Function#isDoingAD()}&quot; flags set to true! &lt;br&gt;
+     *  A tensor is a branch if it is attached to a computation graph in which it is not an input / leave node
+     *  but intermediate / branch node.
+     *
+     * @return The truth value determining if this tensor is attached to a computation graph as branch node.
+     */
+<span class="fc bfc" id="L1319" title="All 2 branches covered.">     default boolean isBranch() { return !this.isLeave(); }</span>
+
+    /**
+     *  Tensors can be components of other tensors which makes the
+     *  implicitly their gradients.
+     *
+     * @return The truth value determining if this tensor has another tensor attached to it (which is its gradient).
+     */
+<span class="fc" id="L1327">    default boolean hasGradient() { return this.has( Tensor.class ); }</span>
+
+    /**
+     *  This flag works alongside two autograd features which can be enabled inside the library settings.
+     *  They will come into effect when flipping their feature flags, &lt;br&gt;
+     *  namely: &lt;i&gt;'isApplyingGradientWhenRequested'&lt;/i&gt; and &lt;i&gt;'isApplyingGradientWhenTensorIsUsed'&lt;/i&gt;&lt;br&gt;
+     *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
+     *  however this will only happen when the second flag is set to true as well, because otherwise gradients
+     *  wouldn't be applied to their tensors automatically in the first place... &lt;br&gt;
+     *  &lt;br&gt;
+     *  Setting both flags to true will inhibit the effect of the second setting &lt;i&gt;'isApplyingGradientWhenTensorIsUsed'&lt;/i&gt;
+     *  unless a form of &quot;permission&quot; is being signaled to the autograd system.
+     *  This signal comes in the form of a &quot;request&quot; flag which marks a tensor as &lt;b&gt;allowed to
+     *  be updated by its gradient&lt;/b&gt;.&lt;br&gt;
+     *  &lt;br&gt;
+     * @return The truth value determining if the application of the gradient of this tensor is requested.
+     */
+    boolean gradientApplyRequested();
+
+    /**
+     *  This flag works alongside two autograd features which can be enabled inside the library settings.
+     *  They will come into effect when flipping their feature flags, &lt;br&gt;
+     *  namely: &lt;i&gt;'isApplyingGradientWhenRequested'&lt;/i&gt; and &lt;i&gt;'isApplyingGradientWhenTensorIsUsed'&lt;/i&gt;&lt;br&gt;
+     *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
+     *  however this will only happen when the second flag is set to true as well, because otherwise gradients
+     *  wouldn't be applied to their tensors automatically in the first place... &lt;br&gt;
+     *  &lt;br&gt;
+     *  Setting both flags to true will inhibit effect of the second setting &lt;i&gt;'isApplyingGradientWhenTensorIsUsed'&lt;/i&gt;
+     *  unless a form of &quot;permission&quot; is being signaled to the autograd system.
+     *  This signal comes in the form of a &quot;request&quot; flag which marks a tensor as &lt;b&gt;allowed to
+     *  be updated by its gradient&lt;/b&gt;.&lt;br&gt;
+     *  &lt;br&gt;
+     * @param applyRequested The truth value determining if the application of the gradient of this tensor is requested.
+     * @return This very tensor instance in order to enable method chaining.
+     */
+    Tensor&lt;V&gt; setGradientApplyRequested( boolean applyRequested );
+
+    /*==================================================================================================================
+    |
+    |       §(3) : COMPONENT SYSTEM
+    |   --------------------------------
+    */
+
+    /**
+     *  Important : Components of type {@link Tensor} are simply gradients!
+     *  Currently, this method is used only to catch illegal arguments which
+     *  is for example the case when trying to attach a gradient with a different shape...
+     *  (Otherwise the gradient tensor &quot;does not mind&quot; an owner change...)
+     */
+    @Override
+    default boolean update( OwnerChangeRequest&lt;Tensor&lt;V&gt;&gt; changeRequest ) {
+<span class="fc bfc" id="L1378" title="All 2 branches covered.">        if ( changeRequest.type() == IsBeing.ADDED ) {</span>
+<span class="fc" id="L1379">            if (</span>
+<span class="pc bpc" id="L1380" title="1 of 2 branches missed.">                changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||</span>
+<span class="pc bpc" id="L1381" title="1 of 2 branches missed.">                Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )</span>
+            ) {
+<span class="nc" id="L1383">                throw new IllegalArgumentException(</span>
+                        &quot;Trying to attach a tensor as gradient component to a tensor with different shape.&quot;
+                );
+            }
+            // If a tensor becomes a gradient, we need to make sure that it does not get deleted.
+<span class="fc" id="L1388">            this.getMut().setIsIntermediate( false ); // So we mark it as non-intermediate.</span>
+        }
+<span class="fc" id="L1390">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
+        // If the change request type is set to &quot;REPLACED&quot; then
+        // this is means that this tensor is a gradient that is being
+        // transferred to another tensor to serve as gradient...
+        // No update task needs to occur. (This might change in the future...)
+<span class="fc" id="L1395">        return true;</span>
+    }
+
+    /*==================================================================================================================
+    |
+    |       §(4) : PROPERTIES :
+    |   ---------------------------------------
+    */
+
+    /**
+     *  The version number is tracking how often this tensor has been mutated.
+     *  This is especially useful for checking the correcting of auto-grad!
+     */
+    int getVersion();
+
+    /**
+     *  This method returns the {@link DataType} instance of this {@link Tensor}, which is
+     *  a wrapper object for the actual type class representing the value items stored inside
+     *  the underlying data array of this tensor.
+     *
+     * @return The {@link DataType} instance of this {@link Tensor} storing important type information.
+     */
+    DataType&lt;V&gt; getDataType();
+
+    /**
+     *  The {@link Class} returned by this method is the representative {@link Class} of the
+     *  value items of a concrete {@link AbstractNda} but not necessarily the actual {@link Class} of
+     *  a given value item, this is especially true for numeric types, which are represented by
+     *  implementations of the {@link NumericType} interface.                                        &lt;br&gt;
+     *  For example in the case of a tensor of type {@link Double}, this method would
+     *  return {@link neureka.dtype.custom.F64} which is the representative class of {@link Double}. &lt;br&gt;
+     *  Calling the {@link #getItemType()} method instead of this method would return the actual value
+     *  type class, namely: {@link Double}.
+     *
+     * @return The representative type class of individual value items within this concrete {@link AbstractNda}
+     *         extension instance which might also be subclasses of the {@link NumericType} interface
+     *         to model unsigned types or other JVM foreign numeric concepts.
+     */
+    Class&lt;?&gt; getRepresentativeItemClass();
+
+    /*==================================================================================================================
+    |
+    |       §(5) : OBJECT STATE MODIFICATION :
+    |   ------------------------------------------
+    */
+
+    /** {@inheritDoc} */
+    @Override
+    MutateTensor&lt;V&gt; getMut();
+
+    /** {@inheritDoc} */
+<span class="fc" id="L1446">    @Override default MutateTensor&lt;V&gt; mut() { return getMut(); }</span>
+
+    /** {@inheritDoc} */
+    @Override default Tensor&lt;V&gt; reshape( int... shape ) {
+<span class="fc" id="L1450">        return Neureka.get()</span>
+<span class="fc" id="L1451">                .backend()</span>
+<span class="fc" id="L1452">                .getAutogradFunction()</span>
+<span class="fc" id="L1453">                .reshape()</span>
+<span class="fc" id="L1454">                .with(Arg.Shape.of(shape))</span>
+<span class="fc" id="L1455">                .call(this);</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default Tensor&lt;V&gt; permute( int... dims ) {
+<span class="fc" id="L1461">        return Neureka.get()</span>
+<span class="fc" id="L1462">                .backend()</span>
+<span class="fc" id="L1463">                .getAutogradFunction()</span>
+<span class="fc" id="L1464">                .permute()</span>
+<span class="fc" id="L1465">                .with(Arg.Indices.of(dims))</span>
+<span class="fc" id="L1466">                .call(this);</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default Tensor&lt;V&gt; transpose( int dim1, int dim2 ) {
+        // Transpose is based on permute, so we can just call permute with the correct arguments!
+<span class="fc" id="L1473">        int[] dims = new int[ this.rank() ];</span>
+<span class="fc bfc" id="L1474" title="All 2 branches covered.">        for ( int i = 0; i &lt; dims.length; i++ ) dims[i] = i;</span>
+<span class="fc" id="L1475">        dims[dim1] = dim2;</span>
+<span class="fc" id="L1476">        dims[dim2] = dim1;</span>
+<span class="fc" id="L1477">        return this.permute( dims );</span>
+    }
+
+    /*==================================================================================================================
+    |
+    |       §(6) : ND-ITERATOR LOGIC :
+    |   ---------------------------------------
+    */
+
+    // See Nda
+
+    /*==================================================================================================================
+    |
+    |       §(7) : COMPONENT SPECIFIC :
+    |   ---------------------------------------
+    */
+
+    /**
+     * This method takes a {@link Device} and tries to migrate the contents of this {@link Tensor}
+     * instance to that {@link Device}!
+     *
+     * @param device The {@link Device} which should host this {@link Tensor} as well as be added to its components list.
+     * @return This very class to enable method chaining.
+     */
+    Tensor&lt;V&gt; to( Device&lt;?&gt; device );
+
+    /**
+     * @param deviceType A search key identifying the device onto which this tensor should be stored.
+     * @return This very tensor instance in order to enable method chaining.
+     */
+<span class="fc" id="L1507">    default Tensor&lt;V&gt; to( String deviceType ) { return this.to(Device.get(deviceType)); }</span>
+
+    /**
+     *  Configures an {@link Optimizer} for this tensor based on the given {@link OptimizerFactory}
+     *  which will be used to create a new {@link Optimizer} instance specific to this tensor.
+     *  The {@link Optimizer} instance will be attached to this tensor as a component
+     *  and then called to perform the actual optimization when the {@link #applyGradient()} method is called.
+     *  &lt;p&gt;
+     *  Here a simple example of how to use this method:
+     *  &lt;pre&gt;{@code
+     *  var t = Tsr.of( 1.0, 2.0, 3.0 ).set( Optimizer.ADAM );
+     *  }&lt;/pre&gt;
+     *  &lt;p&gt;
+     *  As you can see, the {@link Optimizer} interface exposes various types of popular
+     *  optimization algorithm factories which can be used to quickly and conveniently create
+     *  an {@link Optimizer} instance for a particular tensor.
+     *
+     * @param optimizerFactory The {@link OptimizerFactory} which will be used to create a new {@link Optimizer} instance.
+     * @return This tensor instance to allow for method chaining.
+     */
+    default Tensor&lt;V&gt; set( OptimizerFactory optimizerFactory ) {
+<span class="fc" id="L1528">        this.set( optimizerFactory.create( (Tensor) this ) );</span>
+<span class="fc" id="L1529">        return this;</span>
+    }
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  If this tensor is part of a computation graph then this method
+     *  will traverse an error backward in the recorded history towards tensors which require
+     *  the accumulation of gradients.
+     *
+     * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
+     * @return This tensor, to allow for method chaining.
+     */
+    default Tensor&lt;V&gt; backward(Tensor&lt;V&gt; error ) {
+<span class="fc" id="L1543">        LogUtil.nullArgCheck(error, &quot;error&quot;, Tensor.class, &quot;Cannot back-propagate 'null'!&quot;);</span>
+<span class="fc" id="L1544">        ((TensorImpl&lt;V&gt;)this)._backward( LazyRef.of( () -&gt; error ) );</span>
+<span class="fc" id="L1545">        return this;</span>
+    }
+
+    /**
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  If this tensor is part of a computation graph then this method
+     *  will traverse an error backward in the recorded history towards tensors which require
+     *  the accumulation of gradients.&lt;br&gt;
+     *  &lt;br&gt;
+     *  This method turns the given scalar value and
+     *  turns it into a matching tensor ( with the same shape)
+     *  which will then be back-propagated through the
+     *  recorded computation graph.
+     *
+     * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
+     * @return The tensor, to allow for method chaining.
+     */
+    default Tensor&lt;V&gt; backward( double value ) {
+<span class="fc" id="L1564">        ((TensorImpl&lt;V&gt;)this)._backward( LazyRef.of( () -&gt; Tensor.of( this.getItemType(), shape(), value )) );</span>
+<span class="fc" id="L1565">        return this;</span>
+    }
+
+    /**
+     *  Use this to back-propagate an error signal of 1.0 through the recorded computation graph.
+     *  Tensors which are used or produced by operations supporting the autograd system
+     *  will have this graph defined by {@link GraphNode} components attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  If this tensor is part of a computation graph then this method
+     *  will traverse an error backward in the recorded history towards tensors which require
+     *  the accumulation of gradients. &lt;br&gt;
+     *  &lt;br&gt;
+     *  This method assumes that the user wants to back-propagate
+     *  an error of &quot;1&quot; having the same shape as
+     *  this tensor.
+     *
+     * @return This tensor to allow for method chaining.
+     */
+    default Tensor&lt;V&gt; backward() {
+<span class="fc" id="L1584">        backward( 1 ); // By default, we back-propagate an error signal of 1.</span>
+<span class="fc" id="L1585">        return this;</span>
+    }
+
+    /**
+     * @return The gradient of this tensor which is internally stored as component.
+     */
+<span class="fc" id="L1591">    default Optional&lt;Tensor&lt;V&gt;&gt; getGradient() { return this.find( Tensor.class ).map(t -&gt; (Tensor&lt;V&gt;) t ); }</span>
+
+    /**
+     *  This is a functionally identical alternative to the {@link #getGradient()} method.
+     *
+     * @return The gradient of this tensor which is internally stored as component.
+     */
+<span class="fc" id="L1598">    default Optional&lt;Tensor&lt;V&gt;&gt; gradient() { return getGradient(); }</span>
+
+    /**
+     *  If this tensor owns a gradient tensor as component, then it can be applied by this method. &lt;br&gt;
+     *  &quot;Applying&quot; a gradient to a tensor simply means adding the values inside the gradient element-wise
+     *  to the owning host tensor via an inline operation. &lt;br&gt;
+     */
+    default void applyGradient(){
+        /*
+           If the tensor has a JITProp component then it will trigger the continuation of the back-propagation which
+           has been put on hold by saving the pending graph nodes inside the component. &lt;br&gt;
+           This is because the gradient most likely has not yet been fully calculated.
+         */
+<span class="fc" id="L1611">        this.find( JITProp.class ).ifPresent( JITProp::execute );</span>
+        // Afterwards the JITProp component is not needed anymore! So we remove it.
+<span class="fc" id="L1613">        this.remove( JITProp.class );</span>
+        // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class as key).
+<span class="fc" id="L1615">        this.find( Tensor.class ).ifPresent(g -&gt; {</span>
+                // If an optimizer is present then we also optimize the gradient first!
+<span class="fc" id="L1617">                g = this.find( Optimizer.class ).map( o -&gt; o.optimize( this ) ).orElse( g );</span>
+                // And then we remove the gradient because it is no longer needed.
+<span class="fc" id="L1619">                this.remove( Tensor.class );</span>
+                // We are now ready to apply the gradient to the tensor. This is an inline operation!
+                // Therefore, we need to turn off the inline operation safety net:
+<span class="fc" id="L1622">                boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();</span>
+<span class="pc bpc" id="L1623" title="1 of 2 branches missed.">                if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );</span>
+                // INLINE OPERATION :
+<span class="fc" id="L1625">                Neureka.get().backend().getFunction().plusAssign().call( this, g ); //-&gt; Finally applying the gradient!</span>
+                // INLINE END ! -&gt; We can now revert to the previous setting:
+<span class="pc bpc" id="L1627" title="1 of 2 branches missed.">                if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );</span>
+<span class="fc" id="L1628">            }</span>
+        );
+<span class="fc" id="L1630">    }</span>
+
+    /**
+     * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
+     */
+    default Device&lt;V&gt; getDevice() {
+<span class="fc" id="L1636">        Device device = this.get( Device.class );</span>
+<span class="fc bfc" id="L1637" title="All 2 branches covered.">        if ( device == null )</span>
+<span class="fc bfc" id="L1638" title="All 4 branches covered.">            if ( !this.isDeleted() &amp;&amp; mut().getData() != null )</span>
+<span class="fc" id="L1639">                return mut().getData().owner();</span>
+            else
+<span class="fc" id="L1641">                return (Device&lt;V&gt;) CPU.get();</span>
+        else
+<span class="fc" id="L1643">            return device;</span>
+    }
+
+    /**
+     * @return The graph node optional of the computation graph to which this tensor belongs
+     *         or an empty optional if not part of a graph.
+     */
+<span class="fc" id="L1650">    default Optional&lt;GraphNode&lt;V&gt;&gt; getGraphNode() { return find( GraphNode.class ).map( g-&gt; (GraphNode&lt;V&gt;) g ); }</span>
+
+    /**
+     *  This is a functionally identical alternative to {@link #getGraphNode()}.
+     *
+     * @return The graph node optional of the computation graph to which this tensor belongs
+     *         or an empty optional if not part of a graph.
+     */
+<span class="fc" id="L1658">    default Optional&lt;GraphNode&lt;V&gt;&gt; graphNode() { return getGraphNode(); }</span>
+
+    /**
+     * @return An instance of the {@link NDFrame} component if present.
+     */
+<span class="fc" id="L1663">    default Optional&lt;NDFrame&lt;V&gt;&gt; getFrame() { return (Optional&lt;NDFrame&lt;V&gt;&gt;) ((Optional)find( NDFrame.class )); }</span>
+
+    /**
+     *  This is a functionally identical alternative to {@link #getFrame()}.
+     *
+     * @return An instance of the {@link NDFrame} component if present.
+     */
+<span class="fc" id="L1670">    default Optional&lt;NDFrame&lt;V&gt;&gt; frame() { return getFrame(); }</span>
+
+    /**
+     *  &lt;b&gt;This method returns a new tensor detached from any underlying computation-graph
+     *  or simply does nothing if no graph is present.&lt;/b&gt; &lt;br&gt;
+     *  Nodes within a computation graph are instances of the &quot;{@link GraphNode}&quot; class which are also
+     *  simple components of the tensors they represent in the graph. &lt;br&gt;
+     *  Therefore, a &quot;detached&quot; clone of this tensor is
+     *  simply a tensor without a {@link GraphNode} component.
+     *
+     * @return This very instance in order to allow for a more streamline usage of this method.
+     */
+    default Tensor&lt;V&gt; detached() {
+<span class="fc bfc" id="L1683" title="All 2 branches covered.">        if ( this.has( GraphNode.class ) )</span>
+<span class="fc" id="L1684">            return this.shallowCopy().remove( GraphNode.class );</span>
+<span class="fc" id="L1685">        return this;</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    Tensor&lt;V&gt; withLabel(String label );
+
+    /** {@inheritDoc} */
+    @Override
+    Tensor&lt;V&gt; withLabels(String[]... labels );
+
+    /** {@inheritDoc} */
+    @Override
+    Tensor&lt;V&gt; withLabels(List&lt;List&lt;Object&gt;&gt; labels );
+
+    /** {@inheritDoc} */
+    @Override
+    Tensor&lt;V&gt; withLabels(Map&lt;Object, List&lt;Object&gt;&gt; labels );
+
+
+    /*==================================================================================================================
+    |
+    |       §(8) : (OVERLOADABLE) OPERATORS &amp; OPERATIONS :
+    |   -----------------------------------------------------
+    |       ...for more context see package 'math'...
+    |*/
+
+    /**
+     *  This method compares the passed class with the underlying data-type of this NDArray.
+     *  If the data-type of this NDArray is equivalent to the passed class then the returned
+     *  boolean will be true, otherwise the method returns false.
+     *
+     * @param typeClass The class which ought to be compared to the underlying data-type of this NDArray.
+     * @return The truth value of the question: Does this NDArray implementation hold the data of the passed type?
+     */
+    boolean is( Class&lt;?&gt; typeClass );
+
+    /**
+     *  This method will produce the addition of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tensor}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise addition.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimensions the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. &lt;br&gt;
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       &lt;br&gt;
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         &lt;br&gt;
+     *
+     * @param other The right operand of the addition.
+     * @return The sum of this instance as the left and the passed {@link Tensor} instance as right operand.
+     */
+    default Tensor&lt;V&gt; plus(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L1739">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot add 'null' to a tensor!&quot;);</span>
+<span class="fc" id="L1740">        return Neureka.get().backend().getAutogradFunction().plus().call( this, other );</span>
+    }
+
+    /**
+     *  This method will create a new {@link Tensor}
+     *  with the provided double scalar added to all elements of this {@link Tensor}.
+     * &lt;p&gt;
+     *  The shapes of this tensor is irrelevant as the provided value will
+     *  simply be broadcast to any possible shape.
+     *
+     * @param value The right operand of the addition.
+     * @return The sum between this instance as the left and the passed double as right operand.
+     */
+<span class="fc" id="L1753">    default Tensor&lt;V&gt; plus(V value ) { return plus( ofAny( itemType(), this.shape(), value ) ); }</span>
+
+    /**
+     *  Performs subtraction on
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tensor}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors are identical then
+     *  the result will be a regular element-wise subtraction.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimensions the following is true:
+     *  Either the dimensions have the same size or one of them has size 1.    &lt;br&gt;
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       &lt;br&gt;
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)          &lt;br&gt;
+     *
+     * @param other The right operand of the subtraction.
+     * @return The difference between this instance as the left and the passed {@link Tensor} instance as right operand.
+     */
+    default Tensor&lt;V&gt; minus(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L1772">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot subtract 'null' from a tensor!&quot;);</span>
+<span class="fc" id="L1773">        return Neureka.get().backend().getAutogradFunction().minus().call( this, other );</span>
+    }
+
+    /**
+     *  This method will create a new {@link Tensor}
+     *  with the provided item subtracted from all elements of this {@link Tensor}.
+     * &lt;p&gt;
+     *  The shapes of this tensor is irrelevant as the provided item will
+     *  simply be broadcast to all items od this tensor, irrespective of any shape.
+     *
+     * @param other The right operand of the subtraction, which is an item of the same type as this tensor.
+     * @return The difference between this instance as the left and the passed item as right operand.
+     */
+    default Tensor&lt;V&gt; minus(V other ) {
+<span class="fc" id="L1787">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot subtract 'null' from a tensor!&quot;);</span>
+<span class="fc" id="L1788">        return minus(</span>
+<span class="fc" id="L1789">                    of( this.getDataType().getItemTypeClass() )</span>
+<span class="fc" id="L1790">                        .withShape(this.getNDConf().shape())</span>
+<span class="fc" id="L1791">                        .all(other)</span>
+                );
+    }
+
+    /**
+     * @return A clone of this tensor where the signs of all elements are flipped.
+     */
+<span class="fc" id="L1798">    default Tensor&lt;V&gt; negative() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }</span>
+
+    /**
+     *  Creates and returns a new {@link Tensor} instance which is a transposed twin of this instance.&lt;br&gt;
+     *  This is a shorter alternative to the functionally identical {@link #getT()} method.
+     *
+     * @return A new transposed tensor with the same underlying {@link Data} as this tensor.
+     */
+    default Tensor&lt;V&gt; T() {
+<span class="pc bpc" id="L1807" title="1 of 2 branches missed.">        if ( this.rank() == 1 ) return this;</span>
+<span class="fc bfc" id="L1808" title="All 2 branches covered.">        else if ( this.rank() == 2 )</span>
+<span class="fc" id="L1809">            return Neureka.get().backend().getAutogradFunction().transpose2D().call(this);</span>
+
+<span class="fc" id="L1811">        StringBuilder operation = new StringBuilder();</span>
+<span class="fc bfc" id="L1812" title="All 4 branches covered.">        for ( int i = rank() - 1; i &gt;= 0; i-- ) operation.append( i ).append( i == 0 ? &quot;&quot; : &quot;, &quot; );</span>
+<span class="fc" id="L1813">        operation = new StringBuilder( &quot;[&quot; + operation + &quot;]:(I[ 0 ])&quot; );</span>
+<span class="fc" id="L1814">        return Function.of( operation.toString(), true ).call( this );</span>
+    }
+
+    /**
+     *  A method which returns a new {@link Tensor} instance which is a transposed twin of this instance.&lt;br&gt;
+     *  This is an alternative to the functionally identical {@link #T()} method.
+     *
+     * @return A new transposed tensor with the same underlying {@link Data} as this tensor.
+     */
+<span class="fc" id="L1823">    default Tensor&lt;V&gt; getT() { return this.T(); } // Transposed</span>
+
+    /**
+     *  Calculate the mean value of all values
+     *  within this tensor and returns it
+     *  in the form of a scalar tensor. &lt;br&gt;
+     *  This operation supports autograd.
+     *
+     * @return A scalar tensor which wraps the mean value of all values of this tensor.
+     */
+    default Tensor&lt;V&gt; mean() {
+<span class="fc" id="L1834">        Functions functions = Neureka.get().backend().getAutogradFunction();</span>
+<span class="fc" id="L1835">        Tensor&lt;V&gt; sum = this.sum();</span>
+<span class="fc" id="L1836">        Tensor&lt;V&gt; result = functions.div().call( sum, of( this.getItemType(), Shape.of( 1 ), this.size() ) );</span>
+<span class="pc bpc" id="L1837" title="1 of 2 branches missed.">        if ( sum != this ) sum.getMut().delete(); // This is a temporary tensor which is not needed anymore! (not even for back propagation)</span>
+<span class="fc" id="L1838">        return result;</span>
+    }
+
+    /**
+     *  Calculate the sum value of all values
+     *  within this tensor and returns it
+     *  in the form of a scalar tensor. &lt;br&gt;
+     *  This operation supports autograd.
+     *
+     * @return A scalar tensor which wraps the sum of all values of this tensor.
+     */
+    default Tensor&lt;V&gt; sum() {
+<span class="fc" id="L1850">        Functions functions = Neureka.get().backend().getAutogradFunction();</span>
+<span class="fc" id="L1851">        Tensor&lt;V&gt; sum = functions.sum().call( this );</span>
+<span class="pc bpc" id="L1852" title="1 of 2 branches missed.">        if ( sum == null )</span>
+<span class="nc" id="L1853">            throw new IllegalStateException(</span>
+                    &quot;Failed to calculate sum using function! Shape: &quot;+
+<span class="nc" id="L1855">                    Arrays.toString(this.getNDConf().shape())</span>
+                );
+<span class="fc" id="L1857">        return sum;</span>
+    }
+
+    /**
+     *  Calculate the sum value of all values
+     *  within this tensor along the specified axis and returns it
+     *  in the form of a tensor. &lt;br&gt;
+     *  For example, if this tensor has a shape of (2, 3, 4) and the axis is 1,
+     *  then the result will be a tensor with a shape of (2, 1, 4) because the
+     *  sum of all values along the axis 1 is a single value for each of the two
+     *  first dimensions. &lt;br&gt;
+     *  This operation supports autograd.
+     *
+     * @param axis The axis along which the sum should be calculated.
+     * @return A tensor which wraps the sum of all values of this tensor along the specified axis.
+     */
+    default Tensor&lt;V&gt; sum(int axis ) {
+<span class="fc" id="L1874">        int toBeReduced = this.shape(axis);</span>
+<span class="fc" id="L1875">        Tensor&lt;V&gt; current = this.slice().axis(axis).at(0).get();</span>
+<span class="fc bfc" id="L1876" title="All 2 branches covered.">        for ( int i = 0; i &lt; toBeReduced; i++ ) {</span>
+<span class="fc bfc" id="L1877" title="All 2 branches covered.">            if ( i &gt; 0 )</span>
+<span class="fc" id="L1878">                current = this.slice().axis(axis).at(i).get().plus(current);</span>
+        }
+<span class="fc" id="L1880">        return current;</span>
+    }
+
+    /**
+     *  Calculate the sum value of all values
+     *  within this tensor along the specified axes and returns it
+     *  in the form of a tensor. &lt;br&gt;
+     *  For example, if this tensor has a shape of (2, 3, 4) and the axes are 1 and 2,
+     *  then the result will be a tensor with a shape of (2, 1, 1) because the
+     *  sum of all values along the axis 1 and 2 is a single value for each of the two
+     *  first dimensions. &lt;br&gt;
+     *  This operation supports autograd.
+     *
+     * @param axes The axes along which the sum should be calculated.
+     * @return A tensor which wraps the sum of all values of this tensor along the specified axes.
+     */
+    default Tensor&lt;V&gt; sum(int... axes ) {
+<span class="fc" id="L1897">        Tensor&lt;V&gt; current = this;</span>
+<span class="fc bfc" id="L1898" title="All 2 branches covered.">        for ( int axis : axes )</span>
+<span class="fc" id="L1899">            current = current.sum( axis );</span>
+
+<span class="fc" id="L1901">        return current;</span>
+    }
+
+    /**
+     *  Calculate the min value of all values
+     *  within this tensor and returns it
+     *  in the form of a scalar tensor. &lt;br&gt;
+     *  This operation supports autograd.
+     *
+     * @return A scalar tensor which wraps the smallest of all values of this tensor.
+     */
+    default Tensor&lt;V&gt; min() {
+<span class="fc" id="L1913">        Functions functions = Neureka.get().backend().getAutogradFunction();</span>
+<span class="fc" id="L1914">        Tensor&lt;V&gt; min = functions.min().call( this );</span>
+<span class="pc bpc" id="L1915" title="1 of 2 branches missed.">        if ( min == null )</span>
+<span class="nc" id="L1916">            throw new IllegalStateException(</span>
+                &quot;Failed to calculate min using min function! Shape: &quot;+
+<span class="nc" id="L1918">                Arrays.toString(this.getNDConf().shape())</span>
+            );
+<span class="fc" id="L1920">        return min;</span>
+    }
+
+    /**
+     *  Calculate the max value of all values
+     *  within this tensor and returns it
+     *  in the form of a scalar tensor. &lt;br&gt;
+     *  This operation supports autograd.
+     *
+     * @return A scalar tensor which wraps the largest of all values of this tensor.
+     */
+    default Tensor&lt;V&gt; max() {
+<span class="fc" id="L1932">        Functions functions = Neureka.get().backend().getAutogradFunction();</span>
+<span class="fc" id="L1933">        Tensor&lt;V&gt; max = functions.max().call( this );</span>
+<span class="pc bpc" id="L1934" title="1 of 2 branches missed.">        if ( max == null )</span>
+<span class="nc" id="L1935">            throw new IllegalStateException(</span>
+                &quot;Failed to calculate max using max function! Shape: &quot;+
+<span class="nc" id="L1937">                Arrays.toString(this.getNDConf().shape())</span>
+            );
+<span class="fc" id="L1939">        return max;</span>
+    }
+
+    /**
+     *  This method performs a convolutional based dot product between the last dimension of this tensor
+     *  and the first dimension of the passed tensor.
+     *
+     * @param other The tensor which is the right part of the dot product operation.
+     * @return A new tensor which is the dot product of this tensor and the passed one.
+     */
+    default Tensor&lt;V&gt; convDot(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L1950">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class);</span>
+<span class="fc" id="L1951">        Tensor&lt;V&gt; a = this;</span>
+<span class="fc" id="L1952">        int[][] fitter = TensorImpl.makeFit( a.getNDConf().shape(), other.getNDConf().shape() );</span>
+<span class="fc" id="L1953">        boolean doReshape = false;</span>
+<span class="fc bfc" id="L1954" title="All 6 branches covered.">        for ( int i = 0; i &lt; fitter[ 0 ].length &amp;&amp; !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;</span>
+<span class="pc bpc" id="L1955" title="1 of 6 branches missed.">        for ( int i = 0; i &lt; fitter[ 1 ].length &amp;&amp; !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;</span>
+<span class="fc bfc" id="L1956" title="All 2 branches covered.">        if ( doReshape ) {</span>
+<span class="fc" id="L1957">            a = Function.of( NDUtil.shapeString( fitter[ 0 ] ) + &quot;:(I[ 0 ])&quot; ).call( a );</span>
+<span class="fc" id="L1958">            other = Function.of( NDUtil.shapeString( fitter[ 1 ] ) + &quot;:(I[ 0 ])&quot; ).call( other );</span>
+        }
+<span class="fc" id="L1960">        return Neureka.get()</span>
+<span class="fc" id="L1961">                .backend()</span>
+<span class="fc" id="L1962">                .getAutogradFunction()</span>
+<span class="fc" id="L1963">                .conv()</span>
+<span class="fc" id="L1964">                .call( a, other )</span>
+<span class="fc" id="L1965">                .dimtrim();</span>
+    }
+
+    /**
+     *  Performs a dot product between the last dimension of this tensor
+     *  and the first dimension of the provided tensor.
+     *  However, currently this method can only handle matrices which means
+     *  that it is functionally completely identical to the {@link #matMul(Tensor)} method.
+     *
+     * @param other The tensor which is the right part of the dot product operation.
+     * @return A new tensor which is the dot product of this tensor and the passed one.
+     */
+    default Tensor&lt;V&gt; dot(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L1978">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot perform dot operation when second operand is 'null'!&quot;);</span>
+<span class="fc" id="L1979">        return Neureka.get().backend().getAutogradFunction().dot().call( this, other );</span>
+    }
+
+    /**
+     *  This will produce the matrix product of
+     *  two tensors with rank 2 (matrices), where the left operand is this {@link Tensor}
+     *  instance and the right operand is the argument passed to the method.
+     *
+     * @param other The right operand of the matrix multiplication.
+     * @return The matrix product of this instance as the left and the passed {@link Tensor} instance as right operand.
+     */
+    default Tensor&lt;V&gt; matMul(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L1991">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot perform matrix multiplication operation when second operand is 'null'!&quot;);</span>
+<span class="pc bpc" id="L1992" title="2 of 4 branches missed.">        if ( this.rank() != 2 || other.rank() != 2 )</span>
+<span class="nc" id="L1993">            throw new IllegalArgumentException(</span>
+                    &quot;Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n&quot; +
+<span class="nc" id="L1995">                    &quot;Encountered ranks: &quot; + this.rank() + &quot;, &quot; + other.rank() + &quot;;&quot;</span>
+                );
+
+<span class="fc" id="L1998">        return Neureka.get().backend().getAutogradFunction().matMul().call( this, other );</span>
+    }
+
+    /**
+     * This method performs convolution between this tensor and the one passed as argument.
+     * The convolution is performed by the {@link Function} which is registered under the name &quot;conv&quot;.
+     * @param other The tensor which is the right operand of the convolutional operation.
+     * @return A new tensor which is the result of the convolutional operation.
+     */
+    default Tensor&lt;V&gt; conv(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L2008">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot perform convolution operation when second operand is 'null'!&quot;);</span>
+<span class="fc" id="L2009">        return Neureka.get().backend().getAutogradFunction().conv().call( this, other );</span>
+    }
+
+    /**
+     *  This creates a new tensor with the same underlying {@link Data} and whose shape is trimmed.
+     *  A trimmed shape is simply a shape without preceding and trailing ones. &lt;br&gt;
+     *  For example the shape (1x4x1x2x1) would be trimmed to (4x1x2).
+     *  The underlying operation does not perform a removal of redundant ones all together.
+     *  Only ones at the start and the beginning will be removed.
+     *  A scalar tensor will not be affected by this operation.
+     *
+     * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
+     */
+<span class="fc" id="L2022">    default Tensor&lt;V&gt; dimtrim() { return Neureka.get().backend().getAutogradFunction().dimTrim().call( this ); }</span>
+
+    /**
+     *  This method name translates to the &quot;in&quot; keyword in Groovy!
+     *  The same is true for the &quot;contains&quot; method in Kotlin.
+     *  Both methods do the exact same thing, however they exist
+     *  for better language support.
+     *
+     * @param other The tensor which will be checked.
+     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
+     */
+    boolean isCase( Tensor&lt;V&gt; other );
+
+    /**
+     *  This method name translates to the &quot;in&quot; keyword in Kotlin!
+     *  The same is true for the &quot;isCase&quot; method in Groovy.
+     *  Both methods do the exact same thing, however they exist
+     *  for better language support.
+     *
+     * @param other The tensor which will be checked.
+     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
+     */
+    default boolean contains( Tensor&lt;V&gt; other ) {
+<span class="fc" id="L2045">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot perform 'contains' operation when second operand is 'null'!&quot;);</span>
+<span class="fc" id="L2046">        return this.isCase( other );</span>
+    }
+
+    /**
+     *  This method is synonymous to the {@link #times(Tensor)} method.
+     *  Both of which will produce the product of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tensor}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise product.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimensions the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. &lt;br&gt;
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       &lt;br&gt;
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         &lt;br&gt;
+     *
+     * @param other The right operand of the multiplication.
+     * @return The product of this instance as the left and the passed {@link Tensor} instance as right operand.
+     */
+    default Tensor&lt;V&gt; multiply(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L2067">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
+<span class="fc" id="L2068">        return Neureka.get().backend().getAutogradFunction().mul().call( this, other );</span>
+    }
+
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new tensor where all elements are multiplied by the provided value.
+     */
+    default Tensor&lt;V&gt; multiply(V other ) {
+<span class="fc" id="L2076">        LogUtil.nullArgCheck(other, &quot;other&quot;, this.getItemType(), &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
+<span class="fc" id="L2077">        return multiply(</span>
+<span class="fc" id="L2078">                of( this.getDataType().getItemTypeClass() )</span>
+<span class="fc" id="L2079">                        .withShape( this.getNDConf().shape() )</span>
+<span class="fc" id="L2080">                        .all( other )</span>
+        );
+    }
+
+    /**
+     *  This is a functionally identical synonym to the {@link #multiply(Tensor)} method.
+     *  Both of which will produce the product of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tensor}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular element-wise product.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimensions the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. &lt;br&gt;
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       &lt;br&gt;
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         &lt;br&gt;
+     *
+     * @param other The right operand of the multiplication.
+     * @return The product of this instance as the left and the passed {@link Tensor} instance as right operand.
+     */
+    default Tensor&lt;V&gt; times(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L2102">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
+<span class="fc" id="L2103">        return multiply( other );</span>
+    }
+
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new tensor where all elements are multiplied by the provided value.
+     */
+    default Tensor&lt;V&gt; times(V other ) {
+<span class="fc" id="L2111">        LogUtil.nullArgCheck(other, &quot;other&quot;, getItemType(), &quot;Cannot multiply 'null' with a tensor!&quot;);</span>
+<span class="fc" id="L2112">        return multiply( other );</span>
+    }
+
+    /**
+     * @param value The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new tensor where all elements are multiplied by the provided value.
+     */
+    default Tensor&lt;V&gt; multiply(double value ) {
+<span class="fc" id="L2120">        Tensor&lt;V&gt; other = of( getItemType(), shape(), value );</span>
+<span class="fc" id="L2121">        Tensor&lt;V&gt; result = multiply( other );</span>
+<span class="pc bpc" id="L2122" title="1 of 2 branches missed.">        if ( !other.graphNode().map(GraphNode::isUsedAsDerivative).orElse(false) )</span>
+<span class="fc" id="L2123">            other.mut().delete();</span>
+<span class="fc" id="L2124">        return result;</span>
+    }
+
+    /**
+     *  This method will produce the quotient of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tensor}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors are identical then
+     *  the result will be a regular element-wise division.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimensions the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. &lt;br&gt;
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       &lt;br&gt;
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         &lt;br&gt;
+     *
+     * @param other The right operand of the division.
+     * @return The quotient of this instance as the left and the passed {@link Tensor} instance as right operand.
+     */
+    default Tensor&lt;V&gt; div(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L2144">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot divide a tensor by 'null' (In any sense of the word)!&quot;);</span>
+<span class="fc" id="L2145">        return Neureka.get().backend().getAutogradFunction().div().call( this, other );</span>
+    }
+<span class="fc" id="L2147">    default Tensor&lt;V&gt; div(V value ) { return div( of( getItemType(), shape(), value ) ); }</span>
+
+    /**
+     *  Produces the modulus of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tensor}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of these 2 tensors are identical then
+     *  the result will be a regular element-wise modulo operation.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimensions the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. &lt;br&gt;
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       &lt;br&gt;
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         &lt;br&gt;
+     *
+     * @param other The right operand of the modulo operation.
+     * @return The modulus of this instance as the left and the passed {@link Tensor} instance as right operand.
+     */
+    default Tensor&lt;V&gt; mod(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L2166">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot perform tensor modulo 'null'!&quot;);</span>
+<span class="fc" id="L2167">        return Neureka.get().backend().getAutogradFunction().mod().call( this, other );</span>
+    }
+
+    /**
+     * @param other The value which should be broadcast to all elements of a clone of this tensor.
+     * @return A new tensor where the modulo operation is applied to all
+     *          elements using the provided int as right operand.
+     */
+<span class="fc" id="L2175">    default Tensor&lt;V&gt; mod(int other ) { return mod(of(getItemType(), shape(), other)); }</span>
+
+    /**
+     *  This method is synonymous to the {@link #mod(int)} method.
+     */
+<span class="fc" id="L2180">    default Tensor&lt;V&gt; rem(int other ) { return this.mod(other); }</span>
+
+    /**
+     *  This will produce the power of
+     *  two tensors with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tensor}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of the involved tensors are identical then
+     *  the result will be a regular element-wise exponentiation.
+     *  Otherwise, the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimensions the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. &lt;br&gt;
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       &lt;br&gt;
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         &lt;br&gt;
+     *
+     * @param other The right operand, also known as exponent, of the exponentiation.
+     * @return The power of this instance as the left and the passed {@link Tensor} instance as right operand.
+     */
+    default Tensor&lt;V&gt; power(Tensor&lt;V&gt; other ) {
+<span class="fc" id="L2199">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot raise a tensor to the power of 'null'!&quot;);</span>
+<span class="fc" id="L2200">        return Neureka.get().backend().getAutogradFunction().pow().call( this, other );</span>
+    }
+
+    /**
+     *  Raises all items of this tensor to the power of the provided value.
+     *  The returned tensor is a new instance which will have the same shape as this tensor.
+     * 
+     * @param value The value which should be used to raise all items of this tensor to the power of.
+     * @return A new tensor where all items are raised to the power of the provided value.
+     */
+    default Tensor&lt;V&gt; power(V value ) {
+<span class="fc" id="L2211">        LogUtil.nullArgCheck(value, &quot;value&quot;, getItemType(), &quot;Cannot raise a tensor to the power of 'null'!&quot;);</span>
+<span class="fc" id="L2212">        return power( ofAny( this.itemType(), this.shape(), value ) );</span>
+    }
+    
+    /**
+     *  This method is a functionally identical synonym to the {@link #power(Tensor)} method.
+     */
+    default Tensor&lt;V&gt; xor(Tensor&lt;V&gt; other ) {
+<span class="nc" id="L2219">        LogUtil.nullArgCheck(other, &quot;other&quot;, Tensor.class, &quot;Cannot raise a tensor to the power of 'null'!&quot;);</span>
+<span class="nc" id="L2220">        return Neureka.get().backend().getAutogradFunction().pow().call( this, other );</span>
+    }
+
+    /**
+     *  This method is a functionally identical synonym to the {@link #power(Tensor)} method.
+     */
+<span class="nc" id="L2226">    default Tensor&lt;V&gt; xor(double value ) { return xor( ofAny( this.itemType(), this.shape(), value ) ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().sigmoid().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;sig(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;sigmoid function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2239">    default Tensor&lt;V&gt; sig() { return Neureka.get().backend().getAutogradFunction().sigmoid().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().tanh().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;tanh(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;tanh function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2252">    default Tensor&lt;V&gt; tanh() { return Neureka.get().backend().getAutogradFunction().tanh().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().relu().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;relu(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;relu function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="nc" id="L2265">    default Tensor&lt;V&gt; relu() { return Neureka.get().backend().getAutogradFunction().relu().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().sin().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;sin(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;sin function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2278">    default Tensor&lt;V&gt; sin() { return Neureka.get().backend().getAutogradFunction().sin().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().cos().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;cos(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;cos function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2291">    default Tensor&lt;V&gt; cos() { return Neureka.get().backend().getAutogradFunction().cos().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().ln().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;ln(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;ln function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2304">    default Tensor&lt;V&gt; ln() { return Neureka.get().backend().getAutogradFunction().ln().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().softplus().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;softplus(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;softplus function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2317">    default Tensor&lt;V&gt; softplus() { return Neureka.get().backend().getAutogradFunction().softplus().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().exp().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;exp(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;exp function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2330">    default Tensor&lt;V&gt; exp() { return Neureka.get().backend().getAutogradFunction().exp().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().sqrt().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;sqrt(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;sqrt function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2343">    default Tensor&lt;V&gt; sqrt() { return Neureka.get().backend().getAutogradFunction().sqrt().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().log10().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;log10(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;log10 function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2356">    default Tensor&lt;V&gt; log10() { return Neureka.get().backend().getAutogradFunction().log10().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().cbrt().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;cbrt(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;cbrt function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2369">    default Tensor&lt;V&gt; cbrt() { return Neureka.get().backend().getAutogradFunction().cbrt().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().abs().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;abs(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;abs function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2382">    default Tensor&lt;V&gt; abs() { return Neureka.get().backend().getAutogradFunction().abs().call( this ); }</span>
+
+    /**
+     *  This method is a functionally identical to the following alternatives:
+     *  &lt;pre&gt;{@code
+     *      // Pre-instantiated:
+     *      var out1 = Neureka.get().backend().getAutogradFunction().neg().call( myTensor );
+     *      // Dynamically parsed and instantiated:
+     *      var out2 = Function.of(&quot;neg(I[0])&quot;).call(myTensor);
+     *  }&lt;/pre&gt;
+     *
+     * @return A new tensor whose items are the result of the &lt;b&gt;neg function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2395">    default Tensor&lt;V&gt; neg() { return Neureka.get().backend().getAutogradFunction().neg().call( this ); }</span>
+
+    /**
+     * @return A new tensor whose items are the result of the &lt;b&gt;softmax function&lt;/b&gt; applied to the items of this tensor.
+     */
+    default Tensor&lt;V&gt; softmax() {
+        // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
+<span class="fc" id="L2402">        return exp().div( exp().sum() );</span>
+    }
+
+    /**
+     * @return A new tensor whose items are the result of the &lt;b&gt;softmax function&lt;/b&gt; applied to the items of this tensor.
+     */
+    default Tensor&lt;V&gt; softmax(int axis ) {
+        // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
+<span class="fc" id="L2410">        Tensor&lt;V&gt; exp = exp();</span>
+<span class="fc" id="L2411">        return exp.div( exp.sum(axis) );</span>
+    }
+
+    /**
+     *  Calculates the softmax function along the specified axes. &lt;br&gt;
+     *  For example, if this tensor has a shape of (2, 3, 4) and the axes 0 and 2 are chosen,
+     *  then the result will be a tensor of the same size where all elements summed up alongside
+     *  axis 0 and 2 would be 1.
+     *  Ao calling {@code sum(0, 2)} would in this example be a tensor of shape of (1, 3, 1) where every item is 1. &lt;br&gt;
+     *  This operation supports autograd.
+     *
+     * @param axes The axes along which the softmax function should be applied.
+     * @return A new tensor whose items are the result of the &lt;b&gt;softmax function&lt;/b&gt; applied to the items of this tensor.
+     */
+    default Tensor&lt;V&gt; softmax(int... axes ) {
+        // Currently the softmax function is not implemented as Function instance, we simply calculate it using exp and div:
+<span class="fc" id="L2427">        return exp().div( exp().sum(axes) );</span>
+    }
+
+    /**
+     * @return A new tensor whose items are the result of the &lt;b&gt;sigmoid function&lt;/b&gt; applied to the items of this tensor.
+     */
+<span class="fc" id="L2433">    default Tensor&lt;V&gt; sigmoid() { return Neureka.get().backend().getAutogradFunction().sigmoid().call( this ); }</span>
+
+
+    /*==================================================================================================================
+    |
+    |       §(9) : SLICING, INDEXING &amp; INJECTING :
+    |   -----------------------------------------------------
+    |       ...for more context see package 'ndim.config'...
+    */
+
+    /** {@inheritDoc} */
+    @Override
+    AxisOrGetTensor&lt;V&gt; slice();
+
+    /** {@inheritDoc} */
+    @Override default Tensor&lt;V&gt; concatAt(int axis, Nda&lt;V&gt; other, Nda&lt;V&gt;... ndArrays ) {
+<span class="fc" id="L2449">        String args = IntStream.range(0,ndArrays.length+2).mapToObj(i-&gt;&quot;I[&quot;+ i +&quot;]&quot;).collect(Collectors.joining(&quot;, &quot;));</span>
+<span class="fc" id="L2450">        Function concat = Function.of( &quot;concat(&quot;+ args +&quot;)&quot; );</span>
+<span class="fc" id="L2451">        Tensor&lt;V&gt;[] allArgs = new Tensor[ndArrays.length+2];</span>
+<span class="fc" id="L2452">        allArgs[0] = this;</span>
+<span class="fc" id="L2453">        allArgs[1] = (Tensor&lt;V&gt;) other;</span>
+<span class="fc" id="L2454">        System.arraycopy( ndArrays, 0, allArgs, 2, ndArrays.length );</span>
+<span class="fc" id="L2455">        return concat.with(Arg.Axis.of(axis)).call( allArgs );</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override default Tensor&lt;V&gt; concatAt(int axis, Nda&lt;V&gt; other ) {
+<span class="fc" id="L2460">        return Neureka.get()</span>
+<span class="fc" id="L2461">                .backend()</span>
+<span class="fc" id="L2462">                .getAutogradFunction()</span>
+<span class="fc" id="L2463">                .concat()</span>
+<span class="fc" id="L2464">                .with(Arg.Axis.of(axis))</span>
+<span class="fc" id="L2465">                .call( this, (Tensor&lt;V&gt;) other );</span>
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    Tensor&lt;V&gt; getAt(int... indices );
+
+    /** {@inheritDoc} */
+    @Override
+    default Tensor&lt;V&gt; getAt(Number i ) {
+<span class="fc" id="L2476">        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override
+<span class="fc" id="L2481">    default Tensor&lt;V&gt; get(int... indices ) { return getAt( indices ); }</span>
+
+    /** {@inheritDoc} */
+    @Override
+    default Tensor&lt;V&gt; getAt(Object... args ) {
+<span class="fc" id="L2486">        List&lt;Object&gt; argsList = Arrays.asList( args );</span>
+<span class="fc" id="L2487">        return getAt( argsList );</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override
+<span class="fc" id="L2492">    default Tensor&lt;V&gt; get(Object... args ) { return getAt( args ); }</span>
+
+    /** {@inheritDoc} */
+    @Override
+<span class="fc" id="L2496">    default Tensor&lt;V&gt; getAt(int i ) { return getAt( indicesOfIndex(i) ); }</span>
+
+    /** {@inheritDoc} */
+    @Override
+<span class="fc" id="L2500">    default Tensor&lt;V&gt; get(int i ) { return getAt( i ); }</span>
+
+    /** {@inheritDoc} */
+    @Override
+<span class="nc" id="L2504">    default Tensor&lt;V&gt; get(Number i ) { return getAt( i ); }</span>
+
+    /** {@inheritDoc} */
+    @Override
+<span class="nc" id="L2508">    default Tensor&lt;V&gt; get(Object key ) { return getAt( key ); }</span>
+
+    /** {@inheritDoc} */
+    @Override
+    Tensor&lt;V&gt; getAt(Map&lt;?,Integer&gt; rangToSteps);
+
+    /** {@inheritDoc} */
+    @Override
+    Tensor&lt;V&gt; getAt(List&lt;?&gt; key );
+
+    /*==================================================================================================================
+    |
+    |       §(10) : Mapping :
+    |   -----------------------------------------------------
+    |       ...transformation and modification...
+    */
+
+    /** {@inheritDoc} */
+    @Override default &lt;T&gt; Tensor&lt;T&gt; mapTo(
+        Class&lt;T&gt; typeClass,
+        java.util.function.Function&lt;V,T&gt; mapper
+    ) {
+<span class="pc bpc" id="L2530" title="1 of 2 branches missed.">        if ( this.isEmpty() )</span>
+<span class="nc" id="L2531">            throw new IllegalArgumentException(&quot;Trying to map an empty tensor!&quot;);</span>
+        /*
+           The provided lambda cannot be executed anywhere but the CPU (Note: Maybe we should consider Aparapi here)
+           This is a problem if this tensor here lives somewhere other than the JVM.
+           So, therefore, we invite it back home for dinner!
+         */
+<span class="fc" id="L2537">        return CPU.get() // This little API will temporarily migrate this to the JVM.</span>
+<span class="fc" id="L2538">                .borrow( (Tensor&lt;Object&gt;) this )</span>
+<span class="fc" id="L2539">                .in( () -&gt; {</span>
+<span class="fc" id="L2540">                    Object data = getMut().getData().getOrNull();</span>
+<span class="fc" id="L2541">                    DataConverter.ForTensor map = new DataConverter.ForTensor( this );</span>
+<span class="pc bpc" id="L2542" title="1 of 2 branches missed.">                    if ( data == null ) {</span>
+<span class="nc bnc" id="L2543" title="All 2 branches missed.">                        if ( this.isOutsourced() )</span>
+<span class="nc" id="L2544">                            throw new IllegalStateException(&quot;Encountered an outsourced tensor! Only local tensors stored in RAM can be mapped.&quot;);</span>
+                        else
+<span class="nc" id="L2546">                            throw new IllegalStateException(&quot;Invalid tensor state encountered! Cannot map a tensor without data.&quot;);</span>
+                    }
+                    Object newData;
+<span class="fc" id="L2549">                    String failMessage = &quot;Conversion to type &quot;+typeClass+&quot; not yet supported.&quot;;</span>
+<span class="fc bfc" id="L2550" title="All 2 branches covered.">                    if ( Number.class.isAssignableFrom(typeClass) ) {</span>
+                        java.util.function.Function&lt;Integer, Number&gt; access;
+<span class="fc bfc" id="L2552" title="All 2 branches covered.">                        if ( this.getItemType() == Integer.class ) {</span>
+<span class="fc" id="L2553">                            int[] sourceData = getMut().getData().as(int[].class);</span>
+<span class="fc" id="L2554">                            access = (i -&gt; (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L2555" title="All 2 branches covered.">                        } else if (this.getItemType() == Double.class) {</span>
+<span class="fc" id="L2556">                            double[] sourceData = getMut().getData().as(double[].class);</span>
+<span class="fc" id="L2557">                            access = (i -&gt; (Number) mapper.apply((V) Double.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L2558" title="All 2 branches covered.">                        } else if (this.getItemType() == Float.class) {</span>
+<span class="fc" id="L2559">                            float[] sourceData = getMut().getData().as(float[].class);</span>
+<span class="fc" id="L2560">                            access = (i -&gt; (Number) mapper.apply((V) Float.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L2561" title="All 2 branches covered.">                        } else if (this.getItemType() == Short.class) {</span>
+<span class="fc" id="L2562">                            short[] sourceData = getMut().getData().as(short[].class);</span>
+<span class="fc" id="L2563">                            access = (i -&gt; (Number) mapper.apply((V) Short.valueOf(sourceData[i])));</span>
+<span class="pc bpc" id="L2564" title="1 of 2 branches missed.">                        } else if (this.getItemType() == Byte.class) {</span>
+<span class="fc" id="L2565">                            byte[] sourceData = getMut().getData().as(byte[].class);</span>
+<span class="fc" id="L2566">                            access = (i -&gt; (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));</span>
+<span class="fc" id="L2567">                        } else</span>
+<span class="nc" id="L2568">                            throw new IllegalArgumentException(failMessage);</span>
+
+<span class="fc bfc" id="L2570" title="All 2 branches covered.">                        if (typeClass == Double.class) newData = map.toDoubleArray(access);</span>
+<span class="fc bfc" id="L2571" title="All 2 branches covered.">                        else if ( typeClass == Integer.class ) newData = map.toIntArray(access);</span>
+<span class="fc bfc" id="L2572" title="All 2 branches covered.">                        else if ( typeClass == Long.class    ) newData = map.toLongArray(access);</span>
+<span class="fc bfc" id="L2573" title="All 2 branches covered.">                        else if ( typeClass == Byte.class    ) newData = map.toByteArray(access);</span>
+<span class="fc bfc" id="L2574" title="All 2 branches covered.">                        else if ( typeClass == Float.class   ) newData = map.toFloatArray(access);</span>
+<span class="pc bpc" id="L2575" title="1 of 2 branches missed.">                        else if ( typeClass == Short.class   ) newData = map.toShortArray(access);</span>
+                        else
+<span class="nc" id="L2577">                            throw new IllegalArgumentException(failMessage);</span>
+<span class="fc" id="L2578">                    } else {</span>
+<span class="fc" id="L2579">                        java.util.function.Function&lt;Integer, Object&gt; access = null;</span>
+<span class="fc bfc" id="L2580" title="All 2 branches covered.">                        if ( this.getItemType() == Integer.class ) {</span>
+<span class="fc" id="L2581">                            int[] sourceData = getMut().getData().as(int[].class);</span>
+<span class="fc" id="L2582">                            access = (i -&gt; mapper.apply((V) Integer.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L2583" title="All 2 branches covered.">                        } else if ( this.getItemType() == Double.class ) {</span>
+<span class="fc" id="L2584">                            double[] sourceData = getMut().getData().as(double[].class);</span>
+<span class="fc" id="L2585">                            access = (i -&gt; mapper.apply((V) Double.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L2586" title="All 2 branches covered.">                        } else if ( this.getItemType() == Float.class ) {</span>
+<span class="fc" id="L2587">                            float[] sourceData = getMut().getData().as(float[].class);</span>
+<span class="fc" id="L2588">                            access = (i -&gt; mapper.apply((V) Float.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L2589" title="All 2 branches covered.">                        } else if ( this.getItemType() == Short.class ) {</span>
+<span class="fc" id="L2590">                            short[] sourceData = getMut().getData().as(short[].class);</span>
+<span class="fc" id="L2591">                            access = (i -&gt; mapper.apply((V) Short.valueOf(sourceData[i])));</span>
+<span class="fc bfc" id="L2592" title="All 2 branches covered.">                        } else if ( this.getItemType() == Byte.class ) {</span>
+<span class="fc" id="L2593">                            byte[] sourceData = getMut().getData().as(byte[].class);</span>
+<span class="fc" id="L2594">                            access = (i -&gt; mapper.apply((V) Byte.valueOf(sourceData[i])));</span>
+<span class="pc bpc" id="L2595" title="1 of 2 branches missed.">                        } else if ( typeClass == itemType() ) {</span>
+<span class="fc" id="L2596">                            Object[] sourceData = getMut().getData().as(Object[].class);</span>
+<span class="fc" id="L2597">                            access = (i -&gt; mapper.apply( (V) sourceData[i] ));</span>
+<span class="fc" id="L2598">                        } else</span>
+<span class="nc" id="L2599">                            throw new IllegalArgumentException(failMessage);</span>
+
+<span class="fc" id="L2601">                        newData = map.toObjectArray(access);</span>
+                    }
+<span class="fc" id="L2603">                    return Tensor.of( typeClass, this.shape(), newData );</span>
+                });
+    }
+
+    /** {@inheritDoc} */
+    @Override default Tensor&lt;V&gt; map(java.util.function.Function&lt;V,V&gt; mapper ) {
+<span class="fc" id="L2609">        return mapTo( this.getItemType(), mapper );</span>
+    }
+
+    /**
+     *  Turns this tensor into a {@link BufferedImage} based on the provided
+     *  {@link Tensor.ImageType} formatting choice.
+     *
+     * @param type The type of format used to create the buffered image.
+     * @return A {@link BufferedImage} populated with the contents of this tensor.
+     */
+    BufferedImage asImage( Tensor.ImageType type );
+
+    /**
+     * @param typeClass The class which is the target of the type conversion.
+     * @param &lt;T&gt; The type parameter of the type that will be returned.
+     * @return An instance of the supplied type class.
+     */
+    &lt;T&gt; T asType( Class&lt;T&gt; typeClass );
+
+    default String toString( String conf ) {
+<span class="pc bpc" id="L2629" title="1 of 2 branches missed.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="pc bpc" id="L2630" title="1 of 2 branches missed.">        else if ( this.isEmpty() ) return &quot;empty&quot;;</span>
+<span class="pc bpc" id="L2631" title="1 of 2 branches missed.">        else if ( this.isUndefined() ) return &quot;undefined&quot;;</span>
+<span class="fc" id="L2632">        return NdaAsString.representing( this ).withConfig( conf ).toString();</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override default String toString( NDPrintSettings config ) {
+<span class="pc bpc" id="L2637" title="1 of 2 branches missed.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="pc bpc" id="L2638" title="1 of 2 branches missed.">        else if ( this.isEmpty() ) return &quot;empty&quot;;</span>
+<span class="pc bpc" id="L2639" title="1 of 2 branches missed.">        else if ( this.isUndefined() ) return &quot;undefined&quot;;</span>
+<span class="fc" id="L2640">        return Nda.super.toString( config );</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override default String toString( Consumer&lt;NDPrintSettings&gt; configurator ) {
+<span class="fc bfc" id="L2645" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="fc" id="L2646">        return Nda.super.toString( configurator );</span>
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    Tensor&lt;V&gt; deepCopy();
+
+    /** {@inheritDoc} */
+    @Override default Tensor&lt;V&gt; shallowCopy() {
+<span class="pc bpc" id="L2655" title="2 of 4 branches missed.">        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...</span>
+<span class="fc" id="L2656">        return slice().detached();</span>
+    }
+
+    /**
+     *  This is almost identical to the {@link Tensor#deepCopy()} method except that
+     *  the returned tensor will have autograd support, meaning that the cloning
+     *  will be part of the autograd computation graph, and backpropagation
+     *  will traverse the cloned tensor as well.
+     *
+     * @return A deep clone of this tensor with autograd support.
+     */
+    Tensor&lt;V&gt; deepClone();
+
+    /**
+     * @return A shallow copy of this tensor with autograd support.
+     */
+    default Tensor&lt;V&gt; shallowClone() {
+<span class="pc bpc" id="L2673" title="2 of 4 branches missed.">        if ( this.isEmpty() || this.isUndefined() ) return this; // Maybe throw an exception here...</span>
+<span class="fc" id="L2674">        return slice().get();</span>
+    }
+
+    /**
+     * Use this enum as argument for the {@link Tensor#asImage(Tensor.ImageType)} method to
+     * specify the type of image that should be returned.
+     */
+<span class="fc" id="L2681">    enum ImageType</span>
+    {
+<span class="fc" id="L2683">        RGB_1INT(1, UI32.class, 1),</span>
+<span class="fc" id="L2684">        ARGB_1INT(2, UI32.class, 1),</span>
+<span class="fc" id="L2685">        ARGB_PRE_1INT(3, UI32.class, 1),</span>
+<span class="fc" id="L2686">        BGR_1INT(4, UI32.class, 1),</span>
+<span class="fc" id="L2687">        BGR_3BYTE(5, UI8.class, 3),</span>
+<span class="fc" id="L2688">        ABGR_4BYTE(6, UI8.class, 4),</span>
+<span class="fc" id="L2689">        ABGR_PRE_4BYTE(7, UI8.class, 4),</span>
+<span class="fc" id="L2690">        RGB_565_USHORT(8, UI16.class, 1),</span>
+<span class="fc" id="L2691">        RGB_555_USHORT(9, UI16.class, 1),</span>
+<span class="fc" id="L2692">        GRAY_BYTE(0, UI8.class, 1),</span>
+<span class="fc" id="L2693">        GRAY_USHORT(1, UI16.class, 1);</span>
+
+        public final int bufferType;
+        public final DataType&lt;?&gt; dataType;
+        public final int numberOfChannels;
+
+<span class="fc" id="L2699">        ImageType( int bufferType, Class&lt;?&gt; valueTypeClass, int numberOfChannels ) {</span>
+<span class="fc" id="L2700">            this.bufferType = bufferType;</span>
+<span class="fc" id="L2701">            this.dataType = DataType.of( valueTypeClass );</span>
+<span class="fc" id="L2702">            this.numberOfChannels = numberOfChannels;</span>
+<span class="fc" id="L2703">        }</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

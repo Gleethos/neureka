@@ -1,7 +1,7 @@
 {
   "className":"ut.math.Function_Scalar_Spec",
   "title":"Functions for Scalars",
-  "narrative":"The Function API and it's implementations \n    receive and process arrays of scalars as arguments.\n    Functions don't have to be used alongside tensors / nd-arrays,\n    they can also compute derivatives based on scalar values.",
+  "narrative":"The Function API and it's implementations\n    receive and process arrays of scalars as arguments.\n    Functions don't have to be used alongside tensors / nd-arrays,\n    they can also compute derivatives based on scalar values.",
   "subjects":[],
   "statistics":{
     "runs":"6",
@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.026 seconds"
+    "duration":"0.022 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 

@@ -1,15 +1,15 @@
 {
   "className":"ut.tensors.Reshape_Spec",
   "title":"Tensor Reshaping",
-  "narrative":"This specification demonstrates how to reshape tensors,\n    which means to change the shape of a tensor.\n\n    Note that immutability is a core concept of the Neureka library.\n    This means that the `Tsr` API does not expose mutability directly.\n    Instead, it exposes methods that return new instances of `Tsr`\n    that are derived from the original instance.\n\n    This is also true for reshaping operations.\n\n    Don't be concerned about the performance implications of this,\n    because in the vast majority of cases the new instance will be backed by the same data array\n    as the original instance!",
-  "subjects":["neureka.Tsr"],
+  "narrative":"This specification demonstrates how to reshape tensors,\n    which means to change the shape of a tensor.\n\n    Note that immutability is a core concept of the Neureka library.\n    This means that the `Tensor` API does not expose mutability directly.\n    Instead, it exposes methods that return new instances of `Tensor`\n    that are derived from the original instance.\n\n    This is also true for reshaping operations.\n\n    Don't be concerned about the performance implications of this,\n    because in the vast majority of cases the new instance will be backed by the same data array\n    as the original instance!",
+  "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.002 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new tensor with a shape of [2, 3].","code":["Tsr<?> t = Tsr.of( 6..12 ).reshape( 2, 3 )"]},
+        {"kind":"given","text":"We create a new tensor with a shape of [2, 3].","code":["Tensor<?> t = Tensor.of( 6..12 ).reshape( 2, 3 )"]},
 
         {"kind":"expect","text":"The new instance will have the expected shape.","code":["t.shape() == [2, 3]"]},
 
@@ -40,9 +40,9 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new tensor with a shape of [4, 2, 3].","code":["Tsr<Integer> t = Tsr.of(Shape.of(4, 2, 3), 1..24)"]},
+        {"kind":"given","text":"We create a new tensor with a shape of [4, 2, 3].","code":["Tensor<Integer> t = Tensor.of(Shape.of(4, 2, 3), 1..24)"]},
 
-        {"kind":"when","text":"We reshape the tensor to a new tensor with shape [4, -1, 2].","code":["Tsr<Integer> t2 = t.reshape( 4, -1, 2 )"]},
+        {"kind":"when","text":"We reshape the tensor to a new tensor with shape [4, -1, 2].","code":["Tensor<Integer> t2 = t.reshape( 4, -1, 2 )"]},
 
         {"kind":"then","text":"The new tensor will have the expected shape.","code":["t2.shape() == [4, 3, 2]"]},
 
@@ -59,13 +59,13 @@
       "tags":{},"see":[],"extraInfo":["\n            Changing the shape of a tensor is a very common operation in machine learning.\n            This is why the reshape operation also supports autograd.\n            So for example when you have a tensor `a` with shape `s1` and you reshape it to \n            a new tensor `b` with shape `s2` then during backpropagation the error `e_b` of `b`\n            with the shape `s2` will be propagated to a new error `e_a` of `a` with the shape `s1`.\n            It is basically the reshape operation applied in reverse.\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new tensor with a shape of [3, 2] that requires gradients (so that we can capture the error).","code":["Tsr<?> a = Tsr.of( 1..6 ).reshape( 3, 2 ).setRqsGradient( true )"]},
+        {"kind":"given","text":"We create a new tensor with a shape of [3, 2] that requires gradients (so that we can capture the error).","code":["Tensor<?> a = Tensor.of( 1..6 ).reshape( 3, 2 ).setRqsGradient( true )"]},
 
-        {"kind":"when","text":"We reshape the tensor to a new tensor with shape [2, 3].","code":["Tsr<?> b = a.reshape( 2, 3 )"]},
+        {"kind":"when","text":"We reshape the tensor to a new tensor with shape [2, 3].","code":["Tensor<?> b = a.reshape( 2, 3 )"]},
 
         {"kind":"then","text":"The new tensor will have the expected shape.","code":["b.shape() == [2, 3]"]},
 
-        {"kind":"when","text":"We back-propagate an error of some random numbers...","code":["b.backward( Tsr.of( -1, 3, 42, 6, -3, 9 ).reshape( 2, 3 ) )"]},
+        {"kind":"when","text":"We back-propagate an error of some random numbers...","code":["b.backward( Tensor.of( -1, 3, 42, 6, -3, 9 ).reshape( 2, 3 ) )"]},
 
         {"kind":"then","text":"... the error of the original tensor will have the expected shape.","code":["a.gradient().get().shape() == [3, 2]"]},
 

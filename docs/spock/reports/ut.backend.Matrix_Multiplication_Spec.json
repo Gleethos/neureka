@@ -1,7 +1,7 @@
 {
   "className":"ut.backend.Matrix_Multiplication_Spec",
   "title":"Matrix Multiplication",
-  "narrative":"The tensor API exposes a useful method for Matrix Multiplication.\n    This specification not only demonstrates how to use this method\n    but also shows how matrix multiplication work \n    for tensors with both row and column major layouts.\n    (typically, column major is faster)",
+  "narrative":"The tensor API exposes a useful method for Matrix Multiplication.\n    This specification not only demonstrates how to use this method\n    but also shows how matrix multiplication work\n    for tensors with both row and column major layouts.\n    (typically, column major is faster)",
   "subjects":[],
   "statistics":{
     "runs":"2",
@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.374 seconds"
+    "duration":"0.022 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"matMul\" method allows us to perform matrix multiplication.",
       "result":"PASS",
-      "duration":"0.192 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create 2 simple tensors with the shapes (1x7) and (7x8).","code":["var a = Tsr.of(type).withShape(1,7).andFill(1, 2, 3)","var b = Tsr.of(type).withShape(7,8).andFill(2, -4, -1)"]},
+        {"kind":"given","text":"We create 2 simple tensors with the shapes (1x7) and (7x8).","code":["var a = Tensor.of(type).withShape(1,7).andFill(1, 2, 3)","var b = Tensor.of(type).withShape(7,8).andFill(2, -4, -1)"]},
 
         {"kind":"when","text":"We perform matrix multiplication.","code":["var c = a.matMul(b)"]},
 
@@ -35,12 +35,12 @@
     {
       "id":"The simple CPU matrix multiplication implementation works as expected.",
       "result":"PASS",
-      "duration":"0.161 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        ","\n            Matrix multiplication is possible between matrices of various dimensions,\n            data types as well as data layouts!\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We instantiate 2 matrices based on the data from the data table at the end of this method.","code":["Tsr<?> a = Tsr.of(type, Shape.of(M,K), A)","Tsr<?> b = Tsr.of(type, Shape.of(K,N), B)"]},
+        {"kind":"given","text":"We instantiate 2 matrices based on the data from the data table at the end of this method.","code":["Tensor<?> a = Tensor.of(type, Shape.of(M,K), A)","Tensor<?> b = Tensor.of(type, Shape.of(K,N), B)"]},
 
         {"kind":"and","text":"We create the data layout type based on the provided string...","code":["var dataLayout = layout == 'ROW' ? NDConfiguration.Layout.ROW_MAJOR : NDConfiguration.Layout.COLUMN_MAJOR"]},
 
@@ -48,7 +48,7 @@
 
         {"kind":"expect","text":"This should of cause make report that they indeed have this new layout.","code":["a.NDConf.layout == dataLayout","b.NDConf.layout == dataLayout"]},
 
-        {"kind":"when","text":"We now perform the matrix multiplication with the 2 matrix tensors...","code":["Tsr<?> c = a.matMul(b)"]},
+        {"kind":"when","text":"We now perform the matrix multiplication with the 2 matrix tensors...","code":["Tensor<?> c = a.matMul(b)"]},
 
         {"kind":"then","text":"The result will have the expected (M x N) shape.","code":["c.shape == [M,N]"]},
 

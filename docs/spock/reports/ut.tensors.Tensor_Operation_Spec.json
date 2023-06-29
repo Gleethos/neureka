@@ -1,7 +1,7 @@
 {
   "className":"ut.tensors.Tensor_Operation_Spec",
   "title":"Running Tensors through operations",
-  "narrative":"This specification shows how to use the tensor API to run tensors through various operations.\n    Operations are triggered either by simply calling methods on tensors or by using \n    `Function` objects which are used to define custom operations in the form \n    of a syntax tree.",
+  "narrative":"This specification shows how to use the tensor API to run tensors through various operations.\n    Operations are triggered either by simply calling methods on tensors or by using\n    `Function` objects which are used to define custom operations in the form\n    of a syntax tree.",
   "subjects":[],
   "statistics":{
     "runs":"16",
@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"6.120 seconds"
+    "duration":"4.632 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"dot\" operation reshapes and produces valid \"x\" operation result.",
       "result":"PASS",
-      "duration":"0.071 seconds",
+      "duration":"0.053 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Two multi-dimensional tensors.","code":["var a = Tsr.of([1, 4, 4, 1   ], 4f..12f).mut.toType(type)","var b = Tsr.of([1, 3, 5, 2, 1], -5d..3d).mut.toType(type)"]},
+        {"kind":"given","text":"Two multi-dimensional tensors.","code":["var a = Tensor.of([1, 4, 4, 1   ], 4f..12f).mut.toType(type)","var b = Tensor.of([1, 3, 5, 2, 1], -5d..3d).mut.toType(type)"]},
 
         {"kind":"when","text":"The \"dot\" method is being called on \"a\" receiving \"b\"...","code":["var c = a.convDot(b)"]},
 
@@ -37,12 +37,12 @@
     {
       "id":"The \"matMul\" operation produces the expected result.",
       "result":"PASS",
-      "duration":"0.431 seconds",
+      "duration":"0.342 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)","var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)"]},
+        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tensor.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)","var b = Tensor.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)"]},
 
         {"kind":"when","text":"The \"matMul\" method is being called on \"a\" receiving \"b\"...","code":["var c = a.matMul(b)"]},
 
@@ -58,12 +58,12 @@
     {
       "id":"You can do matrix multiplication using transposed matrices.",
       "result":"PASS",
-      "duration":"0.476 seconds",
+      "duration":"0.353 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tsr.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()","var b = Tsr.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)"]},
+        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tensor.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()","var b = Tensor.of(Double.class).withShape(K, N).andFill(B).mut.toType(type)"]},
 
         {"kind":"when","text":"The \"matMul\" method is being called on \"a\" receiving \"b\"...","code":["var c = a.matMul(b)"]},
 
@@ -79,12 +79,12 @@
     {
       "id":"You can do matrix multiplication using transposed matrices as second operand.",
       "result":"PASS",
-      "duration":"0.621 seconds",
+      "duration":"0.465 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tsr.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)","var b = Tsr.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()"]},
+        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tensor.of(Double.class).withShape(M, K).andFill(A).mut.toType(type)","var b = Tensor.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()"]},
 
         {"kind":"when","text":"The \"matMul\" method is being called on \"a\" receiving \"b\"...","code":["var c = a.matMul(b)"]},
 
@@ -100,12 +100,12 @@
     {
       "id":"You can do matrix multiplication using 2 transposed matrices.",
       "result":"PASS",
-      "duration":"0.248 seconds",
+      "duration":"0.185 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tsr.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()","var b = Tsr.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()"]},
+        {"kind":"given","text":"Two 2-dimensional tensors.","code":["var a = Tensor.of(Double.class).withShape(K, M).andFill(A).mut.toType(type).T()","var b = Tensor.of(Double.class).withShape(N, K).andFill(B).mut.toType(type).T()"]},
 
         {"kind":"when","text":"The \"matMul\" method is being called on \"a\" receiving \"b\"...","code":["println a.toString({it.isMultiline = true})","println b.toString({it.isMultiline = true})","var c = a.matMul(b)","println c.toString({it.isMultiline = true})"]},
 
@@ -121,12 +121,12 @@
     {
       "id":"The \"random\" function/operation populates tensors randomly.",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.053 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var t = Tsr.of(type).withShape(2,4).all(-42)"]},
+        {"kind":"given","text":"","code":["var t = Tensor.of(type).withShape(2,4).all(-42)"]},
 
         {"kind":"and","text":"","code":["var f = Function.of('random(I[0])')"]},
 
@@ -152,12 +152,12 @@
     {
       "id":"The values of a randomly populated tensor seems to adhere to a gaussian distribution.",
       "result":"PASS",
-      "duration":"0.075 seconds",
+      "duration":"0.058 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var t = Tsr.of(type).withShape(20, 40, 20).all(0)"]},
+        {"kind":"given","text":"","code":["var t = Tensor.of(type).withShape(20, 40, 20).all(0)"]},
 
         {"kind":"and","text":"","code":["var f = Function.of('random(I[0])')"]},
 
@@ -175,18 +175,18 @@
     {
       "id":"New method \"asFunction\" of String added at runtime is callable by groovy and also works.",
       "result":"PASS",
-      "duration":"0.312 seconds",
+      "duration":"0.255 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create two tensors and convert them to a desired type.","code":["var a = Tsr.of([1,2], [3d, 2d]).mut.toType(type)","var b = Tsr.of([2,1], [-1f, 4f]).mut.toType(type)"]},
+        {"kind":"given","text":"We create two tensors and convert them to a desired type.","code":["var a = Tensor.of([1, 2], [3d, 2d]).mut.toType(type)","var b = Tensor.of([2, 1], [-1f, 4f]).mut.toType(type)"]},
 
         {"kind":"and","text":"We prepare bindings for the Groovy shell.","code":["Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
 
         {"kind":"expect","text":"The tensors have the type...","code":["a.itemType == type","b.itemType == type"]},
 
-        {"kind":"when","text":"The groovy code is being evaluated.","code":["var c = new GroovyShell(binding).evaluate((code)) as Tsr"]},
+        {"kind":"when","text":"The groovy code is being evaluated.","code":["var c = new GroovyShell(binding).evaluate((code)) as Tensor"]},
 
         {"kind":"then","text":"The resulting tensor (toString) will contain the expected String.","code":["c.toString().contains(expected)"]},
 
@@ -200,14 +200,14 @@
     {
       "id":"New operator methods added to \"SDK-types\" at runtime are callable by groovy and also work.",
       "result":"PASS",
-      "duration":"0.735 seconds",
+      "duration":"0.530 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({it.hasSlimNumbers=true})","Tsr a = Tsr.of(5d).mut.toType(type)","Tsr b = Tsr.of(3f).mut.toType(type)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({it.hasSlimNumbers=true})","Tensor a = Tensor.of(5d).mut.toType(type)","Tensor b = Tensor.of(3f).mut.toType(type)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
 
-        {"kind":"when","text":"...calling methods on types like Double and Integer that receive Tsr instances...","code":["Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr"]},
+        {"kind":"when","text":"...calling methods on types like Double and Integer that receive Tsr instances...","code":["Tensor c = new GroovyShell(binding).evaluate((code)) as Tensor"]},
 
         {"kind":"then","text":"The resulting tensor (toString) will contain the expected String.","code":["c.toString().endsWith(\"[$expected]\")"]},
 
@@ -219,14 +219,14 @@
     {
       "id":"Overloaded operation methods on tensors produce expected results when called.",
       "result":"PASS",
-      "duration":"0.044 seconds",
+      "duration":"0.055 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tsr a = Tsr.of(2d).setRqsGradient(true)","Tsr b = Tsr.of(-4d)","Tsr c = Tsr.of(3d).setRqsGradient(true)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tensor a = Tensor.of(2d).setRqsGradient(true)","Tensor b = Tensor.of(-4d)","Tensor c = Tensor.of(3d).setRqsGradient(true)"]},
 
-        {"kind":"expect","text":"","code":["( a / a                      ).toString().contains(\"[1]:(1.0)\")","( c % a                      ).toString().contains(\"[1]:(1.0)\")","( ( ( b / b ) ** c % a ) * 3 ).toString().contains(\"[1]:(3.0)\")","( a *= b                     ).toString().contains(\"(-8.0)\")","( a += -c                    ).toString().contains(\"(-11.0)\")","( a -= c                     ).toString().contains(\"(-14.0)\")","( a /= Tsr.of(2d)      ).toString().contains(\"(-7.0)\")","( a %= c                     ).toString().contains(\"(-1.0)\")"]}
+        {"kind":"expect","text":"","code":["( a / a                      ).toString().contains(\"[1]:(1.0)\")","( c % a                      ).toString().contains(\"[1]:(1.0)\")","( ( ( b / b ) ** c % a ) * 3 ).toString().contains(\"[1]:(3.0)\")","( a *= b                     ).toString().contains(\"(-8.0)\")","( a += -c                    ).toString().contains(\"(-11.0)\")","( a -= c                     ).toString().contains(\"(-14.0)\")","( a /= Tensor.of(2d)      ).toString().contains(\"(-7.0)\")","( a %= c                     ).toString().contains(\"(-1.0)\")"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -234,16 +234,16 @@
     {
       "id":"Simple slice addition produces expected result.",
       "result":"PASS",
-      "duration":"0.111 seconds",
+      "duration":"0.066 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We set the experimental \"autoConvertToFloat\" flag to true.","code":["Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })"]},
 
-        {"kind":"and","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)","Tsr a = Tsr.of([11, 11], 3d..19d).to( device )","Tsr x = a[1..-2,0..-1]","Tsr y = a[0..-3,0..-1]"]},
+        {"kind":"and","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)","Tensor a = Tensor.of([11, 11], 3d..19d).to( device )","Tensor x = a[1..-2,0..-1]","Tensor y = a[0..-3,0..-1]"]},
 
-        {"kind":"when","text":"","code":["Tsr t = x + y","String tAsStr = t.toString({it.setRowLimit(50)})"]},
+        {"kind":"when","text":"","code":["Tensor t = x + y","String tAsStr = t.toString({it.setRowLimit(50)})"]},
 
         {"kind":"then","text":"","code":["tAsStr.contains(\"(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, \" +","        \"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, \" +","        \"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more]\")"]},
 
@@ -255,7 +255,7 @@
     {
       "id":"Auto reshaping and broadcasting works and the result can be back propagated.",
       "result":"PASS",
-      "duration":"1.377 seconds",
+      "duration":"1.056 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -266,19 +266,19 @@
 
         {"kind":"and","text":"","code":["def aShape = [2, 2]"]},
 
-        {"kind":"and","text":"","code":["Tsr<Double> a = Tsr.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.get(device))","Tsr<Double> b = Tsr.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.get(device))"]},
+        {"kind":"and","text":"","code":["Tensor<Double> a = Tensor.of(aShape, 1d..5d).setRqsGradient(!whichGrad).to(Device.get(device))","Tensor<Double> b = Tensor.of(bShape, 8d..9d).setRqsGradient(whichGrad).to(Device.get(device))"]},
 
         {"kind":"and","text":"","code":["a.mut.toType(type)","b.mut.toType(type)"]},
 
-        {"kind":"and","text":"","code":["String wShape = ( whichGrad ? bShape : aShape ).join(\"x\")","Tsr    w      = ( whichGrad ? b      : a      )"]},
+        {"kind":"and","text":"","code":["String wShape = ( whichGrad ? bShape : aShape ).join(\"x\")","Tensor w      = ( whichGrad ? b      : a      )"]},
 
         {"kind":"expect","text":"","code":["a.itemType == type || device == 'GPU' // The gpu backend will only be floats!","b.itemType == type || device == 'GPU' // This is because kernels only work on floats..."]},
 
-        {"kind":"when","text":"","code":["Tsr c = operation.apply(a, b)"]},
+        {"kind":"when","text":"","code":["Tensor c = operation.apply(a, b)"]},
 
         {"kind":"then","text":"","code":["c.toString({it.hasSlimNumbers = true}).startsWith(\"[2x2]:($cValue)\")","w.toString({it.hasSlimNumbers = true}) == \"[$wShape]:($wValue):g:(null)\""]},
 
-        {"kind":"when","text":"","code":["c.backward(Tsr.of([2, 2], [5, -2, 7, 3]).mut.toType(type))"]},
+        {"kind":"when","text":"","code":["c.backward(Tensor.of([2, 2], [5, -2, 7, 3]).mut.toType(type))"]},
 
         {"kind":"then","text":"","code":["w.toString({it.hasSlimNumbers = true}) == \"[$wShape]:($wValue):g:($wGradient)\""]},
 
@@ -296,16 +296,16 @@
     {
       "id":"Scalar broadcasting works across devices.",
       "result":"PASS",
-      "duration":"0.170 seconds",
+      "duration":"0.123 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var a = Tsr.of(type).withShape(3, 2).andFill(-4..4).to(Device.get(device))","var b = Tsr.of(type).withShape(1, 1).andFill(3).to(Device.get(device))"]},
+        {"kind":"given","text":"","code":["var a = Tensor.of(type).withShape(3, 2).andFill(-4..4).to(Device.get(device))","var b = Tensor.of(type).withShape(1, 1).andFill(3).to(Device.get(device))"]},
 
         {"kind":"expect","text":"","code":["a.itemType == type","b.itemType == type"]},
 
-        {"kind":"when","text":"","code":["Tsr c = operation.apply(a, b)"]},
+        {"kind":"when","text":"","code":["Tensor c = operation.apply(a, b)"]},
 
         {"kind":"then","text":"","code":["c.toString() == \"(3x2):[$cValue]\""]},
 
@@ -317,14 +317,14 @@
     {
       "id":"Operators \"+,*,**\" produce expected results with gradients which can be accessed via a \"Ig[0]\" Function instance",
       "result":"PASS",
-      "duration":"0.033 seconds",
+      "duration":"0.026 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Neurekas view is set to legacy and three tensors of which one requires gradients.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tsr x = Tsr.of(3d).setRqsGradient(true)","Tsr b = Tsr.of(-4d)","Tsr w = Tsr.of(2d)"]},
+        {"kind":"given","text":"Neurekas view is set to legacy and three tensors of which one requires gradients.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tensor x = Tensor.of(3d).setRqsGradient(true)","Tensor b = Tensor.of(-4d)","Tensor w = Tensor.of(2d)"]},
 
-        {"kind":"when","text":"","code":["when : Tsr y = ( (x+b)*w )**2"]},
+        {"kind":"when","text":"","code":["when : Tensor y = ( (x+b)*w )**2"]},
 
         {"kind":"then","text":"","code":["then : y.toString().contains(\"[1]:(4.0); ->d[1]:(-8.0)\")"]},
 
@@ -334,9 +334,9 @@
 
         {"kind":"and","text":"","code":["and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)"]},
 
-        {"kind":"when","text":"","code":["y.backward(Tsr.of(1d))"]},
+        {"kind":"when","text":"","code":["y.backward(Tensor.of(1d))"]},
 
-        {"kind":"and","text":"","code":["Tsr t2 = Tsr.of( \"Ig[0]\", [x] )","Tsr t1 = Tsr.of( \"Ig[0]\", [y] ) // The input does not have a gradient!"]},
+        {"kind":"and","text":"","code":["Tensor t2 = Tensor.of( \"Ig[0]\", [x] )","Tensor t1 = Tensor.of( \"Ig[0]\", [y] ) // The input does not have a gradient!"]},
 
         {"kind":"then","text":"","code":["thrown(IllegalArgumentException)"]},
 
@@ -346,7 +346,7 @@
 
         {"kind":"and","text":"","code":["and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)"]},
 
-        {"kind":"when","text":"","code":["Tsr[] trs = new Tsr[]{x}"]},
+        {"kind":"when","text":"","code":["Tensor[] trs = new Tensor[]{x}"]},
 
         {"kind":"and","text":"","code":["def fun = Function.of(\"Ig[0]\", false)"]},
 
@@ -366,14 +366,14 @@
     {
       "id":"Activation functions work across types on slices and non sliced tensors.",
       "result":"PASS",
-      "duration":"1.152 seconds",
+      "duration":"0.861 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create a function based on the provided expression.","code":["var func = Function.of(funExpression)"]},
 
-        {"kind":"and","text":"We create 2 tensors storing the same values, one sliced and the other a normal tensor.","code":["var t1 = Tsr.of(type).withShape(2, 3).andSeed(\"Tempeh\")","var t2 = Tsr.of(type).withShape(4, 5).all(0)[1..2, 1..3]","t2.mut[0..1, 0..2] = t1"]},
+        {"kind":"and","text":"We create 2 tensors storing the same values, one sliced and the other a normal tensor.","code":["var t1 = Tensor.of(type).withShape(2, 3).andSeed(\"Tempeh\")","var t2 = Tensor.of(type).withShape(4, 5).all(0)[1..2, 1..3]","t2.mut[0..1, 0..2] = t1"]},
 
         {"kind":"expect","text":"The types of both tensors should match what was provided during instantiation.","code":["t1.dataType == DataType.of(type)","t1.itemType == type","t2.dataType == DataType.of(type)","t2.itemType == type"]},
 
@@ -393,12 +393,12 @@
     {
       "id":"The transpose operation exposed by the \"T()\" method, supports autograd.",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"0.032 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A simple 2d array","code":["var n = Tsr.of(Shape.of(3, 4), Data.of(6f, -5f, 2.4f)).setRqsGradient(true)"]},
+        {"kind":"given","text":"A simple 2d array","code":["var n = Tensor.of(Shape.of(3, 4), Data.of(6f, -5f, 2.4f)).setRqsGradient(true)"]},
 
         {"kind":"when","text":"The transpose operation is applied","code":["var t = n.T()"]},
 

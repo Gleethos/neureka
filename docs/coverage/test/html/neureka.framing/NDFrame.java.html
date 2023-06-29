@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NDFrame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.framing</a> &gt; <span class="el_source">NDFrame.java</span></div><h1>NDFrame.java</h1><pre class="source lang-java linenums">package neureka.framing;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.composition.Component;
 import neureka.common.utility.LogUtil;
 import neureka.framing.fluent.AxisFrame;
@@ -31,7 +31,7 @@ import java.util.function.Function;
  *
  * @param &lt;V&gt; The type parameter of the value type of the tensor type to whom this component should belong.
  */
-public final class NDFrame&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
+public final class NDFrame&lt;V&gt; implements Component&lt;Tensor&lt;V&gt;&gt;
 {
 <span class="fc" id="L36">    private final List&lt;Object&gt; _hiddenKeys = new ArrayList&lt;&gt;();</span>
     /**
@@ -46,7 +46,7 @@ public final class NDFrame&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
      */
     private final String _mainLabel;
 
-    public NDFrame( List&lt;List&lt;Object&gt;&gt; labels, Tsr&lt;V&gt; host, String mainLabel ) {
+    public NDFrame(List&lt;List&lt;Object&gt;&gt; labels, Tensor&lt;V&gt; host, String mainLabel ) {
 <span class="fc" id="L50">        this(Collections.emptyMap(), host, mainLabel);</span>
 <span class="fc" id="L51">        _label(labels);</span>
 <span class="fc" id="L52">    }</span>
@@ -64,13 +64,13 @@ public final class NDFrame&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 <span class="fc" id="L64">        return this;</span>
     }
 
-    public NDFrame( Tsr&lt;V&gt; host, String tensorName ) {
+    public NDFrame(Tensor&lt;V&gt; host, String tensorName ) {
 <span class="fc" id="L68">        this(Collections.emptyMap(), host, tensorName);</span>
 <span class="fc" id="L69">    }</span>
 
     public NDFrame(
             Map&lt;Object, List&lt;Object&gt;&gt; labels,
-            Tsr&lt;V&gt; host,
+            Tensor&lt;V&gt; host,
             String ndaMainLabel
 <span class="fc" id="L75">    ) {</span>
 <span class="fc" id="L76">        _mainLabel = ndaMainLabel;</span>
@@ -305,7 +305,7 @@ public final class NDFrame&lt;V&gt; implements Component&lt;Tsr&lt;V&gt;&gt;
 
 
     @Override
-    public boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
+    public boolean update( OwnerChangeRequest&lt;Tensor&lt;V&gt;&gt; changeRequest ) {
 <span class="fc" id="L309">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
         // This component does not have anything to do when switching owner...
 <span class="fc" id="L311">        return true;</span>

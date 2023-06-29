@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"3.000 seconds"
+    "duration":"2.922 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -61,16 +61,16 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.044 seconds",
+      "duration":"0.017 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"The first found OpenCLDevice instance.","code":["Device device = Device.get('first')"]},
 
-        {"kind":"and","text":"A mocked tensor that is not outsourced.","code":["Tsr<?> t = Mock(Tsr) // Could be : Tsr.of([4, 3], 2)","t.isOutsourced() >> false"]},
+        {"kind":"and","text":"A mocked tensor that is not outsourced.","code":["Tensor<?> t = Mock(Tensor) // Could be : Tensor.of([4, 3], 2)","t.isOutsourced() >> false"]},
 
-        {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tsr<?> s = Mock(Tsr) // Could be : t[1..3, 1..2]","MutateTsr<?> u = Mock(MutateTsr)","s.getMut() >> u","u.getData() >> Mock(Data)"]},
+        {"kind":"and","text":"Another mocked tensor that represents a slice of the prior one.","code":["Tensor<?> s = Mock(Tensor) // Could be : t[1..3, 1..2]","MutateTensor<?> u = Mock(MutateTensor)","s.getMut() >> u","u.getData() >> Mock(Data)"]},
 
         {"kind":"and","text":"A mocked relation between both tensors returned by the slice as component.","code":["Relation r = Mock(Relation)","s.has(Relation.class) >> true","s.get(Relation.class) >> r","s.find(Relation.class) >> Optional.of(r)","r.findRootTensor() >> Optional.of(t)"]},
 
@@ -78,7 +78,7 @@
 
         {"kind":"then","text":"This will simple trigger the attempt of the device to register itself as component.","code":["1 * s.set({ it == device })"]},
 
-        {"kind":"when","text":"If the tensor was not a mock it would then cause the following change request to be dispatched:","code":["device.update(new Component.OwnerChangeRequest() {","    @Override Tsr<?> getOldOwner() { return null }","    @Override Tsr<?> getNewOwner() { return s }","    @Override boolean executeChange() { return true }","})"]},
+        {"kind":"when","text":"If the tensor was not a mock it would then cause the following change request to be dispatched:","code":["device.update(new Component.OwnerChangeRequest() {","    @Override Tensor<?> getOldOwner() { return null }","    @Override Tensor<?> getNewOwner() { return s }","    @Override boolean executeChange() { return true }","})"]},
 
         {"kind":"then","text":"The device will now try to store the tensor throw an exception because the tensor has an illegal state...","code":["def exception = thrown(Exception)"]},
 
@@ -90,7 +90,7 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.949 seconds",
+      "duration":"2.900 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

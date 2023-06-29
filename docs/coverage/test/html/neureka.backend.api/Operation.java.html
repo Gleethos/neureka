@@ -39,7 +39,7 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
@@ -203,8 +203,8 @@ public interface Operation
 <span class="nc" id="L203">                                        throw new IllegalArgumentException(&quot;Cannot derive w.r.t. to input index &quot; + d + &quot; in function '&quot; + caller + &quot;', because there is no input with index &quot;+d+&quot;!&quot;);</span>
 
 <span class="fc bfc" id="L205" title="All 2 branches covered.">                                    if ( caller.getSubFunctions().stream().allMatch( f -&gt; f instanceof FunctionConstant) ) {</span>
-<span class="pc bpc" id="L206" title="1 of 2 branches missed.">                                        if ( d &lt; 0 ) return Result.of(Tsr.like((Tsr&lt;Number&gt;)call.input(0)).all(caller.call(new double[0])).mut().setIsIntermediate(true));</span>
-<span class="nc" id="L207">                                        else         return Result.of(Tsr.like((Tsr&lt;Number&gt;)call.input(0)).all(0).mut().setIsIntermediate(true));</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">                                        if ( d &lt; 0 ) return Result.of(Tensor.like((Tensor&lt;Number&gt;)call.input(0)).all(caller.call(new double[0])).mut().setIsIntermediate(true));</span>
+<span class="nc" id="L207">                                        else         return Result.of(Tensor.like((Tensor&lt;Number&gt;)call.input(0)).all(0).mut().setIsIntermediate(true));</span>
                                     }
 <span class="fc" id="L209">                                    Result result = call.getAlgorithm().execute( caller, call );</span>
 <span class="pc bpc" id="L210" title="1 of 2 branches missed.">                                    if ( result != null ) return result;</span>
@@ -215,7 +215,7 @@ public interface Operation
                                         );
                                 });
 
-<span class="fc bfc" id="L218" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.inputs() )</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        for ( Tensor&lt;?&gt; t : call.inputs() )</span>
 <span class="fc bfc" id="L219" title="All 2 branches covered.">            if ( !t.graphNode().isPresent() )</span>
 <span class="fc" id="L220">                new GraphNode&lt;&gt;( caller, null, () -&gt; Result.of(t) );</span>
 

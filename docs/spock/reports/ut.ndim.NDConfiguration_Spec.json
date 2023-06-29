@@ -1,7 +1,7 @@
 {
   "className":"ut.ndim.NDConfiguration_Spec",
   "title":"Making Arrays N-Dimensional",
-  "narrative":"Under the hood Neureka implements powerful indexing \n    abstractions through the `NDConfiguration` interface and its various implementations.\n    This allows for the creation of tensors/nd-arrays with arbitrary dimensions, \n    the ability to slice them into smaller tensors/nd-arrays with the same underlying data,\n    and finally the ability to permute their axes (like transposing them for example).\n\n    This specification however only focuses on the behaviour of the `NDConfiguration` interface\n    which translates various types of indices.",
+  "narrative":"Under the hood Neureka implements powerful indexing\n    abstractions through the `NDConfiguration` interface and its various implementations.\n    This allows for the creation of tensors/nd-arrays with arbitrary dimensions,\n    the ability to slice them into smaller tensors/nd-arrays with the same underlying data,\n    and finally the ability to permute their axes (like transposing them for example).\n\n    This specification however only focuses on the behaviour of the `NDConfiguration` interface\n    which translates various types of indices.",
   "subjects":["neureka.ndim.config.NDConfiguration"],
   "statistics":{
     "runs":"1",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.036 seconds"
+    "duration":"0.025 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Various NDConfigurations behave exactly like their general purpose implementation.",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

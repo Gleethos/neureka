@@ -2,6 +2,7 @@
 
 
 import neureka.Neureka;
+import neureka.Tensor;
 import neureka.backend.api.ini.BackendLoader;
 import neureka.backend.api.ini.BackendRegistry;
 import neureka.backend.api.ini.ImplementationReceiver;
@@ -19,7 +20,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- *    Instances of this class are execution contexts hosting {@link Operation} instances which receive {@link neureka.Tsr}
+ *    Instances of this class are execution contexts hosting {@link Operation} instances which receive {@link Tensor}
  *    instances for execution.
  *    {@link BackendContext}s are managed by {@link Neureka}, a (thread-local) Singleton / Multiton library context.&lt;br&gt;
  *    Contexts are cloneable for testing purposes and to enable extending the backend dynamically.
@@ -43,9 +44,9 @@ import java.util.function.Supplier;
  */
 public final class BackendContext implements Cloneable
 {
-<span class="fc" id="L46">    private static final Logger log = org.slf4j.LoggerFactory.getLogger(BackendContext.class);</span>
+<span class="fc" id="L47">    private static final Logger log = org.slf4j.LoggerFactory.getLogger(BackendContext.class);</span>
 
-<span class="fc" id="L48">    private final Extensions _extensions = new Extensions();</span>
+<span class="fc" id="L49">    private final Extensions _extensions = new Extensions();</span>
 
     /**
      *  A mapping between OperationType identifiers and their corresponding instances.
@@ -63,7 +64,7 @@ public final class BackendContext implements Cloneable
     private int _size;
 
     // Global context and cache:
-<span class="fc" id="L66">    private final FunctionCache _functionCache = new FunctionCache();</span>
+<span class="fc" id="L67">    private final FunctionCache _functionCache = new FunctionCache();</span>
 
     private final LazyRef&lt;Functions&gt; _getAutogradFunction;
 
@@ -81,23 +82,23 @@ public final class BackendContext implements Cloneable
      *  Use this constructor to test, debug, build and populate custom execution contexts.
      */
     public BackendContext()
-<span class="fc" id="L84">    {</span>
-<span class="fc" id="L85">        _getAutogradFunction = LazyRef.of( () -&gt; new Functions( true ) );</span>
-<span class="fc" id="L86">        _getFunction = LazyRef.of( () -&gt; new Functions( false ) );</span>
-<span class="fc" id="L87">        _lookup = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L88">        _operations = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L89">        _size = 0;</span>
-<span class="fc" id="L90">    }</span>
+<span class="fc" id="L85">    {</span>
+<span class="fc" id="L86">        _getAutogradFunction = LazyRef.of( () -&gt; new Functions( true ) );</span>
+<span class="fc" id="L87">        _getFunction = LazyRef.of( () -&gt; new Functions( false ) );</span>
+<span class="fc" id="L88">        _lookup = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L89">        _operations = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L90">        _size = 0;</span>
+<span class="fc" id="L91">    }</span>
 
     public void reset() {
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        for ( BackendExtension e : _extensions.getAll(BackendExtension.class) ) {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        for ( BackendExtension e : _extensions.getAll(BackendExtension.class) ) {</span>
             try {
-<span class="fc" id="L95">                e.reset();</span>
-<span class="nc" id="L96">            } catch (Exception ex) {</span>
-<span class="nc" id="L97">                log.error(&quot;Error while resetting backend extension: &quot; + e.getClass().getName(), ex);</span>
-<span class="fc" id="L98">            }</span>
-<span class="fc" id="L99">        }</span>
-<span class="fc" id="L100">    }</span>
+<span class="fc" id="L96">                e.reset();</span>
+<span class="nc" id="L97">            } catch (Exception ex) {</span>
+<span class="nc" id="L98">                log.error(&quot;Error while resetting backend extension: &quot; + e.getClass().getName(), ex);</span>
+<span class="fc" id="L99">            }</span>
+<span class="fc" id="L100">        }</span>
+<span class="fc" id="L101">    }</span>
 
     /**
      *  A {@link Runner} wraps both the called context as well as the context of the caller in order
@@ -107,7 +108,7 @@ public final class BackendContext implements Cloneable
      *
      * @return A lambda {@link Runner} which performs temporary context switching between the caller's context and this context.
      */
-<span class="fc" id="L110">    public Runner runner() { return new Runner( this, Neureka.get().backend() ); }</span>
+<span class="fc" id="L111">    public Runner runner() { return new Runner( this, Neureka.get().backend() ); }</span>
 
     /**
      * This method returns an unmodifiable view of the mapping between the {@link Operation#getIdentifier()} / {@link Operation#getOperator()} properties
@@ -118,7 +119,7 @@ public final class BackendContext implements Cloneable
      *
      * @return An unmodifiable mapping of {@link Operation} properties to the {@link Operation} instances to which they belong.
      */
-<span class="fc" id="L121">    public Map&lt;String, Operation&gt; getOperationLookupMap() { return Collections.unmodifiableMap( _lookup ); }</span>
+<span class="fc" id="L122">    public Map&lt;String, Operation&gt; getOperationLookupMap() { return Collections.unmodifiableMap( _lookup ); }</span>
 
     /**
      * This method returns an unmodifiable view of the
@@ -129,17 +130,17 @@ public final class BackendContext implements Cloneable
      *
      * @return An unmodifiable view of the list of {@link Operation} implementation instances managed by this context
      */
-<span class="fc" id="L132">    public List&lt;Operation&gt; getOperations() { return Collections.unmodifiableList( _operations); }</span>
+<span class="fc" id="L133">    public List&lt;Operation&gt; getOperations() { return Collections.unmodifiableList( _operations); }</span>
 
     /**
      * @return The number of {@link Operation} instances stored on this {@link BackendContext}.
      */
-<span class="fc" id="L137">    public int size() { return _size; }</span>
+<span class="fc" id="L138">    public int size() { return _size; }</span>
 
     /**
-     * @return The {@link Function} and {@link neureka.Tsr} cache of this {@link BackendContext}
+     * @return The {@link Function} and {@link Tensor} cache of this {@link BackendContext}
      */
-<span class="fc" id="L142">    public FunctionCache getFunctionCache() { return _functionCache; }</span>
+<span class="fc" id="L143">    public FunctionCache getFunctionCache() { return _functionCache; }</span>
 
     /**
      *  This method returns a {@link Functions} instance which wraps pre-instantiated
@@ -147,7 +148,7 @@ public final class BackendContext implements Cloneable
      *  This means that no computation graph will be built by these instances.
      *  ( Computation graphs in Neureka are made of instances of the {@link neureka.autograd.GraphNode} class... )
      */
-<span class="fc" id="L150">    public Functions getFunction() { return _getFunction.get(); }</span>
+<span class="fc" id="L151">    public Functions getFunction() { return _getFunction.get(); }</span>
 
     /**
      *  This method returns a {@link Functions} instance which wraps pre-instantiated
@@ -157,27 +158,27 @@ public final class BackendContext implements Cloneable
      *
      * @return A container object which exposes various types of functions with autograd support.
      */
-<span class="fc" id="L160">    public Functions getAutogradFunction() { return _getAutogradFunction.get(); }</span>
+<span class="fc" id="L161">    public Functions getAutogradFunction() { return _getAutogradFunction.get(); }</span>
 
     /**
      *  This method registers {@link Operation} implementation instances in this {@link BackendContext}
-     *  which is the thread local execution context receiving and processing {@link neureka.Tsr} instances...         &lt;br&gt;&lt;br&gt;
+     *  which is the thread local execution context receiving and processing {@link Tensor} instances...         &lt;br&gt;&lt;br&gt;
      *
      * @param operation The {@link Operation} instance which ought to be registered as part of this execution context.
      * @return This very context instance to allow for method chaining.
      */
     public BackendContext addOperation(Operation operation )
     {
-<span class="fc" id="L171">        _operations.add( operation );</span>
-<span class="fc" id="L172">        String function = operation.getIdentifier();</span>
-<span class="fc" id="L173">        String operator = operation.getOperator();</span>
-<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        assert !_lookup.containsKey( operator );</span>
-<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        assert !_lookup.containsKey( function );</span>
-<span class="fc" id="L176">        _lookup.put( operator, operation );</span>
-<span class="fc" id="L177">        _lookup.put( function, operation );</span>
-<span class="fc" id="L178">        _lookup.put( operator.toLowerCase(), operation );</span>
-<span class="fc" id="L179">        _size++;</span>
-<span class="fc" id="L180">        return this;</span>
+<span class="fc" id="L172">        _operations.add( operation );</span>
+<span class="fc" id="L173">        String function = operation.getIdentifier();</span>
+<span class="fc" id="L174">        String operator = operation.getOperator();</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        assert !_lookup.containsKey( operator );</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        assert !_lookup.containsKey( function );</span>
+<span class="fc" id="L177">        _lookup.put( operator, operation );</span>
+<span class="fc" id="L178">        _lookup.put( function, operation );</span>
+<span class="fc" id="L179">        _lookup.put( operator.toLowerCase(), operation );</span>
+<span class="fc" id="L180">        _size++;</span>
+<span class="fc" id="L181">        return this;</span>
     }
 
     /**
@@ -185,7 +186,7 @@ public final class BackendContext implements Cloneable
      * @return The truth value determining if the provided {@link Operation} is part of this {@link BackendContext}.
      */
     public boolean hasOperation( Operation operation ) {
-<span class="fc" id="L188">        return _lookup.containsKey( operation.getIdentifier() );</span>
+<span class="fc" id="L189">        return _lookup.containsKey( operation.getIdentifier() );</span>
     }
 
     /**
@@ -193,7 +194,7 @@ public final class BackendContext implements Cloneable
      * @return The truth value determining if the provided {@link Operation} is part of this {@link BackendContext}.
      */
     public boolean hasOperation( String operationIdentifier ) {
-<span class="nc" id="L196">        return _lookup.containsKey( operationIdentifier );</span>
+<span class="nc" id="L197">        return _lookup.containsKey( operationIdentifier );</span>
     }
 
     /**
@@ -204,7 +205,7 @@ public final class BackendContext implements Cloneable
      * @param index The index of the operation.
      * @return The found Operation instance or null.
      */
-<span class="fc" id="L207">    public Operation getOperation( int index ) { return _operations.get( index ); }</span>
+<span class="fc" id="L208">    public Operation getOperation( int index ) { return _operations.get( index ); }</span>
 
     /**
      *  This method queries the operations in this BackendContext
@@ -214,7 +215,7 @@ public final class BackendContext implements Cloneable
      * @param identifier The operation identifier, aka: its name.
      * @return The requested Operation or null.
      */
-<span class="fc" id="L217">    public Operation getOperation( String identifier ) { return _lookup.getOrDefault( identifier, null ); }</span>
+<span class="fc" id="L218">    public Operation getOperation( String identifier ) { return _lookup.getOrDefault( identifier, null ); }</span>
 
     /**
      *  This method produces a shallow copy of this {@link BackendContext}.
@@ -225,15 +226,15 @@ public final class BackendContext implements Cloneable
     @Override
     public BackendContext clone()
     {
-<span class="fc" id="L228">        BackendContext clone = new BackendContext();</span>
-<span class="fc" id="L229">        clone._size = _size;</span>
-<span class="fc" id="L230">        clone._lookup.putAll( _lookup );</span>
-<span class="fc" id="L231">        clone._operations.addAll( _operations );</span>
-<span class="fc" id="L232">        return clone;</span>
+<span class="fc" id="L229">        BackendContext clone = new BackendContext();</span>
+<span class="fc" id="L230">        clone._size = _size;</span>
+<span class="fc" id="L231">        clone._lookup.putAll( _lookup );</span>
+<span class="fc" id="L232">        clone._operations.addAll( _operations );</span>
+<span class="fc" id="L233">        return clone;</span>
     }
 
     public String toString() {
-<span class="fc" id="L236">        return getClass().getSimpleName()+&quot;[size=&quot; + this.size() + &quot;]&quot;;</span>
+<span class="fc" id="L237">        return getClass().getSimpleName()+&quot;[size=&quot; + this.size() + &quot;]&quot;;</span>
     }
 
     /**
@@ -244,7 +245,7 @@ public final class BackendContext implements Cloneable
      * @return The truth value determining if the provided type is present.
      */
     public &lt;E extends BackendExtension&gt; boolean has( Class&lt;E&gt; extensionClass ) {
-<span class="nc" id="L247">        return _extensions.has( extensionClass );</span>
+<span class="nc" id="L248">        return _extensions.has( extensionClass );</span>
     }
 
     /**
@@ -252,14 +253,14 @@ public final class BackendContext implements Cloneable
      *  or an empty {@link Optional} if no extension of that type was found.
      */
     public &lt;E extends BackendExtension&gt; Optional&lt;E&gt; find( Class&lt;E&gt; componentClass ) {
-<span class="fc" id="L255">        return _extensions.find( componentClass );</span>
+<span class="fc" id="L256">        return _extensions.find( componentClass );</span>
     }
 
     /**
      * @return A list of all {@link BackendExtension} instances.
      */
     public List&lt;BackendExtension&gt; getExtensions() {
-<span class="fc" id="L262">        return _extensions.getAll( BackendExtension.class );</span>
+<span class="fc" id="L263">        return _extensions.getAll( BackendExtension.class );</span>
     }
 
 
@@ -270,12 +271,12 @@ public final class BackendContext implements Cloneable
         final Class&lt;? extends D&gt; deviceType;
         final java.util.function.Function&lt;LoadingContext, ImplementationFor&lt;D&gt;&gt; function;
 
-<span class="fc" id="L273">        private Registered(Class&lt;? extends Operation&gt; operationType, Class&lt;? extends DeviceAlgorithm&gt; algorithmType, Class&lt;? extends D&gt; deviceType, java.util.function.Function&lt;LoadingContext, ImplementationFor&lt;D&gt;&gt; function) {</span>
-<span class="fc" id="L274">            this.operationType = operationType;</span>
-<span class="fc" id="L275">            this.algorithmType = algorithmType;</span>
-<span class="fc" id="L276">            this.deviceType = deviceType;</span>
-<span class="fc" id="L277">            this.function = function;</span>
-<span class="fc" id="L278">        }</span>
+<span class="fc" id="L274">        private Registered(Class&lt;? extends Operation&gt; operationType, Class&lt;? extends DeviceAlgorithm&gt; algorithmType, Class&lt;? extends D&gt; deviceType, java.util.function.Function&lt;LoadingContext, ImplementationFor&lt;D&gt;&gt; function) {</span>
+<span class="fc" id="L275">            this.operationType = operationType;</span>
+<span class="fc" id="L276">            this.algorithmType = algorithmType;</span>
+<span class="fc" id="L277">            this.deviceType = deviceType;</span>
+<span class="fc" id="L278">            this.function = function;</span>
+<span class="fc" id="L279">        }</span>
     }
 
     /**
@@ -287,13 +288,13 @@ public final class BackendContext implements Cloneable
      */
     public BackendContext set( BackendExtension extension )
     {
-<span class="fc" id="L290">        LogUtil.nullArgCheck( extension, &quot;extension&quot;, BackendExtension.class );</span>
-<span class="fc" id="L291">        BackendLoader loader = extension.getLoader();</span>
-<span class="fc" id="L292">        LogUtil.nullArgCheck( loader, &quot;loader&quot;, BackendLoader.class );</span>
+<span class="fc" id="L291">        LogUtil.nullArgCheck( extension, &quot;extension&quot;, BackendExtension.class );</span>
+<span class="fc" id="L292">        BackendLoader loader = extension.getLoader();</span>
+<span class="fc" id="L293">        LogUtil.nullArgCheck( loader, &quot;loader&quot;, BackendLoader.class );</span>
         // Now before adding the extension to the backend we first try to load all the implementations:
-<span class="fc" id="L294">        List&lt;Registered&lt;?&gt;&gt; registeredList = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L295">        loader.load(BackendRegistry.of(</span>
-<span class="fc" id="L296">                new ImplementationReceiver() {</span>
+<span class="fc" id="L295">        List&lt;Registered&lt;?&gt;&gt; registeredList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L296">        loader.load(BackendRegistry.of(</span>
+<span class="fc" id="L297">                new ImplementationReceiver() {</span>
                     @Override
                     public &lt;D extends Device&lt;?&gt;&gt; void accept(
                             Class&lt;? extends Operation&gt; operationType,
@@ -301,47 +302,47 @@ public final class BackendContext implements Cloneable
                             Class&lt;? extends D&gt; deviceType,
                             java.util.function.Function&lt;LoadingContext, ImplementationFor&lt;D&gt;&gt; function
                     ) {
-<span class="fc" id="L304">                        registeredList.add(new Registered&lt;&gt;(operationType, algorithmType, deviceType, function));</span>
-<span class="fc" id="L305">                    }</span>
+<span class="fc" id="L305">                        registeredList.add(new Registered&lt;&gt;(operationType, algorithmType, deviceType, function));</span>
+<span class="fc" id="L306">                    }</span>
                 }
         ));
-<span class="fc" id="L308">        int count = 0;</span>
-<span class="fc bfc" id="L309" title="All 2 branches covered.">        for ( Registered&lt;?&gt; registered : registeredList )</span>
-<span class="pc bpc" id="L310" title="1 of 2 branches missed.">            count += _register( registered ) ? 1 : 0;</span>
+<span class="fc" id="L309">        int count = 0;</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">        for ( Registered&lt;?&gt; registered : registeredList )</span>
+<span class="pc bpc" id="L311" title="1 of 2 branches missed.">            count += _register( registered ) ? 1 : 0;</span>
 
-<span class="fc" id="L312">        count = registeredList.size() - count;</span>
+<span class="fc" id="L313">        count = registeredList.size() - count;</span>
 
-<span class="pc bpc" id="L314" title="1 of 2 branches missed.">        if ( count != 0 )</span>
-<span class="nc" id="L315">            throw new IllegalStateException(</span>
-<span class="nc" id="L316">                &quot;Failed to register &quot;+count+&quot; implementations for extension of type '&quot;+extension.getClass().getSimpleName()+&quot;'.&quot;</span>
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        if ( count != 0 )</span>
+<span class="nc" id="L316">            throw new IllegalStateException(</span>
+<span class="nc" id="L317">                &quot;Failed to register &quot;+count+&quot; implementations for extension of type '&quot;+extension.getClass().getSimpleName()+&quot;'.&quot;</span>
             );
 
-<span class="fc" id="L319">        _extensions.set( extension );</span>
-<span class="fc" id="L320">        return this;</span>
+<span class="fc" id="L320">        _extensions.set( extension );</span>
+<span class="fc" id="L321">        return this;</span>
     }
 
     private boolean _register( Registered&lt;?&gt; registered ) {
-<span class="pc bpc" id="L324" title="1 of 2 branches missed.">        for ( Operation o : _operations ) {</span>
-<span class="fc bfc" id="L325" title="All 2 branches covered.">            if ( o.getClass().equals( registered.operationType ) ) {</span>
-<span class="pc bpc" id="L326" title="1 of 2 branches missed.">                for ( Algorithm a : o.getAllAlgorithms() ) {</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">        for ( Operation o : _operations ) {</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">            if ( o.getClass().equals( registered.operationType ) ) {</span>
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">                for ( Algorithm a : o.getAllAlgorithms() ) {</span>
                     // We make sure it is a device algorithm:
-<span class="fc bfc" id="L328" title="All 2 branches covered.">                    if ( a instanceof DeviceAlgorithm ) {</span>
-<span class="fc" id="L329">                        DeviceAlgorithm da = (DeviceAlgorithm) a;</span>
-<span class="fc bfc" id="L330" title="All 2 branches covered.">                        if ( registered.algorithmType.isAssignableFrom(da.getClass()) ) {</span>
-<span class="fc" id="L331">                            da.setImplementationFor(</span>
+<span class="fc bfc" id="L329" title="All 2 branches covered.">                    if ( a instanceof DeviceAlgorithm ) {</span>
+<span class="fc" id="L330">                        DeviceAlgorithm da = (DeviceAlgorithm) a;</span>
+<span class="fc bfc" id="L331" title="All 2 branches covered.">                        if ( registered.algorithmType.isAssignableFrom(da.getClass()) ) {</span>
+<span class="fc" id="L332">                            da.setImplementationFor(</span>
                                 registered.deviceType,
-<span class="fc" id="L333">                                registered.function.apply(new LoadingContext() {</span>
-<span class="nc" id="L334">                                    @Override public String getAlgorithmName() { return da.getName(); }</span>
-<span class="fc" id="L335">                                    @Override public String getOperationIdentidier() { return o.getIdentifier(); }</span>
+<span class="fc" id="L334">                                registered.function.apply(new LoadingContext() {</span>
+<span class="nc" id="L335">                                    @Override public String getAlgorithmName() { return da.getName(); }</span>
+<span class="fc" id="L336">                                    @Override public String getOperationIdentidier() { return o.getIdentifier(); }</span>
                                 })
                             );
-<span class="fc" id="L338">                            return true;</span>
+<span class="fc" id="L339">                            return true;</span>
                         }
                     }
                 }
             }
-<span class="fc" id="L343">        }</span>
-<span class="nc" id="L344">        return false;</span>
+<span class="fc" id="L344">        }</span>
+<span class="nc" id="L345">        return false;</span>
     }
 
     /**
@@ -362,11 +363,11 @@ public final class BackendContext implements Cloneable
         private final BackendContext originalContext;
         private final BackendContext visitedContext;
 
-<span class="fc" id="L365">        private Runner(BackendContext visited, BackendContext originalContext ) {</span>
-<span class="pc bpc" id="L366" title="1 of 2 branches missed.">            if ( visited == originalContext ) log.warn(&quot;Context runner encountered two identical contexts!&quot;);</span>
-<span class="fc" id="L367">            this.originalContext = originalContext;</span>
-<span class="fc" id="L368">            this.visitedContext = visited;</span>
-<span class="fc" id="L369">        }</span>
+<span class="fc" id="L366">        private Runner(BackendContext visited, BackendContext originalContext ) {</span>
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">            if ( visited == originalContext ) log.warn(&quot;Context runner encountered two identical contexts!&quot;);</span>
+<span class="fc" id="L368">            this.originalContext = originalContext;</span>
+<span class="fc" id="L369">            this.visitedContext = visited;</span>
+<span class="fc" id="L370">        }</span>
 
         /**
          *  Use this method to supply a lambda which will be executed in the {@link BackendContext}
@@ -378,10 +379,10 @@ public final class BackendContext implements Cloneable
          * @return This very {@link Runner} instance to enable method chaining.
          */
         public Runner run( Runnable contextSpecificAction ) {
-<span class="fc" id="L381">            Neureka.get().setBackend( visitedContext );</span>
-<span class="fc" id="L382">            contextSpecificAction.run();</span>
-<span class="fc" id="L383">            Neureka.get().setBackend( originalContext );</span>
-<span class="fc" id="L384">            return this;</span>
+<span class="fc" id="L382">            Neureka.get().setBackend( visitedContext );</span>
+<span class="fc" id="L383">            contextSpecificAction.run();</span>
+<span class="fc" id="L384">            Neureka.get().setBackend( originalContext );</span>
+<span class="fc" id="L385">            return this;</span>
         }
 
         /**
@@ -398,10 +399,10 @@ public final class BackendContext implements Cloneable
          * @return The result of the supplied context action.
          */
         public &lt;T&gt; T runAndGet( Supplier&lt;T&gt; contextSpecificAction ) {
-<span class="fc" id="L401">            Neureka.get().setBackend( visitedContext );</span>
-<span class="fc" id="L402">            T result = contextSpecificAction.get();</span>
-<span class="fc" id="L403">            Neureka.get().setBackend( originalContext );</span>
-<span class="fc" id="L404">            return result;</span>
+<span class="fc" id="L402">            Neureka.get().setBackend( visitedContext );</span>
+<span class="fc" id="L403">            T result = contextSpecificAction.get();</span>
+<span class="fc" id="L404">            Neureka.get().setBackend( originalContext );</span>
+<span class="fc" id="L405">            return result;</span>
         }
 
         /**
@@ -420,7 +421,7 @@ public final class BackendContext implements Cloneable
          * @return The result of the supplied context action.
          */
         public &lt;T&gt; T call( Supplier&lt;T&gt; contextSpecificAction ) {
-<span class="fc" id="L423">            return runAndGet( contextSpecificAction );</span>
+<span class="fc" id="L424">            return runAndGet( contextSpecificAction );</span>
         }
 
         /**
@@ -439,7 +440,7 @@ public final class BackendContext implements Cloneable
          * @return The result of the supplied context action.
          */
         public &lt;T&gt; T invoke( Supplier&lt;T&gt; contextSpecificAction ) {
-<span class="fc" id="L442">            return call( contextSpecificAction );</span>
+<span class="fc" id="L443">            return call( contextSpecificAction );</span>
         }
     }
 

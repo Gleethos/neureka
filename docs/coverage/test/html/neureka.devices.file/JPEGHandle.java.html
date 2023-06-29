@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JPEGHandle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file</a> &gt; <span class="el_source">JPEGHandle.java</span></div><h1>JPEGHandle.java</h1><pre class="source lang-java linenums">package neureka.devices.file;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -17,12 +17,12 @@ final class JPEGHandle extends AbstractImageFileHandle&lt;JPEGHandle&gt;
 
 <span class="fc" id="L18">    JPEGHandle( String fileName) { this( null, fileName ); }</span>
 
-    JPEGHandle( Tsr&lt;Number&gt; tensor, String filename ) {
+    JPEGHandle(Tensor&lt;Number&gt; tensor, String filename ) {
 <span class="fc" id="L21">        super(</span>
                 tensor,
                 filename,
 <span class="fc" id="L24">                new ImageFileType() {</span>
-<span class="fc" id="L25">                    @Override public Tsr.ImageType imageType() { return Tsr.ImageType.BGR_3BYTE; }</span>
+<span class="fc" id="L25">                    @Override public Tensor.ImageType imageType() { return Tensor.ImageType.BGR_3BYTE; }</span>
 
 <span class="nc" id="L27">                    @Override public String imageTypeName() { return &quot;jpeg&quot;; }</span>
 

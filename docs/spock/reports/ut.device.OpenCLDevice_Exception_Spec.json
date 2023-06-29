@@ -1,7 +1,7 @@
 {
   "className":"ut.device.OpenCLDevice_Exception_Spec",
   "title":"OpenCLDevice Exception Handling",
-  "narrative":"The OpenCLDevice class, one of many implementations of the Device interface, \n    represents physical OpenCL devices.\n    This specification defines how instances of this class deal with exceptional information.",
+  "narrative":"The OpenCLDevice class, one of many implementations of the Device interface,\n    represents physical OpenCL devices.\n    This specification defines how instances of this class deal with exceptional information.",
   "subjects":[],
   "statistics":{
     "runs":"4",
@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.077 seconds"
+    "duration":"0.079 seconds"
   },
   "headers":["\n            <p>\n                It is important that an OpenCLDevice gives insightful error messages\n                when encountering exceptional situations.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
@@ -23,7 +23,7 @@
       "blocks":[
         {"kind":"given","text":"The first found OpenCLDevice instance.","code":["Device device = Device.get('first')"]},
 
-        {"kind":"and","text":"A tensor and a slice tensor of the prior.","code":["Tsr t = Tsr.of([4, 3], 2d)","Tsr s = t[1..3, 1..2]"]},
+        {"kind":"and","text":"A tensor and a slice tensor of the prior.","code":["Tensor t = Tensor.of([4, 3], 2d)","Tensor s = t[1..3, 1..2]"]},
 
         {"kind":"expect","text":"Both tensors share not only the same data but also the same data type.","code":["t.mut.data.get() == s.mut.data.get()","t.dataType == DataType.of( Double.class )","s.dataType == DataType.of( Double.class )"]},
 
@@ -39,7 +39,7 @@
     {
       "id":"Ad hoc compilation produces expected exceptions.",
       "result":"PASS",
-      "duration":"0.039 seconds",
+      "duration":"0.041 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -60,7 +60,7 @@
     {
       "id":"Ad hoc compilation produces expected exceptions when duplication is found.",
       "result":"PASS",
-      "duration":"0.034 seconds",
+      "duration":"0.033 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -92,7 +92,7 @@
       "blocks":[
         {"kind":"given","text":"","code":["def device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]"]},
 
-        {"kind":"when","text":"We pass a new tensor to the restore method of the device, even though the tensor is not stored on it...","code":["device.restore( Tsr.newInstance() )"]},
+        {"kind":"when","text":"We pass a new tensor to the restore method of the device, even though the tensor is not stored on it...","code":["device.restore( Tensor.newInstance() )"]},
 
         {"kind":"then","text":"The previous attempt raises an illegal argument exception with an explanatory message.","code":["def exception = thrown( IllegalArgumentException )","exception.message == \"The passed tensor cannot be restored from \" +","        \"this OpenCL device because the tensor is not stored on the device.\\n\""]},
 

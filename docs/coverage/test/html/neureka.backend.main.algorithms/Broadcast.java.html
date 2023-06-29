@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Broadcast.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.algorithms</a> &gt; <span class="el_source">Broadcast.java</span></div><h1>Broadcast.java</h1><pre class="source lang-java linenums">package neureka.backend.main.algorithms;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -27,13 +27,13 @@ import neureka.dtype.NumericType;
 <span class="fc" id="L27">                    return SuitabilityPredicate.UNSUITABLE;</span>
 
 <span class="fc" id="L29">                int maxRank = 0;</span>
-<span class="fc bfc" id="L30" title="All 2 branches covered.">                for ( Tsr&lt;?&gt; t : call.inputs() )</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">                for ( Tensor&lt;?&gt; t : call.inputs() )</span>
 <span class="fc bfc" id="L31" title="All 4 branches covered.">                    if ( t != null &amp;&amp; t.rank() &gt; maxRank ) maxRank = t.rank();</span>
 
 <span class="fc bfc" id="L33" title="All 2 branches covered.">                for ( int i = 0; i &lt; maxRank; i++ )</span>
                 {
 <span class="fc" id="L35">                    int currentDim = -1;</span>
-<span class="fc bfc" id="L36" title="All 2 branches covered.">                    for( Tsr&lt;?&gt; t : call.inputs() )</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">                    for( Tensor&lt;?&gt; t : call.inputs() )</span>
                     {
 <span class="fc bfc" id="L38" title="All 4 branches covered.">                        if ( t != null &amp;&amp; i &lt; t.rank() ) {</span>
 <span class="fc bfc" id="L39" title="All 2 branches covered.">                            if ( currentDim == -1 ) currentDim = t.shape( i );</span>
@@ -66,9 +66,9 @@ import neureka.dtype.NumericType;
 <span class="fc bfc" id="L66" title="All 2 branches covered.">                    call.input( Number.class, offset).shape().size() != call.input( Number.class, 1+offset).shape().size()</span>
                 )
                 {
-<span class="fc" id="L69">                    Tsr&lt;?&gt;[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };</span>
+<span class="fc" id="L69">                    Tensor&lt;?&gt;[] inputs = {call.input( Number.class, offset), call.input( Number.class, 1+offset) };</span>
 <span class="fc" id="L70">                    Permute.makeFit( inputs, true );</span>
-<span class="fc" id="L71">                    inputs = new Tsr[]{ null, inputs[0], inputs[1] };</span>
+<span class="fc" id="L71">                    inputs = new Tensor[]{ null, inputs[0], inputs[1] };</span>
 <span class="fc" id="L72">                    call = call.withInputs( inputs );</span>
                 }
 
@@ -88,7 +88,7 @@ import neureka.dtype.NumericType;
 <span class="fc bfc" id="L88" title="All 2 branches covered.">                        outShape[ i ] = ( s1[ i ] == 1 ? s2[ i ] : s1[ i ] );</span>
 
 <span class="fc" id="L90">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getItemType();</span>
-<span class="fc" id="L91">                    Tsr&lt;?&gt; output = Tsr.of(type).withShape(outShape).all( 0.0 ).mut().setIsIntermediate( true );</span>
+<span class="fc" id="L91">                    Tensor&lt;?&gt; output = Tensor.of(type).withShape(outShape).all( 0.0 ).mut().setIsIntermediate( true );</span>
 <span class="fc" id="L92">                    output.mut().setIsVirtual( false );</span>
 <span class="fc" id="L93">                    device.store( output );</span>
 <span class="fc" id="L94">                    call = call.withInputAt( 0, output );</span>

@@ -2,7 +2,7 @@
 
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.math.Function;
 import neureka.math.args.Arg;
@@ -73,14 +73,14 @@ public class FunctionInput implements Function, GradientProvider
 
 <span class="fc" id="L74">    @Override public List&lt;Function&gt; getSubFunctions() { return new ArrayList&lt;&gt;(); }</span>
 
-    private Tsr&lt;?&gt; _extract( Tsr&lt;?&gt; t )
+    private Tensor&lt;?&gt; _extract(Tensor&lt;?&gt; t )
     {
 <span class="fc bfc" id="L78" title="All 2 branches covered.">        if ( this.providesGradient() ) {</span>
-<span class="fc" id="L79">            Tsr&lt;?&gt; gradient = t.gradient().orElse(null);</span>
+<span class="fc" id="L79">            Tensor&lt;?&gt; gradient = t.gradient().orElse(null);</span>
 <span class="fc bfc" id="L80" title="All 2 branches covered.">            if ( t.rqsGradient() ) {</span>
 <span class="fc bfc" id="L81" title="All 2 branches covered.">                if ( gradient == null ) {</span>
-<span class="fc" id="L82">                    gradient = Tsr.of( (Class&lt;? extends Number&gt;) t.getItemType(), t.shape(), 0.0 );</span>
-<span class="fc" id="L83">                    t.set( (Tsr) gradient );</span>
+<span class="fc" id="L82">                    gradient = Tensor.of( (Class&lt;? extends Number&gt;) t.getItemType(), t.shape(), 0.0 );</span>
+<span class="fc" id="L83">                    t.set( (Tensor) gradient );</span>
                 }
 <span class="fc" id="L85">                return gradient;</span>
             }
@@ -111,12 +111,12 @@ public class FunctionInput implements Function, GradientProvider
     }
 
     @Override
-    public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... inputs ) {
+    public Tensor&lt;?&gt; execute(Args arguments, Tensor&lt;?&gt;... inputs ) {
 <span class="pc bpc" id="L115" title="1 of 2 branches missed.">        int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.valOf(Arg.DerivIdx.class) : -1 );</span>
 <span class="fc bfc" id="L116" title="All 2 branches covered.">        if ( d &gt;= 0 )</span>
 <span class="fc bfc" id="L117" title="All 2 branches covered.">            return ( d == index() )</span>
-<span class="fc" id="L118">                ? Tsr.of( (Class&lt;? extends Number&gt;) inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 1.0 ).getMut().setIsIntermediate( true )</span>
-<span class="fc" id="L119">                : Tsr.of( (Class&lt;? extends Number&gt;) inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 0.0 ).getMut().setIsIntermediate( true );</span>
+<span class="fc" id="L118">                ? Tensor.of( (Class&lt;? extends Number&gt;) inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 1.0 ).getMut().setIsIntermediate( true )</span>
+<span class="fc" id="L119">                : Tensor.of( (Class&lt;? extends Number&gt;) inputs[ 0 ].getItemType(), inputs[ 0 ].shape(), 0.0 ).getMut().setIsIntermediate( true );</span>
 
 <span class="fc bfc" id="L121" title="All 2 branches covered.">        if ( index() &gt;= inputs.length )</span>
 <span class="fc" id="L122">            throw new IllegalArgumentException(</span>

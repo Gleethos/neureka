@@ -11,7 +11,7 @@
     "skipped":"0",
     "duration":"0.003 seconds"
   },
-  "headers":["\n                For certain situations the \"Tsr\" class should use the correct \n                implementations of said interface as configuration for internal index mapping...\n\n        "],"tags":{},"see":[],
+  "headers":["\n                For certain situations the \"Tensor\" class should use the correct \n                implementations of said interface as configuration for internal index mapping...\n\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"NDConfiguration instances of tensors have expected state.",
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Two scalar tensors \"a\" and \"b\" storing values \"1\" and \"2\".","code":["Tsr a = Tsr.of(1d)","Tsr b = Tsr.of(2d)"]},
+        {"kind":"given","text":"Two scalar tensors \"a\" and \"b\" storing values \"1\" and \"2\".","code":["Tensor a = Tensor.of(1d)","Tensor b = Tensor.of(2d)"]},
 
         {"kind":"expect","text":"Tensor \"a\" contains an instance of the \"SimpleScalarConfiguration\".","code":["a.NDConf instanceof Simple0DConfiguration"]},
 
@@ -40,7 +40,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Three vector tensors containing different numeric values.","code":["Tsr<Object> x = Tsr.of([1.0, 2.0, 3.1])","Tsr<Object> y = Tsr.of([3, 4.5, 2])","Tsr<Object> z = Tsr.of([1.4, 2, 4])"]},
+        {"kind":"given","text":"Three vector tensors containing different numeric values.","code":["Tensor<Object> x = Tensor.of([1.0, 2.0, 3.1])","Tensor<Object> y = Tensor.of([3, 4.5, 2])","Tensor<Object> z = Tensor.of([1.4, 2, 4])"]},
 
         {"kind":"expect","text":"All of them possess \"SimpleD1Configuration\" NDConfiguration implementations.","code":["x.NDConf instanceof Simple1DConfiguration","y.NDConf instanceof Simple1DConfiguration","z.NDConf instanceof Simple1DConfiguration"]},
 

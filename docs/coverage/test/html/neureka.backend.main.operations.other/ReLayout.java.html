@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReLayout.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">ReLayout.java</span></div><h1>ReLayout.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -39,17 +39,17 @@ import java.util.function.Supplier;
 <span class="fc" id="L39">            .setExecution(</span>
                 ( caller, call ) -&gt;
                 {
-<span class="fc" id="L42">                    Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();</span>
-<span class="fc" id="L43">                    Tsr&lt;Object&gt; input = (Tsr&lt;Object&gt;) inputs[0];</span>
+<span class="fc" id="L42">                    Tensor&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();</span>
+<span class="fc" id="L43">                    Tensor&lt;Object&gt; input = (Tensor&lt;Object&gt;) inputs[0];</span>
 
 <span class="fc" id="L45">                    NDConfiguration.Layout originalLayout = input.getNDConf().getLayout();</span>
 <span class="fc" id="L46">                    NDConfiguration.Layout newLayout = call.getValOf( Arg.Layout.class );</span>
 
-<span class="fc" id="L48">                    Tsr&lt;?&gt; reLayout = toLayout( input.deepCopy(), newLayout );</span>
+<span class="fc" id="L48">                    Tensor&lt;?&gt; reLayout = toLayout( input.deepCopy(), newLayout );</span>
 
 <span class="fc" id="L50">                    return Result.of(reLayout.mut().setIsIntermediate(true))</span>
 <span class="fc" id="L51">                            .withADAction( target -&gt; {</span>
-<span class="nc" id="L52">                                Tsr&lt;Object&gt; error = (Tsr&lt;Object&gt;) target.error().deepCopy();</span>
+<span class="nc" id="L52">                                Tensor&lt;Object&gt; error = (Tensor&lt;Object&gt;) target.error().deepCopy();</span>
 <span class="nc" id="L53">                                return error.mut().toLayout(originalLayout);</span>
                             });
                 }
@@ -62,7 +62,7 @@ import java.util.function.Supplier;
 <span class="nc" id="L62">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
 
 
-    public static Tsr&lt;?&gt; toLayout( Tsr&lt;?&gt; t, NDConfiguration.Layout target )
+    public static Tensor&lt;?&gt; toLayout(Tensor&lt;?&gt; t, NDConfiguration.Layout target )
     {
 <span class="fc bfc" id="L67" title="All 2 branches covered.">        if ( target == t.getNDConf().getLayout() ) return t;</span>
 <span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if ( target == NDConfiguration.Layout.SYMMETRIC )</span>
@@ -93,13 +93,13 @@ import java.util.function.Supplier;
     /**
      *  Converts this tensor from column major to column major layout.
      */
-    private static void _fromCMToRM( Tsr&lt;?&gt; t ) {
+    private static void _fromCMToRM( Tensor&lt;?&gt; t ) {
 <span class="fc bfc" id="L97" title="All 2 branches covered.">        if ( t.getNDConf().isVirtual() ) {</span>
 <span class="fc" id="L98">            t.mut().setIsVirtual( false ); // We actualized the tensor before conversion!</span>
 <span class="pc bpc" id="L99" title="1 of 2 branches missed.">            if ( t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR )</span>
 <span class="fc" id="L100">                return;</span>
         }
-<span class="fc" id="L102">        Tsr&lt;?&gt; clone = t.deepCopy(); // A clone will have by default a row major layout.</span>
+<span class="fc" id="L102">        Tensor&lt;?&gt; clone = t.deepCopy(); // A clone will have by default a row major layout.</span>
 <span class="fc" id="L103">        t.mut().setNDConf( clone.getNDConf() );</span>
 <span class="fc" id="L104">        _assignIfActual( t, () -&gt; clone );</span>
 <span class="fc" id="L105">    }</span>
@@ -107,7 +107,7 @@ import java.util.function.Supplier;
     /**
      *  Converts this tensor from row major to column major layout.
      */
-    private static void _fromRMToCM( Tsr&lt;?&gt; t ) {
+    private static void _fromRMToCM( Tensor&lt;?&gt; t ) {
 <span class="fc" id="L111">        _assignIfActual( t, () -&gt; Util.transpose(t).deepCopy().getMut().detach() );</span>
 <span class="fc" id="L112">        NDConfiguration old = t.getNDConf();</span>
 <span class="fc" id="L113">        int[] newTranslation = NDConfiguration.Layout.COLUMN_MAJOR.newStridesFor(old.shape());</span>
@@ -122,9 +122,9 @@ import java.util.function.Supplier;
      *  This will only call the supplier and copy its result into this tensor
      *  if this tensor is not virtual (meaning this is an actual tensor).
      */
-    private static void _assignIfActual( Tsr&lt;?&gt; t, Supplier&lt;Tsr&lt;?&gt;&gt; provider ) {
+    private static void _assignIfActual(Tensor&lt;?&gt; t, Supplier&lt;Tensor&lt;?&gt;&gt; provider ) {
 <span class="fc bfc" id="L126" title="All 2 branches covered.">        if ( !t.isVirtual() ) {</span>
-<span class="fc" id="L127">            Tsr&lt;?&gt; toBeAssigned = provider.get();</span>
+<span class="fc" id="L127">            Tensor&lt;?&gt; toBeAssigned = provider.get();</span>
 <span class="fc" id="L128">            MemUtil.keep(t, toBeAssigned,</span>
 <span class="fc" id="L129">                    () -&gt; Neureka.get().backend().getFunction().idy().execute( t, toBeAssigned )</span>
             );

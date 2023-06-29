@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.161 seconds"
+    "duration":"0.051 seconds"
   },
   "headers":["\n                   This specification defines the behavior of\n                   Operation instances and their ability to be extended! <br> \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.",
       "result":"PASS",
-      "duration":"0.158 seconds",
+      "duration":"0.049 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"and","text":"A list of mocked function source nodes.","code":["var children = [Mock(FunctionInput), Mock(FunctionInput)]"]},
 
-        {"kind":"and","text":"A mock tensor which is the expected output","code":["Tsr output = Mock(Tsr)","var mutate = Mock(MutateTsr)"]},
+        {"kind":"and","text":"A mock tensor which is the expected output","code":["Tensor output = Mock(Tensor)","var mutate = Mock(MutateTensor)"]},
 
         {"kind":"and","text":"A mocked operation implementation.","code":["var implementation = Mock(Algorithm)"]},
 
@@ -33,7 +33,7 @@
 
         {"kind":"then","text":"The mock type has been called as expected and the function has the following properties.","code":["(1.._) * op.getArity() >> 2","function.isFlat()","!function.isDoingAD()"]},
 
-        {"kind":"when","text":"The function is being called with an empty tensor array...","code":["var result = function.call(new Tsr[0])"]},
+        {"kind":"when","text":"The function is being called with an empty tensor array...","code":["var result = function.call(new Tensor[0])"]},
 
         {"kind":"then","text":"The custom call hook should be accessed as outlined below.","code":["(0.._) * op.getAlgorithmFor(_) >> implementation","(0.._) * implementation.execute(_,_) >> Result.of(output)","(1.._) * output.getMut() >> mutate","(1.._) * mutate.setIsIntermediate(false) >> output","(1.._) * output.isIntermediate() >> true","(1.._) * op.execute(_,_) >> Result.of(output)"]},
 

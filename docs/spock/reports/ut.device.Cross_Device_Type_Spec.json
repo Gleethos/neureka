@@ -1,7 +1,7 @@
 {
   "className":"ut.device.Cross_Device_Type_Spec",
   "title":"Finding Device Types",
-  "narrative":"Neureka introduces a the concept of a `Device` which is an interface\n    that represents a computational device used for executing tensor / nd-array operations on them.\n    The `Device` interface is implemented by various classes which represent\n    different types of accelerator hardware such as `CPUs`, `GPUs`, `TPUs`, `FPGAs`, etc.\n    These various `Device` types can not be instantiated directly because they model \n    the concrete and finite hardware that is available on any given system Neureka is running on.\n    This means that they are usually instantiated lazily upon access request or \n    upfront by the library backend (usually a backend extension built fo a specific device).\n    In order to find these instances embedded in the library backend the `Device` interface\n    exposes various static methods which can be used to find a device instance by name or type.",
+  "narrative":"Neureka introduces a the concept of a `Device` which is an interface\n    that represents a computational device used for executing tensor / nd-array operations on them.\n    The `Device` interface is implemented by various classes which represent\n    different types of accelerator hardware such as `CPUs`, `GPUs`, `TPUs`, `FPGAs`, etc.\n    These various `Device` types can not be instantiated directly because they model\n    the concrete and finite hardware that is available on any given system Neureka is running on.\n    This means that they are usually instantiated lazily upon access request or\n    upfront by the library backend (usually a backend extension built fo a specific device).\n    In order to find these instances embedded in the library backend the `Device` interface\n    exposes various static methods which can be used to find a device instance by name or type.",
   "subjects":["neureka.devices.Device"],
   "statistics":{
     "runs":"10",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"10.568 seconds"
+    "duration":"0.803 seconds"
   },
   "headers":["\n                Specified below is the behaviour of the factory methods in the\n                Device interface as well as its various implementations \n                which should adhere to a certain set of common behaviours.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can find Device implementations or null by passing search keys to the \"get\" method.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        "]
       },
@@ -35,7 +35,7 @@
     {
       "id":"We can query the backend for devices by specifying both the requested type and a key word.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        "]
       },
@@ -71,12 +71,12 @@
     {
       "id":"Passing a numeric array to a tensor should modify its contents!",
       "result":"PASS",
-      "duration":"0.026 seconds",
+      "duration":"0.014 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tsr t = Tsr.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
 
         {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
 
@@ -90,14 +90,14 @@
     {
       "id":"Devices expose an API for accessing (reading and writing) the data of a tensor.",
       "result":"PASS",
-      "duration":"0.015 seconds",
+      "duration":"0.018 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
 
-        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tsr t = Tsr.of(Shape.of(shape), data).to(device)"]},
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tensor t = Tensor.of(Shape.of(shape), data).to(device)"]},
 
         {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
 
@@ -117,7 +117,7 @@
     {
       "id":"Execution calls containing null arguments will cause an exception to be thrown in device instances.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.279 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Every argument within an ExecutionCall instance has a purpose. Null is not permissible.\n        ","\n            Every argument within an ExecutionCall instance has a purpose. Null is not permissible.\n        "]
       },
@@ -130,7 +130,7 @@
 
         {"kind":"then","text":"...the implementation is being accessed in order to access the mocked lambda...","code":["(1.._) * call.getAlgorithm() >> implementation"]},
 
-        {"kind":"and","text":"The tensor array is being accessed to check for null. (For exception throwing)","code":["1 * call.inputs() >> new Tsr[]{ Mock(Tsr), null }"]},
+        {"kind":"and","text":"The tensor array is being accessed to check for null. (For exception throwing)","code":["1 * call.inputs() >> new Tensor[]{ Mock(Tensor), null }"]},
 
         {"kind":"and","text":"The expected exception is being thrown alongside a descriptive message.","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"Device arguments may not be null!\\n\" +","        \"One or more tensor arguments within the given ExecutionCall instance is null.\""]},
 
@@ -142,14 +142,14 @@
     {
       "id":"Devices store tensors which can also be restored.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            A Device implementation keeps track of the number of tensors it \"owns\",\n            which you can see below. This is basically just reference counting.\n\n            Also note that in this example we are making some exceptions for the CPU device\n            simply because it is the default device on which all tensors are being stored\n            if no other device is specified.\n        "]
       },
       "blocks":[
         {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
 
-        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["int initialNumber = device.numberOfStored()","Tsr a = Tsr.of([2, 3], \";)\")","Tsr b = Tsr.of([3, 4], \":P\")"]},
+        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["int initialNumber = device.numberOfStored()","Tensor a = Tensor.of([2, 3], \";)\")","Tensor b = Tensor.of([3, 4], \":P\")"]},
 
         {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.numberOfStored() == 0 )","!device.has( a ) || device instanceof CPU","!device.has( b ) || device instanceof CPU"]},
 
@@ -173,14 +173,14 @@
     {
       "id":"Devices store slices which can also be restored just like any other tensor.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note that in this example we are making some exceptions for the CPU device\n            simply because it is the default device on which all tensors are being stored\n            if no other device is specified.\n        ","\n            Note that in this example we are making some exceptions for the CPU device\n            simply because it is the default device on which all tensors are being stored\n            if no other device is specified.\n        "]
       },
       "blocks":[
         {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
 
-        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["int initialNumber = device.numberOfStored()","Tsr a = Tsr.of([2, 3], \";)\")","Tsr b = a[1, 0..2]"]},
+        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["int initialNumber = device.numberOfStored()","Tensor a = Tensor.of([2, 3], \";)\")","Tensor b = a[1, 0..2]"]},
 
         {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.numberOfStored() == 0 )","!device.has( a ) || device instanceof CPU","!device.has( b ) || device instanceof CPU"]},
 
@@ -202,7 +202,7 @@
     {
       "id":"A device will keep track of the amount of tensors and data objects it stores.",
       "result":"PASS",
-      "duration":"10.463 seconds",
+      "duration":"0.381 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -213,7 +213,7 @@
 
         {"kind":"then","text":"The CPU should not have stored any tensors yet.","code":["device.numberOfStored() == initial"]},
 
-        {"kind":"when","text":"We create a tensor from the data object...","code":["var t = Tsr.of( Shape.of(2, 2), data ).to(device)"]},
+        {"kind":"when","text":"We create a tensor from the data object...","code":["var t = Tensor.of( Shape.of(2, 2), data ).to(device)"]},
 
         {"kind":"then","text":"The device should know about the existence of a new tensor.","code":["device.numberOfStored() == initial + 1"]},
 
@@ -248,7 +248,7 @@
       "blocks":[
         {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
 
-        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["Tsr a = Tsr.of([2, 3], \";)\")","Tsr b = a[1, 0..2]"]},
+        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["Tensor a = Tensor.of([2, 3], \";)\")","Tensor b = a[1, 0..2]"]},
 
         {"kind":"and","text":"","code":["var initialSize = device.numberOfStored()"]},
 
@@ -274,12 +274,12 @@
     {
       "id":"Virtual tensors stay virtual when outsourced.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note: A virtual tensor is a tensor which is not yet fully initialized\n            in the sense that the data array is not yet allocated according to the \n            tensors size (number of elements they hold).\n            This is the case for tensor which are filled homogeneously with a single value,\n            like for example an all 0 tensor.    \n        ","\n            Note: A virtual tensor is a tensor which is not yet fully initialized\n            in the sense that the data array is not yet allocated according to the \n            tensors size (number of elements they hold).\n            This is the case for tensor which are filled homogeneously with a single value,\n            like for example an all 0 tensor.    \n        "]
       },
       "blocks":[
-        {"kind":"given","text":"We create a homogeneously filled tensor, which is therefor \"virtual\".","code":["var t = Tsr.ofFloats().withShape(4,3).all(-0.54f)"]},
+        {"kind":"given","text":"We create a homogeneously filled tensor, which is therefor \"virtual\".","code":["var t = Tensor.ofFloats().withShape(4,3).all(-0.54f)"]},
 
         {"kind":"and","text":"We also get a device for testing...","code":["var device = Device.get(deviceType)"]},
 

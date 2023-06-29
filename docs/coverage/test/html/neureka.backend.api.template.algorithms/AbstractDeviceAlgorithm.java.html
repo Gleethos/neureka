@@ -2,7 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.ExecutionPreparation;
 import neureka.backend.main.algorithms.ElementwiseAlgorithm;
@@ -78,7 +78,7 @@ implements DeviceAlgorithm&lt;C&gt;
     }
 
 
-    public static Tsr&lt;?&gt; executeFor(
+    public static Tensor&lt;?&gt; executeFor(
             final Function caller,
             final ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
             final FinalExecutor executor
@@ -94,7 +94,7 @@ implements DeviceAlgorithm&lt;C&gt;
 <span class="fc" id="L94">            return _deepDerivative( call, nodes,  executor );</span>
     }
 
-    public static Tsr&lt;?&gt; prepareAndExecute(
+    public static Tensor&lt;?&gt; prepareAndExecute(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; executionCall,
             FinalExecutor executor
     ) {
@@ -104,7 +104,7 @@ implements DeviceAlgorithm&lt;C&gt;
                 Below is the core lambda of recursive preprocessing
                 which is defined for each Algorithm individually :
              */
-<span class="fc" id="L107">            Tsr&lt;?&gt; result = null;</span>
+<span class="fc" id="L107">            Tensor&lt;?&gt; result = null;</span>
 <span class="pc bpc" id="L108" title="1 of 2 branches missed.">            if ( executor != null )</span>
 <span class="fc" id="L109">                result = executor.execute(call);</span>
 <span class="fc" id="L110">            return result;</span>
@@ -116,7 +116,7 @@ implements DeviceAlgorithm&lt;C&gt;
 <span class="fc bfc" id="L116" title="All 2 branches covered.">        if ( currentAlgorithm instanceof ExecutionPreparation)</span>
 <span class="fc" id="L117">            executionCall = ( (ExecutionPreparation) currentAlgorithm ).prepare( executionCall );</span>
 
-<span class="fc bfc" id="L119" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : executionCall.inputs() )</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        for ( Tensor&lt;?&gt; t : executionCall.inputs() )</span>
 <span class="fc bfc" id="L120" title="All 2 branches covered.">            if ( t == null ) throw new IllegalArgumentException(</span>
                                 &quot;Device arguments may not be null!\n&quot; +
                                 &quot;One or more tensor arguments within the given ExecutionCall instance is null.&quot;
@@ -124,10 +124,10 @@ implements DeviceAlgorithm&lt;C&gt;
 <span class="fc" id="L124">        return executionCall;</span>
     }
 
-    public static Tsr&lt;?&gt; executeDeviceAlgorithm(
+    public static Tensor&lt;?&gt; executeDeviceAlgorithm(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call
     ) {
-<span class="fc bfc" id="L130" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.inputs() )</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        for ( Tensor&lt;?&gt; t : call.inputs() )</span>
 <span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if ( t == null ) throw new IllegalArgumentException(</span>
                     &quot;Device arguments may not be null!\n&quot; +
                     &quot;One or more tensor arguments within the given ExecutionCall instance is null.&quot;
@@ -178,12 +178,12 @@ implements DeviceAlgorithm&lt;C&gt;
             ExecutionCall&lt;D&gt; call, Function[] src, boolean ignoreJs
     ) {
 <span class="fc bfc" id="L180" title="All 2 branches covered.">        ExecutionCall&lt;D&gt; innerCall = !ignoreJs ? call : call.withArgs( Arg.DerivIdx.of(-1) );</span>
-<span class="fc" id="L181">        Tsr&lt;?&gt;[] inputs = innerCall.inputs();</span>
+<span class="fc" id="L181">        Tensor&lt;?&gt;[] inputs = innerCall.inputs();</span>
 <span class="fc" id="L182">        return MemUtil.keep( inputs, () -&gt;</span>
         {
 <span class="fc" id="L184">            Shape tempShape = null;</span>
 <span class="fc" id="L185">            Class&lt;?&gt; tempType = null;</span>
-<span class="fc" id="L186">            Tsr&lt;?&gt;[] tensors = new Tsr[src.length];</span>
+<span class="fc" id="L186">            Tensor&lt;?&gt;[] tensors = new Tensor[src.length];</span>
 <span class="fc bfc" id="L187" title="All 2 branches covered.">            for ( int i = 0; i &lt; tensors.length; i++ ) {//constants need to be figured out!</span>
 <span class="fc bfc" id="L188" title="All 2 branches covered.">                if ( !( src[i] instanceof FunctionConstant) ) {</span>
 <span class="fc" id="L189">                    tensors[ i ] = src[i].execute(innerCall);</span>
@@ -196,15 +196,15 @@ implements DeviceAlgorithm&lt;C&gt;
 <span class="fc bfc" id="L196" title="All 2 branches covered.">                if ( tensors[ i ] == null )</span>
 <span class="fc" id="L197">                    tensors[ i ] =</span>
 <span class="fc bfc" id="L198" title="All 2 branches covered.">                            j &lt; 0</span>
-<span class="fc" id="L199">                                ? Tsr.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).mut().setIsIntermediate( true ).to(call.getDevice())</span>
-<span class="fc" id="L200">                                : Tsr.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).mut().setIsIntermediate( true ).to(call.getDevice());</span>
+<span class="fc" id="L199">                                ? Tensor.of( tempType, tempShape, ((FunctionConstant) src[i]).value() ).mut().setIsIntermediate( true ).to(call.getDevice())</span>
+<span class="fc" id="L200">                                : Tensor.of( tempType, tempShape, src[i].call(new double[]{}, j)      ).mut().setIsIntermediate( true ).to(call.getDevice());</span>
 
 <span class="fc" id="L202">            return innerCall.withInputs(tensors);</span>
         });
     }
 
     
-    private static Tsr&lt;?&gt; _deepActivation(
+    private static Tensor&lt;?&gt; _deepActivation(
             final ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
             final Function[] nodes,
             final boolean isFlat,
@@ -228,8 +228,8 @@ implements DeviceAlgorithm&lt;C&gt;
 <span class="fc" id="L228">                                            .mapToObj(i -&gt; &quot;I[&quot; + i + &quot;]&quot;)</span>
 <span class="fc" id="L229">                                            .toArray(String[]::new)</span>
                                     );
-<span class="fc" id="L231">            Tsr&lt;?&gt;[] finalTensors = flattenedCall.inputs();</span>
-<span class="fc" id="L232">            Tsr&lt;?&gt; result = MemUtil.keep(finalTensors, () -&gt; new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));</span>
+<span class="fc" id="L231">            Tensor&lt;?&gt;[] finalTensors = flattenedCall.inputs();</span>
+<span class="fc" id="L232">            Tensor&lt;?&gt; result = MemUtil.keep(finalTensors, () -&gt; new FunctionParser(Neureka.get().backend()).parse(asStr, isDoingAD).execute(finalTensors));</span>
 <span class="fc bfc" id="L233" title="All 2 branches covered.">            for ( int i = 1; i &lt; finalTensors.length; i++ )</span>
 <span class="fc" id="L234">                _deleteIfNotIn(call.inputs(), finalTensors[i]);</span>
 
@@ -246,7 +246,7 @@ implements DeviceAlgorithm&lt;C&gt;
 
 <span class="fc bfc" id="L247" title="All 2 branches covered.">            boolean tooManyArgs = numberOfInputs &gt; operationArity + 1;</span>
 
-            Tsr&lt;?&gt;[] tensors;
+            Tensor&lt;?&gt;[] tensors;
 
 <span class="pc bpc" id="L251" title="1 of 4 branches missed.">            if ( !tooManyArgs || anyNumberOfInputs )</span>
 <span class="fc" id="L252">                tensors = flattenedCall.withAddedInputAt(0, null).inputs();</span>
@@ -271,10 +271,10 @@ implements DeviceAlgorithm&lt;C&gt;
      * @return The index of the tensor whose value is &quot;1.0&quot; (if all others are &quot;0.0&quot;), otherwise : -1
      */
     
-    private static int _indexOfFoundDerivative( final Tsr&lt;?&gt;[] tensors )
+    private static int _indexOfFoundDerivative( final Tensor&lt;?&gt;[] tensors )
     {
 <span class="fc" id="L276">        boolean allVirtual = true;</span>
-<span class="fc bfc" id="L277" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : tensors )</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        for ( Tensor&lt;?&gt; t : tensors )</span>
 <span class="fc bfc" id="L278" title="All 4 branches covered.">            if ( t != null &amp;&amp; !t.isVirtual() ) allVirtual = false;</span>
 
 <span class="fc bfc" id="L280" title="All 2 branches covered.">        if ( allVirtual ) {</span>
@@ -293,20 +293,20 @@ implements DeviceAlgorithm&lt;C&gt;
     }
 
     
-    private static Tsr&lt;?&gt; _deepDerivative(
+    private static Tensor&lt;?&gt; _deepDerivative(
             final ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
             final Function[] nodes,
             final FinalExecutor executor
     ) {
-<span class="fc" id="L301">        Supplier&lt;Tsr&lt;?&gt;&gt; actor = () -&gt;</span>
+<span class="fc" id="L301">        Supplier&lt;Tensor&lt;?&gt;&gt; actor = () -&gt;</span>
 <span class="fc" id="L302">                MemUtil.keep( call.inputs(), () -&gt; {</span>
 <span class="fc" id="L303">                    int d = call.getValOf( Arg.DerivIdx.class );</span>
 <span class="fc" id="L304">                    final int j = call.getValOf( Arg.VarIdx.class );</span>
 <span class="pc bpc" id="L305" title="1 of 2 branches missed.">                    assert d &gt;= 0;</span>
 
-                    Tsr&lt;?&gt;[] tensors;
-<span class="pc bpc" id="L308" title="1 of 2 branches missed.">                    if ( call.getOperation().isIndexer() ) tensors = new Tsr[ 1 + call.arity() ];</span>
-<span class="fc" id="L309">                    else tensors = new Tsr[ 1 + nodes.length ];</span>
+                    Tensor&lt;?&gt;[] tensors;
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">                    if ( call.getOperation().isIndexer() ) tensors = new Tensor[ 1 + call.arity() ];</span>
+<span class="fc" id="L309">                    else tensors = new Tensor[ 1 + nodes.length ];</span>
 
                     // Chain-rule (forward AutoDiff):
                     // inner times outer means:
@@ -323,7 +323,7 @@ implements DeviceAlgorithm&lt;C&gt;
 <span class="fc" id="L323">                                            : nodes[ i - 1 ].executeDerive( call.inputs(), d    );</span>
 
                     //...then add them all together! (is possible because of linearity...)
-                    Tsr&lt;?&gt; inner;
+                    Tensor&lt;?&gt; inner;
 <span class="pc bpc" id="L327" title="1 of 2 branches missed.">                    if ( tensors.length &gt; 2 ) {// Optimization: Finds index of &quot;1.0&quot; among otherwise all &quot;0.0&quot; virtual tensors!</span>
 <span class="fc" id="L328">                        int index = _indexOfFoundDerivative( tensors );</span>
 <span class="fc bfc" id="L329" title="All 2 branches covered.">                        if ( index &gt;= 0 ) inner = tensors[ index ];</span>
@@ -370,7 +370,7 @@ implements DeviceAlgorithm&lt;C&gt;
                                     );
                     // At the end:
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
-<span class="fc" id="L373">                    Tsr&lt;?&gt; result = _innerTimesOuter( inner, tensors, call );</span>
+<span class="fc" id="L373">                    Tensor&lt;?&gt; result = _innerTimesOuter( inner, tensors, call );</span>
                     // done!
 
 <span class="fc" id="L376">                    _delete( inner );</span>
@@ -379,7 +379,7 @@ implements DeviceAlgorithm&lt;C&gt;
                 });
 
 <span class="fc" id="L381">        int d = call.getValOf( Arg.DerivIdx.class );</span>
-<span class="fc" id="L382">        Tsr&lt;?&gt; out = null;</span>
+<span class="fc" id="L382">        Tensor&lt;?&gt; out = null;</span>
 <span class="fc bfc" id="L383" title="All 2 branches covered.">        for ( int i = 0; i &lt; nodes.length; i++ )</span>
         {
             // constants need to be figured out!
@@ -392,10 +392,10 @@ implements DeviceAlgorithm&lt;C&gt;
 <span class="fc" id="L392">        return out;</span>
     }
 
-    private static Tsr&lt;?&gt; _innerTimesOuter(Tsr&lt;?&gt; inner, Tsr&lt;?&gt;[] tensors, ExecutionCall&lt;?&gt; call)
+    private static Tensor&lt;?&gt; _innerTimesOuter(Tensor&lt;?&gt; inner, Tensor&lt;?&gt;[] tensors, ExecutionCall&lt;?&gt; call)
     {
 <span class="fc bfc" id="L397" title="All 6 branches covered.">        if ( !( ( inner.isVirtual() || inner.size() == 1 ) &amp;&amp; inner.getItemsAs( double[].class )[ 0 ] == 1.0 ) ) {</span>
-<span class="fc" id="L398">            tensors = new Tsr[]{ null, inner, tensors[ 0 ] };</span>
+<span class="fc" id="L398">            tensors = new Tensor[]{ null, inner, tensors[ 0 ] };</span>
 <span class="fc" id="L399">            tensors[0] = prepareAndExecute(</span>
 <span class="fc" id="L400">                    ExecutionCall.of( tensors )</span>
 <span class="fc" id="L401">                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
@@ -409,7 +409,7 @@ implements DeviceAlgorithm&lt;C&gt;
 <span class="fc" id="L409">        return tensors[ 0 ];</span>
     }
 
-    private static void _deleteIfNotIn( Tsr&lt;?&gt;[] array, Tsr&lt;?&gt; tensor ) {
+    private static void _deleteIfNotIn(Tensor&lt;?&gt;[] array, Tensor&lt;?&gt; tensor ) {
 <span class="pc bpc" id="L413" title="1 of 2 branches missed.">        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {</span>
 <span class="fc bfc" id="L414" title="All 2 branches covered.">            for ( int i = 1; i &lt; array.length; i++ )</span>
 <span class="fc bfc" id="L415" title="All 2 branches covered.">                if ( array[i] == tensor ) return;</span>
@@ -418,7 +418,7 @@ implements DeviceAlgorithm&lt;C&gt;
         }
 <span class="fc" id="L419">    }</span>
 
-    private static void _delete( Tsr&lt;?&gt; tensor ) {
+    private static void _delete( Tensor&lt;?&gt; tensor ) {
 <span class="fc" id="L422">        Neureka.Settings.Debug debug = Neureka.get().settings().debug();</span>
 <span class="fc bfc" id="L423" title="All 4 branches covered.">        if (  !tensor.isDeleted() &amp;&amp; debug.isDeletingIntermediateTensors() )</span>
 <span class="fc" id="L424">            tensor.mut().delete();</span>
@@ -427,11 +427,11 @@ implements DeviceAlgorithm&lt;C&gt;
     public static &lt;R&gt; R executeOnCommonDevice( ExecutionCall&lt;?&gt; call, Supplier&lt;R&gt; execution ) {
 <span class="fc" id="L428">        Device&lt;Object&gt; device = call.getDeviceFor(Object.class);</span>
 
-<span class="fc" id="L430">        Consumer&lt;Tsr&lt;?&gt;&gt;[] rollbacks = new Consumer[ call.arity() ];</span>
+<span class="fc" id="L430">        Consumer&lt;Tensor&lt;?&gt;&gt;[] rollbacks = new Consumer[ call.arity() ];</span>
 <span class="fc bfc" id="L431" title="All 2 branches covered.">        for (int i = 0; i &lt; call.arity(); i++ )</span>
 <span class="pc bpc" id="L432" title="1 of 4 branches missed.">            if ( call.input( i ) != null &amp;&amp; !call.input( i ).isOutsourced() ) {</span>
 <span class="fc" id="L433">                device.store( call.input( i ) );</span>
-<span class="fc" id="L434">                rollbacks[ i ] = tensor -&gt; device.restore( (Tsr&lt;Object&gt;) tensor );</span>
+<span class="fc" id="L434">                rollbacks[ i ] = tensor -&gt; device.restore( (Tensor&lt;Object&gt;) tensor );</span>
             }
             else
 <span class="fc" id="L437">                rollbacks[ i ] = t -&gt; {};</span>

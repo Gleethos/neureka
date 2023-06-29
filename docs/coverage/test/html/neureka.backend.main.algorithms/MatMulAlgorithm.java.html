@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatMulAlgorithm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.algorithms</a> &gt; <span class="el_source">MatMulAlgorithm.java</span></div><h1>MatMulAlgorithm.java</h1><pre class="source lang-java linenums">package neureka.backend.main.algorithms;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -43,85 +43,94 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm&lt;MatMulAlgorit
 <span class="nc" id="L43">                        throw new IllegalArgumentException(&quot;Matrix multiplication does not support forward-AD!&quot;);</span>
 <span class="fc" id="L44">                    Function matMul = Neureka.get().backend().getFunction().matMul();</span>
 <span class="fc" id="L45">                    int d = ( 1 + adCall.getValOf( Arg.DerivIdx.class ) ) % 2;</span>
-<span class="fc" id="L46">                    Tsr&lt;?&gt; derivative = Util.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...</span>
+<span class="fc" id="L46">                    Tensor&lt;?&gt; derivative = Util.transpose(adCall.input( d )).deepCopy().mut().setIsIntermediate( true ); // We need to clone it to make it have a simple nd configuration...</span>
 <span class="fc" id="L47">                    derivative.to(adCall.getDevice());</span>
-<span class="fc" id="L48">                    return ADAction.of(target -&gt;</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">                                d == 1</span>
-<span class="fc" id="L50">                                    ? matMul.execute( target.error(), derivative )</span>
-<span class="fc" id="L51">                                    : matMul.execute( derivative, target.error() )</span>
-                            );
+<span class="fc" id="L48">                    return ADAction.of(target -&gt; {</span>
+                        Tensor&lt;?&gt; result;
+<span class="pc bpc" id="L50" title="1 of 3 branches missed.">                        switch ( d ) {</span>
+                            case 0:
+<span class="fc" id="L52">                                result = matMul.execute(derivative, target.error());</span>
+<span class="fc" id="L53">                                break;</span>
+                            case 1:
+<span class="fc" id="L55">                                result = matMul.execute(target.error(), derivative);</span>
+<span class="fc" id="L56">                                break;</span>
+                            default:
+<span class="nc" id="L58">                                throw new IllegalStateException(&quot;This should never happen!&quot;);</span>
+                        }
+<span class="fc" id="L60">                        return result;</span>
+                    });
                 })
         );
-<span class="fc" id="L55">        setCallPreparation(MatMulAlgorithm::_prepare);</span>
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L64">        setCallPreparation(MatMulAlgorithm::_prepare);</span>
+<span class="fc" id="L65">    }</span>
 
     private static ExecutionCall&lt;Device&lt;Object&gt;&gt; _prepare( ExecutionCall&lt;?&gt; call )
     {
-<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        assert call.arity() &lt;= 3;</span>
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);</span>
-<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
-<span class="fc" id="L63">            call = _withNewOutput( call );</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        assert call.arity() &lt;= 3;</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if ( call.arity() == 2 ) call = call.withAddedInputAt(0, null);</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
+<span class="fc" id="L72">            call = _withNewOutput( call );</span>
 
-<span class="fc" id="L65">        return (ExecutionCall&lt;Device&lt;Object&gt;&gt;) _autoClone( call );</span>
+<span class="fc" id="L74">        return (ExecutionCall&lt;Device&lt;Object&gt;&gt;) _autoClone( call );</span>
     }
 
     private static ExecutionCall&lt;?&gt; _withNewOutput( ExecutionCall&lt;?&gt; call )
     {
-<span class="fc" id="L70">        Class&lt;Number&gt; type = (Class&lt;Number&gt;) call.input(  1 ).getDataType().getItemTypeClass();</span>
+<span class="fc" id="L79">        Class&lt;Number&gt; type = (Class&lt;Number&gt;) call.input(  1 ).getDataType().getItemTypeClass();</span>
 
-<span class="fc" id="L72">        int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };</span>
-<span class="fc" id="L73">        Tsr&lt;Number&gt; output = Tsr.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );</span>
+<span class="fc" id="L81">        int[] shp = new int[]{ call.input( 1 ).shape(0), call.input( 2 ).shape(1) };</span>
+<span class="fc" id="L82">        Tensor&lt;Number&gt; output = Tensor.of( type ).withShape( shp ).all( 0 ).mut().setIsIntermediate( true );</span>
 
-<span class="fc" id="L75">        call = _checkAndPrepareLayout( call, output );</span>
+<span class="fc" id="L84">        call = _checkAndPrepareLayout( call, output );</span>
 
-<span class="fc" id="L77">        call.getDeviceFor(Number.class).store( output );</span>
-<span class="fc" id="L78">        return call.withInputAt( 0, output );</span>
+<span class="fc" id="L86">        call.getDeviceFor(Number.class).store( output );</span>
+<span class="fc" id="L87">        return call.withInputAt( 0, output );</span>
     }
 
-    private static ExecutionCall&lt;?&gt; _checkAndPrepareLayout( ExecutionCall&lt;?&gt; call, Tsr&lt;?&gt; c )
+    private static ExecutionCall&lt;?&gt; _checkAndPrepareLayout( ExecutionCall&lt;?&gt; call, Tensor&lt;?&gt; c )
     {
-<span class="fc" id="L83">        Tsr&lt;?&gt; a = call.input( 1 );</span>
-<span class="fc" id="L84">        Tsr&lt;?&gt; b = call.input( 2 );</span>
+<span class="fc" id="L92">        Tensor&lt;?&gt; a = call.input( 1 );</span>
+<span class="fc" id="L93">        Tensor&lt;?&gt; b = call.input( 2 );</span>
         // We need to make sure that the matrices have a common/compatible layout,
         // ..before we can before the actual a @ b = c matrix multiplication!
-<span class="fc" id="L87">        NDConfiguration.Layout layoutA = a.getNDConf().getLayout();</span>
-<span class="fc" id="L88">        NDConfiguration.Layout layoutB = b.getNDConf().getLayout();</span>
-<span class="fc" id="L89">        NDConfiguration.Layout layoutC = c.getNDConf().getLayout();</span>
+<span class="fc" id="L96">        NDConfiguration.Layout layoutA = a.getNDConf().getLayout();</span>
+<span class="fc" id="L97">        NDConfiguration.Layout layoutB = b.getNDConf().getLayout();</span>
+<span class="fc" id="L98">        NDConfiguration.Layout layoutC = c.getNDConf().getLayout();</span>
 
-<span class="fc" id="L91">        boolean aIsCompatible = isRMOrCM( layoutA );</span>
-<span class="fc" id="L92">        boolean bIsCompatible = isRMOrCM( layoutB );</span>
+<span class="fc" id="L100">        boolean aIsCompatible = isRMOrCM( layoutA );</span>
+<span class="fc" id="L101">        boolean bIsCompatible = isRMOrCM( layoutB );</span>
 
-<span class="fc" id="L94">        Function relayout = Neureka.get().backend().getFunction().relayout();</span>
+<span class="fc" id="L103">        Function relayout = Neureka.get().backend().getFunction().relayout();</span>
 
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        if ( aIsCompatible ) {</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">            if ( layoutB != NDConfiguration.Layout.SYMMETRIC )</span>
-<span class="fc" id="L98">                b = relayout.with(Arg.Layout.of(layoutA)).call(b); // We choose a valid layout based on a</span>
-<span class="fc" id="L99">            layoutC = layoutA;</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">        } else if ( bIsCompatible ) {</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">            if ( layoutA != NDConfiguration.Layout.SYMMETRIC )</span>
-<span class="fc" id="L102">                a = relayout.with(Arg.Layout.of(layoutB)).call(a); // We choose a valid layout based on b</span>
-<span class="fc" id="L103">            layoutC = layoutB;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if ( aIsCompatible ) {</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            if ( layoutB != NDConfiguration.Layout.SYMMETRIC )</span>
+<span class="fc" id="L107">                b = relayout.with(Arg.Layout.of(layoutA)).call(b); // We choose a valid layout based on a</span>
+<span class="fc" id="L108">            layoutC = layoutA;</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        } else if ( bIsCompatible ) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            if ( layoutA != NDConfiguration.Layout.SYMMETRIC )</span>
+<span class="fc" id="L111">                a = relayout.with(Arg.Layout.of(layoutB)).call(a); // We choose a valid layout based on b</span>
+<span class="fc" id="L112">            layoutC = layoutB;</span>
         } else {
             // Ok so the inputs are unspecific/symmetric/ (not RM or CM)
             // So we just need to decide on any valid layout really:
-<span class="pc bpc" id="L107" title="1 of 2 branches missed.">            layoutC = isRMOrCM(layoutC) ? layoutC : NDConfiguration.Layout.ROW_MAJOR;</span>
-<span class="fc" id="L108">            a = relayout.with(Arg.Layout.of(layoutC)).call(a);</span>
-<span class="fc" id="L109">            b = relayout.with(Arg.Layout.of(layoutC)).call(b);</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">            layoutC = isRMOrCM(layoutC) ? layoutC : NDConfiguration.Layout.ROW_MAJOR;</span>
+<span class="fc" id="L117">            a = relayout.with(Arg.Layout.of(layoutC)).call(a);</span>
+<span class="fc" id="L118">            b = relayout.with(Arg.Layout.of(layoutC)).call(b);</span>
         }
 
-<span class="fc" id="L112">        c.mut().toLayout( layoutC );</span>
-<span class="fc" id="L113">        c.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).</span>
+<span class="fc" id="L121">        c.mut().toLayout( layoutC );</span>
+<span class="fc" id="L122">        c.mut().setIsVirtual( false ); // This statement is after the layout conversion for performance reasons (virtual tensors barely need copying).</span>
 
-<span class="fc" id="L115">        return call.withInputAt( 1, a ).withInputAt( 2, b );</span>
+<span class="fc" id="L124">        return call.withInputAt( 1, a ).withInputAt( 2, b );</span>
     }
 
     private static boolean isRMOrCM(NDConfiguration.Layout layout ) {
-<span class="fc bfc" id="L119" title="All 4 branches covered.">        return layout == NDConfiguration.Layout.ROW_MAJOR ||</span>
+<span class="fc bfc" id="L128" title="All 4 branches covered.">        return layout == NDConfiguration.Layout.ROW_MAJOR ||</span>
                layout == NDConfiguration.Layout.COLUMN_MAJOR;
     }
 
     /**
-     *  This method will clone {@link Tsr} instances if they do not
+     *  This method will clone {@link Tensor} instances if they do not
      *  possess a simple {@link neureka.ndim.config.NDConfiguration}.
      *  This is usually the case when they are slices or permuted views on data...
      *  The reason for this is simply that we need inline data for the OpenCL kernels!
@@ -130,14 +139,14 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm&lt;MatMulAlgorit
      * @param call The execution call whose tensors ought to be cloned based on the complexity of their access patterns.
      */
     private static ExecutionCall&lt;?&gt; _autoClone( ExecutionCall&lt;?&gt; call ) {
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        for ( int i = 0; i &lt; call.arity(); i++ )</span>
-<span class="fc" id="L134">            if (</span>
-<span class="fc bfc" id="L135" title="All 4 branches covered.">                (!_isSimpleRowMajorMatrix( call.input( i ) ) &amp;&amp; !_isSimpleColumnMajorMatrix( call.input( i ) ))</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        for ( int i = 0; i &lt; call.arity(); i++ )</span>
+<span class="fc" id="L143">            if (</span>
+<span class="fc bfc" id="L144" title="All 4 branches covered.">                (!_isSimpleRowMajorMatrix( call.input( i ) ) &amp;&amp; !_isSimpleColumnMajorMatrix( call.input( i ) ))</span>
                         ||
-<span class="pc bpc" id="L137" title="1 of 2 branches missed.">                call.input( i ).isPartialSlice()</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">                call.input( i ).isPartialSlice()</span>
             ) {
-<span class="fc" id="L139">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
-<span class="fc" id="L140">                call = call.withInputAt( i, call.input( i ).deepCopy().mut().setIsIntermediate( true ) );</span>
+<span class="fc" id="L148">                _LOG.debug(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
+<span class="fc" id="L149">                call = call.withInputAt( i, call.input( i ).deepCopy().mut().setIsIntermediate( true ) );</span>
                 /*
                     The user should do cloning explicitly because using slices
                     will cause the backend to perform auto cloning every time the
@@ -145,15 +154,15 @@ public class MatMulAlgorithm extends AbstractFunDeviceAlgorithm&lt;MatMulAlgorit
                  */
             }
 
-<span class="fc" id="L148">        return call;</span>
+<span class="fc" id="L157">        return call;</span>
     }
 
-    private static boolean _isSimpleColumnMajorMatrix( Tsr&lt;?&gt; t ) {
-<span class="pc bpc" id="L152" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;</span>
+    private static boolean _isSimpleColumnMajorMatrix( Tensor&lt;?&gt; t ) {
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR;</span>
     }
 
-    private static boolean _isSimpleRowMajorMatrix( Tsr&lt;?&gt; t ) {
-<span class="pc bpc" id="L156" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;</span>
+    private static boolean _isSimpleRowMajorMatrix( Tensor&lt;?&gt; t ) {
+<span class="pc bpc" id="L165" title="1 of 4 branches missed.">        return t.rank() == 2 &amp;&amp; t.getNDConf().getLayout() == NDConfiguration.Layout.ROW_MAJOR;</span>
     }
 
 }

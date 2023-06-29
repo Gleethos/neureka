@@ -2,26 +2,26 @@
   "className":"ut.tensors.Fluent_Tensor_Creation_Spec",
   "title":"",
   "narrative":"",
-  "subjects":["neureka.Tsr"],
+  "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"7",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.023 seconds"
+    "duration":"0.018 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensors can be created fluently.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!","This feature is based on a fluent builder API!"]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new homogeneously filled Tsr instance using the fluent builder API.","code":["Tsr<?> t = Tsr.of( type )","                     .withShape( 3, 2 )","                     .all( value )"]},
+        {"kind":"given","text":"We create a new homogeneously filled Tensor instance using the fluent builder API.","code":["Tensor<?> t = Tensor.of( type )","                     .withShape( 3, 2 )","                     .all( value )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
@@ -46,7 +46,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a range based Tsr instance using the fluent builder API.","code":["Tsr<?> t = Tsr.of( type )","                .withShape( 3, 2 )","                .andFillFrom( from ).to( to ).step( step )"]},
+        {"kind":"given","text":"We create a range based Tensor instance using the fluent builder API.","code":["Tensor<?> t = Tensor.of( type )","                .withShape( 3, 2 )","                .andFillFrom( from ).to( to ).step( step )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
@@ -71,7 +71,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a Tsr instance by passing an array of arguments which ought to iteratively fill the instance.","code":["Tsr<?> t = Tsr.of( type )","                .withShape( 3, 2 )","                .andFill( data )"]},
+        {"kind":"given","text":"We create a Tensor instance by passing an array of arguments which ought to iteratively fill the instance.","code":["Tensor<?> t = Tensor.of( type )","                .withShape( 3, 2 )","                .andFill( data )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
@@ -96,7 +96,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a Tsr instance by passing an array of arguments which ought to be populated based on a seed.","code":["Tsr<?> t = Tsr.of( type )","                .withShape( 3, 2 )","                .andSeed( seed )"]},
+        {"kind":"given","text":"We create a Tensor instance by passing an array of arguments which ought to be populated based on a seed.","code":["Tensor<?> t = Tensor.of( type )","                    .withShape( 3, 2 )","                    .andSeed( seed )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
@@ -123,7 +123,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a Tsr instance by passing an initialization lambda which ought to iteratively fill the instance.","code":["Tsr<?> t = Tsr.of( type )","                .withShape( 3, 2 )","                .andWhere( initializer )"]},
+        {"kind":"given","text":"We create a Tensor instance by passing an initialization lambda which ought to iteratively fill the instance.","code":["Tensor<?> t = Tensor.of( type )","                .withShape( 3, 2 )","                .andWhere( initializer )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
@@ -148,7 +148,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new Tsr instance using the \"vector\" method in the fluent builder API.","code":["Tsr<?> t = Tsr.of( type ).vector( values )"]},
+        {"kind":"given","text":"We create a new Tsr instance using the \"vector\" method in the fluent builder API.","code":["Tensor<?> t = Tensor.of( type ).vector( values )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
@@ -173,7 +173,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new Tsr instance using the \"scalar\" method in the fluent builder API.","code":["Tsr<?> t = Tsr.of( type ).scalar( value )"]},
+        {"kind":"given","text":"We create a new Tsr instance using the \"scalar\" method in the fluent builder API.","code":["Tensor<?> t = Tensor.of( type ).scalar( value )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 

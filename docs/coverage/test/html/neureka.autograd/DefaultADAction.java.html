@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultADAction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">DefaultADAction.java</span></div><h1>DefaultADAction.java</h1><pre class="source lang-java linenums">package neureka.autograd;
 
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 import java.util.Optional;
 
@@ -28,12 +28,12 @@ final class DefaultADAction implements ADAction
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
     private final ADAction _action;
-    private final Tsr&lt;?&gt; _partialDerivative;
+    private final Tensor&lt;?&gt; _partialDerivative;
 
-<span class="fc" id="L33">    DefaultADAction( ADAction action, Tsr&lt;?&gt; derivative ) { _action = action; _partialDerivative = derivative; }</span>
+<span class="fc" id="L33">    DefaultADAction( ADAction action, Tensor&lt;?&gt; derivative ) { _action = action; _partialDerivative = derivative; }</span>
 
     @Override
-    public Tsr&lt;?&gt; act( ADTarget&lt;?&gt; target ) {
+    public Tensor&lt;?&gt; act(ADTarget&lt;?&gt; target ) {
 <span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if ( _action == null )</span>
 <span class="nc" id="L38">            throw new IllegalStateException(</span>
 <span class="nc" id="L39">                &quot;Cannot perform propagation because this &quot;+ADAction.class.getSimpleName()+&quot; does have an auto-diff implementation.&quot;</span>
@@ -42,11 +42,11 @@ final class DefaultADAction implements ADAction
     }
 
     @Override
-    public Optional&lt;Tsr&lt;?&gt;&gt; partialDerivative() {
+    public Optional&lt;Tensor&lt;?&gt;&gt; partialDerivative() {
 <span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if ( _partialDerivative != null )</span>
 <span class="nc" id="L47">            return Optional.of( _partialDerivative );</span>
 
-<span class="fc" id="L49">        Tsr&lt;?&gt;[] captured = _action.findCaptured();</span>
+<span class="fc" id="L49">        Tensor&lt;?&gt;[] captured = _action.findCaptured();</span>
 <span class="fc bfc" id="L50" title="All 2 branches covered.">        if ( captured.length &gt; 0 )</span>
 <span class="fc" id="L51">            return Optional.of(captured[captured.length - 1]);</span>
 

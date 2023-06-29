@@ -1,7 +1,7 @@
 {
   "className":"ut.ndas.Nda_Items_Spec",
   "title":"The Nds Items API",
-  "narrative":"Nd-arrays are collections of items similar to other\n    collection types in Java. \n    One useful way to access the items of an nd-array is\n    to use the items API.\n\n    Using the `at` methods we can access an `Item` object\n    which is a wrapper around the item's value and its\n    index in the nd-array.\n\n    The `Item` object is a simple data class which\n    is very similar to the `Optional` class, meaning\n    that it can either be empty or contain a value.",
+  "narrative":"Nd-arrays are collections of items similar to other\n    collection types in Java.\n    One useful way to access the items of an nd-array is\n    to use the items API.\n\n    Using the `at` methods we can access an `Item` object\n    which is a wrapper around the item's value and its\n    index in the nd-array.\n\n    The `Item` object is a simple data class which\n    is very similar to the `Optional` class, meaning\n    that it can either be empty or contain a value.",
   "subjects":[],
   "statistics":{
     "runs":"6",

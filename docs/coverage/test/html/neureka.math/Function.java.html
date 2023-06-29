@@ -38,7 +38,7 @@ package neureka.math;
 
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Call;
 import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
@@ -54,7 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  Besides the {@link Tsr} class, which is the core class of Neureka, this interface and its implementations
+ *  Besides the {@link Tensor} class, which is the core class of Neureka, this interface and its implementations
  *  represents the second most important feature of this library.
  *  Instances of {@link Function} implementations form an abstract syntax tree which is being built
  *  from a provided expression {@link String} containing function syntax.
@@ -74,7 +74,7 @@ public interface Function
      *  using 'I[0]', 'I[1]', 'I[2]'... as input variables or 'I[j]' to enable input dependent indexing
      *  like for example &quot;sum( I[j] / 2 )&quot;.
      *  The {@link Function} instances returned by this method will
-     *  by default perform autograd if any involved input {@link Tsr} requires gradients (see {@link Tsr#rqsGradient()}).
+     *  by default perform autograd if any involved input {@link Tensor} requires gradients (see {@link Tensor#rqsGradient()}).
      *  If one wishes to disable this behavior one might consider the use of the {@link Function#of(String, boolean)}
      *  factory method.
      *
@@ -254,7 +254,7 @@ public interface Function
      * @param &lt;T&gt; The type parameter of the tensors wrapped by the provided call.
      * @param &lt;D&gt; The type parameter of the device targeted by the provided call.
      */
-    default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; call( Call.Builder&lt;T, D&gt; call ) {
+    default &lt;T, D extends Device&lt;T&gt;&gt; Tensor&lt;T&gt; call(Call.Builder&lt;T, D&gt; call ) {
 <span class="fc" id="L258">        return call( call.get() );</span>
     }
 
@@ -267,8 +267,8 @@ public interface Function
      * @param &lt;T&gt; The type parameter of the tensors wrapped by the provided call.
      * @param &lt;D&gt; The type parameter of the device targeted by the provided call.
      */
-    default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; call( Call&lt;D&gt; call ) {
-<span class="fc" id="L271">        return (Tsr&lt;T&gt;) execute( call ).getMut().setIsIntermediate(false);</span>
+    default &lt;T, D extends Device&lt;T&gt;&gt; Tensor&lt;T&gt; call(Call&lt;D&gt; call ) {
+<span class="fc" id="L271">        return (Tensor&lt;T&gt;) execute( call ).getMut().setIsIntermediate(false);</span>
     }
 
     /**
@@ -283,14 +283,14 @@ public interface Function
      * @param &lt;T&gt; The type parameter of the tensors wrapped by the provided call.
      * @param &lt;D&gt; The type parameter of the device targeted by the provided call.
      */
-<span class="fc" id="L286">    default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; invoke( Call.Builder&lt;T, D&gt; call ) { return this.call( call ); }</span>
+<span class="fc" id="L286">    default &lt;T, D extends Device&lt;T&gt;&gt; Tensor&lt;T&gt; invoke(Call.Builder&lt;T, D&gt; call ) { return this.call( call ); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
      *  Use this to pass more context information for execution of input tensors. This is important when
      *  interfacing with more complex types of operations, requiring more fine-grained control over the execution.
      */
-    default Tsr&lt;?&gt; execute( Call&lt;?&gt; call ) {
+    default Tensor&lt;?&gt; execute(Call&lt;?&gt; call ) {
         /*
             In order to dispatch the user call to the backend we need to
             convert the call to a format compatible with the backend!
@@ -310,7 +310,7 @@ public interface Function
      * @param arguments A set of arguments you want to supply to this function for further
      *                  control over the execution.
      *
-     * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
+     * @return A simple API for passing the {@link Tensor} arguments and calling this {@link Function}.
      */
 <span class="fc" id="L315">    default Callable with( Arg&lt;?&gt;... arguments ) { return with( Args.of( arguments ) ); }</span>
 
@@ -321,7 +321,7 @@ public interface Function
      * @param arguments A set of arguments you want to supply to this function for further
      *                  control over the execution.
      *
-     * @return A simple API for passing the {@link Tsr} arguments and calling this {@link Function}.
+     * @return A simple API for passing the {@link Tensor} arguments and calling this {@link Function}.
      */
     default Callable with(Args arguments ) {
 <span class="fc" id="L327">       return</span>
@@ -361,7 +361,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-    default &lt;T&gt; Tsr&lt;T&gt; call( Args arguments, Tsr&lt;T&gt;... tensors ) {
+    default &lt;T&gt; Tensor&lt;T&gt; call(Args arguments, Tensor&lt;T&gt;... tensors ) {
 <span class="nc" id="L365">        return with( arguments ).call( tensors ).getMut().setIsIntermediate(false);</span>
     }
 
@@ -375,7 +375,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="nc" id="L378">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Args arguments, Tsr&lt;T&gt;... inputs ) { return this.call( arguments, inputs ); }</span>
+<span class="nc" id="L378">    default &lt;T&gt; Tensor&lt;T&gt; invoke(Args arguments, Tensor&lt;T&gt;... inputs ) { return this.call( arguments, inputs ); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
@@ -388,7 +388,7 @@ public interface Function
      * @param inputs The tensors which should be sent through this function.
      * @return The resulting tensor produced by this function.
      */
-    Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... inputs );
+    Tensor&lt;?&gt; execute(Args arguments, Tensor&lt;?&gt;... inputs );
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
@@ -396,7 +396,7 @@ public interface Function
      * @param inputs The tensors which should be sent through this function.
      * @return The resulting tensor produced by this function.
      */
-<span class="fc" id="L399">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... inputs ) { return execute( inputs, -1 ); }</span>
+<span class="fc" id="L399">    default Tensor&lt;?&gt; execute(Tensor&lt;?&gt;... inputs ) { return execute( inputs, -1 ); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
@@ -405,41 +405,41 @@ public interface Function
      * @param j The input index used by indexer operations to target a particular input.              
      * @return The resulting tensor produced by this function.
      */
-<span class="fc" id="L408">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;[] inputs, int j ) { return with(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }</span>
+<span class="fc" id="L408">    default Tensor&lt;?&gt; execute(Tensor&lt;?&gt;[] inputs, int j ) { return with(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j))).execute(inputs); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
      */
-<span class="fc" id="L413">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index, int j ) { return with(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }</span>
+<span class="fc" id="L413">    default Tensor&lt;?&gt; executeDerive(Tensor&lt;?&gt;[] inputs, int index, int j ) { return with(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j))).execute(inputs); }</span>
 
     /**
      *  &lt;b&gt;Warning: Tensors returned by this method are eligible for deletion when consumed by other functions.&lt;/b&gt;
      */
-<span class="fc" id="L418">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }</span>
+<span class="fc" id="L418">    default Tensor&lt;?&gt; executeDerive(Tensor&lt;?&gt;[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }</span>
 
     /**
      * @param input The tensor which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensor passed to and returned by this function.
      */
-<span class="fc" id="L425">    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt; input )   { return call( new Tsr[]{ input } ); }</span>
+<span class="fc" id="L425">    default &lt;T&gt; Tensor&lt;T&gt; call(Tensor&lt;T&gt; input )   { return call( new Tensor[]{ input } ); }</span>
 
     /**
-     *  This method is functionally identically to {@link #call(Tsr)}, however it is best used
+     *  This method is functionally identically to {@link #call(Tensor)}, however it is best used
      *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
      *
      * @param input The tensor which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensor passed to and returned by this function.
      */
-<span class="fc" id="L435">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt; input ) { return call( input ); }</span>
+<span class="fc" id="L435">    default &lt;T&gt; Tensor&lt;T&gt; invoke(Tensor&lt;T&gt; input ) { return call( input ); }</span>
     
     /**
      * @param inputs The list tensors which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="fc" id="L442">    default &lt;T&gt; Tsr&lt;T&gt; call( List&lt;Tsr&lt;T&gt;&gt; inputs ) { return call( inputs.toArray(new Tsr[ 0 ]) ); }</span>
+<span class="fc" id="L442">    default &lt;T&gt; Tensor&lt;T&gt; call(List&lt;Tensor&lt;T&gt;&gt; inputs ) { return call( inputs.toArray(new Tensor[ 0 ]) ); }</span>
 
     /**
      *  This method is functionally identically to {@link #call(List)}, however it is best used
@@ -449,7 +449,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensor passed to and returned by this function.
      */
-<span class="nc" id="L452">    default &lt;T&gt; Tsr&lt;T&gt; invoke( List&lt;Tsr&lt;T&gt;&gt; input ) { return call( input ); }</span>
+<span class="nc" id="L452">    default &lt;T&gt; Tensor&lt;T&gt; invoke(List&lt;Tensor&lt;T&gt;&gt; input ) { return call( input ); }</span>
 
     /**
      * @param inputs The tensors which should be sent through this function.
@@ -457,12 +457,12 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;[] inputs, int j )   {
-<span class="nc" id="L461">        return (Tsr&lt;T&gt;) execute( inputs, j ).getMut().setIsIntermediate(false);</span>
+    default &lt;T&gt; Tensor&lt;T&gt; call(Tensor&lt;T&gt;[] inputs, int j )   {
+<span class="nc" id="L461">        return (Tensor&lt;T&gt;) execute( inputs, j ).getMut().setIsIntermediate(false);</span>
     }
 
     /**
-     *  This method is functionally identically to {@link #call(Tsr[], int)}, however it is best used
+     *  This method is functionally identically to {@link #call(Tensor[], int)}, however it is best used
      *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
      *
      * @param inputs The tensors which should be sent through this function.
@@ -470,26 +470,26 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="nc" id="L473">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs, int j ) { return call( inputs, j ); }</span>
+<span class="nc" id="L473">    default &lt;T&gt; Tensor&lt;T&gt; invoke(Tensor&lt;T&gt;[] inputs, int j ) { return call( inputs, j ); }</span>
 
     /**
      * @param inputs The tensors which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... inputs )   {
-<span class="fc" id="L481">        return (Tsr&lt;T&gt;) execute( inputs ).getMut().setIsIntermediate(false);</span>
+    default &lt;T&gt; Tensor&lt;T&gt; call(Tensor&lt;T&gt;... inputs )   {
+<span class="fc" id="L481">        return (Tensor&lt;T&gt;) execute( inputs ).getMut().setIsIntermediate(false);</span>
     }
 
     /**
-     *  This method is functionally identically to {@link #call(Tsr[])}, however it is best used
+     *  This method is functionally identically to {@link #call(Tensor[])}, however it is best used
      *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
      *
      * @param inputs The tensors which should be sent through this function.
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="fc" id="L492">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) { return call( inputs );             }</span>
+<span class="fc" id="L492">    default &lt;T&gt; Tensor&lt;T&gt; invoke(Tensor&lt;T&gt;... inputs ) { return call( inputs );             }</span>
 
     /**
      * @param inputs The tensors which should be sent through this function.
@@ -498,8 +498,8 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-    default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int index, int j ) {
-<span class="nc" id="L502">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, index, j );</span>
+    default &lt;T&gt; Tensor&lt;T&gt; derive(Tensor&lt;T&gt;[] inputs, int index, int j ) {
+<span class="nc" id="L502">        Tensor&lt;T&gt; result = (Tensor&lt;T&gt;) executeDerive( inputs, index, j );</span>
 <span class="nc" id="L503">        return result.getMut().setIsIntermediate(false);</span>
     }
 
@@ -509,8 +509,8 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-    default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int index ) {
-<span class="fc" id="L513">        Tsr&lt;T&gt; result = (Tsr&lt;T&gt;) executeDerive( inputs, index );</span>
+    default &lt;T&gt; Tensor&lt;T&gt; derive(Tensor&lt;T&gt;[] inputs, int index ) {
+<span class="fc" id="L513">        Tensor&lt;T&gt; result = (Tensor&lt;T&gt;) executeDerive( inputs, index );</span>
 <span class="fc" id="L514">        return result.getMut().setIsIntermediate(false);</span>
     }
     
@@ -521,7 +521,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="nc" id="L524">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index, int j ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index, j ); }</span>
+<span class="nc" id="L524">    default &lt;T&gt; Tensor&lt;T&gt; derive(List&lt;Tensor&lt;T&gt;&gt; inputs, int index, int j ) { return derive( inputs.toArray( new Tensor[ 0 ] ), index, j ); }</span>
     
     /**
      * @param inputs The list of tensors which should be sent through this function.
@@ -529,7 +529,7 @@ public interface Function
      * @return The resulting tensor produced by this function.
      * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
      */
-<span class="fc" id="L532">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index ); }</span>
+<span class="fc" id="L532">    default &lt;T&gt; Tensor&lt;T&gt; derive(List&lt;Tensor&lt;T&gt;&gt; inputs, int index ) { return derive( inputs.toArray( new Tensor[ 0 ] ), index ); }</span>
 
     /**
      *  Turns this function into a string representation which can be used to
@@ -547,22 +547,22 @@ public interface Function
     interface Callable 
     {
         /**
-         *  This method is functionally identically to {@link Callable#call(Tsr[])}, however it is best used
+         *  This method is functionally identically to {@link Callable#call(Tensor[])}, however it is best used
          *  in Kotlin, where one can omit the function name entirely and call this {@link Function} directly!
          *
          * @param inputs The tensors which should be sent through the owner function of this {@link Callable}.
          * @return The resulting tensor produced by this function.
          * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
          */
-<span class="fc" id="L557">        default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) { return this.call( inputs ); }</span>
+<span class="fc" id="L557">        default &lt;T&gt; Tensor&lt;T&gt; invoke(Tensor&lt;T&gt;... inputs ) { return this.call( inputs ); }</span>
 
         /**
          * @param inputs The tensors which should be sent through the owner function of this {@link Callable}.
          * @return The resulting tensor produced by this function.
          * @param &lt;T&gt; The type parameter of the tensors passed to and returned by this function.
          */
-        default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... inputs ) {
-<span class="fc" id="L565">            return (Tsr&lt;T&gt;) this.execute( inputs ).getMut().setIsIntermediate(false);</span>
+        default &lt;T&gt; Tensor&lt;T&gt; call(Tensor&lt;T&gt;... inputs ) {
+<span class="fc" id="L565">            return (Tensor&lt;T&gt;) this.execute( inputs ).getMut().setIsIntermediate(false);</span>
         }
 
         /**
@@ -571,7 +571,7 @@ public interface Function
          * @param inputs The tensors which should be sent through this function.
          * @return The result from the execution of the provided tensors.
          */
-        Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... inputs );
+        Tensor&lt;?&gt; execute(Tensor&lt;?&gt;... inputs );
     }
 
 

@@ -1,7 +1,7 @@
 {
   "className":"ut.dtype.NumericType_Spec",
   "title":"The NumericType and its implementations model their respective numeric data types.",
-  "narrative":"This specification covers the behavior of the NumericType interface\n    which is responsible for modelling numeric data types which may or may not be native to the JVM. \n    These implementations however do not model them in the traditional OO style\n    but merely expose useful utility method for converting and representing \n    these numeric data types using JVM types.",
+  "narrative":"This specification covers the behavior of the NumericType interface\n    which is responsible for modelling numeric data types which may or may not be native to the JVM.\n    These implementations however do not model them in the traditional OO style\n    but merely expose useful utility method for converting and representing\n    these numeric data types using JVM types.",
   "subjects":["neureka.dtype.NumericType"],
   "statistics":{
     "runs":"4",
@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.039 seconds"
+    "duration":"0.021 seconds"
   },
   "headers":["\n            This specification covers implementations\n            of the \"interface neureka.dtype.NumericType\" interface.\n            Such classes are responsible for\n            representing all numeric types including the ones\n            which are foreign to the JVM, namely : \n            unsigned integer types.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -56,7 +56,7 @@
     {
       "id":"Conversion goes both ways and produces expected numeric values.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

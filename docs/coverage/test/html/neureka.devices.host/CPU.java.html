@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host</a> &gt; <span class="el_source">CPU.java</span></div><h1>CPU.java</h1><pre class="source lang-java linenums">package neureka.devices.host;
 
 import neureka.Data;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Operation;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.LogUtil;
@@ -61,8 +61,8 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 
     /**
      *  Use this method to access the singleton instance of this {@link CPU} class,
-     *  which is a {@link Device} type and default location for freshly instantiated {@link Tsr} instances.
-     *  {@link Tsr} instances located on the {@link CPU} device will reside in regular RAM
+     *  which is a {@link Device} type and default location for freshly instantiated {@link Tensor} instances.
+     *  {@link Tensor} instances located on the {@link CPU} device will reside in regular RAM
      *  causing operations to run on the JVM and thereby the CPU.
      *
      * @return The singleton instance of this {@link CPU} class.
@@ -79,7 +79,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="fc" id="L79">    public JVMExecutor getExecutor() { return _executor; }</span>
     
     @Override
-<span class="fc" id="L82">    protected boolean _approveExecutionOf( Tsr&lt;?&gt;[] tensors, int d, Operation operation ) { return true; }</span>
+<span class="fc" id="L82">    protected boolean _approveExecutionOf(Tensor&lt;?&gt;[] tensors, int d, Operation operation ) { return true; }</span>
 
     /**
      *  This method will shut down the internal thread-pool used by this
@@ -96,10 +96,10 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="nc" id="L96">    }</span>
 
     @Override
-<span class="fc" id="L99">    public CPU restore( Tsr&lt;Object&gt; tensor ) { return this; }</span>
+<span class="fc" id="L99">    public CPU restore( Tensor&lt;Object&gt; tensor ) { return this; }</span>
 
     @Override
-    public &lt;T&gt; CPU store( Tsr&lt;T&gt; tensor ) {
+    public &lt;T&gt; CPU store( Tensor&lt;T&gt; tensor ) {
 <span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if ( !this.has( tensor ) )</span>
 <span class="nc" id="L104">            tensor.getMut().getData().owner().restore( tensor );</span>
 
@@ -107,7 +107,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     }
 
     @Override
-    protected final &lt;T&gt; int _sizeOccupiedBy(Tsr&lt;T&gt; tensor) {
+    protected final &lt;T&gt; int _sizeOccupiedBy(Tensor&lt;T&gt; tensor) {
 <span class="fc" id="L111">        Object data = tensor.getMut().getData().getOrNull();</span>
 <span class="fc bfc" id="L112" title="All 2 branches covered.">        if      ( data instanceof float[]   ) return ( (float[])   data).length;</span>
 <span class="fc bfc" id="L113" title="All 2 branches covered.">        else if ( data instanceof double[]  ) return ( (double[])  data).length;</span>
@@ -121,7 +121,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     }
 
     @Override
-    protected final &lt;T&gt; Object _readAll(Tsr&lt;T&gt; tensor, boolean clone ) {
+    protected final &lt;T&gt; Object _readAll(Tensor&lt;T&gt; tensor, boolean clone ) {
 <span class="fc" id="L125">        Object data = tensor.getMut().getData().getOrNull();</span>
 <span class="fc bfc" id="L126" title="All 2 branches covered.">        if ( clone ) {</span>
 <span class="fc bfc" id="L127" title="All 2 branches covered.">            if ( data instanceof double[]  ) return ( (double[])  data ).clone();</span>
@@ -138,7 +138,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     }
 
     @Override
-    protected final &lt;T&gt; T _readItem( Tsr&lt;T&gt; tensor, int index ) {
+    protected final &lt;T&gt; T _readItem(Tensor&lt;T&gt; tensor, int index ) {
 <span class="fc" id="L142">        Object data = tensor.getMut().getData().getOrNull();</span>
 <span class="fc bfc" id="L143" title="All 2 branches covered.">        if      ( data instanceof float[]   ) return (T)Float.valueOf( ((float[])   data)[ index ] );</span>
 <span class="fc bfc" id="L144" title="All 2 branches covered.">        else if ( data instanceof double[]  ) return (T)Double.valueOf( ((double[])  data)[ index ] );</span>
@@ -153,7 +153,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 
     @Override
     protected final &lt;T, A&gt; A _readArray(
-            Tsr&lt;T&gt; tensor, Class&lt;A&gt; arrayType, int start, int size
+            Tensor&lt;T&gt; tensor, Class&lt;A&gt; arrayType, int start, int size
     ) {
 <span class="fc bfc" id="L158" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
 <span class="fc" id="L159">            float[] source = DataConverter.get().convert(tensor.getMut().getData().getOrNull(), float[].class);</span>
@@ -197,7 +197,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     }
 
     @Override
-    protected final &lt;T&gt; void _writeItem( Tsr&lt;T&gt; tensor, T item, int start, int size ) {
+    protected final &lt;T&gt; void _writeItem(Tensor&lt;T&gt; tensor, T item, int start, int size ) {
 <span class="fc" id="L201">        Object data = tensor.getMut().getData().getOrNull();</span>
 <span class="fc" id="L202">        Class&lt;?&gt; arrayType = data.getClass();</span>
 <span class="fc bfc" id="L203" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
@@ -244,7 +244,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 
     @Override
     protected final &lt;T&gt; void _writeArray(
-            Tsr&lt;T&gt; tensor, Object array, int offset, int start, int size
+            Tensor&lt;T&gt; tensor, Object array, int offset, int start, int size
     ) {
 <span class="fc bfc" id="L249" title="All 2 branches covered.">        Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getOrNull();</span>
 <span class="fc bfc" id="L250" title="All 2 branches covered.">        if ( data == null ) {</span>
@@ -490,7 +490,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 
 
     @Override
-    protected final Data&lt;Object&gt; _actualize( Tsr&lt;?&gt; tensor ) {
+    protected final Data&lt;Object&gt; _actualize( Tensor&lt;?&gt; tensor ) {
 <span class="fc" id="L494">        Data&lt;Object&gt; data = (Data&lt;Object&gt;) tensor.getMut().getData();</span>
 <span class="fc" id="L495">        Object value = data.getOrNull();</span>
 <span class="fc" id="L496">        DataType&lt;?&gt; dataType = tensor.getDataType();</span>
@@ -538,7 +538,7 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     }
 
     @Override
-    protected final Data&lt;Object&gt; _virtualize( Tsr&lt;?&gt; tensor ) {
+    protected final Data&lt;Object&gt; _virtualize( Tensor&lt;?&gt; tensor ) {
 <span class="fc" id="L542">        Class&lt;?&gt; typeClass = tensor.getDataType().getRepresentativeType();</span>
 <span class="fc" id="L543">        Data data = tensor.getMut().getData();</span>
 <span class="pc bpc" id="L544" title="1 of 2 branches missed.">        Object value = data == null ? null : data.getOrNull();</span>
@@ -578,14 +578,14 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     }
 
     @Override
-    public &lt;T&gt; CPU free( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L582">        LogUtil.nullArgCheck( tensor, &quot;tensor&quot;, Tsr.class );</span>
+    public &lt;T&gt; CPU free( Tensor&lt;T&gt; tensor ) {
+<span class="fc" id="L582">        LogUtil.nullArgCheck( tensor, &quot;tensor&quot;, Tensor.class );</span>
 <span class="fc" id="L583">        tensor.getMut().setData(null);</span>
 <span class="fc" id="L584">        return this;</span>
     }
 
     @Override
-<span class="nc" id="L588">    protected &lt;T&gt; void _swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement ) {}</span>
+<span class="nc" id="L588">    protected &lt;T&gt; void _swap(Tensor&lt;T&gt; former, Tensor&lt;T&gt; replacement ) {}</span>
 
     @Override
     public &lt;T&gt; Data&lt;T&gt; allocate( DataType&lt;T&gt; dataType, NDConfiguration ndc ) {
@@ -620,14 +620,14 @@ public class CPU extends AbstractDevice&lt;Object&gt;
 <span class="nc" id="L620">    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }</span>
 
     /**
-     *  This method is part of the component system built into the {@link Tsr} class.
+     *  This method is part of the component system built into the {@link Tensor} class.
      *  Do not use this as part of anything but said component system.
      *
      * @param changeRequest An API which describes the type of update and a method for executing said update.
      * @return The truth value determining if this {@link Device} ought to be added to a tensor (Here always false!).
      */
     @Override
-    public boolean update( OwnerChangeRequest&lt;Tsr&lt;Object&gt;&gt; changeRequest ) {
+    public boolean update( OwnerChangeRequest&lt;Tensor&lt;Object&gt;&gt; changeRequest ) {
 <span class="fc" id="L631">        super.update( changeRequest );</span>
 <span class="fc" id="L632">        return false; // This type of device can not be a component simply because it is the default device</span>
     }

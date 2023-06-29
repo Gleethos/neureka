@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AssignLeft.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">AssignLeft.java</span></div><h1>AssignLeft.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
@@ -43,7 +43,7 @@ public class AssignLeft extends AbstractOperation
 <span class="fc bfc" id="L43" title="All 4 branches covered.">                   if ( call.input( offset ).isVirtual() || call.input( offset ).size() == 1 )</span>
 <span class="fc" id="L44">                       return  call.validate()</span>
 <span class="fc" id="L45">                                       .allNotNull( t -&gt; t.getDataType().typeClassImplements(Object.class) )</span>
-                                       //.allNotNull( Tsr::isVirtual )
+                                       //.allNotNull( Tensor::isVirtual )
 <span class="pc bpc" id="L47" title="3 of 4 branches missed.">                                       .tensors( tensors -&gt; tensors.length == 2 || tensors.length == 3 )</span>
 <span class="fc" id="L48">                                       .suitabilityIfValid(SuitabilityPredicate.PERFECT);</span>
                    else
@@ -52,7 +52,7 @@ public class AssignLeft extends AbstractOperation
             )
 <span class="pc" id="L53">            .setAutogradModeFor( call -&gt; AutoDiffMode.NOT_SUPPORTED)</span>
 <span class="fc" id="L54">            .setExecution( (caller, call) -&gt; {</span>
-<span class="fc" id="L55">                Tsr&lt;?&gt; t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );</span>
+<span class="fc" id="L55">                Tensor&lt;?&gt; t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );</span>
 <span class="fc" id="L56">                t.mut().incrementVersion(call);</span>
 <span class="fc" id="L57">                return Result.of(t);</span>
             })
@@ -81,7 +81,7 @@ public class AssignLeft extends AbstractOperation
             )
 <span class="fc" id="L82">            .setAutogradModeFor( call -&gt; AutoDiffMode.NOT_SUPPORTED)</span>
 <span class="fc" id="L83">            .setExecution( (caller, call) -&gt; {</span>
-<span class="fc" id="L84">                Tsr&lt;?&gt; t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );</span>
+<span class="fc" id="L84">                Tensor&lt;?&gt; t = AbstractDeviceAlgorithm.executeDeviceAlgorithm( call );</span>
 <span class="fc" id="L85">                t.mut().incrementVersion(call);</span>
 <span class="fc" id="L86">                return Result.of(t);</span>
             })
@@ -106,7 +106,7 @@ public class AssignLeft extends AbstractOperation
 
 <span class="fc" id="L107">        Function reducedCaller = reducePairwise(caller);</span>
 <span class="fc" id="L108">        ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (Tsr&lt;?&gt; t : call.inputs()) t.mut().setIsIntermediate(false);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (Tensor&lt;?&gt; t : call.inputs()) t.mut().setIsIntermediate(false);</span>
 <span class="fc" id="L110">        Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), false );</span>
 <span class="fc" id="L111">        return super.execute( flat, flatCall );</span>
     }

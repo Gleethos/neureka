@@ -2,21 +2,21 @@
   "className":"ut.tensors.Tensor_Slicing_Spec",
   "title":"Tensors within Tensors",
   "narrative":"ND-Array data structures can be \"sliced\" in the sense\n    that one can create a subset view of the underlying data inside a tensor\n    through a new tensor instance...\n    This can be a tedious and complicated procedure.\n    Therefore a tensor should expose a various user friendly API for slicing which\n    are also fit for various languages.\n    This specification covers these APIs for tensor slicing.",
-  "subjects":["neureka.Tsr"],
+  "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"9",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.020 seconds"
+    "duration":"0.014 seconds"
   },
   "headers":["\n                This specification covers the behavior of tensors when being sliced\n                on multiple different device types using the slice builder API.           \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"When Slicing only one axis using the SliceBuilder API, the other axes will be sliced implicitly.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,11 +25,11 @@
 
         {"kind":"and","text":"The found device is also supported (Which might not always be the case for the OpenCLDevice).","code":["if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
-        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["Tsr<Double> t = Tsr.of([2, 4, 3], -3d..7d)"]},
+        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["Tensor<Double> t = Tensor.of([2, 4, 3], -3d..7d)"]},
 
         {"kind":"and","text":"Which will be placed on a given device:","code":["t.to(device)"]},
 
-        {"kind":"when","text":"Slicing axis 1 of the tensor using the \"from\" & \"to\" methods...","code":["Tsr s = t.slice()","            .axis(1).from(1).to(2)","            .get() // Note: Axis 0 and 2 will be sliced implicitly if not specified!"]},
+        {"kind":"when","text":"Slicing axis 1 of the tensor using the \"from\" & \"to\" methods...","code":["Tensor s = t.slice()","            .axis(1).from(1).to(2)","            .get() // Note: Axis 0 and 2 will be sliced implicitly if not specified!"]},
 
         {"kind":"then","text":"This will result in a slice which has 4 axis entries less than the original tensor.","code":["s.shape().sum() == t.shape().sum() - 2"]},
 
@@ -54,11 +54,11 @@
 
         {"kind":"and","text":"The found device is also supported (Which might not always be the case for the OpenCLDevice).","code":["if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
-        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["Tsr<Double> t = Tsr.of([3, 3, 4], -11d..3d)"]},
+        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["Tensor<Double> t = Tensor.of([3, 3, 4], -11d..3d)"]},
 
         {"kind":"and","text":"Which will be placed on a given device:","code":["t.to(device)"]},
 
-        {"kind":"when","text":"Slicing the tensor using both \"at\", \"from\"/\"to\" and an implicit full ranged slice for axis 1...","code":["Tsr s = t.slice()","            .axis(0).at(1)","            // Note: Axis 1 will be sliced implicitly if not specified!","            .axis(2).from(1).to(2)","            .get()"]},
+        {"kind":"when","text":"Slicing the tensor using both \"at\", \"from\"/\"to\" and an implicit full ranged slice for axis 1...","code":["Tensor s = t.slice()","                .axis(0).at(1)","                // Note: Axis 1 will be sliced implicitly if not specified!","                .axis(2).from(1).to(2)","                .get()"]},
 
         {"kind":"then","text":"This will result in a slice which has 4 axis entries less than the original tensor.","code":["s.shape().sum() == t.shape().sum() - 4"]},
 
@@ -83,7 +83,7 @@
 
         {"kind":"and","text":"The found device is also supported (Which might not always be the case for the OpenCLDevice).","code":["if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
-        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["Tsr t = Tsr.of([3, 3, 4], -11..3)"]},
+        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["Tensor t = Tensor.of([3, 3, 4], -11..3)"]},
 
         {"kind":"and","text":"Which will be placed on a given device:","code":["t.to(device)"]},
 
@@ -112,7 +112,7 @@
 
         {"kind":"and","text":"The found device is also supported (Which might not always be the case for the OpenCLDevice).","code":["if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
-        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["var t = Tsr.of([3, 3, 4], -11..3)"]},
+        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["var t = Tensor.of([3, 3, 4], -11..3)"]},
 
         {"kind":"and","text":"Which will be placed on a given device:","code":["t.to(device)"]},
 
@@ -130,7 +130,7 @@
     {
       "id":"The slice builder also supports slicing with custom step sizes.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -139,11 +139,11 @@
 
         {"kind":"and","text":"The found device is also supported (Which might not always be the case for the OpenCLDevice).","code":["if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCLDevice() ) return"]},
 
-        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["Tsr<Double> t = Tsr.of([3, 3, 4], -11d..3d)"]},
+        {"kind":"and","text":"A 3 dimensional tensor which will be sliced.","code":["Tensor<Double> t = Tensor.of([3, 3, 4], -11d..3d)"]},
 
         {"kind":"and","text":"Which will be placed on a given device:","code":["t.to(device)"]},
 
-        {"kind":"when","text":"Slicing the tensor using lists of integers generated by the Groovy range operator..","code":["Tsr s = t.slice()","            .axis(0).at(0)","            .axis(1).at(0)","            .axis(2).from(0).to(3).step(2)","            .get()"]},
+        {"kind":"when","text":"Slicing the tensor using lists of integers generated by the Groovy range operator..","code":["Tensor s = t.slice()","            .axis(0).at(0)","            .axis(1).at(0)","            .axis(2).from(0).to(3).step(2)","            .get()"]},
 
         {"kind":"then","text":"This will result in a slice which has 4 axis entries less than the original tensor.","code":["s.shape().sum() == t.shape().sum() - 6"]},
 
@@ -159,16 +159,16 @@
     {
       "id":"Slicing is also a Function with autograd support!",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A 2 dimensional tensor requiring gradients.","code":["var t = Tsr.ofBytes().withShape(4, 4).andFill(-1, 7, 3).setRqsGradient(true)"]},
+        {"kind":"given","text":"A 2 dimensional tensor requiring gradients.","code":["var t = Tensor.ofBytes().withShape(4, 4).andFill(-1, 7, 3).setRqsGradient(true)"]},
 
         {"kind":"and","text":"3 arrays we need to slice (the slice shape, offset and spread/steps).","code":["int[] newShape  = [2, 2]","int[] newOffset = [1, 1]","int[] newSpread = [1, 1]"]},
 
-        {"kind":"when","text":"Slicing the tensor using the slice function.","code":["Tsr<Object> slice = Function.of(\"slice(I[0])\", true)","                        .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))","                        .call(t)"]},
+        {"kind":"when","text":"Slicing the tensor using the slice function.","code":["Tensor<Object> slice = Function.of(\"slice(I[0])\", true)","                        .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))","                        .call(t)"]},
 
         {"kind":"then","text":"The resulting tensor will have the correct shape and values.","code":["slice.toString() == \"(2x2):[\\n\" +","                    \"   [    3  ,   -1   ],\\n\" +","                    \"   [   -1  ,    7   ]\\n\" +","                    \"]\""]},
 
@@ -187,7 +187,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A 1 dimensional tensor (vector) requiring gradients.","code":["var t = Tsr.ofBytes().withShape(5).andFill(-1, 7, 3).setRqsGradient(true)"]},
+        {"kind":"given","text":"A 1 dimensional tensor (vector) requiring gradients.","code":["var t = Tensor.ofBytes().withShape(5).andFill(-1, 7, 3).setRqsGradient(true)"]},
 
         {"kind":"when","text":"Slicing the tensor using the subscription operator (which calls the getAt(List) method).","code":["var s = t[2..3]"]},
 
@@ -201,12 +201,12 @@
     {
       "id":"We can avoid autograd when slicing by using the \"detached\" instead of the \"get\" method.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A 1 dimensional tensor (vector) requiring gradients.","code":["var t = Tsr.ofBytes().withShape(4).andFill(-1, 7, 3).setRqsGradient(true)"]},
+        {"kind":"given","text":"A 1 dimensional tensor (vector) requiring gradients.","code":["var t = Tensor.ofBytes().withShape(4).andFill(-1, 7, 3).setRqsGradient(true)"]},
 
         {"kind":"when","text":"We slice the tensor through the fluent slicer, then get it detached and finally backpropagation an error of 73.","code":["t.slice()","    .axis(0).from(0).to(1)","    .detached()","    .backward(73)"]},
 
@@ -227,7 +227,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A 4 dimensional tensor.","code":["var t = Tsr.ofBytes().withShape(4, 2, 3, 2).andFill(-1, 7, 9, 5, 4, 3)"]},
+        {"kind":"given","text":"A 4 dimensional tensor.","code":["var t = Tensor.ofBytes().withShape(4, 2, 3, 2).andFill(-1, 7, 9, 5, 4, 3)"]},
 
         {"kind":"when","text":"Slicing the tensor using lists of integers...","code":["var s = t[1, 1, 2, 0]"]},
 

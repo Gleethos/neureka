@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PendingError.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">PendingError.java</span></div><h1>PendingError.java</h1><pre class="source lang-java linenums">package neureka.autograd;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.main.memory.MemUtil;
 
 /**
@@ -18,20 +18,20 @@ final class PendingError&lt;V&gt;
 {
     private final int _expectedToBeReceived;
     private int _received;
-    private final Tsr&lt;V&gt; _accumulatedError;
+    private final Tensor&lt;V&gt; _accumulatedError;
     private final int _generation;
 
-<span class="fc" id="L24">    public PendingError( Tsr&lt;V&gt; error, int toBeReceived, int generation ) {</span>
+<span class="fc" id="L24">    public PendingError( Tensor&lt;V&gt; error, int toBeReceived, int generation ) {</span>
 <span class="fc" id="L25">        _expectedToBeReceived = toBeReceived;</span>
 <span class="fc" id="L26">        _received = 1; // 1 because the first error value is already given to the constructor.</span>
 <span class="fc" id="L27">        _accumulatedError = error;</span>
 <span class="fc" id="L28">        _generation = generation;</span>
 <span class="fc" id="L29">    }</span>
 
-    public void accumulate( Tsr&lt;?&gt; error ) {
-<span class="fc" id="L32">        Tsr[] inputs = { _accumulatedError, error };</span>
+    public void accumulate( Tensor&lt;?&gt; error ) {
+<span class="fc" id="L32">        Tensor[] inputs = { _accumulatedError, error };</span>
 <span class="fc" id="L33">        MemUtil.keep( inputs, () -&gt; {</span>
-<span class="fc" id="L34">                    _accumulatedError.mut().plusAssign((Tsr&lt;V&gt;)error);</span>
+<span class="fc" id="L34">                    _accumulatedError.mut().plusAssign((Tensor&lt;V&gt;)error);</span>
 <span class="fc" id="L35">                    return null;</span>
                 });
 <span class="fc" id="L37">        _received++;</span>
@@ -48,7 +48,7 @@ final class PendingError&lt;V&gt;
 <span class="fc bfc" id="L48" title="All 2 branches covered.">        return _received == _expectedToBeReceived;</span>
     }
 
-<span class="fc" id="L51">    public int getGeneration() { return _generation; }</span>
+<span class="nc" id="L51">    public int getGeneration() { return _generation; }</span>
 
     public String toString() {
 <span class="nc" id="L54">        return this.getClass().getSimpleName()+&quot;[&quot; +</span>
@@ -62,7 +62,7 @@ final class PendingError&lt;V&gt;
 
 <span class="nc" id="L63">    public int getExpectedToBeReceived() { return _expectedToBeReceived; }</span>
 
-<span class="fc" id="L65">    public Tsr&lt;V&gt; getAccumulatedError() { return _accumulatedError; }</span>
+<span class="fc" id="L65">    public Tensor&lt;V&gt; getAccumulatedError() { return _accumulatedError; }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

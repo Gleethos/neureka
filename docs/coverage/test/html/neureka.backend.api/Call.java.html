@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Call.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api</a> &gt; <span class="el_source">Call.java</span></div><h1>Call.java</h1><pre class="source lang-java linenums">package neureka.backend.api;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.fun.SuitabilityPredicate;
 import neureka.math.args.Arg;
 import neureka.math.args.Args;
@@ -40,14 +40,14 @@ public class Call&lt;D&gt;
      *  however this is not a necessity.
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
-    protected final Tsr&lt;?&gt;[] _inputs;
+    protected final Tensor&lt;?&gt;[] _inputs;
 
 
 <span class="fc" id="L46">    public static &lt;V, T extends Device&lt;V&gt;&gt; Call.Builder&lt;V,T&gt; to( T device ) { return new Builder&lt;V,T&gt;( device ); }</span>
 
 
-<span class="fc" id="L49">    protected Call( Tsr&lt;?&gt;[] tensors, D device, List&lt;Arg&gt; arguments ) {</span>
-<span class="fc" id="L50">        LogUtil.nullArgCheck( tensors, &quot;tensors&quot;, Tsr[].class );</span>
+<span class="fc" id="L49">    protected Call(Tensor&lt;?&gt;[] tensors, D device, List&lt;Arg&gt; arguments ) {</span>
+<span class="fc" id="L50">        LogUtil.nullArgCheck( tensors, &quot;tensors&quot;, Tensor[].class );</span>
 <span class="fc" id="L51">        LogUtil.nullArgCheck( arguments, &quot;arguments&quot;, List.class );</span>
 <span class="fc" id="L52">        LogUtil.nullArgCheck( device, &quot;device&quot;, Device.class );</span>
 <span class="fc" id="L53">        _inputs = tensors.clone();</span>
@@ -61,9 +61,9 @@ public class Call&lt;D&gt;
 <span class="fc" id="L61">    public D getDevice() { return _device; }</span>
 
     /**
-     * @return The {@link Tsr} parameters of this {@link Call} for execution.
+     * @return The {@link Tensor} parameters of this {@link Call} for execution.
      */
-<span class="fc" id="L66">    public Tsr&lt;?&gt;[] inputs() { return _inputs.clone(); }</span>
+<span class="fc" id="L66">    public Tensor&lt;?&gt;[] inputs() { return _inputs.clone(); }</span>
 
     /**
      * @return The number of input tensors.
@@ -72,13 +72,13 @@ public class Call&lt;D&gt;
 
     /**
      * @param i The index of the tensor argument which should be returned.
-     * @return The {@code i}'th {@link Tsr} parameter of this {@link Call} for execution.
+     * @return The {@code i}'th {@link Tensor} parameter of this {@link Call} for execution.
      */
-<span class="fc" id="L77">    public Tsr&lt;?&gt; input( int i ) { return _inputs[ i ]; }</span>
+<span class="fc" id="L77">    public Tensor&lt;?&gt; input(int i ) { return _inputs[ i ]; }</span>
 
     public void rearrangeInputs( int... indices ) {
 <span class="fc" id="L80">        LogUtil.nullArgCheck( indices, &quot;indices&quot;, int[].class );</span>
-<span class="fc" id="L81">        Tsr&lt;?&gt;[] tensors = _inputs.clone();</span>
+<span class="fc" id="L81">        Tensor&lt;?&gt;[] tensors = _inputs.clone();</span>
 <span class="fc bfc" id="L82" title="All 2 branches covered.">        for ( int i = 0; i &lt; indices.length; i++ ) {</span>
 <span class="fc" id="L83">            _inputs[i] = tensors[indices[i]];</span>
         }
@@ -106,8 +106,8 @@ public class Call&lt;D&gt;
 
 <span class="fc" id="L107">    public int getDerivativeIndex() { return this.getValOf( Arg.DerivIdx.class ); }</span>
 
-    public  &lt;V&gt; Tsr&lt;V&gt; input( Class&lt;V&gt; valueTypeClass, int i ) {
-<span class="fc" id="L110">        Tsr&lt;?&gt;[] inputs = _inputs;</span>
+    public  &lt;V&gt; Tensor&lt;V&gt; input(Class&lt;V&gt; valueTypeClass, int i ) {
+<span class="fc" id="L110">        Tensor&lt;?&gt;[] inputs = _inputs;</span>
 <span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if ( valueTypeClass == null ) {</span>
 <span class="nc" id="L112">            throw new IllegalArgumentException(</span>
                     &quot;The provided tensor type class is null!\n&quot; +
@@ -124,7 +124,7 @@ public class Call&lt;D&gt;
                 );
             }
         }
-<span class="fc" id="L127">        return (Tsr&lt;V&gt;) inputs[ i ];</span>
+<span class="fc" id="L127">        return (Tensor&lt;V&gt;) inputs[ i ];</span>
     }
 
 <span class="fc" id="L130">    public Validator validate() { return new Validator(); }</span>
@@ -133,16 +133,16 @@ public class Call&lt;D&gt;
     public static class Builder&lt;V, T extends Device&lt;V&gt;&gt;
     {
         private final T _device;
-        private Tsr&lt;V&gt;[] _tensors;
+        private Tensor&lt;V&gt;[] _tensors;
 <span class="fc" id="L137">        private final Args _arguments = Args.of( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) );</span>
 
 
 <span class="fc" id="L140">        private Builder( T device ) { _device = device; }</span>
 
         @SafeVarargs
-        public final &lt;N extends V&gt; Builder&lt;V,T&gt; with( Tsr&lt;N&gt;... tensors ) {
-<span class="fc" id="L144">            LogUtil.nullArgCheck( tensors, &quot;tensors&quot;, Tsr[].class );</span>
-<span class="fc" id="L145">            _tensors = (Tsr&lt;V&gt;[]) tensors;</span>
+        public final &lt;N extends V&gt; Builder&lt;V,T&gt; with( Tensor&lt;N&gt;... tensors ) {
+<span class="fc" id="L144">            LogUtil.nullArgCheck( tensors, &quot;tensors&quot;, Tensor[].class );</span>
+<span class="fc" id="L145">            _tensors = (Tensor&lt;V&gt;[]) tensors;</span>
 <span class="fc" id="L146">            return this;</span>
         }
 
@@ -224,7 +224,7 @@ public class Call&lt;D&gt;
 
         private boolean _anyMatch( TensorCondition condition ) {
 <span class="fc" id="L226">            boolean any = false;</span>
-<span class="fc bfc" id="L227" title="All 6 branches covered.">            for ( Tsr&lt;?&gt; t : _inputs) any = condition.check( t ) || any;</span>
+<span class="fc bfc" id="L227" title="All 6 branches covered.">            for ( Tensor&lt;?&gt; t : _inputs) any = condition.check( t ) || any;</span>
 <span class="fc" id="L228">            return any;</span>
         }
 
@@ -236,7 +236,7 @@ public class Call&lt;D&gt;
 
         private boolean _anyNotNullMatch( TensorCondition condition ) {
 <span class="nc" id="L238">            boolean any = false;</span>
-<span class="nc bnc" id="L239" title="All 2 branches missed.">            for ( Tsr&lt;?&gt; t : _inputs)</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">            for ( Tensor&lt;?&gt; t : _inputs)</span>
 <span class="nc bnc" id="L240" title="All 6 branches missed.">                if ( t != null ) any = condition.check( t ) || any;</span>
 <span class="nc" id="L241">            return any;</span>
         }
@@ -257,7 +257,7 @@ public class Call&lt;D&gt;
 <span class="fc" id="L257">            LogUtil.nullArgCheck( propertySource, &quot;propertySource&quot;, TensorProperty.class );</span>
 <span class="fc" id="L258">            Object last = null;</span>
 <span class="fc" id="L259">            boolean firstWasSet = false;</span>
-<span class="fc bfc" id="L260" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : inputs() ) {</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">            for ( Tensor&lt;?&gt; t : inputs() ) {</span>
 <span class="fc bfc" id="L261" title="All 2 branches covered.">                if ( t != null ) {</span>
 <span class="fc" id="L262">                    Object current = propertySource.propertyOf(t);</span>
 <span class="fc bfc" id="L263" title="All 4 branches covered.">                    if ( !Objects.equals(last, current) &amp;&amp; firstWasSet )</span>
@@ -271,7 +271,7 @@ public class Call&lt;D&gt;
 
         private boolean _allMatch( TensorCondition condition ) {
 <span class="fc" id="L273">            boolean all = true;</span>
-<span class="fc bfc" id="L274" title="All 6 branches covered.">            for ( Tsr&lt;?&gt; t : _inputs) all = condition.check( t ) &amp;&amp; all;</span>
+<span class="fc bfc" id="L274" title="All 6 branches covered.">            for ( Tensor&lt;?&gt; t : _inputs) all = condition.check( t ) &amp;&amp; all;</span>
 <span class="fc" id="L275">            return all;</span>
         }
 
@@ -284,7 +284,7 @@ public class Call&lt;D&gt;
         private boolean _allNotNullMatch( TensorCondition condition )
         {
 <span class="fc" id="L286">            boolean all = true;</span>
-<span class="fc bfc" id="L287" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : _inputs)</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">            for ( Tensor&lt;?&gt; t : _inputs)</span>
 <span class="pc bpc" id="L288" title="1 of 6 branches missed.">                if ( t != null ) all = condition.check( t ) &amp;&amp; all;</span>
 <span class="fc" id="L289">            return all;</span>
         }
@@ -297,18 +297,18 @@ public class Call&lt;D&gt;
 
         private boolean _allMatch( TensorCompare compare ) {
 <span class="fc" id="L299">            boolean all = true;</span>
-<span class="fc" id="L300">            Tsr&lt;?&gt; last = null;</span>
-<span class="fc bfc" id="L301" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; current : _inputs) {</span>
+<span class="fc" id="L300">            Tensor&lt;?&gt; last = null;</span>
+<span class="fc bfc" id="L301" title="All 2 branches covered.">            for ( Tensor&lt;?&gt; current : _inputs) {</span>
 <span class="pc bpc" id="L302" title="1 of 4 branches missed.">                if ( last != null &amp;&amp; !compare.check( last, current ) ) all = false;</span>
 <span class="fc" id="L303">                last = current; // Note: shapes are cached!</span>
             }
 <span class="fc" id="L305">            return all;</span>
         }
 
-        public &lt;T&gt; Validator allShare( Function&lt;Tsr&lt;?&gt;, T&gt; propertyProvider ) {
+        public &lt;T&gt; Validator allShare( Function&lt;Tensor&lt;?&gt;, T&gt; propertyProvider ) {
 <span class="fc" id="L309">            LogUtil.nullArgCheck( propertyProvider, &quot;propertyProvider&quot;, Function.class );</span>
 <span class="fc" id="L310">            T first = null;</span>
-<span class="fc bfc" id="L311" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : _inputs ) {</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">            for ( Tensor&lt;?&gt; t : _inputs ) {</span>
 <span class="pc bpc" id="L312" title="1 of 2 branches missed.">                if ( t != null ) {</span>
 <span class="fc" id="L313">                    T found = propertyProvider.apply( t );</span>
 <span class="pc bpc" id="L314" title="1 of 4 branches missed.">                    if ( first == null &amp;&amp; found != null ) first = found;</span>
@@ -358,10 +358,10 @@ public class Call&lt;D&gt;
 
     }
 
-    public interface TensorProperty     { Object  propertyOf( Tsr&lt;?&gt; tensor ); }
-    public interface TensorCompare      { boolean check( Tsr&lt;?&gt; first, Tsr&lt;?&gt; second ); }
-    public interface TensorsCondition   { boolean check( Tsr&lt;?&gt;[] tensors ); }
-    public interface TensorCondition    { boolean check( Tsr&lt;?&gt; tensor ); }
+    public interface TensorProperty     { Object  propertyOf( Tensor&lt;?&gt; tensor ); }
+    public interface TensorCompare      { boolean check(Tensor&lt;?&gt; first, Tensor&lt;?&gt; second ); }
+    public interface TensorsCondition   { boolean check( Tensor&lt;?&gt;[] tensors ); }
+    public interface TensorCondition    { boolean check( Tensor&lt;?&gt; tensor ); }
     public interface DeviceCondition    { boolean check( Device&lt;?&gt; device ); }
     public interface OperationCondition { boolean check( Operation type ); }
 

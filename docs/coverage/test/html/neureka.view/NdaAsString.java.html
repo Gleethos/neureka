@@ -38,7 +38,7 @@ package neureka.view;
 
 import neureka.Nda;
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.GraphNode;
 import neureka.framing.NDFrame;
 import neureka.ndim.config.NDConfiguration;
@@ -80,7 +80,7 @@ public final class NdaAsString
 <span class="fc" id="L80">    private final boolean _preferLeftPadding = true;</span>
 
     private final int[]   _shape;
-    private final Tsr&lt;?&gt;  _tensor;
+    private final Tensor&lt;?&gt; _tensor;
     private final boolean _legacy;
 
     private final NDPrintSettings _config;
@@ -93,7 +93,7 @@ public final class NdaAsString
     public static Builder representing( Nda&lt;?&gt; t ) {
 <span class="fc" id="L94">        return new Builder() {</span>
             /**
-             * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+             * @param configMap The configuration map used as basis for turning the wrapped {@link Tensor} to a {@link String}.
              * @return A new {@link NdaAsString} based on the provided configuration.
              */
             @Override
@@ -101,7 +101,7 @@ public final class NdaAsString
 <span class="fc" id="L101">                return new NdaAsString( t, configMap );</span>
             }
             /**
-             * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+             * @param config The configuration used as basis for turning the wrapped {@link Tensor} to a {@link String}.
              * @return A new {@link NdaAsString} based on the provided configuration.
              */
             @Override
@@ -122,7 +122,7 @@ public final class NdaAsString
 <span class="nc" id="L122">            _shape = new int[0];</span>
 
 <span class="fc" id="L124">        _config = settings.clone();</span>
-<span class="fc" id="L125">        _tensor = (Tsr&lt;?&gt;) tensor; // There is only one implementation for both Tsr and Nda...</span>
+<span class="fc" id="L125">        _tensor = (Tensor&lt;?&gt;) tensor; // There is only one implementation for both Tensor and Nda...</span>
 
 <span class="fc" id="L127">        _isCompact          = _config.getIsScientific() ;</span>
 <span class="fc" id="L128">        _rowLimit           = _config.getRowLimit() ;</span>
@@ -296,7 +296,7 @@ public final class NdaAsString
 
 <span class="fc bfc" id="L297" title="All 6 branches covered.">        if ( _hasGradient &amp;&amp; ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {</span>
 <span class="fc" id="L298">            _$( &quot;:g&quot; );</span>
-<span class="fc" id="L299">            Tsr&lt;?&gt; gradient = _tensor.gradient().orElse(null);</span>
+<span class="fc" id="L299">            Tensor&lt;?&gt; gradient = _tensor.gradient().orElse(null);</span>
 <span class="fc bfc" id="L300" title="All 2 branches covered.">            if ( gradient != null )</span>
 <span class="fc" id="L301">                _$(</span>
 <span class="fc" id="L302">                    gradient.toString(</span>
@@ -544,13 +544,13 @@ public final class NdaAsString
      */
     public interface Builder {
         /**
-         * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+         * @param configMap The configuration map used as basis for turning the wrapped {@link Tensor} to a {@link String}.
          * @return A new {@link NdaAsString} based on the provided configuration.
          */
         NdaAsString withConfig( NDPrintSettings configMap );
 
         /**
-         * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+         * @param config The configuration used as basis for turning the wrapped {@link Tensor} to a {@link String}.
          * @return A new {@link NdaAsString} based on the provided configuration.
          */
         NdaAsString withConfig( String config );

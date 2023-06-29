@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScalarBroadcast.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.algorithms</a> &gt; <span class="el_source">ScalarBroadcast.java</span></div><h1>ScalarBroadcast.java</h1><pre class="source lang-java linenums">package neureka.backend.main.algorithms;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -45,7 +45,7 @@ import neureka.ndim.NDimensional;
 <span class="nc bnc" id="L45" title="All 2 branches missed.">                    assert call.input( 0 ) == null;  // Creating a new tensor:</span>
 <span class="nc" id="L46">                    Shape outShape = call.input( 1 ).shape();</span>
 <span class="nc" id="L47">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input( 1 ).getItemType();</span>
-<span class="nc" id="L48">                    Tsr output = Tsr.of( type, outShape, 0.0 ).mut().setIsIntermediate( true );</span>
+<span class="nc" id="L48">                    Tensor output = Tensor.of( type, outShape, 0.0 ).mut().setIsIntermediate( true );</span>
 <span class="nc" id="L49">                    output.mut().setIsVirtual( false );</span>
                     try {
 <span class="nc" id="L51">                        device.store( output );</span>
@@ -68,7 +68,7 @@ import neureka.ndim.NDimensional;
 <span class="fc" id="L68">                int d = call.getValOf(Arg.DerivIdx.class);</span>
 <span class="pc bpc" id="L69" title="1 of 2 branches missed.">                CPUFun f = d &lt; 0 ? fun.getActivation() : fun.getDerivative();</span>
 <span class="fc" id="L70">                double value =  f.invoke( call.input( Number.class, 1 ).at(0).get().doubleValue() );</span>
-<span class="fc" id="L71">                Tsr&lt;Number&gt; t = call.input( Number.class, 0 );</span>
+<span class="fc" id="L71">                Tensor&lt;Number&gt; t = call.input( Number.class, 0 );</span>
 <span class="fc" id="L72">                int gwz = t.size();</span>
 <span class="fc" id="L73">                call.getDevice()</span>
 <span class="fc" id="L74">                        .getKernel(&quot;scalar_broadcast&quot;)</span>

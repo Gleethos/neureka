@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ADAction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">ADAction.java</span></div><h1>ADAction.java</h1><pre class="source lang-java linenums">package neureka.autograd;
 
-import neureka.Tsr;
+import neureka.Tensor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public interface ADAction
 {
 <span class="fc" id="L28">    static ADAction of( ADAction action ) { return new DefaultADAction( action, null ); }</span>
 
-<span class="nc" id="L30">    static ADAction of( Tsr&lt;?&gt; derivative, ADAction action ) { return new DefaultADAction( action, derivative ); }</span>
+<span class="nc" id="L30">    static ADAction of(Tensor&lt;?&gt; derivative, ADAction action ) { return new DefaultADAction( action, derivative ); }</span>
 
     /**
      *  The auto-differentiation forward or backward pass of an ADAction
@@ -37,33 +37,33 @@ public interface ADAction
      *               be performed and error which ought to be used for the forward or backward differentiation.
      * @return The result of a forward or backward mode auto differentiation.
      */
-    Tsr&lt;?&gt; act( ADTarget&lt;?&gt; target );
+    Tensor&lt;?&gt; act(ADTarget&lt;?&gt; target );
 
     /**
-     *  Finds captured {@link Tsr} instances in this current action
+     *  Finds captured {@link Tensor} instances in this current action
      *  using reflection (This is usually a partial derivative).
      *
-     * @return The captured {@link Tsr} instances.
+     * @return The captured {@link Tensor} instances.
      */
-    default Tsr&lt;?&gt;[] findCaptured() {
-<span class="fc" id="L49">        List&lt;Tsr&lt;?&gt;&gt; captured = new ArrayList&lt;&gt;();</span>
+    default Tensor&lt;?&gt;[] findCaptured() {
+<span class="fc" id="L49">        List&lt;Tensor&lt;?&gt;&gt; captured = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L50" title="All 2 branches covered.">        for ( Class&lt;?&gt; c = this.getClass(); c != null; c = c.getSuperclass() ) {</span>
 <span class="fc bfc" id="L51" title="All 2 branches covered.">            for ( java.lang.reflect.Field f : c.getDeclaredFields() ) {</span>
-<span class="fc bfc" id="L52" title="All 2 branches covered.">                if ( f.getType().equals(Tsr.class) ) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                if ( f.getType().equals(Tensor.class) ) {</span>
 <span class="fc" id="L53">                    f.setAccessible(true);</span>
                     try {
-<span class="fc" id="L55">                        captured.add( (Tsr&lt;?&gt;) f.get(this) );</span>
+<span class="fc" id="L55">                        captured.add( (Tensor&lt;?&gt;) f.get(this) );</span>
 <span class="nc" id="L56">                    } catch (IllegalAccessException e) {</span>
 <span class="nc" id="L57">                        e.printStackTrace();</span>
 <span class="fc" id="L58">                    }</span>
                 }
             }
         }
-<span class="fc" id="L62">        return captured.toArray( new Tsr[0] );</span>
+<span class="fc" id="L62">        return captured.toArray( new Tensor[0] );</span>
     }
 
-    default Optional&lt;Tsr&lt;?&gt;&gt; partialDerivative() {
-<span class="nc" id="L66">        Tsr&lt;?&gt;[] captured = this.findCaptured();</span>
+    default Optional&lt;Tensor&lt;?&gt;&gt; partialDerivative() {
+<span class="nc" id="L66">        Tensor&lt;?&gt;[] captured = this.findCaptured();</span>
 <span class="nc bnc" id="L67" title="All 2 branches missed.">        if ( captured.length &gt; 0 )</span>
 <span class="nc" id="L68">            return Optional.of(captured[captured.length - 1]);</span>
 

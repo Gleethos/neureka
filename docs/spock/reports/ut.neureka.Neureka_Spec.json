@@ -1,7 +1,7 @@
 {
   "className":"ut.neureka.Neureka_Spec",
   "title":"The Neureka context can be used and configured as expected.",
-  "narrative":"This specification covers the behavior of the Neureka class which\n    exposes a global API for configuring thread local contexts and library settings.\n    The purpose of this is to assert that the API exposed by the Neureka class \n    is both thread local and configurable.\n    This specification also exists to cover standards for the Neureka library in general.",
+  "narrative":"This specification covers the behavior of the Neureka class which\n    exposes a global API for configuring thread local contexts and library settings.\n    The purpose of this is to assert that the API exposed by the Neureka class\n    is both thread local and configurable.\n    This specification also exists to cover standards for the Neureka library in general.",
   "subjects":["neureka.Neureka"],
   "statistics":{
     "runs":"6",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"9.609 seconds"
+    "duration":"8.428 seconds"
   },
   "headers":["\n                    This specification defines what types of settings are exposed by\n                    Neureka as well as more general things like how string representations\n                    of various library types should look like... \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Neureka class instance has expected behaviour.",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.049 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,7 +27,7 @@
 
         {"kind":"then","text":"This setting change applies!","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()","!Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()"]},
 
-        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"0.21.0\"//version"]}
+        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"1.0.0\"//version"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -35,7 +35,7 @@
     {
       "id":"Neureka settings class can be locked causing its properties to be immutable.",
       "result":"PASS",
-      "duration":"0.482 seconds",
+      "duration":"0.321 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Every Thread instance has their own Neureka instance.",
       "result":"PASS",
-      "duration":"5.988 seconds",
+      "duration":"5.746 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -87,14 +87,14 @@
     {
       "id":"Various library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"0.990 seconds",
+      "duration":"0.704 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
 
-        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tsr.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tsr.of(2d).setRqsGradient(true)*Tsr.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -102,7 +102,7 @@
     {
       "id":"OpenCL related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"0.119 seconds",
+      "duration":"0.083 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -117,7 +117,7 @@
     {
       "id":"Backend related library objects adhere to the same toString formatting convention!",
       "result":"PASS",
-      "duration":"1.869 seconds",
+      "duration":"1.458 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

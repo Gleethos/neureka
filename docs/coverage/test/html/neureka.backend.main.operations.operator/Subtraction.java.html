@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Subtraction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.operator</a> &gt; <span class="el_source">Subtraction.java</span></div><h1>Subtraction.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.operator;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -63,11 +63,11 @@ import java.util.stream.IntStream;
                     {
 <span class="pc bpc" id="L64" title="1 of 2 branches missed.">                        if ( call.autogradMode().allowsForward() )</span>
 <span class="nc" id="L65">                            throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
-<span class="fc" id="L66">                        Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="fc" id="L66">                        Tensor&lt;?&gt; ctxDerivative = (Tensor&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
 <span class="pc bpc" id="L67" title="1 of 2 branches missed.">                        assert ctxDerivative == null;</span>
 <span class="fc" id="L68">                        int d = call.getDerivativeIndex();</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">                        Tsr&lt;?&gt; derivative = ElemWiseUtil.newTsrLike( call.input( d == 0 ? 1 : 0 ), 0 );</span>
-<span class="fc" id="L70">                        Tsr&lt;?&gt; toBeDerived = ElemWiseUtil.newTsrLike( call.input( d ), 0 );</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                        Tensor&lt;?&gt; derivative = ElemWiseUtil.newTensorLike( call.input( d == 0 ? 1 : 0 ), 0 );</span>
+<span class="fc" id="L70">                        Tensor&lt;?&gt; toBeDerived = ElemWiseUtil.newTensorLike( call.input( d ), 0 );</span>
 <span class="fc" id="L71">                        Device device = call.getDevice();</span>
 <span class="fc" id="L72">                        return</span>
 <span class="fc" id="L73">                            ADAction.of(</span>
@@ -109,11 +109,11 @@ import java.util.stream.IntStream;
 <span class="fc" id="L109">                                                        .filter( i -&gt; caller.getSubFunctions().get(i).dependsOn(d) )</span>
 <span class="fc" id="L110">                                                        .toArray();</span>
 
-<span class="fc" id="L112">                Tsr[] results = new Tsr[ toBeDerived.length ];</span>
+<span class="fc" id="L112">                Tensor[] results = new Tensor[ toBeDerived.length ];</span>
 <span class="fc" id="L113">                Function neg = Neureka.get().backend().getFunction().neg();</span>
 <span class="fc bfc" id="L114" title="All 2 branches covered.">                for ( int i = 0; i &lt; results.length; i++ ) {</span>
 <span class="fc" id="L115">                    Function noAD = Function.of( caller.getSubFunctions().get( toBeDerived[i] ).toString(), false );</span>
-<span class="fc bfc" id="L116" title="All 2 branches covered.">                    Tsr&lt;?&gt; deriv = noAD.execute( noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation()) );</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">                    Tensor&lt;?&gt; deriv = noAD.execute( noAD.getOperation() == null ? call : call.withOperation(noAD.getOperation()) );</span>
 <span class="fc bfc" id="L117" title="All 2 branches covered.">                    if ( i &gt; 0 ) deriv = neg.execute(deriv);</span>
 <span class="fc" id="L118">                    results[ i ] = deriv;</span>
                 }

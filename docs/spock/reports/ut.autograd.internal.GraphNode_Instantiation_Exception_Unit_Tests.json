@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.332 seconds"
+    "duration":"0.066 seconds"
   },
   "headers":["\n            <h2> GraphNode Instantiation Tests </h2>\n            <p>\n                Specified below are strict tests covering the behavior\n                of the GraphNode class during instantiation where\n                inputs are setup to cause expected exceptions.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"GraphNode instantiation throws exception because tensors of ExecutionCall do not return GraphNode instances.",
       "result":"PASS",
-      "duration":"0.289 seconds",
+      "duration":"0.044 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Mocked arguments used to call the GraphNode constructor.","code":["Tsr payload = Mock( Tsr )","Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }","Supplier<Tsr> supplier = () -> payload","Function function = Mock( Function )","Operation type = Mock(Operation)","Object context = Mock( ExecutionCall )","Device device = Mock( Device )","def inputsNodeMock = Mock( GraphNode )"]},
+        {"kind":"given","text":"Mocked arguments used to call the GraphNode constructor.","code":["Tensor payload = Mock( Tensor )","Tensor[] inputs = new Tensor[]{ Mock(Tensor), Mock(Tensor), Mock(Tensor) }","Supplier<Tensor> supplier = () -> payload","Function function = Mock( Function )","Operation type = Mock(Operation)","Object context = Mock( ExecutionCall )","Device device = Mock( Device )","def inputsNodeMock = Mock( GraphNode )"]},
 
         {"kind":"when","text":"We try to instantiate a GraphNode...","code":["new GraphNode( function, context, supplier )"]},
 
@@ -35,12 +35,12 @@
     {
       "id":"GraphNode throws an exception when trying to execute an inline operation on inputs with active autograd.",
       "result":"PASS",
-      "duration":"0.040 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Mocked arguments used to call the GraphNode constructor.","code":["Tsr payload = Mock( Tsr )","Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }","Supplier<Tsr> supplier = () -> payload","AbstractOperation type = Mock( AbstractOperation )","Function function = Mock( Function )","Object context = Mock( ExecutionCall )","Device device = Mock( Device )","def inputsNodeMock = Mock( GraphNode )"]},
+        {"kind":"given","text":"Mocked arguments used to call the GraphNode constructor.","code":["Tensor payload = Mock( Tensor )","Tensor[] inputs = new Tensor[]{ Mock(Tensor), Mock(Tensor), Mock(Tensor) }","Supplier<Tensor> supplier = () -> payload","AbstractOperation type = Mock( AbstractOperation )","Function function = Mock( Function )","Object context = Mock( ExecutionCall )","Device device = Mock( Device )","def inputsNodeMock = Mock( GraphNode )"]},
 
         {"kind":"when","text":"We try to instantiate a GraphNode...","code":["new GraphNode( function, context, supplier )"]},
 

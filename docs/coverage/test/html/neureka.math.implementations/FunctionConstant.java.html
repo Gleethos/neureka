@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionConstant.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.math.implementations</a> &gt; <span class="el_source">FunctionConstant.java</span></div><h1>FunctionConstant.java</h1><pre class="source lang-java linenums">package neureka.math.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.math.Function;
 import neureka.math.args.Arg;
@@ -66,9 +66,9 @@ public final class FunctionConstant implements Function
 <span class="fc" id="L66">	@Override public double derive( double[] inputs, int index, int j ) { return 0; }</span>
 
 	@Override
-	public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... inputs ) {
+	public Tensor&lt;?&gt; execute(Args arguments, Tensor&lt;?&gt;... inputs ) {
 <span class="pc bpc" id="L70" title="1 of 4 branches missed.">		if ( arguments.has(Arg.DerivIdx.class) &amp;&amp; arguments.valOf(Arg.DerivIdx.class) &gt;= 0 ) {</span>
-<span class="fc" id="L71">			return Tsr.of(</span>
+<span class="fc" id="L71">			return Tensor.of(</span>
 <span class="fc" id="L72">						(Class&lt;? extends Number&gt;) inputs[ 0 ].getItemType(),</span>
 <span class="fc" id="L73">						inputs[ 0 ].shape(),</span>
 <span class="fc" id="L74">						0.0</span>
@@ -76,7 +76,7 @@ public final class FunctionConstant implements Function
 <span class="fc" id="L76">					.getMut()</span>
 <span class="fc" id="L77">					.setIsIntermediate( true );</span>
 		}
-<span class="fc" id="L79">		return Tsr.of(</span>
+<span class="fc" id="L79">		return Tensor.of(</span>
 <span class="fc" id="L80">					(Class&lt;? extends Number&gt;) inputs[ 0 ].getItemType(),</span>
 <span class="fc" id="L81">					inputs[ 0 ].shape(),</span>
 <span class="fc" id="L82">					_value</span>

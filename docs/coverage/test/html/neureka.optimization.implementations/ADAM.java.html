@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.optimization.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
@@ -58,20 +58,20 @@ public final class ADAM&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
     private final double lr; // learning rate
 
     // Variables:
-    private Tsr&lt;V&gt; m; // momentum
-    private Tsr&lt;V&gt; v; // velocity
+    private Tensor&lt;V&gt; m; // momentum
+    private Tensor&lt;V&gt; v; // velocity
     private long t; // time
 
-    ADAM( long t, double lr, Tsr&lt;V&gt; target ) {
+    ADAM( long t, double lr, Tensor&lt;V&gt; target ) {
 <span class="fc" id="L66">        this(t, lr, // Step size/learning rate is 0.01 by default!</span>
-<span class="fc" id="L67">            Tsr.of(target.getItemType(), target.shape(), 0), // momentum</span>
-<span class="fc" id="L68">            Tsr.of(target.getItemType(), target.shape(), 0)  // velocity</span>
+<span class="fc" id="L67">            Tensor.of(target.getItemType(), target.shape(), 0), // momentum</span>
+<span class="fc" id="L68">            Tensor.of(target.getItemType(), target.shape(), 0)  // velocity</span>
         );
 <span class="fc" id="L70">    }</span>
 
-<span class="fc" id="L72">    ADAM(long t, double lr, Tsr&lt;V&gt; m, Tsr&lt;V&gt; v ) {</span>
-<span class="fc" id="L73">        LogUtil.nullArgCheck( m, &quot;m&quot;, Tsr.class );</span>
-<span class="fc" id="L74">        LogUtil.nullArgCheck( v, &quot;v&quot;, Tsr.class );</span>
+<span class="fc" id="L72">    ADAM(long t, double lr, Tensor&lt;V&gt; m, Tensor&lt;V&gt; v ) {</span>
+<span class="fc" id="L73">        LogUtil.nullArgCheck( m, &quot;m&quot;, Tensor.class );</span>
+<span class="fc" id="L74">        LogUtil.nullArgCheck( v, &quot;v&quot;, Tensor.class );</span>
 <span class="fc" id="L75">        this.m = m;</span>
 <span class="fc" id="L76">        this.v = v;</span>
 <span class="fc" id="L77">        this.t = t;</span>
@@ -79,27 +79,27 @@ public final class ADAM&lt;V extends Number&gt; implements Optimizer&lt;V&gt;
 <span class="fc" id="L79">    }</span>
 
     @Override
-    public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
-<span class="fc" id="L83">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
+    public Tensor&lt;V&gt; optimize(Tensor&lt;V&gt; w ) {
+<span class="fc" id="L83">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tensor.class ); // The input must not be null!</span>
 <span class="fc" id="L84">        t++;</span>
-<span class="pc" id="L85">        Tsr&lt;V&gt; g = w.gradient().orElseThrow( () -&gt; new IllegalStateException(&quot;Gradient missing! Cannot perform optimization.&quot;) );</span>
+<span class="pc" id="L85">        Tensor&lt;V&gt; g = w.gradient().orElseThrow( () -&gt; new IllegalStateException(&quot;Gradient missing! Cannot perform optimization.&quot;) );</span>
 <span class="fc" id="L86">        double b1Inverse = ( 1 - B1 );</span>
 <span class="fc" id="L87">        double b2Inverse = ( 1 - B2 );</span>
 <span class="fc" id="L88">        double b1hat = ( 1 - Math.pow( B1, t ) );</span>
 <span class="fc" id="L89">        double b2hat = ( 1 - Math.pow( B2, t ) );</span>
-<span class="fc" id="L90">        m = Tsr.of(B1+&quot; * &quot;, m, &quot; + &quot;+b1Inverse+&quot; * &quot;, g);</span>
-<span class="fc" id="L91">        v = Tsr.of(B2+&quot; * &quot;, v, &quot; + &quot;+b2Inverse+&quot; * (&quot;, g,&quot;**2 )&quot;);</span>
-<span class="fc" id="L92">        Tsr&lt;V&gt; mh = Tsr.of(m, &quot;/&quot;+b1hat);</span>
-<span class="fc" id="L93">        Tsr&lt;V&gt; vh = Tsr.of(v, &quot;/&quot;+b2hat);</span>
-<span class="fc" id="L94">        Tsr&lt;V&gt; newg = Tsr.of(&quot;-&quot;+ lr +&quot; * &quot;,mh,&quot; / (&quot;,vh,&quot;**0.5 + &quot;+E+&quot;)&quot;);</span>
+<span class="fc" id="L90">        m = Tensor.of(B1+&quot; * &quot;, m, &quot; + &quot;+b1Inverse+&quot; * &quot;, g);</span>
+<span class="fc" id="L91">        v = Tensor.of(B2+&quot; * &quot;, v, &quot; + &quot;+b2Inverse+&quot; * (&quot;, g,&quot;**2 )&quot;);</span>
+<span class="fc" id="L92">        Tensor&lt;V&gt; mh = Tensor.of(m, &quot;/&quot;+b1hat);</span>
+<span class="fc" id="L93">        Tensor&lt;V&gt; vh = Tensor.of(v, &quot;/&quot;+b2hat);</span>
+<span class="fc" id="L94">        Tensor&lt;V&gt; newg = Tensor.of(&quot;-&quot;+ lr +&quot; * &quot;,mh,&quot; / (&quot;,vh,&quot;**0.5 + &quot;+E+&quot;)&quot;);</span>
 <span class="fc" id="L95">        mh.getMut().delete();</span>
 <span class="fc" id="L96">        vh.getMut().delete();</span>
 <span class="fc" id="L97">        return newg;</span>
     }
 
-<span class="nc" id="L100">    public final Tsr&lt;V&gt; getMomentum() { return m; }</span>
+<span class="nc" id="L100">    public final Tensor&lt;V&gt; getMomentum() { return m; }</span>
 
-<span class="nc" id="L102">    public final Tsr&lt;V&gt; getVelocity() { return v; }</span>
+<span class="nc" id="L102">    public final Tensor&lt;V&gt; getVelocity() { return v; }</span>
 
 <span class="nc" id="L104">    public final long getTime() { return t; }</span>
 

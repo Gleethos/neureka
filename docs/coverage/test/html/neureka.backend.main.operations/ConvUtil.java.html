@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConvUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations</a> &gt; <span class="el_source">ConvUtil.java</span></div><h1>ConvUtil.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
@@ -18,8 +18,8 @@ import neureka.devices.Device;
 <span class="fc" id="L18">        return new NDConvolution()</span>
 <span class="fc" id="L19">                .setAutogradModeFor( call -&gt; {</span>
 <span class="pc bpc" id="L20" title="1 of 2 branches missed.">                    if ( call.getOperation().supports( NDConvolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;</span>
-<span class="nc" id="L21">                    Tsr&lt;?&gt; last = null;</span>
-<span class="nc bnc" id="L22" title="All 2 branches missed.">                    for ( Tsr&lt;?&gt; t : call.inputs() ) {</span>
+<span class="nc" id="L21">                    Tensor&lt;?&gt; last = null;</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">                    for ( Tensor&lt;?&gt; t : call.inputs() ) {</span>
 <span class="nc bnc" id="L23" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return AutoDiffMode.BACKWARD_ONLY;</span>
 <span class="nc" id="L24">                        last = t; // Note: shapes are cached!</span>
                     }
@@ -32,9 +32,9 @@ import neureka.devices.Device;
                         call -&gt;
                         {
 <span class="pc bpc" id="L34" title="1 of 2 branches missed.">                            int offset = ( call.input(0) == null ? 1 : 0 );</span>
-<span class="fc" id="L35">                            Tsr&lt;?&gt;[] tensors = new Tsr[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};</span>
+<span class="fc" id="L35">                            Tensor&lt;?&gt;[] tensors = new Tensor[]{call.input(offset+0), call.input(offset+1), call.input(offset+2)};</span>
 <span class="fc" id="L36">                            Permute.makeFit(tensors, false); // This might not fit here... (fitting should probably be a setup thing...)</span>
-<span class="fc bfc" id="L37" title="All 2 branches covered.">                            for ( Tsr&lt;?&gt; t : tensors ) t.mut().setIsVirtual( false );</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">                            for ( Tensor&lt;?&gt; t : tensors ) t.mut().setIsVirtual( false );</span>
 <span class="fc" id="L38">                            return AbstractDeviceAlgorithm.prepareAndExecute(</span>
 <span class="fc" id="L39">                                    ExecutionCall.of( tensors )</span>
 <span class="fc" id="L40">                                            .andArgs( Arg.DerivIdx.of(0) )</span>
@@ -65,7 +65,7 @@ import neureka.devices.Device;
 <span class="fc" id="L65">        return Shape.of(shape);</span>
     }
     
-    public static Tsr&lt;?&gt; executeRecursively(
+    public static Tensor&lt;?&gt; executeRecursively(
             String op,
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call
     ) {

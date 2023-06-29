@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.020 seconds"
+    "duration":"0.011 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var a = Tsr.ofFloats().withShape(3, 4).all(7)","var b = Tsr.ofFloats().withShape(4, 2).all(-5)","var c = Tsr.ofFloats().withShape(3, 2).all(0)","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
+        {"kind":"given","text":"","code":["var a = Tensor.ofFloats().withShape(3, 4).all(7)","var b = Tensor.ofFloats().withShape(4, 2).all(-5)","var c = Tensor.ofFloats().withShape(3, 2).all(0)","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
 
         {"kind":"when","text":"","code":["new CLGEMM().run( call )"]},
 
@@ -33,12 +33,12 @@
     {
       "id":"The Reduce implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var a = Tsr.ofFloats().withShape(19, 7).andWhere({i, _ -> (1+(7**i)%30)})","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
+        {"kind":"given","text":"","code":["var a = Tensor.ofFloats().withShape(19, 7).andWhere({ i, _ -> (1+(7**i)%30)})","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
 
         {"kind":"when","text":"","code":["new CLReduce(type).run( call )"]},
 
@@ -54,12 +54,12 @@
     {
       "id":"The Sum implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var a = Tsr.ofFloats().withShape(19, 7).andWhere({i, _ -> (1+(7**i)%30)})","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
+        {"kind":"given","text":"","code":["var a = Tensor.ofFloats().withShape(19, 7).andWhere({ i, _ -> (1+(7**i)%30)})","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
 
         {"kind":"when","text":"","code":["new CLSum().run( call )"]},
 
@@ -71,12 +71,12 @@
     {
       "id":"The Sum implementation for the OpenCLDevice has realistic behaviour for when the number of elements is a prime.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var a = Tsr.ofFloats().withShape(31).andWhere({i, _ -> (1+(7**i)%30)})","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
+        {"kind":"given","text":"","code":["var a = Tensor.ofFloats().withShape(31).andWhere({ i, _ -> (1+(7**i)%30)})","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
 
         {"kind":"when","text":"","code":["new CLSum().run( call )"]},
 
@@ -88,12 +88,12 @@
     {
       "id":"The CLDot implementation for the OpenCLDevice has realistic behaviour",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var a = Tsr.ofFloats().withShape(19).andWhere({i, _ -> (1+(7**i)%30)})","var b = Tsr.ofFloats().withShape(19).andWhere({i, _ -> (1+(7**i)%30)})","var c = Tsr.ofFloats().withShape(1).all(0)","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
+        {"kind":"given","text":"","code":["var a = Tensor.ofFloats().withShape(19).andWhere({ i, _ -> (1+(7**i)%30)})","var b = Tensor.ofFloats().withShape(19).andWhere({ i, _ -> (1+(7**i)%30)})","var c = Tensor.ofFloats().withShape(1).all(0)","var call = Mock(ExecutionCall)","var device = Mock(OpenCLDevice)","var kernel = Mock(KernelCaller)"]},
 
         {"kind":"when","text":"","code":["new CLDot().run( call )"]},
 

@@ -23,7 +23,7 @@
       "blocks":[
         {"kind":"given","text":"","code":["var fun = Function.of('I[0] + I[1]')"]},
 
-        {"kind":"and","text":"","code":["var t = Tsr.of(4d)"]},
+        {"kind":"and","text":"","code":["var t = Tensor.of(4d)"]},
 
         {"kind":"when","text":"","code":["fun(t)"]},
 
@@ -44,7 +44,7 @@
       "blocks":[
         {"kind":"given","text":"","code":["var fun = Function.of('I[0] @ I[1]')"]},
 
-        {"kind":"and","text":"","code":["var t = Tsr.of(4d)"]},
+        {"kind":"and","text":"","code":["var t = Tensor.of(4d)"]},
 
         {"kind":"when","text":"","code":["fun(t)"]},
 

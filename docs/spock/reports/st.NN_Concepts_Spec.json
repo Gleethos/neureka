@@ -1,0 +1,41 @@
+{
+  "className":"st.NN_Concepts_Spec",
+  "title":"Examining Neural Network Architecture Snippets",
+  "narrative":"This specification is intended to showcase some basic building blocks of\n    various neural network architectures.",
+  "subjects":[],
+  "statistics":{
+    "runs":"1",
+    "successRate":"100.0%",
+    "failures":"0",
+    "errors":"0",
+    "skipped":"0",
+    "duration":"0.136 seconds"
+  },
+  "headers":[],"tags":{},"see":[],
+  "features":[ 
+    {
+      "id":"The attention mechanism (found in the commonly known transformer) demonstrated.",
+      "result":"PASS",
+      "duration":"0.135 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            The attention mechanism is a core component of the transformer architecture and\n            most likely the reason why it is so successful in natural language processing.\n\n            Here you can see that the query and key weight matrices are trained\n            if there is only one input vector.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"We define an input containing a single vector and target data.","code":["var x1  = Tensor.of( -2f, -1f ).reshape( 1, 2 )","var y = Tensor.of( 1.2f, -0.77f ).reshape( 1, 2 )"]},
+
+        {"kind":"and","text":"We define a custom weight matrix filler lambda.","code":["Filler<Float> filler = ( int i, int[] idx ) -> (float) (Math.abs( Math.pow( 31, 42 + i ) % 11 ) - 5) / 2f"]},
+
+        {"kind":"and","text":"","code":["var Wk = Tensor.of(Float.class, Shape.of(2, 2), filler).setRqsGradient(true)","var Wq = Tensor.of(Float.class, Shape.of(2, 2), filler).setRqsGradient(true)","var Wv = Tensor.of(Float.class, Shape.of(2, 2), filler).setRqsGradient(true)","Wk.set(Optimizer.ADAM)","Wq.set(Optimizer.ADAM)","Wv.set(Optimizer.ADAM)"]},
+
+        {"kind":"and","text":"Finally define everything for training.","code":["int trainingIterations = 10","var pred = null","var loss = []","            var trainer = { x ->","                Tensor<Float> key   = x.matMul(Wk)","                Tensor<Float> query = x.matMul(Wq)","                Tensor<Float> value = x.matMul(Wv)","","                var attention = query.matMul(key.T()).softmax(1)","","                pred = attention.matMul(value)","","                var error = ( ( y - pred ) ** 2f ).sum()","                error.backward()","","                // Applying gradients:","                Wk.applyGradient()","                Wq.applyGradient()","                Wv.applyGradient()","","                return error.item()","            }"]},
+
+        {"kind":"when","text":"","code":["trainingIterations.times {","    loss << trainer(x1)","}"]},
+
+        {"kind":"then","text":"","code":["pred.shape == [1, 2]","loss.size() == trainingIterations","loss[0] > loss[trainingIterations-1]","loss[0].round(3) == 0.633f","loss[trainingIterations-1].round(3) == 0.255f"]}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    }
+  
+  ],
+  "generator":"https://github.com/renatoathaydes/spock-reports"
+}

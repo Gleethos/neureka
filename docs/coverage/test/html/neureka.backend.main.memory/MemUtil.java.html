@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MemUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.memory</a> &gt; <span class="el_source">MemUtil.java</span></div><h1>MemUtil.java</h1><pre class="source lang-java linenums">package neureka.backend.main.memory;
 
 import neureka.Neureka;
-import neureka.Tsr;
-import neureka.autograd.GraphNode;
+import neureka.Tensor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.stream.Stream;
 /**
  *  Utility methods for deleting tensors or preventing thereof.
  *  In essence, it exposes convenience methods for setting and resetting
- *  the {@link Tsr#isIntermediate} flag or supplied tensors...
+ *  the {@link Tensor#isIntermediate} flag or supplied tensors...
  *  This is an internal library class which should not be used
  *  anywhere but in Neurekas backend.
  *  &lt;b&gt;Do not use this anywhere else!&lt;/b&gt;
@@ -29,7 +28,7 @@ public class MemUtil {
      *
      * @param tensors The tensors which should be deleted if possible.
      */
-    public static void autoDelete( Tsr&lt;?&gt;... tensors ) {
+    public static void autoDelete( Tensor&lt;?&gt;... tensors ) {
         /*
              When we are purely in the JVM world, then the garbage
              collector will take care of freeing our memory,
@@ -39,28 +38,28 @@ public class MemUtil {
              The code below will delete intermediate tensors which are expected
              to be no longer used.
         */
-<span class="fc bfc" id="L42" title="All 2 branches covered.">        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : tensors ) {</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            for ( Tensor&lt;?&gt; t : tensors ) {</span>
                 // Tensors flagged as 'intermediate' will automatically be deleted!
-<span class="pc bpc" id="L45" title="1 of 4 branches missed.">                if ( !t.isDeleted() &amp;&amp; t.isIntermediate() ) {</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">                    if (</span>
-<span class="fc" id="L47">                        t.getGraphNode()</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">                        .map(n-&gt;!n.isUsedAsDerivative())</span>
-<span class="fc" id="L49">                        .orElse(true) // No graph, we can delete it!</span>
+<span class="pc bpc" id="L44" title="1 of 4 branches missed.">                if ( !t.isDeleted() &amp;&amp; t.isIntermediate() ) {</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                    if (</span>
+<span class="fc" id="L46">                        t.getGraphNode()</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">                        .map(n-&gt;!n.isUsedAsDerivative())</span>
+<span class="fc" id="L48">                        .orElse(true) // No graph, we can delete it!</span>
                     )
-<span class="fc" id="L51">                        t.mut().delete();</span>
+<span class="fc" id="L50">                        t.mut().delete();</span>
                 }
             }
         }
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L54">    }</span>
 
     /**
      *  This method makes sure that the provided tensors do not get deleted
-     *  by setting the {@link Tsr#isIntermediate} flag to off
+     *  by setting the {@link Tensor#isIntermediate} flag to off
      *  during the execution of the provided {@link Supplier} lambda!
      *  In said lambda the supplied thing will ultimately be returned by
      *  this method...
-     *  All provided tensors will have the {@link Tsr#isIntermediate} flag
+     *  All provided tensors will have the {@link Tensor#isIntermediate} flag
      *  set to their original state after execution.
      *
      * @param tensors An array of tensors which should not be deleted during the execution of the supplied lambda.
@@ -68,22 +67,22 @@ public class MemUtil {
      * @param &lt;T&gt; The type of the result produced by the provided lambda.
      * @return The result produced by the provided lambda.
      */
-    public static &lt;T&gt; T keep( Tsr&lt;?&gt;[] tensors, Supplier&lt;T&gt; during ) {
-<span class="fc" id="L72">        List&lt;Tsr&lt;?&gt;&gt; doNotDelete = Arrays.stream(tensors).filter(Tsr::isIntermediate).collect(Collectors.toList());</span>
-<span class="fc" id="L73">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( false ) );</span>
-<span class="fc" id="L74">        T result = during.get();</span>
+    public static &lt;T&gt; T keep(Tensor&lt;?&gt;[] tensors, Supplier&lt;T&gt; during ) {
+<span class="fc" id="L71">        List&lt;Tensor&lt;?&gt;&gt; doNotDelete = Arrays.stream(tensors).filter(Tensor::isIntermediate).collect(Collectors.toList());</span>
+<span class="fc" id="L72">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( false ) );</span>
+<span class="fc" id="L73">        T result = during.get();</span>
         // After having calculated the result we allow deletion of the provided tensors again:
-<span class="fc" id="L76">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( true ) );</span>
-<span class="fc" id="L77">        return result;</span>
+<span class="fc" id="L75">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( true ) );</span>
+<span class="fc" id="L76">        return result;</span>
     }
 
     /**
      *  This method makes sure that the provided tensors do not get deleted
-     *  by setting the {@link Tsr#isIntermediate} flag to off
+     *  by setting the {@link Tensor#isIntermediate} flag to off
      *  during the execution of the provided {@link Supplier} lambda!
      *  In said lambda the supplied thing will ultimately be returned by
      *  this method...
-     *  Both of the provided tensors will have the {@link Tsr#isIntermediate} flag
+     *  Both of the provided tensors will have the {@link Tensor#isIntermediate} flag
      *  set to their original state after execution.
      *
      * @param a The first tensor which should not be deleted during the execution of the provided lambda.
@@ -92,13 +91,13 @@ public class MemUtil {
      * @param &lt;T&gt; The type of the result produced by the provided lambda.
      * @return The result produced by the provided lambda.
      */
-    public static &lt;T&gt; T keep( Tsr&lt;?&gt; a, Tsr&lt;?&gt; b, Supplier&lt;T&gt; during ) {
-<span class="fc" id="L96">        List&lt;Tsr&lt;?&gt;&gt; doNotDelete = Stream.of(a, b).filter(Tsr::isIntermediate).collect(Collectors.toList());</span>
-<span class="fc" id="L97">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( false ) );</span>
-<span class="fc" id="L98">        T result = during.get();</span>
+    public static &lt;T&gt; T keep(Tensor&lt;?&gt; a, Tensor&lt;?&gt; b, Supplier&lt;T&gt; during ) {
+<span class="fc" id="L95">        List&lt;Tensor&lt;?&gt;&gt; doNotDelete = Stream.of(a, b).filter(Tensor::isIntermediate).collect(Collectors.toList());</span>
+<span class="fc" id="L96">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( false ) );</span>
+<span class="fc" id="L97">        T result = during.get();</span>
         // After having calculated the result we allow deletion of the provided tensors again:
-<span class="fc" id="L100">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( true ) );</span>
-<span class="fc" id="L101">        return result;</span>
+<span class="fc" id="L99">        doNotDelete.forEach( t -&gt; t.mut().setIsIntermediate( true ) );</span>
+<span class="fc" id="L100">        return result;</span>
     }
 
 }

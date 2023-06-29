@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.optimization.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.utility.LogUtil;
 import neureka.optimization.Optimizer;
 
@@ -59,10 +59,10 @@ public class SGD&lt;V&gt; implements Optimizer&lt;V&gt;
 <span class="fc" id="L59">    }</span>
 
     @Override
-    public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
-<span class="fc" id="L63">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tsr.class ); // The input must not be null!</span>
-<span class="pc" id="L64">        Tsr&lt;V&gt; g = w.gradient().orElseThrow(()-&gt;new IllegalStateException(&quot;Gradient missing!&quot;));</span>
-<span class="fc" id="L65">        return Tsr.of(&quot;-&quot; + _lr + &quot; * i0&quot;, g);</span>
+    public Tensor&lt;V&gt; optimize(Tensor&lt;V&gt; w ) {
+<span class="fc" id="L63">        LogUtil.nullArgCheck( w, &quot;w&quot;, Tensor.class ); // The input must not be null!</span>
+<span class="pc" id="L64">        Tensor&lt;V&gt; g = w.gradient().orElseThrow(()-&gt;new IllegalStateException(&quot;Gradient missing!&quot;));</span>
+<span class="fc" id="L65">        return Tensor.of(&quot;-&quot; + _lr + &quot; * i0&quot;, g);</span>
     }
 
 <span class="nc" id="L68">    public double learningRate() { return _lr; }</span>

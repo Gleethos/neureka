@@ -1,7 +1,7 @@
 {
   "className":"ut.ndas.Nda_Reshape_Spec",
   "title":"Nda Reshaping",
-  "narrative":"Immutability is a core concept of the Neureka library.\n    This means that the Nda API does not expose mutability directly.\n    Instead, the API exposes methods that return new instances of Nda\n    that are derived from the original instance.\n\n    This is also true for reshaping operations, \n    meaning that the Nda API does not expose methods that mutate the shape of an Nda\n    but instead provides methods that return new instances of Nda\n    with a different shape.\n\n    Don't be concerned about the performance implications of this,\n    because in the vast majority of cases the new instance will be backed by the same data array\n    as the original instance!",
+  "narrative":"Immutability is a core concept of the Neureka library.\n    This means that the Nda API does not expose mutability directly.\n    Instead, the API exposes methods that return new instances of Nda\n    that are derived from the original instance.\n\n    This is also true for reshaping operations,\n    meaning that the Nda API does not expose methods that mutate the shape of an Nda\n    but instead provides methods that return new instances of Nda\n    with a different shape.\n\n    Don't be concerned about the performance implications of this,\n    because in the vast majority of cases the new instance will be backed by the same data array\n    as the original instance!",
   "subjects":["neureka.Nda"],
   "statistics":{
     "runs":"1",

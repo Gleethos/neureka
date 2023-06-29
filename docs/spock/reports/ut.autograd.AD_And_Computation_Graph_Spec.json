@@ -9,25 +9,25 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.700 seconds"
+    "duration":"0.610 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Reshaping produces expected computation graph and also works with reverse mode AD.",
       "result":"PASS",
-      "duration":"0.084 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tsr<Double> a = Tsr.of([2, 3], [","                    1d, 2d, 3d,","                    4d, 5d, 6d","                ]).setRqsGradient(true)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Tensor<Double> a = Tensor.of([2, 3], [","                    1d, 2d, 3d,","                    4d, 5d, 6d","                ]).setRqsGradient(true)"]},
 
         {"kind":"and","text":"","code":["Function rs = Function.of(\"[1, 0]:(I[0])\")"]},
 
-        {"kind":"when","text":"","code":["Tsr b = rs(a)","GraphNode na = a.get( GraphNode.class )","GraphNode nb = b.get( GraphNode.class )"]},
+        {"kind":"when","text":"","code":["Tensor b = rs(a)","GraphNode na = a.get( GraphNode.class )","GraphNode nb = b.get( GraphNode.class )"]},
 
-        {"kind":"then","text":"","code":["na.getChildren().size() == 1","b.toString().contains(\"\")//Todo!","b.backward(Tsr.of([3, 2],[","                    -1d, 2d,","                     4d, 7d,","                    -9d, 8d","            ]))","a.toString().contains(\"[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)\")","b.toString().contains(\"[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)\")","na.isLeave()","!na.function.isPresent()","na.parents == []","!na.pendingError.isPresent()","na.getMode() == 1"]},
+        {"kind":"then","text":"","code":["na.getChildren().size() == 1","b.toString().contains(\"\")//Todo!","b.backward(Tensor.of([3, 2],[","                    -1d, 2d,","                     4d, 7d,","                    -9d, 8d","            ]))","a.toString().contains(\"[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)\")","b.toString().contains(\"[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)\")","na.isLeave()","!na.function.isPresent()","na.parents == []","!na.pendingError.isPresent()","na.getMode() == 1"]},
 
         {"kind":"and","text":"We expect the partial derivative to be cleaned up! (size == 0)","code":["na.size()==0","!nb.isLeave()","nb.function.isPresent()","nb.getMode() == -1","nb.size()==0"]}
       ],
@@ -37,12 +37,12 @@
     {
       "id":"Payloads and derivatives are null after garbage collection.",
       "result":"PASS",
-      "duration":"0.600 seconds",
+      "duration":"0.606 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Tsr<Double> a = Tsr.of(2d).setRqsGradient(true)","Tsr<Double> b = a * 3 / 5","Tsr<Double> c = Tsr.of(3d)","Tsr<Double> d = b ** c","Tsr<Double> e = d * c","GraphNode n = e.get( GraphNode.class )","var strongRefs = n.parents.collect { it.payload.get() }"]},
+        {"kind":"given","text":"","code":["Tensor<Double> a = Tensor.of(2d).setRqsGradient(true)","Tensor<Double> b = a * 3 / 5","Tensor<Double> c = Tensor.of(3d)","Tensor<Double> d = b ** c","Tensor<Double> e = d * c","GraphNode n = e.get( GraphNode.class )","var strongRefs = n.parents.collect { it.payload.get() }"]},
 
         {"kind":"expect","text":"","code":["!n.parents[0].isLeave()","n.parents[0].isGraphLeave()","n.parents[1].isLeave()","n.parents[1].isGraphLeave()"]},
 

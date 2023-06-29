@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractActivationOperation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.functions</a> &gt; <span class="el_source">AbstractActivationOperation.java</span></div><h1>AbstractActivationOperation.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.functions;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.Result;
@@ -66,8 +66,8 @@ abstract class AbstractActivationOperation extends AbstractOperation
                 // The user wants the derivative! So we need to do inner times outer derivative! (because the function is not flat)
 <span class="fc" id="L67">                ExecutionCall&lt;?&gt; inner = AbstractDeviceAlgorithm.flatten( noAdFun, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
 <span class="fc" id="L68">                Result innerDerivResult = innerFun.getOperation().execute( innerFun, call.withOperation(innerFun.getOperation()) );</span>
-<span class="fc" id="L69">                Tsr&lt;?&gt; innerDeriv = innerDerivResult.get();</span>
-<span class="fc" id="L70">                Tsr&lt;?&gt; outerDeriv = super.execute( flat, inner.withArgs(Arg.DerivIdx.of(0)) ).get();</span>
+<span class="fc" id="L69">                Tensor&lt;?&gt; innerDeriv = innerDerivResult.get();</span>
+<span class="fc" id="L70">                Tensor&lt;?&gt; outerDeriv = super.execute( flat, inner.withArgs(Arg.DerivIdx.of(0)) ).get();</span>
 <span class="fc" id="L71">                Operation mul = Neureka.get().backend().getOperation(&quot;*&quot;);</span>
 <span class="fc" id="L72">                Function opFun = new FunctionParser(Neureka.get().backend()).parse( mul, 2, false );</span>
 <span class="fc" id="L73">                return mul.execute(</span>

@@ -9,23 +9,23 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.155 seconds"
+    "duration":"0.124 seconds"
   },
-  "headers":["\n            <h2>Autograd Tensor Integration Tests</h2>\n            <p>\n                This specification contains tests which\n                cover the autograd behavior of tensors. <br>\n                The classes involved in governing the tested features are\n                the Tsr, GraphNode and Function (& implementations) classes.\n            </p>\n        "],"tags":{},"see":[],
+  "headers":["\n            <h2>Autograd Tensor Integration Tests</h2>\n            <p>\n                This specification contains tests which\n                cover the autograd behavior of tensors. <br>\n                The classes involved in governing the tested features are\n                the Tensor, GraphNode and Function (& implementations) classes.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test pending error optimization",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"The view settings are being set to legacy.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"The simple scalar tensors are being instantiated, where one requires gradients.","code":["var a = Tsr.of(2d).setRqsGradient(true)","var b = Tsr.of(-4d)","var c = Tsr.of(3d).setRqsGradient(true)"]},
+        {"kind":"and","text":"The simple scalar tensors are being instantiated, where one requires gradients.","code":["var a = Tensor.of(2d).setRqsGradient(true)","var b = Tensor.of(-4d)","var c = Tensor.of(3d).setRqsGradient(true)"]},
 
-        {"kind":"when","text":"The following calculations are being executed :","code":["var s =  (a*b) + 2","var x = s * (s+c)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)","x.backward(Tsr.of(1d))","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)"]},
+        {"kind":"when","text":"The following calculations are being executed :","code":["var s =  (a*b) + 2","var x = s * (s+c)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)","x.backward(Tensor.of(1d))","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)"]},
 
         {"kind":"then","text":"","code":["c.toString().contains(\"(3.0):g:(-6.0)\")","a.toString().contains(\"(2.0):g:(36.0)\")"]},
 
@@ -44,9 +44,9 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","var a = Tsr.of(2d).setRqsGradient(true)","var b = Tsr.of(-4d)","var c = Tsr.of(3d).setRqsGradient(true)","var s =  (a*b) + 2","var x = s * (s+c)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","var a = Tensor.of(2d).setRqsGradient(true)","var b = Tensor.of(-4d)","var c = Tensor.of(3d).setRqsGradient(true)","var s =  (a*b) + 2","var x = s * (s+c)"]},
 
-        {"kind":"when","text":"","code":["when : x.backward(Tsr.of(1d))"]},
+        {"kind":"when","text":"","code":["when : x.backward(Tensor.of(1d))"]},
 
         {"kind":"then","text":"","code":["c.toString().contains(\"g:(-6.0)\")","a.toString().contains(\"g:(null)\")"]},
 
@@ -65,9 +65,9 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","var a = Tsr.of(2d).setRqsGradient(true)","var b = Tsr.of(-4d)","var c = Tsr.of(3d).setRqsGradient(true)","var s =  (a*b) + 2 // -6 = (2*-4) +2","var x = s * (s+c) //  -6 * (-6+3) // 18"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","var a = Tensor.of(2d).setRqsGradient(true)","var b = Tensor.of(-4d)","var c = Tensor.of(3d).setRqsGradient(true)","var s =  (a*b) + 2 // -6 = (2*-4) +2","var x = s * (s+c) //  -6 * (-6+3) // 18"]},
 
-        {"kind":"when","text":"","code":["when : x.backward(Tsr.of(1d))"]},
+        {"kind":"when","text":"","code":["when : x.backward(Tensor.of(1d))"]},
 
         {"kind":"then","text":"","code":["c.toString().contains(\"g:(-6.0)\")","a.toString().contains(\"g:(null)\")"]},
 
@@ -81,12 +81,12 @@
     {
       "id":"Gradient auto-apply kicks in when used AD uses JIT prop",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","var a = Tsr.of(2d).setRqsGradient(true)","var b = Tsr.of(-3d)","var c = Tsr.of(3d).setRqsGradient(true)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","var a = Tensor.of(2d).setRqsGradient(true)","var b = Tensor.of(-3d)","var c = Tensor.of(3d).setRqsGradient(true)"]},
 
         {"kind":"when","text":"","code":["var s = (a+b) * c // (2 - 3) * 3 = -3","var x = (s/a)+s // (-3)/2 -3 = -4.5"]},
 
@@ -96,7 +96,7 @@
 
         {"kind":"then","text":"","code":["a.has(JITProp.class)","!b.has(JITProp.class)","c.has(JITProp.class)","s.getGraphNode().get().isReliesOnJustInTimeProp()","a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","c.getGraphNode().get().isReliesOnJustInTimeProp()","a.toString().contains(\"g:(0.75)\")","c.toString().contains(\"g:(null)\")","x.toString().contains(\"(-4.5)\")"]},
 
-        {"kind":"when","text":"","code":["def f = Function.of(\"I[0]*I[1]\", false)","Tsr[] inputs = new Tsr[]{c, a}","var result = f(inputs) // Should have no affect!"]},
+        {"kind":"when","text":"","code":["def f = Function.of(\"I[0]*I[1]\", false)","Tensor[] inputs = new Tensor[]{c, a}","var result = f(inputs) // Should have no affect!"]},
 
         {"kind":"then","text":"","code":["s.getGraphNode().get().isReliesOnJustInTimeProp()","a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","c.getGraphNode().get().isReliesOnJustInTimeProp()","! result.toString().contains(\"d[1]:\")","! result.toString().contains(\"d[1]:\")","a.toString().contains(\"(2.0):g:(0.75)\")","c.toString().contains(\"g:(null)\")","x.toString().contains(\"(-4.5)\")"]},
 
@@ -110,12 +110,12 @@
     {
       "id":"Test no preemptive gradient apply when not requested and auto apply and JIT_prop",
       "result":"PASS",
-      "duration":"0.134 seconds",
+      "duration":"0.108 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(true)","var a = Tsr.of(2d).setRqsGradient(true)","var b = Tsr.of(-3d)","var c = Tsr.of(3d).setRqsGradient(true)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(true)","var a = Tensor.of(2d).setRqsGradient(true)","var b = Tensor.of(-3d)","var c = Tensor.of(3d).setRqsGradient(true)"]},
 
         {"kind":"when","text":"","code":["var s = (a+b) * c // (2 - 3) * 3 = -3","var x = (s/a) + s // (-3)/2 - 3 = -4.5","System.gc() // Why? -> To test if even a clean graph will work properly!","Thread.sleep(50)"]},
 
@@ -125,7 +125,7 @@
 
         {"kind":"then","text":"","code":["s.getGraphNode().get().isReliesOnJustInTimeProp()","a.getGraphNode().get().isReliesOnJustInTimeProp()","!b.getGraphNode().get().isReliesOnJustInTimeProp()","c.getGraphNode().get().isReliesOnJustInTimeProp()","a.has(JITProp.class)","!b.has(JITProp.class)","c.has(JITProp.class)","a.toString().contains(\"(2.0):g:(0.75)\") // Partial gradient -> Later completed by JITProp","c.toString().contains(\"(3.0):g:(null)\") // Gradient created by JIT later on...","x.toString().contains(\"(-4.5)\")"]},
 
-        {"kind":"when","text":"","code":["def f = Function.of(\"I[0]*I[1]\", false)","Tsr[] inputs = new Tsr[]{c, a}","var result = f(inputs) // No changes to inputs! No derivatives!"]},
+        {"kind":"when","text":"","code":["def f = Function.of(\"I[0]*I[1]\", false)","Tensor[] inputs = new Tensor[]{c, a}","var result = f(inputs) // No changes to inputs! No derivatives!"]},
 
         {"kind":"then","text":"","code":["! result.toString().contains(\"d[1]:\")","! result.toString().contains(\"d[1]:\")","a.toString().contains(\"(2.0):g:(0.75)\")","c.toString().contains(\"(3.0):g:(null)\")","x.toString().contains(\"(-4.5)\")"]},
 
@@ -152,7 +152,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","var a = Tsr.of(2d).setRqsGradient(true)","var b = Tsr.of(-3d)","var c = Tsr.of(3d).setRqsGradient(true)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","var a = Tensor.of(2d).setRqsGradient(true)","var b = Tensor.of(-3d)","var c = Tensor.of(3d).setRqsGradient(true)"]},
 
         {"kind":"when","text":"","code":["var s = (a+b) * c // (2 - 3) * 3 = -3","var x = (s/a)+s // (-3)**2 -3 = 6"]},
 
@@ -177,7 +177,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","var a = Tsr.of(2d).setRqsGradient(true)","var b = Tsr.of(-3d)","var c = Tsr.of(3d).setRqsGradient(true)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","var a = Tensor.of(2d).setRqsGradient(true)","var b = Tensor.of(-3d)","var c = Tensor.of(3d).setRqsGradient(true)"]},
 
         {"kind":"when","text":"","code":["var s = (a+b) * c // (2 - 3) * 3 = -3","var x = (s**a)+s // (-3)**2 -3 = 6"]},
 
@@ -198,7 +198,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","var a = Tsr.of(2d).setRqsGradient(true)","var b = Tsr.of(-4d)","var c = Tsr.of(3d).setRqsGradient(true)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)","Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)","Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)","var a = Tensor.of(2d).setRqsGradient(true)","var b = Tensor.of(-4d)","var c = Tensor.of(3d).setRqsGradient(true)"]},
 
         {"kind":"when","text":"","code":["var s = (a+b) * c","var x = (s**2)+s"]},
 

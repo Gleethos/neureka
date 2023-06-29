@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPUDot.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.linear</a> &gt; <span class="el_source">CPUDot.java</span></div><h1>CPUDot.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.linear;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.operations.linear.internal.blas.DOT;
@@ -9,7 +9,7 @@ import neureka.devices.host.CPU;
 <span class="fc" id="L9">public class CPUDot implements ImplementationFor&lt;CPU&gt; {</span>
 
     @Override
-    public Tsr&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
+    public Tensor&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call) {
 
 <span class="pc bpc" id="L14" title="1 of 2 branches missed.">        if ( !call.validate().all( (t1, t2) -&gt; t1.getNDConf().getLayout().isCompatible(t2.getNDConf().getLayout()) ).isValid() )</span>
 <span class="nc" id="L15">            throw new IllegalArgumentException(</span>
@@ -17,7 +17,7 @@ import neureka.devices.host.CPU;
                         &quot;All tensors must be of the same layout.&quot;
                     );
 
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        if ( !call.validate().allShare(Tsr::getDataType).isValid() )</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        if ( !call.validate().allShare(Tensor::getDataType).isValid() )</span>
 <span class="nc" id="L21">            throw new IllegalArgumentException(</span>
                        &quot;Type inconsistency between provided tensors encountered. &quot; +
                        &quot;All tensors must be of the same type.&quot;

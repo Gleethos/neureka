@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cat.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">Cat.java</span></div><h1>Cat.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -35,8 +35,8 @@ public class Cat extends AbstractOperation
 <span class="fc" id="L35">            .withName(&quot;concat&quot;)</span>
 <span class="fc" id="L36">            .setIsSuitableFor( call -&gt; {</span>
 <span class="fc" id="L37">                Integer dim = call.getValOf(Arg.Axis.class);</span>
-<span class="fc" id="L38">                Tsr&lt;?&gt; a = call.input(0);</span>
-<span class="fc" id="L39">                Tsr&lt;?&gt; b = call.input(1);</span>
+<span class="fc" id="L38">                Tensor&lt;?&gt; a = call.input(0);</span>
+<span class="fc" id="L39">                Tensor&lt;?&gt; b = call.input(1);</span>
 <span class="pc bpc" id="L40" title="1 of 2 branches missed.">                if ( a.rank() != b.rank() ) return SuitabilityPredicate.UNSUITABLE;</span>
 <span class="fc bfc" id="L41" title="All 2 branches covered.">                for ( int i = 0; i &lt; a.rank(); i++ )</span>
 <span class="pc bpc" id="L42" title="1 of 4 branches missed.">                    if ( i != dim &amp;&amp; a.shape(i) != b.shape(i) )</span>
@@ -52,7 +52,7 @@ public class Cat extends AbstractOperation
 <span class="fc" id="L52">                    Integer dim = call.getValOf(Arg.Axis.class);</span>
 
                     // First let's find out the shape of the concatenated result:
-<span class="fc" id="L55">                    Tsr&lt;?&gt;[] inputs = call.inputs();</span>
+<span class="fc" id="L55">                    Tensor&lt;?&gt;[] inputs = call.inputs();</span>
 <span class="fc" id="L56">                    List&lt;Integer&gt; axes = Arrays.stream(inputs).map( t -&gt; t.shape(dim) ).collect(Collectors.toList());</span>
 <span class="fc" id="L57">                    int newAxisSize = axes.stream().mapToInt( i -&gt; i ).sum();</span>
 <span class="fc" id="L58">                    List&lt;Integer&gt; newShape = new ArrayList&lt;&gt;();</span>
@@ -60,7 +60,7 @@ public class Cat extends AbstractOperation
 <span class="fc bfc" id="L60" title="All 2 branches covered.">                        newShape.add( i == dim ? newAxisSize : call.input(0).shape(i) );</span>
 
                     // We create the output tensor:
-<span class="fc" id="L63">                    Tsr&lt;?&gt; c = Tsr.of( call.input(0).getItemType(), newShape, 0 );</span>
+<span class="fc" id="L63">                    Tensor&lt;?&gt; c = Tensor.of( call.input(0).getItemType(), newShape, 0 );</span>
 
                     // We make the axes list entries cumulative:
 <span class="fc bfc" id="L66" title="All 2 branches covered.">                    for ( int i = 0; i &lt; axes.size(); i++ )</span>
@@ -70,7 +70,7 @@ public class Cat extends AbstractOperation
 <span class="fc bfc" id="L70" title="All 2 branches covered.">                    for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
 <span class="fc bfc" id="L71" title="All 2 branches covered.">                        int start = i == 0 ? 0 : axes.get( i - 1 );</span>
 <span class="fc" id="L72">                        int end = ( axes.get( i ) - 1 );</span>
-<span class="fc" id="L73">                        Tsr&lt;?&gt; slice = c.slice().axis( dim ).from( start ).to( end ).detached();</span>
+<span class="fc" id="L73">                        Tensor&lt;?&gt; slice = c.slice().axis( dim ).from( start ).to( end ).detached();</span>
 <span class="fc" id="L74">                        Neureka.get().backend().getFunction().idy().execute( slice, call.input( i ) );</span>
                     }
 <span class="fc" id="L76">                    c.mut().setIsIntermediate(true);</span>
@@ -104,7 +104,7 @@ public class Cat extends AbstractOperation
 <span class="fc" id="L104">        return super.execute( caller, call );</span>
     }
 
-    private void _catFrames( Tsr&lt;?&gt;[] inputs, Tsr&lt;?&gt; concat, int dim )
+    private void _catFrames(Tensor&lt;?&gt;[] inputs, Tensor&lt;?&gt; concat, int dim )
     {
 <span class="fc" id="L109">        boolean inputsAreFramed = Arrays.stream(inputs).anyMatch( t -&gt; t.frame().isPresent() );</span>
 
@@ -112,7 +112,7 @@ public class Cat extends AbstractOperation
 
 <span class="fc" id="L113">        String label =</span>
 <span class="fc" id="L114">                Arrays.stream(inputs)</span>
-<span class="fc" id="L115">                .map(Tsr::frame)</span>
+<span class="fc" id="L115">                .map(Tensor::frame)</span>
 <span class="fc" id="L116">                .filter(Optional::isPresent)</span>
 <span class="fc" id="L117">                .map(Optional::get)</span>
 <span class="fc" id="L118">                .map(NDFrame::getLabel)</span>
@@ -122,7 +122,7 @@ public class Cat extends AbstractOperation
 
 <span class="fc" id="L123">        List&lt;Map&lt;Object, List&lt;Object&gt;&gt;&gt; labels =</span>
 <span class="fc" id="L124">                                            Arrays.stream(inputs)</span>
-<span class="fc" id="L125">                                                    .map(Tsr::frame)</span>
+<span class="fc" id="L125">                                                    .map(Tensor::frame)</span>
 <span class="fc" id="L126">                                                    .filter(Optional::isPresent)</span>
 <span class="fc" id="L127">                                                    .map(Optional::get)</span>
 <span class="fc" id="L128">                                                    .map(NDFrame::getState)</span>

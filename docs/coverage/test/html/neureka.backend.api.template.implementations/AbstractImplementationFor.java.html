@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractImplementationFor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.template.implementations</a> &gt; <span class="el_source">AbstractImplementationFor.java</span></div><h1>AbstractImplementationFor.java</h1><pre class="source lang-java linenums">package neureka.backend.api.template.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;
@@ -16,7 +16,7 @@ public class AbstractImplementationFor&lt; D extends Device&lt;?&gt; &gt; implem
 <span class="fc" id="L16">    }</span>
 
     @Override
-    public Tsr&lt;?&gt; run(ExecutionCall&lt;D&gt; call ) {
+    public Tensor&lt;?&gt; run(ExecutionCall&lt;D&gt; call ) {
 <span class="fc bfc" id="L20" title="All 2 branches covered.">        if ( _arity &gt;= 0 ) {</span>
 <span class="fc" id="L21">            int arity1 = call.arity();</span>
 <span class="fc" id="L22">            int arity2 = arity1 - 1; // The first tensor might be the output!</span>

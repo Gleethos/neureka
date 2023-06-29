@@ -2,7 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Result;
@@ -47,8 +47,8 @@ public class Slice extends AbstractOperation
 <span class="fc" id="L47">                    int[] newShape    = call.getValOf(Arg.Shape.class);</span>
 <span class="fc" id="L48">                    int[] newOffset   = call.getValOf(Arg.Offset.class);</span>
 <span class="fc" id="L49">                    int[] newSpread   = call.getValOf(Arg.Stride.class);</span>
-<span class="fc" id="L50">                    Tsr&lt;Object&gt; input = (Tsr&lt;Object&gt;) call.input(0);</span>
-<span class="fc" id="L51">                    Tsr&lt;?&gt; subset     = _slice(newShape, newOffset, newSpread, input);</span>
+<span class="fc" id="L50">                    Tensor&lt;Object&gt; input = (Tensor&lt;Object&gt;) call.input(0);</span>
+<span class="fc" id="L51">                    Tensor&lt;?&gt; subset     = _slice(newShape, newOffset, newSpread, input);</span>
                     //---
 <span class="fc" id="L53">                    Class&lt;?&gt;       typeClass = input.itemType();</span>
 <span class="fc" id="L54">                    Shape          shape = input.shape();</span>
@@ -59,10 +59,10 @@ public class Slice extends AbstractOperation
 <span class="fc" id="L59">                    return</span>
 <span class="fc" id="L60">                        Result.of(subset.mut().setIsIntermediate(true))</span>
 <span class="fc" id="L61">                            .withADAction( t -&gt; {</span>
-<span class="fc" id="L62">                                Tsr&lt;Object&gt; newError = ElemWiseUtil.newTsrLike((Class&lt;Object&gt;) typeClass, shape, isOutsourced, device, 0);</span>
+<span class="fc" id="L62">                                Tensor&lt;Object&gt; newError = ElemWiseUtil.newTensorLike((Class&lt;Object&gt;) typeClass, shape, isOutsourced, device, 0);</span>
 <span class="fc" id="L63">                                boolean isIntermediate = newError.isIntermediate();</span>
 <span class="fc" id="L64">                                newError.mut().setIsIntermediate(false); // To avoid deletion!</span>
-<span class="fc" id="L65">                                Tsr&lt;Object&gt; slice = Function.of(&quot;slice(I[0])&quot;, false)</span>
+<span class="fc" id="L65">                                Tensor&lt;Object&gt; slice = Function.of(&quot;slice(I[0])&quot;, false)</span>
 <span class="fc" id="L66">                                                    .with(Arg.Shape.of(newShape),Arg.Offset.of(newOffset),Arg.Stride.of(newSpread))</span>
 <span class="fc" id="L67">                                                    .call(newError);</span>
 
@@ -77,11 +77,11 @@ public class Slice extends AbstractOperation
         );
 <span class="fc" id="L78">    }</span>
 
-    private static Tsr&lt;?&gt; _slice(
+    private static Tensor&lt;?&gt; _slice(
         int[] newShape,
         int[] newOffset,
         int[] newSpread,
-        Tsr&lt;Object&gt; input
+        Tensor&lt;Object&gt; input
     ) {
 <span class="fc" id="L86">        input.mut().setIsVirtual( false );</span>
 <span class="fc" id="L87">        int[] newStrides    = input.getNDConf().strides();</span>
@@ -94,8 +94,8 @@ public class Slice extends AbstractOperation
 <span class="fc" id="L94">            newOffset[ i ] = newOffset[ i ] + input.getNDConf().offset( i ); // Offset is being inherited!</span>
 
 <span class="fc" id="L96">        Relation&lt;?&gt; inputRelation = input.get( Relation.class );</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        Tsr&lt;?&gt; rootTensor   = ( input.isSlice() ? inputRelation.findRootTensor().orElseThrow(IllegalStateException::new) : input );</span>
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        Tsr&lt;?&gt; parentTensor = ( input.isSlice() ? inputRelation.getParent().orElseThrow(IllegalStateException::new)      : input );</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        Tensor&lt;?&gt; rootTensor   = ( input.isSlice() ? inputRelation.findRootTensor().orElseThrow(IllegalStateException::new) : input );</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        Tensor&lt;?&gt; parentTensor = ( input.isSlice() ? inputRelation.getParent().orElseThrow(IllegalStateException::new)      : input );</span>
         /*
             The following code check the validity of the slice shape ranges with
             respect to the 'parentTensor' of this new slice.
@@ -131,7 +131,7 @@ public class Slice extends AbstractOperation
                 This is simply the 'permute array' which has been recorded inside the 'Relation' component
                 by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
 
-                The following would occur when : &quot;Tsr.of(...).T().getAt(...);&quot;
+                The following would occur when : &quot;Tensor.of(...).T().getAt(...);&quot;
                 Transposing a tensor performs an inline reshaping of an identical
                 slice of the original tensor! Then again slicing this tensor
                 via the 'getAt(...)' method leads us to a situation where
@@ -162,8 +162,8 @@ public class Slice extends AbstractOperation
             );
         }
 
-<span class="fc" id="L165">        Tsr&lt;Object&gt; subset =</span>
-<span class="fc" id="L166">                        Tsr.of(</span>
+<span class="fc" id="L165">        Tensor&lt;Object&gt; subset =</span>
+<span class="fc" id="L166">                        Tensor.of(</span>
 <span class="fc" id="L167">                            input.getDataType(),</span>
 <span class="fc" id="L168">                            NDConstructor.of( newShape, newStrides, newIndicesMap, newSpread, newOffset ),</span>
 <span class="fc" id="L169">                            input.mut().getData()</span>
@@ -183,7 +183,7 @@ public class Slice extends AbstractOperation
     }
 
     private void _sliceFrame(
-        Tsr&lt;?&gt; input, Tsr&lt;?&gt; subset, int[] newShape, int[] newOffset, int[] newSpread
+            Tensor&lt;?&gt; input, Tensor&lt;?&gt; subset, int[] newShape, int[] newOffset, int[] newSpread
     ) {
         // Now if the parent tensor has a name and or axes labels we carry them over to the subset:
 <span class="fc" id="L189">        String label = input.label();</span>

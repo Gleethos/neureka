@@ -1,8 +1,8 @@
 {
   "className":"ut.tensors.Tensor_Stats_Spec",
   "title":"Reducing Tensors",
-  "narrative":"Various kinds of operations reduce tensors to scalars,\n    the most common ones being the min and max operations \n    which find the smallest as well as largest number among all \n    items of a tensor.\n    Neureka exposes various different ways to achieve this,\n    all of which are also differential (autograd support).",
-  "subjects":["neureka.Tsr"],
+  "narrative":"Various kinds of operations reduce tensors to scalars,\n    the most common ones being the min and max operations\n    which find the smallest as well as largest number among all\n    items of a tensor.\n    Neureka exposes various different ways to achieve this,\n    all of which are also differential (autograd support).",
+  "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"8",
     "successRate":"100.0%",
@@ -16,7 +16,7 @@
     {
       "id":"We can use the max operation as a function",
       "result":"PASS",
-      "duration":"0.087 seconds",
+      "duration":"0.080 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"and","text":"A seed, for some variability:","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.hashCode()"]},
 
-        {"kind":"and","text":"","code":["var a = Tsr.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})"]},
+        {"kind":"and","text":"","code":["var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})"]},
 
         {"kind":"and","text":"Before applying the function, we copy the tensor to the device:","code":["a.to(device)"]},
 
@@ -58,12 +58,12 @@
     {
       "id":"There is no need to use a function, we can use the min() and max() methods on tensors instead.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a tensor:","code":["var a = Tsr.of(Float)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((31**(i+42))%301)-151})"]},
+        {"kind":"given","text":"We create a tensor:","code":["var a = Tensor.of(Float)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((31**(i+42))%301)-151})"]},
 
         {"kind":"and","text":"Before applying the function, we copy the tensor to the device:","code":["a.to(device)"]},
 
@@ -84,7 +84,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a simple tensor of floats which requires gradients:","code":["var a = Tsr.of(-3f, 6.42f, 2.065f, -8f, 0.2, 7.666f, 3.39f).setRqsGradient(true)"]},
+        {"kind":"given","text":"We create a simple tensor of floats which requires gradients:","code":["var a = Tensor.of(-3f, 6.42f, 2.065f, -8f, 0.2, 7.666f, 3.39f).setRqsGradient(true)"]},
 
         {"kind":"and","text":"We first do a simple operation to get another tensor:","code":["var b = a * 3"]},
 
@@ -100,12 +100,12 @@
     {
       "id":"We can use the \"sum\" method to sum the items of a tensor.",
       "result":"PASS",
-      "duration":"0.106 seconds",
+      "duration":"0.123 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a tensor:","code":["var a = Tsr.of(Float)","                    .withShape(13, 73, 11)","                    .andWhere({ i, _ -> ((7**i) % 11)-5})"]},
+        {"kind":"given","text":"We create a tensor:","code":["var a = Tensor.of(Float)","                    .withShape(13, 73, 11)","                    .andWhere({ i, _ -> ((7**i) % 11)-5})"]},
 
         {"kind":"and","text":"We sum the items of the tensor:","code":["var sum = a.sum()"]},
 
@@ -124,7 +124,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a simple tensor of floats which requires gradients:","code":["var a = Tsr.of(1f, 2f, 3f, 4f).setRqsGradient(true)"]},
+        {"kind":"given","text":"We create a simple tensor of floats which requires gradients:","code":["var a = Tensor.of(1f, 2f, 3f, 4f).setRqsGradient(true)"]},
 
         {"kind":"and","text":"We first do a simple operation to get another tensor:","code":["var b = a * 3"]},
 
@@ -145,7 +145,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A simple 2 by 3 matrix.","code":["var m = Tsr.of(-3f..5f).reshape(2, 3)"]},
+        {"kind":"given","text":"A simple 2 by 3 matrix.","code":["var m = Tensor.of(-3f..5f).reshape(2, 3)"]},
 
         {"kind":"when","text":"We create a sum for every axis...","code":["var s1 = m.sum(0)","var s2 = m.sum(1)"]},
 
@@ -157,12 +157,12 @@
     {
       "id":"Multiple dimensions of a tensor can selectively be summed up.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Given a tensor with a shape of (x, y, z) and the request to sum up axis 1 and 2,\n            then the result will be a tensor with a shape of (x, 1, 1) because the\n            sum of all values along the axis 1 and 2 is a single value for each of the two\n            first dimensions.\n            This operation supports autograd.\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"A simple 2 by 3 by 4 matrix.","code":["var m = Tsr.of(-3f..23f).reshape(2, 3, 4)"]},
+        {"kind":"given","text":"A simple 2 by 3 by 4 matrix.","code":["var m = Tensor.of(-3f..23f).reshape(2, 3, 4)"]},
 
         {"kind":"when","text":"We create a sum for every axis...","code":["var s = m.sum(1, 2)"]},
 

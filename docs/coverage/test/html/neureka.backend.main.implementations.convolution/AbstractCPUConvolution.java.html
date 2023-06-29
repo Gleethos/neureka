@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractCPUConvolution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.convolution</a> &gt; <span class="el_source">AbstractCPUConvolution.java</span></div><h1>AbstractCPUConvolution.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.convolution;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.implementations.fun.api.CPUBiFun;
@@ -13,7 +13,7 @@ import neureka.ndim.iterator.NDIterator;
     protected abstract CPUBiFun _getFun();
 
     @Override
-    public Tsr&lt;?&gt; run( ExecutionCall&lt;CPU&gt; call )
+    public Tensor&lt;?&gt; run(ExecutionCall&lt;CPU&gt; call )
     {
 <span class="fc" id="L18">        SimpleCPUConvolution simpleConvolution = new SimpleCPUConvolution(call.input(1), call.input(2), call.input(0));</span>
 
@@ -38,9 +38,9 @@ import neureka.ndim.iterator.NDIterator;
     private CPU.RangeWorkload _workloadFor(
         ExecutionCall&lt;CPU&gt; call
     ) {
-<span class="fc" id="L41">        Tsr&lt;Number&gt; t0_drn = call.input( Number.class, 0 );</span>
-<span class="fc" id="L42">        Tsr&lt;Number&gt; t1_src = call.input( Number.class, 1 ).mut().setIsVirtual(false);</span>
-<span class="fc" id="L43">        Tsr&lt;Number&gt; t2_src = call.input( Number.class, 2 ).mut().setIsVirtual(false);</span>
+<span class="fc" id="L41">        Tensor&lt;Number&gt; t0_drn = call.input( Number.class, 0 );</span>
+<span class="fc" id="L42">        Tensor&lt;Number&gt; t1_src = call.input( Number.class, 1 ).mut().setIsVirtual(false);</span>
+<span class="fc" id="L43">        Tensor&lt;Number&gt; t2_src = call.input( Number.class, 2 ).mut().setIsVirtual(false);</span>
 
 <span class="fc" id="L45">        Class&lt;?&gt; typeClass = t0_drn.getItemType();</span>
 
@@ -68,7 +68,7 @@ import neureka.ndim.iterator.NDIterator;
     }
 
     private static void _convolve64(
-            final Tsr&lt;?&gt; t0_drn, final Tsr&lt;?&gt; t1_src, final Tsr&lt;?&gt; t2_src,
+            final Tensor&lt;?&gt; t0_drn, final Tensor&lt;?&gt; t1_src, final Tensor&lt;?&gt; t2_src,
             final int start,
             final int end,
             final CPUBiFun operation
@@ -144,7 +144,7 @@ import neureka.ndim.iterator.NDIterator;
 
 
     private static void _deConvolve64(
-            final Tsr&lt;?&gt; t0_drn, final Tsr&lt;?&gt; t1_src, final Tsr&lt;?&gt; t2_src,
+            final Tensor&lt;?&gt; t0_drn, final Tensor&lt;?&gt; t1_src, final Tensor&lt;?&gt; t2_src,
             final int start, final int end,
             final CPUBiFun operation
     ) {
@@ -243,9 +243,9 @@ import neureka.ndim.iterator.NDIterator;
 
 
     private static void _convolve32(
-        final Tsr&lt;?&gt; t0_drn, final Tsr&lt;?&gt; t1_src, final Tsr&lt;?&gt; t2_src,
-        final int start, final int end,
-        final CPUBiFun operation
+            final Tensor&lt;?&gt; t0_drn, final Tensor&lt;?&gt; t1_src, final Tensor&lt;?&gt; t2_src,
+            final int start, final int end,
+            final CPUBiFun operation
     ) {
 <span class="fc" id="L250">        NDIterator t0Idx = NDIterator.of( t0_drn );</span>
 <span class="fc" id="L251">        NDIterator t1Idx = NDIterator.of( t1_src );</span>
@@ -317,7 +317,7 @@ import neureka.ndim.iterator.NDIterator;
 
 
     private static void _deConvolve32(
-            final Tsr&lt;?&gt; t0_drn, final Tsr&lt;?&gt; t1_src, final Tsr&lt;?&gt; t2_src,
+            final Tensor&lt;?&gt; t0_drn, final Tensor&lt;?&gt; t1_src, final Tensor&lt;?&gt; t2_src,
             final int start, final int end,
             final CPUBiFun operation
     ) {

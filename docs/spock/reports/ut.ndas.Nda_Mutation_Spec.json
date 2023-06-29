@@ -1,7 +1,7 @@
 {
   "className":"ut.ndas.Nda_Mutation_Spec",
   "title":"Mutating ND-Arrays",
-  "narrative":"ND-Arrays should be considered immutable, so we should prefer creating new \n    ND-Arrays from existing ones using wither methods.\n    However this is not always a good idea as it can be expensive to create new\n    ND-Arrays, especially if the ND-Array is very large.\n    The ability to mutate ND-Arrays is therefore provided, but only\n    accessible via the mutation API exposed by the `getMut()` method.",
+  "narrative":"ND-Arrays should be considered immutable, so we should prefer creating new\n    ND-Arrays from existing ones using wither methods.\n    However this is not always a good idea as it can be expensive to create new\n    ND-Arrays, especially if the ND-Array is very large.\n    The ability to mutate ND-Arrays is therefore provided, but only\n    accessible via the mutation API exposed by the `getMut()` method.",
   "subjects":[],
   "statistics":{
     "runs":"6",
@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.004 seconds"
+    "duration":"0.003 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 

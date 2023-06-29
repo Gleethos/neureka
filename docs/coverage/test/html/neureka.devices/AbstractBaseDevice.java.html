@@ -35,7 +35,7 @@ SOFTWARE.
 package neureka.devices;
 
 import neureka.Data;
-import neureka.Tsr;
+import neureka.Tensor;
 
 /**
  * @param &lt;V&gt; The value type parameter representing a common super type for all values supported by the device.
@@ -64,7 +64,7 @@ import neureka.Tsr;
 <span class="fc bfc" id="L64" title="All 2 branches covered.">    public boolean isEmpty() { return this.numberOfStored() == 0; }</span>
 
     @Override
-    public final boolean contains( Tsr&lt;V&gt; o ) {
+    public final boolean contains( Tensor&lt;V&gt; o ) {
 <span class="fc" id="L68">        Data&lt;V&gt; data = o.mut().getData();</span>
 <span class="fc bfc" id="L69" title="All 2 branches covered.">        if ( data == null ) return false;</span>
 <span class="fc bfc" id="L70" title="All 2 branches covered.">        return data.owner() == this;</span>
@@ -80,8 +80,8 @@ import neureka.Tsr;
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public &lt;T extends V&gt; boolean has( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L84">        return this.contains((Tsr&lt;V&gt;) tensor);</span>
+    public &lt;T extends V&gt; boolean has( Tensor&lt;T&gt; tensor ) {
+<span class="fc" id="L84">        return this.contains((Tensor&lt;V&gt;) tensor);</span>
     }
 
 }

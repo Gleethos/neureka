@@ -36,7 +36,7 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.math.args.Arg;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Device;
@@ -93,15 +93,15 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      * @param &lt;D&gt; The device type parameter of the device which is targeted.
      * @return A builder for an {@link ExecutionCall}.
      */
-    public static &lt;D extends Device&lt;?&gt;&gt; Builder&lt;D&gt; of( Tsr&lt;?&gt;... inputs ) {
-<span class="fc" id="L97">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tsr[].class );</span>
+    public static &lt;D extends Device&lt;?&gt;&gt; Builder&lt;D&gt; of( Tensor&lt;?&gt;... inputs ) {
+<span class="fc" id="L97">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tensor[].class );</span>
 <span class="fc" id="L98">        return new Builder&lt;D&gt;(inputs);</span>
     }
 
     private ExecutionCall(
             D device,
             Operation operation,
-            Tsr&lt;?&gt;[] tensors,
+            Tensor&lt;?&gt;[] tensors,
             List&lt;Arg&gt; arguments
     ) {
 <span class="fc" id="L107">        super( tensors, device, arguments );</span>
@@ -150,27 +150,27 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      * @param inputs The new array of input tensors for the new {@link ExecutionCall} returned by this.
      * @return A new {@link ExecutionCall} instance with the provided array of input tensors.
      */
-    public ExecutionCall&lt;D&gt; withInputs( Tsr&lt;?&gt;... inputs ) {
-<span class="fc" id="L154">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tsr[].class );</span>
+    public ExecutionCall&lt;D&gt; withInputs( Tensor&lt;?&gt;... inputs ) {
+<span class="fc" id="L154">        LogUtil.nullArgCheck( inputs, &quot;inputs&quot;, Tensor[].class );</span>
 <span class="fc" id="L155">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs, _arguments.getAll(Arg.class) );</span>
     }
 
-    public ExecutionCall&lt;D&gt; withAddedInputAt(int index, Tsr&lt;?&gt; added ) {
-<span class="fc" id="L159">        List&lt;Tsr&lt;?&gt;&gt; inputs = new ArrayList&lt;&gt;(Arrays.asList(_inputs));</span>
+    public ExecutionCall&lt;D&gt; withAddedInputAt(int index, Tensor&lt;?&gt; added ) {
+<span class="fc" id="L159">        List&lt;Tensor&lt;?&gt;&gt; inputs = new ArrayList&lt;&gt;(Arrays.asList(_inputs));</span>
 <span class="fc" id="L160">        inputs.add(index, added);</span>
-<span class="fc" id="L161">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tsr&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
+<span class="fc" id="L161">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tensor&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
     }
 
-    public ExecutionCall&lt;D&gt; withInputAt( int index, Tsr&lt;?&gt; replacement ) {
-<span class="fc" id="L165">        List&lt;Tsr&lt;?&gt;&gt; inputs = new ArrayList&lt;&gt;(Arrays.asList(_inputs));</span>
+    public ExecutionCall&lt;D&gt; withInputAt( int index, Tensor&lt;?&gt; replacement ) {
+<span class="fc" id="L165">        List&lt;Tensor&lt;?&gt;&gt; inputs = new ArrayList&lt;&gt;(Arrays.asList(_inputs));</span>
 <span class="fc" id="L166">        inputs.set(index, replacement);</span>
-<span class="fc" id="L167">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tsr&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
+<span class="fc" id="L167">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tensor&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
     }
 
     public ExecutionCall&lt;D&gt; withRemovedInputAt(int index) {
-<span class="fc" id="L171">        List&lt;Tsr&lt;?&gt;&gt; inputs = new ArrayList&lt;&gt;(Arrays.asList(_inputs));</span>
+<span class="fc" id="L171">        List&lt;Tensor&lt;?&gt;&gt; inputs = new ArrayList&lt;&gt;(Arrays.asList(_inputs));</span>
 <span class="fc" id="L172">        inputs.remove(index);</span>
-<span class="fc" id="L173">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tsr&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
+<span class="fc" id="L173">        return new ExecutionCall&lt;&gt;( _device, _operation, inputs.toArray(new Tensor&lt;?&gt;[0]), _arguments.getAll(Arg.class) );</span>
     }
 
     public ExecutionCall&lt;D&gt; withOperation( Operation operation ) {
@@ -230,11 +230,11 @@ public class ExecutionCall&lt;D extends Device&lt;?&gt;&gt; extends Call&lt;D&gt
      */
     public static class Builder&lt;D extends Device&lt;?&gt;&gt;
     {
-        private final Tsr&lt;?&gt;[] _tensors;
+        private final Tensor&lt;?&gt;[] _tensors;
 <span class="fc" id="L234">        private final List&lt;Arg&gt; _arguments = Stream.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1)).collect(Collectors.toList());</span>
         private Operation _operation;
 
-<span class="fc" id="L237">        private Builder(Tsr&lt;?&gt;[] tensors) { _tensors = tensors; }</span>
+<span class="fc" id="L237">        private Builder(Tensor&lt;?&gt;[] tensors) { _tensors = tensors; }</span>
 
         public &lt;D extends Device&lt;?&gt;&gt; ExecutionCall&lt;D&gt; on( D device ) {
 <span class="fc" id="L240">            LogUtil.nullArgCheck( device, &quot;device&quot;, Device.class );</span>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Max.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other</a> &gt; <span class="el_source">Max.java</span></div><h1>Max.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.DeviceAlgorithm;
 import neureka.backend.api.Result;
@@ -41,21 +41,21 @@ import neureka.devices.opencl.OpenCLDevice;
             )
 <span class="fc" id="L42">            .setAutogradModeFor( call -&gt; AutoDiffMode.BACKWARD_ONLY )</span>
 <span class="fc" id="L43">            .setExecution( (caller, call) -&gt; {</span>
-<span class="fc" id="L44">                Tsr&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();</span>
+<span class="fc" id="L44">                Tensor&lt;?&gt;[] inputs = AbstractDeviceAlgorithm.flatten(caller, call).inputs();</span>
 <span class="fc" id="L45">                call = call.withInputs(inputs);</span>
-<span class="fc" id="L46">                Tsr&lt;Integer&gt; index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);</span>
+<span class="fc" id="L46">                Tensor&lt;Integer&gt; index = ((DeviceAlgorithm)call.getAlgorithm()).getImplementationFor(call.getDevice()).run(call);</span>
 <span class="fc" id="L47">                int i = index.item();</span>
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                Tsr&lt;?&gt; in = inputs[0] == null ? inputs[1] : inputs[0];</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                Tensor&lt;?&gt; in = inputs[0] == null ? inputs[1] : inputs[0];</span>
 <span class="fc" id="L49">                Class&lt;Object&gt; typeClass = (Class&lt;Object&gt;) in.itemType();</span>
 <span class="fc" id="L50">                Shape shape = in.shape();</span>
 <span class="fc" id="L51">                Device&lt;Object&gt; device = (Device&lt;Object&gt;) call.getDevice();</span>
 <span class="fc" id="L52">                return Result.of(</span>
-<span class="fc" id="L53">                            Tsr.of(in.itemType(), Shape.of( 1 ), in.item(i)).to(call.getDevice()).mut().setIsIntermediate(true)</span>
+<span class="fc" id="L53">                            Tensor.of(in.itemType(), Shape.of( 1 ), in.item(i)).to(call.getDevice()).mut().setIsIntermediate(true)</span>
                         )
 <span class="fc" id="L55">                        .withADAction( target -&gt; {</span>
-<span class="fc" id="L56">                            Tsr&lt;Object&gt; error = (Tsr&lt;Object&gt;) target.error();</span>
+<span class="fc" id="L56">                            Tensor&lt;Object&gt; error = (Tensor&lt;Object&gt;) target.error();</span>
 <span class="pc bpc" id="L57" title="1 of 2 branches missed.">                            assert error.size() == 1;</span>
-<span class="fc" id="L58">                            Tsr&lt;Object&gt; newError = ElemWiseUtil.newTsrLike(typeClass, shape, true, device, 0);</span>
+<span class="fc" id="L58">                            Tensor&lt;Object&gt; newError = ElemWiseUtil.newTensorLike(typeClass, shape, true, device, 0);</span>
 <span class="fc" id="L59">                            newError.mut().setIsVirtual(false);</span>
 <span class="fc" id="L60">                            newError.mut().setItemAt(i, error.item(0));</span>
 <span class="fc" id="L61">                            return newError;</span>

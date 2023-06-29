@@ -2,7 +2,7 @@
 
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
 import neureka.framing.NDFrame;
@@ -40,7 +40,7 @@ public final class CSVHandle extends AbstractFileHandle&lt;CSVHandle, String&gt;
 <span class="fc" id="L40">    private Integer _numberOfBytes = null;</span>
 <span class="fc" id="L41">    private WeakReference&lt;String[]&gt; _rawData = null;</span>
 
-    CSVHandle( Tsr&lt;?&gt; tensor, String filename )
+    CSVHandle(Tensor&lt;?&gt; tensor, String filename )
     {
 <span class="fc" id="L45">        super( filename, new CSVType() );</span>
 <span class="pc bpc" id="L46" title="1 of 2 branches missed.">        assert tensor.rank() == 2;</span>
@@ -180,16 +180,16 @@ public final class CSVHandle extends AbstractFileHandle&lt;CSVHandle, String&gt;
 <span class="fc" id="L180">    }</span>
 
     @Override
-    public &lt;T extends String&gt; Storage&lt;String&gt; store( Tsr&lt;T&gt; tensor ) {
+    public &lt;T extends String&gt; Storage&lt;String&gt; store( Tensor&lt;T&gt; tensor ) {
 <span class="nc" id="L184">        throw new UnsupportedOperationException( &quot;CSVHandle does not support storing tensors!&quot; );</span>
     }
 
 <span class="nc" id="L187">    @Override protected Object _loadData() { return _lazyLoad(); }</span>
 
     @Override
-    public Tsr&lt;String&gt; load() throws IOException {
+    public Tensor&lt;String&gt; load() throws IOException {
 <span class="fc" id="L191">        String[] data = _lazyLoad();</span>
-<span class="fc" id="L192">        Tsr&lt;String&gt; loaded = Tsr.of(DataType.of( String.class ), getShape(), data);</span>
+<span class="fc" id="L192">        Tensor&lt;String&gt; loaded = Tensor.of(DataType.of( String.class ), getShape(), data);</span>
         String[] index;
         String[] labels;
 

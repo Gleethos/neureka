@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.043 seconds"
+    "duration":"0.031 seconds"
   },
   "headers":["\n                This specification covers some basic behaviour related to\n                reading and modifying the data inside a tensor.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -23,7 +23,7 @@
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"A new tensor instance with the shape (4x3).","code":["var t1 = Tsr.of([4, 3], 1d..12d)"]},
+        {"kind":"and","text":"A new tensor instance with the shape (4x3).","code":["var t1 = Tensor.of([4, 3], 1d..12d)"]},
 
         {"kind":"when","text":"Recording the index behavior before and after a permute operation...","code":["var t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})","var t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})","var t1_indices = t1.indicesOfIndex(5)","var t2 = Function.of(\" [ 1, 0 ]:( I[0] ) \")(t1)","var t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})","var t2_idx = t2.indicesOfIndex(7)","var t1_ioi_3 = t1.indexOfIndices(t1.indicesOfIndex(7)) // Element 7 '8.0' is at index 7!","var t2_ioi_2 =  t2.indexOfIndices(t2.indicesOfIndex(7)) // Element 7 '11.0' is at index 10!"]},
 
@@ -35,14 +35,14 @@
     {
       "id":"Tensor value type can not be changed by passing float or double arrays to it.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"A new tensor instance.","code":["var x = Tsr.of(3d)"]},
+        {"kind":"and","text":"A new tensor instance.","code":["var x = Tensor.of(3d)"]},
 
         {"kind":"when","text":"Setting the value of the tensor...","code":["float[] floats = new float[1]","floats[0] = 5","x.mut.setItems(floats)"]},
 
@@ -66,12 +66,12 @@
     {
       "id":"We can re-populate a tensor of shorts from a single scalar value!",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A tensor of 3 numbers:","code":["var t = Tsr.of(type).vector(42, 666, 73)"]},
+        {"kind":"given","text":"A tensor of 3 numbers:","code":["var t = Tensor.of(type).vector(42, 666, 73)"]},
 
         {"kind":"and","text":"We store the tensor on the given device, to ensure that it work there as well.","code":["t.to(device)"]},
 
@@ -89,12 +89,12 @@
     {
       "id":"We can manipulate the underlying data array of a tensor through the mut API.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A tensor of 3 numbers:","code":["var t = Tsr.of(type).vector(42, 66, 73)"]},
+        {"kind":"given","text":"A tensor of 3 numbers:","code":["var t = Tensor.of(type).vector(42, 66, 73)"]},
 
         {"kind":"and","text":"We store the tensor on the given device, to ensure that it work there as well.","code":["t.to(device)"]},
 
@@ -123,7 +123,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A tensor of 3 numbers:","code":["var t = Tsr.of(type).vector(1, 1, 1)"]},
+        {"kind":"given","text":"A tensor of 3 numbers:","code":["var t = Tensor.of(type).vector(1, 1, 1)"]},
 
         {"kind":"and","text":"We store the tensor on the given device, to ensure that it work there as well.","code":["t.to(device)"]},
 
@@ -139,9 +139,9 @@
     },
   
     {
-      "id":"A tensor produced by the static \"Tsr.Create.newRandom(shape)\" has expected \"random\" value.",
+      "id":"A tensor produced by the static \"Tensor.newRandom(shape)\" has expected \"random\" value.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -150,15 +150,15 @@
 
         {"kind":"when","text":"Creating a simple shape array...","code":["var shape = new int[]{4}"]},
 
-        {"kind":"and","text":"...and passing it to the \"newRandom\" factory method to produce tensor x...","code":["Tsr x = Tsr.ofRandom(Double, shape)"]},
+        {"kind":"and","text":"...and passing it to the \"newRandom\" factory method to produce tensor x...","code":["Tensor x = Tensor.ofRandom(Double, shape)"]},
 
         {"kind":"then","text":"...the newly created variable x is as expected!","code":["x.toString().contains(\"[4]:(-1.04829, -0.40245, -0.04347, -1.4921)\")"]},
 
-        {"kind":"when","text":"Again using the \"andSeed\" method with a long seed...","code":["x = Tsr.ofDoubles().withShape(shape).andSeed(106605040595L)"]},
+        {"kind":"when","text":"Again using the \"andSeed\" method with a long seed...","code":["x = Tensor.ofDoubles().withShape(shape).andSeed(106605040595L)"]},
 
         {"kind":"then","text":"...the newly created variable x is as expected!","code":["x.toString().contains(\"[4]:(0.22266, 0.65678, -0.83154, 0.68019)\")"]},
 
-        {"kind":"when","text":"Again using the \"andSeed\" method with a long seed and with float as data type...","code":["x = Tsr.ofFloats().withShape(shape).andSeed(106605040595L)"]},
+        {"kind":"when","text":"Again using the \"andSeed\" method with a long seed and with float as data type...","code":["x = Tensor.ofFloats().withShape(shape).andSeed(106605040595L)"]},
 
         {"kind":"then","text":"...the newly created variable x is as expected!","code":["x.toString().contains(\"[4]:(0.22266, 0.65678, -0.83154, 0.68019)\")"]}
       ],
@@ -166,16 +166,16 @@
     },
   
     {
-      "id":"Tensor values can be manipulated via static method calls within the \"Tsr.IO\" class.",
+      "id":"Tensor values can be manipulated",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We are using the legacy view for tensors where bracket types are swapped, just because...","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(true)"]},
 
-        {"kind":"and","text":"Two tensors which will be used for testing IO.","code":["var t = Tsr.of([2, 2], [","                1.0d, 4.0d,","                2.0d, 7.0d,","            ])","var v = Tsr.of([2, 2], [","                1.0d, -1.0d,","                1.0d, -1.0d","            ])"]},
+        {"kind":"and","text":"Two tensors which will be used for testing IO.","code":["var t = Tensor.of([2, 2], [","                1.0d, 4.0d,","                2.0d, 7.0d,","            ])","var v = Tensor.of([2, 2], [","                1.0d, -1.0d,","                1.0d, -1.0d","            ])"]},
 
         {"kind":"when","text":"","code":["when : t += v"]},
 
@@ -215,7 +215,7 @@
 
         {"kind":"then","text":"The underlying data will have changed.","code":["t.toString().contains(\"[2x2]:(2.0, 3.0, 0.0, 0.0)\")"]},
 
-        {"kind":"when","text":"","code":["when : t -= Tsr.of([2, 2], [1d, 2d, 3d, 4d])"]},
+        {"kind":"when","text":"","code":["when : t -= Tensor.of([2, 2], [1d, 2d, 3d, 4d])"]},
 
         {"kind":"then","text":"","code":["then : t.toString().contains(\"[2x2]:(1.0, 1.0, -3.0, -4.0)\")"]}
       ],
@@ -230,7 +230,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var t = Tsr.of(type).withShape(shape).andFill(data)"]},
+        {"kind":"given","text":"","code":["var t = Tensor.of(type).withShape(shape).andFill(data)"]},
 
         {"kind":"when","text":"","code":["t.mut.setDataAt( 1, element )"]},
 
@@ -238,7 +238,7 @@
 
         {"kind":"and","text":"","code":["t.mut.data.get() == expected","t.rawData == expected"]},
 
-        {"kind":"when","text":"","code":["t = Tsr.of(type).withShape(shape).andFill(data)"]},
+        {"kind":"when","text":"","code":["t = Tensor.of(type).withShape(shape).andFill(data)"]},
 
         {"kind":"and","text":"","code":["t.mut.setItemAt( 1, element )"]},
 

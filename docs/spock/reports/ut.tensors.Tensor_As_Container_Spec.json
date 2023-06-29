@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.011 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":["\n           Although you can create a tensor of almost anything, you will\n           not be able to execute operations on every kind of tensor...        \n        "],"tags":{},"see":[],
   "features":[ 
@@ -21,13 +21,13 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"Two tensors filled with String objects containing various letters.","code":["Tsr a = Tsr.of([2, 3], 'a'..'e')","Tsr b = Tsr.of([2, 3], 'f'..'k')"]},
+        {"kind":"given","text":"Two tensors filled with String objects containing various letters.","code":["Tensor a = Tensor.of([2, 3], 'a'..'e')","Tensor b = Tensor.of([2, 3], 'f'..'k')"]},
 
         {"kind":"expect","text":"These two tensors then look as expected.","code":["a.toString() == '(2x3):[a, b, c, d, e, a]'","b.toString() == '(2x3):[f, g, h, i, j, k]'"]},
 
         {"kind":"and","text":"They have a data type wrapping the String class.","code":["a.dataType == DataType.of( String.class )","b.dataType == DataType.of( String.class )"]},
 
-        {"kind":"when","text":"We now apply the \"+\" operator to the tensors...","code":["Tsr c = a + b"]},
+        {"kind":"when","text":"We now apply the \"+\" operator to the tensors...","code":["Tensor c = a + b"]},
 
         {"kind":"then","text":"This translates to the individual elements :","code":["c.toString() == '(2x3):[af, bg, ch, di, ej, ak]'"]}
       ],
@@ -37,14 +37,14 @@
     {
       "id":"Tensor operations translate to custom data type \"ComplexNumber\".",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create 2 simple complex numbers","code":["def c1 = new ComplexNumber(2.3, -1.54)","def c2 = new ComplexNumber(1.0, 0.5)"]},
 
-        {"kind":"and","text":"Then we use them to populate 2 matrices.","code":["Tsr a = Tsr.of([3, 2], c1)","Tsr b = Tsr.of([3, 2], c2)"]},
+        {"kind":"and","text":"Then we use them to populate 2 matrices.","code":["Tensor a = Tensor.of([3, 2], c1)","Tensor b = Tensor.of([3, 2], c2)"]},
 
         {"kind":"expect","text":"","code":["a.toString() == \"(3x2):[2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i]\"","b.toString() == \"(3x2):[1.0+0.5i, 1.0+0.5i, 1.0+0.5i, 1.0+0.5i, 1.0+0.5i, 1.0+0.5i]\"","a.isVirtual()","b.isVirtual()","(a+b).toString() == \"(3x2):[3.3-1.04i, 3.3-1.04i, 3.3-1.04i, 3.3-1.04i, 3.3-1.04i, 3.3-1.04i]\"","(a-b).toString() == \"(3x2):[1.2999999999999998-2.04i, 1.2999999999999998-2.04i, 1.2999999999999998-2.04i, 1.2999999999999998-2.04i, 1.2999999999999998-2.04i, 1.2999999999999998-2.04i]\"","(a*b).toString() == \"(3x2):[3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i]\""]}
       ],
@@ -59,7 +59,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create 2 simple matrices of complex numbers using filler lambdas ","code":["Tsr a = Tsr.of(","            DataType.of(ComplexNumber.class),","            [3, 2],","            ( int i, int[] indices ) -> new ComplexNumber(indices[0], indices[1])","        )","Tsr b = Tsr.of(","            DataType.of(ComplexNumber.class),","            [3, 2],","            ( int i, int[] indices ) -> new ComplexNumber(indices[1], indices[0])","        )"]},
+        {"kind":"given","text":"We create 2 simple matrices of complex numbers using filler lambdas ","code":["Tensor a = Tensor.of(","            DataType.of(ComplexNumber.class),","            [3, 2],","            ( int i, int[] indices ) -> new ComplexNumber(indices[0], indices[1])","        )","Tensor b = Tensor.of(","            DataType.of(ComplexNumber.class),","            [3, 2],","            ( int i, int[] indices ) -> new ComplexNumber(indices[1], indices[0])","        )"]},
 
         {"kind":"expect","text":"","code":["a.toString() == \"(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]\"","b.toString() == \"(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]\"","!a.isVirtual()","!b.isVirtual()","(a+b).toString() == \"(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]\"","(a-b).toString() == \"(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]\"","(a*b).toString() == \"(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]\""]}
       ],
@@ -69,12 +69,12 @@
     {
       "id":"We can apply predicates on the values of a tensor.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create 3 different kinds of tensors.","code":["var a = Tsr.of(Character).withShape(2, 3).andFill('x' as char, 'y' as char, 'z' as char)","var b = Tsr.of(String).withShape(3, 2).andFill(\"Hey\", \"how\", \"are\", \"you\", \"?\")","var c = Tsr.ofDoubles().vector(42, 0.53, -2.5, 9, -12.92, 73)"]},
+        {"kind":"given","text":"We create 3 different kinds of tensors.","code":["var a = Tensor.of(Character).withShape(2, 3).andFill('x' as char, 'y' as char, 'z' as char)","var b = Tensor.of(String).withShape(3, 2).andFill(\"Hey\", \"how\", \"are\", \"you\", \"?\")","var c = Tensor.ofDoubles().vector(42, 0.53, -2.5, 9, -12.92, 73)"]},
 
         {"kind":"expect","text":"We can check if every value of a tensor satisfies a condition.","code":["a.every( item -> item instanceof Character )","b.every( item -> item instanceof String )","c.every( item -> item instanceof Double )"]},
 

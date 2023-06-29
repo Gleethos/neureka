@@ -3,7 +3,7 @@
 import neureka.Nda;
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.math.Function;
 import neureka.math.args.Arg;
 import neureka.common.utility.DataConverter;
@@ -22,11 +22,11 @@ import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
- *  This is the implementation of the fluent builder API for creating {@link Nda}/{@link Tsr} instances.
+ *  This is the implementation of the fluent builder API for creating {@link Nda}/{@link Tensor} instances.
  *  A simple example would be:
  * &lt;pre&gt;{@code
  *
- *    Tsr.of(Double.class)
+ *    Tensor.of(Double.class)
  *          .withShape( 2, 3, 4 )
  *          .andFill( 5, 3, 5 )
  *
@@ -35,7 +35,7 @@ import java.util.stream.IntStream;
  * It is also possible to define a range using the API to populate the tensor with values:
  * &lt;pre&gt;{@code
  *
- *    Tsr.of(Double.class)
+ *    Tensor.of(Double.class)
  *          .withShape( 2, 3, 4 )
  *          .andFillFrom( 2 ).to( 9 ).step( 2 )
  *
@@ -44,27 +44,27 @@ import java.util.stream.IntStream;
  * If one needs a simple scalar then the following shortcut is possible:
  * &lt;pre&gt;{@code
  *
- *    Tsr.of(Float.class).scalar( 3f )
+ *    Tensor.of(Float.class).scalar( 3f )
  *
  * }&lt;/pre&gt;
  *
  * This principle works for vectors as well:
  * &lt;pre&gt;{@code
  *
- *     Tsr.of(Byte.class).vector( 2, 5, 6, 7, 8 )
+ *     Tensor.of(Byte.class).vector( 2, 5, 6, 7, 8 )
  *
  * }&lt;/pre&gt;
  * For more fine-grained control over the initialization one can
  * pass an initialization lambda to the API:
  * &lt;pre&gt;{@code
  *
- *     Tsr.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -&gt; i * 5 - 30 )
+ *     Tensor.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -&gt; i * 5 - 30 )
  *
  * }&lt;/pre&gt;
  *
- * @param &lt;V&gt; The type of the values which ought to be represented by the {@link Tsr} built by this {@link NdaBuilder}.
+ * @param &lt;V&gt; The type of the values which ought to be represented by the {@link Tensor} built by this {@link NdaBuilder}.
  */
-public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDevice&lt;V&gt;, IterByOrIterFromOrAllTsr&lt;V&gt;, ToForTsr&lt;V&gt;, StepForTsr&lt;V&gt;
+public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDevice&lt;V&gt;, IterByOrIterFromOrAllTensor&lt;V&gt;, ToForTensor&lt;V&gt;, StepForTensor&lt;V&gt;
 {
 <span class="fc" id="L69">    private static final Logger _LOG = LoggerFactory.getLogger(NdaBuilder.class);</span>
 
@@ -75,25 +75,25 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
 <span class="fc" id="L75">    private Device&lt;V&gt; _device = (Device&lt;V&gt;) CPU.get();</span>
 
     /**
-     * @param typeClass The type of the values which ought to be represented by the {@link Tsr} built by this {@link NdaBuilder}.
+     * @param typeClass The type of the values which ought to be represented by the {@link Tensor} built by this {@link NdaBuilder}.
      */
 <span class="fc" id="L80">    public NdaBuilder( Class&lt;V&gt; typeClass ) {</span>
 <span class="fc" id="L81">        LogUtil.nullArgCheck( typeClass, &quot;typeClass&quot;, Class.class, &quot;Cannot build tensor without data type information!&quot; );</span>
 <span class="fc" id="L82">        _dataType = DataType.of( typeClass );</span>
 <span class="fc" id="L83">    }</span>
 
-    private Tsr&lt;V&gt; _get( Object value ) {
+    private Tensor&lt;V&gt; _get(Object value ) {
 <span class="fc" id="L86">        LogUtil.nullArgCheck( value, &quot;value&quot;, Object.class, &quot;Cannot build tensor where value is null!&quot; );</span>
-<span class="fc" id="L87">        return Tsr.of( _dataType, _device, _shape, value );</span>
+<span class="fc" id="L87">        return Tensor.of( _dataType, _device, _shape, value );</span>
     }
 
     /**
-     * @param values The values which will recurrently populate the returned {@link Tsr} with values until it is filled.
-     * @return A new {@link Tsr} instance populated by the array of values supplied to this method.
+     * @param values The values which will recurrently populate the returned {@link Tensor} with values until it is filled.
+     * @return A new {@link Tensor} instance populated by the array of values supplied to this method.
      */
     @SafeVarargs
     @Override
-    public final Tsr&lt;V&gt; andFill( V... values ) {
+    public final Tensor&lt;V&gt; andFill(V... values ) {
 <span class="fc" id="L97">        LogUtil.nullArgCheck( values, &quot;values&quot;, _dataType.getItemTypeClass(), &quot;Cannot fill a tensor will a value array that is null!&quot; );</span>
 <span class="fc bfc" id="L98" title="All 2 branches covered.">        if ( _isAllOne(values) ) return _get( values[0] );</span>
 <span class="fc" id="L99">        return _get( values );</span>
@@ -116,28 +116,28 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
 
     /**
      *  This method receives an {@link Filler} lambda which will be
-     *  used to populate the {@link Tsr} instance produced by this API with values.
+     *  used to populate the {@link Tensor} instance produced by this API with values.
      *
-     * @param filler The {@link Filler} which ought to populate the returned {@link Tsr}.
-     * @return A new {@link Tsr} instance populated by the lambda supplied to this method.
+     * @param filler The {@link Filler} which ought to populate the returned {@link Tensor}.
+     * @return A new {@link Tensor} instance populated by the lambda supplied to this method.
      */
     @Override
-    public Tsr&lt;V&gt; andWhere( Filler&lt;V&gt; filler ) {
-<span class="fc" id="L126">        return Tsr.of( _dataType, _shape, filler ).to( _device );</span>
+    public Tensor&lt;V&gt; andWhere(Filler&lt;V&gt; filler ) {
+<span class="fc" id="L126">        return Tensor.of( _dataType, _shape, filler ).to( _device );</span>
     }
 
     @Override
-    public ToForTsr&lt;V&gt; andFillFrom( V index ) {
+    public ToForTensor&lt;V&gt; andFillFrom(V index ) {
 <span class="fc" id="L131">        LogUtil.nullArgCheck(index, &quot;index&quot;, _dataType.getItemTypeClass(), &quot;Cannot create a range where the last index is undefined!&quot;);</span>
 <span class="fc" id="L132">        _from = _checked(index);</span>
 <span class="fc" id="L133">        return this;</span>
     }
 
     @Override
-<span class="fc" id="L137">    public Tsr&lt;V&gt; all( V value ) { return _get( value ); }</span>
+<span class="fc" id="L137">    public Tensor&lt;V&gt; all(V value ) { return _get( value ); }</span>
 
     @Override
-    public Tsr&lt;V&gt; andSeed( Object seed ) {
+    public Tensor&lt;V&gt; andSeed(Object seed ) {
 <span class="fc" id="L141">        Class&lt;V&gt; type = _dataType.getItemTypeClass();</span>
 <span class="fc" id="L142">        Class&lt;?&gt; seedType = seed.getClass();</span>
         try {
@@ -147,7 +147,7 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
 <span class="fc bfc" id="L147" title="All 4 branches covered.">            else if (type == Float.class &amp;&amp; seedType == Long.class)</span>
 <span class="fc" id="L148">                return random.with( Arg.Seed.of((Long) seed) ).call( _get( 0f ) );</span>
             else
-<span class="fc" id="L150">                return Tsr.of( type, _shape, Arg.Seed.of(seed.toString()) ).to( _device );</span>
+<span class="fc" id="L150">                return Tensor.of( type, _shape, Arg.Seed.of(seed.toString()) ).to( _device );</span>
 <span class="fc" id="L151">        } catch ( Exception e ) {</span>
 <span class="fc" id="L152">            IllegalArgumentException exception =</span>
                     new IllegalArgumentException(
@@ -159,7 +159,7 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
     }
 
     @Override
-    public IterByOrIterFromOrAllTsr&lt;V&gt; withShape( int... shape ) {
+    public IterByOrIterFromOrAllTensor&lt;V&gt; withShape(int... shape ) {
 <span class="fc" id="L163">        LogUtil.nullArgCheck(shape, &quot;shape&quot;, int[].class, &quot;Cannot create a tensor without shape!&quot;);</span>
 <span class="fc bfc" id="L164" title="All 2 branches covered.">        if ( shape.length == 0 )</span>
 <span class="fc" id="L165">            throw new IllegalArgumentException(&quot;Cannot instantiate a tensor without shape arguments.&quot;);</span>
@@ -168,7 +168,7 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
     }
 
     @Override
-    public Tsr&lt;V&gt; vector( Object[] values ) {
+    public Tensor&lt;V&gt; vector(Object[] values ) {
 <span class="fc" id="L172">        LogUtil.nullArgCheck(values, &quot;values&quot;, Object[].class, &quot;Cannot create a vector without data array!&quot;);</span>
 <span class="fc" id="L173">        _shape = Shape.of( values.length );</span>
 <span class="fc bfc" id="L174" title="All 2 branches covered.">        if ( _isAllOne(values) ) return _get( values[0] );</span>
@@ -176,7 +176,7 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
     }
 
     @Override
-    public Tsr&lt;V&gt; scalar( V value ) {
+    public Tensor&lt;V&gt; scalar(V value ) {
 <span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if ( value != null ) {</span>
 <span class="fc" id="L181">            value = _checked( value );</span>
 <span class="fc bfc" id="L182" title="All 2 branches covered.">            if ( !_dataType.getItemTypeClass().isAssignableFrom(value.getClass()) ) {</span>
@@ -219,10 +219,10 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
     }
 
     @Override
-<span class="fc" id="L222">    public StepForTsr&lt;V&gt; to( V index ) { _to = _checked(index); return this; }</span>
+<span class="fc" id="L222">    public StepForTensor&lt;V&gt; to( V index ) { _to = _checked(index); return this; }</span>
 
     @Override
-    public Tsr&lt;V&gt; step( double size ) {
+    public Tensor&lt;V&gt; step(double size ) {
 <span class="fc" id="L226">        int tensorSize = _size();</span>
 <span class="fc" id="L227">        Object data = null;</span>
 <span class="fc" id="L228">        int itemLimit = _size();</span>
@@ -299,7 +299,7 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
     }
 
     @Override
-    public WithShapeOrScalarOrVectorTsr&lt;V&gt; on( Device&lt;V&gt; device ) {
+    public WithShapeOrScalarOrVectorTensor&lt;V&gt; on(Device&lt;V&gt; device ) {
 <span class="fc" id="L303">        LogUtil.nullArgCheck(device, &quot;device&quot;, Device.class, &quot;Cannot create a tensor with an undefined device!&quot;);</span>
 <span class="fc" id="L304">        _device = device;</span>
 <span class="fc" id="L305">        return this;</span>

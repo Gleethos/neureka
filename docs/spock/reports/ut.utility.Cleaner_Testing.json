@@ -1,7 +1,7 @@
 {
   "className":"ut.utility.Cleaner_Testing",
   "title":"How Neureka Cleans Up",
-  "narrative":"Under the hood \n    Neureka deals whith large arrays of\n    data, which are often times \n    native data arrays requiring explicit\n    memory freeing!\n    This freeing of memory can happen at any time\n    during the livetime of a nd-array, however\n    it should happen at least up until the nd-arra/tensor\n    objects representing their referenced data arrays become\n    eligible for garbage collection.\n    This specification ensures that the custom garbage\n    cleaner implementation used by Neureka fulfills this role",
+  "narrative":"Under the hood\n    Neureka deals whith large arrays of\n    data, which are often times\n    native data arrays requiring explicit\n    memory freeing!\n    This freeing of memory can happen at any time\n    during the livetime of a nd-array, however\n    it should happen at least up until the nd-arra/tensor\n    objects representing their referenced data arrays become\n    eligible for garbage collection.\n    This specification ensures that the custom garbage\n    cleaner implementation used by Neureka fulfills this role",
   "subjects":[],
   "statistics":{
     "runs":"1",
@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.221 seconds"
+    "duration":"0.217 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The DeviceCleaner triggers registered cleaner actions when things are eligible for GC.",
       "result":"PASS",
-      "duration":"0.219 seconds",
+      "duration":"0.216 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var cleaner = DeviceCleaner.getNewInstance()","var refCount = 10","var r1 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r2 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r3 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r4 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r5 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r6 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r7 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r8 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r9 =  Tsr.ofDoubles().withShape( 2, 4 ).all(0)","var r10 = Tsr.ofDoubles().withShape( 2, 4 ).all(0)","cleaner.register( r1, {refCount--} )","cleaner.register( r2, {refCount--} )","cleaner.register( r3, {refCount--} )","cleaner.register( r4, {refCount--} )","cleaner.register( r5, {refCount--} )","cleaner.register( r6, {refCount--} )","cleaner.register( r7, {refCount--} )","cleaner.register( r8, {refCount--} )","cleaner.register( r9, {refCount--} )","cleaner.register( r10,{refCount--} )"]},
+        {"kind":"given","text":"","code":["var cleaner = DeviceCleaner.getNewInstance()","var refCount = 10","var r1 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)","var r2 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)","var r3 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)","var r4 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)","var r5 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)","var r6 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)","var r7 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)","var r8 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)","var r9 =  Tensor.ofDoubles().withShape( 2, 4 ).all(0)","var r10 = Tensor.ofDoubles().withShape( 2, 4 ).all(0)","cleaner.register( r1, {refCount--} )","cleaner.register( r2, {refCount--} )","cleaner.register( r3, {refCount--} )","cleaner.register( r4, {refCount--} )","cleaner.register( r5, {refCount--} )","cleaner.register( r6, {refCount--} )","cleaner.register( r7, {refCount--} )","cleaner.register( r8, {refCount--} )","cleaner.register( r9, {refCount--} )","cleaner.register( r10,{refCount--} )"]},
 
         {"kind":"when","text":"","code":["r1 = null","r3 = null","System.gc()"]},
 

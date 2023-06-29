@@ -2,7 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -99,7 +99,7 @@ implements ExecutionPreparation, ADActionSupplier
     @Override
     public float isSuitableFor( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
 <span class="fc" id="L101">        int[] shape = null;</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.inputs() ) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        for ( Tensor&lt;?&gt; t : call.inputs() ) {</span>
 <span class="fc bfc" id="L103" title="All 2 branches covered.">            if ( t != null ) {</span>
 <span class="fc bfc" id="L104" title="All 2 branches covered.">                if ( shape == null ) shape = t.getNDConf().shape();</span>
 <span class="fc bfc" id="L105" title="All 2 branches covered.">                else if ( !Arrays.equals(shape, t.getNDConf().shape()) ) return 0.0f;</span>
@@ -117,18 +117,18 @@ implements ExecutionPreparation, ADActionSupplier
 
     public static ADAction ADAction( Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
     {
-<span class="fc" id="L120">        Tsr&lt;?&gt; derivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="fc" id="L120">        Tensor&lt;?&gt; derivative = (Tensor&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
 <span class="fc" id="L121">        Function mul = Neureka.get().backend().getFunction().mul();</span>
 <span class="fc bfc" id="L122" title="All 2 branches covered.">        if ( derivative != null )</span>
 <span class="fc" id="L123">            return ADAction.of( target -&gt; mul.execute( target.error(), derivative ) );</span>
 
-<span class="fc" id="L125">        Tsr&lt;?&gt; localDerivative = MemUtil.keep( call.inputs(), () -&gt; function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );</span>
+<span class="fc" id="L125">        Tensor&lt;?&gt; localDerivative = MemUtil.keep( call.inputs(), () -&gt; function.executeDerive( call.inputs(), call.getDerivativeIndex() ) );</span>
 <span class="fc" id="L126">        localDerivative.mut().setIsIntermediate( false );</span>
 <span class="fc" id="L127">        return ADAction.of( target -&gt; mul.execute( target.error(), localDerivative ) );</span>
         // TODO: Maybe delete local derivative??
     }
 
-    public Tsr&lt;?&gt; dispatch( Function caller, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
+    public Tensor&lt;?&gt; dispatch(Function caller, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
 <span class="fc" id="L132">        return AbstractDeviceAlgorithm.executeFor( caller, call, AbstractDeviceAlgorithm::executeDeviceAlgorithm );</span>
     }
 
@@ -139,12 +139,12 @@ implements ExecutionPreparation, ADActionSupplier
 <span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
         {
 <span class="fc" id="L141">            Shape shp = call.input( 1 ).shape();</span>
-            Tsr&lt;Object&gt; output;
+            Tensor&lt;Object&gt; output;
 
 <span class="pc bpc" id="L144" title="1 of 2 branches missed.">            if ( call.getOperation().isInline() )</span>
 <span class="nc" id="L145">                output = call.input( Object.class, 1 );</span>
             else
-<span class="fc" id="L147">                output = (Tsr&lt;Object&gt;) Tsr.of( call.input( 1 ).getDataType(), shp )</span>
+<span class="fc" id="L147">                output = (Tensor&lt;Object&gt;) Tensor.of( call.input( 1 ).getDataType(), shp )</span>
 <span class="fc" id="L148">                                                    .mut()</span>
 <span class="fc" id="L149">                                                    .setIsIntermediate(true);</span>
 <span class="fc" id="L150">            output.mut().setIsVirtual( false );</span>
@@ -190,7 +190,7 @@ implements ExecutionPreparation, ADActionSupplier
             );
 <span class="fc" id="L191">    }</span>
 
-    private static void setAt( Tsr&lt;Object&gt; t, int i, Object o ) {
+    private static void setAt(Tensor&lt;Object&gt; t, int i, Object o ) {
 <span class="fc" id="L194">        t.mut().setDataAt( t.getNDConf().indexOfIndex( i ), o );</span>
 <span class="fc" id="L195">    }</span>
 

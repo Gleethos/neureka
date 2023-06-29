@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLElementwiseFunction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.elementwise</a> &gt; <span class="el_source">CLElementwiseFunction.java</span></div><h1>CLElementwiseFunction.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.elementwise;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.main.implementations.ParsedCLImplementation;
 import neureka.backend.main.implementations.fun.api.ScalarFun;
@@ -24,7 +24,7 @@ public class CLElementwiseFunction extends ParsedCLImplementation
         );
 <span class="fc" id="L25">    }</span>
 
-    private static Tsr&lt;?&gt; _run( ExecutionCall&lt;OpenCLDevice&gt; call )
+    private static Tensor&lt;?&gt; _run(ExecutionCall&lt;OpenCLDevice&gt; call )
     {
 <span class="pc bpc" id="L29" title="1 of 2 branches missed.">        int offset = call.input( Number.class, 0 ) != null ? 0 : 1;</span>
 <span class="pc bpc" id="L30" title="1 of 2 branches missed.">        int gwz = call.input( Number.class, 0 ) != null ? call.input( Number.class, 0 ).size() : call.input( Number.class, 1 ).size();</span>

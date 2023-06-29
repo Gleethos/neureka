@@ -2,28 +2,28 @@
   "className":"ut.miscellaneous.Weired_NN_Spec",
   "title":"",
   "narrative":"This specification is meant less as feature documentation and more as a\n    chaos test for weired neural network architectures\n    an unusual usages of the Neureka library.",
-  "subjects":["neureka.Tsr","neureka.optimization.Optimizer"],
+  "subjects":["neureka.Tensor","neureka.optimization.Optimizer"],
   "statistics":{
     "runs":"1",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.090 seconds"
+    "duration":"0.018 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Dot based feed forward and activation produces expected result.",
       "result":"PASS",
-      "duration":"0.088 seconds",
+      "duration":"0.016 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def data = Tsr.of([8, 4], [ // a-b*c","                              1d,  2d,  2d, -3d,","                              3d, -1d, -1d,  4d,","                             -1d, -2d, -3d, -7d,","                             -2d, -3d,  4d,  10d,","                              4d,  5d, -1d,  9d,","                              6d,  2d,  3d,  0d,","                              7d,  3d,  2d,  1d,","                             -4d, -4d,  2d,  4d","                        ])","var X = data[0..-1, 0..2].T()"]},
+        {"kind":"given","text":"","code":["def data = Tensor.of([8, 4], [ // a-b*c","                               1d, 2d, 2d, -3d,","                               3d, -1d, -1d, 4d,","                               -1d, -2d, -3d, -7d,","                               -2d, -3d, 4d, 10d,","                               4d, 5d, -1d, 9d,","                               6d, 2d, 3d, 0d,","                               7d, 3d, 2d, 1d,","                               -4d, -4d, 2d, 4d","                        ])","var X = data[0..-1, 0..2].T()"]},
 
-        {"kind":"and","text":"","code":["var w1 = Tsr.of([8, 3], \":-)\").setRqsGradient(true)","var w2 = Tsr.of([7, 8], \"O.o\").setRqsGradient(true)","var w3 = Tsr.of([1, 7], \":P\").setRqsGradient(true)"]},
+        {"kind":"and","text":"","code":["var w1 = Tensor.of([8, 3], \":-)\").setRqsGradient(true)","var w2 = Tensor.of([7, 8], \"O.o\").setRqsGradient(true)","var w3 = Tensor.of([1, 7], \":P\").setRqsGradient(true)"]},
 
         {"kind":"expect","text":"","code":["X.NDConf instanceof SimpleReshapeView","X.NDConf.indicesMap()  == [ 8,1  ] as int[]","X.NDConf.strides() == [1, 4 ] as int[]","X.NDConf.offset()      == [ 0,0  ] as int[]","X.NDConf.spread()      == [ 1,1  ] as int[]","X.NDConf.shape()       == [ 3, 8 ] as int[]"]},
 

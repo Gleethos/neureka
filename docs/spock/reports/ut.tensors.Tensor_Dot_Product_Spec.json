@@ -2,14 +2,14 @@
   "className":"ut.tensors.Tensor_Dot_Product_Spec",
   "title":"Tensor Dot Products",
   "narrative":"A tensor can also be a simple vector, which is a tensor of rank 1.\n    This specification demonstrates how to perform dot products on tensors of rank 1.",
-  "subjects":["neureka.Tsr"],
+  "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"7",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.137 seconds"
+    "duration":"0.128 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"two vectors, a and b, of length 2.","code":["var a = Tsr.of(3f, 2f)","var b = Tsr.of(1f, -0.5f)"]},
+        {"kind":"given","text":"two vectors, a and b, of length 2.","code":["var a = Tensor.of(3f, 2f)","var b = Tensor.of(1f, -0.5f)"]},
 
         {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
 
@@ -38,7 +38,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A matrix we want to slice.","code":["var m = Tsr.of(1f..4f).reshape(2,2)"]},
+        {"kind":"given","text":"A matrix we want to slice.","code":["var m = Tensor.of(1f..4f).reshape(2,2)"]},
 
         {"kind":"when","text":"we slice the matrix into two vectors.","code":["var a = m.slice().axis(0).at(0).get()","var b = m.slice().axis(0).at(1).get()"]},
 
@@ -57,7 +57,7 @@
       "tags":{},"see":[],"extraInfo":["\n            The \"dot\" operation supports autograd.\n            This means that you can use it to calculate the gradient of a weight tensor.\n            This is useful for when you want to build a neural network or some other machine learning model.\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"two vectors, a and b, of length 2.","code":["var a = Tsr.of(4f, -1f, 2f)","var w = Tsr.of(1f, 0f, 0f).setRqsGradient(true)"]},
+        {"kind":"given","text":"two vectors, a and b, of length 2.","code":["var a = Tensor.of(4f, -1f, 2f)","var w = Tensor.of(1f, 0f, 0f).setRqsGradient(true)"]},
 
         {"kind":"when","text":"we calculate the dot product of a and w.","code":["var result = a.dot(w)"]},
 
@@ -73,12 +73,12 @@
     {
       "id":"The dot product operation runs on any device.",
       "result":"PASS",
-      "duration":"0.079 seconds",
+      "duration":"0.075 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The dot product operation runs on any device that \n            supports OpenCL (meaning that it has OpenCL drivers installed).\n        ","\n            The dot product operation runs on any device that \n            supports OpenCL (meaning that it has OpenCL drivers installed).\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tsr.of(-1f, -3f, 0f, 4f, 2f).to( device )","var b = Tsr.of( 1f,  2f, 7f, -1f, 3f).to( device )"]},
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(-1f, -3f, 0f, 4f, 2f).to( device )","var b = Tensor.of( 1f,  2f, 7f, -1f, 3f).to( device )"]},
 
         {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
 
@@ -97,7 +97,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tsr.of(Shape.of(8), 3f).to(device)","var b = Tsr.of(Shape.of(8), 3f).to(device)"]},
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(Shape.of(8), 3f).to(device)","var b = Tensor.of(Shape.of(8), 3f).to(device)"]},
 
         {"kind":"expect","text":"the tensors are virtual.","code":["a.isVirtual() // They are scalars in disguise!","b.isVirtual()"]},
 
@@ -118,7 +118,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tsr.of(Shape.of(8), 3f).to(device)","var b = Tsr.of(Shape.of(8), Data.of(3f, 4f, -1f)).to(device)"]},
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(Shape.of(8), 3f).to(device)","var b = Tensor.of(Shape.of(8), Data.of(3f, 4f, -1f)).to(device)"]},
 
         {"kind":"expect","text":"the tensors are virtual.","code":["a.isVirtual() // They are scalars in disguise!","!b.isVirtual()"]},
 
@@ -134,12 +134,12 @@
     {
       "id":"The dot product works across different types and devices.",
       "result":"PASS",
-      "duration":"0.038 seconds",
+      "duration":"0.037 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tsr.of(data1).to(device)","var b = Tsr.of(data2).to(device)"]},
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
 
         {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
 

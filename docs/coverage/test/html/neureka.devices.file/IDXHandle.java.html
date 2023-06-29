@@ -4,7 +4,7 @@
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
@@ -66,7 +66,7 @@ public final class IDXHandle extends AbstractFileHandle&lt;IDXHandle, Number&gt;
 <span class="fc" id="L66">        }</span>
 <span class="fc" id="L67">    }</span>
 
-    public IDXHandle(Tsr&lt;Number&gt; t, String filename ) {
+    public IDXHandle(Tensor&lt;Number&gt; t, String filename ) {
 <span class="fc" id="L70">        super( filename, new IDXType() );</span>
 <span class="fc" id="L71">        _shape = t.shape();</span>
 <span class="fc" id="L72">        _dataType = t.getDataType();</span>
@@ -103,7 +103,7 @@ public final class IDXHandle extends AbstractFileHandle&lt;IDXHandle, Number&gt;
 
 
     @Override
-    public &lt;T extends Number&gt; IDXHandle store( Tsr&lt;T&gt; tensor )
+    public &lt;T extends Number&gt; IDXHandle store( Tensor&lt;T&gt; tensor )
     {
 <span class="fc" id="L108">        Iterator&lt;T&gt; data = tensor.iterator();</span>
         FileOutputStream fos;
@@ -180,13 +180,13 @@ public final class IDXHandle extends AbstractFileHandle&lt;IDXHandle, Number&gt;
     }
 
     @Override
-    public Tsr&lt;Number&gt; load() throws IOException
+    public Tensor&lt;Number&gt; load() throws IOException
     {
 <span class="fc" id="L185">        Object value = _loadData();</span>
 <span class="pc bpc" id="L186" title="1 of 2 branches missed.">        DataType&lt;?&gt; type = Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes()</span>
 <span class="fc" id="L187">                            ? DataType.of( _dataType.getTypeClassInstance(NumericType.class).getNumericTypeTarget() )</span>
 <span class="pc" id="L188">                            : _dataType;</span>
-<span class="fc" id="L189">        return Tsr.of( type, _shape, value ).getMut().upcast(Number.class);</span>
+<span class="fc" id="L189">        return Tensor.of( type, _shape, value ).getMut().upcast(Number.class);</span>
     }
 
     @Override

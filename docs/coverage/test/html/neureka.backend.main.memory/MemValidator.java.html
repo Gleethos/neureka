@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MemValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.memory</a> &gt; <span class="el_source">MemValidator.java</span></div><h1>MemValidator.java</h1><pre class="source lang-java linenums">package neureka.backend.main.memory;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.Result;
 
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 /**
  *  This class validates the states of tensors with respect to memory management
  *  before and after a lambda executes a function or some kind of algorithm on said tensors.
- *  This validity refers to the {@link Tsr#isIntermediate()} flag, whose state should
+ *  This validity refers to the {@link Tensor#isIntermediate()} flag, whose state should
  *  adhere to strict rules in order to allow for safe deletion of tensors.
  *  The lambda wrapped by this may be a {@link neureka.math.Function} call or a lower level
  *  procedure defined a {@link neureka.backend.api.Algorithm} implementation.
@@ -28,18 +28,18 @@ public class MemValidator {
      * @param resultProvider The callback providing the result which ought to be validated.
      * @return The {@link MemValidator} which ought to validate the provided result.
      */
-    public static MemValidator forInputs( Tsr&lt;?&gt;[] inputs, Supplier&lt;Result&gt; resultProvider ) {
+    public static MemValidator forInputs(Tensor&lt;?&gt;[] inputs, Supplier&lt;Result&gt; resultProvider ) {
 <span class="fc" id="L32">        return new MemValidator( inputs, resultProvider );</span>
     }
 
-<span class="fc" id="L35">    private MemValidator( Tsr&lt;?&gt;[] tensors, Supplier&lt;Result&gt; execution ) {</span>
+<span class="fc" id="L35">    private MemValidator(Tensor&lt;?&gt;[] tensors, Supplier&lt;Result&gt; execution ) {</span>
         /*
             Now before calling the function we will do a snapshot of the inputs
             in order to later on verify the output validity with respect
             to the 'intermediate' flag.
         */
-<span class="fc" id="L41">        Tsr&lt;?&gt;[] inputs = tensors.clone();</span>
-<span class="fc" id="L42">        Boolean[] areIntermediates = Arrays.stream(tensors).map(Tsr::isIntermediate).toArray(Boolean[]::new);</span>
+<span class="fc" id="L41">        Tensor&lt;?&gt;[] inputs = tensors.clone();</span>
+<span class="fc" id="L42">        Boolean[] areIntermediates = Arrays.stream(tensors).map(Tensor::isIntermediate).toArray(Boolean[]::new);</span>
 <span class="pc bpc" id="L43" title="1 of 4 branches missed.">        Boolean[] gradIntermediates = Arrays.stream(tensors).map(t -&gt; (t.hasGradient() &amp;&amp; t.gradient().get().isIntermediate())).toArray(Boolean[]::new);</span>
         /*
             Finally, we dispatch the call to the function implementation to get as result!
@@ -98,12 +98,12 @@ public class MemValidator {
 <span class="fc" id="L98">    }</span>
 
     /**
-     * @return Is {@code true} if the result tensor is wrongfully flagged as intermediate (see {@link Tsr#isIntermediate()}).
+     * @return Is {@code true} if the result tensor is wrongfully flagged as intermediate (see {@link Tensor#isIntermediate()}).
      */
 <span class="fc" id="L103">    public boolean isWronglyIntermediate() { return _wronglyIntermediate; }</span>
 
     /**
-     * @return Is {@code true} if the result tensor is wrongfully flagged as non-intermediate (see {@link Tsr#isIntermediate()}).
+     * @return Is {@code true} if the result tensor is wrongfully flagged as non-intermediate (see {@link Tensor#isIntermediate()}).
      */
 <span class="fc" id="L108">    public boolean isWronglyNonIntermediate() { return _wronglyNonIntermediate; }</span>
 

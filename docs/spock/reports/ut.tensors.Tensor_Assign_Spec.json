@@ -1,15 +1,15 @@
 {
   "className":"ut.tensors.Tensor_Assign_Spec",
-  "title":"Tsr Inline Assignment",
+  "title":"Tensor Inline Assignment",
   "narrative":"In this specification we cover the behaviour of tensors with respect to the assignment operation\n    as well as the assignment of individual tensor items.",
-  "subjects":["neureka.Tsr"],
+  "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.002 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We have two vector tensors:","code":["var a = Tsr.of(1L, 2L, 3L)","var b = Tsr.of(-3L, -2L, -1L)"]},
+        {"kind":"given","text":"We have two vector tensors:","code":["var a = Tensor.of(1L, 2L, 3L)","var b = Tensor.of(-3L, -2L, -1L)"]},
 
         {"kind":"when","text":"We assign the contents of \"b\" into \"a\" using the \"mut\" API:","code":["a.mut.assign( b )"]},
 
@@ -38,13 +38,13 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"An tensor of bytes with shape (2, 3).","code":["var n = Tsr.ofBytes().withShape(3, 2).andFill(5, 4, 3, 2, 1, 0)"]},
+        {"kind":"given","text":"An tensor of bytes with shape (2, 3).","code":["var n = Tensor.ofBytes().withShape(3, 2).andFill(5, 4, 3, 2, 1, 0)"]},
 
-        {"kind":"and","text":"","code":["var a = Tsr.ofBytes().withShape(1, 2).andFill(-42, 42)"]},
+        {"kind":"and","text":"","code":["var a = Tensor.ofBytes().withShape(1, 2).andFill(-42, 42)"]},
 
         {"kind":"when","text":"We assign the tensor a to the tensor n.","code":["n.mut[0..1, 1] = a"]},
 
-        {"kind":"then","text":"The Tsr n has the expected values.","code":["n.items == [5, -42, 3, 42, 1, 0]"]}
+        {"kind":"then","text":"The Tensor n has the expected values.","code":["n.items == [5, -42, 3, 42, 1, 0]"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -57,7 +57,7 @@
       "tags":{},"see":[],"extraInfo":["\n            Note that using the 'assign' operation on slices should be handled with care,\n            since the operation has side effects on the underlying data array\n            which is shared by both the slice and its parent.\n            Use the 'copy' operation on slices if you want to avoid this.\n        "]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var n1 = Tsr.ofShorts().vector(1, 2, 3, 4)","var n2 = Tsr.ofShorts().vector(6, 7, 8, 9, 10, 11)"]},
+        {"kind":"given","text":"","code":["var n1 = Tensor.ofShorts().vector(1, 2, 3, 4)","var n2 = Tensor.ofShorts().vector(6, 7, 8, 9, 10, 11)"]},
 
         {"kind":"when","text":"We create to very simple slices of 3 items in the above vectors.","code":["var s1 = n1[0..2]","var s2 = n2[2..4]"]},
 

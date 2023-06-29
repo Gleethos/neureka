@@ -2,21 +2,21 @@
   "className":"ut.device.Cross_Device_IO_Spec",
   "title":"Devices manage the states of the tensors they store!",
   "narrative":"Tensors should not manage their states\n    themselves, simply because the type and location\n    of the data is dependent on the device onto which they are stored.\n    This specification tests of various device implementations\n    enable reading to or writing from the tensors they store.",
-  "subjects":["neureka.devices.Device","neureka.Tsr"],
+  "subjects":["neureka.devices.Device","neureka.Tensor"],
   "statistics":{
     "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.141 seconds"
+    "duration":"0.012 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the access device API to read from a tensor.",
       "result":"PASS",
-      "duration":"0.079 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,7 +25,7 @@
 
         {"kind":"and","text":"We fetch the array type of the tested data type!","code":["var arrayType = DataType.of(type).dataArrayType()"]},
 
-        {"kind":"and","text":"A tensor filled with 4 values which we are going to store on the previously fetched device.","code":["var t = Tsr.of(type).withShape(4).andFill(fill).to(device)"]},
+        {"kind":"and","text":"A tensor filled with 4 values which we are going to store on the previously fetched device.","code":["var t = Tensor.of(type).withShape(4).andFill(fill).to(device)"]},
 
         {"kind":"and","text":"A slice from the above tensor.","code":["var s = t[1..2]"]},
 
@@ -43,7 +43,7 @@
     {
       "id":"We can use the access device API to write to a tensor",
       "result":"PASS",
-      "duration":"0.034 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
 
         {"kind":"and","text":"We fetch the array type of the tested data type!","code":["var arrayType = DataType.of(type).dataArrayType()"]},
 
-        {"kind":"and","text":"A tensor filled with 4 values which we are going to store on the previously fetched device.","code":["var t = Tsr.of(type).withShape(4).andFill(fill).to(device)"]},
+        {"kind":"and","text":"A tensor filled with 4 values which we are going to store on the previously fetched device.","code":["var t = Tensor.of(type).withShape(4).andFill(fill).to(device)"]},
 
         {"kind":"and","text":"A slice from the above tensor.","code":["var s = t[1..2]"]},
 

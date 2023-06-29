@@ -2,7 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -37,8 +37,8 @@ import neureka.devices.Device;
             new NDConvolution()
 <span class="fc" id="L38">            .setAutogradModeFor( call -&gt; {</span>
 <span class="fc bfc" id="L39" title="All 2 branches covered.">                if ( call.getOperation().supports( NDConvolution.class ) ) return AutoDiffMode.BACKWARD_ONLY;</span>
-<span class="fc" id="L40">                Tsr&lt;?&gt; last = null;</span>
-<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                for ( Tsr&lt;?&gt; t : call.inputs() ) {</span>
+<span class="fc" id="L40">                Tensor&lt;?&gt; last = null;</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                for ( Tensor&lt;?&gt; t : call.inputs() ) {</span>
 <span class="nc bnc" id="L42" title="All 4 branches missed.">                    if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return AutoDiffMode.BACKWARD_ONLY;</span>
 <span class="nc" id="L43">                    last = t; // Note: shapes are cached!</span>
                 }
@@ -60,7 +60,7 @@ import neureka.devices.Device;
                                 &quot;I[ 0 ] x&gt;&gt; I[ 1 ] x&gt;&gt; I[ 2 ]&quot;,
                                 false
                         );
-<span class="fc" id="L63">                        Tsr&lt;?&gt; derivative = f.derive( (Tsr[]) adCall.inputs(), d );</span>
+<span class="fc" id="L63">                        Tensor&lt;?&gt; derivative = f.derive( (Tensor[]) adCall.inputs(), d );</span>
 <span class="pc bpc" id="L64" title="2 of 4 branches missed.">                        assert d &gt;= 0 &amp;&amp; d &lt;= 1;</span>
 <span class="pc bpc" id="L65" title="1 of 2 branches missed.">                        assert derivative != null;</span>
 <span class="pc bpc" id="L66" title="1 of 2 branches missed.">                        assert deConv != null;</span>
@@ -83,7 +83,7 @@ import neureka.devices.Device;
 <span class="fc" id="L83">                                deConv.execute(</span>
 <span class="fc" id="L84">                                        target.error(),</span>
                                         derivative,
-<span class="fc" id="L86">                                        Tsr.of(shape, zero).mut().setIsIntermediate( false )</span>
+<span class="fc" id="L86">                                        Tensor.of(shape, zero).mut().setIsIntermediate( false )</span>
                                 )
                         );
                     })
@@ -93,7 +93,7 @@ import neureka.devices.Device;
 <span class="pc bpc" id="L93" title="1 of 2 branches missed.">                     if ( call.arity() &lt;= 2 ) call = call.withAddedInputAt( 0, null );</span>
 <span class="fc" id="L94">                     Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
 <span class="fc" id="L95">                     Shape shp = ConvUtil.shapeOfCon(call.input( 1 ).getNDConf().shape(), call.input( 2 ).getNDConf().shape());</span>
-<span class="fc" id="L96">                     Tsr&lt;Number&gt; output = (Tsr&lt;Number&gt;) Tsr.of( call.input(1).getItemType(), shp, 0 )</span>
+<span class="fc" id="L96">                     Tensor&lt;Number&gt; output = (Tensor&lt;Number&gt;) Tensor.of( call.input(1).getItemType(), shp, 0 )</span>
 <span class="fc" id="L97">                                                             .mut()</span>
 <span class="fc" id="L98">                                                             .setIsIntermediate( true );</span>
 <span class="fc" id="L99">                     output.mut().setIsVirtual( false );</span>
@@ -114,7 +114,7 @@ import neureka.devices.Device;
 <span class="fc" id="L114">            Function reducedCaller = reducePairwise(caller);</span>
 <span class="fc" id="L115">            ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
 <span class="fc" id="L116">            Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );</span>
-<span class="pc bpc" id="L117" title="1 of 4 branches missed.">            for ( Tsr&lt;?&gt; t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);</span>
+<span class="pc bpc" id="L117" title="1 of 4 branches missed.">            for ( Tensor&lt;?&gt; t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);</span>
 <span class="fc" id="L118">            return this.execute( flat, flatCall );</span>
         }
 <span class="fc bfc" id="L120" title="All 2 branches covered.">        if ( call.getDerivativeIndex() &gt;= 0 ) {</span>
@@ -129,7 +129,7 @@ import neureka.devices.Device;
 <span class="fc" id="L129">        Function reducedCaller = reducePairwise(caller);</span>
 <span class="fc" id="L130">        ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
 <span class="fc" id="L131">        Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );</span>
-<span class="pc bpc" id="L132" title="1 of 4 branches missed.">        for ( Tsr&lt;?&gt; t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);</span>
+<span class="pc bpc" id="L132" title="1 of 4 branches missed.">        for ( Tensor&lt;?&gt; t : flatCall.inputs() ) if ( t != null ) t.mut().setIsIntermediate(false);</span>
 <span class="fc" id="L133">        return super.execute( flat, flatCall );</span>
     }
 

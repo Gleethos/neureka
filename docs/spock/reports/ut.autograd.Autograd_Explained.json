@@ -1,17 +1,17 @@
 {
   "className":"ut.autograd.Autograd_Explained",
   "title":"Autograd - Automatic Differentiation",
-  "narrative":"Central to all neural networks in Neureka is the autograd package.                                      \n    The autograd package provides automatic differentiation for all default operations on Tensors.          \n    Neureka is a define-by-run library, which means that your backpropagation is defined by how             \n    your code is run, and that every single iteration can be different.                                     \n\n    The class neureka.Tsr is the central class of the main package.                                         \n    If you set its attribute 'rqsGradient' to True, Neureka starts to track all operations on it.           \n    When you finish the forward pass of your network                                                        \n    you can call .backward() and have all the gradients computed                                            \n    and distributed to the tensors requiring them automatically.                                            \n\n    The gradient for a tensor will be accumulated into a child tensor (component) which                     \n    can be accessed via the '.getGradient()' method.                                                        \n\n    To stop a tensor from tracking history, you can call '.detach()' to detach it from the                  \n    computation history, and to prevent future computation from being tracked.",
-  "subjects":["neureka.Tsr","neureka.autograd.GraphNode"],
+  "narrative":"Central to all neural networks in Neureka is the autograd package.\n    The autograd package provides automatic differentiation for all default operations on Tensors.\n    Neureka is a define-by-run library, which means that your backpropagation is defined by how\n    your code is run, and that every single iteration can be different.\n\n    The class neureka.Tensor is the central class of the main package.\n    If you set its attribute 'rqsGradient' to True, Neureka starts to track all operations on it.\n    When you finish the forward pass of your network\n    you can call .backward() and have all the gradients computed\n    and distributed to the tensors requiring them automatically.\n\n    The gradient for a tensor will be accumulated into a child tensor (component) which\n    can be accessed via the '.getGradient()' method.\n\n    To stop a tensor from tracking history, you can call '.detach()' to detach it from the\n    computation history, and to prevent future computation from being tracked.",
+  "subjects":["neureka.Tensor","neureka.autograd.GraphNode"],
   "statistics":{
     "runs":"1",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.008 seconds"
+    "duration":"0.007 seconds"
   },
-  "headers":["\n            There’s one more class which is very important for autograd implementation : the 'GraphNode class'!     \n            Tsr and GraphNode instances are interconnected and build up an acyclic graph,                              \n            that encodes a complete history of computation.                                                                        \n            Each tensor has a .getGraphNode() attribute that references the GraphNode                                        \n            that has created a given Tsr instance.                                                                  \n            (except for Tsr created by the user or created by a \"detached\" Function instance... ).                  \n\n        ","\n            If you want to compute the derivatives, you can call .backward() on a Tensor.                           \n            If the given Tsr is a scalar (i.e. it holds one element and has shape \"(1)\"), you do not need to        \n            specify any arguments to backward(), however if it has more elements,                                   \n            you should specify a gradient argument that is a tensor of matching shape.                              \n        "],"tags":{},"see":[],
+  "headers":["\n            There’s one more class which is very important for autograd implementation : the 'GraphNode class'!     \n            Tensor and GraphNode instances are interconnected and build up an acyclic graph,                              \n            that encodes a complete history of computation.                                                                        \n            Each tensor has a .getGraphNode() attribute that references the GraphNode                                        \n            that has created a given Tensor instance.                                                                  \n            (except for Tensor created by the user or created by a \"detached\" Function instance... ).                  \n\n        ","\n            If you want to compute the derivatives, you can call .backward() on a Tensor.                           \n            If the given Tensor is a scalar (i.e. it holds one element and has shape \"(1)\"), you do not need to        \n            specify any arguments to backward(), however if it has more elements,                                   \n            you should specify a gradient argument that is a tensor of matching shape.                              \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Simple automatic differentiation and propagation.",
@@ -23,7 +23,7 @@
       "blocks":[
         {"kind":"given","text":"\n                The following flag states enable regular auto-grad (should also be the default):\n            ","code":["Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)","Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)","Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)"]},
 
-        {"kind":"and","text":"We create a simple tensor and set rqsGradient to true in order to track dependent computation.","code":["def x = Tsr.of([2, 2], 1d).setRqsGradient(true)"]},
+        {"kind":"and","text":"We create a simple tensor and set rqsGradient to true in order to track dependent computation.","code":["def x = Tensor.of([2, 2], 1d).setRqsGradient(true)"]},
 
         {"kind":"expect","text":"The tensor should look as follows : ","code":["x.toString().contains(\"(2x2):[1.0, 1.0, 1.0, 1.0]\")"]},
 
@@ -41,7 +41,7 @@
 
         {"kind":"then","text":"This \"result\" tensor will be the expected scalar :","code":["result.toString().contains(\"27.0\")"]},
 
-        {"kind":"when","text":"Any new tensor is created...","code":["def someTensor = Tsr.newInstance()"]},
+        {"kind":"when","text":"Any new tensor is created...","code":["def someTensor = Tensor.newInstance()"]},
 
         {"kind":"then","text":"The autograd flag will always default to \"false\" :","code":["someTensor.rqsGradient() == false"]},
 
@@ -49,7 +49,7 @@
 
         {"kind":"then","text":"\n                We will notice that \"result\" does NOT require gradients!\n                Although one of it's \"ancestors\" does require gradients (namely: \"x\"),\n                this variable itself will not hold any gradients except for when it\n                propagates them ...\n            ","code":["resultRequiresGradient == false"]},
 
-        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tsr.of(1)).\n            ","code":["z.backward(0.25)"]},
+        {"kind":"when","text":"\n                We now try to backpropagate! Because \"result\" contains a single scalar,\n                result.backward() is equivalent to out.backward(Tensor.of(1)).\n            ","code":["z.backward(0.25)"]},
 
         {"kind":"then","text":"\n                The tensor which requires gradients, namely \"x\" now has the expected gradients :\n        ","code":["x.toString().contains(\"(2x2):[1.0, 1.0, 1.0, 1.0]:g:[4.5, 4.5, 4.5, 4.5]\")"]},
 

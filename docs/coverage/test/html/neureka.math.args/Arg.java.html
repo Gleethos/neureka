@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Arg.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.math.args</a> &gt; <span class="el_source">Arg.java</span></div><h1>Arg.java</h1><pre class="source lang-java linenums">package neureka.math.args;
 
+import neureka.Tensor;
 import neureka.common.composition.Component;
-import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.ndim.config.NDConfiguration;
 
@@ -36,9 +36,9 @@ public abstract class Arg&lt;T&gt; implements Component&lt;Args&gt; {
 <span class="fc" id="L36">    public boolean update(OwnerChangeRequest&lt;Args&gt; changeRequest) { return true; }</span>
 
 
-    public static class Derivative&lt;V&gt; extends Arg&lt;Tsr&lt;V&gt;&gt; {
-<span class="fc" id="L40">        public static &lt;V&gt; Derivative&lt;V&gt; of(Tsr&lt;V&gt; arg) { return new Derivative&lt;&gt;(arg); }</span>
-<span class="fc" id="L41">        private Derivative(Tsr&lt;V&gt; arg) { super(arg); }</span>
+    public static class Derivative&lt;V&gt; extends Arg&lt;Tensor&lt;V&gt;&gt; {
+<span class="fc" id="L40">        public static &lt;V&gt; Derivative&lt;V&gt; of(Tensor&lt;V&gt; arg) { return new Derivative&lt;&gt;(arg); }</span>
+<span class="fc" id="L41">        private Derivative(Tensor&lt;V&gt; arg) { super(arg); }</span>
     }
 
     /**

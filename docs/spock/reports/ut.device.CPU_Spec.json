@@ -1,7 +1,7 @@
 {
   "className":"ut.device.CPU_Spec",
   "title":"The CPU device, an API for CPU based execution",
-  "narrative":"The CPU class, one of many implementations of the Device interface, \n    is simply supposed to be an API for dispatching threaded workloads onto the CPU.\n    Contrary to other types of device, the CPU will host tensor data by default, simply\n    because the tensors will be stored in RAM if no device was specified.",
+  "narrative":"The CPU class, one of many implementations of the Device interface,\n    is simply supposed to be an API for dispatching threaded workloads onto the CPU.\n    Contrary to other types of device, the CPU will host tensor data by default, simply\n    because the tensors will be stored in RAM if no device was specified.",
   "subjects":["neureka.devices.host.CPU","neureka.devices.Device"],
   "statistics":{
     "runs":"4",
@@ -9,19 +9,19 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"5.589 seconds"
+    "duration":"0.643 seconds"
   },
   "headers":[" \n                <p>\n                    The thread pool of the class neureka.devices.host.CPU executor becomes\n                    more active when receiving larger workloads which\n                    benefit from parallelization.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Thread pool executes given workload in parallel",
       "result":"PASS",
-      "duration":"0.344 seconds",
+      "duration":"0.454 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Warning! This test is flaky simply because it relies on the behaviour of threads\n            which may or may not behave as expected. \n        "]
       },
       "blocks":[
-        {"kind":"given","text":"Two 4 dimensional tensor instances.","code":["Tsr a = Tsr.of(Shape.of(100, 60, 1, 2),  4)","Tsr b = Tsr.of(Shape.of(100, 1, 60, 2), -2)"]},
+        {"kind":"given","text":"Two 4 dimensional tensor instances.","code":["Tensor a = Tensor.of(Shape.of(100, 60, 1, 2),  4)","Tensor b = Tensor.of(Shape.of(100, 1, 60, 2), -2)"]},
 
         {"kind":"and","text":"The default device returned by the first tensor:","code":["Device cpu = a.getDevice()"]},
 
@@ -31,7 +31,7 @@
 
         {"kind":"then","text":"The executor is not null as well as its internal thread pool!","code":["exec != null"]},
 
-        {"kind":"expect","text":"","code":["if ( exec.getCorePoolSize() <= 2 ) true","else {","    int[] min = new int[]{ exec.getCorePoolSize() }","    assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()","    Thread t = new Thread(() -> {","        while ( min[0] > 0 ) {","            int current = exec.getCorePoolSize() - exec.getActiveThreadCount()","            if ( current < min[0] ) min[0] = current","        }","    })","    t.start()","    Tsr c = ( a / b ) * 3","    assert c.shape() == [100,60,60,2]","    int result = min[0]","    try {","        min[0] = 0","        t.join()","    } catch (InterruptedException e) {","        e.printStackTrace()","    }","    assert result <= (exec.getCorePoolSize() / 2)","}"]}
+        {"kind":"expect","text":"","code":["if ( exec.getCorePoolSize() <= 2 ) true","else {","    int[] min = new int[]{ exec.getCorePoolSize() }","    assert min[0] > 0 && min[0] <= Runtime.getRuntime().availableProcessors()","    Thread t = new Thread(() -> {","        while ( min[0] > 0 ) {","            int current = exec.getCorePoolSize() - exec.getActiveThreadCount()","            if ( current < min[0] ) min[0] = current","        }","    })","    t.start()","    Tensor c = ( a / b ) * 3","    assert c.shape() == [100,60,60,2]","    int result = min[0]","    try {","        min[0] = 0","        t.join()","    } catch (InterruptedException e) {","        e.printStackTrace()","    }","    assert result <= (exec.getCorePoolSize() / 2)","}"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -67,7 +67,7 @@
     {
       "id":"The CPU device will keep track of the amount of tensors it stores.",
       "result":"PASS",
-      "duration":"5.241 seconds",
+      "duration":"0.174 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -80,7 +80,7 @@
 
         {"kind":"then","text":"The CPU should not have stored any tensors yet.","code":["cpu.numberOfStored() == initial"]},
 
-        {"kind":"when","text":"We create a tensor from the data object...","code":["var t = Tsr.of( Shape.of(2, 2), data )"]},
+        {"kind":"when","text":"We create a tensor from the data object...","code":["var t = Tensor.of( Shape.of(2, 2), data )"]},
 
         {"kind":"then","text":"The CPU should know about the existence of a new tensor.","code":["CPU.get().numberOfStored() == initial + 1"]},
 

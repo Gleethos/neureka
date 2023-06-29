@@ -9,21 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.200 seconds"
+    "duration":"2.117 seconds"
   },
   "headers":["\n                Specified below are strict tests covering the behavior\n                of the OpenCLDevice when hosting tensors and executing \n                operations on them.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An OpenCLDevice loads tensors in a provided lambda temporarily.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"The first found OpenCLDevice instance.","code":["Device<?> device = Device.get('first')"]},
 
-        {"kind":"and","text":"We create 2 tensors with different default devices.","code":["Tsr<?> t = Tsr.of([4, 3], 2)","Tsr<?> s = Tsr.of([3, 2], -1).to(device)"]},
+        {"kind":"and","text":"We create 2 tensors with different default devices.","code":["Tensor<?> t = Tensor.of([4, 3], 2)","Tensor<?> s = Tensor.of([3, 2], -1).to(device)"]},
 
         {"kind":"expect","text":"At first, both tensors are stored where we said they should be.","code":["!device.has(t)","device.has(s)"]},
 
@@ -48,7 +48,7 @@
       "blocks":[
         {"kind":"given","text":"We set the experimental \"autoConvertToFloat\" flag to true.","code":["Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })"]},
 
-        {"kind":"and","text":"A new tensor.","code":["Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)"]},
+        {"kind":"and","text":"A new tensor.","code":["Tensor t = Tensor.ofDoubles().withShape( 1, 2 ).all(0)"]},
 
         {"kind":"expect","text":"This tensor is initially of type \"Double\", meaning it is backed by a \"double[]\" array internally...","code":["t.dataType == DataType.of( Double.class )"]},
 
@@ -71,7 +71,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new tensor belonging to the first found OpenCLDevice instance.","code":["Tsr t = Tsr.ofDoubles().withShape( 1, 2 ).all(0)"]},
+        {"kind":"given","text":"A new tensor belonging to the first found OpenCLDevice instance.","code":["Tensor t = Tensor.ofDoubles().withShape( 1, 2 ).all(0)"]},
 
         {"kind":"and","text":"The tensor value is being fetched...","code":["def data = t.mut.data.get()"]},
 
@@ -87,12 +87,12 @@
     {
       "id":"Ad hoc compilation produces executable kernel.",
       "result":"PASS",
-      "duration":"0.038 seconds",
+      "duration":"0.037 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]","def someData  = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )"]},
+        {"kind":"given","text":"","code":["def device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]","def someData  = Tensor.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )"]},
 
         {"kind":"expect","text":"The OpenCL device initially does not have the \"dummy_kernel\" we are going to create.","code":["!device.hasAdHocKernel( 'dummy_kernel' )"]},
 
@@ -112,12 +112,12 @@
     {
       "id":"Ad hoc compilation works for WIP general purpose matrix multiplication.",
       "result":"PASS",
-      "duration":"0.296 seconds",
+      "duration":"0.295 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]","var kernelName = \"dummy_mm_${M}x${K}x${N}\"","var params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)","var TSM  = params[0] //4   //= 128","var TSN  = params[1] //4   //= 128","var TSK  = params[2] //2   //= 16","var WPTM = params[3] // 2  //=  8","var WPTN = params[4] // 2  //=  8","long[] local=   new long[]{ TSM/WPTM, TSN/WPTN }","long[] global = new long[]{ (M/WPTM), (N/WPTN) }","Tsr A = Tsr.of( [M,K], 0f )","Tsr B = Tsr.of( [K,N], 0f )","Tsr C = Tsr.of( [M,N], 0f )","A.mut[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)","B.mut[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
+        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().getPlatforms()[0].devices[0]","var kernelName = \"dummy_mm_${M}x${K}x${N}\"","var params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)","var TSM  = params[0] //4   //= 128","var TSN  = params[1] //4   //= 128","var TSK  = params[2] //2   //= 16","var WPTM = params[3] // 2  //=  8","var WPTN = params[4] // 2  //=  8","long[] local=   new long[]{ TSM/WPTM, TSN/WPTN }","long[] global = new long[]{ (M/WPTM), (N/WPTN) }","Tensor A = Tensor.of( [M, K], 0f )","Tensor B = Tensor.of( [K, N], 0f )","Tensor C = Tensor.of( [M, N], 0f )","A.mut[0..M-1,0..K-1] = Tensor.of([M, K], 3..1)","B.mut[0..K-1,0..N-1] = Tensor.of([K, N], -5..0)","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -139,12 +139,12 @@
     {
       "id":"Ad hoc matrix multiplication works for multiple of 16 matrices.",
       "result":"PASS",
-      "duration":"0.169 seconds",
+      "duration":"0.154 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","var kernelName = \"backend_mm_${M}x${K}x${N}\"","long[] local=   new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, K }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
+        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","var kernelName = \"backend_mm_${M}x${K}x${N}\"","long[] local=   new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, K }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tensor A = Tensor.of( [M, K], data1  )","Tensor B = Tensor.of( [K, N], data2  )","Tensor C = Tensor.of( [M, N], 0f )","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -166,12 +166,12 @@
     {
       "id":"Ad hoc compilation works for custom simple row major based matrix multiplication.",
       "result":"PASS",
-      "duration":"0.312 seconds",
+      "duration":"0.307 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","var kernelName = \"simple_backend_mm_${M}x${K}x${N}\"","long[] local=   null //new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, N }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tsr A = Tsr.of( [M,K], data1  )","Tsr B = Tsr.of( [K,N], data2  )","Tsr C = Tsr.of( [M,N], 0f )","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
+        {"kind":"given","text":"","code":["var device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","var kernelName = \"simple_backend_mm_${M}x${K}x${N}\"","long[] local=   null //new long[]{ Math.min(16, M), Math.min(16, K) }","long[] global = new long[]{ M, N }","var data = (0..(M*K-1)).collect( v-> v + seed )","var data1 = data.collect( v -> ((v+5)%11)-5 as float )","var data2 = data.collect( v -> ((v+7)%11)-5 as float )","Tensor A = Tensor.of( [M, K], data1  )","Tensor B = Tensor.of( [K, N], data2  )","Tensor C = Tensor.of( [M, N], 0f )","var reference = A.matMul(B).items // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 
@@ -193,14 +193,14 @@
     {
       "id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.",
       "result":"PASS",
-      "duration":"1.349 seconds",
+      "duration":"1.295 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["def device = Neureka.get().backend().find(CLBackend.class).get().platforms[0].devices[0]","def kernelName = \"fast_columns_major_mm_${M}x${K}x${N}\"","def data = (0..(M*K-1)).collect( v-> v + seed )","def data1 = data.collect( v -> ((v+5)%11)-5 as float )","def data2 = data.collect( v -> ((v+7)%11)-5 as float )"]},
 
-        {"kind":"and","text":"We create column major based matrices!","code":["Tsr A = Tsr.of( [M,K], data1 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr B = Tsr.of( [K,N], data2 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tsr C = Tsr.of( [M,N], 0f    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","var reference = A.matMul(B).rawData // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)","var MW = 1","var KW = 1","for ( s in [16,8,4,2,1] )","    if ( M % s == 0 ) { MW = s; break }","for ( s in [8,4,2,1] )","    if ( N % s == 0 && K % s == 0 ) { KW = s; break }","var NW = KW","long[] local =  null // This kernel does not have local memory (uses register/private memory instead)","long[] global = new long[]{ Math.floor(M/MW), Math.floor(N/NW), 1 }"]},
+        {"kind":"and","text":"We create column major based matrices!","code":["Tensor A = Tensor.of( [M, K], data1 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tensor B = Tensor.of( [K, N], data2 ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","Tensor C = Tensor.of( [M, N], 0f    ).mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","var reference = A.matMul(B).rawData // CPU execution for reference!","A.to( device )","B.to( device )","C.to( device ).mut.setIsVirtual(false)","var MW = 1","var KW = 1","for ( s in [16,8,4,2,1] )","    if ( M % s == 0 ) { MW = s; break }","for ( s in [8,4,2,1] )","    if ( N % s == 0 && K % s == 0 ) { KW = s; break }","var NW = KW","long[] local =  null // This kernel does not have local memory (uses register/private memory instead)","long[] global = new long[]{ Math.floor(M/MW), Math.floor(N/NW), 1 }"]},
 
         {"kind":"expect","text":"","code":["!device.hasAdHocKernel( kernelName )"]},
 

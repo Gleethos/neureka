@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Power.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.operator</a> &gt; <span class="el_source">Power.java</span></div><h1>Power.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.operator;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.ExecutionCall;
@@ -55,13 +55,13 @@ public class Power extends AbstractOperation
                 {
 <span class="nc bnc" id="L56" title="All 2 branches missed.">                    if ( call.autogradMode().allowsForward() )</span>
 <span class="nc" id="L57">                        throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
-<span class="nc" id="L58">                    Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="nc" id="L58">                    Tensor&lt;?&gt; ctxDerivative = (Tensor&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
 <span class="nc" id="L59">                    Function mul = Neureka.get().backend().getFunction().mul();</span>
 <span class="nc bnc" id="L60" title="All 2 branches missed.">                    if ( ctxDerivative != null ) {</span>
 <span class="nc" id="L61">                        return ADAction.of( target -&gt; mul.execute( target.error(), ctxDerivative ) );</span>
                     }
 <span class="nc" id="L63">                    int d = call.getDerivativeIndex();</span>
-<span class="nc" id="L64">                    Tsr&lt;?&gt; derivative = f.executeDerive( call.inputs(), d );</span>
+<span class="nc" id="L64">                    Tensor&lt;?&gt; derivative = f.executeDerive( call.inputs(), d );</span>
 <span class="nc" id="L65">                    return ADAction.of( target -&gt; mul.execute( target.error(), derivative ) );</span>
                 }
             )

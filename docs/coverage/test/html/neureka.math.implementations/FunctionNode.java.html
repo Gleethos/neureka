@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionNode.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.math.implementations</a> &gt; <span class="el_source">FunctionNode.java</span></div><h1>FunctionNode.java</h1><pre class="source lang-java linenums">package neureka.math.implementations;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.main.operations.other.Permute;
@@ -87,7 +87,7 @@ public final class FunctionNode implements Function
 <span class="fc" id="L87">    public List&lt;Function&gt; getSubFunctions() { return Arrays.asList(_src); }</span>
 
     @Override
-    public Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... inputs )
+    public Tensor&lt;?&gt; execute(Args arguments, Tensor&lt;?&gt;... inputs )
     {
 <span class="fc bfc" id="L92" title="All 2 branches covered.">        if ( this.isDoingAD() )</span>
 <span class="fc" id="L93">            Permute.makeFit( inputs, this.isDoingAD() ); // reshaping if needed</span>
@@ -101,12 +101,12 @@ public final class FunctionNode implements Function
     }
 
     /**
-     *  This method tries to find a common {@link Device} for the provided {@link Tsr}s.
+     *  This method tries to find a common {@link Device} for the provided {@link Tensor}s.
      *
-     * @param inputs The input {@link Tsr}s for which a {@link Device} ought to be found and returned.
+     * @param inputs The input {@link Tensor}s for which a {@link Device} ought to be found and returned.
      * @return A found {@link Device} implementation instance.
      */
-    private Device&lt;?&gt; _deviceFor( Tsr&lt;?&gt;[] inputs )
+    private Device&lt;?&gt; _deviceFor( Tensor&lt;?&gt;[] inputs )
     {
 <span class="fc bfc" id="L111" title="All 2 branches covered.">        if ( inputs.length == 0 ) return CPU.get();</span>
 <span class="fc" id="L112">        Device&lt;?&gt; device = inputs[ 0 ].get( Device.class );</span>
@@ -119,15 +119,15 @@ public final class FunctionNode implements Function
      * @param tensors An array of tensors for which the most common {@link Device} should be determined.
      * @return The most common {@link Device} among the provided tensors.
      */
-    private static boolean _shareGuestDevice( Tsr&lt;?&gt;[] tensors )
+    private static boolean _shareGuestDevice( Tensor&lt;?&gt;[] tensors )
     {
 <span class="fc" id="L124">        boolean onSameGuestDevice = true;</span>
 <span class="fc" id="L125">        Device&lt;?&gt; device = null;</span>
-<span class="fc bfc" id="L126" title="All 4 branches covered.">        for ( Tsr&lt;?&gt; tensor : tensors ) device = ( tensor.isOutsourced() ? tensor.get( Device.class ) : device );</span>
+<span class="fc bfc" id="L126" title="All 4 branches covered.">        for ( Tensor&lt;?&gt; tensor : tensors ) device = ( tensor.isOutsourced() ? tensor.get( Device.class ) : device );</span>
 
 <span class="fc bfc" id="L128" title="All 2 branches covered.">        if ( device != null ) {</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; tsr : tensors ) {</span>
-<span class="fc bfc" id="L130" title="All 6 branches covered.">                onSameGuestDevice = ( !tsr.isVirtual() &amp;&amp; device == tsr.get(Device.class) ) &amp;&amp; onSameGuestDevice;</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            for ( Tensor&lt;?&gt; tensor : tensors ) {</span>
+<span class="fc bfc" id="L130" title="All 6 branches covered.">                onSameGuestDevice = ( !tensor.isVirtual() &amp;&amp; device == tensor.get(Device.class) ) &amp;&amp; onSameGuestDevice;</span>
             }
         }
 <span class="fc" id="L133">        else onSameGuestDevice = false;</span>

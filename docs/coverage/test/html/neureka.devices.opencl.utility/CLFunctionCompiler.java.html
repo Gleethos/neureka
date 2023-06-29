@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLFunctionCompiler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.opencl.utility</a> &gt; <span class="el_source">CLFunctionCompiler.java</span></div><h1>CLFunctionCompiler.java</h1><pre class="source lang-java linenums">package neureka.devices.opencl.utility;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.autograd.ADAction;
 import neureka.backend.api.*;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -78,13 +78,13 @@ public final class CLFunctionCompiler
                                     outerCaller, outerCall,
 <span class="fc" id="L79">                                    call -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( call )</span>
                                 ))
-<span class="pc" id="L81">                                .withAutoDiff((caller, call) -&gt; ADAction.of( target -&gt; Function.of(caller.toString(), false).derive(new Tsr[]{target.error()}, 0) ))</span>
+<span class="pc" id="L81">                                .withAutoDiff((caller, call) -&gt; ADAction.of( target -&gt; Function.of(caller.toString(), false).derive(new Tensor[]{target.error()}, 0) ))</span>
                         )
 <span class="fc" id="L83">                        .setCallPreparation(</span>
                             call -&gt; {
 <span class="pc bpc" id="L85" title="1 of 2 branches missed.">                                if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
                                 {
-<span class="fc" id="L87">                                    Tsr&lt;Number&gt; output = Tsr.like( (Tsr&lt;Number&gt;) call.input( 1 ) ).all(0);</span>
+<span class="fc" id="L87">                                    Tensor&lt;Number&gt; output = Tensor.like( (Tensor&lt;Number&gt;) call.input( 1 ) ).all(0);</span>
 <span class="fc" id="L88">                                    output.getMut().setIsVirtual( false );</span>
 <span class="fc" id="L89">                                    call.getDeviceFor(Number.class).store(output);</span>
 <span class="fc" id="L90">                                    call = call.withInputAt( 0, output );</span>
@@ -98,9 +98,9 @@ public final class CLFunctionCompiler
     }
 
 
-    private Tsr&lt;?&gt; _adHocKernelFor( ExecutionCall&lt;?&gt; call ) {
+    private Tensor&lt;?&gt; _adHocKernelFor(ExecutionCall&lt;?&gt; call ) {
 
-<span class="fc" id="L103">        List&lt;Tsr&lt;Number&gt;&gt; args = Arrays.stream( _argPointer )</span>
+<span class="fc" id="L103">        List&lt;Tensor&lt;Number&gt;&gt; args = Arrays.stream( _argPointer )</span>
 <span class="fc" id="L104">                                    .mapToObj( p -&gt; call.input( p + 1 ).getMut().upcast(Number.class) )</span>
 <span class="fc" id="L105">                                    .collect(Collectors.toList());</span>
 
@@ -198,7 +198,7 @@ public final class CLFunctionCompiler
 <span class="fc" id="L198">        return call.input(0);</span>
     }
 
-    private static String _clTypeOf( Tsr&lt;?&gt; tensor ) {
+    private static String _clTypeOf( Tensor&lt;?&gt; tensor ) {
 <span class="fc" id="L202">        DataType&lt;?&gt; dtype = tensor.getDataType();</span>
 <span class="fc" id="L203">        java.util.function.Function&lt;Class&lt;?&gt;, String&gt; formatter = type -&gt; type.getSimpleName()</span>
 <span class="fc" id="L204">                                                                                 .toLowerCase()</span>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SmartSlicer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.fluent.slicing</a> &gt; <span class="el_source">SmartSlicer.java</span></div><h1>SmartSlicer.java</h1><pre class="source lang-java linenums">package neureka.fluent.slicing;
 
-import neureka.Tsr;
-import neureka.fluent.slicing.states.AxisOrGetTsr;
+import neureka.Tensor;
+import neureka.fluent.slicing.states.AxisOrGetTensor;
 import neureka.framing.NDFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +21,11 @@ import java.util.stream.Stream;
      */
 <span class="fc" id="L22">    private static final Logger _LOG = LoggerFactory.getLogger(SmartSlicer.class); // Why is this not final ? : For unit testing!</span>
 
-    public static &lt;ValType&gt; Tsr&lt;ValType&gt; slice(
+    public static &lt;ValType&gt; Tensor&lt;ValType&gt; slice(
             Object[] ranges,
-            Tsr&lt;ValType&gt; source
+            Tensor&lt;ValType&gt; source
     ) {
-<span class="fc" id="L28">        AxisOrGetTsr&lt;ValType&gt; sliceBuilder = new SliceBuilder&lt;&gt;(source);</span>
+<span class="fc" id="L28">        AxisOrGetTensor&lt;ValType&gt; sliceBuilder = new SliceBuilder&lt;&gt;(source);</span>
 <span class="fc" id="L29">        List&lt;Object&gt; rangeList = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L30">        List&lt;Integer&gt; stepsList = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L31" title="All 2 branches covered.">        for (Object range : ranges ) {</span>

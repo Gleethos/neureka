@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPUReduce.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.other.internal</a> &gt; <span class="el_source">CPUReduce.java</span></div><h1>CPUReduce.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.other.internal;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.host.CPU;
@@ -79,15 +79,15 @@ import neureka.devices.host.CPU;
 
 
     @Override
-    public Tsr&lt;Integer&gt; run(ExecutionCall&lt;CPU&gt; call) {
+    public Tensor&lt;Integer&gt; run(ExecutionCall&lt;CPU&gt; call) {
 <span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if ( call.getDevice() != CPU.get() )</span>
 <span class="nc" id="L84">            throw new IllegalArgumentException(&quot;This implementation is only available for the CPU!&quot;);</span>
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        Tsr&lt;?&gt; in = call.input(0) == null ? call.input(1) : call.input(0);</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        Tensor&lt;?&gt; in = call.input(0) == null ? call.input(1) : call.input(0);</span>
 <span class="fc" id="L86">        int index = _runRecursively(in, CPU.get());</span>
-<span class="fc" id="L87">        return Tsr.of(Integer.class, Shape.of(1), index);</span>
+<span class="fc" id="L87">        return Tensor.of(Integer.class, Shape.of(1), index);</span>
     }
 
-    private int _runRecursively(Tsr&lt;?&gt; in, CPU device)
+    private int _runRecursively(Tensor&lt;?&gt; in, CPU device)
     {
 <span class="fc" id="L92">        CPU.JVMExecutor executor = device.getExecutor();</span>
 <span class="fc" id="L93">        int RTS = 64;</span>
@@ -130,7 +130,7 @@ import neureka.devices.host.CPU;
 <span class="fc bfc" id="L130" title="All 2 branches covered.">            if ( N &gt; 1 ) {</span>
 <span class="fc" id="L131">                float[] reduced = new float[out.length];</span>
 <span class="fc bfc" id="L132" title="All 2 branches covered.">                executor.threaded( out.length, (start, end) -&gt; { for ( int i=start; i &lt; end; ++i ) reduced[i] = inData[out[i]];});</span>
-<span class="fc" id="L133">                return out[_runRecursively(Tsr.of(Float.class, Shape.of(out.length), reduced), device)];</span>
+<span class="fc" id="L133">                return out[_runRecursively(Tensor.of(Float.class, Shape.of(out.length), reduced), device)];</span>
             }
         }
 <span class="fc bfc" id="L136" title="All 2 branches covered.">        if ( type == Double.class ) {</span>
@@ -153,7 +153,7 @@ import neureka.devices.host.CPU;
 <span class="fc bfc" id="L153" title="All 2 branches covered.">            if ( N &gt; 1 ) {</span>
 <span class="fc" id="L154">                double[] reduced = new double[out.length];</span>
 <span class="fc bfc" id="L155" title="All 2 branches covered.">                executor.threaded( out.length, (start, end) -&gt; { for ( int i=start; i &lt; end; ++i ) reduced[i] = inData[out[i]];});</span>
-<span class="fc" id="L156">                return out[_runRecursively(Tsr.of(Double.class, Shape.of(out.length), reduced), device)];</span>
+<span class="fc" id="L156">                return out[_runRecursively(Tensor.of(Double.class, Shape.of(out.length), reduced), device)];</span>
             }
         }
 <span class="fc bfc" id="L159" title="All 2 branches covered.">        if ( type == Integer.class ) {</span>
@@ -176,7 +176,7 @@ import neureka.devices.host.CPU;
 <span class="fc bfc" id="L176" title="All 2 branches covered.">            if ( N &gt; 1 ) {</span>
 <span class="fc" id="L177">                int[] reduced = new int[out.length];</span>
 <span class="fc bfc" id="L178" title="All 2 branches covered.">                executor.threaded( out.length, (start, end) -&gt; { for ( int i=start; i &lt; end; ++i ) reduced[i] = inData[out[i]];});</span>
-<span class="fc" id="L179">                return out[_runRecursively(Tsr.of(Integer.class, Shape.of(out.length), reduced), device)];</span>
+<span class="fc" id="L179">                return out[_runRecursively(Tensor.of(Integer.class, Shape.of(out.length), reduced), device)];</span>
             }
         }
 <span class="fc bfc" id="L182" title="All 2 branches covered.">        if ( type == Long.class ) {</span>
@@ -199,7 +199,7 @@ import neureka.devices.host.CPU;
 <span class="fc bfc" id="L199" title="All 2 branches covered.">            if ( N &gt; 1 ) {</span>
 <span class="fc" id="L200">                long[] reduced = new long[out.length];</span>
 <span class="fc bfc" id="L201" title="All 2 branches covered.">                executor.threaded( out.length, (start, end) -&gt; { for ( int i=start; i &lt; end; ++i ) reduced[i] = inData[out[i]];});</span>
-<span class="fc" id="L202">                return out[_runRecursively(Tsr.of(Long.class, Shape.of(out.length), reduced), device)];</span>
+<span class="fc" id="L202">                return out[_runRecursively(Tensor.of(Long.class, Shape.of(out.length), reduced), device)];</span>
             }
         }
 <span class="fc bfc" id="L205" title="All 2 branches covered.">        if ( type == Short.class ) {</span>
@@ -222,7 +222,7 @@ import neureka.devices.host.CPU;
 <span class="fc bfc" id="L222" title="All 2 branches covered.">            if ( N &gt; 1 ) {</span>
 <span class="fc" id="L223">                short[] reduced = new short[out.length];</span>
 <span class="fc bfc" id="L224" title="All 2 branches covered.">                executor.threaded( out.length, (start, end) -&gt; { for ( int i=start; i &lt; end; ++i ) reduced[i] = inData[out[i]];});</span>
-<span class="fc" id="L225">                return out[_runRecursively(Tsr.of(Short.class, Shape.of(out.length), reduced), device)];</span>
+<span class="fc" id="L225">                return out[_runRecursively(Tensor.of(Short.class, Shape.of(out.length), reduced), device)];</span>
             }
         }
 <span class="fc bfc" id="L228" title="All 2 branches covered.">        if ( type == Byte.class ) {</span>
@@ -245,7 +245,7 @@ import neureka.devices.host.CPU;
 <span class="fc bfc" id="L245" title="All 2 branches covered.">            if ( N &gt; 1 ) {</span>
 <span class="fc" id="L246">                byte[] reduced = new byte[out.length];</span>
 <span class="fc bfc" id="L247" title="All 2 branches covered.">                executor.threaded( out.length, (start, end) -&gt; { for ( int i=start; i &lt; end; ++i ) reduced[i] = inData[out[i]];});</span>
-<span class="fc" id="L248">                return out[_runRecursively(Tsr.of(Byte.class, Shape.of(out.length), reduced), device)];</span>
+<span class="fc" id="L248">                return out[_runRecursively(Tensor.of(Byte.class, Shape.of(out.length), reduced), device)];</span>
             }
         }
 

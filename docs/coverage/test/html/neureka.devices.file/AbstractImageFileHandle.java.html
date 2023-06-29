@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractImageFileHandle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file</a> &gt; <span class="el_source">AbstractImageFileHandle.java</span></div><h1>AbstractImageFileHandle.java</h1><pre class="source lang-java linenums">package neureka.devices.file;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.common.utility.LogUtil;
 import neureka.devices.Storage;
 import neureka.devices.host.CPU;
@@ -22,7 +22,7 @@ abstract class AbstractImageFileHandle&lt;C&gt; extends AbstractFileHandle&lt;C,
     private int _height;
 
 
-    protected AbstractImageFileHandle( Tsr&lt;Number&gt; t, String filename, ImageFileType type ) {
+    protected AbstractImageFileHandle(Tensor&lt;Number&gt; t, String filename, ImageFileType type ) {
 <span class="fc" id="L26">        super( filename, type );</span>
 <span class="fc" id="L27">        LogUtil.nullArgCheck( type, &quot;type&quot;, ImageFileType.class );</span>
 <span class="fc" id="L28">        _type = type;</span>
@@ -76,9 +76,9 @@ abstract class AbstractImageFileHandle&lt;C&gt; extends AbstractFileHandle&lt;C,
 
     /** {@inheritDoc} */
     @Override
-    public Tsr&lt;Number&gt; load() throws IOException {
+    public Tensor&lt;Number&gt; load() throws IOException {
 <span class="fc" id="L80">        Object value = _loadData(); // This is simply some kind of primitive array.</span>
-<span class="fc" id="L81">        Tsr&lt;?&gt; t = Tsr.of(</span>
+<span class="fc" id="L81">        Tensor&lt;?&gt; t = Tensor.of(</span>
 <span class="fc" id="L82">                        _type.targetedValueType(),</span>
 <span class="fc" id="L83">                        Shape.of(_height, _width, _type.numberOfChannels()),</span>
                         value
@@ -133,9 +133,9 @@ abstract class AbstractImageFileHandle&lt;C&gt; extends AbstractFileHandle&lt;C,
 
     /** {@inheritDoc} */
     @Override
-    public &lt;T extends Number&gt; Storage&lt;Number&gt; store( Tsr&lt;T&gt; tensor )
+    public &lt;T extends Number&gt; Storage&lt;Number&gt; store( Tensor&lt;T&gt; tensor )
     {
-<span class="fc" id="L138">        LogUtil.nullArgCheck( tensor, &quot;tensor&quot;, Tsr.class );</span>
+<span class="fc" id="L138">        LogUtil.nullArgCheck( tensor, &quot;tensor&quot;, Tensor.class );</span>
 
 <span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if ( _width != tensor.shape(1) )</span>
 <span class="nc" id="L141">            throw new IllegalArgumentException(</span>

@@ -1,31 +1,31 @@
 {
   "className":"ut.tensors.Tensor_Version_Spec",
   "title":"Tensor (Data Array) Version",
-  "narrative":"There are two fundamental categories of operations\n    which can be applied to tensors : \n    Inline operations and Non-Inline  operations! \n\n    Inline operations are often times problematic because they produce\n    side effects by changing passed tensors instead of producing new ones... \n    One such bad side effect can easily occur for tensors involved in the\n    autograd system, more specifically: the recorded computation graph. \n    Inline operations can break the mathematically pureness of the back-propagation\n    procedure by for example changing partial derivatives... <br>\n    In order to prevent said errors from occurring unnoticed tensors\n    have versions which will increment when the underlying data of the tensor changes. \n    This version will be tracked by the computation graph as well in order to\n    match it with the ones stored inside the tensor. \n    A mismatch would then yield an exception! \n\n    This specification is responsible for defining the behaviour of this\n    version number with respect to their wrapping tensors as well as computation graph nodes.",
-  "subjects":["neureka.Tsr"],
+  "narrative":"There are two fundamental categories of operations\n    which can be applied to tensors :\n    Inline operations and Non-Inline  operations!\n\n    Inline operations are often times problematic because they produce\n    side effects by changing passed tensors instead of producing new ones...\n    One such bad side effect can easily occur for tensors involved in the\n    autograd system, more specifically: the recorded computation graph.\n    Inline operations can break the mathematically pureness of the back-propagation\n    procedure by for example changing partial derivatives... <br>\n    In order to prevent said errors from occurring unnoticed tensors\n    have versions which will increment when the underlying data of the tensor changes.\n    This version will be tracked by the computation graph as well in order to\n    match it with the ones stored inside the tensor.\n    A mismatch would then yield an exception!\n\n    This specification is responsible for defining the behaviour of this\n    version number with respect to their wrapping tensors as well as computation graph nodes.",
+  "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"4",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.073 seconds"
+    "duration":"0.050 seconds"
   },
   "headers":["\n                <p>\n                    Here you can find out how the version number of a tensor is\n                    set and tracked.\n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Inline operations causes version incrementation.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"2 tensors a and b.","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( safe_inline )","Tsr a = Tsr.of(4d) + Tsr.of(2d)","Tsr b = Tsr.of(-1d) + Tsr.of(-3d).setRqsGradient(true)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+        {"kind":"given","text":"2 tensors a and b.","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( safe_inline )","Tensor a = Tensor.of(4d) + Tensor.of(2d)","Tensor b = Tensor.of(-1d) + Tensor.of(-3d).setRqsGradient(true)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
 
         {"kind":"expect","text":"Initially both tensors have a version number of 0.","code":["a.getVersion() == 0","b.getVersion() == 0"]},
 
-        {"kind":"when","text":"The groovy code (performing inline operations) is being evaluated.","code":["Tsr c = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The groovy code (performing inline operations) is being evaluated.","code":["Tensor c = new GroovyShell(binding).evaluate((code))"]},
 
         {"kind":"then","text":"The resulting tensor (toString) will contain the expected sub-string.","code":["c.toString().contains(expected)","c == a"]},
 
@@ -39,20 +39,20 @@
     {
       "id":"Non-inline operations do not cause version incrementation.",
       "result":"PASS",
-      "duration":"0.020 seconds",
+      "duration":"0.010 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( no_inline )"]},
 
-        {"kind":"and","text":"Two tensors, one requiring gradients and the other one not.","code":["Tsr a = Tsr.of(6d).setRqsGradient(true)","Tsr b = Tsr.of(-4d)"]},
+        {"kind":"and","text":"Two tensors, one requiring gradients and the other one not.","code":["Tensor a = Tensor.of(6d).setRqsGradient(true)","Tensor b = Tensor.of(-4d)"]},
 
         {"kind":"and","text":"A binding for both tensors as preparation for calling the Groovy shell.","code":["Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
 
         {"kind":"expect","text":"The versions of both tensors are 0 initially.","code":["a.getVersion() == 0","b.getVersion() == 0"]},
 
-        {"kind":"when","text":"The Groovy code is being evaluated inside the Groovy shell.","code":["Tsr c = new GroovyShell(binding).evaluate((code))"]},
+        {"kind":"when","text":"The Groovy code is being evaluated inside the Groovy shell.","code":["Tensor c = new GroovyShell(binding).evaluate((code))"]},
 
         {"kind":"then","text":"The resulting tensor (toString) will contain the expected String.","code":["c.toString().contains(expected)","c != a"]},
 
@@ -66,16 +66,16 @@
     {
       "id":"Inline operations cause illegal state exceptions.",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )","Tsr a = Tsr.of(4d) + Tsr.of(2d).setRqsGradient(true)","Tsr b = Tsr.of(-4d)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
+        {"kind":"given","text":"","code":["Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )","Tensor a = Tensor.of(4d) + Tensor.of(2d).setRqsGradient(true)","Tensor b = Tensor.of(-4d)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
 
         {"kind":"expect","text":"","code":["a.getVersion() == 0","b.getVersion() == 0"]},
 
-        {"kind":"when","text":"The groovy code is being evaluated.","code":["Tsr<Double> c = new GroovyShell( binding ).evaluate( code )"]},
+        {"kind":"when","text":"The groovy code is being evaluated.","code":["Tensor<Double> c = new GroovyShell( binding ).evaluate( code )"]},
 
         {"kind":"then","text":"An illegal state exception is being thrown.","code":["def exception = thrown(IllegalStateException)","exception.message == message"]},
 
@@ -89,12 +89,12 @@
     {
       "id":"Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["var t = Tsr.ofFloats().withShape(5, 2).andSeed(42)"]},
+        {"kind":"given","text":"","code":["var t = Tensor.ofFloats().withShape(5, 2).andSeed(42)"]},
 
         {"kind":"expect","text":"","code":["t.version == 0"]},
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AxisSliceBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.fluent.slicing</a> &gt; <span class="el_source">AxisSliceBuilder.java</span></div><h1>AxisSliceBuilder.java</h1><pre class="source lang-java linenums">package neureka.fluent.slicing;
 
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.fluent.slicing.states.*;
 
-public class AxisSliceBuilder&lt;V&gt; implements FromOrAtTsr&lt;V&gt;, ToForTsr&lt;V&gt;, StepsOrAxisOrGetTsr&lt;V&gt;, AxisOrGetTsr&lt;V&gt;
+public class AxisSliceBuilder&lt;V&gt; implements FromOrAtTensor&lt;V&gt;, ToForTensor&lt;V&gt;, StepsOrAxisOrGetTensor&lt;V&gt;, AxisOrGetTensor&lt;V&gt;
 {
     interface Resolution&lt;V&gt; { SliceBuilder&lt;V&gt; resolve( int from, int to, int steps ); }
 
@@ -30,7 +30,7 @@ public class AxisSliceBuilder&lt;V&gt; implements FromOrAtTsr&lt;V&gt;, ToForTsr
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link To} interface.
      */
     @Override
-    public ToForTsr&lt;V&gt; from(int index ) {
+    public ToForTensor&lt;V&gt; from(int index ) {
 <span class="fc" id="L34">        _from = index;</span>
 <span class="fc" id="L35">        return this;</span>
     }
@@ -45,7 +45,7 @@ public class AxisSliceBuilder&lt;V&gt; implements FromOrAtTsr&lt;V&gt;, ToForTsr
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link StepsOrAxisOrGet} interface.
      */
     @Override
-    public StepsOrAxisOrGetTsr&lt;V&gt; to(int index ) {
+    public StepsOrAxisOrGetTensor&lt;V&gt; to( int index ) {
 <span class="fc" id="L49">        _to = index;</span>
 <span class="fc" id="L50">        return this;</span>
     }
@@ -60,7 +60,7 @@ public class AxisSliceBuilder&lt;V&gt; implements FromOrAtTsr&lt;V&gt;, ToForTsr
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override
-    public AxisOrGetTsr&lt;V&gt; step(int size) {
+    public AxisOrGetTensor&lt;V&gt; step( int size) {
 <span class="fc" id="L64">        _steps = size;</span>
 <span class="fc" id="L65">        return this;</span>
     }
@@ -75,14 +75,14 @@ public class AxisSliceBuilder&lt;V&gt; implements FromOrAtTsr&lt;V&gt;, ToForTsr
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override
-    public AxisOrGetTsr&lt;V&gt; at( int index ) {
+    public AxisOrGetTensor&lt;V&gt; at( int index ) {
 <span class="fc" id="L79">        _from = index;</span>
 <span class="fc" id="L80">        _to = index;</span>
 <span class="fc" id="L81">        return this;</span>
     }
 
     @Override
-    public AxisOrGetTsr&lt;V&gt; all() {
+    public AxisOrGetTensor&lt;V&gt; all() {
 <span class="nc" id="L86">        return from( 0 ).to( _to );</span>
     }
 
@@ -91,17 +91,17 @@ public class AxisSliceBuilder&lt;V&gt; implements FromOrAtTsr&lt;V&gt;, ToForTsr
      *  This method returns an instance of the {@link AxisSliceBuilder} targeted by the provided index.
      */
     @Override
-    public FromOrAtTsr&lt;V&gt; axis( int axis ) {
+    public FromOrAtTensor&lt;V&gt; axis( int axis ) {
 <span class="fc" id="L95">       return _then.resolve(_from, _to, _steps).axis(axis);</span>
     }
 
     @Override
-    public Tsr&lt;V&gt; get() {
+    public Tensor&lt;V&gt; get() {
 <span class="fc" id="L100">        return _then.resolve(_from, _to, _steps).get();</span>
     }
 
     @Override
-    public Tsr&lt;V&gt; detached() {
+    public Tensor&lt;V&gt; detached() {
 <span class="fc" id="L105">        return _then.resolve(_from, _to, _steps).detached();</span>
     }
 

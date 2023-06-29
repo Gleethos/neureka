@@ -2,7 +2,7 @@
   "className":"ut.tensors.DimTrim_Spec",
   "title":"The 'dimTrim' Method",
   "narrative":"The 'dimTrim' method is used to remove training and leading dimensions of length 1 from a tensor.\n    This is useful when you want to perform operations on tensors of different ranks.\n    For example, if you want to perform a dot product on two vectors, you can use the 'dimTrim' method\n    to remove the dimension of length 1 from the vector, so that it becomes a scalar.\n    This way you can perform the dot product on two scalars.",
-  "subjects":["neureka.Tsr"],
+  "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"1",
     "successRate":"100.0%",
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A matrix we want to slice.","code":["var m = Tsr.of(1f..4f).reshape(2,2)"]},
+        {"kind":"given","text":"A matrix we want to slice.","code":["var m = Tensor.of(1f..4f).reshape(2,2)"]},
 
         {"kind":"when","text":"we slice the matrix into two vectors.","code":["var a = m.slice().axis(0).at(0).get()","var b = m.slice().axis(0).at(1).get()"]},
 

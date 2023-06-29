@@ -38,7 +38,7 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.fun.ADSupportPredicate;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.fun.SuitabilityPredicate;
@@ -55,7 +55,7 @@ import neureka.common.utility.LogUtil;
  *   an instance of an implementation of the {@link Operation} interface. &lt;br&gt;
  *   The &quot;+&quot; operator for example has different {@link Algorithm} instances tailored to specific requirements
  *   originating from different {@link ExecutionCall} instances with unique arguments.
- *   {@link Tsr} instances within an execution call having the same shape would
+ *   {@link Tensor} instances within an execution call having the same shape would
  *   cause the {@link Operation} instance to choose an {@link Algorithm} instance which is responsible
  *   for performing element-wise operations, whereas otherwise the {@link neureka.backend.main.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.

@@ -9,23 +9,23 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.009 seconds"
+    "duration":"0.006 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor can be converted to buffered images.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"A tensor of the provided type is converted to a buffered image","code":["var asImage = Tsr.of(type).withShape(shape).andFill(42..73).asImage(image)"]},
+        {"kind":"when","text":"A tensor of the provided type is converted to a buffered image","code":["var asImage = Tensor.of(type).withShape(shape).andFill(42..73).asImage(image)"]},
 
         {"kind":"then","text":"The resulting image has the expected shape","code":["asImage.height == shape[0]","asImage.width  == shape[1]"]},
 
-        {"kind":"where","text":"","code":{"type":["Byte","Integer","Byte","Byte"],"image":["Tsr.ImageType.BGR_3BYTE","Tsr.ImageType.ARGB_1INT","Tsr.ImageType.ABGR_4BYTE","Tsr.ImageType.ABGR_PRE_4BYTE"],"shape":["[3, 5, 3]","[7, 5, 1]","[7, 5, 4]","[7, 5, 4]"]}}
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","Byte","Byte"],"image":["Tensor.ImageType.BGR_3BYTE","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ABGR_4BYTE","Tensor.ImageType.ABGR_PRE_4BYTE"],"shape":["[3, 5, 3]","[7, 5, 1]","[7, 5, 4]","[7, 5, 4]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -38,13 +38,13 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"when","text":"We try to convert a tensor of the provided type to a buffered image...","code":["Tsr.of(type).withShape(shape).all(-3).asImage(image)"]},
+        {"kind":"when","text":"We try to convert a tensor of the provided type to a buffered image...","code":["Tensor.of(type).withShape(shape).all(-3).asImage(image)"]},
 
         {"kind":"then","text":"An exception is thrown!","code":["var exception = thrown(IllegalArgumentException)"]},
 
         {"kind":"and","text":"The exception message has a plausible size.","code":["exception.message.length() > 13"]},
 
-        {"kind":"where","text":"","code":{"type":["Byte","Integer","String","Byte"],"image":["Tsr.ImageType.BGR_3BYTE","Tsr.ImageType.ARGB_1INT","Tsr.ImageType.ARGB_1INT","Tsr.ImageType.ABGR_4BYTE"],"shape":["[3, 5]","[7, 5, 3]","[7, 5, 1]","[2, 9, 3]"]}}
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","String","Byte"],"image":["Tensor.ImageType.BGR_3BYTE","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ABGR_4BYTE"],"shape":["[3, 5]","[7, 5, 3]","[7, 5, 1]","[2, 9, 3]"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

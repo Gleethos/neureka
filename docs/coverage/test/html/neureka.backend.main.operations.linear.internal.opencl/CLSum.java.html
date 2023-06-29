@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLSum.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear.internal.opencl</a> &gt; <span class="el_source">CLSum.java</span></div><h1>CLSum.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.linear.internal.opencl;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.devices.opencl.KernelCaller;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 <span class="fc" id="L12">public class CLSum implements ImplementationFor&lt;OpenCLDevice&gt;</span>
 {
     @Override
-    public Tsr&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
+    public Tensor&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
 <span class="fc" id="L16">        return run(call.input(Float.class, 0), call.getDevice());</span>
     }
 
@@ -20,8 +20,8 @@ import java.util.function.Supplier;
      *  This method compiles and executes the kernel that will return the sum of the
      *  elements in the {@code in} tensor.
      */
-    public static Tsr&lt;Float&gt; run(
-        Tsr&lt;Float&gt; in, OpenCLDevice device
+    public static Tensor&lt;Float&gt; run(
+            Tensor&lt;Float&gt; in, OpenCLDevice device
     ) {
 <span class="fc" id="L26">        final long RTS = device.maxWorkGroupSize(); // Register tile size</span>
 <span class="fc" id="L27">        final int SIZE = in.size();</span>
@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 <span class="fc" id="L32">        long[] local  = new long[]{ localSize };</span>
 <span class="fc" id="L33">        long[] global = new long[]{(long) SIZE };</span>
 
-        Tsr&lt;Float&gt; out;
+        Tensor&lt;Float&gt; out;
 
 <span class="fc bfc" id="L37" title="All 2 branches covered.">        if ( localSize == 1 ) { // Oh, the user wants to process a prime number of elements... sigh! Ok let's do it (slower)!</span>
 <span class="fc" id="L38">            double fraction = (double) SIZE / (double) RTS;</span>
@@ -44,19 +44,19 @@ import java.util.function.Supplier;
             else
 <span class="fc" id="L45">                newN = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)</span>
 
-<span class="fc" id="L47">            out = Tsr.of(Float.class, Shape.of(newN), 0).to(device).mut().setIsVirtual(false);</span>
+<span class="fc" id="L47">            out = Tensor.of(Float.class, Shape.of(newN), 0).to(device).mut().setIsVirtual(false);</span>
 <span class="fc" id="L48">            KernelCaller caller = _processPrivate(RTS, device);</span>
 <span class="fc" id="L49">            caller.pass(SIZE).pass(in).pass(out).call(global, local);</span>
 <span class="fc" id="L50">        }</span>
         else
         {
-<span class="fc" id="L53">            out = Tsr.of(Float.class, Shape.of( N ), 0).to(device).mut().setIsVirtual(false);</span>
+<span class="fc" id="L53">            out = Tensor.of(Float.class, Shape.of( N ), 0).to(device).mut().setIsVirtual(false);</span>
 <span class="fc" id="L54">            KernelCaller caller = _processLocal(device);</span>
 <span class="fc" id="L55">            caller.pass(in).pass(out).passLocalFloats((int) localSize).call(global, local);</span>
         }
 
 <span class="fc bfc" id="L58" title="All 2 branches covered.">        if ( N &gt; 1 ) {</span>
-<span class="fc" id="L59">            Tsr&lt;Float&gt; reduced = run(out, device);</span>
+<span class="fc" id="L59">            Tensor&lt;Float&gt; reduced = run(out, device);</span>
 <span class="fc" id="L60">            out.mut().delete();</span>
 <span class="fc" id="L61">            return reduced;</span>
         }

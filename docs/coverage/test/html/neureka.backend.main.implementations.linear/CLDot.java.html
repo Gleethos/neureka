@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLDot.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.implementations.linear</a> &gt; <span class="el_source">CLDot.java</span></div><h1>CLDot.java</h1><pre class="source lang-java linenums">package neureka.backend.main.implementations.linear;
 
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.main.operations.linear.internal.opencl.CLSum;
@@ -16,11 +16,11 @@ import java.util.function.Supplier;
 <span class="fc" id="L16">public class CLDot implements ImplementationFor&lt;OpenCLDevice&gt;</span>
 {
     @Override
-    public Tsr&lt;?&gt; run( ExecutionCall&lt;OpenCLDevice&gt; call ) {
+    public Tensor&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call ) {
         // First we unpack the input tensors:
-<span class="fc" id="L21">        Tsr&lt;Float&gt; c = call.input(Float.class, 0);</span>
-<span class="fc" id="L22">        Tsr&lt;Float&gt; a = call.input(Float.class, 1);</span>
-<span class="fc" id="L23">        Tsr&lt;Float&gt; b = call.input(Float.class, 2);</span>
+<span class="fc" id="L21">        Tensor&lt;Float&gt; c = call.input(Float.class, 0);</span>
+<span class="fc" id="L22">        Tensor&lt;Float&gt; a = call.input(Float.class, 1);</span>
+<span class="fc" id="L23">        Tensor&lt;Float&gt; b = call.input(Float.class, 2);</span>
 <span class="fc" id="L24">        OpenCLDevice device = call.getDevice();</span>
 
 <span class="pc bpc" id="L26" title="2 of 4 branches missed.">        if ( a.rank() != 1 || b.rank() != 1 )</span>
@@ -43,14 +43,14 @@ import java.util.function.Supplier;
                     &quot;    }\n&quot; +
                     &quot;}&quot;;
 
-<span class="fc" id="L46">        Tsr&lt;Float&gt; temp = Tsr.of(Float.class, Shape.of(size), 0).to(device).mut().setIsVirtual(false);</span>
+<span class="fc" id="L46">        Tensor&lt;Float&gt; temp = Tensor.of(Float.class, Shape.of(size), 0).to(device).mut().setIsVirtual(false);</span>
 
         // Kernels are cached, so if it is already compiled, it will be retrieved from the cache:
 <span class="fc" id="L49">        KernelCaller caller = device.findOrCompileAdHocKernel(kernelName, code);</span>
         // We call OpenCL to do the work:
 <span class="fc" id="L51">        caller.pass(a).pass(b).pass(temp).pass(size).call(new long[]{size}, null);</span>
 
-<span class="fc" id="L53">        Tsr&lt;Float&gt; out = CLSum.run(temp, device);</span>
+<span class="fc" id="L53">        Tensor&lt;Float&gt; out = CLSum.run(temp, device);</span>
 <span class="fc" id="L54">        c.mut().at(0).set(out.item());</span>
 <span class="fc" id="L55">        return c;</span>
     }

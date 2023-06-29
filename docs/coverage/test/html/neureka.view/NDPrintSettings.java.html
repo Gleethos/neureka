@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NDPrintSettings.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.view</a> &gt; <span class="el_source">NDPrintSettings.java</span></div><h1>NDPrintSettings.java</h1><pre class="source lang-java linenums">package neureka.view;
 
+import neureka.Tensor;
+
 import java.util.function.Supplier;
 
 /**
- *  This is simply a mutable container for configuring how {@link neureka.Tsr}
+ *  This is simply a mutable container for configuring how {@link Tensor}
  *  instances ought to be converted to {@link String}s.
  */
 public final class NDPrintSettings
@@ -25,32 +27,32 @@ public final class NDPrintSettings
     private String  _indent;
     private boolean _legacy;
 
-<span class="fc" id="L28">    public NDPrintSettings(Supplier&lt;Boolean&gt; notModifiable) {</span>
-<span class="fc" id="L29">        _notModifiable = notModifiable;</span>
-<span class="fc" id="L30">        _isScientific = true;</span>
-<span class="fc" id="L31">        _multiline = true;</span>
-<span class="fc" id="L32">        _cellSize = 6;</span>
-<span class="fc" id="L33">        _rowLimit = 50;</span>
-<span class="fc" id="L34">        _hasShape = true;</span>
-<span class="fc" id="L35">        _hasValue = true;</span>
-<span class="fc" id="L36">        _hasGradient = true;</span>
-<span class="fc" id="L37">        _hasDerivatives = false;</span>
-<span class="fc" id="L38">        _hasRecursiveGraph = false;</span>
-<span class="fc" id="L39">        _isCellBound = false;</span>
-<span class="fc" id="L40">        _postfix = &quot;&quot;;</span>
-<span class="fc" id="L41">        _prefix = &quot;&quot;;</span>
-<span class="fc" id="L42">        _indent = &quot;&quot;;</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L30">    public NDPrintSettings(Supplier&lt;Boolean&gt; notModifiable) {</span>
+<span class="fc" id="L31">        _notModifiable = notModifiable;</span>
+<span class="fc" id="L32">        _isScientific = true;</span>
+<span class="fc" id="L33">        _multiline = true;</span>
+<span class="fc" id="L34">        _cellSize = 6;</span>
+<span class="fc" id="L35">        _rowLimit = 50;</span>
+<span class="fc" id="L36">        _hasShape = true;</span>
+<span class="fc" id="L37">        _hasValue = true;</span>
+<span class="fc" id="L38">        _hasGradient = true;</span>
+<span class="fc" id="L39">        _hasDerivatives = false;</span>
+<span class="fc" id="L40">        _hasRecursiveGraph = false;</span>
+<span class="fc" id="L41">        _isCellBound = false;</span>
+<span class="fc" id="L42">        _postfix = &quot;&quot;;</span>
+<span class="fc" id="L43">        _prefix = &quot;&quot;;</span>
+<span class="fc" id="L44">        _indent = &quot;&quot;;</span>
+<span class="fc" id="L45">    }</span>
 
     public NDPrintSettings clone() {
-<span class="fc" id="L46">        NDPrintSettings clone = new NDPrintSettings(() -&gt; false);</span>
-<span class="fc" id="L47">        _imposeOn(clone);</span>
-<span class="fc" id="L48">        return clone;</span>
+<span class="fc" id="L48">        NDPrintSettings clone = new NDPrintSettings(() -&gt; false);</span>
+<span class="fc" id="L49">        _imposeOn(clone);</span>
+<span class="fc" id="L50">        return clone;</span>
     }
 
     public NDPrintSettings with(NDPrintSettings other ) {
-<span class="fc" id="L52">        other._imposeOn( this );</span>
-<span class="fc" id="L53">        return this;</span>
+<span class="fc" id="L54">        other._imposeOn( this );</span>
+<span class="fc" id="L55">        return this;</span>
     }
 
     /**
@@ -60,21 +62,21 @@ public final class NDPrintSettings
      * @param other The {@link NDPrintSettings} which ought to be read from.
      */
     private void _imposeOn( NDPrintSettings other ) {
-<span class="fc" id="L63">        other._cellSize = _cellSize;</span>
-<span class="fc" id="L64">        other._rowLimit = _rowLimit;</span>
-<span class="fc" id="L65">        other._hasGradient = _hasGradient;</span>
-<span class="fc" id="L66">        other._isScientific = _isScientific;</span>
-<span class="fc" id="L67">        other._multiline = _multiline;</span>
-<span class="fc" id="L68">        other._haveSlimNumbers = _haveSlimNumbers;</span>
-<span class="fc" id="L69">        other._hasValue = _hasValue;</span>
-<span class="fc" id="L70">        other._hasShape = _hasShape;</span>
-<span class="fc" id="L71">        other._hasRecursiveGraph = _hasRecursiveGraph;</span>
-<span class="fc" id="L72">        other._hasDerivatives = _hasDerivatives;</span>
-<span class="fc" id="L73">        other._isCellBound = _isCellBound;</span>
-<span class="fc" id="L74">        other._prefix = _prefix;</span>
-<span class="fc" id="L75">        other._postfix = _postfix;</span>
-<span class="fc" id="L76">        other._legacy = _legacy;</span>
-<span class="fc" id="L77">    }</span>
+<span class="fc" id="L65">        other._cellSize = _cellSize;</span>
+<span class="fc" id="L66">        other._rowLimit = _rowLimit;</span>
+<span class="fc" id="L67">        other._hasGradient = _hasGradient;</span>
+<span class="fc" id="L68">        other._isScientific = _isScientific;</span>
+<span class="fc" id="L69">        other._multiline = _multiline;</span>
+<span class="fc" id="L70">        other._haveSlimNumbers = _haveSlimNumbers;</span>
+<span class="fc" id="L71">        other._hasValue = _hasValue;</span>
+<span class="fc" id="L72">        other._hasShape = _hasShape;</span>
+<span class="fc" id="L73">        other._hasRecursiveGraph = _hasRecursiveGraph;</span>
+<span class="fc" id="L74">        other._hasDerivatives = _hasDerivatives;</span>
+<span class="fc" id="L75">        other._isCellBound = _isCellBound;</span>
+<span class="fc" id="L76">        other._prefix = _prefix;</span>
+<span class="fc" id="L77">        other._postfix = _postfix;</span>
+<span class="fc" id="L78">        other._legacy = _legacy;</span>
+<span class="fc" id="L79">    }</span>
 
     /**
      *  A cell size refers to the number of characters reserved to
@@ -86,7 +88,7 @@ public final class NDPrintSettings
      * @return The width of the cell in terms of numbers of characters.
      */
     public int getCellSize() {
-<span class="fc" id="L89">        return _cellSize;</span>
+<span class="fc" id="L91">        return _cellSize;</span>
     }
 
     /**
@@ -99,9 +101,9 @@ public final class NDPrintSettings
      * @param cellSize The width of the cell in terms of numbers of characters.
      */
     public NDPrintSettings setCellSize(int cellSize ) {
-<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L103">        _cellSize = cellSize;</span>
-<span class="fc" id="L104">        return this;</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L105">        _cellSize = cellSize;</span>
+<span class="fc" id="L106">        return this;</span>
     }
 
     /**
@@ -114,7 +116,7 @@ public final class NDPrintSettings
      * @return The maximum number of rows in the {@link String} representation of the tensor.
      */
     public int getRowLimit() {
-<span class="fc" id="L117">        return _rowLimit;</span>
+<span class="fc" id="L119">        return _rowLimit;</span>
     }
 
     /**
@@ -127,105 +129,105 @@ public final class NDPrintSettings
      * @param shortage The maximum number of rows in the {@link String} representation of the tensor.
      */
     public NDPrintSettings setRowLimit(int shortage ) {
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L131">        _rowLimit = shortage;</span>
-<span class="fc" id="L132">        return this;</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L133">        _rowLimit = shortage;</span>
+<span class="fc" id="L134">        return this;</span>
     }
 
     /**
      * @return The truth value determining if the tensor should also print its gradient.
      */
     public boolean getHasGradient() {
-<span class="fc" id="L139">        return _hasGradient;</span>
+<span class="fc" id="L141">        return _hasGradient;</span>
     }
 
     /**
      * @param hasGradient The truth value determining if the tensor should also print its gradient.
      */
     public NDPrintSettings setHasGradient(boolean hasGradient ) {
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L147">        _hasGradient = hasGradient;</span>
-<span class="fc" id="L148">        return this;</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L149">        _hasGradient = hasGradient;</span>
+<span class="fc" id="L150">        return this;</span>
     }
 
     /**
      * @return The truth value determining if numeric values should be formatted in scientific notation.
      */
     public boolean getIsScientific() {
-<span class="fc" id="L155">        return _isScientific;</span>
+<span class="fc" id="L157">        return _isScientific;</span>
     }
 
     /**
      * @param isScientific The truth value determining if numeric values should be formatted in scientific notation.
      */
     public NDPrintSettings setIsScientific(boolean isScientific ) {
-<span class="fc bfc" id="L162" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L163">        _isScientific = isScientific;</span>
-<span class="fc" id="L164">        return this;</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L165">        _isScientific = isScientific;</span>
+<span class="fc" id="L166">        return this;</span>
     }
 
     /**
      * @return The truth value determining if the tensor should be printed in one line or across multiple lines.
      */
     public boolean getIsMultiline() {
-<span class="fc" id="L171">        return _multiline;</span>
+<span class="fc" id="L173">        return _multiline;</span>
     }
 
     /**
      * @param isMultiline The truth value determining if the tensor should be printed in one line or across multiple lines.
      */
     public NDPrintSettings setIsMultiline(boolean isMultiline ) {
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L179">        _multiline = isMultiline;</span>
-<span class="fc" id="L180">        return this;</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L181">        _multiline = isMultiline;</span>
+<span class="fc" id="L182">        return this;</span>
     }
 
     /**
      * @return The truth value determining if numbers should be formatted more compactly (1.0 to 1).
      */
     public boolean getHasSlimNumbers() {
-<span class="fc" id="L187">        return _haveSlimNumbers;</span>
+<span class="fc" id="L189">        return _haveSlimNumbers;</span>
     }
 
     /**
      * @param haveSlimNumbers The truth value determining if numbers should be formatted more compactly (1.0 to 1).
      */
     public NDPrintSettings setHasSlimNumbers(boolean haveSlimNumbers ) {
-<span class="fc bfc" id="L194" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L195">        _haveSlimNumbers = haveSlimNumbers;</span>
-<span class="fc" id="L196">        return this;</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L197">        _haveSlimNumbers = haveSlimNumbers;</span>
+<span class="fc" id="L198">        return this;</span>
     }
 
     /**
      * @return The truth value determining if the values of the tensor should be included in the {@link String} representation.
      */
     public boolean getHasValue() {
-<span class="fc" id="L203">        return _hasValue;</span>
+<span class="fc" id="L205">        return _hasValue;</span>
     }
 
     /**
      * @param hasValue The truth value determining if the values of the tensor should be included in the {@link String} representation.
      */
     public NDPrintSettings setHasValue(boolean hasValue ) {
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L211">        _hasValue = hasValue;</span>
-<span class="fc" id="L212">        return this;</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L213">        _hasValue = hasValue;</span>
+<span class="fc" id="L214">        return this;</span>
     }
 
     /**
      * @return The truth value determining if the tensor should have its shape included in the {@link String}.
      */
     public boolean getHasShape() {
-<span class="fc" id="L219">        return _hasShape;</span>
+<span class="fc" id="L221">        return _hasShape;</span>
     }
 
     /**
      * @param hasShape The truth value determining if the tensor should have its shape included in the {@link String}.
      */
     public NDPrintSettings setHasShape(boolean hasShape ) {
-<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L227">        _hasShape = hasShape;</span>
-<span class="fc" id="L228">        return this;</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L229">        _hasShape = hasShape;</span>
+<span class="fc" id="L230">        return this;</span>
     }
 
     /**
@@ -233,7 +235,7 @@ public final class NDPrintSettings
      *         tensor should have its computation graph attached (if present).
      */
     public boolean getHasRecursiveGraph() {
-<span class="fc" id="L236">        return _hasRecursiveGraph;</span>
+<span class="fc" id="L238">        return _hasRecursiveGraph;</span>
     }
 
     /**
@@ -242,61 +244,61 @@ public final class NDPrintSettings
      *         tensor should have its computation graph attached (if present).
      */
     public NDPrintSettings setHasRecursiveGraph(boolean hasRecursiveGraph ) {
-<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L246">        _hasRecursiveGraph = hasRecursiveGraph;</span>
-<span class="fc" id="L247">        return this;</span>
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L248">        _hasRecursiveGraph = hasRecursiveGraph;</span>
+<span class="fc" id="L249">        return this;</span>
     }
 
     public boolean getHasDerivatives() {
-<span class="fc" id="L251">        return _hasDerivatives;</span>
+<span class="fc" id="L253">        return _hasDerivatives;</span>
     }
 
     public NDPrintSettings setHasDerivatives(boolean hasDerivatives ) {
-<span class="pc bpc" id="L255" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L256">        _hasDerivatives = hasDerivatives;</span>
-<span class="fc" id="L257">        return this;</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L258">        _hasDerivatives = hasDerivatives;</span>
+<span class="fc" id="L259">        return this;</span>
     }
 
     public boolean getIsCellBound() {
-<span class="fc" id="L261">        return _isCellBound;</span>
+<span class="fc" id="L263">        return _isCellBound;</span>
     }
 
     public NDPrintSettings setIsCellBound(boolean isCellBound ) {
-<span class="pc bpc" id="L265" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L266">        _isCellBound = isCellBound;</span>
-<span class="fc" id="L267">        return this;</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L268">        _isCellBound = isCellBound;</span>
+<span class="fc" id="L269">        return this;</span>
     }
 
     /**
-     * @return The {@link String} which will be prepended at the beginning of a {@link neureka.Tsr} string representation.
+     * @return The {@link String} which will be prepended at the beginning of a {@link Tensor} string representation.
      */
     public String getPrefix() {
-<span class="fc" id="L274">        return _prefix;</span>
+<span class="fc" id="L276">        return _prefix;</span>
     }
 
     /**
-     * @param prefix The {@link String} which will be prepended at the beginning of a {@link neureka.Tsr} string representation.
+     * @param prefix The {@link String} which will be prepended at the beginning of a {@link Tensor} string representation.
      */
     public NDPrintSettings setPrefix(String prefix ) {
-<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L282">        _prefix = prefix;</span>
-<span class="fc" id="L283">        return this;</span>
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L284">        _prefix = prefix;</span>
+<span class="fc" id="L285">        return this;</span>
     }
 
     /**
-     * @return The {@link String} which will be appended at the end of a {@link neureka.Tsr} string representation.
+     * @return The {@link String} which will be appended at the end of a {@link Tensor} string representation.
      */
     public String getPostfix() {
-<span class="fc" id="L290">        return _postfix;</span>
+<span class="fc" id="L292">        return _postfix;</span>
     }
 
     /**
-     * @param postfix The {@link String} which will be appended at the end of a {@link neureka.Tsr} string representation.
+     * @param postfix The {@link String} which will be appended at the end of a {@link Tensor} string representation.
      */
     public NDPrintSettings setPostfix(String postfix ) {
-<span class="pc bpc" id="L297" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L298">        _postfix = postfix;</span>
-<span class="fc" id="L299">        return this;</span>
+<span class="pc bpc" id="L299" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L300">        _postfix = postfix;</span>
+<span class="fc" id="L301">        return this;</span>
     }
 
     /**
@@ -305,7 +307,7 @@ public final class NDPrintSettings
      *         the {@link #getIsMultiline()} is set to {@code true}.
      */
     public String getIndent() {
-<span class="fc" id="L308">        return _indent;</span>
+<span class="fc" id="L310">        return _indent;</span>
     }
 
     /**
@@ -314,9 +316,9 @@ public final class NDPrintSettings
      *               the {@link #getIsMultiline()} is set to {@code true}.
      */
     public NDPrintSettings setIndent(String indent ) {
-<span class="pc bpc" id="L317" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L318">        _indent = indent;</span>
-<span class="fc" id="L319">        return this;</span>
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L320">        _indent = indent;</span>
+<span class="fc" id="L321">        return this;</span>
     }
 
     /**
@@ -327,7 +329,7 @@ public final class NDPrintSettings
      * @return The truth value determining the type of brackets used.
      */
     public boolean getIsLegacy() {
-<span class="fc" id="L330">        return _legacy;</span>
+<span class="fc" id="L332">        return _legacy;</span>
     }
 
     /**
@@ -338,9 +340,9 @@ public final class NDPrintSettings
      * @param legacy The truth value determining the type of brackets used.
      */
     public NDPrintSettings setIsLegacy(boolean legacy ) {
-<span class="fc bfc" id="L341" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
-<span class="fc" id="L342">        _legacy = legacy;</span>
-<span class="fc" id="L343">        return this;</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">        if ( _notModifiable.get() ) return this;</span>
+<span class="fc" id="L344">        _legacy = legacy;</span>
+<span class="fc" id="L345">        return this;</span>
     }
 
     /**
@@ -349,24 +351,24 @@ public final class NDPrintSettings
      */
     public NDPrintSettings with(String modes )
     {
-<span class="pc bpc" id="L352" title="2 of 4 branches missed.">        if ( modes == null || modes.trim().isEmpty() )</span>
-<span class="nc" id="L353">            return this;</span>
+<span class="pc bpc" id="L354" title="2 of 4 branches missed.">        if ( modes == null || modes.trim().isEmpty() )</span>
+<span class="nc" id="L355">            return this;</span>
 
-<span class="fc" id="L355">        NDPrintSettings settings = this;</span>
-<span class="pc bpc" id="L356" title="1 of 2 branches missed.">        if ( modes.contains( &quot;s&quot; ) ) settings.setRowLimit(  3  );</span>
-<span class="fc" id="L357">        settings.setIsScientific(  modes.contains( &quot;c&quot; )                                      )</span>
-<span class="fc" id="L358">        .setIsMultiline(  modes.contains( &quot;f&quot; )                                      )</span>
-<span class="fc" id="L359">        .setHasGradient(  modes.contains( &quot;g&quot; )                                      )</span>
-<span class="pc bpc" id="L360" title="2 of 4 branches missed.">        .setCellSize(  modes.contains( &quot;p&quot; ) ? 6 : modes.contains( &quot;f&quot; ) ? 2 : 1  )</span>
-<span class="pc bpc" id="L361" title="2 of 4 branches missed.">        .setHasValue( !(modes.contains( &quot;shp&quot; ) || modes.contains(&quot;shape&quot;))       )</span>
-<span class="fc" id="L362">        .setHasRecursiveGraph( modes.contains( &quot;r&quot; )                                      )</span>
-<span class="fc" id="L363">        .setHasDerivatives(  modes.contains( &quot;d&quot; )                                      )</span>
-<span class="pc bpc" id="L364" title="1 of 2 branches missed.">        .setHasShape(  !modes.contains( &quot;v&quot; )                                     )</span>
-<span class="fc" id="L365">        .setIsCellBound(  modes.contains( &quot;b&quot; )                                      )</span>
-<span class="fc" id="L366">        .setPostfix(  &quot;&quot;                                                         )</span>
-<span class="fc" id="L367">        .setPrefix(  &quot;&quot;                                                         )</span>
-<span class="fc" id="L368">        .setHasSlimNumbers(  false                                                      );</span>
-<span class="fc" id="L369">        return settings;</span>
+<span class="fc" id="L357">        NDPrintSettings settings = this;</span>
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">        if ( modes.contains( &quot;s&quot; ) ) settings.setRowLimit(  3  );</span>
+<span class="fc" id="L359">        settings.setIsScientific(  modes.contains( &quot;c&quot; )                                      )</span>
+<span class="fc" id="L360">        .setIsMultiline(  modes.contains( &quot;f&quot; )                                      )</span>
+<span class="fc" id="L361">        .setHasGradient(  modes.contains( &quot;g&quot; )                                      )</span>
+<span class="pc bpc" id="L362" title="2 of 4 branches missed.">        .setCellSize(  modes.contains( &quot;p&quot; ) ? 6 : modes.contains( &quot;f&quot; ) ? 2 : 1  )</span>
+<span class="pc bpc" id="L363" title="2 of 4 branches missed.">        .setHasValue( !(modes.contains( &quot;shp&quot; ) || modes.contains(&quot;shape&quot;))       )</span>
+<span class="fc" id="L364">        .setHasRecursiveGraph( modes.contains( &quot;r&quot; )                                      )</span>
+<span class="fc" id="L365">        .setHasDerivatives(  modes.contains( &quot;d&quot; )                                      )</span>
+<span class="pc bpc" id="L366" title="1 of 2 branches missed.">        .setHasShape(  !modes.contains( &quot;v&quot; )                                     )</span>
+<span class="fc" id="L367">        .setIsCellBound(  modes.contains( &quot;b&quot; )                                      )</span>
+<span class="fc" id="L368">        .setPostfix(  &quot;&quot;                                                         )</span>
+<span class="fc" id="L369">        .setPrefix(  &quot;&quot;                                                         )</span>
+<span class="fc" id="L370">        .setHasSlimNumbers(  false                                                      );</span>
+<span class="fc" id="L371">        return settings;</span>
     }
 
 

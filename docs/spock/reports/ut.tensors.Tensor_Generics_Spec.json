@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.005 seconds"
+    "duration":"0.003 seconds"
   },
   "headers":["\n                    Here you will find out how to create a tensor of any kind of data.          \n            "],"tags":{},"see":[],
   "features":[ 
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a completely uninitialized tensor instance.","code":["var t = Tsr.newInstance()"]},
+        {"kind":"given","text":"We create a completely uninitialized tensor instance.","code":["var t = Tensor.newInstance()"]},
 
         {"kind":"expect","text":"","code":["t.getRepresentativeItemClass() == Neureka.get().settings().dtype().defaultDataTypeClass"]},
 
@@ -38,7 +38,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a tensor of strings.","code":["Tsr<String> t = Tsr.of([2, 4], [\"Hi\", \"I'm\", \"a\", \"String\", \"list\"])"]},
+        {"kind":"given","text":"We create a tensor of strings.","code":["Tensor<String> t = Tensor.of([2, 4], [\"Hi\", \"I'm\", \"a\", \"String\", \"list\"])"]},
 
         {"kind":"expect","text":"The tensor has the correct item type.","code":["t.itemType == String.class"]},
 
@@ -57,7 +57,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"","code":["def t = Tsr.of(data)"]},
+        {"kind":"given","text":"","code":["def t = Tensor.of(data)"]},
 
         {"kind":"expect","text":"","code":["t.rank() == 1"]},
 

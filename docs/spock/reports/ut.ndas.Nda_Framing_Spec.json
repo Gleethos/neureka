@@ -1,7 +1,7 @@
 {
   "className":"ut.ndas.Nda_Framing_Spec",
   "title":"Nda framing",
-  "narrative":"Immutability is a core concept of the Neureka library.\n    This means that the Nda API does not expose mutability directly.\n    Instead, the API exposes methods that return new instances of Nda\n    that are derived from the original instance.\n\n    This is also true for labeling operations, \n    meaning that the Nda API does not directly expose methods that mutate labels of an Nda\n    but instead provides methods that return new instances of Nda\n    with different labels.\n\n    Don't be concerned about the performance implications of this,\n    because in the vast majority of cases the new instance will be backed by the same data array\n    as the original instance!",
+  "narrative":"Immutability is a core concept of the Neureka library.\n    This means that the Nda API does not expose mutability directly.\n    Instead, the API exposes methods that return new instances of Nda\n    that are derived from the original instance.\n\n    This is also true for labeling operations,\n    meaning that the Nda API does not directly expose methods that mutate labels of an Nda\n    but instead provides methods that return new instances of Nda\n    with different labels.\n\n    Don't be concerned about the performance implications of this,\n    because in the vast majority of cases the new instance will be backed by the same data array\n    as the original instance!",
   "subjects":["neureka.Nda"],
   "statistics":{
     "runs":"6",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.008 seconds"
+    "duration":"0.009 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"An Nda can be labeled.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +69,7 @@
     {
       "id":"We can use labels as selectors for slicing.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

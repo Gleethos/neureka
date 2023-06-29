@@ -1,7 +1,7 @@
 {
   "className":"ut.device.FileDevice_Spec",
   "title":"FileDevice, Storing Tensors in Files",
-  "narrative":"The `FileDevice` class, one of many implementations of the `Device` interface, \n    represents a file directory which can store and load tensors as files (`idx`, `jpg`, `png`...).",
+  "narrative":"The `FileDevice` class, one of many implementations of the `Device` interface,\n    represents a file directory which can store and load tensors as files (`idx`, `jpg`, `png`...).",
   "subjects":["neureka.devices.file.FileDevice","neureka.devices.Device"],
   "statistics":{
     "runs":"4",
@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.047 seconds"
+    "duration":"0.046 seconds"
   },
   "headers":["\n                    This specification covers the behavior of the `FileDevice`\n                    class, which enables the persistence of tensor data.      \n            "],"tags":{},"see":[],
   "features":[ 
@@ -21,7 +21,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new tensor is being created for testing.","code":["var a = Tsr.of([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])"]},
+        {"kind":"given","text":"A new tensor is being created for testing.","code":["var a = Tensor.of([2, 4], [5, 4, -7, 3, -2, 6, -4, 3 ])"]},
 
         {"kind":"and","text":"A file device instance is being accessed for a given path.","code":["var device = FileDevice.at( path )"]},
 
@@ -45,12 +45,12 @@
     {
       "id":"A file device stores tensors in various file formats.",
       "result":"PASS",
-      "duration":"0.020 seconds",
+      "duration":"0.023 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A new tensor is being created for testing.","code":["var a = Tsr.of( Shape.of(shape), -8d..8d )"]},
+        {"kind":"given","text":"A new tensor is being created for testing.","code":["var a = Tensor.of( Shape.of(shape), -8d..8d )"]},
 
         {"kind":"and","text":"A String representation of the shape.","code":["var shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})"]},
 
@@ -80,7 +80,7 @@
     {
       "id":"The file device can load known files in a directory.",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
       "blocks":[
         {"kind":"given","text":"A file device instance is being accessed for a simple test path.","code":["def device = FileDevice.at( 'build/resources/test/idx2' )"]},
 
-        {"kind":"and","text":"We create a simple tensor which we want to save.","code":["var t = Tsr.of(shape, data)"]},
+        {"kind":"and","text":"We create a simple tensor which we want to save.","code":["var t = Tensor.of(shape, data)"]},
 
         {"kind":"expect","text":"","code":["device.directory == 'build/resources/test/idx2'","t.getDevice() === CPU.get()","device.loadable.toSet() == [].toSet() // If this fails: consider deleting the build folder!!","device.loaded == []"]},
 

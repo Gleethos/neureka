@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Product.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.indexer</a> &gt; <span class="el_source">Product.java</span></div><h1>Product.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.indexer;
 
 import neureka.Neureka;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.*;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
@@ -52,7 +52,7 @@ public final class Product extends AbstractOperation
 <span class="nc" id="L52">                throw new IllegalArgumentException(&quot;The shapes of the operands of the multiplication operation must be equal! (when deriving nested functions)&quot;);</span>
 
 <span class="fc" id="L54">            Function noAD = Function.of( caller.toString(), false );</span>
-<span class="fc" id="L55">            Tsr&lt;?&gt;[] results = new Tsr[ call.arity() ];</span>
+<span class="fc" id="L55">            Tensor&lt;?&gt;[] results = new Tensor[ call.arity() ];</span>
 <span class="fc bfc" id="L56" title="All 2 branches covered.">            for ( int i = 0; i &lt; results.length; i++ ) {</span>
 <span class="fc" id="L57">                ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flattenForIndexer( noAD, call.withArgs(Arg.VarIdx.of(i), Arg.DerivIdx.of(-1)) );</span>
 <span class="fc" id="L58">                results[ i ] = flatCall.input( 0 );</span>
@@ -63,7 +63,7 @@ public final class Product extends AbstractOperation
 <span class="fc" id="L63">                                            .filter( i -&gt; caller.dependsOn(d) )</span>
 <span class="fc" id="L64">                                            .toArray();</span>
 
-<span class="fc" id="L66">            Tsr&lt;?&gt;[] derivs = new Tsr[ call.arity() ];</span>
+<span class="fc" id="L66">            Tensor&lt;?&gt;[] derivs = new Tensor[ call.arity() ];</span>
 <span class="fc bfc" id="L67" title="All 2 branches covered.">            for ( int i = 0; i &lt; results.length; i++ ) {</span>
 <span class="fc" id="L68">                int finalI = i;</span>
 <span class="pc bpc" id="L69" title="1 of 4 branches missed.">                if ( Arrays.stream(toBeDerived).anyMatch(v -&gt; v == finalI) ) {</span>
@@ -74,7 +74,7 @@ public final class Product extends AbstractOperation
 <span class="fc" id="L74">            return Multiplication.derive( toBeDerived, results, i -&gt; derivs[i] );</span>
         }
 
-<span class="fc" id="L77">        Tsr&lt;?&gt;[] inputs = new Tsr[ call.arity() ];</span>
+<span class="fc" id="L77">        Tensor&lt;?&gt;[] inputs = new Tensor[ call.arity() ];</span>
 <span class="fc bfc" id="L78" title="All 2 branches covered.">        for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
 <span class="fc" id="L79">            ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flattenForIndexer( caller, call.withArgs(Arg.VarIdx.of(i)) );</span>
 <span class="fc" id="L80">            inputs[ i ] = flatCall.input( 0 );</span>

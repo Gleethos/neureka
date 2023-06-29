@@ -1,7 +1,7 @@
 {
   "className":"ut.tensors.Tensor_Device_Spec",
   "title":"Tensors on Devices",
-  "narrative":"This unit test specification covers \n    the expected behavior of tensors when interacting\n    with instances of implementations of the Device interface.",
+  "narrative":"This unit test specification covers\n    the expected behavior of tensors when interacting\n    with instances of implementations of the Device interface.",
   "subjects":[],
   "statistics":{
     "runs":"4",
@@ -23,7 +23,7 @@
       "blocks":[
         {"kind":"given","text":"We get a device instance representing the GPU.","code":["Device gpu = Device.get(\"gpu\")"]},
 
-        {"kind":"and","text":"We create a simple tensor.","code":["Tsr t = Tsr.of([3, 4, 1], 3f)"]},
+        {"kind":"and","text":"We create a simple tensor.","code":["Tensor t = Tensor.of([3, 4, 1], 3f)"]},
 
         {"kind":"expect","text":"The following is to be expected with respect to the given :","code":["!t.has(Device.class)","!t.isOutsourced()","!gpu.has(t)"]},
 
@@ -42,7 +42,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A mock device and a simple tensor instance.","code":["def device = Mock(Device)","var t = Tsr.of(2d)","device.has(t) >>> [false, true, true]"]},
+        {"kind":"given","text":"A mock device and a simple tensor instance.","code":["def device = Mock(Device)","var t = Tensor.of(2d)","device.has(t) >>> [false, true, true]"]},
 
         {"kind":"when","text":"The mock device is being added to the tensor...","code":["t.to(device)"]},
 
@@ -63,7 +63,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A simple tensor having a device as component","code":["def device = Mock(Device)","device.has(_) >>> [false, true, true] // Some realistic return values to simulate tensor reception!","var t = Tsr.of(1d)"]},
+        {"kind":"given","text":"A simple tensor having a device as component","code":["def device = Mock(Device)","device.has(_) >>> [false, true, true] // Some realistic return values to simulate tensor reception!","var t = Tensor.of(1d)"]},
 
         {"kind":"when","text":"","code":["t.to(device)"]},
 
@@ -88,7 +88,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"A 2D tensor having a device as component","code":["def device = Mock(Device)","var t = Tsr.of([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])","device.has(t) >>> [false, true]"]},
+        {"kind":"given","text":"A 2D tensor having a device as component","code":["def device = Mock(Device)","var t = Tensor.of([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])","device.has(t) >>> [false, true]"]},
 
         {"kind":"when","text":"A slice is being created from the given tensor...","code":["var s = t[1..2, 0..2]"]},
 
@@ -98,7 +98,7 @@
 
         {"kind":"and","text":"Instead the \"update\" method should be called...","code":["1 * device.update(_)"]},
 
-        {"kind":"and","text":"Internally the Tsr may \"asks\" if it belongs to the Device. (before and after migration attempt)","code":["(0.._) * device.has(t)"]}
+        {"kind":"and","text":"Internally the Tensor may \"asks\" if it belongs to the Device. (before and after migration attempt)","code":["(0.._) * device.has(t)"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

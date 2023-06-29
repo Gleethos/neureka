@@ -2,7 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Shape;
-import neureka.Tsr;
+import neureka.Tensor;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.ocl.CLBackend;
@@ -32,18 +32,18 @@ public class CLReduce implements ImplementationFor&lt;OpenCLDevice&gt;
 <span class="fc" id="L32">    }</span>
 
     @Override
-    public Tsr&lt;Integer&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
+    public Tensor&lt;Integer&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
 <span class="fc" id="L36">        CLBackend context = Neureka.get().backend().find(CLBackend.class).orElse(null);</span>
 <span class="pc bpc" id="L37" title="1 of 2 branches missed.">        CLSettings settings = context == null ? null : context.getSettings();</span>
 <span class="pc bpc" id="L38" title="1 of 4 branches missed.">        boolean autoConvert = context == null || settings.isAutoConvertToFloat();</span>
 <span class="pc bpc" id="L39" title="1 of 2 branches missed.">        if ( settings != null ) settings.setAutoConvertToFloat(false);</span>
-<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        Tsr&lt;Float&gt; in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        Tensor&lt;Float&gt; in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);</span>
 <span class="fc" id="L41">        int index = _runRecursively(in, call.getDevice());</span>
 <span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if ( settings != null ) settings.setAutoConvertToFloat(autoConvert);</span>
-<span class="fc" id="L43">        return Tsr.of(Integer.class, Shape.of( 1 ), index);</span>
+<span class="fc" id="L43">        return Tensor.of(Integer.class, Shape.of( 1 ), index);</span>
     }
 
-    private int _runRecursively(Tsr&lt;Float&gt; in, OpenCLDevice device)
+    private int _runRecursively(Tensor&lt;Float&gt; in, OpenCLDevice device)
     {
 <span class="fc" id="L48">        final long RTS = device.maxWorkGroupSize(); // Register tile size</span>
 <span class="fc" id="L49">        final int SIZE = in.size();</span>
@@ -56,7 +56,7 @@ public class CLReduce implements ImplementationFor&lt;OpenCLDevice&gt;
         else
 <span class="fc" id="L57">            N = (int) Math.ceil(fraction); // The last tile we do a partial reduction (bound check)</span>
 
-<span class="fc" id="L59">        Tsr&lt;Integer&gt; out = Tsr.of(Integer.class, Shape.of(N), 0).to(device);</span>
+<span class="fc" id="L59">        Tensor&lt;Integer&gt; out = Tensor.of(Integer.class, Shape.of(N), 0).to(device);</span>
 <span class="fc" id="L60">        out.mut().setIsVirtual(false);</span>
 
 <span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if ( in.size() == 1 ) {</span>
@@ -101,7 +101,7 @@ public class CLReduce implements ImplementationFor&lt;OpenCLDevice&gt;
 
         int i;
 <span class="fc bfc" id="L103" title="All 2 branches covered.">        if ( N &gt; 1 ) {</span>
-<span class="fc" id="L104">            Tsr&lt;Float&gt; reduced = _fetch(in, out, device);</span>
+<span class="fc" id="L104">            Tensor&lt;Float&gt; reduced = _fetch(in, out, device);</span>
 <span class="fc" id="L105">            i = out.at(_runRecursively(reduced, device)).get();</span>
 <span class="fc" id="L106">            reduced.mut().delete();</span>
 <span class="fc" id="L107">        }</span>
@@ -118,10 +118,10 @@ public class CLReduce implements ImplementationFor&lt;OpenCLDevice&gt;
      *  argument.
      *  All of this is done on a simple index to array entry mapping kernel!
      */
-    private Tsr&lt;Float&gt; _fetch(
-            Tsr&lt;Float&gt; in, Tsr&lt;Integer&gt; indices, OpenCLDevice device
+    private Tensor&lt;Float&gt; _fetch(
+            Tensor&lt;Float&gt; in, Tensor&lt;Integer&gt; indices, OpenCLDevice device
     ) {
-<span class="fc" id="L124">        Tsr&lt;Float&gt; out = Tsr.of(Float.class, Shape.of(indices.size()), 0).to(device);</span>
+<span class="fc" id="L124">        Tensor&lt;Float&gt; out = Tensor.of(Float.class, Shape.of(indices.size()), 0).to(device);</span>
 <span class="fc" id="L125">        out.mut().setIsVirtual(false);</span>
 
 <span class="fc" id="L127">        String kernelName = INDICES_MAPPER_ID;</span>
