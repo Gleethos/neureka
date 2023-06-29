@@ -148,7 +148,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new Tsr instance using the \"vector\" method in the fluent builder API.","code":["Tensor<?> t = Tensor.of( type ).vector( values )"]},
+        {"kind":"given","text":"We create a new `Tensor` instance using the \"vector\" method in the fluent builder API.","code":["Tensor<?> t = Tensor.of( type ).vector( values )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 
@@ -173,7 +173,7 @@
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create a new Tsr instance using the \"scalar\" method in the fluent builder API.","code":["Tensor<?> t = Tensor.of( type ).scalar( value )"]},
+        {"kind":"given","text":"We create a new `Tensor` instance using the \"scalar\" method in the fluent builder API.","code":["Tensor<?> t = Tensor.of( type ).scalar( value )"]},
 
         {"kind":"expect","text":"This new instance will have the expected data type...","code":["t.dataType == DataType.of(type)"]},
 

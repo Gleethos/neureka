@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.017 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -66,7 +66,7 @@
     {
       "id":"We can concatenate 2 string tensors alongside a specified axis!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -1,13 +1,13 @@
 {
   "project": "Neureka",
   "version": "0.20.1",
-  "created": "Thu Jun 29 18:01:53 CEST 2023",
+  "created": "Thu Jun 29 18:08:38 CEST 2023",
   "statistics":{
     "runs":"99",
-    "passed":"97",
-    "failed":"2",
-    "featureFailures":"2",
-    "successRate":"0.9797979797979798",
+    "passed":"99",
+    "failed":"0",
+    "featureFailures":"0",
+    "successRate":"1.0",
     "duration":"?"
   },
   "specifications": [{
@@ -93,6 +93,18 @@
       "successRate":"1.0",
       "duration":"?",
       "executedFeatures":[{"id":"The long broad integration test runs successfully.","extraInfo":[]}],
+      "ignoredFeatures":[]
+    },{
+      "className":"st.NN_Concepts_Spec",
+      "title":"Examining Neural Network Architecture Snippets",
+      "narrative":"This specification is intended to showcase some basic building blocks of \n    various neural network architectures.",
+      "featureCount":"1",
+      "failures":"0",
+      "errors":"0",
+      "skipped":"0" ,
+      "successRate":"1.0",
+      "duration":"?",
+      "executedFeatures":[{"id":"The attention mechanism (found in the commonly known transformer) demonstrated.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
       "className":"st.Training_NNs_Spec",
@@ -315,10 +327,10 @@
       "title":"The CPU device, an API for CPU based execution",
       "narrative":"The CPU class, one of many implementations of the Device interface, \n    is simply supposed to be an API for dispatching threaded workloads onto the CPU.\n    Contrary to other types of device, the CPU will host tensor data by default, simply\n    because the tensors will be stored in RAM if no device was specified.",
       "featureCount":"4",
-      "failures":"1",
+      "failures":"0",
       "errors":"0",
       "skipped":"0" ,
-      "successRate":"0.75",
+      "successRate":"1.0",
       "duration":"?",
       "executedFeatures":[{"id":"CPU knows the current number of available processor cores!","extraInfo":[]},{"id":"The CPU device will keep track of the amount of tensors it stores.","extraInfo":[]},{"id":"The CPU exposes a non null API for executing workloads in parallel.","extraInfo":[]},{"id":"Thread pool executes given workload in parallel","extraInfo":[]}],
       "ignoredFeatures":[]
@@ -339,10 +351,10 @@
       "title":"Finding Device Types",
       "narrative":"Neureka introduces a the concept of a `Device` which is an interface\n    that represents a computational device used for executing tensor / nd-array operations on them.\n    The `Device` interface is implemented by various classes which represent\n    different types of accelerator hardware such as `CPUs`, `GPUs`, `TPUs`, `FPGAs`, etc.\n    These various `Device` types can not be instantiated directly because they model \n    the concrete and finite hardware that is available on any given system Neureka is running on.\n    This means that they are usually instantiated lazily upon access request or \n    upfront by the library backend (usually a backend extension built fo a specific device).\n    In order to find these instances embedded in the library backend the `Device` interface\n    exposes various static methods which can be used to find a device instance by name or type.",
       "featureCount":"11",
-      "failures":"1",
+      "failures":"0",
       "errors":"0",
       "skipped":"1" ,
-      "successRate":"0.9",
+      "successRate":"1.0",
       "duration":"?",
       "executedFeatures":[{"id":"A device will keep track of the amount of tensors and data objects it stores.","extraInfo":[]},{"id":"Devices expose an API for accessing (reading and writing) the data of a tensor.","extraInfo":[]},{"id":"Devices store slices which can also be restored just like any other tensor.","extraInfo":[]},{"id":"Devices store tensors which can also be restored.","extraInfo":[]},{"id":"Execution calls containing null arguments will cause an exception to be thrown in device instances.","extraInfo":[]},{"id":"In total there are 3 different types of methods for finding device instances.","extraInfo":[]},{"id":"Passing a numeric array to a tensor should modify its contents!","extraInfo":[]},{"id":"Virtual tensors stay virtual when outsourced.","extraInfo":[]},{"id":"We can find Device implementations or null by passing search keys to the \"get\" method.","extraInfo":[]},{"id":"We can query the backend for devices by specifying both the requested type and a key word.","extraInfo":[]}],
       "ignoredFeatures":[{"id":"Devices cannot store slices whose parents are not already stored.","extraInfo":[]}]
@@ -1185,18 +1197,6 @@
       "successRate":"1.0",
       "duration":"?",
       "executedFeatures":[{"id":"Object arrays can be converted to primitive arrays.","extraInfo":[]}],
-      "ignoredFeatures":[]
-    },{
-      "className":"st.NN_Concepts_Spec",
-      "title":"Examining Neural Network Architecture Snippets",
-      "narrative":"This specification is intended to showcase some basic building blocks of \n    various neural network architectures.",
-      "featureCount":"1",
-      "failures":"0",
-      "errors":"0",
-      "skipped":"0" ,
-      "successRate":"1.0",
-      "duration":"?",
-      "executedFeatures":[{"id":"The attention mechanism (found in the commonly known transformer) demonstrated.","extraInfo":[]}],
       "ignoredFeatures":[]
     }
   ],

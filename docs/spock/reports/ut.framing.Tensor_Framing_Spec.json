@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.013 seconds"
+    "duration":"0.014 seconds"
   },
   "headers":["\n                    This specification covers the behavior\n                    of tensors with respect to specifying aliases for\n                    indices and then using them for slicing.     \n            "],"tags":{},"see":[],
   "features":[ 

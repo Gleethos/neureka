@@ -16,7 +16,7 @@
     {
       "id":"Autograd works in a simple mat-mul based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.011 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"Autograd works in a simple convolutional dot product based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"Autograd works in a simple convolutional dot product and float based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.023 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -102,7 +102,7 @@
     {
       "id":"Autograd works for 2 matrix multiplications in a row.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

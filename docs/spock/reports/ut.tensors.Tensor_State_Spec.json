@@ -136,7 +136,7 @@
     {
       "id":"The data and the value of a tensor a 2 different things!",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

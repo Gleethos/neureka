@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"2.922 seconds"
+    "duration":"3.009 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -61,7 +61,7 @@
     {
       "id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.020 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -90,7 +90,7 @@
     {
       "id":"A given OpenCL context can be disposed!",
       "result":"PASS",
-      "duration":"2.900 seconds",
+      "duration":"2.984 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

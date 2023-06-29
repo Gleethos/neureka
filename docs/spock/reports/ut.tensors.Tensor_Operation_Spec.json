@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"4.632 seconds"
+    "duration":"5.029 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"dot\" operation reshapes and produces valid \"x\" operation result.",
       "result":"PASS",
-      "duration":"0.053 seconds",
+      "duration":"0.059 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,7 @@
     {
       "id":"The \"matMul\" operation produces the expected result.",
       "result":"PASS",
-      "duration":"0.342 seconds",
+      "duration":"0.368 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"You can do matrix multiplication using transposed matrices.",
       "result":"PASS",
-      "duration":"0.353 seconds",
+      "duration":"0.386 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -79,7 +79,7 @@
     {
       "id":"You can do matrix multiplication using transposed matrices as second operand.",
       "result":"PASS",
-      "duration":"0.465 seconds",
+      "duration":"0.497 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,7 +100,7 @@
     {
       "id":"You can do matrix multiplication using 2 transposed matrices.",
       "result":"PASS",
-      "duration":"0.185 seconds",
+      "duration":"0.190 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -152,7 +152,7 @@
     {
       "id":"The values of a randomly populated tensor seems to adhere to a gaussian distribution.",
       "result":"PASS",
-      "duration":"0.058 seconds",
+      "duration":"0.059 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -175,7 +175,7 @@
     {
       "id":"New method \"asFunction\" of String added at runtime is callable by groovy and also works.",
       "result":"PASS",
-      "duration":"0.255 seconds",
+      "duration":"0.277 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -200,14 +200,14 @@
     {
       "id":"New operator methods added to \"SDK-types\" at runtime are callable by groovy and also work.",
       "result":"PASS",
-      "duration":"0.530 seconds",
+      "duration":"0.577 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["Neureka.get().settings().view().ndArrays({it.hasSlimNumbers=true})","Tensor a = Tensor.of(5d).mut.toType(type)","Tensor b = Tensor.of(3f).mut.toType(type)","Binding binding = new Binding()","binding.setVariable('a', a)","binding.setVariable('b', b)"]},
 
-        {"kind":"when","text":"...calling methods on types like Double and Integer that receive Tsr instances...","code":["Tensor c = new GroovyShell(binding).evaluate((code)) as Tensor"]},
+        {"kind":"when","text":"...calling methods on types like Double and Integer that receive `Tensor` instances...","code":["Tensor c = new GroovyShell(binding).evaluate((code)) as Tensor"]},
 
         {"kind":"then","text":"The resulting tensor (toString) will contain the expected String.","code":["c.toString().endsWith(\"[$expected]\")"]},
 
@@ -219,7 +219,7 @@
     {
       "id":"Overloaded operation methods on tensors produce expected results when called.",
       "result":"PASS",
-      "duration":"0.055 seconds",
+      "duration":"0.071 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -234,7 +234,7 @@
     {
       "id":"Simple slice addition produces expected result.",
       "result":"PASS",
-      "duration":"0.066 seconds",
+      "duration":"0.056 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -255,7 +255,7 @@
     {
       "id":"Auto reshaping and broadcasting works and the result can be back propagated.",
       "result":"PASS",
-      "duration":"1.056 seconds",
+      "duration":"1.155 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -296,7 +296,7 @@
     {
       "id":"Scalar broadcasting works across devices.",
       "result":"PASS",
-      "duration":"0.123 seconds",
+      "duration":"0.139 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -317,7 +317,7 @@
     {
       "id":"Operators \"+,*,**\" produce expected results with gradients which can be accessed via a \"Ig[0]\" Function instance",
       "result":"PASS",
-      "duration":"0.026 seconds",
+      "duration":"0.028 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -366,7 +366,7 @@
     {
       "id":"Activation functions work across types on slices and non sliced tensors.",
       "result":"PASS",
-      "duration":"0.861 seconds",
+      "duration":"0.946 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -393,7 +393,7 @@
     {
       "id":"The transpose operation exposed by the \"T()\" method, supports autograd.",
       "result":"PASS",
-      "duration":"0.032 seconds",
+      "duration":"0.034 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

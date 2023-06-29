@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.136 seconds"
+    "duration":"0.121 seconds"
   },
   "headers":["\n            <h2>Autograd Tensor Integration Tests</h2>\n            <p>\n                This specification contains tests which\n                cover the autograd behavior of tensors. <br>\n                The classes involved in governing the tested features are\n                the Tensor, GraphNode and Function (& implementations) classes.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Test pending error optimization",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -110,7 +110,7 @@
     {
       "id":"Test no preemptive gradient apply when not requested and auto apply and JIT_prop",
       "result":"PASS",
-      "duration":"0.115 seconds",
+      "duration":"0.106 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -147,7 +147,7 @@
     {
       "id":"Test autograd without JIT and auto apply.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -172,7 +172,7 @@
     {
       "id":"Test in-differential and JIT with auto apply",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -193,7 +193,7 @@
     {
       "id":"Test no JIT prop when forward AD",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

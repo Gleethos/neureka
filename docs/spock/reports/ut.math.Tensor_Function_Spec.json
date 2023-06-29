@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.074 seconds"
+    "duration":"0.080 seconds"
   },
   "headers":[" \n                This specification ensures that tensors supplied\n                to functions are executed successfully and produce the expected results.\n        "],"tags":{},"see":[],
   "features":[ 
@@ -119,7 +119,7 @@
     {
       "id":"Tensor results of various Function instances return expected results.",
       "result":"PASS",
-      "duration":"0.020 seconds",
+      "duration":"0.019 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -9,7 +9,7 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.128 seconds"
+    "duration":"0.137 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
@@ -73,7 +73,7 @@
     {
       "id":"The dot product operation runs on any device.",
       "result":"PASS",
-      "duration":"0.075 seconds",
+      "duration":"0.079 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The dot product operation runs on any device that \n            supports OpenCL (meaning that it has OpenCL drivers installed).\n        ","\n            The dot product operation runs on any device that \n            supports OpenCL (meaning that it has OpenCL drivers installed).\n        "]
       },
@@ -113,7 +113,7 @@
     {
       "id":"The dot operation work even when one tensor is virtual.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -134,7 +134,7 @@
     {
       "id":"The dot product works across different types and devices.",
       "result":"PASS",
-      "duration":"0.037 seconds",
+      "duration":"0.041 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
