@@ -72,7 +72,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     private Shape _shape;
     private V _from;
     private V _to;
-    private Device<V> _device = (Device<V>) CPU.get();
+    private Device<? super V> _device = CPU.get();
 
     /**
      * @param typeClass The type of the values which ought to be represented by the {@link Tensor} built by this {@link NdaBuilder}.
@@ -299,7 +299,7 @@ public final class NdaBuilder<V> implements WithShapeOrScalarOrVectorOnDevice<V>
     }
 
     @Override
-    public WithShapeOrScalarOrVectorTensor<V> on(Device<V> device ) {
+    public WithShapeOrScalarOrVectorTensor<V> on(Device<? super V> device ) {
         LogUtil.nullArgCheck(device, "device", Device.class, "Cannot create a tensor with an undefined device!");
         _device = device;
         return this;

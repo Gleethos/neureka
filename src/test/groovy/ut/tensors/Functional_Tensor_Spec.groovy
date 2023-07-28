@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tensor
 import neureka.common.utility.SettingsLoader
 import neureka.backend.ocl.CLBackend
+import neureka.devices.Device
 import neureka.dtype.DataType
 import neureka.view.NDPrintSettings
 import spock.lang.IgnoreIf
@@ -67,7 +68,7 @@ class Functional_Tensor_Spec extends Specification
             String device
     ) {
         given : 'We create 2 tensors, where one is a slice of the other.'
-            var a = Tensor.ofInts().withShape(3, 2).andFill(2, 0, 1, 1, 8, 3)
+            var a = Tensor.ofInts().on(Device.get(device)).withShape(3, 2).andFill(2, 0, 1, 1, 8, 3)
             var b = a[1, 0..1]
 
         expect :
