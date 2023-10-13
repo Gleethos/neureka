@@ -210,7 +210,7 @@ Min-jar file:
 ## :microscope: Tests & Specs :scroll: ###
 
 - BDD & living documentation with Spock!
-- Yes! A a browsable test suite. [Check it out!](https://gleethos.github.io/neureka/showcase.html)!
+- Yes! A browsable test suite. [Check it out!](https://gleethos.github.io/neureka/showcase.html)!
 
 ---
 
