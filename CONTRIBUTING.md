@@ -1,4 +1,4 @@
-# Contributing to Transcriptase
+# Contributing
 We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
 
 - Reporting a bug
@@ -24,7 +24,7 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. <br>
 Feel free to contact the maintainers if that's a concern. (gleethos@gmx.at)
 
-## Report bugs using Github's [issues](https://github.com/briandk/transcriptase-atom/issues)
+## Report bugs using Github's issues ##
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue](); it's that easy!
 
 ## Write bug reports with detail, background, and sample code
@@ -45,14 +45,6 @@ We *love* thorough bug reports. :)
 
 ## Use a Consistent Coding Style
 Simply use the same coding styles found in Neureka. <br>
-One special coding style for the project is that underscore is allowed as first character for private variables! <br>
-Also : Use spaces as padding for brackets ! <br>
 
 ## License
 By contributing, you agree that your contributions will be licensed under its MIT License.
-
-## References
-This document was adapted from 
-[gist.github.com/briandk](https://gist.github.com/briandk/3d2e8b3ec8daf5a27a62), <br>
-which was originally adapted from the open-source contribution guidelines for 
-[Facebook's Draft](https://github.com/facebook/draft-js/blob/a9316a723f9e918afde44dea68b5f9f39b7d9b00/CONTRIBUTING.md)
