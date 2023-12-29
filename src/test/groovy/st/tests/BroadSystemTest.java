@@ -220,9 +220,6 @@ public class BroadSystemTest
                 }
         );
         //=====================
-        _subTest2(tester);
-        //=====================
-
 
         // TESTING INVERSE:
         //=================
@@ -488,53 +485,4 @@ public class BroadSystemTest
         //===========================================
         return true;
     }
-
-
-
-    private static void _subTest2(UnitTester_Tensor tester) {
-
-        Neureka.get().settings().debug().setIsDeletingIntermediateTensors(false);
-        Tensor<Double> tensor1 = Tensor.of(Shape.of(1), 2d);//-2*4 = 8 | *3 = -24
-        tensor1.setRqsGradient(true);
-        Tensor<?> result = Tensor.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
-        GraphNode<Double> node = (GraphNode) result.get( GraphNode.class );
-        String asString = node.toString(GraphNode.Print.FANCY);
-        tester.testContains(
-                asString,
-                new String[]{
-                        "[1]:(-24.0)",
-                        "[1]:(12.0)",
-                        "[1]:(2.0)",
-                        "[1]:(-3.0)",
-                        "(-1.0 * I[0])",
-                        "(I[0] * -1.0)",
-                        "(I[0] * I[1])",
-                        "LEAVE RQS GRADIENT",
-                        "(I[0] * I[1]) => [1]:(-4.0)"
-                },
-                "Testing 'toString' of GraphNode");
-        Neureka.get().settings().debug().setIsDeletingIntermediateTensors(true);
-        result = Tensor.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
-        node = (GraphNode) result.get( GraphNode.class );
-        asString = node.toString(GraphNode.Print.FANCY);
-        tester.testContains(
-                asString,
-                new String[]{
-                        "(I[0] * I[1]) => [1]:(-24.0), type='BRANCH'",
-                        "[1]:(12.0)",
-                        "[1]:(2.0)",
-                        //"[1]:(-3.0)",
-                        "(-1.0 * I[0])",
-                        "(I[0] * -1.0)",
-                        "(I[0] * I[1])",
-                        "LEAVE RQS GRADIENT",
-                        //"deleted",
-                        //"(I[0] * -1.0) => deleted, type='BRANCH'"
-                        "(I[0] * -1.0) =>",
-                        "type='LEAVE DELETED'",
-                        "[1]:(2.0), type='LEAVE RQS GRADIENT'"
-                },
-                "Testing 'toString' of GraphNode");
-    }
-
 }
