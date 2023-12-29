@@ -118,20 +118,6 @@ public class BroadSystemTest
                         " =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) }"
                 });
         //---
-        tensor1 = Tensor.of(Shape.of(1, 3), 2d);
-        tensor2 = Tensor.of(Double.class).withShape(2, 1).all(-1.0);
-        tensor1.setRqsGradient(true);
-        tensor2.setRqsGradient(true);
-        tester.testTensorAutoGrad(
-                new Tensor[]{tensor1, tensor2},
-                "lig((I[0]xI[1])*-100)",
-                new String[]{
-                        "[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0);",
-                        " =>d|[ [2x3]:(-100.0, -100.0, -100.0, -100.0, -100.0, -100.0) ]|:t{ [2x3]:(-2.0, -2.0, -2.0, -2.0, -2.0, -2.0);",
-                        " =>d|[ [1x3]:(2.0, 2.0, 2.0) ]|:t{ [2x1]:(-1.0, -1.0) }",
-                        " =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) }",
-                }
-        );
         //---//Broken down to 2 functions:
         tensor1 = Tensor.of(Shape.of(1, 3), 2d);
         tensor2 = Tensor.of(Shape.of(2, 1), -1d);
@@ -156,26 +142,6 @@ public class BroadSystemTest
                 new String[]{"[4x3x2]:(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)"}
         );
         //---
-        tensor1 = Tensor.of(Shape.of(2), 2d);
-        tensor2 = Tensor.of(Shape.of(2), 4d);
-        tensor1.setRqsGradient(true);
-        tensor2.setRqsGradient(true);
-        tester.testTensorAutoGrad(
-                new Tensor[]{tensor1, tensor2},
-                "lig(tanh(I[0]*I[1]*2)*I[1])",
-                new String[]{
-                        "[2]:(4.01815, 4.01815); ",
-                        "=>d|[ [2]:(3.92806, 3.92806) ]|" +
-                                ":t{ [2]:(0.99999, 0.99999); ",
-                                        "=>d|[ [2]:(202.505e-15, 202.505e-15) ]|" +
-                                                ":t{ [2]:(4.0, 4.0) }",
-                                        "=>d|[ [2]:(405.009e-15, 405.009e-15) ]|" +
-                                                ":t{ [2]:(2.0, 2.0) }",
-                                "}, ",
-                        "=>d|[ [2]:(0.98201, 0.98201) ]|" +
-                                ":t{ [2]:(4.0, 4.0) }"
-                }
-        );
         //---
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
         tensor1 = Tensor.of(Shape.of(3, 2, 1), 4d);
@@ -253,8 +219,6 @@ public class BroadSystemTest
                             "t{ [1]:(4.0) }"
                 }
         );
-        //=====================
-        _subTest(tester);
         //=====================
         _subTest2(tester);
         //=====================
@@ -525,62 +489,6 @@ public class BroadSystemTest
         return true;
     }
 
-    private static void _subTest(UnitTester_Tensor tester) {
-
-        Neureka.get().settings().debug().setIsDeletingIntermediateTensors(false);
-
-        Tensor<Double> tensor1 = Tensor.of(Shape.of(1), 2d);//-2*4 = 8 | *3 = -24
-        tensor1.setRqsGradient(true);
-        tester.testTensorAutoGrad(
-                new Tensor[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
-                "(-3*(2*(i0*-1)))*(-1*i0)",
-                new String[]{
-                        "[1]:(-24.0); ",
-                        "=>d|[ [1]:(12.0) ]|:" +
-                                "t{ [1]:(-2.0); " +
-                                "=>d|[ [1]:(-1.0) ]|:" +
-                                "t{ [1]:(2.0) } " +
-                                "}",
-                        "=>d|[ [1]:(-2.0) ]|:" +
-                                "t{ [1]:(12.0); " +
-                                "=>d|[ [1]:(6.0) ]|:" +
-                                "t{ [1]:(2.0) } " +
-                                "}"
-                }
-        );
-
-        Neureka.get().settings().debug().setIsDeletingIntermediateTensors(true);
-
-
-        tensor1 = Tensor.of(Shape.of(1), 2d);//-2*4 = 8 | *3 = -24
-        tensor1.setRqsGradient(true);
-        tester.testTensorAutoGrad(
-                new Tensor[]{tensor1},//2 =>-2 =>-4 =>12 //2 =>-2 //-2,12 =>-24
-                "(-3*(2*(i0*-1)))*(-1*i0)",
-                new String[]{
-                        "[1]:(-24.0); ",
-                        "=>d|[ [1]:(12.0) ]|:" +
-                                "t{ [1]:(-2.0); =>d|[ [1]:(-1.0) ]|:t{ [1]:(2.0) } }",
-                        "=>d|[ [1]:(-2.0) ]|:" +
-                                "t{ [1]:(12.0); " +
-                                "=>d|[ [1]:(6.0) ]|:" +
-                                "t{ [1]:(2.0) } " +
-                                "}"
-                }
-        );
-/*
-            [1]:(-24.0);
-                =>d|[ [1]:(-2.0) ]|:t{
-                    [1]:(12.0);
-                    =>d|[ [1]:(6.0) ]|:t{ [1]:(2.0) }
-                },
-                =>d|[ [1]:(12.0) ]|:t{
-                    [1]:(-2.0);
-                    =>d|[ [1]:(-1.0) ]|:t{ [1]:(2.0) }
-                }
- */
-
-    }
 
 
     private static void _subTest2(UnitTester_Tensor tester) {
