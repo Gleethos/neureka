@@ -43,9 +43,11 @@ import neureka.Tensor;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.devices.Device;
 import neureka.math.Function;
 import neureka.math.implementations.FunctionConstant;
-import neureka.devices.Device;
+
+import java.util.List;
 
 /**
  *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.
@@ -202,7 +204,9 @@ public interface Operation
                                     if ( d >= 0 && !caller.dependsOn(d) )
                                         throw new IllegalArgumentException("Cannot derive w.r.t. to input index " + d + " in function '" + caller + "', because there is no input with index "+d+"!");
 
-                                    if ( caller.getSubFunctions().stream().allMatch( f -> f instanceof FunctionConstant) ) {
+                                    List<Function> subFunctions = caller.getSubFunctions();
+
+                                    if ( subFunctions.stream().allMatch( f -> f instanceof FunctionConstant) ) {
                                         if ( d < 0 ) return Result.of(Tensor.like((Tensor<Number>)call.input(0)).all(caller.call(new double[0])).mut().setIsIntermediate(true));
                                         else         return Result.of(Tensor.like((Tensor<Number>)call.input(0)).all(0).mut().setIsIntermediate(true));
                                     }
