@@ -50,8 +50,14 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id('io.github.gradle-nexus.publish-plugin') version '1.1.0'
+
+    // For static analysis and null checking:
+    id "net.ltgt.errorprone" version "3.1.0"
 }
 
+// If current version >= 11 we can do static analysis:
+boolean WE_CAN_DO_STATIC_ANALYSIS = JavaVersion.current().isJava11Compatible()
+println "Static analysis enabled: $WE_CAN_DO_STATIC_ANALYSIS"
 
 
 // This gives some more freedom for comments ( special characters... ).
@@ -135,6 +141,17 @@ repositories {
 // Note: Visit the java-library gradle plugin documentation for more information about api vs implementation.
 dependencies {
 
+    if ( WE_CAN_DO_STATIC_ANALYSIS ) {
+        errorprone "com.uber.nullaway:nullaway:0.10.25"
+        compileOnly "com.google.code.findbugs:jsr305:3.0.2"
+        errorprone "com.google.errorprone:error_prone_core:2.27.0"
+    }
+    else
+        errorprone "com.google.errorprone:error_prone_core:2.9.+"
+
+    implementation group: 'com.google.errorprone', name: 'error_prone_annotations', version: '2.27.0'
+    implementation group: 'org.jspecify', name: 'jspecify', version: '0.3.0'
+
     // Core library dependencies :
     implementation 'org.jocl:jocl:2.0.5' //-> Internal dependency!
 
@@ -187,6 +204,25 @@ test {
 
     // Number of threads used for testing :
     maxParallelForks = 1//Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
+}
+
+if ( WE_CAN_DO_STATIC_ANALYSIS ) {
+    tasks.withType(JavaCompile) {
+        // remove the if condition if you want to run NullAway on test code
+        if (!name.toLowerCase().contains("test")) {
+            options.errorprone {
+                check("NullAway", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
+                option("NullAway:AnnotatedPackages", "")
+                // We disable the NonCanonicalType because non-canonical type declarations are used for convenience
+                check("NonCanonicalType", net.ltgt.gradle.errorprone.CheckSeverity.OFF)
+            }
+        } else {
+            options.errorprone {
+                check("NullAway", net.ltgt.gradle.errorprone.CheckSeverity.WARN)
+                option("NullAway:AnnotatedPackages", "")
+            }
+        }
+    }
 }
 
 

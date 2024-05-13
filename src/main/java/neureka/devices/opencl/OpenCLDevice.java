@@ -1011,6 +1011,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
             if ( !(obj instanceof cl_tsr) ) return false;
             return ((cl_tsr) obj).value == this.value;
         }
+
+        @Override public int hashCode() {
+            return value.hashCode();
+        }
     }
 
     /**
