@@ -115,8 +115,8 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         if ( args == null || args.length == 0 ) return new TensorImpl<>();
         if ( args.length == 1 ) {
             TensorImpl<T> t = new TensorImpl<>();
-            boolean success = constructFor(t, CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
-            if ( !success ) {
+            constructFor(t, CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
+            if ( args[ 0 ] == null ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
                 throw new IllegalArgumentException( message );

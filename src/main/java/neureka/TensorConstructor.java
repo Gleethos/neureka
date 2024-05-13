@@ -63,7 +63,8 @@ final class TensorConstructor
         NDConfiguration ndc = _ndConstructor.produceNDC( makeVirtual );
         _API.setIsVirtual( makeVirtual );
         _API.setConf( ndc );
-        if ( autoAllocate ) _API.setData( _targetDevice.allocate( type, ndc ) );
+        if ( autoAllocate )
+            _API.setData( _targetDevice.allocate( type, ndc ) );
     }
 
     public void constructTrusted( Data<?> data ) {
@@ -92,8 +93,11 @@ final class TensorConstructor
                 isDefinitelyScalarValue = true;
             }
 
-            if ( isDefinitelyScalarValue ) // This means that "data" is a single value!
-                if ( newPopulatedFromOne( data, dataType.getItemTypeClass() ) ) return;
+            if ( isDefinitelyScalarValue ) { // This means that "data" is a single value!
+                newPopulatedFromOne( data, dataType.getItemTypeClass() );
+                if ( data != null )
+                    return;
+            }
         }
 
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
