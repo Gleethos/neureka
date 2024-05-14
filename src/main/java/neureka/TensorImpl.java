@@ -221,7 +221,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         });
     }
 
-    TensorImpl( TensorConstructor.API args ) {
+    TensorImpl( TensorConstructor.Args args ) {
         NDConfiguration ndc       = args.getConf();
         Boolean         isVirtual = args.isVirtual();
         Data<V>         data      = (Data<V>) args.getData();
@@ -363,7 +363,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
                 _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            TensorConstructor.API args = constructFor(getDevice(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
+            TensorConstructor.Args args = constructFor(getDevice(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
             _setState( args );
 
             if ( isVirtual )
@@ -384,7 +384,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         return this;
     }
 
-    private void _setState(TensorConstructor.API args) {
+    private void _setState(TensorConstructor.Args args) {
         Boolean         isVirtual = args.isVirtual();
         NDConfiguration ndc       = args.getConf();
         Data<V>         data      = (Data<V>) args.getData();

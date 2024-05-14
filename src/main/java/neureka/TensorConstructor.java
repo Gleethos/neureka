@@ -27,40 +27,25 @@ final class TensorConstructor
      *  An interface defining methods for configuring a {@link Tensor}
      *  in the making...
      */
-    public interface API {
-        void   setConf( NDConfiguration conf );
-        void   setData( Data<?> o );
-        void   setIsVirtual(  boolean isVirtual );
-        NDConfiguration getConf();
-        Data<?> getData();
-        Boolean isVirtual();
-    }
-
-    public static class Args implements API {
+    static class Args {
         private NDConfiguration _conf;
         private Data<?>         _data;
         private Boolean         _isVirtual;
 
-        @Override
         public void setConf( NDConfiguration conf ) { _conf = conf; }
 
-        @Override
         public void setData( Data<?> o ) { _data = o; }
 
-        @Override
         public void setIsVirtual( boolean isVirtual ) { _isVirtual = isVirtual; }
 
-        @Override
         public NDConfiguration getConf() { return _conf; }
 
-        @Override
         public Data<?> getData() { return _data; }
 
-        @Override
         public Boolean isVirtual() { return _isVirtual; }
     }
 
-    private final API _API;
+    private final Args _Args;
     private final Device<Object> _targetDevice;
     private final NDConstructor _ndConstructor;
 
@@ -68,14 +53,14 @@ final class TensorConstructor
      *
      * @param targetDevice The {@link Device} to be used for the construction of the {@link Tensor}
      * @param ndConstructor A producer of the {@link NDConfiguration} interface implementation.
-     * @param API An implementation of the {@link API} interface.
+     * @param Args An implementation of the {@link Args} interface.
      */
-    public TensorConstructor(Device<?> targetDevice, NDConstructor ndConstructor, API API ) {
+    public TensorConstructor(Device<?> targetDevice, NDConstructor ndConstructor, Args Args) {
         LogUtil.nullArgCheck( targetDevice, "targetDevice", Device.class, "Cannot construct a tensor without target device." );
         LogUtil.nullArgCheck( ndConstructor, "ndConstructor", NDConstructor.class, "Cannot construct tensor without shape information." );
         _targetDevice = (Device<Object>) targetDevice;
         _ndConstructor = ndConstructor;
-        _API = API;
+        _Args = Args;
     }
 
     /**
@@ -84,24 +69,24 @@ final class TensorConstructor
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
      */
-    API unpopulated(
+    Args unpopulated(
             boolean makeVirtual, boolean autoAllocate, DataType<?> type
     ) {
         NDConfiguration ndc = _ndConstructor.produceNDC( makeVirtual );
-        _API.setIsVirtual( makeVirtual );
-        _API.setConf( ndc );
+        _Args.setIsVirtual( makeVirtual );
+        _Args.setConf( ndc );
         if ( autoAllocate )
-            _API.setData( _targetDevice.allocate( type, ndc ) );
-        return _API;
+            _Args.setData( _targetDevice.allocate( type, ndc ) );
+        return _Args;
     }
 
-    public API constructTrusted( Data<?> data ) {
-        _API.setConf( _ndConstructor.produceNDC( false ) );
-        _API.setData( data );
-        return _API;
+    public Args constructTrusted(Data<?> data ) {
+        _Args.setConf( _ndConstructor.produceNDC( false ) );
+        _Args.setData( data );
+        return _Args;
     }
 
-    public API tryConstructing(
+    public Args tryConstructing(
         DataType<?> dataType,
         Object data
     ) {
@@ -125,39 +110,39 @@ final class TensorConstructor
             if ( isDefinitelyScalarValue ) { // This means that "data" is a single value!
                 newPopulatedFromOne( data, dataType.getItemTypeClass() );
                 if ( data != null )
-                    return _API;
+                    return _Args;
             }
         }
 
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
-        _API.setIsVirtual( false );
-        _API.setConf( ndc );
-        _API.setData( _targetDevice.allocateFromAll( dataType, ndc, data) );
-        return _API;
+        _Args.setIsVirtual( false );
+        _Args.setConf( ndc );
+        _Args.setData( _targetDevice.allocateFromAll( dataType, ndc, data) );
+        return _Args;
     }
 
-    public API newPopulatedFromOne( Object singleItem, Class<?> type )
+    public Args newPopulatedFromOne(Object singleItem, Class<?> type )
     {
         int size = _ndConstructor.getSize();
         NDConfiguration ndc = _ndConstructor.produceNDC(_ndConstructor.getSize() > 1);
         DataType<Object> dataType = (DataType<Object>) DataType.of( type );
         Data<?> array = _targetDevice.allocateFromOne( dataType, ndc, singleItem );
-        _API.setIsVirtual( size > 1 );
-        _API.setConf( ndc );
-        _API.setData( array );
-        return _API;
+        _Args.setIsVirtual( size > 1 );
+        _Args.setConf( ndc );
+        _Args.setData( array );
+        return _Args;
     }
 
-    public <V> API newSeeded( Class<V> valueType, Arg.Seed seed )
+    public <V> Args newSeeded(Class<V> valueType, Arg.Seed seed )
     {
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
         Data<?> data = _targetDevice.allocate( DataType.of( valueType ), ndc );
         Object out = CPURandomization.fillRandomly( data.getOrNull(), seed );
         assert out == data.getOrNull();
-        _API.setIsVirtual( false );
-        _API.setConf( ndc );
-        _API.setData( data );
-        return _API;
+        _Args.setIsVirtual( false );
+        _Args.setConf( ndc );
+        _Args.setData( data );
+        return _Args;
     }
 
 }
