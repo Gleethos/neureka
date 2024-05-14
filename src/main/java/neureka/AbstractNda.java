@@ -254,17 +254,13 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tensor<V>> imple
      *
      * @return An {@link TensorConstructor} exposing a simple API for configuring a new {@link Tensor} instance.
      */
-    protected static TensorConstructor constructFor(AbstractNda<?, ?> nda, Device<?> targetDevice, NDConstructor ndConstructor )
+    protected static TensorConstructor constructFor( Device<?> targetDevice, NDConstructor ndConstructor )
     {
         return
-            new TensorConstructor(
-                targetDevice, ndConstructor,
-                new TensorConstructor.API() {
-                    @Override public void setConf( NDConfiguration conf   ) { nda.mut().setNDConf( conf ); }
-                    @Override public void setData( Data o                 ) { nda._setData( o ); }
-                    @Override public void setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
-                }
-            );
+                new TensorConstructor(
+                        targetDevice, ndConstructor,
+                        new TensorConstructor.Args()
+                );
     }
 
     /**

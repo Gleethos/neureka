@@ -31,6 +31,33 @@ final class TensorConstructor
         void   setConf( NDConfiguration conf );
         void   setData( Data<?> o );
         void   setIsVirtual(  boolean isVirtual );
+        NDConfiguration getConf();
+        Data<?> getData();
+        Boolean isVirtual();
+    }
+
+    public static class Args implements API {
+        private NDConfiguration _conf;
+        private Data<?>         _data;
+        private Boolean         _isVirtual;
+
+        @Override
+        public void setConf( NDConfiguration conf ) { _conf = conf; }
+
+        @Override
+        public void setData( Data<?> o ) { _data = o; }
+
+        @Override
+        public void setIsVirtual( boolean isVirtual ) { _isVirtual = isVirtual; }
+
+        @Override
+        public NDConfiguration getConf() { return _conf; }
+
+        @Override
+        public Data<?> getData() { return _data; }
+
+        @Override
+        public Boolean isVirtual() { return _isVirtual; }
     }
 
     private final API _API;
@@ -57,7 +84,7 @@ final class TensorConstructor
      * @param makeVirtual A flag determining if the tensor should be actual or virtual (not fully allocated).
      * @param autoAllocate Determines if the underlying data array should be allocated or not.
      */
-    void unpopulated(
+    API unpopulated(
             boolean makeVirtual, boolean autoAllocate, DataType<?> type
     ) {
         NDConfiguration ndc = _ndConstructor.produceNDC( makeVirtual );
@@ -65,14 +92,16 @@ final class TensorConstructor
         _API.setConf( ndc );
         if ( autoAllocate )
             _API.setData( _targetDevice.allocate( type, ndc ) );
+        return _API;
     }
 
-    public void constructTrusted( Data<?> data ) {
+    public API constructTrusted( Data<?> data ) {
         _API.setConf( _ndConstructor.produceNDC( false ) );
         _API.setData( data );
+        return _API;
     }
 
-    public void tryConstructing(
+    public API tryConstructing(
         DataType<?> dataType,
         Object data
     ) {
@@ -96,7 +125,7 @@ final class TensorConstructor
             if ( isDefinitelyScalarValue ) { // This means that "data" is a single value!
                 newPopulatedFromOne( data, dataType.getItemTypeClass() );
                 if ( data != null )
-                    return;
+                    return _API;
             }
         }
 
@@ -104,9 +133,10 @@ final class TensorConstructor
         _API.setIsVirtual( false );
         _API.setConf( ndc );
         _API.setData( _targetDevice.allocateFromAll( dataType, ndc, data) );
+        return _API;
     }
 
-    public boolean newPopulatedFromOne( Object singleItem, Class<?> type )
+    public API newPopulatedFromOne( Object singleItem, Class<?> type )
     {
         int size = _ndConstructor.getSize();
         NDConfiguration ndc = _ndConstructor.produceNDC(_ndConstructor.getSize() > 1);
@@ -115,10 +145,10 @@ final class TensorConstructor
         _API.setIsVirtual( size > 1 );
         _API.setConf( ndc );
         _API.setData( array );
-        return singleItem != null;
+        return _API;
     }
 
-    public <V> void newSeeded( Class<V> valueType, Arg.Seed seed )
+    public <V> API newSeeded( Class<V> valueType, Arg.Seed seed )
     {
         NDConfiguration ndc = _ndConstructor.produceNDC( false );
         Data<?> data = _targetDevice.allocate( DataType.of( valueType ), ndc );
@@ -127,6 +157,7 @@ final class TensorConstructor
         _API.setIsVirtual( false );
         _API.setConf( ndc );
         _API.setData( data );
+        return _API;
     }
 
 }
