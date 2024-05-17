@@ -1,5 +1,8 @@
 package neureka.devices;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.util.ArrayList;
@@ -15,61 +18,98 @@ import java.util.List;
  *  anywhere but within this library. <br>
  *  This class or its public methods might change or get removed in future versions!</b>
  */
-final class CustomDeviceCleaner implements DeviceCleaner, Runnable
+final class CustomDeviceCleaner implements DeviceCleaner
 {
-    private final ReferenceQueue<Object> _referenceQueue = new ReferenceQueue<>();
-    private final long _timeout = 60 * 1000;
-    private int _registered = 0;
+    private static final Logger log = LoggerFactory.getLogger(CustomDeviceCleaner.class);
 
-    List<Object> list = new ArrayList<>();
+    private static final CustomDeviceCleaner _INSTANCE = new CustomDeviceCleaner();
+
+    private static final long _QUEUE_TIMEOUT = 60 * 1000;
+
+
+    public static CustomDeviceCleaner getInstance() {
+        return _INSTANCE;
+    }
+
+
+    private final ReferenceQueue<Object> _referenceQueue = new ReferenceQueue<>();
+
+    private final List<ReferenceWithCleanup<Object>> _toBeCleaned = new ArrayList<>();
+    private Thread _thread = null;
+
+
+    private CustomDeviceCleaner() {}
+
 
     static class ReferenceWithCleanup<T> extends PhantomReference<T>
     {
-        private final Runnable _action;
+        private Runnable _action;
 
-        ReferenceWithCleanup(T o, Runnable action, ReferenceQueue<T> queue) {
+        ReferenceWithCleanup( T o, Runnable action, ReferenceQueue<T> queue ) {
             super( o, queue );
             _action = action;
         }
         public void cleanup() {
-            _action.run();
-        }
-    }
-
-    @Override
-    public void register(Object o, Runnable action) {
-        synchronized ( _referenceQueue ) {
-            list.add(new ReferenceWithCleanup<Object>(o, action, _referenceQueue));
-            _registered++;
-            if ( _registered == 1 ) new Thread( this::run ).start();
-        }
-    }
-
-    @Override
-    public void run() {
-        while ( _registered > 0 ) {
-            try {
-                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove(_timeout);
-                if ( ref != null ) {
-                    try {
-                        ref.cleanup();
-                    } catch ( Throwable e ) {
-                        e.printStackTrace();
-                        // ignore exceptions from the cleanup action
-                        // (including interruption of cleanup thread)
-                    }
-                    _registered--;
+            if ( _action != null ) {
+                try {
+                    _action.run();
+                } catch (Exception e) {
+                    log.error("Failed to execute cleanup action '"+_action+"'.", e);
+                } finally {
+                    _action = null;
                 }
-            } catch ( Throwable e ) {
-                e.printStackTrace(); // The queue failed
             }
+        }
+    }
+
+    public void register( Object o, Runnable action ) {
+        synchronized ( _referenceQueue ) {
+            _toBeCleaned.add(new ReferenceWithCleanup<>(o, action, _referenceQueue));
+            if ( _toBeCleaned.size() == 1 ) {
+                if ( _thread == null ) {
+                    _thread = new Thread(this::run, "SwingTree-Cleaner");
+                    _thread.start();
+                }
+                else
+                    _thread.notify();
+            }
+        }
+    }
+
+    private void run() {
+        while ( _thread.isAlive() ) {
+            while ( !_toBeCleaned.isEmpty() ) {
+                checkCleanup();
+            }
+            try {
+                _thread.wait();
+            } catch (Exception e) {
+                log.error("Failed to make cleaner thread wait for cleaning notification!", e);
+            }
+        }
+    }
+
+    private void checkCleanup() {
+        try {
+            ReferenceWithCleanup<Object> ref = (ReferenceWithCleanup<Object>) _referenceQueue.remove(_QUEUE_TIMEOUT);
+            if ( ref != null ) {
+                try {
+                    ref.cleanup();
+                } catch ( Throwable e ) {
+                    log.error("Failed to perform cleanup!", e);
+                } finally {
+                    _toBeCleaned.remove(ref);
+                }
+            }
+        } catch ( Throwable e ) {
+            log.error("Failed to call 'remove()' on cleaner internal queue.", e);
         }
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName()+"@"+Integer.toHexString(this.hashCode())+"[" +
-                    "registered=" + _registered +
+                    "registered=" + _toBeCleaned.size() +
                 "]";
     }
 
