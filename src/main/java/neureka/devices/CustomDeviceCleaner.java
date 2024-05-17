@@ -35,10 +35,12 @@ final class CustomDeviceCleaner implements DeviceCleaner
     private final ReferenceQueue<Object> _referenceQueue = new ReferenceQueue<>();
 
     private final List<ReferenceWithCleanup<Object>> _toBeCleaned = new ArrayList<>();
-    private Thread _thread = null;
+    private final Thread _thread;
 
 
-    private CustomDeviceCleaner() {}
+    private CustomDeviceCleaner() {
+        _thread = new Thread(this::run, "Neureka-Cleaner");
+    }
 
 
     static class ReferenceWithCleanup<T> extends PhantomReference<T>
@@ -63,26 +65,43 @@ final class CustomDeviceCleaner implements DeviceCleaner
     }
 
     public void register( Object o, Runnable action ) {
+        if ( o == null ) {
+            log.warn("Attempt to register a null object for cleanup. This is not allowed!");
+            try {
+                action.run();
+            } catch (Exception e) {
+                log.error("Failed to execute cleanup action '"+action+"'.", e);
+            }
+            return;
+        }
         synchronized ( _referenceQueue ) {
             _toBeCleaned.add(new ReferenceWithCleanup<>(o, action, _referenceQueue));
             if ( _toBeCleaned.size() == 1 ) {
-                if ( _thread == null ) {
-                    _thread = new Thread(this::run, "SwingTree-Cleaner");
+                if ( !_thread.isAlive() ) {
                     _thread.start();
                 }
-                else
-                    _thread.notify();
+                else {
+                    // We notify the cleaner thread that there are new items to be cleaned
+                    synchronized ( _thread ) {
+                        _thread.notify();
+                    }
+                }
             }
         }
     }
 
     private void run() {
+        if ( !_thread.isAlive() ) {
+            _thread.start();
+        }
         while ( _thread.isAlive() ) {
             while ( !_toBeCleaned.isEmpty() ) {
                 checkCleanup();
             }
             try {
-                _thread.wait();
+                synchronized ( _thread ) {
+                    _thread.wait();
+                }
             } catch (Exception e) {
                 log.error("Failed to make cleaner thread wait for cleaning notification!", e);
             }
