@@ -319,12 +319,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tensor<V>> imple
     protected void _setNDConf( NDConfiguration ndConfiguration )
     {
         _guardSet( "ND-Configuration" );
-        if ( _NDConf != null && ndConfiguration != null ) {
-            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a * b );
-            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a * b );
-            assert s1 == s2;
-        }
-        _NDConf = ndConfiguration;
+        _NDConf = ( ndConfiguration != null ? ndConfiguration : NDConfiguration.none() );
     }
 
 }

@@ -45,6 +45,11 @@ import java.util.stream.IntStream;
  */
 public interface NDConfiguration
 {
+    /**
+     * @return A {@link NDConfiguration} instance which represents the absence of a configuration.
+     */
+    static NDConfiguration none() { return NoOpNDConfig.INSTANCE; }
+
     static NDConfiguration of(
             int[] shape, // The shape of the tensor.
             int[] strides, // Strides are the distances between elements of a tensor in each dimension.

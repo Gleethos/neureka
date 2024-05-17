@@ -228,7 +228,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         if ( isVirtual != null )
             _setIsVirtual( isVirtual );
         if ( ndc != null )
-            mut().setNDConf( ndc );
+            _setNDConf( ndc );
         if ( data != null )
             _setData( data );
     }
@@ -391,7 +391,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         if ( isVirtual != null )
             _setIsVirtual( isVirtual );
         if ( ndc != null )
-            mut().setNDConf( ndc );
+            _setNDConf( ndc );
         if ( data != null )
             _setData( data );
     }
