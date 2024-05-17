@@ -167,7 +167,7 @@ abstract class AbstractNda<C, V> extends AbstractComponentOwner<Tensor<V>> imple
         if ( newData instanceof DeviceData )
             ( (DeviceData<?>) newData ).incrementUsageCount();
 
-        _data = newData; // This must be the only place where the data is set!!!
+        _data = ( newData != null ? newData : (Data<V>) Data.none()); // This must be the only place where the data is set!!!
     }
 
     protected <T> void _initDataArrayFrom( Filler<T> filler )
