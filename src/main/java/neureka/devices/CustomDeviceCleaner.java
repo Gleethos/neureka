@@ -38,7 +38,7 @@ final class CustomDeviceCleaner implements DeviceCleaner
     private final Thread _thread;
 
 
-    private CustomDeviceCleaner() {
+    CustomDeviceCleaner() {
         _thread = new Thread(this::run, "Neureka-Cleaner");
     }
 

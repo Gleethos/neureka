@@ -61,7 +61,7 @@ class Cleaner_Testing extends Specification
             System.gc()
 
         then :
-            Sleep.until(700, { refCount == 8 && cleaner._registered == 8 })
+            Sleep.until(700, { refCount == 8 && cleaner._toBeCleaned.size() == 8 })
             r1  == null
             r2  != null
             r3  == null
@@ -79,7 +79,7 @@ class Cleaner_Testing extends Specification
             System.gc()
 
         then :
-            Sleep.until(750, { refCount == 6 && cleaner._registered == 6 })
+            Sleep.until(750, { refCount == 6 && cleaner._toBeCleaned.size() == 6 })
             r1  == null
             r2  == null
             r3  == null
