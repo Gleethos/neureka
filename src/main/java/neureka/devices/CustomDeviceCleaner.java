@@ -21,22 +21,17 @@ import java.util.List;
 final class CustomDeviceCleaner implements DeviceCleaner
 {
     private static final Logger log = LoggerFactory.getLogger(CustomDeviceCleaner.class);
-
     private static final CustomDeviceCleaner _INSTANCE = new CustomDeviceCleaner();
-
     private static final long _QUEUE_TIMEOUT = 60 * 1000;
+
+    private final ReferenceQueue<Object> _referenceQueue = new ReferenceQueue<>();
+    private final List<ReferenceWithCleanup<Object>> _toBeCleaned = new ArrayList<>();
+    private final Thread _thread;
 
 
     public static CustomDeviceCleaner getInstance() {
         return _INSTANCE;
     }
-
-
-    private final ReferenceQueue<Object> _referenceQueue = new ReferenceQueue<>();
-
-    private final List<ReferenceWithCleanup<Object>> _toBeCleaned = new ArrayList<>();
-    private final Thread _thread;
-
 
     CustomDeviceCleaner() {
         _thread = new Thread(this::run, "Neureka-Cleaner");

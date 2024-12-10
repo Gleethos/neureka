@@ -39,7 +39,8 @@ public final class BiElementwise extends AbstractFunDeviceAlgorithm<BiElementwis
         setCallPreparation(this::_prepare);
     }
 
-    private ExecutionCall<?> _prepare( ExecutionCall<?> call ) {
+    private ExecutionCall<?> _prepare( final ExecutionCall<?> inputCall ) {
+        ExecutionCall<?> call = inputCall;
         if ( call.arity() < 3 ) call = call.withAddedInputAt(0, null);
         Device<Object> device = (Device<Object>) call.getDevice();
         if ( call.input( 0 ) == null ) // Creating a new tensor:
