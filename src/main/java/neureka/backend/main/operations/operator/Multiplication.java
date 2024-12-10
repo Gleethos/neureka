@@ -3,6 +3,7 @@ package neureka.backend.main.operations.operator;
 import neureka.Neureka;
 import neureka.Tensor;
 import neureka.autograd.ADAction;
+import neureka.autograd.GraphNode;
 import neureka.backend.api.AutoDiffMode;
 import neureka.backend.api.Call;
 import neureka.backend.api.ExecutionCall;
@@ -80,15 +81,17 @@ public class Multiplication extends AbstractOperation
     @Override
     public Result execute( final Function caller, final ExecutionCall<?> call )
     {
+        int d = call.getDerivativeIndex();
         if ( !caller.isFlat() ) {
-            int d = call.getDerivativeIndex();
             if ( d < 0 ) {
                 Function reducedCaller = reducePairwise(caller);
                 ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );
+                for ( Tensor<?> input : flatCall.inputs() )
+                    input.mut().setIsIntermediate( false );
                 Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );
                 Result r = super.execute( flat, flatCall );
-                //for ( int i = 0; i < flatCall.inputs().length; i++ )
-                //    _deleteIfNotIn(call.inputs(), flatCall.input(i)); // TODO: Make it possible to delete more stuff
+                for ( int i = 0; i < flatCall.inputs().length; i++ )
+                    _deleteIfNotIn(call.inputs(), flatCall.input(i));
                 return r;
             } else {
                 if ( !call.validate().all( (a, b) -> Util.canBeBroadcast(a.shape(), b.shape()) ).isValid() )
@@ -109,7 +112,28 @@ public class Multiplication extends AbstractOperation
                 } );
             }
         }
-        return super.execute( reducePairwise(caller), call );
+
+
+        Function reduced = reducePairwise(caller);
+        //ExecutionCall<?> flatCall = call;
+        //Function flat = caller;
+        //if ( d < 0 && caller.isFlat() && subFunctions.stream().anyMatch( f -> f instanceof FunctionConstant) ) {
+        //    Function noAd = Function.of( caller.toString(), false );
+        //    ExecutionCall<?> flatCall = AbstractDeviceAlgorithm.flatten( noAd, call.withArgs(Arg.DerivIdx.of(-1)) );
+        //    return super.execute( reducePairwise(caller), call );
+        //}
+        if ( reduced.equals(caller) && reduced.isFlat() )
+            return super.execute( reduced, call );
+        else
+            return this.execute( reduced, call );
+    }
+
+    private void _deleteIfNotIn( Tensor<?>[] inputs, Tensor<?> input ) {
+        for ( Tensor<?> i : inputs ) {
+            if ( i == input ) return;
+        }
+        if ( input.getGraphNode().map(GraphNode::canBeDeleted).orElse(true) )
+            input.mut().delete();
     }
 
     public static Result derive(

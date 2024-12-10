@@ -2,6 +2,7 @@ package neureka.backend.main.algorithms;
 
 import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
@@ -28,28 +29,35 @@ public final class BiElementwise extends AbstractFunDeviceAlgorithm<BiElementwis
                         outerCaller, outerCall,
                         innerCall -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )
                 ))
+            //(outerCaller, outerCall) -> {
+            //    ExecutionCall<? extends Device<?>> finalOuterCall = _prepare(outerCall);
+            //    return Result.of(executeOnCommonDevice(finalOuterCall, ()->{
+            //        return AbstractDeviceAlgorithm.executeDeviceAlgorithm(finalOuterCall);
+            //    }));
+            //}
         );
-        setCallPreparation(
-            call -> {
-                if ( call.arity() < 3 ) call = call.withAddedInputAt(0, null);
-                Device<Object> device = (Device<Object>) call.getDevice();
-                if ( call.input( 0 ) == null ) // Creating a new tensor:
-                {
-                    int[] outShape = call.input( 1 ).getNDConf().shape();
+        setCallPreparation(this::_prepare);
+    }
 
-                    Class<Object> type = (Class<Object>) call.input(  1 ).getItemType();
-                    Tensor<Object> output = Tensor.of( type ).withShape( outShape ).all( 0.0 ).mut().setIsIntermediate( true );
-                    output.mut().setIsVirtual( false );
-                    try {
-                        device.store( output );
-                    } catch( Exception e ) {
-                        e.printStackTrace();
-                    }
-                    call = call.withInputAt( 0, output );
-                }
-                return call;
+    private ExecutionCall<?> _prepare( final ExecutionCall<?> inputCall ) {
+        ExecutionCall<?> call = inputCall;
+        if ( call.arity() < 3 ) call = call.withAddedInputAt(0, null);
+        Device<Object> device = (Device<Object>) call.getDevice();
+        if ( call.input( 0 ) == null ) // Creating a new tensor:
+        {
+            int[] outShape = call.input( 1 ).getNDConf().shape();
+
+            Class<Object> type = (Class<Object>) call.input(  1 ).getItemType();
+            Tensor<Object> output = Tensor.of( type ).withShape( outShape ).all( 0.0 ).mut().setIsIntermediate( true );
+            output.mut().setIsVirtual( false );
+            try {
+                device.store( output );
+            } catch( Exception e ) {
+                e.printStackTrace();
             }
-        );
+            call = call.withInputAt( 0, output );
+        }
+        return call;
     }
 
 }

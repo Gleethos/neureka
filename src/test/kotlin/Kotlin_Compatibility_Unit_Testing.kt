@@ -13,6 +13,7 @@ import neureka.dtype.DataType
 import neureka.optimization.Optimizer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 
 internal class
@@ -326,7 +327,7 @@ Kotlin_Compatibility_Unit_Testing {
         assert(e1.toString() == "(1x1x1):[42.0+666.0i]")
 
         // When :
-        slice.mut.assign(slice.map { it.toUpperCase() })
+        slice.mut.assign(slice.map { it.uppercase(Locale.getDefault()) })
 
         // Then :
         assert(

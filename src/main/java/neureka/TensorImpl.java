@@ -114,9 +114,8 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
     {
         if ( args == null || args.length == 0 ) return new TensorImpl<>();
         if ( args.length == 1 ) {
-            TensorImpl<T> t = new TensorImpl<>();
-            boolean success = constructFor(t, CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() );
-            if ( !success ) {
+            TensorImpl<T> t = new TensorImpl<>(constructFor(CPU.get(), NDConstructor.of(1)).newPopulatedFromOne( args[ 0 ], args[ 0 ].getClass() ));
+            if ( args[ 0 ] == null ) {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
                 throw new IllegalArgumentException( message );
@@ -126,13 +125,11 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
 
         Class<?> commonType = _extractCommonType(args);
         if ( commonType != null ) {
-            TensorImpl<T> t = new TensorImpl<>();
-            constructFor(t, CPU.get(), NDConstructor.of( args.length ))
-                .tryConstructing(
-                    DataType.of(commonType),
-                    args
-                );
-            return t;
+            return new TensorImpl<>(constructFor(CPU.get(), NDConstructor.of( args.length ))
+                                            .tryConstructing(
+                                                    DataType.of(commonType),
+                                                    args
+                                            ));
         }
 
         /* EXPRESSION BASED CONSTRUCTION:
@@ -177,15 +174,12 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
 
     static <T> Tensor<T> _of( List<T> list )
     {
-        TensorImpl<T> t = new TensorImpl<>();
-        Class<?> commonType = _extractCommonType( list.toArray() );
-        // We construct the tensor:
-        constructFor(t, CPU.get(), NDConstructor.of( list.size() ))
-                    .tryConstructing(
-                        DataType.of(commonType),
-                        list.toArray()
-                    );
-        return t;
+        return new TensorImpl<>(
+                            constructFor(CPU.get(), NDConstructor.of( list.size() ))
+                                .tryConstructing(
+                                    DataType.of(_extractCommonType( list.toArray() )),
+                                    list.toArray()
+                                ));
     }
 
 
@@ -227,6 +221,18 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         });
     }
 
+    TensorImpl( TensorConstructor.Args args ) {
+        NDConfiguration ndc       = args.getConf();
+        Boolean         isVirtual = args.isVirtual();
+        Data<V>         data      = (Data<V>) args.getData();
+        if ( isVirtual != null )
+            _setIsVirtual( isVirtual );
+        if ( ndc != null )
+            _setNDConf( ndc );
+        if ( data != null )
+            _setData( data );
+    }
+
     public static <V> TensorImpl<V> _of( NDConstructor ndConstructor, Device device, DataType<V> dataType, Object value ) {
         Object data = value;
         if ( List.class.isAssignableFrom( dataType.getItemTypeClass() ) )
@@ -241,9 +247,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
             List<?> range = (List<?>) data;
             data = range.toArray();// TODO: This is probably wrong!
         }
-        TensorImpl<V> t = new TensorImpl<>();
-        constructFor(t, device, ndConstructor).tryConstructing( dataType, data );
-        return t;
+        return new TensorImpl<>(constructFor(device, ndConstructor).tryConstructing( dataType, data ));
     }
 
     static <V> TensorImpl<V> _of( NDConstructor ndConstructor, DataType<V> dataType, Data<V> data ) {
@@ -253,9 +257,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
                     "The data type of the data is not compatible with the data type of the tensor!"
                 );
 
-        TensorImpl<V> t = new TensorImpl<>();
-        constructFor(t, data.owner(), ndConstructor).constructTrusted( data );
-        return t;
+        return new TensorImpl<>(constructFor(data.owner(), ndConstructor).constructTrusted( data ));
     }
 
     /**
@@ -265,8 +267,7 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
         LogUtil.nullArgCheck( type, "filler", Filler.class );
-        TensorImpl<V> t = new TensorImpl<>();
-        constructFor(t, CPU.get(), ndConstructor).unpopulated( false, true, type );
+        TensorImpl<V> t = new TensorImpl<>(constructFor(CPU.get(), ndConstructor).unpopulated( false, true, type ));
         t._initDataArrayFrom( filler );
         return t;
     }
@@ -278,17 +279,13 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         LogUtil.nullArgCheck( valueType, "valueType", Class.class );
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( seed, "seed", Arg.Seed.class );
-        TensorImpl<V> t = new TensorImpl<>();
-        constructFor(t, CPU.get(), ndConstructor).newSeeded( valueType, seed );
-        return t;
+        return new TensorImpl<>(constructFor(CPU.get(), ndConstructor).newSeeded( valueType, seed ));
     }
 
     static <V> TensorImpl<V> _of( NDConstructor ndConstructor, DataType<?> type ) {
         LogUtil.nullArgCheck(ndConstructor, "ndcProducer", NDConstructor.class );
         LogUtil.nullArgCheck( type, "type", DataType.class );
-        TensorImpl<V> t = new TensorImpl<>();
-        constructFor(t, CPU.get(), ndConstructor).unpopulated( true, true, type );
-        return t;
+        return new TensorImpl<>(constructFor(CPU.get(), ndConstructor).unpopulated( true, true, type ));
     }
 
     /*==================================================================================================================
@@ -366,7 +363,9 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
                 _actualize();
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore, we need to re-initialize the NDConfiguration object:
-            constructFor(this, getDevice(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
+            TensorConstructor.Args args = constructFor(getDevice(),NDConstructor.of(getNDConf().shape())).unpopulated( isVirtual, false, getDataType() );
+            _setState( args );
+
             if ( isVirtual )
                 this.find( Relation.class )
                         .ifPresent( r ->
@@ -383,6 +382,18 @@ final class TensorImpl<V> extends AbstractNda<Tensor<V>, V> implements MutateTen
         }
         else if ( isVirtual ) _allocateVirtual(); //> Only a single value representing the rest.
         return this;
+    }
+
+    private void _setState(TensorConstructor.Args args) {
+        Boolean         isVirtual = args.isVirtual();
+        NDConfiguration ndc       = args.getConf();
+        Data<V>         data      = (Data<V>) args.getData();
+        if ( isVirtual != null )
+            _setIsVirtual( isVirtual );
+        if ( ndc != null )
+            _setNDConf( ndc );
+        if ( data != null )
+            _setData( data );
     }
 
     /**

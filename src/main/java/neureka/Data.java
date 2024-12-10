@@ -16,6 +16,17 @@ import neureka.dtype.DataType;
  */
 public interface Data<V>
 {
+    /**
+     *  This is a static factory method which returns a {@link Data} object
+     *  which does not contain any data. It is a sort of no-operation null object
+     *  which can be used to represent the absence of data.
+     *  A deleted tensor will typically have a {@link Data} object which does not contain any data.
+     *
+     * @return A {@link Data} object which does not contain any data.
+     */
+    static Data<Void> none() { return NoOpData.INSTANCE; }
+
+
     static <V> Data<V> of( Class<V> type, V... data ) { return CPU.get().allocate( type, data ); }
 
     static Data<Float> of( float... items ) { return CPU.get().allocate( Float.class, items ); }
