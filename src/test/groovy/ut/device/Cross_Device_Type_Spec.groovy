@@ -112,7 +112,7 @@ class Cross_Device_Type_Spec extends Specification
         expect : 'Querying for a device using a device type and key works as expected.'
             Device.get(type, key) === expected
         and : 'We can use the "find" method if we want the result to be wrapped in a nice and safe Optional instance.'
-            Device.find(type, key).isEmpty() && expected == null || Device.find(type, key).get() === expected
+            !Device.find(type, key).isPresent() && expected == null || Device.find(type, key).get() === expected
 
         where : 'The we can use the following device type, key and expected device instance.'
             type        | key          || expected
@@ -133,7 +133,7 @@ class Cross_Device_Type_Spec extends Specification
         and : 'The "any" method returns a device instance or the "CPU device", which is the library default device.'
             Device.any(key) === expected || Device.any(key) === CPU.get()
         and : 'The "find" method returns a device instance wrapped in an Optional instance.'
-            Device.find(key).isEmpty() && expected == null || Device.find(key).get() === expected
+            !Device.find(key).isPresent() && expected == null || Device.find(key).get() === expected
 
         where : 'The we can use the following search key and expected device instance.'
             key                 || expected
