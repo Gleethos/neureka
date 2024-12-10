@@ -44,7 +44,7 @@ plugins {
     id 'info.solidsoft.pitest' version '1.5.1'
 
     // Kotlin tests:
-    id 'org.jetbrains.kotlin.jvm' version '1.9.25'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
 
     // Public deployment :
     id 'maven-publish'
@@ -172,7 +172,7 @@ dependencies {
     testRuntimeOnly group: 'org.objenesis', name: 'objenesis', version: '3.2'      // allows mocking of classes without default constructor (together with ByteBuddy or CGLIB)
 
     // Kotlin tests:
-    testImplementation 'org.jetbrains.kotlin:kotlin-script-runtime:1.9.25' // first the runtime so that the tests compile
+    testImplementation 'org.jetbrains.kotlin:kotlin-script-runtime:1.7.10' // first the runtime so that the tests compile
     testImplementation 'org.jetbrains.kotlin:kotlin-test' // Then some test dependencies to do assertions...
     testImplementation 'org.assertj:assertj-core:3.23.1' // Same story here!
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
