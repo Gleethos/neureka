@@ -23,28 +23,6 @@ import neureka.ndim.config.NDConfiguration;
  */
 final class TensorConstructor
 {
-    /**
-     *  An interface defining methods for configuring a {@link Tensor}
-     *  in the making...
-     */
-    static class Args {
-        private NDConfiguration _conf;
-        private Data<?>         _data;
-        private Boolean         _isVirtual;
-
-        public void setConf( NDConfiguration conf ) { _conf = conf; }
-
-        public void setData( Data<?> o ) { _data = o; }
-
-        public void setIsVirtual( boolean isVirtual ) { _isVirtual = isVirtual; }
-
-        public NDConfiguration getConf() { return _conf; }
-
-        public Data<?> getData() { return _data; }
-
-        public Boolean isVirtual() { return _isVirtual; }
-    }
-
     private final Args _Args;
     private final Device<Object> _targetDevice;
     private final NDConstructor _ndConstructor;
@@ -143,6 +121,28 @@ final class TensorConstructor
         _Args.setConf( ndc );
         _Args.setData( data );
         return _Args;
+    }
+
+    /**
+     *  An interface defining methods for configuring a {@link Tensor}
+     *  in the making...
+     */
+    static class Args {
+        private NDConfiguration _conf;
+        private Data<?>         _data;
+        private Boolean         _isVirtual;
+
+        public void setConf( NDConfiguration conf ) { _conf = conf; }
+
+        public void setData( Data<?> o ) { _data = o; }
+
+        public void setIsVirtual( boolean isVirtual ) { _isVirtual = isVirtual; }
+
+        public NDConfiguration getConf() { return _conf; }
+
+        public Data<?> getData() { return _data; }
+
+        public Boolean isVirtual() { return _isVirtual; }
     }
 
 }
