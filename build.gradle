@@ -196,6 +196,9 @@ test {
     // Spock-Reports configuration can be found in the test resources: src/test/resources/SpockConfig.Groovy
 
     useJUnitPlatform() // ...otherwise spock tests will not be received by gradle...
+    testLogging {
+        exceptionFormat = 'full' // So we see spock power assert messages!
+    }
 
     // Memory :
     minHeapSize = "1g"
