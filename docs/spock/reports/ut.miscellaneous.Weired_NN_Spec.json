@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.019 seconds"
+    "duration":"0.036 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Dot based feed forward and activation produces expected result.",
       "result":"PASS",
-      "duration":"0.017 seconds",
+      "duration":"0.034 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -4,20 +4,36 @@ public strictfp interface CPUBiFun
 {
     double invoke(double a, double b);
 
-<span class="nc" id="L7">    default float invoke(float a, float b) { return (float) invoke( (double) a, (double) b ); }</span>
+    default float invoke(float a, float b) {
+<span class="nc" id="L8">        return (float) invoke( a, (double) b );</span>
+    }
 
-<span class="nc" id="L9">    default int invoke(int a, int b) { return (int) Math.round( invoke( (double) a, (double) b ) ); }</span>
+    default int invoke(int a, int b) {
+<span class="nc" id="L12">        return (int) Math.round( invoke( a, (double) b ) );</span>
+    }
 
-<span class="nc" id="L11">    default long invoke(long a, long b) { return Math.round( invoke( (double) a, (double) b ) ); }</span>
+    default long invoke(long a, long b) {
+<span class="nc" id="L16">        return Math.round( invoke( (double) a, (double) b ) );</span>
+    }
 
-<span class="nc" id="L13">    default byte invoke(byte a, byte b) { return (byte) Math.round( invoke( (double) a, (double) b ) ); }</span>
+    default byte invoke(byte a, byte b) {
+<span class="nc" id="L20">        return (byte) Math.round( invoke( a, (double) b ) );</span>
+    }
 
-<span class="fc" id="L15">    default short invoke(short a, short b) { return (short) Math.round( invoke( (double) a, (double) b ) ); }</span>
+    default short invoke(short a, short b) {
+<span class="fc" id="L24">        return (short) Math.round( invoke( a, (double) b ) );</span>
+    }
 
-<span class="nc bnc" id="L17" title="All 6 branches missed.">    default boolean invoke(boolean a, boolean b) { return Math.round( invoke( a ? 1 : 0, b ? 1 : 0 ) ) != 0; } // Some default behaviors, it might make sense to override this for some activations.</span>
+    default boolean invoke(boolean a, boolean b) {
+<span class="nc bnc" id="L28" title="All 6 branches missed.">        return invoke( a ? 1 : 0, b ? 1 : 0 ) != 0; // Some default behaviors, it might make sense to override this for some activations.</span>
+    }
 
-<span class="nc" id="L19">    default char invoke(char a, char b) { return (char) Math.round( invoke( (int) a, (int) b ) ); } // Some default behaviors, it might make sense to override this for some activations.</span>
+    default char invoke(char a, char b) {
+<span class="nc" id="L32">        return (char) invoke( a, (int) b ); // Some default behaviors, it might make sense to override this for some activations.</span>
+    }
 
-<span class="nc" id="L21">    default Object invoke(Object a, Object b) { throw new IllegalStateException(&quot;Not implemented for operation &quot;+getClass().getSimpleName()); }</span>
+    default Object invoke(Object a, Object b) {
+<span class="nc" id="L36">        throw new IllegalStateException(&quot;Not implemented for operation &quot;+getClass().getSimpleName());</span>
+    }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

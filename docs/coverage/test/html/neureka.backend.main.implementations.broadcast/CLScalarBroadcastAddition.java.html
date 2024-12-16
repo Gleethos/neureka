@@ -5,32 +5,32 @@ import neureka.backend.api.ExecutionCall;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.math.args.Arg;
 
-<span class="fc" id="L8">public class CLScalarBroadcastAddition extends CLScalarBroadcast</span>
+<span class="nc" id="L8">public class CLScalarBroadcastAddition extends CLScalarBroadcast</span>
 {
     public CLScalarBroadcastAddition(String id) {
-<span class="fc" id="L11">        super( id,  &quot;output = input1 + value;\n&quot;, &quot;output = 1;\n&quot; );</span>
-<span class="fc" id="L12">    }</span>
+<span class="nc" id="L11">        super( id,  &quot;output = input1 + value;\n&quot;, &quot;output = 1;\n&quot; );</span>
+<span class="nc" id="L12">    }</span>
 
     @Override
     public Tensor&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
-<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        assert call.arity() == 3;</span>
-<span class="pc bpc" id="L17" title="1 of 2 branches missed.">        if ( call.getDerivativeIndex() == 0 )</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">        assert call.arity() == 3;</span>
+<span class="nc bnc" id="L17" title="All 2 branches missed.">        if ( call.getDerivativeIndex() == 0 )</span>
 <span class="nc" id="L18">            return Tensor.of( call.input(1).shape(), 1d ).mut().setIsIntermediate( true );</span>
-<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        else if ( call.getDerivativeIndex() == 1 )</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        else if ( call.getDerivativeIndex() == 1 )</span>
 <span class="nc" id="L20">            return Tensor.of( call.input( 2 ).shape(), 1d ).mut().setIsIntermediate( true );</span>
         else {
-<span class="fc" id="L22">            int gwz = call.input(Number.class, 0).size();</span>
-<span class="fc" id="L23">            float value = call.input(Number.class, 2).item(0).floatValue();</span>
-<span class="fc" id="L24">            call.getDevice()</span>
-<span class="fc" id="L25">                    .getKernel(call)</span>
-<span class="fc" id="L26">                    .passAllOf(call.input(Number.class, 0))</span>
-<span class="fc" id="L27">                    .passAllOf(call.input(Number.class, 1))</span>
-<span class="fc" id="L28">                    .pass(value)</span>
-<span class="fc" id="L29">                    .pass(call.input(Number.class, 0).rank())</span>
-<span class="fc" id="L30">                    .pass(call.getValOf(Arg.DerivIdx.class))</span>
-<span class="fc" id="L31">                    .call(gwz);</span>
+<span class="nc" id="L22">            int gwz = call.input(Number.class, 0).size();</span>
+<span class="nc" id="L23">            float value = call.input(Number.class, 2).item(0).floatValue();</span>
+<span class="nc" id="L24">            call.getDevice()</span>
+<span class="nc" id="L25">                    .getKernel(call)</span>
+<span class="nc" id="L26">                    .passAllOf(call.input(Number.class, 0))</span>
+<span class="nc" id="L27">                    .passAllOf(call.input(Number.class, 1))</span>
+<span class="nc" id="L28">                    .pass(value)</span>
+<span class="nc" id="L29">                    .pass(call.input(Number.class, 0).rank())</span>
+<span class="nc" id="L30">                    .pass(call.getValOf(Arg.DerivIdx.class))</span>
+<span class="nc" id="L31">                    .call(gwz);</span>
         }
-<span class="fc" id="L33">        return call.input( 0 );</span>
+<span class="nc" id="L33">        return call.input( 0 );</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

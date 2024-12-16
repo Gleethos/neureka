@@ -25,13 +25,13 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 <span class="fc" id="L25">    @Override public String id() { return &quot;selu&quot;; }</span>
 
     @Override public String activationCode() {
-<span class="fc" id="L28">        return &quot;if      ( input &gt; 0  ) output = &quot;+SCALE_F32+&quot;f * input;\n&quot; +</span>
+<span class="nc" id="L28">        return &quot;if      ( input &gt; 0  ) output = &quot;+SCALE_F32+&quot;f * input;\n&quot; +</span>
                &quot;else if ( input &lt;= 0 ) output = &quot;+SCALE_F32+&quot;f * &quot;+ALPHA_F32+&quot;f * (exp(input) - 1.0f);\n&quot; +
                &quot;else                   output = 0.0f;\n&quot;;
     }
 
     @Override public String derivationCode() {
-<span class="fc" id="L34">        return &quot;if      ( input &gt;  0 ) output = &quot;+SCALE_F32+&quot;f;\n&quot; +</span>
+<span class="nc" id="L34">        return &quot;if      ( input &gt;  0 ) output = &quot;+SCALE_F32+&quot;f;\n&quot; +</span>
                &quot;else if ( input &lt;= 0 ) output = &quot;+SCALE_F32+&quot;f * &quot;+ALPHA_F32+&quot;f * exp(input);\n&quot; +
                &quot;else                   output = 1.0f;\n&quot;;
     }
@@ -71,4 +71,4 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -226,19 +226,19 @@ public interface Device&lt;V&gt; extends Component&lt;Tensor&lt;V&gt;&gt;, Stora
      * @return An instance of the optimized function.
      */
     default Function optimizedFunctionOf( Function function, String name ) {
-<span class="fc" id="L229">        LogUtil.nullArgCheck( function, &quot;function&quot;, Function.class );</span>
-<span class="fc" id="L230">        LogUtil.nullArgCheck( name, &quot;name&quot;, String.class );</span>
+<span class="nc" id="L229">        LogUtil.nullArgCheck( function, &quot;function&quot;, Function.class );</span>
+<span class="nc" id="L230">        LogUtil.nullArgCheck( name, &quot;name&quot;, String.class );</span>
 
-<span class="fc" id="L232">        Operation optimizedOperation = optimizedOperationOf( function, name );</span>
-<span class="fc" id="L233">        BackendContext currentContext = Neureka.get().backend();</span>
-<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        if ( !currentContext.hasOperation( optimizedOperation ) )</span>
-<span class="fc" id="L235">            currentContext.addOperation( optimizedOperation );</span>
+<span class="nc" id="L232">        Operation optimizedOperation = optimizedOperationOf( function, name );</span>
+<span class="nc" id="L233">        BackendContext currentContext = Neureka.get().backend();</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        if ( !currentContext.hasOperation( optimizedOperation ) )</span>
+<span class="nc" id="L235">            currentContext.addOperation( optimizedOperation );</span>
 
-<span class="fc" id="L237">        return new FunctionParser( currentContext )</span>
-<span class="fc" id="L238">                            .parse(</span>
+<span class="nc" id="L237">        return new FunctionParser( currentContext )</span>
+<span class="nc" id="L238">                            .parse(</span>
                                 optimizedOperation,
-<span class="fc" id="L240">                                function.numberOfArgs(),</span>
-<span class="fc" id="L241">                                function.isDoingAD()</span>
+<span class="nc" id="L240">                                function.numberOfArgs(),</span>
+<span class="nc" id="L241">                                function.isDoingAD()</span>
                             );
     }
 
@@ -261,8 +261,8 @@ public interface Device&lt;V&gt; extends Component&lt;Tensor&lt;V&gt;&gt;, Stora
 <span class="fc" id="L261">        LogUtil.nullArgCheck( rest, &quot;rest&quot;, Tensor[].class );</span>
 <span class="fc" id="L262">        List&lt;Tensor&lt;V&gt;&gt; tensors = new ArrayList&lt;&gt;();</span>
 <span class="pc bpc" id="L263" title="1 of 2 branches missed.">        if ( first != null ) tensors.add( first );</span>
-<span class="fc bfc" id="L264" title="All 2 branches covered.">        if ( rest.length &gt; 0 )</span>
-<span class="fc" id="L265">            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );</span>
+<span class="pc bpc" id="L264" title="1 of 2 branches missed.">        if ( rest.length &gt; 0 )</span>
+<span class="nc" id="L265">            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );</span>
 <span class="fc" id="L266">        Device&lt;?&gt; thisDevice = this;</span>
 <span class="fc" id="L267">        return new In() {</span>
             @Override
@@ -408,4 +408,4 @@ public interface Device&lt;V&gt; extends Component&lt;Tensor&lt;V&gt;&gt;, Stora
 
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

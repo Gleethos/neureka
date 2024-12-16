@@ -1,21 +1,21 @@
 {
   "className":"ut.tensors.Tensor_Device_Spec",
   "title":"Tensors on Devices",
-  "narrative":"This unit test specification covers\n    the expected behavior of tensors when interacting\n    with instances of implementations of the Device interface.",
+  "narrative":"This unit test specification covers \n    the expected behavior of tensors when interacting\n    with instances of implementations of the Device interface.",
   "subjects":[],
   "statistics":{
-    "runs":"4",
+    "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
-    "skipped":"0",
-    "duration":"0.004 seconds"
+    "skipped":"1",
+    "duration":"0.015 seconds"
   },
   "headers":["\n            Here you will find out how to store tensors on devices,\n            how to move tensors between devices and how to use\n            the device specific methods of the tensor class.\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Adding OpenCL device to tensor makes tensor be \"outsourced\" and contain the Device instance as component.",
-      "result":"PASS",
+      "result":"IGNORED",
       "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
@@ -37,7 +37,7 @@
     {
       "id":"Tensors try to migrate themselves to a device that is being added to them as component.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -58,7 +58,7 @@
     {
       "id":"The device of a tensor can be accessed via the \"device()\" method.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -83,7 +83,7 @@
     {
       "id":"When creating slices of tensors then this should trigger a \"parent - child\" relation noticeable to the device!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

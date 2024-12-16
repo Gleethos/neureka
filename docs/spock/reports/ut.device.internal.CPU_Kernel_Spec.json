@@ -4,19 +4,19 @@
   "narrative":"",
   "subjects":["neureka.backend.main.operations.other.internal.CPUReduce"],
   "statistics":{
-    "runs":"2",
+    "runs":"20",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.027 seconds"
+    "duration":"0.083 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"The Reduce implementation for the CPU has realistic behaviour",
+      "id":"The Reduce implementation for the CPU has realistic behaviour [0]",
       "result":"PASS",
-      "duration":"0.008 seconds",
+      "duration":"0.014 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,349 @@
     },
   
     {
-      "id":"The Sum implementation for the CPU has realistic behaviour",
+      "id":"The Reduce implementation for the CPU has realistic behaviour [1]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [2]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [3]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [4]",
+      "result":"PASS",
+      "duration":"0.004 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [5]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [6]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [7]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [8]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [9]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [10]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Reduce implementation for the CPU has realistic behaviour [11]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode() + reduceType.name().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var index = new CPUReduce(reduceType).run( call )","var result = a.item(index.item() as int)"]},
+
+        {"kind":"then","text":"","code":["result == expected"]},
+
+        {"kind":"where","text":"","code":{"reduceType":["CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX","CPUReduce.Type.MIN","CPUReduce.Type.MAX"],"dataType":["Float","Float","Double","Double","Integer","Integer","Long","Long","Short","Short","Byte","Byte"],"expected":["-148.0","141.0","-143.0","149.0","-121","148","-146","147","-148","146","-127","124"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Sum implementation for the CPU has realistic behaviour [0]",
+      "result":"PASS",
+      "duration":"0.009 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var result = new CPUSum().run( call )"]},
+
+        {"kind":"then","text":"","code":["result.item() == expected","result.item() == result.items.stream().reduce(0, (x, y) -> x + y)"]},
+
+        {"kind":"where","text":"","code":{"dataType":["Float","Double","Integer","Long","Short","Byte","BigInteger","BigDecimal"],"expected":["-1222.0","-1026.0","-2251","-2083","1018","34","3930","-1502.0"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Sum implementation for the CPU has realistic behaviour [1]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var result = new CPUSum().run( call )"]},
+
+        {"kind":"then","text":"","code":["result.item() == expected","result.item() == result.items.stream().reduce(0, (x, y) -> x + y)"]},
+
+        {"kind":"where","text":"","code":{"dataType":["Float","Double","Integer","Long","Short","Byte","BigInteger","BigDecimal"],"expected":["-1222.0","-1026.0","-2251","-2083","1018","34","3930","-1502.0"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Sum implementation for the CPU has realistic behaviour [2]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var result = new CPUSum().run( call )"]},
+
+        {"kind":"then","text":"","code":["result.item() == expected","result.item() == result.items.stream().reduce(0, (x, y) -> x + y)"]},
+
+        {"kind":"where","text":"","code":{"dataType":["Float","Double","Integer","Long","Short","Byte","BigInteger","BigDecimal"],"expected":["-1222.0","-1026.0","-2251","-2083","1018","34","3930","-1502.0"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Sum implementation for the CPU has realistic behaviour [3]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var result = new CPUSum().run( call )"]},
+
+        {"kind":"then","text":"","code":["result.item() == expected","result.item() == result.items.stream().reduce(0, (x, y) -> x + y)"]},
+
+        {"kind":"where","text":"","code":{"dataType":["Float","Double","Integer","Long","Short","Byte","BigInteger","BigDecimal"],"expected":["-1222.0","-1026.0","-2251","-2083","1018","34","3930","-1502.0"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Sum implementation for the CPU has realistic behaviour [4]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var result = new CPUSum().run( call )"]},
+
+        {"kind":"then","text":"","code":["result.item() == expected","result.item() == result.items.stream().reduce(0, (x, y) -> x + y)"]},
+
+        {"kind":"where","text":"","code":{"dataType":["Float","Double","Integer","Long","Short","Byte","BigInteger","BigDecimal"],"expected":["-1222.0","-1026.0","-2251","-2083","1018","34","3930","-1502.0"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Sum implementation for the CPU has realistic behaviour [5]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var result = new CPUSum().run( call )"]},
+
+        {"kind":"then","text":"","code":["result.item() == expected","result.item() == result.items.stream().reduce(0, (x, y) -> x + y)"]},
+
+        {"kind":"where","text":"","code":{"dataType":["Float","Double","Integer","Long","Short","Byte","BigInteger","BigDecimal"],"expected":["-1222.0","-1026.0","-2251","-2083","1018","34","3930","-1502.0"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Sum implementation for the CPU has realistic behaviour [6]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var seed = dataType.getSimpleName().hashCode()","var a = Tensor.of(dataType)","                    .withShape(19, 7)","                    .andWhere({ i, _ -> ((seed+31**(i+13))%301)-151})","var call = ExecutionCall.of(a).running(Mock(Operation)).on(CPU.get())"]},
+
+        {"kind":"when","text":"","code":["var result = new CPUSum().run( call )"]},
+
+        {"kind":"then","text":"","code":["result.item() == expected","result.item() == result.items.stream().reduce(0, (x, y) -> x + y)"]},
+
+        {"kind":"where","text":"","code":{"dataType":["Float","Double","Integer","Long","Short","Byte","BigInteger","BigDecimal"],"expected":["-1222.0","-1026.0","-2251","-2083","1018","34","3930","-1502.0"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The Sum implementation for the CPU has realistic behaviour [7]",
       "result":"PASS",
       "duration":"0.002 seconds",
       "iterations":{

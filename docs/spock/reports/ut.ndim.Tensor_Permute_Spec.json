@@ -1,7 +1,7 @@
 {
   "className":"ut.ndim.Tensor_Permute_Spec",
   "title":"Reshaping Tensors",
-  "narrative":"Permuting an N-dimensional array means rearranging the dimensions/axes of the N-dimensional array.\n    It produces a new tensor with the same data as the original tensor,\n    but with the specified dimensions rearranged.\n\n    This is very useful for example when you want to\n    change the order of dimensions, for example, if you have a tensor with dimensions (batch_size, channels, height, width),\n    you can use permute() to rearrange the dimensions to (batch_size, height, width, channels).\n    Another useful application of permute() is transposing a matrix.\n    For example, if you have a matrix with dimensions (rows, columns),\n    you can use permute() to rearrange the dimensions to (columns, rows).\n\n    Permuting is a very cheap operation because it does not copy any data but merely\n    creates a new view on the same data with a different access pattern.",
+  "narrative":"Permuting an N-dimensional array means rearranging the dimensions/axes of the N-dimensional array.\n    It produces a new tensor with the same data as the original tensor, \n    but with the specified dimensions rearranged. \n\n    This is very useful for example when you want to\n    change the order of dimensions, for example, if you have a tensor with dimensions (batch_size, channels, height, width), \n    you can use permute() to rearrange the dimensions to (batch_size, height, width, channels).\n    Another useful application of permute() is transposing a matrix.\n    For example, if you have a matrix with dimensions (rows, columns), \n    you can use permute() to rearrange the dimensions to (columns, rows).\n\n    Permuting is a very cheap operation because it does not copy any data but merely\n    creates a new view on the same data with a different access pattern.",
   "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"2",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.009 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can use the \"permute\" method to rearrange the dimensions of a tensor.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            In Neureka `Tensor::permute(int...)` rearranges the original tensor according to the desired \n            ordering and returns a new multidimensional rotated tensor. \n            The size of the returned tensor remains the same as that of the original.\n        "]
       },
@@ -39,7 +39,7 @@
     {
       "id":"When matrices are transpose, they will change their layout type as expected.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

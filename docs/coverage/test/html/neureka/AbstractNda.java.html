@@ -153,9 +153,9 @@ import java.util.Arrays;
 <span class="fc" id="L153">        _guardSet( &quot;data object&quot; );</span>
 <span class="fc bfc" id="L154" title="All 2 branches covered.">        Object data = newData == null ? null : newData.getOrNull();</span>
         // Note: If the data is null, this might mean the tensor is outsourced (data is somewhere else)
-<span class="fc bfc" id="L156" title="All 8 branches covered.">        if ( _data != null &amp;&amp; _data.getOrNull() != data &amp;&amp; data != null &amp;&amp; _data.getOrNull() != null ) {</span>
-<span class="pc bpc" id="L157" title="1 of 2 branches missed.">            boolean isProbablyDeviceTransfer = ( _data.getOrNull().getClass().isArray() != data.getClass().isArray() );</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">            if ( !isProbablyDeviceTransfer)</span>
+<span class="pc bpc" id="L156" title="1 of 8 branches missed.">        if ( _data != null &amp;&amp; _data.getOrNull() != data &amp;&amp; data != null &amp;&amp; _data.getOrNull() != null ) {</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">            boolean isProbablyDeviceTransfer = ( _data.getOrNull().getClass().isArray() != data.getClass().isArray() );</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">            if ( !isProbablyDeviceTransfer)</span>
 <span class="nc" id="L159">                _version++; // Autograd must be warned!</span>
         }
 <span class="fc" id="L161">        _setDataAndCountUsage( newData );</span>
@@ -167,7 +167,7 @@ import java.util.Arrays;
 <span class="fc bfc" id="L167" title="All 2 branches covered.">        if ( newData instanceof DeviceData )</span>
 <span class="fc" id="L168">            ( (DeviceData&lt;?&gt;) newData ).incrementUsageCount();</span>
 
-<span class="fc" id="L170">        _data = newData; // This must be the only place where the data is set!!!</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        _data = ( newData != null ? newData : (Data&lt;V&gt;) Data.none()); // This must be the only place where the data is set!!!</span>
 <span class="fc" id="L171">    }</span>
 
     protected &lt;T&gt; void _initDataArrayFrom( Filler&lt;T&gt; filler )
@@ -254,17 +254,13 @@ import java.util.Arrays;
      *
      * @return An {@link TensorConstructor} exposing a simple API for configuring a new {@link Tensor} instance.
      */
-    protected static TensorConstructor constructFor(AbstractNda&lt;?, ?&gt; nda, Device&lt;?&gt; targetDevice, NDConstructor ndConstructor )
+    protected static TensorConstructor constructFor( Device&lt;?&gt; targetDevice, NDConstructor ndConstructor )
     {
 <span class="fc" id="L259">        return</span>
-            new TensorConstructor(
-                targetDevice, ndConstructor,
-<span class="fc" id="L262">                new TensorConstructor.API() {</span>
-<span class="fc" id="L263">                    @Override public void setConf( NDConfiguration conf   ) { nda.mut().setNDConf( conf ); }</span>
-<span class="fc" id="L264">                    @Override public void setData( Data o                 ) { nda._setData( o ); }</span>
-<span class="fc" id="L265">                    @Override public void setIsVirtual( boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }</span>
-                }
-            );
+                new TensorConstructor(
+                        targetDevice, ndConstructor,
+                        new TensorConstructor.Args()
+                );
     }
 
     /**
@@ -276,7 +272,7 @@ import java.util.Arrays;
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  &lt;br&gt;
      */
-<span class="fc" id="L279">    protected final void _virtualize() { _setDataAndCountUsage(getDevice().access(this).virtualize()); }</span>
+<span class="fc" id="L275">    protected final void _virtualize() { _setDataAndCountUsage(getDevice().access(this).virtualize()); }</span>
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. &lt;br&gt;
@@ -288,21 +284,21 @@ import java.util.Arrays;
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... &lt;br&gt;
      */
-<span class="fc" id="L291">    protected final void _actualize() { _setDataAndCountUsage(getDevice().access(this).actualize()); }</span>
+<span class="fc" id="L287">    protected final void _actualize() { _setDataAndCountUsage(getDevice().access(this).actualize()); }</span>
 
     protected Object _convertedDataOfType( Class&lt;?&gt; typeClass )
     {
-<span class="fc" id="L295">        DataType&lt;?&gt; newDT = DataType.of( typeClass );</span>
-<span class="fc" id="L296">        if (</span>
-<span class="pc bpc" id="L297" title="1 of 2 branches missed.">            newDT.typeClassImplements( NumericType.class )</span>
+<span class="fc" id="L291">        DataType&lt;?&gt; newDT = DataType.of( typeClass );</span>
+<span class="fc" id="L292">        if (</span>
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">            newDT.typeClassImplements( NumericType.class )</span>
                     &amp;&amp;
-<span class="pc bpc" id="L299" title="1 of 2 branches missed.">            getDataType().typeClassImplements( NumericType.class )</span>
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">            getDataType().typeClassImplements( NumericType.class )</span>
         ) {
-<span class="fc" id="L301">            NumericType&lt;?,Object, ?, Object&gt; targetType  = (NumericType&lt;?, Object,?, Object&gt;) newDT.getTypeClassInstance(NumericType.class);</span>
-<span class="fc" id="L302">            return targetType.readForeignDataFrom( iterator(), this.size() );</span>
+<span class="fc" id="L297">            NumericType&lt;?,Object, ?, Object&gt; targetType  = (NumericType&lt;?, Object,?, Object&gt;) newDT.getTypeClassInstance(NumericType.class);</span>
+<span class="fc" id="L298">            return targetType.readForeignDataFrom( iterator(), this.size() );</span>
         }
         else
-<span class="nc" id="L305">            return DataConverter.get().convert( _getRawData(), newDT.getRepresentativeType() );</span>
+<span class="nc" id="L301">            return DataConverter.get().convert( _getRawData(), newDT.getRepresentativeType() );</span>
     }
 
     /**
@@ -310,8 +306,8 @@ import java.util.Arrays;
      */
      @Override
     public boolean is( Class&lt;?&gt; typeClass ) {
-<span class="fc" id="L313">        DataType&lt;?&gt; type = DataType.of( typeClass );</span>
-<span class="fc bfc" id="L314" title="All 2 branches covered.">        return type == _getData().dataType();</span>
+<span class="fc" id="L309">        DataType&lt;?&gt; type = DataType.of( typeClass );</span>
+<span class="pc bpc" id="L310" title="1 of 2 branches missed.">        return type == _getData().dataType();</span>
     }
 
     /**
@@ -322,14 +318,9 @@ import java.util.Arrays;
      */
     protected void _setNDConf( NDConfiguration ndConfiguration )
     {
-<span class="fc" id="L325">        _guardSet( &quot;ND-Configuration&quot; );</span>
-<span class="fc bfc" id="L326" title="All 4 branches covered.">        if ( _NDConf != null &amp;&amp; ndConfiguration != null ) {</span>
-<span class="fc" id="L327">            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a * b );</span>
-<span class="fc" id="L328">            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -&gt; a * b );</span>
-<span class="pc bpc" id="L329" title="1 of 2 branches missed.">            assert s1 == s2;</span>
-        }
-<span class="fc" id="L331">        _NDConf = ndConfiguration;</span>
-<span class="fc" id="L332">    }</span>
+<span class="fc" id="L321">        _guardSet( &quot;ND-Configuration&quot; );</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">        _NDConf = ( ndConfiguration != null ? ndConfiguration : NDConfiguration.none() );</span>
+<span class="fc" id="L323">    }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

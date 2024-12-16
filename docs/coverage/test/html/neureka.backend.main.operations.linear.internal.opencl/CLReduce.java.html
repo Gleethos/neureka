@@ -35,7 +35,7 @@ public class CLReduce implements ImplementationFor&lt;OpenCLDevice&gt;
     public Tensor&lt;Integer&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
 <span class="fc" id="L36">        CLBackend context = Neureka.get().backend().find(CLBackend.class).orElse(null);</span>
 <span class="pc bpc" id="L37" title="1 of 2 branches missed.">        CLSettings settings = context == null ? null : context.getSettings();</span>
-<span class="pc bpc" id="L38" title="1 of 4 branches missed.">        boolean autoConvert = context == null || settings.isAutoConvertToFloat();</span>
+<span class="pc bpc" id="L38" title="3 of 4 branches missed.">        boolean autoConvert = context == null || settings.isAutoConvertToFloat();</span>
 <span class="pc bpc" id="L39" title="1 of 2 branches missed.">        if ( settings != null ) settings.setAutoConvertToFloat(false);</span>
 <span class="pc bpc" id="L40" title="1 of 2 branches missed.">        Tensor&lt;Float&gt; in = call.input(0) == null ? call.input(Float.class, 1) : call.input(Float.class, 0);</span>
 <span class="fc" id="L41">        int index = _runRecursively(in, call.getDevice());</span>
@@ -67,7 +67,7 @@ public class CLReduce implements ImplementationFor&lt;OpenCLDevice&gt;
 <span class="fc" id="L67">        String kernelName = &quot;fast_&quot;+_type.name().toLowerCase()+&quot;_reduce_RTS&quot;+RTS;</span>
 
 <span class="fc" id="L69">        Supplier&lt;String&gt; code = () -&gt;</span>
-<span class="fc" id="L70">                        &quot;   #define RTS &quot;+RTS+&quot;                                                                             \n&quot; +</span>
+<span class="nc" id="L70">                        &quot;   #define RTS &quot;+RTS+&quot;                                                                             \n&quot; +</span>
                         &quot;   __kernel void &quot;+kernelName+&quot;(                                                                   \n&quot; +
                         &quot;               const int size,                                                                     \n&quot; +
                         &quot;               const __global float* in,                                                           \n&quot; +
@@ -151,4 +151,4 @@ public class CLReduce implements ImplementationFor&lt;OpenCLDevice&gt;
 }
 
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

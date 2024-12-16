@@ -2642,7 +2642,7 @@ public interface Tensor&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tensor&lt;V&
 
     /** {@inheritDoc} */
     @Override default String toString( Consumer&lt;NDPrintSettings&gt; configurator ) {
-<span class="fc bfc" id="L2645" title="All 2 branches covered.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
+<span class="pc bpc" id="L2645" title="1 of 2 branches missed.">        if ( this.isDeleted() ) return &quot;deleted&quot;;</span>
 <span class="fc" id="L2646">        return Nda.super.toString( configurator );</span>
     }
 
@@ -2704,4 +2704,4 @@ public interface Tensor&lt;V&gt; extends Nda&lt;V&gt;, Component&lt;Tensor&lt;V&
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

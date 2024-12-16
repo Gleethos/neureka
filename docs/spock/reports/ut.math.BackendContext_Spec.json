@@ -4,19 +4,19 @@
   "narrative":"This specification defines the expected behaviour of the backend context\n    which should expose a convenient API to work with.\n    This API should allow for tasks to be running on a given context\n    which is important for testing and modularity not only\n    during library startup but also throughout the runtime.",
   "subjects":["neureka.backend.api.Operation","neureka.backend.api.BackendContext"],
   "statistics":{
-    "runs":"3",
+    "runs":"5",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"0.013 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"BackendContext instances can be created by cloning from Singleton instance.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"BackendContext instances return Runner instances for easy visiting.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,65 @@
     },
   
     {
-      "id":"BackendContext instances return Runner instances for easy visiting with return values.",
+      "id":"BackendContext instances return Runner instances for easy visiting with return values. [0]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"The current thread local BackendContext instance.","code":["def current = Neureka.get().backend()"]},
+
+        {"kind":"and","text":"A clone is being created by calling \"clone()\" on the given context...","code":["def clone = current.clone()"]},
+
+        {"kind":"and","text":"We wrap a Runner instance around a wrapper which will test its methods!","code":["def run = runWrapper( clone.runner() )"]},
+
+        {"kind":"when","text":"Querying the thread local context inside the Runner...","code":["def innerContext = run { Neureka.get().backend() }"]},
+
+        {"kind":"and","text":"...also outside the Runner lambda...","code":["def outerContext = Neureka.get().backend()"]},
+
+        {"kind":"then","text":"These two context instances will be different objects!","code":["innerContext != outerContext"]},
+
+        {"kind":"and","text":"The inner context will in fact be the clone which provided the Runner!","code":["innerContext == clone"]},
+
+        {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
+
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["(BackendContext.Runner runner) -> { (arg) -> runner.call(arg) }","(BackendContext.Runner runner) -> { (arg) -> runner.invoke(arg) }","(BackendContext.Runner runner) -> { (arg) -> runner.runAndGet(arg) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"BackendContext instances return Runner instances for easy visiting with return values. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"The current thread local BackendContext instance.","code":["def current = Neureka.get().backend()"]},
+
+        {"kind":"and","text":"A clone is being created by calling \"clone()\" on the given context...","code":["def clone = current.clone()"]},
+
+        {"kind":"and","text":"We wrap a Runner instance around a wrapper which will test its methods!","code":["def run = runWrapper( clone.runner() )"]},
+
+        {"kind":"when","text":"Querying the thread local context inside the Runner...","code":["def innerContext = run { Neureka.get().backend() }"]},
+
+        {"kind":"and","text":"...also outside the Runner lambda...","code":["def outerContext = Neureka.get().backend()"]},
+
+        {"kind":"then","text":"These two context instances will be different objects!","code":["innerContext != outerContext"]},
+
+        {"kind":"and","text":"The inner context will in fact be the clone which provided the Runner!","code":["innerContext == clone"]},
+
+        {"kind":"and","text":"The outer context is as expected simply the current context.","code":["outerContext == current"]},
+
+        {"kind":"where","text":"The following conceptually identical Runner methods can be used:","code":{"runWrapper":["(BackendContext.Runner runner) -> { (arg) -> runner.call(arg) }","(BackendContext.Runner runner) -> { (arg) -> runner.invoke(arg) }","(BackendContext.Runner runner) -> { (arg) -> runner.runAndGet(arg) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"BackendContext instances return Runner instances for easy visiting with return values. [2]",
       "result":"PASS",
       "duration":"0",
       "iterations":{

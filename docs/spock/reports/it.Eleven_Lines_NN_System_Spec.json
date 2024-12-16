@@ -9,21 +9,21 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.281 seconds"
+    "duration":"0.491 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"One can write a simple neural network with custom back-prop in 11 lines of code!",
       "result":"PASS",
-      "duration":"0.064 seconds",
+      "duration":"0.109 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var X = Tensor.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])","var y = Tensor.of(Double, [[0, 1, 1, 0]]).T","var W1 = Tensor.ofRandom(Double, 3, 4)","var W2 = Tensor.ofRandom(Double, 4, 1)","60.times {","    var l1 = Tensor.of('sig(', X.matMul(W1), ')')","    var l2 = Tensor.of('sig(', l1.matMul(W2), ')')","    var l2_delta = (y - l2) * (l2 * (-l2 + 1))","    var l1_delta = l2_delta.matMul(W2.T) * (l1 * (-l1 + 1))","    W2 += l1.T.matMul(l2_delta)","    W1 += X.T.matMul(l1_delta)","}"]},
 
-        {"kind":"expect","text":"","code":["W1.mut.data.get().collect({it.round 14}) == RESULT_W1.collect({it.round 14})","W2.mut.data.get().collect({it.round 14}) == RESULT_W2.collect({it.round 14})"]}
+        {"kind":"expect","text":"","code":["W1.mut.data.get().collect({it.round 12}) == RESULT_W1.collect({it.round 12})","W2.mut.data.get().collect({it.round 12}) == RESULT_W2.collect({it.round 12})"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -31,14 +31,14 @@
     {
       "id":"One can write a simple neural network in less than 11 lines of code!",
       "result":"PASS",
-      "duration":"0.078 seconds",
+      "duration":"0.122 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"","code":["var X = Tensor.of(Double, [[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])","var y = Tensor.of(Double, [[0, 1, 1, 0]]).T","var W1 = Tensor.ofRandom(Double, 3, 4).setRqsGradient(true)","var W2 = Tensor.ofRandom(Double, 4, 1).setRqsGradient(true)","60.times {","    var l2 = Tensor.of('sig(',Tensor.of('sig(',X.matMul(W1),')').matMul(W2),')')","    l2.backward(y - l2)","    W1.applyGradient(); W2.applyGradient()","}"]},
 
-        {"kind":"expect","text":"","code":["W1.mut.data.get().collect({it.round 14}) == RESULT_W1.collect({it.round 14})","W2.mut.data.get().collect({it.round 14}) == RESULT_W2.collect({it.round 14})"]}
+        {"kind":"expect","text":"","code":["W1.mut.data.get().collect({it.round 12}) == RESULT_W1.collect({it.round 12})","W2.mut.data.get().collect({it.round 12}) == RESULT_W2.collect({it.round 12})"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
@@ -46,7 +46,7 @@
     {
       "id":"One can write a simple float based neural network in less than 11 lines of java like code!",
       "result":"PASS",
-      "duration":"0.067 seconds",
+      "duration":"0.128 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +61,7 @@
     {
       "id":"One can write a simple double based neural network in less than 11 lines of java like code using the \"@\" operator!",
       "result":"PASS",
-      "duration":"0.068 seconds",
+      "duration":"0.125 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -76,7 +76,7 @@
     {
       "id":"The pseudo random number generator works as expected for the weights used in the 11 line NN examples!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -4,19 +4,19 @@
   "narrative":"Here we specify how a tensor can be converted to other data types\n    like for example another tensor of a different data type.",
   "subjects":["neureka.Tensor"],
   "statistics":{
-    "runs":"3",
+    "runs":"38",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.011 seconds"
+    "duration":"0.024 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We turn a tensor into a scalar value or string through the \"as\" operator!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"Tensors value type can be changed by calling \"toType(...)\".",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
       },
@@ -52,11 +52,816 @@
     },
   
     {
-      "id":"We can change the data type of all kinds of tensors.",
+      "id":"We can change the data type of all kinds of tensors. [0]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [1]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        ","\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [7]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [9]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [10]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [11]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [12]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [13]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [14]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [15]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [16]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [17]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [18]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [19]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [20]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [21]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [22]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [23]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [24]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [25]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [26]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [27]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [28]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [29]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [30]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [31]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [32]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [33]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [34]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},
+
+        {"kind":"when","text":"We change the data type of the tensor using the unsafe \"toType\" method.","code":["var b = a.mut.toType(targetType)"]},
+
+        {"kind":"then","text":"The returned tensor has the expected data type.","code":["b.itemType == targetType"]},
+
+        {"kind":"and","text":"The returned tensor has the expected values.","code":["b.rawItems == data.collect({ it.asType(targetType) })"]},
+
+        {"kind":"and","text":"The returned tensor is in fact the original instance.","code":["a === b"]},
+
+        {"kind":"where","text":"We use the following data and matrix dimensions!","code":{"sourceType":["Double","Double","Double","Double","Double","Double","Float","Float","Float","Float","Float","Float","Long","Long","Long","Long","Long","Long","Integer","Integer","Integer","Integer","Integer","Integer","Short","Short","Short","Short","Short","Short","Byte","Byte","Byte","Byte","Byte","Byte"],"targetType":["Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte","Double","Float","Long","Integer","Short","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can change the data type of all kinds of tensors. [35]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Warning! The `toType` method mutates the tensor!\n            This is especially problematic with respect to generics, \n            because if the tensor is still used as a tensor of the old type, \n            then the compiler will not be able to detect that the tensor has changed its type.\n            This is why we have to use the `unsafe` API exists.\n            Only use this method if there are urgent performance requirements and\n            you know exactly what you are doing!\n        "]
       },
       "blocks":[
         {"kind":"given","text":"A simple tensor with a few initial values.","code":["var data = [-3, -12, 42, -42, 12, 3]","var a = Tensor.of(sourceType).withShape(data.size()).andFill(data)"]},

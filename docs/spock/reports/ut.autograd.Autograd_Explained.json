@@ -1,7 +1,7 @@
 {
   "className":"ut.autograd.Autograd_Explained",
   "title":"Autograd - Automatic Differentiation",
-  "narrative":"Central to all neural networks in Neureka is the autograd package.\n    The autograd package provides automatic differentiation for all default operations on Tensors.\n    Neureka is a define-by-run library, which means that your backpropagation is defined by how\n    your code is run, and that every single iteration can be different.\n\n    The class neureka.Tensor is the central class of the main package.\n    If you set its attribute 'rqsGradient' to True, Neureka starts to track all operations on it.\n    When you finish the forward pass of your network\n    you can call .backward() and have all the gradients computed\n    and distributed to the tensors requiring them automatically.\n\n    The gradient for a tensor will be accumulated into a child tensor (component) which\n    can be accessed via the '.getGradient()' method.\n\n    To stop a tensor from tracking history, you can call '.detach()' to detach it from the\n    computation history, and to prevent future computation from being tracked.",
+  "narrative":"Central to all neural networks in Neureka is the autograd package.                                      \n    The autograd package provides automatic differentiation for all default operations on Tensors.          \n    Neureka is a define-by-run library, which means that your backpropagation is defined by how             \n    your code is run, and that every single iteration can be different.                                     \n\n    The class neureka.Tensor is the central class of the main package.                                         \n    If you set its attribute 'rqsGradient' to True, Neureka starts to track all operations on it.           \n    When you finish the forward pass of your network                                                        \n    you can call .backward() and have all the gradients computed                                            \n    and distributed to the tensors requiring them automatically.                                            \n\n    The gradient for a tensor will be accumulated into a child tensor (component) which                     \n    can be accessed via the '.getGradient()' method.                                                        \n\n    To stop a tensor from tracking history, you can call '.detach()' to detach it from the                  \n    computation history, and to prevent future computation from being tracked.",
   "subjects":["neureka.Tensor","neureka.autograd.GraphNode"],
   "statistics":{
     "runs":"1",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"0.011 seconds"
   },
   "headers":["\n            There’s one more class which is very important for autograd implementation : the 'GraphNode class'!     \n            Tensor and GraphNode instances are interconnected and build up an acyclic graph,                              \n            that encodes a complete history of computation.                                                                        \n            Each tensor has a .getGraphNode() attribute that references the GraphNode                                        \n            that has created a given Tensor instance.                                                                  \n            (except for Tensor created by the user or created by a \"detached\" Function instance... ).                  \n\n        ","\n            If you want to compute the derivatives, you can call .backward() on a Tensor.                           \n            If the given Tensor is a scalar (i.e. it holds one element and has shape \"(1)\"), you do not need to        \n            specify any arguments to backward(), however if it has more elements,                                   \n            you should specify a gradient argument that is a tensor of matching shape.                              \n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Simple automatic differentiation and propagation.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.008 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            How can I compute gradients with Neureka automatically?\n        "]
       },

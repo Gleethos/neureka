@@ -1,7 +1,7 @@
 {
   "className":"ut.utility.Cleaner_Testing",
   "title":"How Neureka Cleans Up",
-  "narrative":"Under the hood\n    Neureka deals whith large arrays of\n    data, which are often times\n    native data arrays requiring explicit\n    memory freeing!\n    This freeing of memory can happen at any time\n    during the livetime of a nd-array, however\n    it should happen at least up until the nd-arra/tensor\n    objects representing their referenced data arrays become\n    eligible for garbage collection.\n    This specification ensures that the custom garbage\n    cleaner implementation used by Neureka fulfills this role",
+  "narrative":"Under the hood \n    Neureka deals whith large arrays of\n    data, which are often times \n    native data arrays requiring explicit\n    memory freeing!\n    This freeing of memory can happen at any time\n    during the livetime of a nd-array, however\n    it should happen at least up until the nd-arra/tensor\n    objects representing their referenced data arrays become\n    eligible for garbage collection.\n    This specification ensures that the custom garbage\n    cleaner implementation used by Neureka fulfills this role",
   "subjects":[],
   "statistics":{
     "runs":"1",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.260 seconds"
+    "duration":"1.304 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The DeviceCleaner triggers registered cleaner actions when things are eligible for GC.",
       "result":"PASS",
-      "duration":"0.259 seconds",
+      "duration":"1.302 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -25,11 +25,11 @@
 
         {"kind":"when","text":"","code":["r1 = null","r3 = null","System.gc()"]},
 
-        {"kind":"then","text":"","code":["Sleep.until(700, { refCount == 8 && cleaner._registered == 8 })","r1  == null","r2  != null","r3  == null","r4  != null","r5  != null","r6  != null","r7  != null","r8  != null","r9  != null","r10 != null"]},
+        {"kind":"then","text":"","code":["Sleep.until(700, { refCount == 8 && cleaner._toBeCleaned.size() == 8 })","r1  == null","r2  != null","r3  == null","r4  != null","r5  != null","r6  != null","r7  != null","r8  != null","r9  != null","r10 != null"]},
 
         {"kind":"when","text":"","code":["r2 = null","r4 = null","System.gc()"]},
 
-        {"kind":"then","text":"","code":["Sleep.until(750, { refCount == 6 && cleaner._registered == 6 })","r1  == null","r2  == null","r3  == null","r4  == null","r5  != null","r6  != null","r7  != null","r8  != null","r9  != null","r10 != null"]}
+        {"kind":"then","text":"","code":["Sleep.until(750, { refCount == 6 && cleaner._toBeCleaned.size() == 6 })","r1  == null","r2  == null","r3  == null","r4  == null","r5  != null","r6  != null","r7  != null","r8  != null","r9  != null","r10 != null"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

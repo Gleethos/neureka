@@ -72,7 +72,7 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
     private Shape _shape;
     private V _from;
     private V _to;
-<span class="fc" id="L75">    private Device&lt;V&gt; _device = (Device&lt;V&gt;) CPU.get();</span>
+<span class="fc" id="L75">    private Device&lt;? super V&gt; _device = CPU.get();</span>
 
     /**
      * @param typeClass The type of the values which ought to be represented by the {@link Tensor} built by this {@link NdaBuilder}.
@@ -299,10 +299,10 @@ public final class NdaBuilder&lt;V&gt; implements WithShapeOrScalarOrVectorOnDev
     }
 
     @Override
-    public WithShapeOrScalarOrVectorTensor&lt;V&gt; on(Device&lt;V&gt; device ) {
+    public WithShapeOrScalarOrVectorTensor&lt;V&gt; on(Device&lt;? super V&gt; device ) {
 <span class="fc" id="L303">        LogUtil.nullArgCheck(device, &quot;device&quot;, Device.class, &quot;Cannot create a tensor with an undefined device!&quot;);</span>
 <span class="fc" id="L304">        _device = device;</span>
 <span class="fc" id="L305">        return this;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

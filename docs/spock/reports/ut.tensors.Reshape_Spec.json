@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.002 seconds"
+    "duration":"0.013 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can create a new tensor with a different shape.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"We can use `-1` in the desired shape if we want the axis size to be determined automatically.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"The reshape operation supports autograd!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Changing the shape of a tensor is a very common operation in machine learning.\n            This is why the reshape operation also supports autograd.\n            So for example when you have a tensor `a` with shape `s1` and you reshape it to \n            a new tensor `b` with shape `s2` then during backpropagation the error `e_b` of `b`\n            with the shape `s2` will be propagated to a new error `e_a` of `a` with the shape `s1`.\n            It is basically the reshape operation applied in reverse.\n        "]
       },

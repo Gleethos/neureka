@@ -16,11 +16,11 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 <span class="fc" id="L16">    @Override public String id() { return &quot;gatu&quot;; }</span>
 
     @Override
-<span class="fc" id="L19">    public String activationCode() { return &quot;output = tanh(input*input*input);\n&quot;; }</span>
+<span class="nc" id="L19">    public String activationCode() { return &quot;output = tanh(input*input*input);\n&quot;; }</span>
 
     @Override
     public String derivationCode() {
-<span class="fc" id="L23">        return &quot;float x2 = input * input;       \n&quot; +</span>
+<span class="nc" id="L23">        return &quot;float x2 = input * input;       \n&quot; +</span>
                &quot;float x3 = x2 * input;          \n&quot; +
                &quot;float temp = 3 * x2;            \n&quot; +
                &quot;float tanh2 = pow(tanh(x3), 2); \n&quot; +
@@ -57,4 +57,4 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -4,19 +4,19 @@
   "narrative":"In this specification we cover the behaviour of tensors with respect to their copy methods.\n    There are to main ways to copy a tensor: <br>\n    1. .shallowCopy() <br>\n    2. .deepCopy() <br>\n    <br>\n    The first method creates a new tensor with the same underlying data array as the original tensor. <br>\n    The second method on the other hand creates a new tensor with a new data array. <br>\n    <br>\n    The first method is the most efficient, but it is not as safe as the second method. <br>\n    The second method is the most safe, but it is not as efficient. <br>\n    <br>\n    Besides these 2 main requirements, there are als some corner cases with respect to\n    the components of a tensor (like for example its computation graph) which\n    will be covered in this specification as well.",
   "subjects":["neureka.Tensor"],
   "statistics":{
-    "runs":"5",
+    "runs":"17",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.013 seconds"
+    "duration":"0.038 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A deep copy of a tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,7 +37,65 @@
     },
   
     {
-      "id":"A shallow copy of a tensor will be flagged as such.",
+      "id":"A shallow copy of a tensor will be flagged as such. [0]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The tensor we will use for copying is not flagged as a shallow copy.","code":["!t.isShallowCopy()","t.toString()"]},
+
+        {"kind":"when","text":"We create a shallow copy of the tensor.","code":["var shallow = t.shallowCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["shallow !== t // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["shallow.shape == t.shape","shallow.mut.data.get() == t.mut.data.get() // The tensors share the same values...","shallow.mut.data.get() === t.mut.data.get() // ...as well as the same array!","shallow.mut.data === t.mut.data // In fact, their data container is the same instance."]},
+
+        {"kind":"and","text":"","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) }) // The values are the same!"]},
+
+        {"kind":"and","text":"The shallow copy is flagged as such.","code":["shallow.isShallowCopy()"]},
+
+        {"kind":"and","text":"Because shallow copies are merely \"fully slices\" we expect this flag to be set as well.","code":["shallow.isFullSlice()"]},
+
+        {"kind":"and","text":"The inverse property is false:","code":["!shallow.isPartialSlice()"]},
+
+        {"kind":"where","text":"","code":{"t":["Tensor.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)","Tensor.ofBytes().withShape(5).andFill(8, 2, -7, 3, 0)","Tensor.of(1d, 2d, 3d, 4d, 5d, 6d, 7d)2..4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A shallow copy of a tensor will be flagged as such. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The tensor we will use for copying is not flagged as a shallow copy.","code":["!t.isShallowCopy()","t.toString()"]},
+
+        {"kind":"when","text":"We create a shallow copy of the tensor.","code":["var shallow = t.shallowCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["shallow !== t // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["shallow.shape == t.shape","shallow.mut.data.get() == t.mut.data.get() // The tensors share the same values...","shallow.mut.data.get() === t.mut.data.get() // ...as well as the same array!","shallow.mut.data === t.mut.data // In fact, their data container is the same instance."]},
+
+        {"kind":"and","text":"","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) }) // The values are the same!"]},
+
+        {"kind":"and","text":"The shallow copy is flagged as such.","code":["shallow.isShallowCopy()"]},
+
+        {"kind":"and","text":"Because shallow copies are merely \"fully slices\" we expect this flag to be set as well.","code":["shallow.isFullSlice()"]},
+
+        {"kind":"and","text":"The inverse property is false:","code":["!shallow.isPartialSlice()"]},
+
+        {"kind":"where","text":"","code":{"t":["Tensor.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)","Tensor.ofBytes().withShape(5).andFill(8, 2, -7, 3, 0)","Tensor.of(1d, 2d, 3d, 4d, 5d, 6d, 7d)2..4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A shallow copy of a tensor will be flagged as such. [2]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -68,7 +126,7 @@
     {
       "id":"A deep copy of a slice tensor is also a deep copy of the underlying data array.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -91,7 +149,30 @@
     },
   
     {
-      "id":"A shallow copy will share the same underlying data as its original tensor.",
+      "id":"A shallow copy will share the same underlying data as its original tensor. [0]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A tensor of ints with shape (2, 3).","code":["var t = Tensor.ofInts().withShape(2, 3).andFill(1, 2, -9, 8, 3, -2)"]},
+
+        {"kind":"expect","text":"The underlying data array is as expected.","code":["t.mut.data.get() == [1, 2, -9, 8, 3, -2] // It's unsafe because it exposes mutable parts of the tensor!"]},
+
+        {"kind":"when","text":"We create a shallow copy of the tensor.","code":["var shallow = cloner(t)"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["shallow !== t // It's not the same instance!","shallow.shape == t.shape","shallow.mut.data.get() == t.mut.data.get() // The tensors share the same values!","shallow.mut.data.get() === t.mut.data.get() // The tensors share the exact same data array!"]},
+
+        {"kind":"and","text":"We verify that they share the same ints through the \"every\" method.","code":["(0..<t.size).every({ int i -> shallow.at(i) == t.at(i) }) // The values are the same!"]},
+
+        {"kind":"where","text":"","code":{"cloner":["{ Tensor x -> x.shallowCopy()}","{ Tensor x -> x.shallowClone()}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A shallow copy will share the same underlying data as its original tensor. [1]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -114,9 +195,234 @@
     },
   
     {
-      "id":"We can deep copy various types of tensors.",
+      "id":"We can deep copy various types of tensors. [0]",
       "result":"PASS",
       "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple vector tensor which we are going to copy.","code":["var t = Tensor.of(type).withShape(expected.length).andFill(expected)"]},
+
+        {"kind":"and","text":"A slice of the tensor, which we should also be able to deep copy.","code":["var s = t[1..<(expected.length - 1)]"]},
+
+        {"kind":"when","text":"","code":["var deep = t.deepCopy()","var deepSlice = s.deepCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t // It's not the same instance!","deepSlice !== s // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.mut.data.get() == t.mut.data.get() // The tensors share the same values!","deep.mut.data.get() !== t.mut.data.get() // ...but they are not the same array!"]},
+
+        {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
+
+        {"kind":"where","text":"We can use the following types and values for the above code.","code":{"type":["Integer","Byte","Short","Long","Float","Double","Boolean","Character","String","Object"],"expected":["[6, 2, 0, -387, 22, 53, -92] as int[]","[-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]","[65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]","[0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]","[0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]","[4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]","[true, false, true, false, true, false, true, false, true] as boolean[]","['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]","[\"test\", \"data\", \"!\"] as String[]","[\"What\", 4, 'm' as char, 1] as Object[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can deep copy various types of tensors. [1]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple vector tensor which we are going to copy.","code":["var t = Tensor.of(type).withShape(expected.length).andFill(expected)"]},
+
+        {"kind":"and","text":"A slice of the tensor, which we should also be able to deep copy.","code":["var s = t[1..<(expected.length - 1)]"]},
+
+        {"kind":"when","text":"","code":["var deep = t.deepCopy()","var deepSlice = s.deepCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t // It's not the same instance!","deepSlice !== s // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.mut.data.get() == t.mut.data.get() // The tensors share the same values!","deep.mut.data.get() !== t.mut.data.get() // ...but they are not the same array!"]},
+
+        {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
+
+        {"kind":"where","text":"We can use the following types and values for the above code.","code":{"type":["Integer","Byte","Short","Long","Float","Double","Boolean","Character","String","Object"],"expected":["[6, 2, 0, -387, 22, 53, -92] as int[]","[-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]","[65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]","[0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]","[0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]","[4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]","[true, false, true, false, true, false, true, false, true] as boolean[]","['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]","[\"test\", \"data\", \"!\"] as String[]","[\"What\", 4, 'm' as char, 1] as Object[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can deep copy various types of tensors. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple vector tensor which we are going to copy.","code":["var t = Tensor.of(type).withShape(expected.length).andFill(expected)"]},
+
+        {"kind":"and","text":"A slice of the tensor, which we should also be able to deep copy.","code":["var s = t[1..<(expected.length - 1)]"]},
+
+        {"kind":"when","text":"","code":["var deep = t.deepCopy()","var deepSlice = s.deepCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t // It's not the same instance!","deepSlice !== s // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.mut.data.get() == t.mut.data.get() // The tensors share the same values!","deep.mut.data.get() !== t.mut.data.get() // ...but they are not the same array!"]},
+
+        {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
+
+        {"kind":"where","text":"We can use the following types and values for the above code.","code":{"type":["Integer","Byte","Short","Long","Float","Double","Boolean","Character","String","Object"],"expected":["[6, 2, 0, -387, 22, 53, -92] as int[]","[-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]","[65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]","[0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]","[0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]","[4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]","[true, false, true, false, true, false, true, false, true] as boolean[]","['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]","[\"test\", \"data\", \"!\"] as String[]","[\"What\", 4, 'm' as char, 1] as Object[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can deep copy various types of tensors. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple vector tensor which we are going to copy.","code":["var t = Tensor.of(type).withShape(expected.length).andFill(expected)"]},
+
+        {"kind":"and","text":"A slice of the tensor, which we should also be able to deep copy.","code":["var s = t[1..<(expected.length - 1)]"]},
+
+        {"kind":"when","text":"","code":["var deep = t.deepCopy()","var deepSlice = s.deepCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t // It's not the same instance!","deepSlice !== s // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.mut.data.get() == t.mut.data.get() // The tensors share the same values!","deep.mut.data.get() !== t.mut.data.get() // ...but they are not the same array!"]},
+
+        {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
+
+        {"kind":"where","text":"We can use the following types and values for the above code.","code":{"type":["Integer","Byte","Short","Long","Float","Double","Boolean","Character","String","Object"],"expected":["[6, 2, 0, -387, 22, 53, -92] as int[]","[-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]","[65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]","[0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]","[0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]","[4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]","[true, false, true, false, true, false, true, false, true] as boolean[]","['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]","[\"test\", \"data\", \"!\"] as String[]","[\"What\", 4, 'm' as char, 1] as Object[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can deep copy various types of tensors. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple vector tensor which we are going to copy.","code":["var t = Tensor.of(type).withShape(expected.length).andFill(expected)"]},
+
+        {"kind":"and","text":"A slice of the tensor, which we should also be able to deep copy.","code":["var s = t[1..<(expected.length - 1)]"]},
+
+        {"kind":"when","text":"","code":["var deep = t.deepCopy()","var deepSlice = s.deepCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t // It's not the same instance!","deepSlice !== s // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.mut.data.get() == t.mut.data.get() // The tensors share the same values!","deep.mut.data.get() !== t.mut.data.get() // ...but they are not the same array!"]},
+
+        {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
+
+        {"kind":"where","text":"We can use the following types and values for the above code.","code":{"type":["Integer","Byte","Short","Long","Float","Double","Boolean","Character","String","Object"],"expected":["[6, 2, 0, -387, 22, 53, -92] as int[]","[-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]","[65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]","[0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]","[0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]","[4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]","[true, false, true, false, true, false, true, false, true] as boolean[]","['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]","[\"test\", \"data\", \"!\"] as String[]","[\"What\", 4, 'm' as char, 1] as Object[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can deep copy various types of tensors. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple vector tensor which we are going to copy.","code":["var t = Tensor.of(type).withShape(expected.length).andFill(expected)"]},
+
+        {"kind":"and","text":"A slice of the tensor, which we should also be able to deep copy.","code":["var s = t[1..<(expected.length - 1)]"]},
+
+        {"kind":"when","text":"","code":["var deep = t.deepCopy()","var deepSlice = s.deepCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t // It's not the same instance!","deepSlice !== s // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.mut.data.get() == t.mut.data.get() // The tensors share the same values!","deep.mut.data.get() !== t.mut.data.get() // ...but they are not the same array!"]},
+
+        {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
+
+        {"kind":"where","text":"We can use the following types and values for the above code.","code":{"type":["Integer","Byte","Short","Long","Float","Double","Boolean","Character","String","Object"],"expected":["[6, 2, 0, -387, 22, 53, -92] as int[]","[-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]","[65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]","[0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]","[0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]","[4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]","[true, false, true, false, true, false, true, false, true] as boolean[]","['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]","[\"test\", \"data\", \"!\"] as String[]","[\"What\", 4, 'm' as char, 1] as Object[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can deep copy various types of tensors. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple vector tensor which we are going to copy.","code":["var t = Tensor.of(type).withShape(expected.length).andFill(expected)"]},
+
+        {"kind":"and","text":"A slice of the tensor, which we should also be able to deep copy.","code":["var s = t[1..<(expected.length - 1)]"]},
+
+        {"kind":"when","text":"","code":["var deep = t.deepCopy()","var deepSlice = s.deepCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t // It's not the same instance!","deepSlice !== s // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.mut.data.get() == t.mut.data.get() // The tensors share the same values!","deep.mut.data.get() !== t.mut.data.get() // ...but they are not the same array!"]},
+
+        {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
+
+        {"kind":"where","text":"We can use the following types and values for the above code.","code":{"type":["Integer","Byte","Short","Long","Float","Double","Boolean","Character","String","Object"],"expected":["[6, 2, 0, -387, 22, 53, -92] as int[]","[-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]","[65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]","[0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]","[0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]","[4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]","[true, false, true, false, true, false, true, false, true] as boolean[]","['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]","[\"test\", \"data\", \"!\"] as String[]","[\"What\", 4, 'm' as char, 1] as Object[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can deep copy various types of tensors. [7]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple vector tensor which we are going to copy.","code":["var t = Tensor.of(type).withShape(expected.length).andFill(expected)"]},
+
+        {"kind":"and","text":"A slice of the tensor, which we should also be able to deep copy.","code":["var s = t[1..<(expected.length - 1)]"]},
+
+        {"kind":"when","text":"","code":["var deep = t.deepCopy()","var deepSlice = s.deepCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t // It's not the same instance!","deepSlice !== s // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.mut.data.get() == t.mut.data.get() // The tensors share the same values!","deep.mut.data.get() !== t.mut.data.get() // ...but they are not the same array!"]},
+
+        {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
+
+        {"kind":"where","text":"We can use the following types and values for the above code.","code":{"type":["Integer","Byte","Short","Long","Float","Double","Boolean","Character","String","Object"],"expected":["[6, 2, 0, -387, 22, 53, -92] as int[]","[-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]","[65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]","[0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]","[0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]","[4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]","[true, false, true, false, true, false, true, false, true] as boolean[]","['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]","[\"test\", \"data\", \"!\"] as String[]","[\"What\", 4, 'm' as char, 1] as Object[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can deep copy various types of tensors. [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A simple vector tensor which we are going to copy.","code":["var t = Tensor.of(type).withShape(expected.length).andFill(expected)"]},
+
+        {"kind":"and","text":"A slice of the tensor, which we should also be able to deep copy.","code":["var s = t[1..<(expected.length - 1)]"]},
+
+        {"kind":"when","text":"","code":["var deep = t.deepCopy()","var deepSlice = s.deepCopy()"]},
+
+        {"kind":"then","text":"The copy is not the same instance as the original tensor.","code":["deep !== t // It's not the same instance!","deepSlice !== s // It's not the same instance!"]},
+
+        {"kind":"and","text":"The shape and underlying data array are equal to the original tensor but the data is not identical.","code":["deep.shape == t.shape","deep.mut.data.get() == t.mut.data.get() // The tensors share the same values!","deep.mut.data.get() !== t.mut.data.get() // ...but they are not the same array!"]},
+
+        {"kind":"and","text":"Both the copied tensor and its slice have the expected values.","code":["deep.items == expected","deepSlice.items == expected[1..<(expected.length - 1)]"]},
+
+        {"kind":"where","text":"We can use the following types and values for the above code.","code":{"type":["Integer","Byte","Short","Long","Float","Double","Boolean","Character","String","Object"],"expected":["[6, 2, 0, -387, 22, 53, -92] as int[]","[-1, 4, 2, -49, 2, -72, 235, 0, 3] as byte[]","[65, -20, -7, -8, -3, -4, -5, -6, -9] as short[]","[0, 5462, -976, -3, -42, -35, -3436, -7, -89] as long[]","[0.5076, -1.0, -2.4, -3.0, -4.0, -5.0, -6.0] as float[]","[4.26434, -4.0, 5.3, -6.6, -7.0, 9.67] as double[]","[true, false, true, false, true, false, true, false, true] as boolean[]","['t', 'e', 's', 't', 'd', 'a', 't', 'a', '!'] as char[]","[\"test\", \"data\", \"!\"] as String[]","[\"What\", 4, 'm' as char, 1] as Object[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can deep copy various types of tensors. [9]",
+      "result":"PASS",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

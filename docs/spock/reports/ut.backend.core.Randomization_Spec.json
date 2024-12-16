@@ -4,17 +4,17 @@
   "narrative":"",
   "subjects":["neureka.backend.main.implementations.elementwise.CPURandomization"],
   "statistics":{
-    "runs":"3",
+    "runs":"10",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.018 seconds"
+    "duration":"0.039 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"We can make slices of tensors random.",
+      "id":"We can make slices of tensors random. [0]",
       "result":"PASS",
       "duration":"0.005 seconds",
       "iterations":{
@@ -35,9 +35,156 @@
     },
   
     {
-      "id":"Randomization is in essence the same algorithm as JDKs \"Random\".",
+      "id":"We can make slices of tensors random. [1]",
       "result":"PASS",
       "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var r = Function.of(\"random(I[0])\")"]},
+
+        {"kind":"and","text":"","code":["var t = Tensor.of(values)[1..<(values.length-1)] //"]},
+
+        {"kind":"when","text":"","code":["r.with(Arg.Seed.of(73)).call(t)"]},
+
+        {"kind":"then","text":"","code":["t.items == expected"]},
+
+        {"kind":"where","text":"","code":{"values":["[0,0,0,0,0] as int[]","[0,0,0,0,0] as byte[]","[0,0,0,0,0] as short[]","[0,0,0,0,0] as long[]","[0,0,0,0,0] as float[]","[0,0,0,0,0] as double[]","[0,0,0,0,0] as char[]","[0,0,0,0,0] as boolean[]"],"expected":["[1682321148, -442781155, 1450818241] as int[]","[-4, 29, -63] as byte[]","[12028, -19939, -17727] as short[]","[7225514313620035527, -1901730580994377074, 6231216898071663791] as long[]","[1.0493218, 0.96351904, 1.3803823] as float[]","[1.0493217368660326, 0.9635190511757348, 1.3803823236577413] as double[]","[12028, 45597, 47809] as char[]","[false, true, false] as boolean[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can make slices of tensors random. [2]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var r = Function.of(\"random(I[0])\")"]},
+
+        {"kind":"and","text":"","code":["var t = Tensor.of(values)[1..<(values.length-1)] //"]},
+
+        {"kind":"when","text":"","code":["r.with(Arg.Seed.of(73)).call(t)"]},
+
+        {"kind":"then","text":"","code":["t.items == expected"]},
+
+        {"kind":"where","text":"","code":{"values":["[0,0,0,0,0] as int[]","[0,0,0,0,0] as byte[]","[0,0,0,0,0] as short[]","[0,0,0,0,0] as long[]","[0,0,0,0,0] as float[]","[0,0,0,0,0] as double[]","[0,0,0,0,0] as char[]","[0,0,0,0,0] as boolean[]"],"expected":["[1682321148, -442781155, 1450818241] as int[]","[-4, 29, -63] as byte[]","[12028, -19939, -17727] as short[]","[7225514313620035527, -1901730580994377074, 6231216898071663791] as long[]","[1.0493218, 0.96351904, 1.3803823] as float[]","[1.0493217368660326, 0.9635190511757348, 1.3803823236577413] as double[]","[12028, 45597, 47809] as char[]","[false, true, false] as boolean[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can make slices of tensors random. [3]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var r = Function.of(\"random(I[0])\")"]},
+
+        {"kind":"and","text":"","code":["var t = Tensor.of(values)[1..<(values.length-1)] //"]},
+
+        {"kind":"when","text":"","code":["r.with(Arg.Seed.of(73)).call(t)"]},
+
+        {"kind":"then","text":"","code":["t.items == expected"]},
+
+        {"kind":"where","text":"","code":{"values":["[0,0,0,0,0] as int[]","[0,0,0,0,0] as byte[]","[0,0,0,0,0] as short[]","[0,0,0,0,0] as long[]","[0,0,0,0,0] as float[]","[0,0,0,0,0] as double[]","[0,0,0,0,0] as char[]","[0,0,0,0,0] as boolean[]"],"expected":["[1682321148, -442781155, 1450818241] as int[]","[-4, 29, -63] as byte[]","[12028, -19939, -17727] as short[]","[7225514313620035527, -1901730580994377074, 6231216898071663791] as long[]","[1.0493218, 0.96351904, 1.3803823] as float[]","[1.0493217368660326, 0.9635190511757348, 1.3803823236577413] as double[]","[12028, 45597, 47809] as char[]","[false, true, false] as boolean[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can make slices of tensors random. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var r = Function.of(\"random(I[0])\")"]},
+
+        {"kind":"and","text":"","code":["var t = Tensor.of(values)[1..<(values.length-1)] //"]},
+
+        {"kind":"when","text":"","code":["r.with(Arg.Seed.of(73)).call(t)"]},
+
+        {"kind":"then","text":"","code":["t.items == expected"]},
+
+        {"kind":"where","text":"","code":{"values":["[0,0,0,0,0] as int[]","[0,0,0,0,0] as byte[]","[0,0,0,0,0] as short[]","[0,0,0,0,0] as long[]","[0,0,0,0,0] as float[]","[0,0,0,0,0] as double[]","[0,0,0,0,0] as char[]","[0,0,0,0,0] as boolean[]"],"expected":["[1682321148, -442781155, 1450818241] as int[]","[-4, 29, -63] as byte[]","[12028, -19939, -17727] as short[]","[7225514313620035527, -1901730580994377074, 6231216898071663791] as long[]","[1.0493218, 0.96351904, 1.3803823] as float[]","[1.0493217368660326, 0.9635190511757348, 1.3803823236577413] as double[]","[12028, 45597, 47809] as char[]","[false, true, false] as boolean[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can make slices of tensors random. [5]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var r = Function.of(\"random(I[0])\")"]},
+
+        {"kind":"and","text":"","code":["var t = Tensor.of(values)[1..<(values.length-1)] //"]},
+
+        {"kind":"when","text":"","code":["r.with(Arg.Seed.of(73)).call(t)"]},
+
+        {"kind":"then","text":"","code":["t.items == expected"]},
+
+        {"kind":"where","text":"","code":{"values":["[0,0,0,0,0] as int[]","[0,0,0,0,0] as byte[]","[0,0,0,0,0] as short[]","[0,0,0,0,0] as long[]","[0,0,0,0,0] as float[]","[0,0,0,0,0] as double[]","[0,0,0,0,0] as char[]","[0,0,0,0,0] as boolean[]"],"expected":["[1682321148, -442781155, 1450818241] as int[]","[-4, 29, -63] as byte[]","[12028, -19939, -17727] as short[]","[7225514313620035527, -1901730580994377074, 6231216898071663791] as long[]","[1.0493218, 0.96351904, 1.3803823] as float[]","[1.0493217368660326, 0.9635190511757348, 1.3803823236577413] as double[]","[12028, 45597, 47809] as char[]","[false, true, false] as boolean[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can make slices of tensors random. [6]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var r = Function.of(\"random(I[0])\")"]},
+
+        {"kind":"and","text":"","code":["var t = Tensor.of(values)[1..<(values.length-1)] //"]},
+
+        {"kind":"when","text":"","code":["r.with(Arg.Seed.of(73)).call(t)"]},
+
+        {"kind":"then","text":"","code":["t.items == expected"]},
+
+        {"kind":"where","text":"","code":{"values":["[0,0,0,0,0] as int[]","[0,0,0,0,0] as byte[]","[0,0,0,0,0] as short[]","[0,0,0,0,0] as long[]","[0,0,0,0,0] as float[]","[0,0,0,0,0] as double[]","[0,0,0,0,0] as char[]","[0,0,0,0,0] as boolean[]"],"expected":["[1682321148, -442781155, 1450818241] as int[]","[-4, 29, -63] as byte[]","[12028, -19939, -17727] as short[]","[7225514313620035527, -1901730580994377074, 6231216898071663791] as long[]","[1.0493218, 0.96351904, 1.3803823] as float[]","[1.0493217368660326, 0.9635190511757348, 1.3803823236577413] as double[]","[12028, 45597, 47809] as char[]","[false, true, false] as boolean[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can make slices of tensors random. [7]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var r = Function.of(\"random(I[0])\")"]},
+
+        {"kind":"and","text":"","code":["var t = Tensor.of(values)[1..<(values.length-1)] //"]},
+
+        {"kind":"when","text":"","code":["r.with(Arg.Seed.of(73)).call(t)"]},
+
+        {"kind":"then","text":"","code":["t.items == expected"]},
+
+        {"kind":"where","text":"","code":{"values":["[0,0,0,0,0] as int[]","[0,0,0,0,0] as byte[]","[0,0,0,0,0] as short[]","[0,0,0,0,0] as long[]","[0,0,0,0,0] as float[]","[0,0,0,0,0] as double[]","[0,0,0,0,0] as char[]","[0,0,0,0,0] as boolean[]"],"expected":["[1682321148, -442781155, 1450818241] as int[]","[-4, 29, -63] as byte[]","[12028, -19939, -17727] as short[]","[7225514313620035527, -1901730580994377074, 6231216898071663791] as long[]","[1.0493218, 0.96351904, 1.3803823] as float[]","[1.0493217368660326, 0.9635190511757348, 1.3803823236577413] as double[]","[12028, 45597, 47809] as char[]","[false, true, false] as boolean[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Randomization is in essence the same algorithm as JDKs \"Random\".",
+      "result":"PASS",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -56,7 +203,7 @@
     {
       "id":"The Randomization class can fill various types of arrays with pseudo random numbers.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

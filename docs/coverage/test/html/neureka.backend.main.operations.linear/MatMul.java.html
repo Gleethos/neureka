@@ -1,31 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatMul.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.main.operations.linear</a> &gt; <span class="el_source">MatMul.java</span></div><h1>MatMul.java</h1><pre class="source lang-java linenums">package neureka.backend.main.operations.linear;
 
+import neureka.Neureka;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Result;
+import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.operations.AbstractOperation;
 import neureka.backend.api.template.operations.OperationBuilder;
 import neureka.backend.main.algorithms.MatMulAlgorithm;
 import neureka.math.Function;
+import neureka.math.args.Arg;
+import neureka.math.parsing.FunctionParser;
 
 public class MatMul extends AbstractOperation
 {
     public MatMul()
     {
-<span class="fc" id="L12">        super(</span>
+<span class="fc" id="L18">        super(</span>
             new OperationBuilder()
-<span class="fc" id="L14">                .identifier(       &quot;matMul&quot;    )</span>
-<span class="fc" id="L15">                .operator(         &quot;@&quot;         )</span>
-<span class="fc" id="L16">                .arity(            2           )</span>
-<span class="fc" id="L17">                .isOperator(       true        )</span>
-<span class="fc" id="L18">                .isIndexer(        false       )</span>
-<span class="fc" id="L19">                .isDifferentiable( true        )</span>
-<span class="fc" id="L20">                .isInline(         false       )</span>
+<span class="fc" id="L20">                .identifier(       &quot;matMul&quot;    )</span>
+<span class="fc" id="L21">                .operator(         &quot;@&quot;         )</span>
+<span class="fc" id="L22">                .arity(            2           )</span>
+<span class="fc" id="L23">                .isOperator(       true        )</span>
+<span class="fc" id="L24">                .isIndexer(        false       )</span>
+<span class="fc" id="L25">                .isDifferentiable( true        )</span>
+<span class="fc" id="L26">                .isInline(         false       )</span>
         );
 
-<span class="fc" id="L23">        setAlgorithm(</span>
-<span class="fc" id="L24">            new MatMulAlgorithm().buildFunAlgorithm()</span>
+<span class="fc" id="L29">        setAlgorithm(</span>
+<span class="fc" id="L30">            new MatMulAlgorithm().buildFunAlgorithm()</span>
         );
-<span class="fc" id="L26">    }</span>
+<span class="fc" id="L32">    }</span>
 
     @Override
-<span class="nc" id="L29">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
+    public Result execute( final Function caller, final ExecutionCall&lt;?&gt; call )
+    {
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if ( !caller.isFlat() ) {</span>
+<span class="nc" id="L38">            Function reducedCaller = reducePairwise(caller);</span>
+<span class="nc" id="L39">            ExecutionCall&lt;?&gt; flatCall = AbstractDeviceAlgorithm.flatten( reducedCaller, call.withArgs(Arg.DerivIdx.of(-1)) );</span>
+<span class="nc" id="L40">            Function flat = new FunctionParser(Neureka.get().backend()).parse( flatCall.getOperation(), flatCall.arity(), true );</span>
+<span class="nc" id="L41">            return super.execute( flat, flatCall );</span>
+        }
+<span class="fc" id="L43">        return super.execute( reducePairwise(caller), call );</span>
+    }
+
+    private Function reducePairwise( final Function fun ) {
+<span class="fc" id="L47">        Function reduced = fun;</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if ( reduced.getSubFunctions().size() &gt; 2 ) {</span>
+            /*
+                So currently we have something like this: a@b@c@d...
+                However, this is how it is really executed:  ((((a@b)@c)@d)..)
+                ...so let's create a function that is nested like the above:
+            */
+<span class="nc" id="L54">            Function nested = reduced.getSubFunctions().get(0);</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">            for ( int i = 1; i &lt; reduced.getSubFunctions().size(); i++ )</span>
+<span class="nc" id="L56">                nested = Function.of( nested + &quot; @ &quot; + reduced.getSubFunctions().get(i), true );</span>
+
+<span class="nc" id="L58">            reduced = nested;</span>
+        }
+<span class="fc" id="L60">        return reduced;</span>
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+<span class="nc" id="L65">        return src[ 0 ].call( inputs, j );</span>
+    }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

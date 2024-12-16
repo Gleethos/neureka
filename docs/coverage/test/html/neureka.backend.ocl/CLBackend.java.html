@@ -70,20 +70,20 @@ public final class CLBackend implements BackendExtension
      * @return The number of all {@link OpenCLDevice} instances across all {@link OpenCLPlatform}s.
      */
     public int getTotalNumberOfDevices() {
-<span class="fc" id="L73">        List&lt;OpenCLPlatform&gt; platforms = getPlatforms();</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if ( getPlatforms().isEmpty() ) return 0;</span>
-<span class="fc" id="L75">        return platforms.stream().mapToInt( p -&gt; p.getDevices().size() ).sum();</span>
+<span class="nc" id="L73">        List&lt;OpenCLPlatform&gt; platforms = getPlatforms();</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if ( getPlatforms().isEmpty() ) return 0;</span>
+<span class="nc" id="L75">        return platforms.stream().mapToInt( p -&gt; p.getDevices().size() ).sum();</span>
     }
 
     /**
      * @return A list of context specific {@link OpenCLPlatform} instances possible containing {@link OpenCLDevice}s.
      */
-<span class="fc" id="L81">    public List&lt;OpenCLPlatform&gt; getPlatforms() { return Collections.unmodifiableList( _platforms ); }</span>
+<span class="nc" id="L81">    public List&lt;OpenCLPlatform&gt; getPlatforms() { return Collections.unmodifiableList( _platforms ); }</span>
 
     /**
      * @return A container for OpenCL specific settings.
      */
-<span class="fc" id="L86">    public CLSettings getSettings() { return _settings; }</span>
+<span class="nc" id="L86">    public CLSettings getSettings() { return _settings; }</span>
 
     /**
      *  Updating the CLContext will cause the list of existing {@link OpenCLPlatform} instances to be
@@ -94,17 +94,17 @@ public final class CLBackend implements BackendExtension
      */
     @Override
     public boolean update( OwnerChangeRequest&lt;Extensions&gt; changeRequest ) {
-<span class="fc" id="L97">        _platforms.clear();</span>
-<span class="fc" id="L98">        _platforms.addAll( _findLoadAndCompileForAllPlatforms() );</span>
-<span class="fc" id="L99">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
-<span class="fc" id="L100">        return true;</span>
+<span class="nc" id="L97">        _platforms.clear();</span>
+<span class="nc" id="L98">        _platforms.addAll( _findLoadAndCompileForAllPlatforms() );</span>
+<span class="nc" id="L99">        changeRequest.executeChange(); // This can be an 'add', 'remove' or 'transfer' of this component!</span>
+<span class="nc" id="L100">        return true;</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L105">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
+<span class="nc" id="L105">        return this.getClass().getSimpleName()+&quot;@&quot;+Integer.toHexString(hashCode())+&quot;[&quot; +</span>
                     &quot;platforms=[&quot;+
-<span class="fc" id="L107">                        _platforms.stream().map(Object::toString).collect(Collectors.joining(&quot;,&quot;))+</span>
+<span class="nc" id="L107">                        _platforms.stream().map(Object::toString).collect(Collectors.joining(&quot;,&quot;))+</span>
                     &quot;]&quot; +
                 &quot;]&quot;;
     }
@@ -115,68 +115,68 @@ public final class CLBackend implements BackendExtension
     private static List&lt;OpenCLPlatform&gt; _findLoadAndCompileForAllPlatforms()
     {
         // Obtain the number of platforms
-<span class="fc" id="L118">        int[] numPlatforms = new int[ 1 ];</span>
-<span class="fc" id="L119">        clGetPlatformIDs( 0, null, numPlatforms );</span>
+<span class="nc" id="L118">        int[] numPlatforms = new int[ 1 ];</span>
+<span class="nc" id="L119">        clGetPlatformIDs( 0, null, numPlatforms );</span>
 
         // Obtain the platform IDs
-<span class="fc" id="L122">        cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];</span>
-<span class="fc" id="L123">        clGetPlatformIDs( platforms.length, platforms, null );</span>
+<span class="nc" id="L122">        cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];</span>
+<span class="nc" id="L123">        clGetPlatformIDs( platforms.length, platforms, null );</span>
 
-<span class="fc" id="L125">        List&lt;OpenCLPlatform&gt; loadedPlatforms = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L126">        List&lt;String&gt; failures = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L127" title="All 2 branches covered.">        for ( cl_platform_id id : platforms ) {</span>
-<span class="fc" id="L128">            OpenCLPlatform newPlatform = null;</span>
+<span class="nc" id="L125">        List&lt;OpenCLPlatform&gt; loadedPlatforms = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L126">        List&lt;String&gt; failures = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        for ( cl_platform_id id : platforms ) {</span>
+<span class="nc" id="L128">            OpenCLPlatform newPlatform = null;</span>
             try {
-<span class="fc" id="L130">                newPlatform = new OpenCLPlatform( id );</span>
+<span class="nc" id="L130">                newPlatform = new OpenCLPlatform( id );</span>
 <span class="nc" id="L131">            } catch ( Exception e ) {</span>
 <span class="nc" id="L132">                String message =</span>
 <span class="nc" id="L133">                        &quot;Failed to instantiate '&quot;+OpenCLPlatform.class.getSimpleName()+&quot;' &quot; +</span>
 <span class="nc" id="L134">                        &quot;with id '0x&quot;+Long.toHexString(id.getNativePointer())+&quot;'!&quot;;</span>
 <span class="nc" id="L135">                _LOG.error( message, e );</span>
 <span class="nc" id="L136">                failures.add( message + &quot; Reason: &quot; + e.getMessage() );</span>
-<span class="fc" id="L137">            }</span>
-<span class="pc bpc" id="L138" title="1 of 2 branches missed.">            if ( newPlatform != null )</span>
-<span class="fc" id="L139">                loadedPlatforms.add( newPlatform );</span>
+<span class="nc" id="L137">            }</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">            if ( newPlatform != null )</span>
+<span class="nc" id="L139">                loadedPlatforms.add( newPlatform );</span>
         }
-<span class="pc bpc" id="L141" title="2 of 4 branches missed.">        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -&gt; p.getDevices().isEmpty() ) )</span>
+<span class="nc bnc" id="L141" title="All 4 branches missed.">        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -&gt; p.getDevices().isEmpty() ) )</span>
 <span class="nc" id="L142">            _LOG.info( Messages.clContextCouldNotFindAnyDevices() );</span>
 
-<span class="pc bpc" id="L144" title="3 of 4 branches missed.">        if ( loadedPlatforms.isEmpty() &amp;&amp; platforms.length &gt; 0 )</span>
+<span class="nc bnc" id="L144" title="All 4 branches missed.">        if ( loadedPlatforms.isEmpty() &amp;&amp; platforms.length &gt; 0 )</span>
             // There should be at least one platform with at least one device!
 <span class="nc" id="L146">            throw new RuntimeException(</span>
 <span class="nc" id="L147">                &quot;Failed to instantiate any '&quot;+OpenCLPlatform.class.getSimpleName()+&quot;' instance!\n&quot; +</span>
 <span class="nc" id="L148">                &quot;Reasons: \n    &quot; + failures.stream().collect(Collectors.joining(&quot;\n    &quot;))</span>
             );
 
-<span class="fc" id="L151">        return loadedPlatforms;</span>
+<span class="nc" id="L151">        return loadedPlatforms;</span>
     }
 
     @Override
     public DeviceOption find( String searchKey ) {
-<span class="fc" id="L156">        Device&lt;Number&gt; result = null;</span>
-<span class="fc" id="L157">        double score = 0;</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">        for ( OpenCLPlatform p : _platforms ) {</span>
-<span class="fc bfc" id="L159" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
-<span class="fc" id="L160">                double similarity = Stream.of(&quot;opencl&quot;,d.type().name(),d.name(),d.vendor())</span>
-<span class="fc" id="L161">                                            .map( word -&gt; word.trim().toLowerCase() )</span>
-<span class="fc" id="L162">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
-<span class="fc" id="L163">                                            .max()</span>
-<span class="fc" id="L164">                                            .orElse(0);</span>
-<span class="pc bpc" id="L165" title="1 of 2 branches missed.">                if ( similarity &gt; score ) {</span>
-<span class="fc" id="L166">                    result = d;</span>
-<span class="fc" id="L167">                    score = similarity;</span>
-<span class="fc bfc" id="L168" title="All 2 branches covered.">                    if ( score == 1 )</span>
-<span class="fc" id="L169">                        return new DeviceOption( result, score );</span>
+<span class="nc" id="L156">        Device&lt;Number&gt; result = null;</span>
+<span class="nc" id="L157">        double score = 0;</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        for ( OpenCLPlatform p : _platforms ) {</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
+<span class="nc" id="L160">                double similarity = Stream.of(&quot;opencl&quot;,d.type().name(),d.name(),d.vendor())</span>
+<span class="nc" id="L161">                                            .map( word -&gt; word.trim().toLowerCase() )</span>
+<span class="nc" id="L162">                                            .mapToDouble( word -&gt; ParseUtil.similarity( word, searchKey ) )</span>
+<span class="nc" id="L163">                                            .max()</span>
+<span class="nc" id="L164">                                            .orElse(0);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">                if ( similarity &gt; score ) {</span>
+<span class="nc" id="L166">                    result = d;</span>
+<span class="nc" id="L167">                    score = similarity;</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                    if ( score == 1 )</span>
+<span class="nc" id="L169">                        return new DeviceOption( result, score );</span>
                 }
-<span class="fc" id="L171">            }</span>
-<span class="fc" id="L172">        }</span>
-<span class="fc" id="L173">        return new DeviceOption( result, score );</span>
+<span class="nc" id="L171">            }</span>
+<span class="nc" id="L172">        }</span>
+<span class="nc" id="L173">        return new DeviceOption( result, score );</span>
     }
 
     @Override
     public void reset() {
-<span class="fc" id="L178">        _settings.reset();</span>
-<span class="fc" id="L179">    }</span>
+<span class="nc" id="L178">        _settings.reset();</span>
+<span class="nc" id="L179">    }</span>
 
     /**
      *  This method will free all the resources occupied by this context,
@@ -185,12 +185,12 @@ public final class CLBackend implements BackendExtension
      */
     @Override
     public void dispose() {
-<span class="fc bfc" id="L188" title="All 2 branches covered.">        for ( OpenCLPlatform platform : _platforms ) {</span>
-<span class="fc bfc" id="L189" title="All 2 branches covered.">            for ( OpenCLDevice device : platform.getDevices() ) device.dispose();</span>
-<span class="fc" id="L190">            platform.dispose();</span>
-<span class="fc" id="L191">        }</span>
-<span class="fc" id="L192">        _platforms.clear();</span>
-<span class="fc" id="L193">    }</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        for ( OpenCLPlatform platform : _platforms ) {</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            for ( OpenCLDevice device : platform.getDevices() ) device.dispose();</span>
+<span class="nc" id="L190">            platform.dispose();</span>
+<span class="nc" id="L191">        }</span>
+<span class="nc" id="L192">        _platforms.clear();</span>
+<span class="nc" id="L193">    }</span>
 
     @Override
     public BackendLoader getLoader() {
@@ -200,129 +200,129 @@ public final class CLBackend implements BackendExtension
     private void _load( ReceiveForDevice&lt;OpenCLDevice&gt; receive )
     {
 <span class="fc" id="L202">        receive.forOperation( Power.class )</span>
-<span class="fc" id="L203">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastPower( context.getOperationIdentidier() ) )</span>
-<span class="fc" id="L204">                .set( Broadcast.class,     context -&gt; new CLBroadcastPower( context.getOperationIdentidier() )       )</span>
-<span class="fc" id="L205">                .set( BiElementwise.class, context -&gt; new CLBiElementwisePower( context.getOperationIdentidier() )   );</span>
+<span class="pc" id="L203">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastPower( context.getOperationIdentidier() ) )</span>
+<span class="pc" id="L204">                .set( Broadcast.class,     context -&gt; new CLBroadcastPower( context.getOperationIdentidier() )       )</span>
+<span class="pc" id="L205">                .set( BiElementwise.class, context -&gt; new CLBiElementwisePower( context.getOperationIdentidier() )   );</span>
 
 <span class="fc" id="L207">        receive.forOperation( Addition.class )</span>
-<span class="fc" id="L208">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastAddition(context.getOperationIdentidier()) )</span>
-<span class="fc" id="L209">                .set( Broadcast.class,     context -&gt; new CLBroadcastAddition( context.getOperationIdentidier() )       )</span>
-<span class="fc" id="L210">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseAddition( context.getOperationIdentidier() ));</span>
+<span class="pc" id="L208">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastAddition(context.getOperationIdentidier()) )</span>
+<span class="pc" id="L209">                .set( Broadcast.class,     context -&gt; new CLBroadcastAddition( context.getOperationIdentidier() )       )</span>
+<span class="pc" id="L210">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseAddition( context.getOperationIdentidier() ));</span>
 
 <span class="fc" id="L212">        receive.forOperation( Subtraction.class )</span>
-<span class="fc" id="L213">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastSubtraction( context.getOperationIdentidier() ) )</span>
-<span class="fc" id="L214">                .set( Broadcast.class,     context -&gt; new CLBroadcastSubtraction( context.getOperationIdentidier() )       )</span>
-<span class="fc" id="L215">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseSubtraction( context.getOperationIdentidier() ) );</span>
+<span class="pc" id="L213">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastSubtraction( context.getOperationIdentidier() ) )</span>
+<span class="pc" id="L214">                .set( Broadcast.class,     context -&gt; new CLBroadcastSubtraction( context.getOperationIdentidier() )       )</span>
+<span class="pc" id="L215">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseSubtraction( context.getOperationIdentidier() ) );</span>
 
 <span class="fc" id="L217">        receive.forOperation( Multiplication.class )</span>
-<span class="fc" id="L218">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastMultiplication( context.getOperationIdentidier() ) )</span>
-<span class="fc" id="L219">                .set( Broadcast.class,     context -&gt; new CLBroadcastMultiplication( context.getOperationIdentidier() )       )</span>
-<span class="fc" id="L220">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseMultiplication( context.getOperationIdentidier() ) );</span>
+<span class="pc" id="L218">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastMultiplication( context.getOperationIdentidier() ) )</span>
+<span class="pc" id="L219">                .set( Broadcast.class,     context -&gt; new CLBroadcastMultiplication( context.getOperationIdentidier() )       )</span>
+<span class="pc" id="L220">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseMultiplication( context.getOperationIdentidier() ) );</span>
 
 <span class="fc" id="L222">        receive.forOperation( Division.class )</span>
-<span class="fc" id="L223">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastDivision( context.getOperationIdentidier() ) )</span>
-<span class="fc" id="L224">                .set( Broadcast.class,     context -&gt; new CLBroadcastDivision( context.getOperationIdentidier() )       )</span>
-<span class="fc" id="L225">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseDivision( context.getOperationIdentidier() ) );</span>
+<span class="pc" id="L223">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastDivision( context.getOperationIdentidier() ) )</span>
+<span class="pc" id="L224">                .set( Broadcast.class,     context -&gt; new CLBroadcastDivision( context.getOperationIdentidier() )       )</span>
+<span class="pc" id="L225">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseDivision( context.getOperationIdentidier() ) );</span>
 
 <span class="fc" id="L227">        receive.forOperation( Modulo.class )</span>
-<span class="fc" id="L228">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastModulo( context.getOperationIdentidier() ) )</span>
-<span class="fc" id="L229">                .set( Broadcast.class,     context -&gt; new CLBroadcastModulo( context.getOperationIdentidier() )       )</span>
-<span class="fc" id="L230">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseModulo( context.getOperationIdentidier() ) );</span>
+<span class="pc" id="L228">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastModulo( context.getOperationIdentidier() ) )</span>
+<span class="pc" id="L229">                .set( Broadcast.class,     context -&gt; new CLBroadcastModulo( context.getOperationIdentidier() )       )</span>
+<span class="pc" id="L230">                .set( BiElementwise.class, context -&gt; new CLBiElementwiseModulo( context.getOperationIdentidier() ) );</span>
 
 <span class="fc" id="L232">        receive.forOperation( AssignLeft.class )</span>
-<span class="fc" id="L233">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastIdentity( context.getOperationIdentidier() ) )</span>
-<span class="fc" id="L234">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.IDENTITY ) );</span>
+<span class="pc" id="L233">                .set( BiScalarBroadcast.class, context -&gt; new CLScalarBroadcastIdentity( context.getOperationIdentidier() ) )</span>
+<span class="pc" id="L234">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.IDENTITY ) );</span>
 
 <span class="fc" id="L236">        receive.forOperation( Convolution.class )</span>
-<span class="fc" id="L237">                .set( NDConvolution.class, context -&gt; new CLConvolution( context.getOperationIdentidier() ) );</span>
+<span class="pc" id="L237">                .set( NDConvolution.class, context -&gt; new CLConvolution( context.getOperationIdentidier() ) );</span>
 <span class="fc" id="L238">        receive.forOperation( XConvLeft.class )</span>
-<span class="fc" id="L239">                .set( NDConvolution.class, context -&gt; new CLConvolution( context.getOperationIdentidier() ) );</span>
+<span class="pc" id="L239">                .set( NDConvolution.class, context -&gt; new CLConvolution( context.getOperationIdentidier() ) );</span>
 <span class="fc" id="L240">        receive.forOperation( XConvRight.class )</span>
-<span class="fc" id="L241">                .set( NDConvolution.class, context -&gt; new CLConvolution( context.getOperationIdentidier() ) );</span>
+<span class="pc" id="L241">                .set( NDConvolution.class, context -&gt; new CLConvolution( context.getOperationIdentidier() ) );</span>
 
 <span class="fc" id="L243">        receive.forOperation( MatMul.class )</span>
-<span class="fc" id="L244">                .set( MatMulAlgorithm.class, context -&gt; new CLMatMul() );</span>
+<span class="pc" id="L244">                .set( MatMulAlgorithm.class, context -&gt; new CLMatMul() );</span>
 
 <span class="fc" id="L246">        receive.forOperation( DotProduct.class )</span>
-<span class="fc" id="L247">                .set( DotProductAlgorithm.class, context -&gt; new CLDot() );</span>
+<span class="pc" id="L247">                .set( DotProductAlgorithm.class, context -&gt; new CLDot() );</span>
 
 <span class="fc" id="L249">        receive.forOperation( Sum.class )</span>
-<span class="fc" id="L250">                .set( SumAlgorithm.class, context -&gt; new CLSum() );</span>
+<span class="pc" id="L250">                .set( SumAlgorithm.class, context -&gt; new CLSum() );</span>
 
 <span class="fc" id="L252">        receive.forOperation( Randomization.class )</span>
-<span class="fc" id="L253">                .set( ElementwiseAlgorithm.class, context -&gt; new CLRandomization() );</span>
+<span class="pc" id="L253">                .set( ElementwiseAlgorithm.class, context -&gt; new CLRandomization() );</span>
 
 <span class="fc" id="L255">        receive.forOperation( Absolute.class )</span>
-<span class="fc" id="L256">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.ABSOLUTE) )</span>
-<span class="fc" id="L257">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.ABSOLUTE) );</span>
+<span class="pc" id="L256">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.ABSOLUTE) )</span>
+<span class="pc" id="L257">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.ABSOLUTE) );</span>
 <span class="fc" id="L258">        receive.forOperation( Cosinus.class )</span>
-<span class="fc" id="L259">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.COSINUS) )</span>
-<span class="fc" id="L260">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.COSINUS) );</span>
+<span class="pc" id="L259">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.COSINUS) )</span>
+<span class="pc" id="L260">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.COSINUS) );</span>
 <span class="fc" id="L261">        receive.forOperation( GaSU.class )</span>
-<span class="fc" id="L262">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GASU) )</span>
-<span class="fc" id="L263">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GASU) );</span>
+<span class="pc" id="L262">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GASU) )</span>
+<span class="pc" id="L263">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GASU) );</span>
 <span class="fc" id="L264">        receive.forOperation( GaTU.class )</span>
-<span class="fc" id="L265">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GATU) )</span>
-<span class="fc" id="L266">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GATU) );</span>
+<span class="pc" id="L265">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GATU) )</span>
+<span class="pc" id="L266">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GATU) );</span>
 <span class="fc" id="L267">        receive.forOperation( Gaussian.class )</span>
-<span class="fc" id="L268">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GAUSSIAN) )</span>
-<span class="fc" id="L269">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GAUSSIAN) );</span>
+<span class="pc" id="L268">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GAUSSIAN) )</span>
+<span class="pc" id="L269">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GAUSSIAN) );</span>
 <span class="fc" id="L270">        receive.forOperation( GaussianFast.class )</span>
-<span class="fc" id="L271">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )</span>
-<span class="fc" id="L272">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GAUSSIAN_FAST) );</span>
+<span class="pc" id="L271">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GAUSSIAN_FAST) )</span>
+<span class="pc" id="L272">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GAUSSIAN_FAST) );</span>
 <span class="fc" id="L273">        receive.forOperation( GeLU.class )</span>
-<span class="fc" id="L274">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GELU) )</span>
-<span class="fc" id="L275">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GELU) );</span>
+<span class="pc" id="L274">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.GELU) )</span>
+<span class="pc" id="L275">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.GELU) );</span>
 <span class="fc" id="L276">        receive.forOperation( Identity.class )</span>
-<span class="fc" id="L277">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.IDENTITY) )</span>
-<span class="fc" id="L278">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.IDENTITY) );</span>
+<span class="pc" id="L277">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.IDENTITY) )</span>
+<span class="pc" id="L278">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.IDENTITY) );</span>
 <span class="fc" id="L279">        receive.forOperation( Logarithm.class )</span>
-<span class="fc" id="L280">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.LOGARITHM) )</span>
-<span class="fc" id="L281">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.LOGARITHM) );</span>
+<span class="pc" id="L280">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.LOGARITHM) )</span>
+<span class="pc" id="L281">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.LOGARITHM) );</span>
 <span class="fc" id="L282">        receive.forOperation( Quadratic.class )</span>
-<span class="fc" id="L283">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.QUADRATIC) )</span>
-<span class="fc" id="L284">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.QUADRATIC) );</span>
+<span class="pc" id="L283">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.QUADRATIC) )</span>
+<span class="pc" id="L284">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.QUADRATIC) );</span>
 <span class="fc" id="L285">        receive.forOperation( ReLU.class )</span>
-<span class="fc" id="L286">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.RELU) )</span>
-<span class="fc" id="L287">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.RELU) );</span>
+<span class="pc" id="L286">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.RELU) )</span>
+<span class="pc" id="L287">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.RELU) );</span>
 <span class="fc" id="L288">        receive.forOperation( SeLU.class )</span>
-<span class="fc" id="L289">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SELU) )</span>
-<span class="fc" id="L290">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SELU) );</span>
+<span class="pc" id="L289">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SELU) )</span>
+<span class="pc" id="L290">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SELU) );</span>
 <span class="fc" id="L291">        receive.forOperation( Sigmoid.class )</span>
-<span class="fc" id="L292">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SIGMOID) )</span>
-<span class="fc" id="L293">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SIGMOID) );</span>
+<span class="pc" id="L292">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SIGMOID) )</span>
+<span class="pc" id="L293">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SIGMOID) );</span>
 <span class="fc" id="L294">        receive.forOperation( SiLU.class )</span>
-<span class="fc" id="L295">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SILU) )</span>
-<span class="fc" id="L296">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SILU) );</span>
+<span class="pc" id="L295">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SILU) )</span>
+<span class="pc" id="L296">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SILU) );</span>
 <span class="fc" id="L297">        receive.forOperation( Sinus.class )</span>
-<span class="fc" id="L298">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SINUS) )</span>
-<span class="fc" id="L299">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SINUS) );</span>
+<span class="pc" id="L298">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SINUS) )</span>
+<span class="pc" id="L299">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SINUS) );</span>
 <span class="fc" id="L300">        receive.forOperation( Softplus.class )</span>
-<span class="fc" id="L301">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SOFTPLUS) )</span>
-<span class="fc" id="L302">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SOFTPLUS) );</span>
+<span class="pc" id="L301">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SOFTPLUS) )</span>
+<span class="pc" id="L302">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SOFTPLUS) );</span>
 <span class="fc" id="L303">        receive.forOperation( Softsign.class )</span>
-<span class="fc" id="L304">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SOFTSIGN) )</span>
-<span class="fc" id="L305">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SOFTSIGN) );</span>
+<span class="pc" id="L304">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SOFTSIGN) )</span>
+<span class="pc" id="L305">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SOFTSIGN) );</span>
 <span class="fc" id="L306">        receive.forOperation( Tanh.class )</span>
-<span class="fc" id="L307">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.TANH) )</span>
-<span class="fc" id="L308">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.TANH) );</span>
+<span class="pc" id="L307">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.TANH) )</span>
+<span class="pc" id="L308">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.TANH) );</span>
 <span class="fc" id="L309">        receive.forOperation( TanhFast.class )</span>
-<span class="fc" id="L310">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.TANH_FAST) )</span>
-<span class="fc" id="L311">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.TANH_FAST) );</span>
+<span class="pc" id="L310">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.TANH_FAST) )</span>
+<span class="pc" id="L311">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.TANH_FAST) );</span>
 
 <span class="fc" id="L313">        receive.forOperation( Exp.class )</span>
-<span class="fc" id="L314">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.EXP) )</span>
-<span class="fc" id="L315">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.EXP) );</span>
+<span class="pc" id="L314">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.EXP) )</span>
+<span class="pc" id="L315">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.EXP) );</span>
 <span class="fc" id="L316">        receive.forOperation( Cbrt.class )</span>
-<span class="fc" id="L317">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.CBRT) )</span>
-<span class="fc" id="L318">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.CBRT) );</span>
+<span class="pc" id="L317">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.CBRT) )</span>
+<span class="pc" id="L318">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.CBRT) );</span>
 <span class="fc" id="L319">        receive.forOperation( Log10.class )</span>
-<span class="fc" id="L320">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.LOG10) )</span>
-<span class="fc" id="L321">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.LOG10) );</span>
+<span class="pc" id="L320">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.LOG10) )</span>
+<span class="pc" id="L321">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.LOG10) );</span>
 <span class="fc" id="L322">        receive.forOperation( Sqrt.class )</span>
-<span class="fc" id="L323">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SQRT) )</span>
-<span class="fc" id="L324">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SQRT) );</span>
+<span class="pc" id="L323">                .set( ElementwiseAlgorithm.class, context -&gt; new CLElementwiseFunction( ScalarFun.SQRT) )</span>
+<span class="pc" id="L324">                .set( ScalarAlgorithm.class, context -&gt; new CLScalarFunction(ScalarFun.SQRT) );</span>
 <span class="fc" id="L325">    }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -216,7 +216,7 @@ implements DeviceAlgorithm&lt;C&gt;
 
 <span class="fc" id="L217">        ExecutionCall&lt;?&gt; flattenedCall = _flatten( call.withArgs( Arg.VarIdx.of(j) ), nodes );</span>
 
-<span class="fc bfc" id="L219" title="All 4 branches covered.">        if (</span>
+<span class="pc bpc" id="L219" title="1 of 4 branches missed.">        if (</span>
                 !isFlat &amp;&amp; j &lt; 0 &amp;&amp; (
 <span class="pc bpc" id="L221" title="1 of 2 branches missed.">                        call.getOperation().isOperator()</span>
                                 ||
@@ -412,7 +412,7 @@ implements DeviceAlgorithm&lt;C&gt;
     private static void _deleteIfNotIn(Tensor&lt;?&gt;[] array, Tensor&lt;?&gt; tensor ) {
 <span class="pc bpc" id="L413" title="1 of 2 branches missed.">        if ( Neureka.get().settings().debug().isDeletingIntermediateTensors() ) {</span>
 <span class="fc bfc" id="L414" title="All 2 branches covered.">            for ( int i = 1; i &lt; array.length; i++ )</span>
-<span class="fc bfc" id="L415" title="All 2 branches covered.">                if ( array[i] == tensor ) return;</span>
+<span class="pc bpc" id="L415" title="1 of 2 branches missed.">                if ( array[i] == tensor ) return;</span>
 
 <span class="pc bpc" id="L417" title="1 of 2 branches missed.">            if ( !tensor.isDeleted() ) tensor.mut().delete();</span>
         }
@@ -470,4 +470,4 @@ implements DeviceAlgorithm&lt;C&gt;
 
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

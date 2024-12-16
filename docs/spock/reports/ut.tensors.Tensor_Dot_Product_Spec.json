@@ -4,19 +4,19 @@
   "narrative":"A tensor can also be a simple vector, which is a tensor of rank 1.\n    This specification demonstrates how to perform dot products on tensors of rank 1.",
   "subjects":["neureka.Tensor"],
   "statistics":{
-    "runs":"7",
+    "runs":"21",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.137 seconds"
+    "duration":"0.037 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The \"dot\" method calculates the dot product between vectors.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"You can slice a Matrix into vectors and then used them for dot products.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -52,7 +52,7 @@
     {
       "id":"The \"dot\" operation supports autograd.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The \"dot\" operation supports autograd.\n            This means that you can use it to calculate the gradient of a weight tensor.\n            This is useful for when you want to build a neural network or some other machine learning model.\n        "]
       },
@@ -71,11 +71,11 @@
     },
   
     {
-      "id":"The dot product operation runs on any device.",
+      "id":"The dot product operation runs on any device. [0]",
       "result":"PASS",
-      "duration":"0.079 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\n            The dot product operation runs on any device that \n            supports OpenCL (meaning that it has OpenCL drivers installed).\n        ","\n            The dot product operation runs on any device that \n            supports OpenCL (meaning that it has OpenCL drivers installed).\n        "]
+      "tags":{},"see":[],"extraInfo":["\n            The dot product operation runs on any device that \n            supports OpenCL (meaning that it has OpenCL drivers installed).\n        "]
       },
       "blocks":[
         {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(-1f, -3f, 0f, 4f, 2f).to( device )","var b = Tensor.of( 1f,  2f, 7f, -1f, 3f).to( device )"]},
@@ -90,9 +90,28 @@
     },
   
     {
-      "id":"The dot operation works for virtual tensors as well.",
+      "id":"The dot product operation runs on any device. [1]",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(-1f, -3f, 0f, 4f, 2f).to( device )","var b = Tensor.of( 1f,  2f, 7f, -1f, 3f).to( device )"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == [ -1f * 1f + -3f * 2f + 0f * 7f + 4f * -1f + 2f * 3f ]"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot operation works for virtual tensors as well. [0]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -111,9 +130,30 @@
     },
   
     {
-      "id":"The dot operation work even when one tensor is virtual.",
+      "id":"The dot operation works for virtual tensors as well. [1]",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(Shape.of(8), 3f).to(device)","var b = Tensor.of(Shape.of(8), 3f).to(device)"]},
+
+        {"kind":"expect","text":"the tensors are virtual.","code":["a.isVirtual() // They are scalars in disguise!","b.isVirtual()"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == [ 3f * 3f * 8f ]"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot operation work even when one tensor is virtual. [0]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -132,9 +172,239 @@
     },
   
     {
-      "id":"The dot product works across different types and devices.",
+      "id":"The dot operation work even when one tensor is virtual. [1]",
       "result":"PASS",
-      "duration":"0.041 seconds",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(Shape.of(8), 3f).to(device)","var b = Tensor.of(Shape.of(8), Data.of(3f, 4f, -1f)).to(device)"]},
+
+        {"kind":"expect","text":"the tensors are virtual.","code":["a.isVirtual() // They are scalars in disguise!","!b.isVirtual()"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == [ 57f ]"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [0]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [7]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [9]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [10]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A pair of vector tensors which we move to the device!","code":["var a = Tensor.of(data1).to(device)","var b = Tensor.of(data2).to(device)"]},
+
+        {"kind":"when","text":"we calculate the dot product of a and b.","code":["var result = a.dot(b)"]},
+
+        {"kind":"then","text":"the result is a scalar.","code":["result.shape == Shape.of(1)","result.items == expected"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'CPU'","'GPU'","'GPU'"],"data1":["[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]","[ 8d, -4d, -1d ] as double[]","[ 2d, 3d, 4d ] as double[]","[ 1d, -4d ] as double[]","[ 8, -4, -1 ] as int[]","[ 42 ] as int[]","[ 2, 3, 4 ] as long[]","[ 1, -4 ] as long[]","[ 42 ] as long[]","[ 8f, -4f, -1f ] as float[]","[ 42f ] as float[]"],"data2":["[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]","[ 1d, 2d, 4d ] as double[]","[ 0d, 2d, 3d ] as double[]","[ 4d, 2d ] as double[]","[ 1, 2, 4 ] as int[]","[ 56 ] as int[]","[ 0, 2, 3 ] as long[]","[ 4, 2 ] as long[]","[ 56 ] as long[]","[ 1f, 2f, 4f ] as float[]","[ 56f ] as float[]"],"expected":["[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]","[ 8d * 1d + -4d * 2d + -1d * 4d ]","[ 2d * 0d + 3d * 2d + 4d * 3d ]","[ 1d * 4d + -4d * 2d ]","[ 8 * 1 + -4 * 2 + -1 * 4 ]","[ 42 * 56 ]","[ 2 * 0 + 3 * 2 + 4 * 3 ]","[ 1 * 4 + -4 * 2 ]","[ 42 * 56 ]","[ 8f * 1f + -4f * 2f + -1f * 4f ]","[ 42f * 56f ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The dot product works across different types and devices. [11]",
+      "result":"PASS",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

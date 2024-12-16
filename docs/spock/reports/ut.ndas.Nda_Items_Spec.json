@@ -1,7 +1,7 @@
 {
   "className":"ut.ndas.Nda_Items_Spec",
   "title":"The Nds Items API",
-  "narrative":"Nd-arrays are collections of items similar to other\n    collection types in Java.\n    One useful way to access the items of an nd-array is\n    to use the items API.\n\n    Using the `at` methods we can access an `Item` object\n    which is a wrapper around the item's value and its\n    index in the nd-array.\n\n    The `Item` object is a simple data class which\n    is very similar to the `Optional` class, meaning\n    that it can either be empty or contain a value.",
+  "narrative":"Nd-arrays are collections of items similar to other\n    collection types in Java. \n    One useful way to access the items of an nd-array is\n    to use the items API.\n\n    Using the `at` methods we can access an `Item` object\n    which is a wrapper around the item's value and its\n    index in the nd-array.\n\n    The `Item` object is a simple data class which\n    is very similar to the `Optional` class, meaning\n    that it can either be empty or contain a value.",
   "subjects":[],
   "statistics":{
     "runs":"6",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.004 seconds"
+    "duration":"0.010 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can check if items of a tensor is present or not.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
     {
       "id":"We can get the value of an item.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,7 +46,7 @@
     {
       "id":"The \"get\" method of an Item object will throw an exception if the item is missing.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Similar as the `Optional` class, an `Item` object can be empty.\n            If we try to get the value of an empty item, an exception will be thrown.\n            The reason for this is that we can not be sure that the item is actually\n            empty or if it is just not present in the nd-array.\n            If you want to get an item's value without throwing an exception \n            (but the risk of getting a null value instead) you can use the `orElseNull` method.\n        "]
       },
@@ -82,7 +82,7 @@
     {
       "id":"An item can be converted to an Optional object.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -97,7 +97,7 @@
     {
       "id":"Other than the \"orElse(T)\" method of the Optional class, the same method of an Item will throw an exception if the provided value is null.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            If you want to get an item's value without throwing an exception \n            (but the risk of getting a null value instead) you can use the `orElseNull` method.\n            The `orElse(T)` method of the `Optional` class will not throw an exception\n            if the provided value is null. This is not the case for the `orElse(T)` method\n            of an `Item` object.\n        "]
       },

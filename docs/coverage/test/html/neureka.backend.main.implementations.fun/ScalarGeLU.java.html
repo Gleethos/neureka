@@ -17,10 +17,10 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 
 <span class="fc" id="L18">    @Override public String id() { return &quot;gelu&quot;; }</span>
 
-<span class="fc" id="L20">    @Override public String activationCode() { return &quot;output = input / ( 1 + (float) exp(-input * 1.702) );\n&quot;; }</span>
+<span class="nc" id="L20">    @Override public String activationCode() { return &quot;output = input / ( 1 + (float) exp(-input * 1.702) );\n&quot;; }</span>
 
     @Override public String derivationCode() {
-<span class="fc" id="L23">        return &quot;float sig = 1.0f / ( 1.0f + exp( -input * 1.702f ) );&quot; +</span>
+<span class="nc" id="L23">        return &quot;float sig = 1.0f / ( 1.0f + exp( -input * 1.702f ) );&quot; +</span>
                &quot;float ds = sig * ( 1.0f - sig );&quot; +
                &quot;output = sig + ds * input * 1.702;\n&quot;;
     }
@@ -54,4 +54,4 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 <span class="fc" id="L54">    public static double gelu(double x) { return x * ScalarSigmoid.sig(x * 1.702); }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

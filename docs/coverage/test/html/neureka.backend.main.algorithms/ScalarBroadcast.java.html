@@ -65,22 +65,22 @@ import neureka.ndim.NDimensional;
 <span class="fc" id="L65">        setImplementationFor(</span>
             OpenCLDevice.class,
             call -&gt; {
-<span class="fc" id="L68">                int d = call.getValOf(Arg.DerivIdx.class);</span>
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">                CPUFun f = d &lt; 0 ? fun.getActivation() : fun.getDerivative();</span>
-<span class="fc" id="L70">                double value =  f.invoke( call.input( Number.class, 1 ).at(0).get().doubleValue() );</span>
-<span class="fc" id="L71">                Tensor&lt;Number&gt; t = call.input( Number.class, 0 );</span>
-<span class="fc" id="L72">                int gwz = t.size();</span>
-<span class="fc" id="L73">                call.getDevice()</span>
-<span class="fc" id="L74">                        .getKernel(&quot;scalar_broadcast&quot;)</span>
-<span class="fc" id="L75">                        .passAllOf(t)</span>
-<span class="fc" id="L76">                        .pass((float) value)</span>
-<span class="fc" id="L77">                        .pass(t.rank())</span>
-<span class="fc" id="L78">                        .call( gwz );</span>
+<span class="nc" id="L68">                int d = call.getValOf(Arg.DerivIdx.class);</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                CPUFun f = d &lt; 0 ? fun.getActivation() : fun.getDerivative();</span>
+<span class="nc" id="L70">                double value =  f.invoke( call.input( Number.class, 1 ).at(0).get().doubleValue() );</span>
+<span class="nc" id="L71">                Tensor&lt;Number&gt; t = call.input( Number.class, 0 );</span>
+<span class="nc" id="L72">                int gwz = t.size();</span>
+<span class="nc" id="L73">                call.getDevice()</span>
+<span class="nc" id="L74">                        .getKernel(&quot;scalar_broadcast&quot;)</span>
+<span class="nc" id="L75">                        .passAllOf(t)</span>
+<span class="nc" id="L76">                        .pass((float) value)</span>
+<span class="nc" id="L77">                        .pass(t.rank())</span>
+<span class="nc" id="L78">                        .call( gwz );</span>
 
-<span class="fc" id="L80">                return call.input(0);</span>
+<span class="nc" id="L80">                return call.input(0);</span>
             }
         );
 <span class="fc" id="L83">    }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

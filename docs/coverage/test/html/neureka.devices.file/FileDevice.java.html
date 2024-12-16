@@ -81,7 +81,7 @@ public final class FileDevice extends AbstractBaseDevice&lt;Object&gt;
     private void _updateFolderView() {
 <span class="fc" id="L82">        _loadable.clear();</span>
 <span class="fc" id="L83">        File dir = new File( _directory );</span>
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if ( ! dir.exists() ) dir.mkdirs();</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if ( ! dir.exists() ) dir.mkdirs();</span>
         else {
 <span class="fc" id="L86">            List&lt;String&gt; found = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L87">            File[] files = dir.listFiles();</span>
@@ -333,4 +333,4 @@ public final class FileDevice extends AbstractBaseDevice&lt;Object&gt;
 <span class="fc" id="L333">    public List&lt;String&gt; getLoaded() { return new ArrayList&lt;&gt;(_loaded.keySet()); }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -12,30 +12,30 @@ import java.util.Map;
  *  anywhere but within this library. &lt;br&gt;
  *  This class or its public methods might change or get removed in future versions!&lt;/b&gt;
  */
-<span class="fc" id="L15">public final class KernelCache {</span>
+<span class="nc" id="L15">public final class KernelCache {</span>
 
     private final static int CAPACITY = 256;
 
-<span class="fc" id="L19">    private final Map&lt;String, OpenCLDevice.cl_ad_hoc&gt; _adhocKernels =</span>
-<span class="fc" id="L20">    new LinkedHashMap&lt;String, OpenCLDevice.cl_ad_hoc&gt;(CAPACITY) {</span>
+<span class="nc" id="L19">    private final Map&lt;String, OpenCLDevice.cl_ad_hoc&gt; _adhocKernels =</span>
+<span class="nc" id="L20">    new LinkedHashMap&lt;String, OpenCLDevice.cl_ad_hoc&gt;(CAPACITY) {</span>
         @Override
         protected boolean removeEldestEntry(final Map.Entry eldest) {
-<span class="pc bpc" id="L23" title="1 of 2 branches missed.">            return size() &gt; CAPACITY;</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">            return size() &gt; CAPACITY;</span>
         }
     };
 
     public void put( String name, OpenCLDevice.cl_ad_hoc kernel ) {
         // Storing the ad hoc object in a fixed size map for fast access by operations:
-<span class="fc" id="L29">        _adhocKernels.put( name, kernel );</span>
-<span class="fc" id="L30">    }</span>
+<span class="nc" id="L29">        _adhocKernels.put( name, kernel );</span>
+<span class="nc" id="L30">    }</span>
 
     public boolean has( String name ) {
-<span class="fc" id="L33">        return _adhocKernels.containsKey( name );</span>
+<span class="nc" id="L33">        return _adhocKernels.containsKey( name );</span>
     }
 
     public OpenCLDevice.cl_ad_hoc get( String name ) {
-<span class="fc" id="L37">        return _adhocKernels.get( name );</span>
+<span class="nc" id="L37">        return _adhocKernels.get( name );</span>
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

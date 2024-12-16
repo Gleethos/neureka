@@ -8,7 +8,7 @@ import neureka.devices.opencl.OpenCLDevice;
 public class CLScalarBroadcastDivision extends CLScalarBroadcast
 {
     public CLScalarBroadcastDivision( String id ) {
-<span class="fc" id="L11">        super(</span>
+<span class="nc" id="L11">        super(</span>
                 id,
                 &quot;output = (&quot;+TYPE+&quot;)(((float)input1) / ((float)value));\n&quot;,
                 &quot;if ( d == 0 ) {                                                        \n&quot; +
@@ -17,7 +17,7 @@ public class CLScalarBroadcastDivision extends CLScalarBroadcast
                 &quot;    output = -((&quot;+TYPE+&quot;)(((float)value) /(float)pow((float)input1, 2.0f)));    \n&quot; +
                 &quot;}                                                                               \n&quot;
         );
-<span class="fc" id="L20">    }</span>
+<span class="nc" id="L20">    }</span>
 
     @Override
     public Tensor&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
@@ -34,4 +34,4 @@ public class CLScalarBroadcastDivision extends CLScalarBroadcast
 <span class="nc" id="L34">        return call.input( 0 );</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

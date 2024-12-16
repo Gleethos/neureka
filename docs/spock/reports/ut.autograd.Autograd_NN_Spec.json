@@ -1,22 +1,22 @@
 {
   "className":"ut.autograd.Autograd_NN_Spec",
   "title":"Simple Neural Network autograd integration test",
-  "narrative":"The integration test below has been implemented by using\n    the following code and the result it produces as reference :\n    https://medium.com/dair-ai/a-simple-neural-network-from-scratch-with-pytorch-and-google-colab-c7f3830618e0\n\n    The following seed has been used to assure reproducibility :\n    'torch.manual_seed(503672689411)'",
+  "narrative":"The integration test below has been implemented by using\n    the following code and the result it produces as reference : \n    https://medium.com/dair-ai/a-simple-neural-network-from-scratch-with-pytorch-and-google-colab-c7f3830618e0 \n\n    The following seed has been used to assure reproducibility :\n    'torch.manual_seed(503672689411)'",
   "subjects":["neureka.Tensor","neureka.autograd.GraphNode"],
   "statistics":{
-    "runs":"5",
+    "runs":"7",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.076 seconds"
+    "duration":"0.148 seconds"
   },
   "headers":["\n\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Autograd works in a simple mat-mul based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.023 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -35,7 +35,7 @@
     {
       "id":"Autograd works in a simple convolutional dot product based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.028 seconds",
+      "duration":"0.052 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -54,7 +54,7 @@
     {
       "id":"Autograd works in a simple convolutional dot product and float based feed forward neural network.",
       "result":"PASS",
-      "duration":"0.023 seconds",
+      "duration":"0.049 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -71,9 +71,9 @@
     },
   
     {
-      "id":"Autograd work for simple matrix multiplications.",
+      "id":"Autograd work for simple matrix multiplications. [0]",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -100,9 +100,67 @@
     },
   
     {
-      "id":"Autograd works for 2 matrix multiplications in a row.",
+      "id":"Autograd work for simple matrix multiplications. [1]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var a = Tensor.of([2, 3], -1f..4f).setRqsGradient(true).mut.toType(type)","var b = Tensor.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).mut.toType(type)"]},
+
+        {"kind":"when","text":"","code":["var c = a.matMul(b)"]},
+
+        {"kind":"then","text":"","code":["c.itemType == type"]},
+
+        {"kind":"and","text":"","code":["a.toString() == \"(2x3):[\" +","                    \"-1.0, 0.0, 1.0, \" +","                    \"2.0, 3.0, 4.0\" +","                \"]:g:[null]\""]},
+
+        {"kind":"and","text":"","code":["b.toString() == \"(3x1):[\" +","                        \"-4.0, \" +","                        \"-2.0, \" +","                        \"0.0\" +","                    \"]:g:[null]\""]},
+
+        {"kind":"and","text":"","code":["def cStr = c.toString()","cStr.contains \"(2x1):[4.0, -14.0]\"","cStr.contains \"->d(3x2):[-1.0, 2.0, 0.0, 3.0, 1.0, 4.0]\"","cStr.contains \"->d(1x3):[-4.0, -2.0, 0.0]\""]},
+
+        {"kind":"when","text":"","code":["c.backward(Tensor.of(c.shape, [-1d, 1d]).mut.toType(type)) // (2x1):[-1, 1]"]},
+
+        {"kind":"then","text":"","code":["a.toString() == \"(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[4.0, 2.0, 0.0, -4.0, -2.0, 0.0]\"","b.toString() == \"(3x1):[-4.0, -2.0, 0.0]:g:[3.0, 3.0, 3.0]\""]},
+
+        {"kind":"where","text":"","code":{"type":["Double","Float"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Autograd works for 2 matrix multiplications in a row. [0]",
       "result":"PASS",
       "duration":"0.005 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We set the experimental \"autoConvertToFloat\" flag to true.","code":["Neureka.get().backend().find(CLBackend).ifPresent({ it.settings.autoConvertToFloat=true })"]},
+
+        {"kind":"and","text":"\n            We create 3 tensors with the shapes (2x3), (3x1) and (2x1) for matrix multiplication.\n            All of them ought to be stored on the provided device and \n            only the first 2 require gradients, whereas the third one does not.\n            We use these tensors to mimic 2 linear forward passes in a neural network.\n        ","code":["def a = Tensor.of([2, 3], -1d..4d).setRqsGradient(true).to(device)","def b = Tensor.of([3, 1], [-4d, -2d, 0d]).setRqsGradient(true).to(device)","def x = Tensor.of([[0.5d, 0.5d]]).to(device)"]},
+
+        {"kind":"expect","text":"Initially none of the tensors requiring gradients have any (see \"g:[null]\").","code":["a.toString() == \"(2x3):[\" +","        \"-1.0, 0.0, 1.0, \" +","        \"2.0, 3.0, 4.0\" +","        \"]:g:[null]\"","b.toString() == \"(3x1):[\" +","        \"-4.0, \" +","        \"-2.0, \" +","        \"0.0\" +","        \"]:g:[null]\"","x.toString() == \"(1x2):[0.5, 0.5]\""]},
+
+        {"kind":"when","text":"We perform 2 matrix multiplications in a row, using all 3 previously created tensors...","code":["var c = a.matMul(b)","var o = x.matMul(c)"]},
+
+        {"kind":"then","text":"The results from the two matrix multiplications are as expected.","code":["var cStr = c.toString()","cStr.contains \"(2x1):[4.0, -14.0]\"","cStr.contains \"->d(3x2):[-1.0, 2.0, 0.0, 3.0, 1.0, 4.0]\"","cStr.contains \"->d(1x3):[-4.0, -2.0, 0.0]\"","o.toString() == \"(1x1):[-5.0]; ->d(2x1):[0.5, 0.5]\""]},
+
+        {"kind":"and","text":"We still expect the first 2 tensors to not yet have any gradients (see \"g:[null]\").","code":["a.toString() == \"(2x3):[\" +","                        \"-1.0, 0.0, 1.0, \" +","                        \"2.0, 3.0, 4.0\" +","                    \"]:g:[null]\"","b.toString() == \"(3x1):[\" +","                        \"-4.0, \" +","                        \"-2.0, \" +","                        \"0.0\" +","                    \"]:g:[null]\"","x.toString() == \"(1x2):[0.5, 0.5]\""]},
+
+        {"kind":"when","text":"We perform back-propagation...","code":["o.backward()"]},
+
+        {"kind":"then","text":"Contrary to before, the 2 matrices now do have the expected gradients automatically generated by the aut-grad system.","code":["a.toString() == \"(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[-2.0, -1.0, 0.0, -2.0, -1.0, 0.0]\"","b.toString() == \"(3x1):[-4.0, -2.0, 0.0]:g:[0.5, 1.5, 2.5]\""]},
+
+        {"kind":"where","text":"We test this feature on both the CPU as well as the GPU.","code":{"device":["CPU.get()","Device.get('first gpu')"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Autograd works for 2 matrix multiplications in a row. [1]",
+      "result":"PASS",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

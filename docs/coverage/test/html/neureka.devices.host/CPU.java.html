@@ -246,11 +246,11 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     protected final &lt;T&gt; void _writeArray(
             Tensor&lt;T&gt; tensor, Object array, int offset, int start, int size
     ) {
-<span class="fc bfc" id="L249" title="All 2 branches covered.">        Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getOrNull();</span>
-<span class="fc bfc" id="L250" title="All 2 branches covered.">        if ( data == null ) {</span>
-<span class="pc bpc" id="L251" title="1 of 2 branches missed.">            DataType&lt;?&gt; dataType = tensor.getDataType() != null ? tensor.getDataType() : _dataTypeOf(array);</span>
-<span class="fc" id="L252">            tensor.getMut().setData( _createDataFor(  array, (DataType&lt;T&gt;) dataType) );</span>
-<span class="fc" id="L253">            return;</span>
+<span class="pc bpc" id="L249" title="1 of 2 branches missed.">        Object data = tensor.getMut().getData() == null ? null : tensor.getMut().getData().getOrNull();</span>
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">        if ( data == null ) {</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">            DataType&lt;?&gt; dataType = tensor.getDataType() != null ? tensor.getDataType() : _dataTypeOf(array);</span>
+<span class="nc" id="L252">            tensor.getMut().setData( _createDataFor(  array, (DataType&lt;T&gt;) dataType) );</span>
+<span class="nc" id="L253">            return;</span>
         }
 <span class="fc" id="L255">        Class&lt;?&gt; arrayType = data.getClass();</span>
 <span class="fc bfc" id="L256" title="All 2 branches covered.">        if ( arrayType == float[].class ) {</span>
@@ -628,8 +628,8 @@ public class CPU extends AbstractDevice&lt;Object&gt;
      */
     @Override
     public boolean update( OwnerChangeRequest&lt;Tensor&lt;Object&gt;&gt; changeRequest ) {
-<span class="fc" id="L631">        super.update( changeRequest );</span>
-<span class="fc" id="L632">        return false; // This type of device can not be a component simply because it is the default device</span>
+<span class="nc" id="L631">        super.update( changeRequest );</span>
+<span class="nc" id="L632">        return false; // This type of device can not be a component simply because it is the default device</span>
     }
 
     /**
@@ -798,4 +798,4 @@ public class CPU extends AbstractDevice&lt;Object&gt;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

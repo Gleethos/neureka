@@ -8,8 +8,8 @@ import neureka.devices.opencl.OpenCLDevice;
 public class CLScalarBroadcastSubtraction extends CLScalarBroadcast
 {
     public CLScalarBroadcastSubtraction(String id) {
-<span class="fc" id="L11">        super( id,  &quot;output = input1 - value;\n&quot;, &quot;if (d==0) { output = 1; } else { output = -1; }&quot; );</span>
-<span class="fc" id="L12">    }</span>
+<span class="nc" id="L11">        super( id,  &quot;output = input1 - value;\n&quot;, &quot;if (d==0) { output = 1; } else { output = -1; }&quot; );</span>
+<span class="nc" id="L12">    }</span>
 
     @Override
     public Tensor&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
@@ -27,4 +27,4 @@ public class CLScalarBroadcastSubtraction extends CLScalarBroadcast
 <span class="nc" id="L27">        return call.input(0);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
