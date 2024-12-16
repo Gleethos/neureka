@@ -149,7 +149,7 @@ dependencies {
     else
         errorprone "com.google.errorprone:error_prone_core:2.9.+"
 
-    implementation group: 'com.google.errorprone', name: 'error_prone_annotations', version: '2.27.0'
+    // Annotation for null checking :
     implementation group: 'org.jspecify', name: 'jspecify', version: '1.0.0'
 
     // Core library dependencies :
