@@ -56,6 +56,18 @@ public class OpenCLPlatform
         clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, 0, null, numDevices);
         cl_device_id[] devicesArray = new cl_device_id[numDevices[ 0 ]];
         clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, numDevices[ 0 ], devicesArray, null);
+        if ( numDevices[0] == 0 ) {
+            String vendor = OpenCLDevice.Query.getString(pid, CL_PLATFORM_VENDOR);
+            String platformName = OpenCLDevice.Query.getString(pid, CL_PLATFORM_NAME);
+            _LOG.warn(
+                "Could not find any OpenCL devices for platform '{}' with id '0x{}' on vendor '{}'.",
+                "Although an OpenCL platform is present, it does not seem to find any devices. \n" +
+                "Does your hardware support OpenCL? \n",
+                platformName, Long.toHexString(pid.getNativePointer()), vendor,
+                new Throwable()
+            );
+        }
+
 
         // Enable exceptions and subsequently omit error checks in this sample
         setExceptionsEnabled( true );
