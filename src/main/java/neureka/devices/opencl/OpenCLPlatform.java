@@ -60,7 +60,7 @@ public class OpenCLPlatform
             String vendor = OpenCLDevice.Query.getString(pid, CL_PLATFORM_VENDOR);
             String platformName = OpenCLDevice.Query.getString(pid, CL_PLATFORM_NAME);
             _LOG.warn(
-                "Could not find any OpenCL devices for platform '{}' with id '0x{}' on vendor '{}'.",
+                "Could not find any OpenCL devices for platform '{}' with id '0x{}' from vendor '{}'. \n" +
                 "Although an OpenCL platform is present, it does not seem to find any devices. \n" +
                 "Does your hardware support OpenCL? \n",
                 platformName, Long.toHexString(pid.getNativePointer()), vendor,
