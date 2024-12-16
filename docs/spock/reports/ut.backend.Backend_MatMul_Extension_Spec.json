@@ -4,19 +4,19 @@
   "narrative":"",
   "subjects":[],
   "statistics":{
-    "runs":"3",
+    "runs":"17",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.053 seconds"
+    "duration":"0.083 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected.",
+      "id":"GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected. [0]",
       "result":"PASS",
-      "duration":"0.045 seconds",
+      "duration":"0.060 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,53 @@
     },
   
     {
-      "id":"Test context mock for opencl reference implementations.",
+      "id":"GEMM matrix multiplication reference implementation can be set as custom OperationType and works as expected. [1]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["BackendContext oldContext = Neureka.get().backend()","BackendContext testContext = oldContext.clone()"]},
+
+        {"kind":"when","text":"","code":["def run = testContext.runner()"]},
+
+        {"kind":"then","text":"","code":["run { testContext == Neureka.get().backend() }"]},
+
+        {"kind":"when","text":"","code":["Tensor t1 = Tensor.of([row_sze, com_sze], -3d..8d)","Tensor t2 = Tensor.of([com_sze, col_sze], -7d..4d)","            run {","                Neureka.get().backend()","                    .addOperation(","                            Operation","                                .builder()","                                .identifier('test_function')","                                .operator('test_function')","                                .arity(-1)","                                .isIndexer(false)","                                .isOperator(false)","                                .isDifferentiable(true)","                                .isInline(false)","                                .stringifier(","                                        children -> {","                                            String expression = String.join(\", \", children);","                                            if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {","                                                return \"test_function\" + expression;","                                            }","                                            return \"test_function\" + \"(\" + expression + \")\";","                                        }","                                )","                                .build()","                                .setAlgorithm(","                                        DeviceAlgorithm.withName(\"my_algorithm\")","                                            .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )","                                            .setAutogradModeFor(call -> AutoDiffMode.BACKWARD_ONLY )","                                            .setExecution(","                                                (outerCaller, outerCall) ->","                                                Result.of(AbstractDeviceAlgorithm.executeFor(","                                                    outerCaller, outerCall,","                                                    call -> AbstractDeviceAlgorithm.executeDeviceAlgorithm( call )","                                                ))","                                                .withAutoDiff((ADActionSupplier){ Function f, ExecutionCall<? extends Device<?>> adCall, boolean forward ->","                                                    if (forward) throw new IllegalArgumentException(\"Reshape operation does not support forward-AD!\");","                                                    return ADAction.of((t, error) -> Function.of(f.toString(), false).derive(new Tensor[]{error}, 0));","                                                })","                                            )","                                            .setCallPreparation(","                                                    call -> {","                                                         Device<?> device = call.getDevice();","                                                        if ( call.input( 0 ) == null ) // Creating a new tensor:","                                                        {","                                                            Shape shp = Shape.of(call.input( 1 ).getNDConf().shape(0), call.input( 2 ).getNDConf().shape(1))","                                                            Tensor output = Tensor.of(shp, 0.0);","                                                            output.mut.setIsVirtual(false);","                                                            device.store( output );","                                                            call = call.withInputAt( 0, output );","                                                        }","                                                        return call;","                                                    }","                                            )","                                            .setImplementationFor(","                                                    CPU.class,","                                                    CPUImplementation","                                                        .withArity(3)","                                                        .andImplementation(","                                                            (call) -> {","                                                                Tensor drn = call.input(Number.class, 0)","                                                                Tensor src1 = call.input(Number.class, 1)","                                                                Tensor src2 = call.input(Number.class, 2)","                                                                assert src1.shape(1) == src2.shape(0)","","                                                                //for ( int i=0; i<clContext.getGws(); i++ ) {","                                                                //    kernel.gemm_template(","                                                                //            drn.getDataAs( float[].class ),                     //__global float[] drain,","                                                                //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,","                                                                //            src1.getDataAs( float[].class ),                    //const __global float[] src1,","                                                                //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,","                                                                //            src2.getDataAs( float[].class ),                    //const __global float[] src2,","                                                                //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,","                                                                //            //call.getTensorOfType( Number.class, 0).rank(),//int rank, == 2","                                                                //            //-1, //const int d,","                                                                //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size","                                                                //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,","                                                                //            clContext.getMaxTSCom(),//16, //const u int max_ts_com,//  = 16,","                                                                //            clContext.getMaxWPTRow(),//8, //const u int max_wpt_row,// = 8,   // wpt := work per thread","                                                                //            clContext.getMaxWPTCol()//8  //const u int max_wpt_col // = 8,","                                                                //    )","                                                                //    clContext.increment()","                                                                //}","                                                                return call.input(0)","                                                            }","                                                        )","                                            )","                                            .buildFunAlgorithm()","                                )","                )","            }","Function testFun = run { Function.of(\"test_function(I[0],I[1])\") }"]},
+
+        {"kind":"then","text":"","code":["testFun.toString() == \"test_function(I[0], I[1])\""]},
+
+        {"kind":"when","text":"","code":["Tensor t3 = run { testFun([t1, t2]) }"]},
+
+        {"kind":"then","text":"","code":["t3 != null"]},
+
+        {"kind":"and","text":"","code":["Neureka.get().backend() == oldContext"]},
+
+        {"kind":"where","text":"","code":{"lws":["320","32"],"rws":["32","16"],"com_sze":["80","8"],"row_sze":["640","64"],"col_sze":["640","64"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test context mock for opencl reference implementations. [0]",
+      "result":"PASS",
+      "duration":"0.005 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)"]},
+
+        {"kind":"expect","text":"","code":["clContext.getMaxWPTCol()==wpt_col","clContext.getMaxWPTRow()==wpt_row","clContext.getMaxTSCom()==ts_com","clContext.getMaxTSCol()==ts_col","clContext.getMaxTSRow()==ts_row"]},
+
+        {"kind":"where","text":"","code":{"lws":["32","320","738"],"rws":["16","32","84"],"com_sze":["8","80","345"],"row_sze":["64","640","848"],"col_sze":["64","640","738"],"ts_com":["4","16","23"],"ts_row":["4","16","16"],"ts_col":["4","16","18"],"wpt_row":["4","4","8"],"wpt_col":["4","4","9"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test context mock for opencl reference implementations. [1]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -60,7 +106,211 @@
     },
   
     {
-      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions.",
+      "id":"Test context mock for opencl reference implementations. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)"]},
+
+        {"kind":"expect","text":"","code":["clContext.getMaxWPTCol()==wpt_col","clContext.getMaxWPTRow()==wpt_row","clContext.getMaxTSCom()==ts_com","clContext.getMaxTSCol()==ts_col","clContext.getMaxTSRow()==ts_row"]},
+
+        {"kind":"where","text":"","code":{"lws":["32","320","738"],"rws":["16","32","84"],"com_sze":["8","80","345"],"row_sze":["64","640","848"],"col_sze":["64","640","738"],"ts_com":["4","16","23"],"ts_row":["4","16","16"],"ts_col":["4","16","18"],"wpt_row":["4","4","8"],"wpt_col":["4","4","9"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [0]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [7]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [9]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [10]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["int[] result = DispatchUtility.parseTile( size, shape as int[] )"]},
+
+        {"kind":"then","text":"","code":["result == expected as int[]"]},
+
+        {"kind":"where","text":"","code":{"size":["800","1800","800","600","200","100","100","255","255","128**2","8**2","4**2"],"shape":["[432, 93, 352, 193]","[432, 903, 3520, 193]","[422, 293]","[993]","[252, 143]","[100, 100]","[400, 100]","[470, 652]","[7849, 4782]","[256, 256]","[128, 128]","[4,4]"],"expected":["[8, 31, 4, 1]","[108, 3, 8, 1]","[2, 293]","[331]","[12, 13]","[10, 5]","[8, 5]","[47, 4]","[47, 6]","[128, 128]","[8, 8]","[4,4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tile parsing for kernel parameter calculation yields expected tile dimensions. [11]",
       "result":"PASS",
       "duration":"0",
       "iterations":{

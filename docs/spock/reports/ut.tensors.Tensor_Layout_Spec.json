@@ -1,22 +1,22 @@
 {
   "className":"ut.tensors.Tensor_Layout_Spec",
   "title":"Row or Column Major. Why not both?",
-  "narrative":"Although Neureka exposes tensors as row major tensors from\n    a users point of view, it does in fact support both row major and column major\n    based tensor layout under the hood.\n    Here we cover how the layout of tensors can be modified\n    and we ensure the different tensor types still work as expected...\n    (The features in this specification involve mutating tensors, be careful when playing around with this yourself)",
+  "narrative":"Although Neureka exposes tensors as row major tensors from \n    a users point of view, it does in fact support both row major and column major \n    based tensor layout under the hood.\n    Here we cover how the layout of tensors can be modified\n    and we ensure the different tensor types still work as expected...\n    (The features in this specification involve mutating tensors, be careful when playing around with this yourself)",
   "subjects":[],
   "statistics":{
-    "runs":"2",
+    "runs":"3",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.133 seconds"
+    "duration":"0.184 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A new transposed version of a given tensor will be returned by the \"T()\" method.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.059 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,9 +37,36 @@
     },
   
     {
-      "id":"Matrix multiplication works for both column and row major matrices across devices.",
+      "id":"Matrix multiplication works for both column and row major matrices across devices. [0]",
       "result":"PASS",
-      "duration":"0.101 seconds",
+      "duration":"0.066 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We want to view tensors in the \"(shape:[value]\" format so we set the corresponding flag.","code":["Neureka.get().settings().view().getNDPrintSettings().setIsLegacy(false)"]},
+
+        {"kind":"and","text":"","code":["var a = Tensor.ofFloats().withShape(2, 3).andWhere({ it, idx->((7**it)%11-5).floatValue()})","var b = Tensor.ofFloats().withShape(3, 4).andWhere({ it, idx->((5**it)%11-5).floatValue()})","Device.get(device).store(a).store(b)"]},
+
+        {"kind":"expect","text":"","code":["a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString"]},
+
+        {"kind":"when","text":"","code":["a.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)","b.mut.toLayout(NDConfiguration.Layout.COLUMN_MAJOR)"]},
+
+        {"kind":"then","text":"","code":["a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString"]},
+
+        {"kind":"when","text":"","code":["a.mut.toLayout(NDConfiguration.Layout.ROW_MAJOR)","b.mut.toLayout(NDConfiguration.Layout.ROW_MAJOR)"]},
+
+        {"kind":"then","text":"","code":["a.matMul(b).toString({it.hasSlimNumbers = true}) == expectedString"]},
+
+        {"kind":"where","text":"","code":{"device":["'CPU'","'GPU'"],"expectedString":["'(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'","'(2x4):[24, -8, 8, 0, -1, 28, -14, 7]'"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Matrix multiplication works for both column and row major matrices across devices. [1]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

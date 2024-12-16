@@ -1,22 +1,22 @@
 {
   "className":"st.Training_NNs_Spec",
   "title":"Training a Neural Network Class",
-  "narrative":"When designing larger neural network architectures, what you would usually do is\n    to create a class that represents the whole model (which itself might be composed\n    of smaller models).\n\n    This class would then represent something that can be executed and then trained.\n    This Specification shows how to instantiate, execute and train various\n    pre-defined example neural network models.",
+  "narrative":"When designing larger neural network architectures, what you would usually do is\n    to create a class that represents the whole model (which itself might be composed\n    of smaller models). \n\n    This class would then represent something that can be executed and then trained.\n    This Specification shows how to instantiate, execute and train various \n    pre-defined example neural network models.",
   "subjects":[],
   "statistics":{
-    "runs":"3",
+    "runs":"5",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"7.071 seconds"
+    "duration":"12.622 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can run the attention head test model.",
       "result":"PASS",
-      "duration":"5.276 seconds",
+      "duration":"9.452 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            This little test simply executes the `QuasiMultiHeadAttention` model class\n            and checks if the loss is decreasing over time.\n            You can check out how this is implemented in the `QuasiMultiHeadAttention` class.\n            Here you will only see how the training is executed.\n        "]
       },
@@ -35,7 +35,7 @@
     {
       "id":"A simple 3 layer neural network converges.",
       "result":"PASS",
-      "duration":"1.331 seconds",
+      "duration":"2.328 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -50,9 +50,55 @@
     },
   
     {
-      "id":"A very simple 1 layer NN converges.",
+      "id":"A very simple 1 layer NN converges. [0]",
       "result":"PASS",
-      "duration":"0.458 seconds",
+      "duration":"0.144 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var inputs = Tensor.ofFloats().withShape( 2, 6 ).andFill(-4f..3f)","var weights = Tensor.ofRandom(Float, 6, 1)","var targets = Tensor.of( 0.2f, -0.1f, 0.5f, 1.2f, -0.3f, 0.2f ).reshape( 2, 1 )"]},
+
+        {"kind":"and","text":"","code":["weights.setRqsGradient( true )","applyOptimizer.accept(weights)"]},
+
+        {"kind":"and","text":"","code":["var pred","var losses = []"]},
+
+        {"kind":"when","text":"","code":["100.times {","    pred = inputs.matMul( weights ).tanh()","    var loss = ((pred - targets)**2).sum()","    loss.backward()","    weights.applyGradient()","    losses << loss.item()","}"]},
+
+        {"kind":"then","text":"","code":["pred.shape == [2, 1]","losses[0] > losses[losses.size()-1]","losses[0] > 2","losses[losses.size()-1] < 0.5"]},
+
+        {"kind":"where","text":"","code":{"applyOptimizer":["{ it.set(Optimizer.SGD.withLearningRate(0.03)) }","{ it.set(Optimizer.ADAM) }","{ it.set(Optimizer.RMSProp.withLearningRate(0.05)) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A very simple 1 layer NN converges. [1]",
+      "result":"PASS",
+      "duration":"0.434 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var inputs = Tensor.ofFloats().withShape( 2, 6 ).andFill(-4f..3f)","var weights = Tensor.ofRandom(Float, 6, 1)","var targets = Tensor.of( 0.2f, -0.1f, 0.5f, 1.2f, -0.3f, 0.2f ).reshape( 2, 1 )"]},
+
+        {"kind":"and","text":"","code":["weights.setRqsGradient( true )","applyOptimizer.accept(weights)"]},
+
+        {"kind":"and","text":"","code":["var pred","var losses = []"]},
+
+        {"kind":"when","text":"","code":["100.times {","    pred = inputs.matMul( weights ).tanh()","    var loss = ((pred - targets)**2).sum()","    loss.backward()","    weights.applyGradient()","    losses << loss.item()","}"]},
+
+        {"kind":"then","text":"","code":["pred.shape == [2, 1]","losses[0] > losses[losses.size()-1]","losses[0] > 2","losses[losses.size()-1] < 0.5"]},
+
+        {"kind":"where","text":"","code":{"applyOptimizer":["{ it.set(Optimizer.SGD.withLearningRate(0.03)) }","{ it.set(Optimizer.ADAM) }","{ it.set(Optimizer.RMSProp.withLearningRate(0.05)) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A very simple 1 layer NN converges. [2]",
+      "result":"PASS",
+      "duration":"0.255 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

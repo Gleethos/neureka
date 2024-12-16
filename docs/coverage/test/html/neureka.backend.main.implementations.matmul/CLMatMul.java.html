@@ -7,27 +7,27 @@ import neureka.ndim.config.NDConfiguration;
 public class CLMatMul extends SimpleCLImplementation
 {
     public CLMatMul() {
-<span class="fc" id="L10">        super(</span>
+<span class="nc" id="L10">        super(</span>
             call -&gt; {
-<span class="fc" id="L12">                if (</span>
-<span class="fc" id="L13">                    call.validate()</span>
-<span class="fc bfc" id="L14" title="All 2 branches covered.">                        .all( t -&gt; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
-<span class="fc bfc" id="L15" title="All 2 branches covered.">                        .isValid()</span>
+<span class="nc" id="L12">                if (</span>
+<span class="nc" id="L13">                    call.validate()</span>
+<span class="nc bnc" id="L14" title="All 2 branches missed.">                        .all( t -&gt; t.getNDConf().getLayout() == NDConfiguration.Layout.COLUMN_MAJOR )</span>
+<span class="nc bnc" id="L15" title="All 2 branches missed.">                        .isValid()</span>
                 ) {
-<span class="fc" id="L17">                    return new CLGEMM().run( call );</span>
+<span class="nc" id="L17">                    return new CLGEMM().run( call );</span>
                 } else {
-<span class="fc" id="L19">                    int M = call.input(1).shape(0);</span>
-<span class="fc" id="L20">                    int N = call.input(2).shape(1);</span>
-<span class="fc" id="L21">                    int K = call.input(1).shape(1);</span>
-<span class="fc" id="L22">                    call.getDevice()</span>
-<span class="fc" id="L23">                        .getKernel(call)</span>
-<span class="fc" id="L24">                        .pass(M).pass(N).pass(K)</span>
-<span class="fc" id="L25">                        .pass(call.input(Number.class, 1))</span>
-<span class="fc" id="L26">                        .pass(call.input(Number.class, 2))</span>
-<span class="fc" id="L27">                        .pass(call.input(Number.class, 0))</span>
-<span class="fc" id="L28">                        .call(new long[]{M, N}, null);</span>
+<span class="nc" id="L19">                    int M = call.input(1).shape(0);</span>
+<span class="nc" id="L20">                    int N = call.input(2).shape(1);</span>
+<span class="nc" id="L21">                    int K = call.input(1).shape(1);</span>
+<span class="nc" id="L22">                    call.getDevice()</span>
+<span class="nc" id="L23">                        .getKernel(call)</span>
+<span class="nc" id="L24">                        .pass(M).pass(N).pass(K)</span>
+<span class="nc" id="L25">                        .pass(call.input(Number.class, 1))</span>
+<span class="nc" id="L26">                        .pass(call.input(Number.class, 2))</span>
+<span class="nc" id="L27">                        .pass(call.input(Number.class, 0))</span>
+<span class="nc" id="L28">                        .call(new long[]{M, N}, null);</span>
 
-<span class="fc" id="L30">                    return call.input(0);</span>
+<span class="nc" id="L30">                    return call.input(0);</span>
                 }
             },
             3,
@@ -50,6 +50,6 @@ public class CLMatMul extends SimpleCLImplementation
             &quot;       C[ n + m * N ] = acc;                                            \n&quot; +
             &quot;   }                                                                    \n&quot;
         );
-<span class="fc" id="L53">    }</span>
+<span class="nc" id="L53">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

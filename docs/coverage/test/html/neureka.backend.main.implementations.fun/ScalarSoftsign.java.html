@@ -17,12 +17,12 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 
     @Override
     public String activationCode() {
-<span class="fc" id="L20">        return &quot;output = input / ( 1.0f + fabs( input ) );\n&quot;;</span>
+<span class="nc" id="L20">        return &quot;output = input / ( 1.0f + fabs( input ) );\n&quot;;</span>
     }
 
     @Override
     public String derivationCode() {
-<span class="fc" id="L25">        return &quot;output = 1.0f / ( 2.0f * fabs( input ) + input * input + 1.0f );\n&quot;;</span>
+<span class="nc" id="L25">        return &quot;output = 1.0f / ( 2.0f * fabs( input ) + input * input + 1.0f );\n&quot;;</span>
     }
 
     @Override
@@ -46,4 +46,4 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 <span class="fc" id="L46">    public static float softsign(float x) { return x / ( 1f + Math.abs( x ) ); }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

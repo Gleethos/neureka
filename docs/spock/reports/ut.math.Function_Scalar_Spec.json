@@ -1,20 +1,20 @@
 {
   "className":"ut.math.Function_Scalar_Spec",
   "title":"Functions for Scalars",
-  "narrative":"The Function API and it's implementations\n    receive and process arrays of scalars as arguments.\n    Functions don't have to be used alongside tensors / nd-arrays,\n    they can also compute derivatives based on scalar values.",
+  "narrative":"The Function API and it's implementations \n    receive and process arrays of scalars as arguments.\n    Functions don't have to be used alongside tensors / nd-arrays,\n    they can also compute derivatives based on scalar values.",
   "subjects":[],
   "statistics":{
-    "runs":"6",
+    "runs":"66",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.027 seconds"
+    "duration":"0.042 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"Function \"1/I[0]\" instance returns expected scalar results.",
+      "id":"Function \"1/I[0]\" instance returns expected scalar results. [0]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -31,7 +31,41 @@
     },
   
     {
-      "id":"Function \"I[0]+1/I[0]\" instance returns expected scalar results.",
+      "id":"Function \"1/I[0]\" instance returns expected scalar results. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a Function instance from expression \"1/I[0]\".","code":["Function f = Function.of(\"1/I[0]\", false)"]},
+
+        {"kind":"expect","text":"The function yields expected scalar results when called.","code":["if (index!=null) assert f.derive( inputs, index ) == expected","else assert f.call( inputs ) == expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[2]","[2]"],"index":["0","null"],"expected":["-0.25","0.5"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"I[0]+1/I[0]\" instance returns expected scalar results. [0]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a Function instance from expression \"I[0]+1/I[0]\".","code":["Function f = Function.of(\"I[0]+1/I[0]\", false)"]},
+
+        {"kind":"expect","text":"The function yields expected scalar results when called.","code":["if (index!=null) assert f.derive( inputs, index ) == expected","else assert f.call( inputs ) == expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[2]","[-1]","[-3]","[0.2]"],"index":["null","0","0","0"],"expected":["2.5","0.0","0.8888888888888888","-23.999999999999996"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"I[0]+1/I[0]\" instance returns expected scalar results. [1]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -48,7 +82,41 @@
     },
   
     {
-      "id":"Function \"(I[0]+1/I[0])**-I[0]\" instance returns expected scalar result.",
+      "id":"Function \"I[0]+1/I[0]\" instance returns expected scalar results. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a Function instance from expression \"I[0]+1/I[0]\".","code":["Function f = Function.of(\"I[0]+1/I[0]\", false)"]},
+
+        {"kind":"expect","text":"The function yields expected scalar results when called.","code":["if (index!=null) assert f.derive( inputs, index ) == expected","else assert f.call( inputs ) == expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[2]","[-1]","[-3]","[0.2]"],"index":["null","0","0","0"],"expected":["2.5","0.0","0.8888888888888888","-23.999999999999996"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"I[0]+1/I[0]\" instance returns expected scalar results. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a Function instance from expression \"I[0]+1/I[0]\".","code":["Function f = Function.of(\"I[0]+1/I[0]\", false)"]},
+
+        {"kind":"expect","text":"The function yields expected scalar results when called.","code":["if (index!=null) assert f.derive( inputs, index ) == expected","else assert f.call( inputs ) == expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[2]","[-1]","[-3]","[0.2]"],"index":["null","0","0","0"],"expected":["2.5","0.0","0.8888888888888888","-23.999999999999996"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"(I[0]+1/I[0])**-I[0]\" instance returns expected scalar result. [0]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -65,7 +133,41 @@
     },
   
     {
-      "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars.",
+      "id":"Function \"(I[0]+1/I[0])**-I[0]\" instance returns expected scalar result. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a Function instance from expression \"(I[0]+1/I[0])**-I[0]\".","code":["Function f = Function.of(\"(I[0]+1/I[0])**-I[0]\", false)"]},
+
+        {"kind":"expect","text":"The function yields expected scalar results when called.","code":["if (index!=null) assert f.derive( inputs, index ) == expected","else assert f.call( inputs ) == expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[  1  ]","[ 0.2 ]"],"index":["null","0"],"expected":["0.5","-0.5217778675999797"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars. [0]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(\"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\", false)"]},
+
+        {"kind":"expect","text":"","code":["if ( index != null ) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[ 3  ]","[ 2.5]","[ 0  ]","[ 0  ]","[ 0.5]","[ 1.6]","[ -4 ]"],"index":["null","null","null","0","0","0","0"],"expected":["3.049021713079475","3.507365283517986","0.2","1.1","0.646867884000033","-0.00697440343353687","3.9174193383745917"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars. [1]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -82,7 +184,109 @@
     },
   
     {
-      "id":"Test scalar results of Function \"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\" instance.",
+      "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(\"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\", false)"]},
+
+        {"kind":"expect","text":"","code":["if ( index != null ) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[ 3  ]","[ 2.5]","[ 0  ]","[ 0  ]","[ 0.5]","[ 1.6]","[ -4 ]"],"index":["null","null","null","0","0","0","0"],"expected":["3.049021713079475","3.507365283517986","0.2","1.1","0.646867884000033","-0.00697440343353687","3.9174193383745917"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(\"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\", false)"]},
+
+        {"kind":"expect","text":"","code":["if ( index != null ) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[ 3  ]","[ 2.5]","[ 0  ]","[ 0  ]","[ 0.5]","[ 1.6]","[ -4 ]"],"index":["null","null","null","0","0","0","0"],"expected":["3.049021713079475","3.507365283517986","0.2","1.1","0.646867884000033","-0.00697440343353687","3.9174193383745917"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(\"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\", false)"]},
+
+        {"kind":"expect","text":"","code":["if ( index != null ) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[ 3  ]","[ 2.5]","[ 0  ]","[ 0  ]","[ 0.5]","[ 1.6]","[ -4 ]"],"index":["null","null","null","0","0","0","0"],"expected":["3.049021713079475","3.507365283517986","0.2","1.1","0.646867884000033","-0.00697440343353687","3.9174193383745917"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(\"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\", false)"]},
+
+        {"kind":"expect","text":"","code":["if ( index != null ) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[ 3  ]","[ 2.5]","[ 0  ]","[ 0  ]","[ 0.5]","[ 1.6]","[ -4 ]"],"index":["null","null","null","0","0","0","0"],"expected":["3.049021713079475","3.507365283517986","0.2","1.1","0.646867884000033","-0.00697440343353687","3.9174193383745917"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Function \"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\" instance returns expected scalars. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(\"(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)\", false)"]},
+
+        {"kind":"expect","text":"","code":["if ( index != null ) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[ 3  ]","[ 2.5]","[ 0  ]","[ 0  ]","[ 0.5]","[ 1.6]","[ -4 ]"],"index":["null","null","null","0","0","0","0"],"expected":["3.049021713079475","3.507365283517986","0.2","1.1","0.646867884000033","-0.00697440343353687","3.9174193383745917"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of Function \"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\" instance. [0]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(\"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\", false)"]},
+
+        {"kind":"expect","text":"","code":["if (index!=null) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[0.0, 0.5, 1.6, -4.0]","[0.0, 0.5, 1.6, -4.0]","[0.0, 0.5, 1.6, -4.0]","[0.0, 0.5, 1.6, -4.0]"],"index":["0","1","2","3"],"expected":["1.1","0.646867884000033","-0.00697440343353687","3.9174193383745917"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of Function \"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\" instance. [1]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -99,7 +303,823 @@
     },
   
     {
-      "id":"Test scalar results of various Function instances.",
+      "id":"Test scalar results of Function \"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\" instance. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(\"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\", false)"]},
+
+        {"kind":"expect","text":"","code":["if (index!=null) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[0.0, 0.5, 1.6, -4.0]","[0.0, 0.5, 1.6, -4.0]","[0.0, 0.5, 1.6, -4.0]","[0.0, 0.5, 1.6, -4.0]"],"index":["0","1","2","3"],"expected":["1.1","0.646867884000033","-0.00697440343353687","3.9174193383745917"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of Function \"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\" instance. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Function f = Function.of(\"sumjs((cos(I[j]*5)/5+I[j])*(1+sin(I[j])/2))\", false)"]},
+
+        {"kind":"expect","text":"","code":["if (index!=null) assert f.derive( inputs, index )==expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following input array, target derivative index and result scalar is used :","code":{"inputs":["[0.0, 0.5, 1.6, -4.0]","[0.0, 0.5, 1.6, -4.0]","[0.0, 0.5, 1.6, -4.0]","[0.0, 0.5, 1.6, -4.0]"],"index":["0","1","2","3"],"expected":["1.1","0.646867884000033","-0.00697440343353687","3.9174193383745917"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [0]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [7]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [9]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [10]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [11]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [12]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [13]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [14]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [15]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [16]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [17]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [18]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [19]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [20]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [21]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [22]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [23]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [24]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [25]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [26]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [27]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [28]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [29]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [30]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [31]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [32]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [33]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [34]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [35]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [36]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [37]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [38]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [39]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [40]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [41]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [42]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [43]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [44]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [45]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new Function instance which is detached! (no autograd support)","code":["Function f = Function.of(equation, false)"]},
+
+        {"kind":"expect","text":"Calling the function will yield the expected result.","code":["if ( index!=null ) assert f.derive( inputs, index ) == expected","else assert f.call( inputs )==expected"]},
+
+        {"kind":"where","text":"The following parameters are used :","code":{"equation":["\"6/2*(1+2)\"","\"sumJs(Ij)\"","\"prod(Ij)\"","\"prod(prod(Ij))\"","\"I3/i[1]-I0+2+i2\"","\"i3*i1/(i4-i0-2)-sig(0)+tanh(0)\"","\"(i0*i1)*i2\"","\"softplus(i0*i1)*i2\"","\"prod(ij)\"","\"relu(prod(ij))\"","\"relu(prod(ij))\"","\"quad(prod(ij)+6)\"","\"quad(prod(ij)+6)\"","\"quad(abs(prod(ij))-6)\"","\"quad(abs(prod(ij))-6)\"","\"sumJs(ij)\"","\"sumJs(ij)\"","\"sumJs(ij**1)\"","\"sumJs(ij**1)\"","\"I[1]**2\"","\"I[1]**2\"","\"sumJs(ij**2)\"","\"sumJs(ij**2)\"","\"2**I[1]\"","\"2**I[0]\"","\"2**I[2]\"","\"2**I[1]\"","\"sumJs(2**I[j])\"","\"sumJs(2**I[j])\"","\"I[1]%2\"","\"I[1]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"I[2]%2\"","\"7%I[1]\"","\"7%I[1]\"","\"sum(7%ij)\""],"inputs":["[]","[2, 3.2, 6]","[0.5, 0.5, 100]","[0.5, 0.5, 10]","[5, 4, 3, 12]","[-4, -2, 6, -3, -8]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -2]","[2, 3, -5]","[2, 3, -5]","[2, 3, -5]","[2, 4, -5]","[2, 4, -5]","[2, 3,  4]"],"index":["null","null","null","null","null","null","0","0","1","null","1","null","1","null","1","null","1","null","1","null","1","null","1","null","null","null","1","null","1","null","1","null","2","1","null","1","2"],"expected":["9","11.2","25","(2.5 * 2.5 * 2.5)","3","-1.5","-6","-5.985164261060192","-4","-0.12","-0.04","36","-12*-4","36","-12*-4","3","1","3","1","9","6","17","6","8","4","0.25","5.545177444479562","12.25","5.545177444479562","1","1","-1","1","0","3","0 \n\"sum(7%i0)\"                       [2, 3,  4]            null   3\n\"sum(7%ij)\"                       [2, 3,  4]            null   5\n\"sum(7%i0)\"                       [2, 3,  4]            2      0","0 \n\"sum(i0%3)\"                       [2, 3,  4]            0      1\n\"sum(ij%3)\"                       [2, 3,  4]            2      1\n\"sum(ij-3)\"                       [1, 2,  4]            null   -2\n\"sum(ij-3)\"                       [1, 2,  4]            1      1\n\"sum(3-ij)\"                       [1, 2,  4]            null   2\n\"sum(3-ij)\"                       [1, 2,  4]            1      -1\n\"sum(3-ij-ij)\"                    [1, 2,  4]            1      -2"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test scalar results of various Function instances. [46]",
       "result":"PASS",
       "duration":"0",
       "iterations":{

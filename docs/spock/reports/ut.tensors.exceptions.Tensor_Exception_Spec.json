@@ -4,19 +4,19 @@
   "narrative":"This specification covers the behavior of the Tensor class in\n    exceptional scenarios which are contrary to its intended use.\n    The purpose of this is to assert that the Tensor class will provide\n    useful feedback to a user to explain that a misuse of its API\n    occurred so that the user can correct this misuse.",
   "subjects":[],
   "statistics":{
-    "runs":"8",
+    "runs":"25",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.047 seconds"
   },
   "headers":["\n                <h2> Tensors Exception Behavior </h2>\n                <br> \n                <p>\n                    This specification covers the behavior of tensors\n                    in exceptional situations.           \n                </p>\n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Trying to inject an empty tensor into another causes fitting exception.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,364 @@
     },
   
     {
-      "id":"Passing null to various methods of the tensor API will throw exceptions.",
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [0]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [7]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [8]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [9]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [10]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [11]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [12]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [13]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [14]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [15]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [16]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["Tensor<Integer> t = Tensor.of(1, 2, 3)"]},
+
+        {"kind":"when","text":"","code":["errorCode(t)"]},
+
+        {"kind":"then","text":"","code":["var exception = thrown(type)"]},
+
+        {"kind":"and","text":"","code":["exception.message != \"\" && exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException","IllegalArgumentException"],"errorCode":["{ Tensor x -> x.times((Tensor)null) }","{ Tensor x -> x.div((Tensor)null)  }","{ Tensor x -> x.plus((Tensor)null)  }","{ Tensor x -> x.mod((Tensor)null)  }","{ Tensor x -> x.mut.timesAssign((Tensor)null) }","{ Tensor x -> x.mut.divAssign((Tensor)null)  }","{ Tensor x -> x.mut.plusAssign((Tensor)null)  }","{ Tensor x -> x.mut.modAssign((Tensor)null)  }","{ Tensor x -> x.mut.minusAssign((Tensor)null)  }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((String[][])null) }","{ Tensor x -> x.mut.labelAxes((Map)null) }","{ Tensor x -> x.mut.label(null) }","{ Tensor x -> x.withLabels((String[][])null) }","{ Tensor x -> x.withLabels(null, (String[])null) }","{ Tensor x -> x.withLabels((String[])null) }","{ Tensor x -> x.withLabels((Map)null) }","{ Tensor x -> x.withLabel(null) }"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing null to various methods of the tensor API will throw exceptions. [17]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -54,7 +411,7 @@
     {
       "id":"Passing an invalid object into Tensor constructor causes descriptive exception.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +426,7 @@
     {
       "id":"Passing an invalid key object into the \"getAt\" method causes a descriptive exception.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -86,7 +443,7 @@
     {
       "id":"Out of dimension bound causes descriptive exception!",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -116,7 +473,7 @@
     {
       "id":"Casting a tensor as something unusual will cuas an exception to be thrown.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -133,7 +490,7 @@
     {
       "id":"Building a tensor with \"null\" as shape argument throws an exception.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

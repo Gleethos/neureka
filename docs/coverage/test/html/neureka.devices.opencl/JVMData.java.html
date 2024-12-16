@@ -40,11 +40,11 @@ class JVMData
     }
 
     public static JVMData of( Object data, boolean convertToFloat ) {
-<span class="fc" id="L43">        return new JVMData( data, 0, lengthOf(data), convertToFloat, false );</span>
+<span class="nc" id="L43">        return new JVMData( data, 0, lengthOf(data), convertToFloat, false );</span>
     }
 
     public static JVMData of( Object data, int size, boolean convertToFloat, boolean virtual ) {
-<span class="fc" id="L47">        return new JVMData( data, 0, size, convertToFloat, virtual );</span>
+<span class="nc" id="L47">        return new JVMData( data, 0, size, convertToFloat, virtual );</span>
     }
 
     public static JVMData of( Object data, int size, int start ) {
@@ -60,13 +60,13 @@ class JVMData
 
     private Object _preprocess( Object data, int start, int targetSize, boolean convertToFloat, boolean allowVirtual )
     {
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        int size = allowVirtual ? lengthOf(data) : targetSize;</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        int size = allowVirtual ? lengthOf(data) : targetSize;</span>
 
 <span class="fc bfc" id="L65" title="All 2 branches covered.">        if ( data instanceof Number )</span>
 <span class="fc" id="L66">            data = _allocArrayFromNumber( (Number) data, size );</span>
 
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        if ( convertToFloat )</span>
-<span class="fc" id="L69">            data = DataConverter.get().convert( data, float[].class );</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if ( convertToFloat )</span>
+<span class="nc" id="L69">            data = DataConverter.get().convert( data, float[].class );</span>
 
 <span class="fc" id="L71">        return _fillArray( data, start, size ); // Make sure the array is of the correct size!</span>
     }
@@ -169,7 +169,7 @@ class JVMData
 <span class="nc" id="L169">        throw new IllegalStateException();</span>
     }
 
-<span class="fc" id="L172">    public long getTargetLength() { return _size; }</span>
+<span class="nc" id="L172">    public long getTargetLength() { return _size; }</span>
 
     int getItemSize() {
 <span class="fc bfc" id="L175" title="All 2 branches covered.">        if ( _data instanceof float[]  ) return Sizeof.cl_float;</span>
@@ -182,7 +182,7 @@ class JVMData
     }
 
     boolean isVirtual() {
-<span class="fc bfc" id="L185" title="All 2 branches covered.">        return _size != getLength();</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        return _size != getLength();</span>
     }
 
     OpenCLDevice.cl_dtype getType() {
@@ -217,4 +217,4 @@ class JVMData
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -4,19 +4,19 @@
   "narrative":"Tensors should have good interoperability with other JDK data structures like images.\n    In this specification we define these interoperability requirements.",
   "subjects":[],
   "statistics":{
-    "runs":"2",
+    "runs":"8",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.008 seconds"
+    "duration":"0.035 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"Tensor can be converted to buffered images.",
+      "id":"Tensor can be converted to buffered images. [0]",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.024 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,115 @@
     },
   
     {
-      "id":"Not all tensor can be converted to images.",
+      "id":"Tensor can be converted to buffered images. [1]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"A tensor of the provided type is converted to a buffered image","code":["var asImage = Tensor.of(type).withShape(shape).andFill(42..73).asImage(image)"]},
+
+        {"kind":"then","text":"The resulting image has the expected shape","code":["asImage.height == shape[0]","asImage.width  == shape[1]"]},
+
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","Byte","Byte"],"image":["Tensor.ImageType.BGR_3BYTE","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ABGR_4BYTE","Tensor.ImageType.ABGR_PRE_4BYTE"],"shape":["[3, 5, 3]","[7, 5, 1]","[7, 5, 4]","[7, 5, 4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tensor can be converted to buffered images. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"A tensor of the provided type is converted to a buffered image","code":["var asImage = Tensor.of(type).withShape(shape).andFill(42..73).asImage(image)"]},
+
+        {"kind":"then","text":"The resulting image has the expected shape","code":["asImage.height == shape[0]","asImage.width  == shape[1]"]},
+
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","Byte","Byte"],"image":["Tensor.ImageType.BGR_3BYTE","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ABGR_4BYTE","Tensor.ImageType.ABGR_PRE_4BYTE"],"shape":["[3, 5, 3]","[7, 5, 1]","[7, 5, 4]","[7, 5, 4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Tensor can be converted to buffered images. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"A tensor of the provided type is converted to a buffered image","code":["var asImage = Tensor.of(type).withShape(shape).andFill(42..73).asImage(image)"]},
+
+        {"kind":"then","text":"The resulting image has the expected shape","code":["asImage.height == shape[0]","asImage.width  == shape[1]"]},
+
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","Byte","Byte"],"image":["Tensor.ImageType.BGR_3BYTE","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ABGR_4BYTE","Tensor.ImageType.ABGR_PRE_4BYTE"],"shape":["[3, 5, 3]","[7, 5, 1]","[7, 5, 4]","[7, 5, 4]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Not all tensor can be converted to images. [0]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We try to convert a tensor of the provided type to a buffered image...","code":["Tensor.of(type).withShape(shape).all(-3).asImage(image)"]},
+
+        {"kind":"then","text":"An exception is thrown!","code":["var exception = thrown(IllegalArgumentException)"]},
+
+        {"kind":"and","text":"The exception message has a plausible size.","code":["exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","String","Byte"],"image":["Tensor.ImageType.BGR_3BYTE","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ABGR_4BYTE"],"shape":["[3, 5]","[7, 5, 3]","[7, 5, 1]","[2, 9, 3]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Not all tensor can be converted to images. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We try to convert a tensor of the provided type to a buffered image...","code":["Tensor.of(type).withShape(shape).all(-3).asImage(image)"]},
+
+        {"kind":"then","text":"An exception is thrown!","code":["var exception = thrown(IllegalArgumentException)"]},
+
+        {"kind":"and","text":"The exception message has a plausible size.","code":["exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","String","Byte"],"image":["Tensor.ImageType.BGR_3BYTE","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ABGR_4BYTE"],"shape":["[3, 5]","[7, 5, 3]","[7, 5, 1]","[2, 9, 3]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Not all tensor can be converted to images. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We try to convert a tensor of the provided type to a buffered image...","code":["Tensor.of(type).withShape(shape).all(-3).asImage(image)"]},
+
+        {"kind":"then","text":"An exception is thrown!","code":["var exception = thrown(IllegalArgumentException)"]},
+
+        {"kind":"and","text":"The exception message has a plausible size.","code":["exception.message.length() > 13"]},
+
+        {"kind":"where","text":"","code":{"type":["Byte","Integer","String","Byte"],"image":["Tensor.ImageType.BGR_3BYTE","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ARGB_1INT","Tensor.ImageType.ABGR_4BYTE"],"shape":["[3, 5]","[7, 5, 3]","[7, 5, 1]","[2, 9, 3]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Not all tensor can be converted to images. [3]",
       "result":"PASS",
       "duration":"0",
       "iterations":{

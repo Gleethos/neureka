@@ -113,7 +113,7 @@ public final class CSVHandle extends AbstractFileHandle&lt;CSVHandle, String&gt;
 <span class="fc" id="L113">        }</span>
 <span class="fc" id="L114">        List&lt;String[]&gt; table = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L115" title="All 2 branches covered.">        List&lt;String&gt; rowLabels = ( _firstColIsIndex ) ? new ArrayList&lt;&gt;() : null;</span>
-        try (
+<span class="fc" id="L116">        try (</span>
 <span class="fc" id="L117">            BufferedReader br = new BufferedReader( new InputStreamReader( fis, StandardCharsets.UTF_8 ) )</span>
         ) {
             String line;
@@ -279,4 +279,4 @@ public final class CSVHandle extends AbstractFileHandle&lt;CSVHandle, String&gt;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

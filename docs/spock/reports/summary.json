@@ -1,10 +1,10 @@
 {
   "project": "Neureka",
   "version": "0.20.1",
-  "created": "Thu Jun 29 18:08:38 CEST 2023",
+  "created": "Mon Dec 16 14:38:28 CET 2024",
   "statistics":{
     "runs":"99",
-    "passed":"99",
+    "passed":"96",
     "failed":"0",
     "featureFailures":"0",
     "successRate":"1.0",
@@ -86,13 +86,13 @@
       "className":"st.Broad_System_Test",
       "title":"",
       "narrative":"",
-      "featureCount":"1",
+      "featureCount":"4",
       "failures":"0",
       "errors":"0",
       "skipped":"0" ,
       "successRate":"1.0",
       "duration":"?",
-      "executedFeatures":[{"id":"The long broad integration test runs successfully.","extraInfo":[]}],
+      "executedFeatures":[{"id":"A function with expression \"(-3*(2*(i0*-1)))*(-1*i0)\" can be backpropagated.","extraInfo":[]},{"id":"A function with expression \"softplus((I[0]xI[1])*-100)\" can be backpropagated.","extraInfo":[]},{"id":"A function with expression \"softplus(tanh(I[0]*I[1]*2)*I[1])\" can be backpropagated.","extraInfo":[]},{"id":"The long broad integration test runs successfully.","extraInfo":[]}],
       "ignoredFeatures":[]
     },{
       "className":"st.NN_Concepts_Spec",
@@ -377,11 +377,11 @@
       "featureCount":"4",
       "failures":"0",
       "errors":"0",
-      "skipped":"0" ,
+      "skipped":"4" ,
       "successRate":"1.0",
       "duration":"?",
-      "executedFeatures":[{"id":"Ad hoc compilation produces expected exceptions when duplication is found.","extraInfo":[]},{"id":"Ad hoc compilation produces expected exceptions.","extraInfo":[]},{"id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.","extraInfo":[]},{"id":"Trying to restore a tensor which is not on a device raises exception.","extraInfo":[]}],
-      "ignoredFeatures":[]
+      "executedFeatures":[],
+      "ignoredFeatures":[{"id":"Ad hoc compilation produces expected exceptions when duplication is found.","extraInfo":[]},{"id":"Ad hoc compilation produces expected exceptions.","extraInfo":[]},{"id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.","extraInfo":[]},{"id":"Trying to restore a tensor which is not on a device raises exception.","extraInfo":[]}]
     },{
       "className":"ut.device.OpenCLDevice_Spec",
       "title":"The OpenCLDevice Specification",
@@ -389,11 +389,11 @@
       "featureCount":"8",
       "failures":"0",
       "errors":"0",
-      "skipped":"0" ,
+      "skipped":"8" ,
       "successRate":"1.0",
       "duration":"?",
-      "executedFeatures":[{"id":"Ad hoc compilation produces executable kernel.","extraInfo":[]},{"id":"Ad hoc compilation works for WIP general purpose matrix multiplication.","extraInfo":[]},{"id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.","extraInfo":[]},{"id":"Ad hoc compilation works for custom simple row major based matrix multiplication.","extraInfo":[]},{"id":"Ad hoc matrix multiplication works for multiple of 16 matrices.","extraInfo":[]},{"id":"An OpenCLDevice loads tensors in a provided lambda temporarily.","extraInfo":[]},{"id":"We can get the items of an outsourced tensor as a primitive array.","extraInfo":[]},{"id":"We can take a look at the underlying data array of an outsourced tensor through the unsafe API.","extraInfo":[]}],
-      "ignoredFeatures":[]
+      "executedFeatures":[],
+      "ignoredFeatures":[{"id":"Ad hoc compilation produces executable kernel.","extraInfo":[]},{"id":"Ad hoc compilation works for WIP general purpose matrix multiplication.","extraInfo":[]},{"id":"Ad hoc compilation works for custom column major based tiled matrix multiplication.","extraInfo":[]},{"id":"Ad hoc compilation works for custom simple row major based matrix multiplication.","extraInfo":[]},{"id":"Ad hoc matrix multiplication works for multiple of 16 matrices.","extraInfo":[]},{"id":"An OpenCLDevice loads tensors in a provided lambda temporarily.","extraInfo":[]},{"id":"We can get the items of an outsourced tensor as a primitive array.","extraInfo":[]},{"id":"We can take a look at the underlying data array of an outsourced tensor through the unsafe API.","extraInfo":[]}]
     },{
       "className":"ut.device.OpenCL_Spec",
       "title":"Working with OpenCL",
@@ -401,11 +401,11 @@
       "featureCount":"5",
       "failures":"0",
       "errors":"0",
-      "skipped":"0" ,
+      "skipped":"5" ,
       "successRate":"1.0",
       "duration":"?",
-      "executedFeatures":[{"id":"A given OpenCL context can be disposed!","extraInfo":[]},{"id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.","extraInfo":[]},{"id":"First found OpenCLDevice will have realistic numeric properties.","extraInfo":[]},{"id":"First found OpenCLDevice will have realistic properties inside summary query.","extraInfo":[]},{"id":"First found OpenCLDevice will have realistic text properties.","extraInfo":[]}],
-      "ignoredFeatures":[]
+      "executedFeatures":[],
+      "ignoredFeatures":[{"id":"A given OpenCL context can be disposed!","extraInfo":[]},{"id":"An OpenCLDevice will throw an exception when trying to add a tensor whose \"data parent\" is not outsourced.","extraInfo":[]},{"id":"First found OpenCLDevice will have realistic numeric properties.","extraInfo":[]},{"id":"First found OpenCLDevice will have realistic properties inside summary query.","extraInfo":[]},{"id":"First found OpenCLDevice will have realistic text properties.","extraInfo":[]}]
     },{
       "className":"ut.device.internal.CLFunctionCompiler_Spec",
       "title":"Turning functions into kernels.",
@@ -413,11 +413,11 @@
       "featureCount":"4",
       "failures":"0",
       "errors":"0",
-      "skipped":"0" ,
+      "skipped":"2" ,
       "successRate":"1.0",
       "duration":"?",
-      "executedFeatures":[{"id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.","extraInfo":[]},{"id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.","extraInfo":[]},{"id":"The OpenCLDevice produces a working optimized Function for doubles.","extraInfo":[]},{"id":"The OpenCLDevice produces a working optimized Function for floats.","extraInfo":[]}],
-      "ignoredFeatures":[]
+      "executedFeatures":[{"id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.","extraInfo":[]},{"id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.","extraInfo":[]}],
+      "ignoredFeatures":[{"id":"The OpenCLDevice produces a working optimized Function for doubles.","extraInfo":[]},{"id":"The OpenCLDevice produces a working optimized Function for floats.","extraInfo":[]}]
     },{
       "className":"ut.device.internal.CPU_Kernel_Spec",
       "title":"",
@@ -761,11 +761,11 @@
       "featureCount":"6",
       "failures":"0",
       "errors":"0",
-      "skipped":"0" ,
+      "skipped":"1" ,
       "successRate":"1.0",
       "duration":"?",
-      "executedFeatures":[{"id":"Backend related library objects adhere to the same toString formatting convention!","extraInfo":[]},{"id":"Every Thread instance has their own Neureka instance.","extraInfo":[]},{"id":"Neureka class instance has expected behaviour.","extraInfo":[]},{"id":"Neureka settings class can be locked causing its properties to be immutable.","extraInfo":[]},{"id":"OpenCL related library objects adhere to the same toString formatting convention!","extraInfo":[]},{"id":"Various library objects adhere to the same toString formatting convention!","extraInfo":[]}],
-      "ignoredFeatures":[]
+      "executedFeatures":[{"id":"Backend related library objects adhere to the same toString formatting convention!","extraInfo":[]},{"id":"Every Thread instance has their own Neureka instance.","extraInfo":[]},{"id":"Neureka class instance has expected behaviour.","extraInfo":[]},{"id":"Neureka settings class can be locked causing its properties to be immutable.","extraInfo":[]},{"id":"Various library objects adhere to the same toString formatting convention!","extraInfo":[]}],
+      "ignoredFeatures":[{"id":"OpenCL related library objects adhere to the same toString formatting convention!","extraInfo":[]}]
     },{
       "className":"ut.optimization.ADAM_Spec",
       "title":"",
@@ -881,11 +881,11 @@
       "featureCount":"7",
       "failures":"0",
       "errors":"0",
-      "skipped":"0" ,
+      "skipped":"3" ,
       "successRate":"1.0",
       "duration":"?",
-      "executedFeatures":[{"id":"Tensor mapping lambdas produce expected tensors.","extraInfo":[]},{"id":"The \"map\" method is a shorter convenience method for mapping to the same type.","extraInfo":[]},{"id":"We can analyse the values of a tensor using various predicate receiving methods","extraInfo":[]},{"id":"We can find both min and max items in a tensor by providing a comparator.","extraInfo":[]},{"id":"We can initialize a tensor using a filler lambda mapping indices to items.","extraInfo":[]},{"id":"We can use the \"filter\" method as a shortcut for \"stream().filter(..)\".","extraInfo":[]},{"id":"We can use the \"flatMap\" method as a shortcut for \"stream().flatMap(..)\".","extraInfo":[]}],
-      "ignoredFeatures":[]
+      "executedFeatures":[{"id":"We can find both min and max items in a tensor by providing a comparator.","extraInfo":[]},{"id":"We can initialize a tensor using a filler lambda mapping indices to items.","extraInfo":[]},{"id":"We can use the \"filter\" method as a shortcut for \"stream().filter(..)\".","extraInfo":[]},{"id":"We can use the \"flatMap\" method as a shortcut for \"stream().flatMap(..)\".","extraInfo":[]}],
+      "ignoredFeatures":[{"id":"Tensor mapping lambdas produce expected tensors.","extraInfo":[]},{"id":"The \"map\" method is a shorter convenience method for mapping to the same type.","extraInfo":[]},{"id":"We can analyse the values of a tensor using various predicate receiving methods","extraInfo":[]}]
     },{
       "className":"ut.tensors.Reshape_Spec",
       "title":"Tensor Reshaping",
@@ -953,11 +953,11 @@
       "featureCount":"4",
       "failures":"0",
       "errors":"0",
-      "skipped":"0" ,
+      "skipped":"1" ,
       "successRate":"1.0",
       "duration":"?",
-      "executedFeatures":[{"id":"Adding OpenCL device to tensor makes tensor be \"outsourced\" and contain the Device instance as component.","extraInfo":[]},{"id":"Tensors try to migrate themselves to a device that is being added to them as component.","extraInfo":[]},{"id":"The device of a tensor can be accessed via the \"device()\" method.","extraInfo":[]},{"id":"When creating slices of tensors then this should trigger a \"parent - child\" relation noticeable to the device!","extraInfo":[]}],
-      "ignoredFeatures":[]
+      "executedFeatures":[{"id":"Tensors try to migrate themselves to a device that is being added to them as component.","extraInfo":[]},{"id":"The device of a tensor can be accessed via the \"device()\" method.","extraInfo":[]},{"id":"When creating slices of tensors then this should trigger a \"parent - child\" relation noticeable to the device!","extraInfo":[]}],
+      "ignoredFeatures":[{"id":"Adding OpenCL device to tensor makes tensor be \"outsourced\" and contain the Device instance as component.","extraInfo":[]}]
     },{
       "className":"ut.tensors.Tensor_Dot_Product_Spec",
       "title":"Tensor Dot Products",
@@ -1097,11 +1097,11 @@
       "featureCount":"4",
       "failures":"0",
       "errors":"0",
-      "skipped":"0" ,
+      "skipped":"1" ,
       "successRate":"1.0",
       "duration":"?",
-      "executedFeatures":[{"id":"Inline operations cause illegal state exceptions.","extraInfo":[]},{"id":"Inline operations causes version incrementation.","extraInfo":[]},{"id":"Non-inline operations do not cause version incrementation.","extraInfo":[]},{"id":"Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).","extraInfo":[]}],
-      "ignoredFeatures":[]
+      "executedFeatures":[{"id":"Inline operations cause illegal state exceptions.","extraInfo":[]},{"id":"Inline operations causes version incrementation.","extraInfo":[]},{"id":"Non-inline operations do not cause version incrementation.","extraInfo":[]}],
+      "ignoredFeatures":[{"id":"Storing a tensor on a device should not change the version of a tensor (Even though its data changed technically).","extraInfo":[]}]
     },{
       "className":"ut.tensors.exceptions.Tensor_Delete_Exception_Spec",
       "title":"",

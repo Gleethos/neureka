@@ -7,9 +7,9 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 {
 <span class="fc" id="L8">    @Override public String id() { return &quot;abs&quot;; }</span>
 
-<span class="fc" id="L10">    @Override public String activationCode() { return &quot;output = fabs( input );\n&quot;; }</span>
+<span class="nc" id="L10">    @Override public String activationCode() { return &quot;output = fabs( input );\n&quot;; }</span>
 
-<span class="fc" id="L12">    @Override public String derivationCode() { return &quot;output = ( input &lt; 0 ) ? -1 : 1;\n&quot;; }</span>
+<span class="nc" id="L12">    @Override public String derivationCode() { return &quot;output = ( input &lt; 0 ) ? -1 : 1;\n&quot;; }</span>
 
     @Override
     public CPUFun getActivation() {
@@ -32,4 +32,4 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

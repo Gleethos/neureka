@@ -2,6 +2,7 @@
 
 import neureka.Tensor;
 import neureka.backend.api.AutoDiffMode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Result;
 import neureka.backend.api.template.algorithms.AbstractDeviceAlgorithm;
 import neureka.backend.api.template.algorithms.AbstractFunDeviceAlgorithm;
@@ -12,45 +13,52 @@ import neureka.ndim.NDimensional;
 public final class BiElementwise extends AbstractFunDeviceAlgorithm&lt;BiElementwise&gt;
 {
     public BiElementwise() {
-<span class="fc" id="L15">        super(&quot;elementwise&quot;);</span>
-<span class="fc" id="L16">        setIsSuitableFor(</span>
-<span class="fc" id="L17">            call -&gt; call</span>
-<span class="fc" id="L18">                    .validate()</span>
-<span class="fc" id="L19">                    .allNotNullHaveSame(NDimensional::size)</span>
-<span class="fc" id="L20">                    .allNotNullHaveSame(NDimensional::shape)</span>
-<span class="fc" id="L21">                    .allNotNull( t -&gt; t.getDataType().typeClassImplements( NumericType.class ) )</span>
-<span class="fc" id="L22">                    .basicSuitability()</span>
+<span class="fc" id="L16">        super(&quot;elementwise&quot;);</span>
+<span class="fc" id="L17">        setIsSuitableFor(</span>
+<span class="fc" id="L18">            call -&gt; call</span>
+<span class="fc" id="L19">                    .validate()</span>
+<span class="fc" id="L20">                    .allNotNullHaveSame(NDimensional::size)</span>
+<span class="fc" id="L21">                    .allNotNullHaveSame(NDimensional::shape)</span>
+<span class="fc" id="L22">                    .allNotNull( t -&gt; t.getDataType().typeClassImplements( NumericType.class ) )</span>
+<span class="fc" id="L23">                    .basicSuitability()</span>
         );
-<span class="fc" id="L24">        setAutogradModeFor( call -&gt; AutoDiffMode.FORWARD_AND_BACKWARD );</span>
-<span class="fc" id="L25">        setExecution(</span>
+<span class="fc" id="L25">        setAutogradModeFor( call -&gt; AutoDiffMode.FORWARD_AND_BACKWARD );</span>
+<span class="fc" id="L26">        setExecution(</span>
             (outerCaller, outerCall) -&gt;
-<span class="fc" id="L27">                Result.of(AbstractDeviceAlgorithm.executeFor(</span>
+<span class="fc" id="L28">                Result.of(AbstractDeviceAlgorithm.executeFor(</span>
                         outerCaller, outerCall,
-<span class="fc" id="L29">                        innerCall -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )</span>
+<span class="fc" id="L30">                        innerCall -&gt; AbstractDeviceAlgorithm.executeDeviceAlgorithm( innerCall )</span>
                 ))
+            //(outerCaller, outerCall) -&gt; {
+            //    ExecutionCall&lt;? extends Device&lt;?&gt;&gt; finalOuterCall = _prepare(outerCall);
+            //    return Result.of(executeOnCommonDevice(finalOuterCall, ()-&gt;{
+            //        return AbstractDeviceAlgorithm.executeDeviceAlgorithm(finalOuterCall);
+            //    }));
+            //}
         );
-<span class="fc" id="L32">        setCallPreparation(</span>
-            call -&gt; {
-<span class="fc bfc" id="L34" title="All 2 branches covered.">                if ( call.arity() &lt; 3 ) call = call.withAddedInputAt(0, null);</span>
-<span class="fc" id="L35">                Device&lt;Object&gt; device = (Device&lt;Object&gt;) call.getDevice();</span>
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
-                {
-<span class="fc" id="L38">                    int[] outShape = call.input( 1 ).getNDConf().shape();</span>
+<span class="fc" id="L39">        setCallPreparation(this::_prepare);</span>
+<span class="fc" id="L40">    }</span>
 
-<span class="fc" id="L40">                    Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getItemType();</span>
-<span class="fc" id="L41">                    Tensor&lt;Object&gt; output = Tensor.of( type ).withShape( outShape ).all( 0.0 ).mut().setIsIntermediate( true );</span>
-<span class="fc" id="L42">                    output.mut().setIsVirtual( false );</span>
-                    try {
-<span class="fc" id="L44">                        device.store( output );</span>
-<span class="nc" id="L45">                    } catch( Exception e ) {</span>
-<span class="nc" id="L46">                        e.printStackTrace();</span>
-<span class="fc" id="L47">                    }</span>
-<span class="fc" id="L48">                    call = call.withInputAt( 0, output );</span>
-                }
-<span class="fc" id="L50">                return call;</span>
-            }
-        );
-<span class="fc" id="L53">    }</span>
+    private ExecutionCall&lt;?&gt; _prepare( final ExecutionCall&lt;?&gt; inputCall ) {
+<span class="fc" id="L43">        ExecutionCall&lt;?&gt; call = inputCall;</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if ( call.arity() &lt; 3 ) call = call.withAddedInputAt(0, null);</span>
+<span class="fc" id="L45">        Device&lt;Object&gt; device = (Device&lt;Object&gt;) call.getDevice();</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if ( call.input( 0 ) == null ) // Creating a new tensor:</span>
+        {
+<span class="fc" id="L48">            int[] outShape = call.input( 1 ).getNDConf().shape();</span>
+
+<span class="fc" id="L50">            Class&lt;Object&gt; type = (Class&lt;Object&gt;) call.input(  1 ).getItemType();</span>
+<span class="fc" id="L51">            Tensor&lt;Object&gt; output = Tensor.of( type ).withShape( outShape ).all( 0.0 ).mut().setIsIntermediate( true );</span>
+<span class="fc" id="L52">            output.mut().setIsVirtual( false );</span>
+            try {
+<span class="fc" id="L54">                device.store( output );</span>
+<span class="nc" id="L55">            } catch( Exception e ) {</span>
+<span class="nc" id="L56">                e.printStackTrace();</span>
+<span class="fc" id="L57">            }</span>
+<span class="fc" id="L58">            call = call.withInputAt( 0, output );</span>
+        }
+<span class="fc" id="L60">        return call;</span>
+    }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

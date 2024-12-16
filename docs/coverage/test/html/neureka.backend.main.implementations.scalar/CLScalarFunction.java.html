@@ -12,9 +12,9 @@ public class CLScalarFunction implements ImplementationFor&lt;OpenCLDevice&gt;
 {
     private final ScalarFun _fun;
 
-<span class="fc" id="L15">    public CLScalarFunction(ScalarFun fun) {</span>
-<span class="fc" id="L16">        _fun = fun;</span>
-<span class="fc" id="L17">    }</span>
+<span class="nc" id="L15">    public CLScalarFunction(ScalarFun fun) {</span>
+<span class="nc" id="L16">        _fun = fun;</span>
+<span class="nc" id="L17">    }</span>
 
     @Override
     public Tensor&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
@@ -26,4 +26,4 @@ public class CLScalarFunction implements ImplementationFor&lt;OpenCLDevice&gt;
 <span class="nc" id="L26">        return call.input(0);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

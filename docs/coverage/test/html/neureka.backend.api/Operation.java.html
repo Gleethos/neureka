@@ -43,9 +43,11 @@ import neureka.Tensor;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.fun.Execution;
 import neureka.backend.api.template.operations.OperationBuilder;
+import neureka.devices.Device;
 import neureka.math.Function;
 import neureka.math.implementations.FunctionConstant;
-import neureka.devices.Device;
+
+import java.util.List;
 
 /**
  *  This interface is part of the backend API, and it embodies the top layer of the 3 tier backend architecture.
@@ -64,7 +66,7 @@ import neureka.devices.Device;
  */
 public interface Operation
 {
-<span class="fc" id="L67">    static OperationBuilder builder() { return new OperationBuilder(); }</span>
+<span class="fc" id="L69">    static OperationBuilder builder() { return new OperationBuilder(); }</span>
 
     Algorithm[] getAllAlgorithms();
 
@@ -95,7 +97,7 @@ public interface Operation
     &lt;T extends Algorithm&gt; Operation setAlgorithm( Class&lt;T&gt; type, T instance );
 
     default &lt;T extends Algorithm&gt; Operation setAlgorithm( T instance ) {
-<span class="fc" id="L98">        return setAlgorithm( (Class&lt;T&gt;) instance.getClass(), instance );</span>
+<span class="fc" id="L100">        return setAlgorithm( (Class&lt;T&gt;) instance.getClass(), instance );</span>
     }
 
     /**
@@ -197,39 +199,41 @@ public interface Operation
 
     default Result execute( Function caller, ExecutionCall&lt;?&gt; call )
     {
-<span class="fc" id="L200">        LazyRef&lt;Result&gt; ref = LazyRef.of(()-&gt;{</span>
-<span class="fc" id="L201">                                    int d = call.getDerivativeIndex();</span>
-<span class="pc bpc" id="L202" title="1 of 4 branches missed.">                                    if ( d &gt;= 0 &amp;&amp; !caller.dependsOn(d) )</span>
-<span class="nc" id="L203">                                        throw new IllegalArgumentException(&quot;Cannot derive w.r.t. to input index &quot; + d + &quot; in function '&quot; + caller + &quot;', because there is no input with index &quot;+d+&quot;!&quot;);</span>
+<span class="fc" id="L202">        LazyRef&lt;Result&gt; ref = LazyRef.of(()-&gt;{</span>
+<span class="fc" id="L203">                                    int d = call.getDerivativeIndex();</span>
+<span class="pc bpc" id="L204" title="1 of 4 branches missed.">                                    if ( d &gt;= 0 &amp;&amp; !caller.dependsOn(d) )</span>
+<span class="nc" id="L205">                                        throw new IllegalArgumentException(&quot;Cannot derive w.r.t. to input index &quot; + d + &quot; in function '&quot; + caller + &quot;', because there is no input with index &quot;+d+&quot;!&quot;);</span>
 
-<span class="fc bfc" id="L205" title="All 2 branches covered.">                                    if ( caller.getSubFunctions().stream().allMatch( f -&gt; f instanceof FunctionConstant) ) {</span>
-<span class="pc bpc" id="L206" title="1 of 2 branches missed.">                                        if ( d &lt; 0 ) return Result.of(Tensor.like((Tensor&lt;Number&gt;)call.input(0)).all(caller.call(new double[0])).mut().setIsIntermediate(true));</span>
-<span class="nc" id="L207">                                        else         return Result.of(Tensor.like((Tensor&lt;Number&gt;)call.input(0)).all(0).mut().setIsIntermediate(true));</span>
+<span class="fc" id="L207">                                    List&lt;Function&gt; subFunctions = caller.getSubFunctions();</span>
+
+<span class="fc bfc" id="L209" title="All 2 branches covered.">                                    if ( subFunctions.stream().allMatch( f -&gt; f instanceof FunctionConstant) ) {</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">                                        if ( d &lt; 0 ) return Result.of(Tensor.like((Tensor&lt;Number&gt;)call.input(0)).all(caller.call(new double[0])).mut().setIsIntermediate(true));</span>
+<span class="nc" id="L211">                                        else         return Result.of(Tensor.like((Tensor&lt;Number&gt;)call.input(0)).all(0).mut().setIsIntermediate(true));</span>
                                     }
-<span class="fc" id="L209">                                    Result result = call.getAlgorithm().execute( caller, call );</span>
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">                                    if ( result != null ) return result;</span>
-<span class="nc" id="L211">                                    throw new IllegalStateException(</span>
-<span class="nc" id="L212">                                            &quot;Missing return value of &quot; + Execution.class.getSimpleName() + &quot; in algorithm '&quot; +</span>
-<span class="nc" id="L213">                                            call.getAlgorithm().getClass().getSimpleName() + &quot;' in operation '&quot; +</span>
-<span class="nc" id="L214">                                            call.getOperation().getClass().getName()+&quot;'&quot;</span>
+<span class="fc" id="L213">                                    Result result = call.getAlgorithm().execute( caller, call );</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">                                    if ( result != null ) return result;</span>
+<span class="nc" id="L215">                                    throw new IllegalStateException(</span>
+<span class="nc" id="L216">                                            &quot;Missing return value of &quot; + Execution.class.getSimpleName() + &quot; in algorithm '&quot; +</span>
+<span class="nc" id="L217">                                            call.getAlgorithm().getClass().getSimpleName() + &quot;' in operation '&quot; +</span>
+<span class="nc" id="L218">                                            call.getOperation().getClass().getName()+&quot;'&quot;</span>
                                         );
                                 });
 
-<span class="fc bfc" id="L218" title="All 2 branches covered.">        for ( Tensor&lt;?&gt; t : call.inputs() )</span>
-<span class="fc bfc" id="L219" title="All 2 branches covered.">            if ( !t.graphNode().isPresent() )</span>
-<span class="fc" id="L220">                new GraphNode&lt;&gt;( caller, null, () -&gt; Result.of(t) );</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        for ( Tensor&lt;?&gt; t : call.inputs() )</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">            if ( !t.graphNode().isPresent() )</span>
+<span class="fc" id="L224">                new GraphNode&lt;&gt;( caller, null, () -&gt; Result.of(t) );</span>
 
-<span class="fc bfc" id="L222" title="All 2 branches covered.">        if ( caller.isFlat() )</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        if ( caller.isFlat() )</span>
         {
-<span class="fc" id="L224">            call.checkArity();</span>
+<span class="fc" id="L228">            call.checkArity();</span>
             /*  The following code is reached in flat functions only:
                 Autograd-Graph will be generated below for the new GraphNode:
                 only flat functions can be executed directly                         */
 
-<span class="fc bfc" id="L229" title="All 4 branches covered.">            if ( call.getDerivativeIndex() &lt; 0 &amp;&amp; caller.isDoingAD() )</span>
-<span class="fc" id="L230">                new GraphNode&lt;&gt;( caller, (ExecutionCall&lt;Device&lt;?&gt;&gt;) call, ref::get );</span>
+<span class="fc bfc" id="L233" title="All 4 branches covered.">            if ( call.getDerivativeIndex() &lt; 0 &amp;&amp; caller.isDoingAD() )</span>
+<span class="fc" id="L234">                new GraphNode&lt;&gt;( caller, (ExecutionCall&lt;Device&lt;?&gt;&gt;) call, ref::get );</span>
         }
-<span class="fc" id="L232">        return ref.get();</span>
+<span class="fc" id="L236">        return ref.get();</span>
     }
 
     /**
@@ -261,4 +265,4 @@ public interface Operation
     double calculate( double[] inputs, int j, int d, Function[] src );
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

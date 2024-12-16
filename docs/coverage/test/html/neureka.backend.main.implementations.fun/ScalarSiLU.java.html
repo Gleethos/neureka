@@ -13,10 +13,10 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 {
 <span class="fc" id="L14">    @Override public String id() { return &quot;silu&quot;; }</span>
 
-<span class="fc" id="L16">    @Override public String activationCode() { return &quot;output = input / ( 1 + (float) exp(-input) );\n&quot;; }</span>
+<span class="nc" id="L16">    @Override public String activationCode() { return &quot;output = input / ( 1 + (float) exp(-input) );\n&quot;; }</span>
 
     @Override public String derivationCode() {
-<span class="fc" id="L19">        return &quot;float sig = 1.0f / ( 1.0f + exp( -input ) );&quot; +</span>
+<span class="nc" id="L19">        return &quot;float sig = 1.0f / ( 1.0f + exp( -input ) );&quot; +</span>
                &quot;output = sig + ( input * sig * ( 1.0f - sig ) );\n&quot;;
     }
 
@@ -48,4 +48,4 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 <span class="fc" id="L48">    public static double silu(double x) { return x * ScalarSigmoid.sig(x); }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -66,7 +66,7 @@ import neureka.Tensor;
     @Override
     public final boolean contains( Tensor&lt;V&gt; o ) {
 <span class="fc" id="L68">        Data&lt;V&gt; data = o.mut().getData();</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        if ( data == null ) return false;</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if ( data == null ) return false;</span>
 <span class="fc bfc" id="L70" title="All 2 branches covered.">        return data.owner() == this;</span>
     }
 
@@ -85,4 +85,4 @@ import neureka.Tensor;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

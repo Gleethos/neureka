@@ -67,7 +67,7 @@ import java.util.function.Supplier;
     {
 <span class="fc" id="L68">        String kernelName = &quot;fast_private_sum_reduction_RTS&quot;+RTS;</span>
 <span class="fc" id="L69">        Supplier&lt;String&gt; code = () -&gt;</span>
-<span class="fc" id="L70">                        &quot;   #define RTS &quot;+RTS+&quot;                                                                    \n&quot; +</span>
+<span class="nc" id="L70">                        &quot;   #define RTS &quot;+RTS+&quot;                                                                    \n&quot; +</span>
                         &quot;   __kernel void &quot;+kernelName+&quot;(                                                          \n&quot; +
                         &quot;               const int size,                                                            \n&quot; +
                         &quot;               const __global float* in,                                                  \n&quot; +
@@ -95,7 +95,7 @@ import java.util.function.Supplier;
     ) {
 <span class="fc" id="L96">        String kernelName = &quot;fast_local_mem_based_sum&quot;;</span>
 <span class="fc" id="L97">        Supplier&lt;String&gt; code = () -&gt;</span>
-<span class="fc" id="L98">                &quot;                                                                                                  \n&quot; +</span>
+<span class="nc" id="L98">                &quot;                                                                                                  \n&quot; +</span>
                 &quot;    int div(int i) { return i % 2 == 1 ? (i+1) / 2 : i / 2;  }                                    \n&quot; +
                 &quot;                                                                                                  \n&quot; +
                 &quot;    __kernel void &quot;+kernelName+&quot; (                                                                \n&quot; +
@@ -132,4 +132,4 @@ import java.util.function.Supplier;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

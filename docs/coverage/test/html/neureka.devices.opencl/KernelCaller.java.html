@@ -19,18 +19,18 @@ import static org.jocl.CL.*;
     private final cl_kernel         _kernel;
     private final List&lt;Tensor&lt;Number&gt;&gt; _inputs;
 
-<span class="fc" id="L22">    private int _argId = 0;</span>
+<span class="nc" id="L22">    private int _argId = 0;</span>
 
     /**
      *
      * @param kernel The kernel which ought to be called.
      * @param queue The queue on which calls ought to be dispatched.
      */
-<span class="fc" id="L29">    public KernelCaller( cl_kernel kernel, cl_command_queue queue ) {</span>
-<span class="fc" id="L30">        _queue  = queue;</span>
-<span class="fc" id="L31">        _kernel = kernel;</span>
-<span class="fc" id="L32">        _inputs = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L33">    }</span>
+<span class="nc" id="L29">    public KernelCaller( cl_kernel kernel, cl_command_queue queue ) {</span>
+<span class="nc" id="L30">        _queue  = queue;</span>
+<span class="nc" id="L31">        _kernel = kernel;</span>
+<span class="nc" id="L32">        _inputs = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L33">    }</span>
 
     /**
      * This method passes 2 arguments to the kernel.
@@ -39,10 +39,10 @@ import static org.jocl.CL.*;
      * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller passAllOf( Tensor&lt;Number&gt; tensor ) {
-<span class="fc" id="L42">        _inputs.add( tensor );</span>
-<span class="fc" id="L43">        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.data ) );</span>
-<span class="fc" id="L44">        _argId++;</span>
-<span class="fc" id="L45">        return passConfOf( tensor );</span>
+<span class="nc" id="L42">        _inputs.add( tensor );</span>
+<span class="nc" id="L43">        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.data ) );</span>
+<span class="nc" id="L44">        _argId++;</span>
+<span class="nc" id="L45">        return passConfOf( tensor );</span>
     }
 
     /**
@@ -55,10 +55,10 @@ import static org.jocl.CL.*;
      *  @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller passConfOf( Tensor&lt;Number&gt; tensor ) {
-<span class="fc" id="L58">        OpenCLDevice device = (OpenCLDevice) tensor.getDevice();</span>
-<span class="fc" id="L59">        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( device.clConfigOf(tensor ).data ) );</span>
-<span class="fc" id="L60">        _argId++;</span>
-<span class="fc" id="L61">        return this;</span>
+<span class="nc" id="L58">        OpenCLDevice device = (OpenCLDevice) tensor.getDevice();</span>
+<span class="nc" id="L59">        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( device.clConfigOf(tensor ).data ) );</span>
+<span class="nc" id="L60">        _argId++;</span>
+<span class="nc" id="L61">        return this;</span>
     }
 
     /**
@@ -68,10 +68,10 @@ import static org.jocl.CL.*;
      * @return This very KernelCaller instance (factory pattern).
      */
     public &lt;T extends Number&gt; KernelCaller pass( Tensor&lt;T&gt; tensor ) {
-<span class="fc" id="L71">        _inputs.add( tensor.getMut().upcast(Number.class) );</span>
-<span class="fc" id="L72">        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.data ) );</span>
-<span class="fc" id="L73">        _argId++;</span>
-<span class="fc" id="L74">        return this;</span>
+<span class="nc" id="L71">        _inputs.add( tensor.getMut().upcast(Number.class) );</span>
+<span class="nc" id="L72">        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.data ) );</span>
+<span class="nc" id="L73">        _argId++;</span>
+<span class="nc" id="L74">        return this;</span>
     }
 
     /**
@@ -80,7 +80,7 @@ import static org.jocl.CL.*;
      * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller pass( int value ) {
-<span class="fc" id="L83">        return this.pass( new int[]{ value } );</span>
+<span class="nc" id="L83">        return this.pass( new int[]{ value } );</span>
     }
 
     /**
@@ -90,9 +90,9 @@ import static org.jocl.CL.*;
      * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller pass( int... values ) {
-<span class="fc" id="L93">        clSetKernelArg( _kernel, _argId, Sizeof.cl_int * (long) values.length, Pointer.to( values ) );</span>
-<span class="fc" id="L94">        _argId++;</span>
-<span class="fc" id="L95">        return this;</span>
+<span class="nc" id="L93">        clSetKernelArg( _kernel, _argId, Sizeof.cl_int * (long) values.length, Pointer.to( values ) );</span>
+<span class="nc" id="L94">        _argId++;</span>
+<span class="nc" id="L95">        return this;</span>
     }
 
     /**
@@ -102,33 +102,33 @@ import static org.jocl.CL.*;
      * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller pass( float... values ) {
-<span class="fc" id="L105">        clSetKernelArg( _kernel, _argId, Sizeof.cl_float * (long) values.length, Pointer.to( values ) );</span>
-<span class="fc" id="L106">        _argId++;</span>
-<span class="fc" id="L107">        return this;</span>
+<span class="nc" id="L105">        clSetKernelArg( _kernel, _argId, Sizeof.cl_float * (long) values.length, Pointer.to( values ) );</span>
+<span class="nc" id="L106">        _argId++;</span>
+<span class="nc" id="L107">        return this;</span>
     }
 
     public KernelCaller pass( double... values ) {
-<span class="fc" id="L111">        clSetKernelArg( _kernel, _argId, Sizeof.cl_double * (long) values.length, Pointer.to( values ) );</span>
-<span class="fc" id="L112">        _argId++;</span>
-<span class="fc" id="L113">        return this;</span>
+<span class="nc" id="L111">        clSetKernelArg( _kernel, _argId, Sizeof.cl_double * (long) values.length, Pointer.to( values ) );</span>
+<span class="nc" id="L112">        _argId++;</span>
+<span class="nc" id="L113">        return this;</span>
     }
 
     public KernelCaller pass( short... values ) {
-<span class="fc" id="L117">        clSetKernelArg( _kernel, _argId, Sizeof.cl_short * (long) values.length, Pointer.to( values ) );</span>
-<span class="fc" id="L118">        _argId++;</span>
-<span class="fc" id="L119">        return this;</span>
+<span class="nc" id="L117">        clSetKernelArg( _kernel, _argId, Sizeof.cl_short * (long) values.length, Pointer.to( values ) );</span>
+<span class="nc" id="L118">        _argId++;</span>
+<span class="nc" id="L119">        return this;</span>
     }
 
     public KernelCaller pass( long... values ) {
-<span class="fc" id="L123">        clSetKernelArg( _kernel, _argId, Sizeof.cl_long * (long) values.length, Pointer.to( values ) );</span>
-<span class="fc" id="L124">        _argId++;</span>
-<span class="fc" id="L125">        return this;</span>
+<span class="nc" id="L123">        clSetKernelArg( _kernel, _argId, Sizeof.cl_long * (long) values.length, Pointer.to( values ) );</span>
+<span class="nc" id="L124">        _argId++;</span>
+<span class="nc" id="L125">        return this;</span>
     }
 
     public KernelCaller pass( byte... values ) {
-<span class="fc" id="L129">        clSetKernelArg( _kernel, _argId, Sizeof.cl_char * (long) values.length, Pointer.to( values ) );</span>
-<span class="fc" id="L130">        _argId++;</span>
-<span class="fc" id="L131">        return this;</span>
+<span class="nc" id="L129">        clSetKernelArg( _kernel, _argId, Sizeof.cl_char * (long) values.length, Pointer.to( values ) );</span>
+<span class="nc" id="L130">        _argId++;</span>
+<span class="nc" id="L131">        return this;</span>
     }
 
     /**
@@ -136,39 +136,39 @@ import static org.jocl.CL.*;
      * @return This very KernelCaller instance (factory pattern).
      */
     public KernelCaller pass( float value ) {
-<span class="fc" id="L139">        return this.pass( new float[]{ value } );</span>
+<span class="nc" id="L139">        return this.pass( new float[]{ value } );</span>
     }
 
     public KernelCaller pass( double value ) {
-<span class="fc" id="L143">        return this.pass( new double[]{ value } );</span>
+<span class="nc" id="L143">        return this.pass( new double[]{ value } );</span>
     }
 
     public KernelCaller pass( short value ) {
-<span class="fc" id="L147">        return this.pass( new short[]{ value } );</span>
+<span class="nc" id="L147">        return this.pass( new short[]{ value } );</span>
     }
 
     public KernelCaller pass( long value ) {
-<span class="fc" id="L151">        return this.pass( new long[]{ value } );</span>
+<span class="nc" id="L151">        return this.pass( new long[]{ value } );</span>
     }
 
     public KernelCaller pass( byte value ) {
-<span class="fc" id="L155">        return this.pass( new byte[]{ value } );</span>
+<span class="nc" id="L155">        return this.pass( new byte[]{ value } );</span>
     }
 
     public KernelCaller pass( Number value ) {
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        if ( value instanceof Float ) return this.pass( value.floatValue() );</span>
-<span class="fc bfc" id="L160" title="All 2 branches covered.">        else if ( value instanceof Double ) return this.pass( value.doubleValue() );</span>
-<span class="fc bfc" id="L161" title="All 2 branches covered.">        else if ( value instanceof Integer ) return this.pass( value.intValue() );</span>
-<span class="fc bfc" id="L162" title="All 2 branches covered.">        else if ( value instanceof Long ) return this.pass( value.longValue() );</span>
-<span class="fc bfc" id="L163" title="All 2 branches covered.">        else if ( value instanceof Short ) return this.pass( value.shortValue() );</span>
-<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        else if ( value instanceof Byte ) return this.pass( value.byteValue() );</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if ( value instanceof Float ) return this.pass( value.floatValue() );</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        else if ( value instanceof Double ) return this.pass( value.doubleValue() );</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        else if ( value instanceof Integer ) return this.pass( value.intValue() );</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        else if ( value instanceof Long ) return this.pass( value.longValue() );</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        else if ( value instanceof Short ) return this.pass( value.shortValue() );</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        else if ( value instanceof Byte ) return this.pass( value.byteValue() );</span>
 <span class="nc" id="L165">        else throw new IllegalArgumentException( &quot;Unsupported number type: &quot; + value.getClass().getName() );</span>
     }
 
     public KernelCaller passLocalFloats( long size ) {
-<span class="fc" id="L169">        clSetKernelArg( _kernel, _argId, Sizeof.cl_float * (long) size, null );</span>
-<span class="fc" id="L170">        _argId++;</span>
-<span class="fc" id="L171">        return this;</span>
+<span class="nc" id="L169">        clSetKernelArg( _kernel, _argId, Sizeof.cl_float * (long) size, null );</span>
+<span class="nc" id="L170">        _argId++;</span>
+<span class="nc" id="L171">        return this;</span>
     }
 
     /**
@@ -177,12 +177,12 @@ import static org.jocl.CL.*;
      */
     public void call( int globalWorkSize )
     {
-<span class="fc" id="L180">        cl_event[] events = _getWaitList( _inputs.toArray( new Tensor[ 0 ] ) );</span>
-<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        if ( events.length &gt; 0 ) {</span>
+<span class="nc" id="L180">        cl_event[] events = _getWaitList( _inputs.toArray( new Tensor[ 0 ] ) );</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        if ( events.length &gt; 0 ) {</span>
 <span class="nc" id="L182">            clWaitForEvents( events.length, events );</span>
 <span class="nc" id="L183">            _releaseEvents( _inputs.toArray( new Tensor[ 0 ] ) );</span>
         }
-<span class="fc" id="L185">        clEnqueueNDRangeKernel(</span>
+<span class="nc" id="L185">        clEnqueueNDRangeKernel(</span>
                 _queue, _kernel,
                 1,
                 null,
@@ -192,7 +192,7 @@ import static org.jocl.CL.*;
                 null,
                 null
         );
-<span class="fc" id="L195">    }</span>
+<span class="nc" id="L195">    }</span>
 
      /**
      *  Use this to call the kernel with 2 long arrays defining how the kernel should be indexed and parallelized.
@@ -215,13 +215,13 @@ import static org.jocl.CL.*;
      */
     public void call( long[] globalWorkSizes, long[] localWorkSizes )
     {
-<span class="fc" id="L218">        cl_event[] events = _getWaitList( _inputs.toArray( new Tensor[ 0 ] ) );</span>
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        if ( events.length &gt; 0 ) {</span>
+<span class="nc" id="L218">        cl_event[] events = _getWaitList( _inputs.toArray( new Tensor[ 0 ] ) );</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        if ( events.length &gt; 0 ) {</span>
 <span class="nc" id="L220">            clWaitForEvents( events.length, events );</span>
 <span class="nc" id="L221">            _releaseEvents( _inputs.toArray( new Tensor[ 0 ] ) );</span>
         }
-<span class="pc bpc" id="L223" title="1 of 4 branches missed.">        assert localWorkSizes == null || globalWorkSizes.length == localWorkSizes.length;</span>
-<span class="fc" id="L224">        clEnqueueNDRangeKernel(</span>
+<span class="nc bnc" id="L223" title="All 4 branches missed.">        assert localWorkSizes == null || globalWorkSizes.length == localWorkSizes.length;</span>
+<span class="nc" id="L224">        clEnqueueNDRangeKernel(</span>
                 _queue, _kernel,
                 globalWorkSizes.length,
                 null,
@@ -231,7 +231,7 @@ import static org.jocl.CL.*;
                 null,
                 null
         );
-<span class="fc" id="L234">    }</span>
+<span class="nc" id="L234">    }</span>
 
     
     private void _releaseEvents( Tensor&lt;Number&gt;[] tensors ) {
@@ -245,15 +245,15 @@ import static org.jocl.CL.*;
 
     
     private cl_event[] _getWaitList( Tensor&lt;Number&gt;[] tensors ) {
-<span class="fc" id="L248">        List&lt;cl_event&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L249" title="All 2 branches covered.">        for ( Tensor&lt;Number&gt; t : tensors ) {</span>
-<span class="fc" id="L250">            cl_event event = t.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.event;</span>
-<span class="pc bpc" id="L251" title="3 of 4 branches missed.">            if ( event != null &amp;&amp; !list.contains(event) ) {</span>
+<span class="nc" id="L248">        List&lt;cl_event&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        for ( Tensor&lt;Number&gt; t : tensors ) {</span>
+<span class="nc" id="L250">            cl_event event = t.getMut().getData().as( OpenCLDevice.cl_tsr.class ).value.event;</span>
+<span class="nc bnc" id="L251" title="All 4 branches missed.">            if ( event != null &amp;&amp; !list.contains(event) ) {</span>
 <span class="nc" id="L252">                list.add( event );</span>
             }
         }
-<span class="fc" id="L255">        return list.toArray( new cl_event[ 0 ] );</span>
+<span class="nc" id="L255">        return list.toArray( new cl_event[ 0 ] );</span>
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

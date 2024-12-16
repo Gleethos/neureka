@@ -78,7 +78,7 @@ public final class Neureka
     /**
      *  The current semantic version of this library build.
      */
-<span class="fc" id="L81">    private static String _VERSION = &quot;1.0.0&quot;;</span>
+<span class="fc" id="L81">    private static String _VERSION = &quot;1.0.1&quot;;</span>
 
     /**
      *  The truth value determining if OpenCL is available or not.
@@ -139,9 +139,9 @@ public final class Neureka
 <span class="fc" id="L139">            _backend.set( new CPUBackend() ); // CPU (JVM) is always available!</span>
 
 <span class="pc bpc" id="L141" title="1 of 2 branches missed.">            if ( _OPENCL_AVAILABLE )</span>
-<span class="fc" id="L142">                _backend.set( new CLBackend() ); // OpenCL is available if the jocl dependency can find OpenCL drivers!</span>
+<span class="nc" id="L142">                _backend.set( new CLBackend() ); // OpenCL is available if the jocl dependency can find OpenCL drivers!</span>
             else
-<span class="nc" id="L144">                _LOG.debug( Messages.clContextCreationFailed() );</span>
+<span class="fc" id="L144">                _LOG.debug( Messages.clContextCreationFailed() );</span>
         }
 <span class="fc" id="L146">        return _backend;</span>
     }
@@ -217,10 +217,10 @@ public final class Neureka
      */
     public boolean canAccessOpenCL() {
 <span class="pc bpc" id="L219" title="1 of 2 branches missed.">        return _OPENCL_AVAILABLE &amp;&amp;</span>
-<span class="fc" id="L220">                get().backend()</span>
-<span class="fc" id="L221">                        .find(CLBackend.class)</span>
-<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                        .map( it -&gt; it.getTotalNumberOfDevices() &gt; 0 )</span>
-<span class="pc bpc" id="L223" title="1 of 2 branches missed.">                        .orElse(false);</span>
+<span class="nc" id="L220">                get().backend()</span>
+<span class="nc" id="L221">                        .find(CLBackend.class)</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">                        .map( it -&gt; it.getTotalNumberOfDevices() &gt; 0 )</span>
+<span class="pc bnc" id="L223" title="All 2 branches missed.">                        .orElse(false);</span>
     }
 
     /**
@@ -228,10 +228,10 @@ public final class Neureka
      */
     public boolean canAccessOpenCLDevice() {
 <span class="pc bpc" id="L230" title="1 of 2 branches missed.">        return canAccessOpenCL() &amp;&amp;</span>
-<span class="fc" id="L231">                get().backend()</span>
-<span class="fc" id="L232">                        .find(CLBackend.class)</span>
-<span class="pc bpc" id="L233" title="1 of 2 branches missed.">                        .map( it -&gt; it.getTotalNumberOfDevices() &gt; 0 )</span>
-<span class="pc bpc" id="L234" title="1 of 2 branches missed.">                        .orElse(false);</span>
+<span class="nc" id="L231">                get().backend()</span>
+<span class="nc" id="L232">                        .find(CLBackend.class)</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">                        .map( it -&gt; it.getTotalNumberOfDevices() &gt; 0 )</span>
+<span class="pc bnc" id="L234" title="All 2 branches missed.">                        .orElse(false);</span>
     }
 
     /**
@@ -772,14 +772,14 @@ public final class Neureka
 <span class="fc" id="L772">            boolean found = false;</span>
 <span class="fc" id="L773">            String cause = &quot; unknown &quot;;</span>
             try {
-<span class="fc" id="L775">                Class.forName( className );</span>
-<span class="fc" id="L776">                found = true;</span>
-<span class="nc" id="L777">            } catch ( Throwable ex ) {// Class or one of its dependencies is not present...</span>
-<span class="nc" id="L778">                cause = ex.getMessage();</span>
+<span class="nc" id="L775">                Class.forName( className );</span>
+<span class="nc" id="L776">                found = true;</span>
+<span class="fc" id="L777">            } catch ( Throwable ex ) {// Class or one of its dependencies is not present...</span>
+<span class="fc" id="L778">                cause = ex.getMessage();</span>
             } finally {
 <span class="fc" id="L780">                String tipMessage = tip.get().replace(&quot;\n&quot;, &quot;\n    &quot;+&quot;     &quot;).trim();</span>
 <span class="pc bpc" id="L781" title="1 of 2 branches missed.">                if ( !found )</span>
-<span class="nc" id="L782">                    _LOG.debug(</span>
+<span class="fc" id="L782">                    _LOG.debug(</span>
                         &quot;Neureka:\n&quot; +
                         &quot;    info: Failed to load class '&quot; + className + &quot;'!&quot; + &quot;\n&quot; +
                         &quot;    cause: &quot; + cause + &quot;\n&quot; +
@@ -792,4 +792,4 @@ public final class Neureka
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

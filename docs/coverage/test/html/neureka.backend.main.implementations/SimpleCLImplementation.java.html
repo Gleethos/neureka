@@ -15,18 +15,18 @@ public class SimpleCLImplementation extends CLImplementation
             String kernelName,
             String kernelSource
     ) {
-<span class="fc" id="L18">        super(execution, arity);</span>
-<span class="fc" id="L19">        _kernel = new KernelCode( kernelName, kernelSource );</span>
-<span class="fc" id="L20">    }</span>
+<span class="nc" id="L18">        super(execution, arity);</span>
+<span class="nc" id="L19">        _kernel = new KernelCode( kernelName, kernelSource );</span>
+<span class="nc" id="L20">    }</span>
 
     @Override
     public KernelCode getKernelFor( ExecutionCall&lt;OpenCLDevice&gt; call ) {
-<span class="fc" id="L24">        return _kernel;</span>
+<span class="nc" id="L24">        return _kernel;</span>
     }
 
     @Override
     public KernelCode[] getKernelCode() {
-<span class="fc" id="L29">        return new KernelCode[]{ _kernel };</span>
+<span class="nc" id="L29">        return new KernelCode[]{ _kernel };</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

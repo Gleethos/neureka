@@ -283,9 +283,9 @@ tasks.register('deploy') {
     dependsOn 'jar'
     dependsOn 'releaseJDocs'
 
-    dependsOn 'publishToSonatype'
 }
 // 3:
+//     execute dependsOn 'publishToSonatype' then
 //     go to https://oss.sonatype.org/#stagingRepositories
 //     close and release the repository
 

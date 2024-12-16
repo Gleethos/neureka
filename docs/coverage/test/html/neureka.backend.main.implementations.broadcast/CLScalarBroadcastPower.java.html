@@ -8,7 +8,7 @@ import neureka.devices.opencl.OpenCLDevice;
 public class CLScalarBroadcastPower extends CLScalarBroadcast
 {
     public CLScalarBroadcastPower( String id ) {
-<span class="fc" id="L11">        super(</span>
+<span class="nc" id="L11">        super(</span>
             id,
             &quot;output = (&quot;+TYPE+&quot;) pow( (float) input1, (float) value );&quot;,
             &quot;   if ( d == 0 )                                                            \n&quot; +
@@ -16,7 +16,7 @@ public class CLScalarBroadcastPower extends CLScalarBroadcast
             &quot;   else                                                                              \n&quot; +
             &quot;       output = (&quot;+TYPE+&quot;) ( pow( (float) input1, (float) value ) * log( (float) value ) );  \n&quot;
         );
-<span class="fc" id="L19">    }</span>
+<span class="nc" id="L19">    }</span>
     @Override
     public Tensor&lt;?&gt; run(ExecutionCall&lt;OpenCLDevice&gt; call) {
 <span class="nc bnc" id="L22" title="All 4 branches missed.">        int offset = (call.input( Number.class, 2 ).isVirtual() || call.input( Number.class, 2 ).size() == 1)?1:0;</span>
@@ -33,4 +33,4 @@ public class CLScalarBroadcastPower extends CLScalarBroadcast
 <span class="nc" id="L33">        return call.input(0);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

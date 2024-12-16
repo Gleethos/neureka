@@ -4,19 +4,19 @@
   "narrative":"Tensors expose a powerful API for performing operations on them\n    in a functional style.",
   "subjects":[],
   "statistics":{
-    "runs":"7",
+    "runs":"4",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
-    "skipped":"0",
-    "duration":"0.301 seconds"
+    "skipped":"3",
+    "duration":"0.230 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can initialize a tensor using a filler lambda mapping indices to items.",
       "result":"PASS",
-      "duration":"0.029 seconds",
+      "duration":"0.056 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -30,13 +30,13 @@
   
     {
       "id":"We can analyse the values of a tensor using various predicate receiving methods",
-      "result":"PASS",
-      "duration":"0.059 seconds",
+      "result":"IGNORED",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
-        {"kind":"given","text":"We create 2 tensors, where one is a slice of the other.","code":["var a = Tensor.ofInts().withShape(3, 2).andFill(2, 0, 1, 1, 8, 3)","var b = a[1, 0..1]"]},
+        {"kind":"given","text":"We create 2 tensors, where one is a slice of the other.","code":["var a = Tensor.ofInts().on(Device.get(device)).withShape(3, 2).andFill(2, 0, 1, 1, 8, 3)","var b = a[1, 0..1]"]},
 
         {"kind":"expect","text":"","code":["!a.every((Predicate<Integer>){it == 1})","a.any((Predicate<Integer>){it == 1})","a.any((Predicate<Integer>){it == 8})","!a.any((Predicate<Integer>){it == 42})"]},
 
@@ -54,7 +54,7 @@
     {
       "id":"We can use the \"filter\" method as a shortcut for \"stream().filter(..)\".",
       "result":"PASS",
-      "duration":"0.027 seconds",
+      "duration":"0.056 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -69,7 +69,7 @@
     {
       "id":"We can use the \"flatMap\" method as a shortcut for \"stream().flatMap(..)\".",
       "result":"PASS",
-      "duration":"0.030 seconds",
+      "duration":"0.055 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -83,8 +83,8 @@
   
     {
       "id":"Tensor mapping lambdas produce expected tensors.",
-      "result":"PASS",
-      "duration":"0.059 seconds",
+      "result":"IGNORED",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,8 +106,8 @@
   
     {
       "id":"The \"map\" method is a shorter convenience method for mapping to the same type.",
-      "result":"PASS",
-      "duration":"0.057 seconds",
+      "result":"IGNORED",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -128,7 +128,7 @@
     {
       "id":"We can find both min and max items in a tensor by providing a comparator.",
       "result":"PASS",
-      "duration":"0.030 seconds",
+      "duration":"0.058 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

@@ -4,19 +4,19 @@
   "narrative":"Tensors do not just store numeric data.\n    They can hold anything which can be stuffed into a \"Object[]\" array.\n    You could even create a tensor of tensors!",
   "subjects":[],
   "statistics":{
-    "runs":"3",
+    "runs":"7",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.004 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":["\n                    Here you will find out how to create a tensor of any kind of data.          \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Anonymous tensor instance has the default datatype class as defined in Neureka settings.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"We can create a tensor of strings.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -50,7 +50,91 @@
     },
   
     {
-      "id":"1D tensors can be created from primitive arrays.",
+      "id":"1D tensors can be created from primitive arrays. [0]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["def t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"","code":["t.rank() == 1"]},
+
+        {"kind":"and","text":"","code":["t.size() == size"]},
+
+        {"kind":"and","text":"","code":["t.getItemType() == expected"]},
+
+        {"kind":"where","text":"","code":{"size":["3","4","2","3","1"],"data":["new float[]{-1f, 3f, 6f}","new int[]{1, -2 , 9, 12}","new byte[]{42 , 73}","new long[]{-16 , 54, 12}","new short[]{26}"],"expected":["Float","Integer","Byte","Long","Short"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"1D tensors can be created from primitive arrays. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["def t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"","code":["t.rank() == 1"]},
+
+        {"kind":"and","text":"","code":["t.size() == size"]},
+
+        {"kind":"and","text":"","code":["t.getItemType() == expected"]},
+
+        {"kind":"where","text":"","code":{"size":["3","4","2","3","1"],"data":["new float[]{-1f, 3f, 6f}","new int[]{1, -2 , 9, 12}","new byte[]{42 , 73}","new long[]{-16 , 54, 12}","new short[]{26}"],"expected":["Float","Integer","Byte","Long","Short"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"1D tensors can be created from primitive arrays. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["def t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"","code":["t.rank() == 1"]},
+
+        {"kind":"and","text":"","code":["t.size() == size"]},
+
+        {"kind":"and","text":"","code":["t.getItemType() == expected"]},
+
+        {"kind":"where","text":"","code":{"size":["3","4","2","3","1"],"data":["new float[]{-1f, 3f, 6f}","new int[]{1, -2 , 9, 12}","new byte[]{42 , 73}","new long[]{-16 , 54, 12}","new short[]{26}"],"expected":["Float","Integer","Byte","Long","Short"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"1D tensors can be created from primitive arrays. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["def t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"","code":["t.rank() == 1"]},
+
+        {"kind":"and","text":"","code":["t.size() == size"]},
+
+        {"kind":"and","text":"","code":["t.getItemType() == expected"]},
+
+        {"kind":"where","text":"","code":{"size":["3","4","2","3","1"],"data":["new float[]{-1f, 3f, 6f}","new int[]{1, -2 , 9, 12}","new byte[]{42 , 73}","new long[]{-16 , 54, 12}","new short[]{26}"],"expected":["Float","Integer","Byte","Long","Short"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"1D tensors can be created from primitive arrays. [4]",
       "result":"PASS",
       "duration":"0",
       "iterations":{

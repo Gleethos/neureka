@@ -33,7 +33,7 @@ import java.util.function.Supplier;
         // First we multiply the two vectors:
 <span class="fc" id="L34">        String kernelName = &quot;multiply_arrays_for_dot_product&quot;;</span>
 <span class="fc" id="L35">        Supplier&lt;String&gt; code = () -&gt;</span>
-<span class="fc" id="L36">                    &quot;__kernel void &quot; + kernelName + &quot;(__global const float* a, \n&quot; +</span>
+<span class="nc" id="L36">                    &quot;__kernel void &quot; + kernelName + &quot;(__global const float* a, \n&quot; +</span>
                     &quot;                              __global const float* b, \n&quot; +
                     &quot;                              __global float* c,\n&quot; +
                     &quot;                              const int n) {\n&quot; +
@@ -55,4 +55,4 @@ import java.util.function.Supplier;
 <span class="fc" id="L55">        return c;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

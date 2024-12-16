@@ -4,19 +4,19 @@
   "narrative":"",
   "subjects":[],
   "statistics":{
-    "runs":"6",
+    "runs":"24",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.536 seconds"
+    "duration":"0.787 seconds"
   },
   "headers":["\n            This specification covers the expected functionality of\n            various \"FileHandle\" implementations.\n            Such implementations ought to be able to save tensors to\n            a given directory in the file format that they represent.\n            Functionalities like : \"store\", \"restore\" and \"free\" must\n            behave as expected.\n            (For more information take a look a the \"FileHandle\" & \"Storage\" interface)\n        "],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"Test writing IDX file format.",
+      "id":"Test writing IDX file format. [0]",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -37,9 +37,239 @@
     },
   
     {
-      "id":"Test reading IDX file format.",
+      "id":"Test writing IDX file format. [1]",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test writing IDX file format. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test writing IDX file format. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test writing IDX file format. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test writing IDX file format. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test writing IDX file format. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test writing IDX file format. [7]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test writing IDX file format. [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test writing IDX file format. [9]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test writing IDX file format. [10]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["    Neureka.get().settings().view().ndArrays({ NDPrintSettings it ->","    it.setIsScientific( true )","    it.setIsMultiline( false )","    it.setHasGradient( true )","    it.setCellSize( 1 )","    it.setHasValue( true )","    it.setHasRecursiveGraph( false )","    it.setHasDerivatives( false )","    it.setHasShape( true )","    it.setIsCellBound( false )","    it.setPostfix(  \"\" )","    it.setPrefix(  \"\"  )","    it.setHasSlimNumbers(  false )","})"]},
+
+        {"kind":"when","text":"A new IDX file handle for the given filename is being instantiated.","code":["IDXHandle idx = new IDXHandle(tensor, \"build/test-can/\"+filename)"]},
+
+        {"kind":"then","text":"The file will then exist at the following path: ","code":["new File(\"build/test-can/\"+filename).exists()"]},
+
+        {"kind":"when","text":"The \"load\" method is being called in order to load the tensor into memory.","code":["Tensor loaded = idx.load()"]},
+
+        {"kind":"then","text":"The loaded tensor is as expected...","code":["loaded != null","loaded.toString() == expected","loaded.getDataType().getRepresentativeType() == type"]},
+
+        {"kind":"where","text":"The following paths and file names are being used for testing : ","code":{"tensor":["Tensor.of([2, 4], -2d..4d)","Tensor.of([2, 4], 2d)","Tensor.of(Float, [8], -2f..4f)","Tensor.of([4, 2], 2f)","Tensor.of(Integer, [3], 2..4)","Tensor.of([2, 2], 2)","Tensor.of(Short, [2], 2..4)","Tensor.of([2, 2], 2 as short)","Tensor.of(Byte, [2], 2..4)","Tensor.of([1, 2], 2 as byte)","Tensor.of(Long, [6], -3..4)"],"type":["F64.class","F64.class","F32.class","F32.class","I32.class","I32.class","I16.class","I16.class","I8.class","I8.class","I64.class"],"filename":["\"test.idx3-ubyte\"","\"test2.idx\"","\"test_f32_1.idx\"","\"test_f32_2.idx\"","\"test_i32_1.idx\"","\"test_i32_2.idx\"","\"test_i16_1.idx\"","\"test_i16_2.idx\"","\"test_i8_1.idx\"","\"test_i8_2.idx\"","\"test_i64_1.idx\""],"expected":["\"(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(8):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]\"","\"(4x2):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"","\"(3):[2, 3, 4]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(2x2):[2, 2, 2, 2]\"","\"(2):[2, 3]\"","\"(1x2):[2, 2]\"","\"(6):[-3, -2, -1, 0, 1, 2]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test reading IDX file format. [0]",
+      "result":"PASS",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -64,9 +294,63 @@
     },
   
     {
-      "id":"We can load image files as tensors.",
+      "id":"Test reading IDX file format. [1]",
       "result":"PASS",
-      "duration":"0.508 seconds",
+      "duration":"0.004 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A variable for storing a hash :","code":["def hash = \"\""]},
+
+        {"kind":"when","text":"The given idx file is being loaded by the \"IDXHead\" class into a new tensor...","code":["IDXHandle idx = new IDXHandle( \"build/resources/test/idx/\" + filename )","Tensor loaded = idx.load()"]},
+
+        {"kind":"and","text":"... this new tensor is then hashed ...","code":["loaded.forEach( e -> hash = ( hash + e ).digest(\"md5\") )"]},
+
+        {"kind":"then","text":"The hash is as expected.","code":["hash == expected"]},
+
+        {"kind":"and","text":"The loaded tensor has the expected data type.","code":["loaded.dataType.getRepresentativeType() == I16.class","loaded.dataType == DataType.of( I16.class )"]},
+
+        {"kind":"and","text":"It contains the correct array type.","code":["loaded.mut.data.get() instanceof short[]"]},
+
+        {"kind":"and","text":"The \"IDXHead\" instance has the expected state :","code":["idx.valueSize == 28 * 28","idx.valueSize == 28 * 28 * 1 // 1 := ubyte","idx.fileName == filename","idx.location.endsWith( filename )","idx.totalSize == 28 * 28 * 1 + 16","idx.dataType != loaded.dataType","idx.dataType == DataType.of( UI8.class ) // The underlying data is unsigned byte! (Not supported by JVM)"]},
+
+        {"kind":"where","text":"The following files and the expected hashes of their data were used :","code":{"filename":["\"MNIST-sample-1.idx\"","\"MNIST-sample-2.idx\"","\"MNIST-sample-3.idx\""],"expected":["\"c74e87c7a93605e7a1660ec9e17dcf9f\"","\"4a57297981456a467a302c8738b3ac50\"","\"87eade8bb5659d324030f4e84f6745e7\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Test reading IDX file format. [2]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A variable for storing a hash :","code":["def hash = \"\""]},
+
+        {"kind":"when","text":"The given idx file is being loaded by the \"IDXHead\" class into a new tensor...","code":["IDXHandle idx = new IDXHandle( \"build/resources/test/idx/\" + filename )","Tensor loaded = idx.load()"]},
+
+        {"kind":"and","text":"... this new tensor is then hashed ...","code":["loaded.forEach( e -> hash = ( hash + e ).digest(\"md5\") )"]},
+
+        {"kind":"then","text":"The hash is as expected.","code":["hash == expected"]},
+
+        {"kind":"and","text":"The loaded tensor has the expected data type.","code":["loaded.dataType.getRepresentativeType() == I16.class","loaded.dataType == DataType.of( I16.class )"]},
+
+        {"kind":"and","text":"It contains the correct array type.","code":["loaded.mut.data.get() instanceof short[]"]},
+
+        {"kind":"and","text":"The \"IDXHead\" instance has the expected state :","code":["idx.valueSize == 28 * 28","idx.valueSize == 28 * 28 * 1 // 1 := ubyte","idx.fileName == filename","idx.location.endsWith( filename )","idx.totalSize == 28 * 28 * 1 + 16","idx.dataType != loaded.dataType","idx.dataType == DataType.of( UI8.class ) // The underlying data is unsigned byte! (Not supported by JVM)"]},
+
+        {"kind":"where","text":"The following files and the expected hashes of their data were used :","code":{"filename":["\"MNIST-sample-1.idx\"","\"MNIST-sample-2.idx\"","\"MNIST-sample-3.idx\""],"expected":["\"c74e87c7a93605e7a1660ec9e17dcf9f\"","\"4a57297981456a467a302c8738b3ac50\"","\"87eade8bb5659d324030f4e84f6745e7\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can load image files as tensors. [0]",
+      "result":"PASS",
+      "duration":"0.587 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,9 +369,129 @@
     },
   
     {
-      "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors.",
+      "id":"We can load image files as tensors. [1]",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.014 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var hash = \"\"","var type = filename.split(\"\\\\.\")[1].toLowerCase()"]},
+
+        {"kind":"when","text":"","code":["FileHandle handle = FileHandle.FACTORY.getLoader(type).load(\"build/resources/test/$type/\" + filename, null)","Tensor loaded = handle.load()","loaded.forEach(e -> hash = ( hash + e ).digest('md5') )"]},
+
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getRepresentativeType() == I16.class // Auto convert! (stored as I16)","hash == expected"]},
+
+        {"kind":"and","text":"","code":["handle.shape == shape","handle.valueSize == shape.inject( 1, {prod, value -> prod * value} )","handle.totalSize == shape.inject( 1, {prod, value -> prod * value} ) //28 * 28 * 1 + 16","handle.location.endsWith( filename )","handle.dataType == DataType.of( UI8.class )","loaded.dataType == DataType.of( I16.class )"]},
+
+        {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":{"filename":["\"small.JPG\"","\"tiny.JPG\"","\"super-tiny.JPG\"","\"tiny.png\""],"shape":["[260, 410, 3]","[10, 46, 3]","[3, 4, 3]","[90, 183, 4]"],"expected":["\"b0e336b03f2ead7297e56b8ca050f34d\"","\"79bf5dd367b5ec05603e395c41dafaa7\"","\"a834038d8ddc53f170fa426c76d45df2\"","\"63bcd21a7580242a1b562bb49cb53e74\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can load image files as tensors. [2]",
+      "result":"PASS",
+      "duration":"0.011 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var hash = \"\"","var type = filename.split(\"\\\\.\")[1].toLowerCase()"]},
+
+        {"kind":"when","text":"","code":["FileHandle handle = FileHandle.FACTORY.getLoader(type).load(\"build/resources/test/$type/\" + filename, null)","Tensor loaded = handle.load()","loaded.forEach(e -> hash = ( hash + e ).digest('md5') )"]},
+
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getRepresentativeType() == I16.class // Auto convert! (stored as I16)","hash == expected"]},
+
+        {"kind":"and","text":"","code":["handle.shape == shape","handle.valueSize == shape.inject( 1, {prod, value -> prod * value} )","handle.totalSize == shape.inject( 1, {prod, value -> prod * value} ) //28 * 28 * 1 + 16","handle.location.endsWith( filename )","handle.dataType == DataType.of( UI8.class )","loaded.dataType == DataType.of( I16.class )"]},
+
+        {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":{"filename":["\"small.JPG\"","\"tiny.JPG\"","\"super-tiny.JPG\"","\"tiny.png\""],"shape":["[260, 410, 3]","[10, 46, 3]","[3, 4, 3]","[90, 183, 4]"],"expected":["\"b0e336b03f2ead7297e56b8ca050f34d\"","\"79bf5dd367b5ec05603e395c41dafaa7\"","\"a834038d8ddc53f170fa426c76d45df2\"","\"63bcd21a7580242a1b562bb49cb53e74\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can load image files as tensors. [3]",
+      "result":"PASS",
+      "duration":"0.119 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"","code":["var hash = \"\"","var type = filename.split(\"\\\\.\")[1].toLowerCase()"]},
+
+        {"kind":"when","text":"","code":["FileHandle handle = FileHandle.FACTORY.getLoader(type).load(\"build/resources/test/$type/\" + filename, null)","Tensor loaded = handle.load()","loaded.forEach(e -> hash = ( hash + e ).digest('md5') )"]},
+
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getRepresentativeType() == I16.class // Auto convert! (stored as I16)","hash == expected"]},
+
+        {"kind":"and","text":"","code":["handle.shape == shape","handle.valueSize == shape.inject( 1, {prod, value -> prod * value} )","handle.totalSize == shape.inject( 1, {prod, value -> prod * value} ) //28 * 28 * 1 + 16","handle.location.endsWith( filename )","handle.dataType == DataType.of( UI8.class )","loaded.dataType == DataType.of( I16.class )"]},
+
+        {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":{"filename":["\"small.JPG\"","\"tiny.JPG\"","\"super-tiny.JPG\"","\"tiny.png\""],"shape":["[260, 410, 3]","[10, 46, 3]","[3, 4, 3]","[90, 183, 4]"],"expected":["\"b0e336b03f2ead7297e56b8ca050f34d\"","\"79bf5dd367b5ec05603e395c41dafaa7\"","\"a834038d8ddc53f170fa426c76d45df2\"","\"63bcd21a7580242a1b562bb49cb53e74\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors. [0]",
+      "result":"PASS",
+      "duration":"0.004 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["CSVHandle csv = new CSVHandle( \"build/resources/test/csv/\" + filename, params )","Tensor loaded = csv.load()","var hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )"]},
+
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getItemTypeClass() == String.class // Auto convert! (stored as String)","hash == expected"]},
+
+        {"kind":"and","text":"","code":["csv.shape == shape","csv.valueSize == shape.inject( 1, {prod, value -> prod * value} )","csv.totalSize == byteSize","csv.dataSize == byteSize","csv.location.endsWith( filename )","csv.dataType == DataType.of( String.class )","loaded.dataType == DataType.of( String.class )"]},
+
+        {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":{"filename":["\"biostats.csv\"","\"biostats.csv\"","\"biostats.csv\"","\"biostats.csv\""],"params":["[:]","[firstRowIsLabels:true]","[firstColIsIndex:true]","[firstColIsIndex:true,firstRowIsLabels:true]"],"byteSize":["753","702","639","594"],"shape":["[19, 5]","[18, 5]","[19, 4]","[18, 4]"],"expected":["\"a3dc4ede7814b5d35d20a8c9310cd63c\"","\"baac406a366a51cb6d69e97a90711050\"","\"90c5d3a4b1ea87901879993bb79e9bc1\"","\"61d75f3dccc8d6987e686d151a423310\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors. [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["CSVHandle csv = new CSVHandle( \"build/resources/test/csv/\" + filename, params )","Tensor loaded = csv.load()","var hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )"]},
+
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getItemTypeClass() == String.class // Auto convert! (stored as String)","hash == expected"]},
+
+        {"kind":"and","text":"","code":["csv.shape == shape","csv.valueSize == shape.inject( 1, {prod, value -> prod * value} )","csv.totalSize == byteSize","csv.dataSize == byteSize","csv.location.endsWith( filename )","csv.dataType == DataType.of( String.class )","loaded.dataType == DataType.of( String.class )"]},
+
+        {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":{"filename":["\"biostats.csv\"","\"biostats.csv\"","\"biostats.csv\"","\"biostats.csv\""],"params":["[:]","[firstRowIsLabels:true]","[firstColIsIndex:true]","[firstColIsIndex:true,firstRowIsLabels:true]"],"byteSize":["753","702","639","594"],"shape":["[19, 5]","[18, 5]","[19, 4]","[18, 4]"],"expected":["\"a3dc4ede7814b5d35d20a8c9310cd63c\"","\"baac406a366a51cb6d69e97a90711050\"","\"90c5d3a4b1ea87901879993bb79e9bc1\"","\"61d75f3dccc8d6987e686d151a423310\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["CSVHandle csv = new CSVHandle( \"build/resources/test/csv/\" + filename, params )","Tensor loaded = csv.load()","var hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )"]},
+
+        {"kind":"then","text":"","code":["loaded != null","!loaded.isVirtual()","loaded.size() == shape.inject( 1, {prod, value -> prod * value} )","loaded.getDataType().getItemTypeClass() == String.class // Auto convert! (stored as String)","hash == expected"]},
+
+        {"kind":"and","text":"","code":["csv.shape == shape","csv.valueSize == shape.inject( 1, {prod, value -> prod * value} )","csv.totalSize == byteSize","csv.dataSize == byteSize","csv.location.endsWith( filename )","csv.dataType == DataType.of( String.class )","loaded.dataType == DataType.of( String.class )"]},
+
+        {"kind":"where","text":"The following jpg files with their expected shape and hash were used.","code":{"filename":["\"biostats.csv\"","\"biostats.csv\"","\"biostats.csv\"","\"biostats.csv\""],"params":["[:]","[firstRowIsLabels:true]","[firstColIsIndex:true]","[firstColIsIndex:true,firstRowIsLabels:true]"],"byteSize":["753","702","639","594"],"shape":["[19, 5]","[18, 5]","[19, 4]","[18, 4]"],"expected":["\"a3dc4ede7814b5d35d20a8c9310cd63c\"","\"baac406a366a51cb6d69e97a90711050\"","\"90c5d3a4b1ea87901879993bb79e9bc1\"","\"61d75f3dccc8d6987e686d151a423310\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"The FileDevice component \"CSVHead\" can read CSV file formats and load them as tensors. [3]",
+      "result":"PASS",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -106,7 +510,7 @@
     {
       "id":"Fully labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,7 +533,7 @@
     {
       "id":"Partially labeled tenors will be stored with their labels included when saving them as CSV.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

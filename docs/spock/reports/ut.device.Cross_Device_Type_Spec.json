@@ -1,24 +1,24 @@
 {
   "className":"ut.device.Cross_Device_Type_Spec",
   "title":"Finding Device Types",
-  "narrative":"Neureka introduces a the concept of a `Device` which is an interface\n    that represents a computational device used for executing tensor / nd-array operations on them.\n    The `Device` interface is implemented by various classes which represent\n    different types of accelerator hardware such as `CPUs`, `GPUs`, `TPUs`, `FPGAs`, etc.\n    These various `Device` types can not be instantiated directly because they model\n    the concrete and finite hardware that is available on any given system Neureka is running on.\n    This means that they are usually instantiated lazily upon access request or\n    upfront by the library backend (usually a backend extension built fo a specific device).\n    In order to find these instances embedded in the library backend the `Device` interface\n    exposes various static methods which can be used to find a device instance by name or type.",
+  "narrative":"Neureka introduces a the concept of a `Device` which is an interface\n    that represents a computational device used for executing tensor / nd-array operations on them.\n    The `Device` interface is implemented by various classes which represent\n    different types of accelerator hardware such as `CPUs`, `GPUs`, `TPUs`, `FPGAs`, etc.\n    These various `Device` types can not be instantiated directly because they model \n    the concrete and finite hardware that is available on any given system Neureka is running on.\n    This means that they are usually instantiated lazily upon access request or \n    upfront by the library backend (usually a backend extension built fo a specific device).\n    In order to find these instances embedded in the library backend the `Device` interface\n    exposes various static methods which can be used to find a device instance by name or type.",
   "subjects":["neureka.devices.Device"],
   "statistics":{
-    "runs":"10",
+    "runs":"53",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"1",
-    "duration":"0.834 seconds"
+    "duration":"6.152 seconds"
   },
   "headers":["\n                Specified below is the behaviour of the factory methods in the\n                Device interface as well as its various implementations \n                which should adhere to a certain set of common behaviours.\n        "],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"We can find Device implementations or null by passing search keys to the \"get\" method.",
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [0]",
       "result":"PASS",
-      "duration":"0.012 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        "]
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        "]
       },
       "blocks":[
         {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
@@ -33,16 +33,225 @@
     },
   
     {
-      "id":"We can query the backend for devices by specifying both the requested type and a key word.",
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [1]",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.001 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        ","\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        "]
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        "]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        "]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        "]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" method are dependent on the current \n            system and the available hardware.\n        "]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [5]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [6]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [7]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [9]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [10]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can find Device implementations or null by passing search keys to the \"get\" method. [11]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"We pass a query key word to the \"get\" method...","code":["var device = Device.get(query)"]},
+
+        {"kind":"then","text":"...the result should be a non-null device (if our query key matches something).","code":["device != null"]},
+
+        {"kind":"and","text":"The resulting Device variable has the expected type (CPU, OpenCLDevice, ...).","code":["device.class == type"]},
+
+        {"kind":"where","text":"The query key words and the expected device types returned.","code":{"query":["\"cPu\"","\"jVm\"","\"natiVe\"","\"Threaded\"","\"first CPU\"","\"openCl\"","\"first gpu\"","\"nvidia or amd or intel\"","\"rocm or cuda or amd or nvidia\"","\"nvidia  amd or intel\"","\"cudarocm  gpu\"","\"first\""],"type":["CPU","CPU","CPU","CPU","CPU","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice","OpenCLDevice"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can query the backend for devices by specifying both the requested type and a key word. [0]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        "]
       },
       "blocks":[
         {"kind":"expect","text":"Querying for a device using a device type and key works as expected.","code":["Device.get(type, key) === expected"]},
 
-        {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional instance.","code":["Device.find(type, key).isEmpty() && expected == null || Device.find(type, key).get() === expected"]},
+        {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional instance.","code":["!Device.find(type, key).isPresent() && expected == null || Device.find(type, key).get() === expected"]},
 
         {"kind":"where","text":"The we can use the following device type, key and expected device instance.","code":{"type":["Device","Device","Device","DummyDevice","DummyDevice","DummyDevice","DummyDevice"],"key":["'cpu'","'jvm'","'processor'","'first'","'any'","'cpu'","'gpu'"],"expected":["CPU.get()","CPU.get()","CPU.get()","null","null","null","null"]}}
       ],
@@ -50,9 +259,111 @@
     },
   
     {
-      "id":"In total there are 3 different types of methods for finding device instances.",
+      "id":"We can query the backend for devices by specifying both the requested type and a key word. [1]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        "]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Querying for a device using a device type and key works as expected.","code":["Device.get(type, key) === expected"]},
+
+        {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional instance.","code":["!Device.find(type, key).isPresent() && expected == null || Device.find(type, key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following device type, key and expected device instance.","code":{"type":["Device","Device","Device","DummyDevice","DummyDevice","DummyDevice","DummyDevice"],"key":["'cpu'","'jvm'","'processor'","'first'","'any'","'cpu'","'gpu'"],"expected":["CPU.get()","CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can query the backend for devices by specifying both the requested type and a key word. [2]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        "]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Querying for a device using a device type and key works as expected.","code":["Device.get(type, key) === expected"]},
+
+        {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional instance.","code":["!Device.find(type, key).isPresent() && expected == null || Device.find(type, key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following device type, key and expected device instance.","code":{"type":["Device","Device","Device","DummyDevice","DummyDevice","DummyDevice","DummyDevice"],"key":["'cpu'","'jvm'","'processor'","'first'","'any'","'cpu'","'gpu'"],"expected":["CPU.get()","CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can query the backend for devices by specifying both the requested type and a key word. [3]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        "]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Querying for a device using a device type and key works as expected.","code":["Device.get(type, key) === expected"]},
+
+        {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional instance.","code":["!Device.find(type, key).isPresent() && expected == null || Device.find(type, key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following device type, key and expected device instance.","code":{"type":["Device","Device","Device","DummyDevice","DummyDevice","DummyDevice","DummyDevice"],"key":["'cpu'","'jvm'","'processor'","'first'","'any'","'cpu'","'gpu'"],"expected":["CPU.get()","CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can query the backend for devices by specifying both the requested type and a key word. [4]",
       "result":"PASS",
       "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        "]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Querying for a device using a device type and key works as expected.","code":["Device.get(type, key) === expected"]},
+
+        {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional instance.","code":["!Device.find(type, key).isPresent() && expected == null || Device.find(type, key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following device type, key and expected device instance.","code":{"type":["Device","Device","Device","DummyDevice","DummyDevice","DummyDevice","DummyDevice"],"key":["'cpu'","'jvm'","'processor'","'first'","'any'","'cpu'","'gpu'"],"expected":["CPU.get()","CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can query the backend for devices by specifying both the requested type and a key word. [5]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        "]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Querying for a device using a device type and key works as expected.","code":["Device.get(type, key) === expected"]},
+
+        {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional instance.","code":["!Device.find(type, key).isPresent() && expected == null || Device.find(type, key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following device type, key and expected device instance.","code":{"type":["Device","Device","Device","DummyDevice","DummyDevice","DummyDevice","DummyDevice"],"key":["'cpu'","'jvm'","'processor'","'first'","'any'","'cpu'","'gpu'"],"expected":["CPU.get()","CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"We can query the backend for devices by specifying both the requested type and a key word. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Note that the examples specified in the table below\n            may not be the same on every system because the devices\n            returned by the \"get\" and \"find\" methods are dependent on the current \n            system and the available hardware that Neureka encounters.\n        "]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Querying for a device using a device type and key works as expected.","code":["Device.get(type, key) === expected"]},
+
+        {"kind":"and","text":"We can use the \"find\" method if we want the result to be wrapped in a nice and safe Optional instance.","code":["!Device.find(type, key).isPresent() && expected == null || Device.find(type, key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following device type, key and expected device instance.","code":{"type":["Device","Device","Device","DummyDevice","DummyDevice","DummyDevice","DummyDevice"],"key":["'cpu'","'jvm'","'processor'","'first'","'any'","'cpu'","'gpu'"],"expected":["CPU.get()","CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"In total there are 3 different types of methods for finding device instances. [0]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +372,7 @@
 
         {"kind":"and","text":"The \"any\" method returns a device instance or the \"CPU device\", which is the library default device.","code":["Device.any(key) === expected || Device.any(key) === CPU.get()"]},
 
-        {"kind":"and","text":"The \"find\" method returns a device instance wrapped in an Optional instance.","code":["Device.find(key).isEmpty() && expected == null || Device.find(key).get() === expected"]},
+        {"kind":"and","text":"The \"find\" method returns a device instance wrapped in an Optional instance.","code":["!Device.find(key).isPresent() && expected == null || Device.find(key).get() === expected"]},
 
         {"kind":"where","text":"The we can use the following search key and expected device instance.","code":{"key":["'cpu'","'central processing'","'e9rt56hqfwe5f0'","'5638135dh90978'","'banana device'","'cupcake'"],"expected":["CPU.get()","CPU.get()","null","null","null","null"]}}
       ],
@@ -69,11 +380,106 @@
     },
   
     {
-      "id":"Passing a numeric array to a tensor should modify its contents!",
+      "id":"In total there are 3 different types of methods for finding device instances. [1]",
       "result":"PASS",
-      "duration":"0.022 seconds",
+      "duration":"0.002 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        ","\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        "]
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The \"get\" method returns a device instance or null.","code":["Device.get(key) === expected"]},
+
+        {"kind":"and","text":"The \"any\" method returns a device instance or the \"CPU device\", which is the library default device.","code":["Device.any(key) === expected || Device.any(key) === CPU.get()"]},
+
+        {"kind":"and","text":"The \"find\" method returns a device instance wrapped in an Optional instance.","code":["!Device.find(key).isPresent() && expected == null || Device.find(key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following search key and expected device instance.","code":{"key":["'cpu'","'central processing'","'e9rt56hqfwe5f0'","'5638135dh90978'","'banana device'","'cupcake'"],"expected":["CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"In total there are 3 different types of methods for finding device instances. [2]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The \"get\" method returns a device instance or null.","code":["Device.get(key) === expected"]},
+
+        {"kind":"and","text":"The \"any\" method returns a device instance or the \"CPU device\", which is the library default device.","code":["Device.any(key) === expected || Device.any(key) === CPU.get()"]},
+
+        {"kind":"and","text":"The \"find\" method returns a device instance wrapped in an Optional instance.","code":["!Device.find(key).isPresent() && expected == null || Device.find(key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following search key and expected device instance.","code":{"key":["'cpu'","'central processing'","'e9rt56hqfwe5f0'","'5638135dh90978'","'banana device'","'cupcake'"],"expected":["CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"In total there are 3 different types of methods for finding device instances. [3]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The \"get\" method returns a device instance or null.","code":["Device.get(key) === expected"]},
+
+        {"kind":"and","text":"The \"any\" method returns a device instance or the \"CPU device\", which is the library default device.","code":["Device.any(key) === expected || Device.any(key) === CPU.get()"]},
+
+        {"kind":"and","text":"The \"find\" method returns a device instance wrapped in an Optional instance.","code":["!Device.find(key).isPresent() && expected == null || Device.find(key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following search key and expected device instance.","code":{"key":["'cpu'","'central processing'","'e9rt56hqfwe5f0'","'5638135dh90978'","'banana device'","'cupcake'"],"expected":["CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"In total there are 3 different types of methods for finding device instances. [4]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The \"get\" method returns a device instance or null.","code":["Device.get(key) === expected"]},
+
+        {"kind":"and","text":"The \"any\" method returns a device instance or the \"CPU device\", which is the library default device.","code":["Device.any(key) === expected || Device.any(key) === CPU.get()"]},
+
+        {"kind":"and","text":"The \"find\" method returns a device instance wrapped in an Optional instance.","code":["!Device.find(key).isPresent() && expected == null || Device.find(key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following search key and expected device instance.","code":{"key":["'cpu'","'central processing'","'e9rt56hqfwe5f0'","'5638135dh90978'","'banana device'","'cupcake'"],"expected":["CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"In total there are 3 different types of methods for finding device instances. [5]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The \"get\" method returns a device instance or null.","code":["Device.get(key) === expected"]},
+
+        {"kind":"and","text":"The \"any\" method returns a device instance or the \"CPU device\", which is the library default device.","code":["Device.any(key) === expected || Device.any(key) === CPU.get()"]},
+
+        {"kind":"and","text":"The \"find\" method returns a device instance wrapped in an Optional instance.","code":["!Device.find(key).isPresent() && expected == null || Device.find(key).get() === expected"]},
+
+        {"kind":"where","text":"The we can use the following search key and expected device instance.","code":{"key":["'cpu'","'central processing'","'e9rt56hqfwe5f0'","'5638135dh90978'","'banana device'","'cupcake'"],"expected":["CPU.get()","CPU.get()","null","null","null","null"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its contents! [0]",
+      "result":"PASS",
+      "duration":"0.004 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        "]
       },
       "blocks":[
         {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
@@ -88,9 +494,180 @@
     },
   
     {
-      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor.",
+      "id":"Passing a numeric array to a tensor should modify its contents! [1]",
       "result":"PASS",
-      "duration":"0.024 seconds",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
+
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"data1":["new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}","new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}"],"data2":["new float[0]","new float[]{1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}","new float[0]","new float[]{1, 1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}"],"expected":["\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\"","\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its contents! [2]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
+
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"data1":["new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}","new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}"],"data2":["new float[0]","new float[]{1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}","new float[0]","new float[]{1, 1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}"],"expected":["\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\"","\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its contents! [3]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
+
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"data1":["new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}","new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}"],"data2":["new float[0]","new float[]{1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}","new float[0]","new float[]{1, 1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}"],"expected":["\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\"","\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its contents! [4]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Here we demonstrate that a tensor located on a non-CPU `Device` will be\n            updated when passing a float or double array, even if it its data is stored\n            on the GPU or somewhere else!\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
+
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"data1":["new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}","new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}"],"data2":["new float[0]","new float[]{1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}","new float[0]","new float[]{1, 1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}"],"expected":["\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\"","\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its contents! [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
+
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"data1":["new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}","new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}"],"data2":["new float[0]","new float[]{1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}","new float[0]","new float[]{1, 1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}"],"expected":["\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\"","\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its contents! [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
+
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"data1":["new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}","new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}"],"data2":["new float[0]","new float[]{1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}","new float[0]","new float[]{1, 1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}"],"expected":["\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\"","\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its contents! [7]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
+
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"data1":["new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}","new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}"],"data2":["new float[0]","new float[]{1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}","new float[0]","new float[]{1, 1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}"],"expected":["\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\"","\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its contents! [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
+
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"data1":["new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}","new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}"],"data2":["new float[0]","new float[]{1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}","new float[0]","new float[]{1, 1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}"],"expected":["\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\"","\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Passing a numeric array to a tensor should modify its contents! [9]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A 2D tensor which we transfer to a device using the \"to\" method...","code":["Tensor t = Tensor.of(Shape.of(3, 2), new double[]{2, 4, -5, 8, 3, -2}).to(device)"]},
+
+        {"kind":"when","text":"A numeric array is passed to said tensor...","code":["t.mut.setItems(data1)","t.mut.setItems(data2)"]},
+
+        {"kind":"then","text":"The tensor (as String) contains the expected String.","code":["t.toString().contains(expected)"]},
+
+        {"kind":"where","text":"The following data is being used :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"data1":["new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}","new float[0]","new float[]{2, 3, 4, 5, 6}","new float[]{3, 5, 6}","new double[]{9, 4, 7, -12}","new float[]{22, 24, 35, 80}"],"data2":["new float[0]","new float[]{1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}","new float[0]","new float[]{1, 1, 1, 1, 1}","new float[]{4, 2, 3}","new double[]{-5, -2, 1}","new double[]{-1, -1, -1}"],"expected":["\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 6.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\"","\"(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]\"","\"(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]\"","\"(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]\"","\"(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]\"","\"(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]\""]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor. [0]",
+      "result":"PASS",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -115,11 +692,252 @@
     },
   
     {
-      "id":"Execution calls containing null arguments will cause an exception to be thrown in device instances.",
+      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor. [1]",
       "result":"PASS",
-      "duration":"0.294 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\n            Every argument within an ExecutionCall instance has a purpose. Null is not permissible.\n        ","\n            Every argument within an ExecutionCall instance has a purpose. Null is not permissible.\n        "]
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tensor t = Tensor.of(Shape.of(shape), data).to(device)"]},
+
+        {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+
+        {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"shape":["new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}"],"data":["new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new int[]{-5, -2, 1, -12, 3, -2}","new long[]{-5, -2, 1, -12, 3, -2}","new byte[]{-5, -2, 1, -12, 3, -2}","new short[]{-5, -2, 1, -12, 3, -2}","new float[]{-5, -2, 1, -12, 3, -2}","new boolean[]{true, false, false}","new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor. [2]",
+      "result":"PASS",
+      "duration":"0.004 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tensor t = Tensor.of(Shape.of(shape), data).to(device)"]},
+
+        {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+
+        {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"shape":["new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}"],"data":["new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new int[]{-5, -2, 1, -12, 3, -2}","new long[]{-5, -2, 1, -12, 3, -2}","new byte[]{-5, -2, 1, -12, 3, -2}","new short[]{-5, -2, 1, -12, 3, -2}","new float[]{-5, -2, 1, -12, 3, -2}","new boolean[]{true, false, false}","new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor. [3]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tensor t = Tensor.of(Shape.of(shape), data).to(device)"]},
+
+        {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+
+        {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"shape":["new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}"],"data":["new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new int[]{-5, -2, 1, -12, 3, -2}","new long[]{-5, -2, 1, -12, 3, -2}","new byte[]{-5, -2, 1, -12, 3, -2}","new short[]{-5, -2, 1, -12, 3, -2}","new float[]{-5, -2, 1, -12, 3, -2}","new boolean[]{true, false, false}","new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor. [4]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tensor t = Tensor.of(Shape.of(shape), data).to(device)"]},
+
+        {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+
+        {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"shape":["new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}"],"data":["new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new int[]{-5, -2, 1, -12, 3, -2}","new long[]{-5, -2, 1, -12, 3, -2}","new byte[]{-5, -2, 1, -12, 3, -2}","new short[]{-5, -2, 1, -12, 3, -2}","new float[]{-5, -2, 1, -12, 3, -2}","new boolean[]{true, false, false}","new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor. [5]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tensor t = Tensor.of(Shape.of(shape), data).to(device)"]},
+
+        {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+
+        {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"shape":["new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}"],"data":["new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new int[]{-5, -2, 1, -12, 3, -2}","new long[]{-5, -2, 1, -12, 3, -2}","new byte[]{-5, -2, 1, -12, 3, -2}","new short[]{-5, -2, 1, -12, 3, -2}","new float[]{-5, -2, 1, -12, 3, -2}","new boolean[]{true, false, false}","new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor. [6]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tensor t = Tensor.of(Shape.of(shape), data).to(device)"]},
+
+        {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+
+        {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"shape":["new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}"],"data":["new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new int[]{-5, -2, 1, -12, 3, -2}","new long[]{-5, -2, 1, -12, 3, -2}","new byte[]{-5, -2, 1, -12, 3, -2}","new short[]{-5, -2, 1, -12, 3, -2}","new float[]{-5, -2, 1, -12, 3, -2}","new boolean[]{true, false, false}","new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor. [7]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tensor t = Tensor.of(Shape.of(shape), data).to(device)"]},
+
+        {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+
+        {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"shape":["new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}"],"data":["new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new int[]{-5, -2, 1, -12, 3, -2}","new long[]{-5, -2, 1, -12, 3, -2}","new byte[]{-5, -2, 1, -12, 3, -2}","new short[]{-5, -2, 1, -12, 3, -2}","new float[]{-5, -2, 1, -12, 3, -2}","new boolean[]{true, false, false}","new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Devices expose an API for accessing (reading and writing) the data of a tensor. [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Because in some environments OpenCL might not be available, the test will be stopped!","code":["if ( device == null ) return"]},
+
+        {"kind":"when","text":"A 2D tensor is being instantiated by passing the given shape and data...","code":["Tensor t = Tensor.of(Shape.of(shape), data).to(device)"]},
+
+        {"kind":"then","text":"The tensor values (as List) are as expected.","code":["Arrays.equals(t.getItemsAs(double[].class), DataConverter.get().convert(expected,double[].class))"]},
+
+        {"kind":"when","text":"The same underlying data is being queried by calling the device...","code":["var result = (0..<t.size()).collect{device.access(t).readAt(it)}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"when","text":"","code":["result = (0..<t.size()).collect{device.access(t).readArray(data.getClass(), it, 1)[0]}"]},
+
+        {"kind":"then","text":"This other result also contains the same elements.","code":["result == expected"]},
+
+        {"kind":"where","text":"The following data is being used for tensor instantiation :","code":{"device":["Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"cpu\")","Device.get(\"openCL\")","Device.get(\"openCL\")"],"shape":["new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}","new int[]{3, 2}"],"data":["new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new int[]{-5, -2, 1, -12, 3, -2}","new long[]{-5, -2, 1, -12, 3, -2}","new byte[]{-5, -2, 1, -12, 3, -2}","new short[]{-5, -2, 1, -12, 3, -2}","new float[]{-5, -2, 1, -12, 3, -2}","new boolean[]{true, false, false}","new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}","new float[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}"],"expected":["[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[-5, -2, 1, -12, 3, -2]","[true, false, false, true, false, false]","[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]","[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Execution calls containing null arguments will cause an exception to be thrown in device instances. [0]",
+      "result":"PASS",
+      "duration":"0.006 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":["\n            Every argument within an ExecutionCall instance has a purpose. Null is not permissible.\n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"A mocked ExecutionCall with mocked algorithm...","code":["var call = Mock(ExecutionCall)","var implementation = Mock(Algorithm)"]},
+
+        {"kind":"and","text":"We construct a plausible mocked call by making it expose the given device.","code":["call.getDevice() >> device"]},
+
+        {"kind":"when","text":"The call is being passed to the execution utility method ..","code":["AbstractDeviceAlgorithm.prepareAndExecute( call, AbstractDeviceAlgorithm::executeDeviceAlgorithm )"]},
+
+        {"kind":"then","text":"...the implementation is being accessed in order to access the mocked lambda...","code":["(1.._) * call.getAlgorithm() >> implementation"]},
+
+        {"kind":"and","text":"The tensor array is being accessed to check for null. (For exception throwing)","code":["1 * call.inputs() >> new Tensor[]{ Mock(Tensor), null }"]},
+
+        {"kind":"and","text":"The expected exception is being thrown alongside a descriptive message.","code":["def exception = thrown(IllegalArgumentException)","exception.message == \"Device arguments may not be null!\\n\" +","        \"One or more tensor arguments within the given ExecutionCall instance is null.\""]},
+
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU.get()","Device.get(\"openCL\")"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Execution calls containing null arguments will cause an exception to be thrown in device instances. [1]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"A mocked ExecutionCall with mocked algorithm...","code":["var call = Mock(ExecutionCall)","var implementation = Mock(Algorithm)"]},
@@ -142,7 +960,7 @@
     {
       "id":"Devices store tensors which can also be restored.",
       "result":"PASS",
-      "duration":"0.005 seconds",
+      "duration":"0.029 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            A Device implementation keeps track of the number of tensors it \"owns\",\n            which you can see below. This is basically just reference counting.\n\n            Also note that in this example we are making some exceptions for the CPU device\n            simply because it is the default device on which all tensors are being stored\n            if no other device is specified.\n        "]
       },
@@ -171,11 +989,11 @@
     },
   
     {
-      "id":"Devices store slices which can also be restored just like any other tensor.",
+      "id":"Devices store slices which can also be restored just like any other tensor. [0]",
       "result":"PASS",
-      "duration":"0.007 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\n            Note that in this example we are making some exceptions for the CPU device\n            simply because it is the default device on which all tensors are being stored\n            if no other device is specified.\n        ","\n            Note that in this example we are making some exceptions for the CPU device\n            simply because it is the default device on which all tensors are being stored\n            if no other device is specified.\n        "]
+      "tags":{},"see":[],"extraInfo":["\n            Note that in this example we are making some exceptions for the CPU device\n            simply because it is the default device on which all tensors are being stored\n            if no other device is specified.\n        "]
       },
       "blocks":[
         {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
@@ -200,9 +1018,77 @@
     },
   
     {
-      "id":"A device will keep track of the amount of tensors and data objects it stores.",
+      "id":"Devices store slices which can also be restored just like any other tensor. [1]",
       "result":"PASS",
-      "duration":"0.374 seconds",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"The given device is available and Neureka is being reset.","code":["if ( device == null ) return"]},
+
+        {"kind":"and","text":"Two tensors which will be transferred later on...","code":["int initialNumber = device.numberOfStored()","Tensor a = Tensor.of([2, 3], \";)\")","Tensor b = a[1, 0..2]"]},
+
+        {"kind":"expect","text":"The given device is initially empty.","code":["device.isEmpty() == ( device.numberOfStored() == 0 )","!device.has( a ) || device instanceof CPU","!device.has( b ) || device instanceof CPU"]},
+
+        {"kind":"when","text":"The the first tensor is being passed to the device...","code":["device.store( a )"]},
+
+        {"kind":"then","text":"...tensor \"a\" is now on the device.","code":["!device.isEmpty()","device.numberOfStored() == initialNumber + ( device instanceof CPU ? 2 : 1 )","device.has( a )"]},
+
+        {"kind":"and","text":"","code":["!device.has( b ) || device instanceof CPU"]},
+
+        {"kind":"when","text":"","code":["device.free( a )"]},
+
+        {"kind":"then","text":"...the device is empty again.","code":["device.isEmpty() == (( initialNumber == 0 ) && !( device instanceof CPU ))","device.numberOfStored() == initialNumber + ( device instanceof CPU ? 1 : 0 )","!device.has( a ) || device instanceof CPU","!device.has( b ) || device instanceof CPU"]},
+
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU.get()","Device.get( \"openCL\" )"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A device will keep track of the amount of tensors and data objects it stores. [0]",
+      "result":"PASS",
+      "duration":"5.953 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We note the initial amount of tensors stored on the device.","code":["System.gc()","Sleep.until(5_000, 100, {CPU.get().numberOfStored() == 0})","int initial = device.numberOfStored()","int initialDataObjects = device.numberOfDataObjects()"]},
+
+        {"kind":"when","text":"We first create a data object...","code":["var data = Data.of( 42, 73, 11, 7 )"]},
+
+        {"kind":"then","text":"The CPU should not have stored any tensors yet.","code":["device.numberOfStored() == initial"]},
+
+        {"kind":"when","text":"We create a tensor from the data object...","code":["var t = Tensor.of( Shape.of(2, 2), data ).to(device)"]},
+
+        {"kind":"then","text":"The device should know about the existence of a new tensor.","code":["device.numberOfStored() == initial + 1"]},
+
+        {"kind":"and","text":"The number of data objects stored on the device should also be increased.","code":["device.numberOfDataObjects() == initialDataObjects + 1"]},
+
+        {"kind":"when","text":"We create a new tensor from the first one...","code":["var t2 = t * 2"]},
+
+        {"kind":"then","text":"The device should know about the existence of a new tensor as well as the data objects.","code":["device.numberOfStored() == initial + 2","device.numberOfDataObjects() == initialDataObjects + 2"]},
+
+        {"kind":"when","text":"We however create a new reshaped version of the first tensor...","code":["var t3 = t.reshape( 4 )"]},
+
+        {"kind":"then","text":"The device should also know about the existence of a new tensor, but not a new data object.","code":["device.numberOfStored() == initial + 3","device.numberOfDataObjects() == initialDataObjects + 2"]},
+
+        {"kind":"when","text":"We delete the references to the tensors, and then give the GC some time to do its job...","code":["t = null","t2 = null","t3 = null","System.gc()","Thread.sleep( 128 )","Sleep.until(1028, {device.numberOfStored() == initial})"]},
+
+        {"kind":"then","text":"The device should have forgotten about the tensors.","code":["device.numberOfStored() == initial"]},
+
+        {"kind":"and","text":"The device should have forgotten about the data objects as well.","code":["device.numberOfDataObjects() == initialDataObjects"]},
+
+        {"kind":"where","text":"The following Device instances are being tested :","code":{"device":["CPU.get()","Device.get( \"openCL\" )"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"A device will keep track of the amount of tensors and data objects it stores. [1]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -272,11 +1158,42 @@
     },
   
     {
-      "id":"Virtual tensors stay virtual when outsourced.",
+      "id":"Virtual tensors stay virtual when outsourced. [0]",
       "result":"PASS",
-      "duration":"0.006 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
-      "tags":{},"see":[],"extraInfo":["\n            Note: A virtual tensor is a tensor which is not yet fully initialized\n            in the sense that the data array is not yet allocated according to the \n            tensors size (number of elements they hold).\n            This is the case for tensor which are filled homogeneously with a single value,\n            like for example an all 0 tensor.    \n        ","\n            Note: A virtual tensor is a tensor which is not yet fully initialized\n            in the sense that the data array is not yet allocated according to the \n            tensors size (number of elements they hold).\n            This is the case for tensor which are filled homogeneously with a single value,\n            like for example an all 0 tensor.    \n        "]
+      "tags":{},"see":[],"extraInfo":["\n            Note: A virtual tensor is a tensor which is not yet fully initialized\n            in the sense that the data array is not yet allocated according to the \n            tensors size (number of elements they hold).\n            This is the case for tensor which are filled homogeneously with a single value,\n            like for example an all 0 tensor.    \n        "]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a homogeneously filled tensor, which is therefor \"virtual\".","code":["var t = Tensor.ofFloats().withShape(4,3).all(-0.54f)"]},
+
+        {"kind":"and","text":"We also get a device for testing...","code":["var device = Device.get(deviceType)"]},
+
+        {"kind":"expect","text":"We expect that the tensor is virtual, meaning its underlying data array stores only a single value...","code":["t.isVirtual()"]},
+
+        {"kind":"when","text":"We send the tensor to the device...","code":["t.to(device)"]},
+
+        {"kind":"then","text":"This should cause it to be \"outsourced\", (except dor a CPU device of course).","code":["t.isOutsourced() != ( device instanceof CPU )"]},
+
+        {"kind":"and","text":"...we expect the tensor to stay virtual on the device!","code":["t.isVirtual()"]},
+
+        {"kind":"when","text":"We restore the device...","code":["device.restore(t)"]},
+
+        {"kind":"then","text":"The tensor should no longer be outsourced.","code":["!t.isOutsourced()"]},
+
+        {"kind":"and","text":"It should still be virtual!","code":["t.isVirtual()"]},
+
+        {"kind":"where","text":"We test on the following devices:","code":{"deviceType":["'CPU'","'GPU'"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Virtual tensors stay virtual when outsourced. [1]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
       },
       "blocks":[
         {"kind":"given","text":"We create a homogeneously filled tensor, which is therefor \"virtual\".","code":["var t = Tensor.ofFloats().withShape(4,3).all(-0.54f)"]},

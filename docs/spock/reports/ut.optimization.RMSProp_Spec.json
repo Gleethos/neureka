@@ -1,22 +1,193 @@
 {
   "className":"ut.optimization.RMSProp_Spec",
   "title":"",
-  "narrative":"**Root Mean Squared Propagation**, or RMSProp, is an extension of gradient\n    descent and the AdaGrad version of gradient descent that uses a\n    decaying average of partial gradients in the adaptation of the\n    step size for each parameter.",
+  "narrative":"**Root Mean Squared Propagation**, or RMSProp, is an extension of gradient \n    descent and the AdaGrad version of gradient descent that uses a \n    decaying average of partial gradients in the adaptation of the \n    step size for each parameter.",
   "subjects":["neureka.optimization.Optimizer"],
   "statistics":{
-    "runs":"1",
+    "runs":"10",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.028 seconds"
   },
   "headers":["\n                The code below assumes that for we\n                have the following 2 variables setup\n                throughout every data table iteration:\n                ```\n                    Tensor<?> w = Tensor.of(0d)\n                    Optimizer<?> o = Optimizer.RMSProp.create(w)            \n                    w.set(o)                   \n                ```\n            "],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"RMSprop optimizes according to expected inputs",
+      "id":"RMSprop optimizes according to expected inputs [0]",
       "result":"PASS",
-      "duration":"0.010 seconds",
+      "duration":"0.006 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tensor g = Tensor.of(expectedWeight)"]},
+
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tensor.of( (double) gradient ) )","w.applyGradient()"]},
+
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"RMSprop optimizes according to expected inputs [1]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tensor g = Tensor.of(expectedWeight)"]},
+
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tensor.of( (double) gradient ) )","w.applyGradient()"]},
+
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"RMSprop optimizes according to expected inputs [2]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tensor g = Tensor.of(expectedWeight)"]},
+
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tensor.of( (double) gradient ) )","w.applyGradient()"]},
+
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"RMSprop optimizes according to expected inputs [3]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tensor g = Tensor.of(expectedWeight)"]},
+
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tensor.of( (double) gradient ) )","w.applyGradient()"]},
+
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"RMSprop optimizes according to expected inputs [4]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tensor g = Tensor.of(expectedWeight)"]},
+
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tensor.of( (double) gradient ) )","w.applyGradient()"]},
+
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"RMSprop optimizes according to expected inputs [5]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tensor g = Tensor.of(expectedWeight)"]},
+
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tensor.of( (double) gradient ) )","w.applyGradient()"]},
+
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"RMSprop optimizes according to expected inputs [6]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tensor g = Tensor.of(expectedWeight)"]},
+
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tensor.of( (double) gradient ) )","w.applyGradient()"]},
+
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"RMSprop optimizes according to expected inputs [7]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tensor g = Tensor.of(expectedWeight)"]},
+
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tensor.of( (double) gradient ) )","w.applyGradient()"]},
+
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"RMSprop optimizes according to expected inputs [8]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"A new scalar gradient tensor is being created.","code":["Tensor g = Tensor.of(expectedWeight)"]},
+
+        {"kind":"and","text":"The following input is being applied to the tensor (and internal optimizer)...","code":["w.set( Tensor.of( (double) gradient ) )","w.applyGradient()"]},
+
+        {"kind":"expect","text":"The following state emerges:","code":["w.toString().contains(g.toString())","w.shape.hashCode()==g.shape.hashCode()","w.strides().hashCode()==g.strides().hashCode()","w.indicesMap().hashCode()==g.indicesMap().hashCode()","w.spread().hashCode()==g.spread().hashCode()","w.offset().hashCode()==g.offset().hashCode()"]},
+
+        {"kind":"where","text":"","code":{"gradient":["-3","-3","2","-3","2","2","-4","-3","-3","2"],"expectedWeight":["0.00316","0.00545","0.00402","0.00586","0.00466","0.00349","0.00544","0.00682","0.00815","0.00725"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"RMSprop optimizes according to expected inputs [9]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

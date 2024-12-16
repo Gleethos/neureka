@@ -85,28 +85,28 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
      */
     @Override
     public boolean update( OwnerChangeRequest&lt;Tensor&lt;V&gt;&gt; changeRequest ) {
-<span class="fc" id="L88">        Tensor&lt;V&gt; oldOwner = changeRequest.getOldOwner();</span>
-<span class="fc" id="L89">        Tensor&lt;V&gt; newOwner = changeRequest.getNewOwner();</span>
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if ( changeRequest.type() == IsBeing.REPLACED ) _swap( oldOwner, newOwner );</span>
-<span class="fc bfc" id="L91" title="All 2 branches covered.">        else if ( changeRequest.type() == IsBeing.ADDED ) {</span>
-<span class="fc bfc" id="L92" title="All 2 branches covered.">            if ( newOwner.has( Relation.class ) ) {</span>
-<span class="fc" id="L93">                Relation&lt;V&gt; relation = newOwner.get(Relation.class);</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">                if ( relation.hasParent() ) { // Root needs to be found ! :</span>
-<span class="fc" id="L95">                    Tensor&lt;V&gt; root = relation.findRootTensor().orElseThrow(IllegalStateException::new);</span>
-<span class="pc bpc" id="L96" title="1 of 4 branches missed.">                    if ( !this.has(root) || !root.isOutsourced() )</span>
-<span class="fc" id="L97">                        throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
+<span class="nc" id="L88">        Tensor&lt;V&gt; oldOwner = changeRequest.getOldOwner();</span>
+<span class="nc" id="L89">        Tensor&lt;V&gt; newOwner = changeRequest.getNewOwner();</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if ( changeRequest.type() == IsBeing.REPLACED ) _swap( oldOwner, newOwner );</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        else if ( changeRequest.type() == IsBeing.ADDED ) {</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            if ( newOwner.has( Relation.class ) ) {</span>
+<span class="nc" id="L93">                Relation&lt;V&gt; relation = newOwner.get(Relation.class);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                if ( relation.hasParent() ) { // Root needs to be found ! :</span>
+<span class="nc" id="L95">                    Tensor&lt;V&gt; root = relation.findRootTensor().orElseThrow(IllegalStateException::new);</span>
+<span class="nc bnc" id="L96" title="All 4 branches missed.">                    if ( !this.has(root) || !root.isOutsourced() )</span>
+<span class="nc" id="L97">                        throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
                 }
             }
 
-<span class="fc" id="L101">            Device&lt;V&gt; found = newOwner.getMut().getData().owner();</span>
+<span class="nc" id="L101">            Device&lt;V&gt; found = newOwner.getMut().getData().owner();</span>
 
-<span class="fc bfc" id="L103" title="All 4 branches covered.">            if ( found != null &amp;&amp; found != this )</span>
-<span class="fc" id="L104">                found.restore( newOwner );</span>
+<span class="nc bnc" id="L103" title="All 4 branches missed.">            if ( found != null &amp;&amp; found != this )</span>
+<span class="nc" id="L104">                found.restore( newOwner );</span>
         }
-<span class="fc" id="L106">        return true;</span>
+<span class="nc" id="L106">        return true;</span>
     }
 
-<span class="fc" id="L109">    protected void _cleaning( Object o, Runnable action ) { _CLEANER.register( o, action ); }</span>
+<span class="nc" id="L109">    protected void _cleaning( Object o, Runnable action ) { _CLEANER.register( o, action ); }</span>
 
     /**
      *  &lt;b&gt;This method plays an important role in approving a provided {@link ExecutionCall}.&lt;/b&gt;
@@ -128,8 +128,8 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
     /** {@inheritDoc} */
     @Override
     public &lt;T extends V&gt; Storage&lt;V&gt; store( Tensor&lt;T&gt; tensor ) {
-<span class="fc" id="L131">        tensor.set( (Component) this ); // This way we move the storing procedure to the update function!</span>
-<span class="fc" id="L132">        return this;</span>
+<span class="nc" id="L131">        tensor.set( (Component) this ); // This way we move the storing procedure to the update function!</span>
+<span class="nc" id="L132">        return this;</span>
     }
 
     /** {@inheritDoc} */
@@ -170,8 +170,8 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
             int offset, int start, int size
     ) {
 <span class="fc" id="L172">        DataType&lt;?&gt; dataType = tensor.getDataType();</span>
-<span class="fc bfc" id="L173" title="All 2 branches covered.">        if ( dataType == null )</span>
-<span class="fc" id="L174">            dataType = _dataTypeOf( array );</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if ( dataType == null )</span>
+<span class="nc" id="L174">            dataType = _dataTypeOf( array );</span>
 <span class="fc" id="L175">        Class&lt;?&gt; arrayType = dataType.dataArrayType();</span>
 <span class="fc bfc" id="L176" title="All 2 branches covered.">        if ( !arrayType.isAssignableFrom( array.getClass() ) )</span>
 <span class="fc" id="L177">            array = DataConverter.get().convert( array, arrayType );</span>
@@ -206,4 +206,4 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
     protected abstract DataType&lt;?&gt; _dataTypeOf( Object rawData );
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

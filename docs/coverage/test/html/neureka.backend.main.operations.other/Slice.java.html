@@ -174,8 +174,8 @@ public class Slice extends AbstractOperation
 <span class="fc" id="L174">        parent.addChild( subset );</span>
 <span class="fc" id="L175">        input.set( parent );</span>
 
-<span class="fc bfc" id="L177" title="All 2 branches covered.">        if ( input.isOutsourced() )</span>
-<span class="fc" id="L178">            input.getDevice().store( subset );</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if ( input.isOutsourced() )</span>
+<span class="nc" id="L178">            input.getDevice().store( subset );</span>
 
 <span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if ( input.isVirtual() ) subset.mut().setIsVirtual( true );</span>
 
@@ -218,4 +218,4 @@ public class Slice extends AbstractOperation
 <span class="nc" id="L218">    public double calculate( double[] inputs, int j, int d, Function[] src ) { return src[ 0 ].call( inputs, j ); }</span>
 }
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -7,9 +7,9 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 {
 <span class="fc" id="L8">    @Override public String id() { return &quot;sig&quot;; }</span>
 
-<span class="fc" id="L10">    @Override public String activationCode() { return &quot;output = 1 / ( 1 + (float) exp(-input) );\n&quot;; }</span>
+<span class="nc" id="L10">    @Override public String activationCode() { return &quot;output = 1 / ( 1 + (float) exp(-input) );\n&quot;; }</span>
 
-<span class="fc" id="L12">    @Override public String derivationCode() { return &quot;output = input * ( 1 - input );\n&quot;; }</span>
+<span class="nc" id="L12">    @Override public String derivationCode() { return &quot;output = input * ( 1 - input );\n&quot;; }</span>
 
     @Override
     public CPUFun getActivation() {
@@ -38,4 +38,4 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 <span class="fc" id="L38">    public static double sig(double x) { return 1d / ( 1d + Math.exp( -x ) ); }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

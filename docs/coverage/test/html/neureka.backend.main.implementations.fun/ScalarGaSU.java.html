@@ -17,13 +17,13 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 
     @Override
     public String activationCode() {
-<span class="fc" id="L20">        return &quot;float cubed = input * input * input;        \n&quot; +</span>
+<span class="nc" id="L20">        return &quot;float cubed = input * input * input;        \n&quot; +</span>
                &quot;output = cubed / ( 1.0f + fabs( cubed ) );  \n&quot;;
     }
 
     @Override
     public String derivationCode() {
-<span class="fc" id="L26">        return &quot;float x2 = input * input;                                        \n&quot; +</span>
+<span class="nc" id="L26">        return &quot;float x2 = input * input;                                        \n&quot; +</span>
                &quot;float x6 = x2 * x2 * x2;                                         \n&quot; +
                &quot;output = 3.0f * x2 / ( 2.0f * x2 * fabs( input ) + x6 + 1.0f );  \n&quot;;
     }
@@ -55,4 +55,4 @@ import neureka.backend.main.implementations.fun.api.ScalarFun;
 
 }
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

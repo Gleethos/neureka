@@ -1,7 +1,7 @@
 {
   "className":"ut.ndim.Tensor_Slice_Permute_Spec",
   "title":"Permuting Slices of Tensors",
-  "narrative":"Neureka provides a convenient way to permuting tensors\n    even if they are slices of other tensors sharing the same underlying data.\n    This is possible because of the under the hood indexing\n    abstractions provided by the `NDConfiguration` interface and its various implementations.",
+  "narrative":"Neureka provides a convenient way to permuting tensors\n    even if they are slices of other tensors sharing the same underlying data.\n    This is possible because of the under the hood indexing \n    abstractions provided by the `NDConfiguration` interface and its various implementations.",
   "subjects":["neureka.Tensor"],
   "statistics":{
     "runs":"3",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.005 seconds"
+    "duration":"0.011 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A slice of a tensor changes as expected when reshaping it.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -45,7 +45,7 @@
     {
       "id":"Two slices of one big tensor perform matrix multiplication flawless.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +66,7 @@
     {
       "id":"Reshaping a slice works as expected.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

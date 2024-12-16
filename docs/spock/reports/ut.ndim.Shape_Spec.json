@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.019 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A shape can be created from a list of integers.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -31,7 +31,7 @@
     {
       "id":"A shape can be created from a stream of ints.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -46,7 +46,7 @@
     {
       "id":"A shape can be created from an iterable.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -61,7 +61,7 @@
     {
       "id":"A shape can be mapped to a new shape.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note that as a tuple, the shape is immutable so you cannot change its values.\n            But as a monad, the shape can be mapped to a new shape\n            using the \"map\" method. :)\n        "]
       },
@@ -78,7 +78,7 @@
     {
       "id":"A shape can be sliced.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            This is similar as the \"subList\" method of the java.util.List interface.\n            It returns a new shape which is a slice of the original shape\n            starting at the given index and ending at the given index.\n        "]
       },
@@ -95,7 +95,7 @@
     {
       "id":"Use the \"any\" or \"every\" method to check if a predicate holds for any or every value of the shape.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The `Shape` class allows you to check if a condition holds for any or every value of the shape\n            in a functional way by simply passing a predicate to the \"any\" or \"every\" method.\n            This allows for much more readable code than using a for-loop.\n        "]
       },
@@ -116,7 +116,7 @@
     {
       "id":"You can use the \"count(Predicate)\" method to count the number of values that satisfy a predicate.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

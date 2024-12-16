@@ -4,19 +4,19 @@
   "narrative":"Neureka parses mathematical expressions into an AST representation\n    hidden behind the Function interface...\n    This feature does not exist without reason, we can use\n    this abstract syntax tree to compile to OpenCL kernels\n    for optimal execution speed!",
   "subjects":[],
   "statistics":{
-    "runs":"4",
+    "runs":"2",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
-    "skipped":"0",
-    "duration":"0.170 seconds"
+    "skipped":"2",
+    "duration":"0.206 seconds"
   },
   "headers":["\n            Specified below are strict tests for covering the ability of \n            OpenCL devices to be able produce optimized functions given\n            a normal function instance created from a String...\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"The OpenCLDevice produces a working optimized Function for doubles.",
-      "result":"PASS",
-      "duration":"0.046 seconds",
+      "result":"IGNORED",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -42,8 +42,8 @@
   
     {
       "id":"The OpenCLDevice produces a working optimized Function for floats.",
-      "result":"PASS",
-      "duration":"0.044 seconds",
+      "result":"IGNORED",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -70,7 +70,7 @@
     {
       "id":"The CLFunctionCompiler produces an operation which properly integrates to the backend.",
       "result":"PASS",
-      "duration":"0.056 seconds",
+      "duration":"0.151 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,7 +129,7 @@
     {
       "id":"The CLFunctionCompiler produces the expected \"ad hoc\" kernel.",
       "result":"PASS",
-      "duration":"0.021 seconds",
+      "duration":"0.051 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

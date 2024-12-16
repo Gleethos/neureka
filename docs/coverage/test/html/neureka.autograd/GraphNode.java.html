@@ -288,7 +288,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tensor&lt;V&gt;&gt;
 <span class="fc" id="L288">        this.getPayload().ifPresent( payload -&gt; {</span>
             // It was not garbage collected:
             try {
-<span class="fc bfc" id="L291" title="All 2 branches covered.">                if ( payload.isOutsourced() ) payload.getDevice().store( e );</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">                if ( payload.isOutsourced() ) payload.getDevice().store( e );</span>
 <span class="nc" id="L292">            } catch ( Exception exception ) {</span>
 <span class="nc bnc" id="L293" title="All 2 branches missed.">                if ( payload.isUndefined() )</span>
 <span class="nc" id="L294">                    throw new IllegalStateException(</span>
@@ -911,7 +911,7 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tensor&lt;V&gt;&gt;
 <span class="fc bfc" id="L911" title="All 2 branches covered.">        if ( this.isLeave() ) type += &quot;LEAVE&quot;;</span>
 <span class="fc" id="L912">        else type += &quot;BRANCH&quot;;</span>
 <span class="fc" id="L913">        type += this.getPayload()</span>
-<span class="fc bfc" id="L914" title="All 2 branches covered.">                    .filter( p -&gt; !p.isDeleted() )</span>
+<span class="pc bpc" id="L914" title="1 of 2 branches missed.">                    .filter( p -&gt; !p.isDeleted() )</span>
 <span class="fc bfc" id="L915" title="All 2 branches covered.">                    .map( p -&gt; p.rqsGradient() ? &quot; RQS GRADIENT&quot; : &quot;&quot; )</span>
 <span class="fc" id="L916">                    .orElse(&quot; DELETED&quot;);</span>
 <span class="fc" id="L917">        return type;</span>
@@ -1022,4 +1022,4 @@ public class GraphNode&lt;V&gt; implements Component&lt;Tensor&lt;V&gt;&gt;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

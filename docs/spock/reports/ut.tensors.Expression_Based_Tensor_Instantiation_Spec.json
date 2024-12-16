@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.014 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A tensor can be created from a function as expression.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            The `Tensor.of` method can be used to instantiate a tensor\n            using a string expression which defines a function \n            followed by an arbitrary number of tensor arguments\n            which are used as input for the function.\n        "]
       },
@@ -35,7 +35,7 @@
     {
       "id":"We can instantiate tensors from various simple string expressions.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

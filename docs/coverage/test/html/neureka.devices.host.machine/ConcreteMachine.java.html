@@ -38,17 +38,17 @@ public final class ConcreteMachine extends CommonMachine {
 <span class="fc" id="L38">        int threads = ConcreteMachine.getThreads();</span>
 
 <span class="fc bfc" id="L40" title="All 2 branches covered.">        for (Hardware hw : Hardware.PREDEFINED) {</span>
-<span class="pc bpc" id="L41" title="3 of 6 branches missed.">            if (hw.architecture.equals(architecture) &amp;&amp; (hw.threads == threads) &amp;&amp; (hw.memory &gt;= memory))</span>
-<span class="nc" id="L42">                ENVIRONMENT = hw.virtualize();</span>
+<span class="pc bpc" id="L41" title="1 of 6 branches missed.">            if (hw.architecture.equals(architecture) &amp;&amp; (hw.threads == threads) &amp;&amp; (hw.memory &gt;= memory))</span>
+<span class="fc" id="L42">                ENVIRONMENT = hw.virtualize();</span>
 <span class="fc" id="L43">        }</span>
 
 <span class="pc bpc" id="L45" title="1 of 2 branches missed.">        if (ENVIRONMENT == null) {</span>
-<span class="fc" id="L46">            _LOG.debug(</span>
+<span class="nc" id="L46">            _LOG.debug(</span>
                 &quot;No matching hardware profile found for this system. &quot; +
                 &quot;Instantiating a default hardware profile with the following main properties: &quot; +
-<span class="fc" id="L49">                &quot;Architecture={} Threads={} Memory={}&quot;, architecture, threads, memory</span>
+<span class="nc" id="L49">                &quot;Architecture={} Threads={} Memory={}&quot;, architecture, threads, memory</span>
             );
-<span class="fc" id="L51">            ENVIRONMENT = Hardware.makeSimple(architecture, memory, threads).virtualize();</span>
+<span class="nc" id="L51">            ENVIRONMENT = Hardware.makeSimple(architecture, memory, threads).virtualize();</span>
         }
 <span class="fc" id="L53">    }</span>
 
@@ -117,4 +117,4 @@ public final class ConcreteMachine extends CommonMachine {
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

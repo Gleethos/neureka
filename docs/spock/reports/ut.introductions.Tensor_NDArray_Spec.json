@@ -1,7 +1,7 @@
 {
   "className":"ut.introductions.Tensor_NDArray_Spec",
   "title":"Tensors or Nd-arrays",
-  "narrative":"*What is the difference?*\n\nIn the world of machine learning we use something called a **'tensor'** to represent data.\nThey might be called **'nd-arrays'** in some other frameworks,\nbut although they are very similar,\nthere are also some important distinctions to be made between these two concepts.\nBoth are at their core merely multidimensional arrays, however,\nthey are different in their typical usage and API.\nnd-arrays are merely used to represent any type of data as a\ncollection of elements in a multidimensional grid,\ntensors on the other hand have additional requirements.\nThey are a type of nd-array which stores numeric data\nas well as expose various mathematical operations for said data.\nIn that sense it is actually merely a more complex kind of number.\nThis concept actually comes from the field of physics,\nwhere it is used to represent a physical quantity.\n\nNeureka models both concepts through the `Tensor` and the `Nda` interfaces.\n`Nda` is an abbreviation of `NdArray`, and `Tensor` is an abbreviation of `Tensor`.\nThe `Tensor` type is a subtype of the `Nda` type, exposing additional methods\nlike for example `plus`, `minus`, `times` and `divide`.\nBoth can be instantiated through static factory methods (and a fluent builder API).",
+  "narrative":"*What is the difference?*\n\nIn the world of machine learning we use something called a **'tensor'** to represent data.\nThey might be called **'nd-arrays'** in some other frameworks,\nbut although they are very similar, \nthere are also some important distinctions to be made between these two concepts.\nBoth are at their core merely multidimensional arrays, however,\nthey are different in their typical usage and API.\nnd-arrays are merely used to represent any type of data as a \ncollection of elements in a multidimensional grid,  \ntensors on the other hand have additional requirements.\nThey are a type of nd-array which stores numeric data \nas well as expose various mathematical operations for said data.\nIn that sense it is actually merely a more complex kind of number.\nThis concept actually comes from the field of physics, \nwhere it is used to represent a physical quantity.\n\nNeureka models both concepts through the `Tensor` and the `Nda` interfaces.\n`Nda` is an abbreviation of `NdArray`, and `Tensor` is an abbreviation of `Tensor`.\nThe `Tensor` type is a subtype of the `Nda` type, exposing additional methods\nlike for example `plus`, `minus`, `times` and `divide`.\nBoth can be instantiated through static factory methods (and a fluent builder API).",
   "subjects":["neureka.Nda","neureka.Tensor"],
   "statistics":{
     "runs":"2",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.003 seconds"
+    "duration":"0.009 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Tensor is a subtype of NdArray.",
       "result":"PASS",
-      "duration":"0.001 seconds",
+      "duration":"0.004 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -33,7 +33,7 @@
     {
       "id":"We can use tensors for numeric calculations (but not nd-arrays).",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.003 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

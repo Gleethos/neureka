@@ -16,25 +16,36 @@ import neureka.dtype.DataType;
  */
 public interface Data&lt;V&gt;
 {
-<span class="nc" id="L19">    static &lt;V&gt; Data&lt;V&gt; of( Class&lt;V&gt; type, V... data ) { return CPU.get().allocate( type, data ); }</span>
+    /**
+     *  This is a static factory method which returns a {@link Data} object
+     *  which does not contain any data. It is a sort of no-operation null object
+     *  which can be used to represent the absence of data.
+     *  A deleted tensor will typically have a {@link Data} object which does not contain any data.
+     *
+     * @return A {@link Data} object which does not contain any data.
+     */
+<span class="fc" id="L27">    static Data&lt;Void&gt; none() { return NoOpData.INSTANCE; }</span>
 
-<span class="fc" id="L21">    static Data&lt;Float&gt; of( float... items ) { return CPU.get().allocate( Float.class, items ); }</span>
 
-<span class="fc" id="L23">    static Data&lt;Double&gt; of( double... items ) { return CPU.get().allocate( Double.class, items ); }</span>
+<span class="nc" id="L30">    static &lt;V&gt; Data&lt;V&gt; of( Class&lt;V&gt; type, V... data ) { return CPU.get().allocate( type, data ); }</span>
 
-<span class="fc" id="L25">    static Data&lt;Integer&gt; of( int... items ) { return CPU.get().allocate( Integer.class, items ); }</span>
+<span class="fc" id="L32">    static Data&lt;Float&gt; of( float... items ) { return CPU.get().allocate( Float.class, items ); }</span>
 
-<span class="fc" id="L27">    static Data&lt;Long&gt; of( long... items ) { return CPU.get().allocate( Long.class, items ); }</span>
+<span class="fc" id="L34">    static Data&lt;Double&gt; of( double... items ) { return CPU.get().allocate( Double.class, items ); }</span>
 
-<span class="nc" id="L29">    static Data&lt;Byte&gt; of( byte... items ) { return CPU.get().allocate( Byte.class, items ); }</span>
+<span class="fc" id="L36">    static Data&lt;Integer&gt; of( int... items ) { return CPU.get().allocate( Integer.class, items ); }</span>
 
-<span class="nc" id="L31">    static Data&lt;Short&gt; of( short... items ) { return CPU.get().allocate( Short.class, items ); }</span>
+<span class="fc" id="L38">    static Data&lt;Long&gt; of( long... items ) { return CPU.get().allocate( Long.class, items ); }</span>
 
-<span class="nc" id="L33">    static Data&lt;Boolean&gt; of( boolean... items ) { return CPU.get().allocate( Boolean.class, items ); }</span>
+<span class="nc" id="L40">    static Data&lt;Byte&gt; of( byte... items ) { return CPU.get().allocate( Byte.class, items ); }</span>
 
-<span class="nc" id="L35">    static Data&lt;Character&gt; of( char... items ) { return CPU.get().allocate( Character.class, items ); }</span>
+<span class="nc" id="L42">    static Data&lt;Short&gt; of( short... items ) { return CPU.get().allocate( Short.class, items ); }</span>
 
-<span class="nc" id="L37">    static Data&lt;String&gt; of( String... items ) { return CPU.get().allocate( String.class, items ); }</span>
+<span class="nc" id="L44">    static Data&lt;Boolean&gt; of( boolean... items ) { return CPU.get().allocate( Boolean.class, items ); }</span>
+
+<span class="nc" id="L46">    static Data&lt;Character&gt; of( char... items ) { return CPU.get().allocate( Character.class, items ); }</span>
+
+<span class="nc" id="L48">    static Data&lt;String&gt; of( String... items ) { return CPU.get().allocate( String.class, items ); }</span>
 
     /**
      * @return The owner of this data array wrapper (the device which allocated the memory).
@@ -63,9 +74,9 @@ public interface Data&lt;V&gt;
      * @return The raw data object underlying a nd-array/tensor.
      */
     default Object get() {
-<span class="fc" id="L66">        Object data = getOrNull();</span>
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if ( data == null ) throw new NullPointerException(&quot;The data reference is missing!&quot;);</span>
-<span class="fc" id="L68">        return data;</span>
+<span class="fc" id="L77">        Object data = getOrNull();</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if ( data == null ) throw new NullPointerException(&quot;The data reference is missing!&quot;);</span>
+<span class="fc" id="L79">        return data;</span>
     }
 
     /**
@@ -78,10 +89,10 @@ public interface Data&lt;V&gt;
      * @return The raw data object underlying a nd-array/tensor.
      */
     default &lt;D&gt; D as( Class&lt;D&gt; dataType ) {
-<span class="fc" id="L81">        Object data = getOrNull();</span>
-<span class="pc bpc" id="L82" title="2 of 4 branches missed.">        if ( data != null &amp;&amp; !dataType.isAssignableFrom(data.getClass()) )</span>
-<span class="nc" id="L83">            throw new IllegalArgumentException(&quot;Provided data type '&quot;+dataType+&quot;' is not assignable from '&quot;+data.getClass()+&quot;'.&quot;);</span>
-<span class="fc" id="L84">        return dataType.cast(data);</span>
+<span class="fc" id="L92">        Object data = getOrNull();</span>
+<span class="pc bpc" id="L93" title="2 of 4 branches missed.">        if ( data != null &amp;&amp; !dataType.isAssignableFrom(data.getClass()) )</span>
+<span class="nc" id="L94">            throw new IllegalArgumentException(&quot;Provided data type '&quot;+dataType+&quot;' is not assignable from '&quot;+data.getClass()+&quot;'.&quot;);</span>
+<span class="fc" id="L95">        return dataType.cast(data);</span>
     }
 
     /**
@@ -100,4 +111,4 @@ public interface Data&lt;V&gt;
      */
     int usages();
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -4,17 +4,164 @@
   "narrative":"",
   "subjects":[],
   "statistics":{
-    "runs":"1",
+    "runs":"8",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.006 seconds"
+    "duration":"0.026 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"Object arrays can be converted to primitive arrays.",
+      "id":"Object arrays can be converted to primitive arrays. [0]",
+      "result":"PASS",
+      "duration":"0.003 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["def result = code(input)"]},
+
+        {"kind":"then","text":"","code":["result == input"]},
+
+        {"kind":"and","text":"","code":["result.class != input.class"]},
+
+        {"kind":"and","text":"","code":["result.class == expectedType"]},
+
+        {"kind":"where","text":"","code":{"input":["[1, 2, 3] as Float[]","[1, 2, 3] as Double[]","[1, 2, 3] as Integer[]","[1, 2, 3] as Long[]","[1, 2, 3] as Short[]","[1, 2, 3] as Byte[]","[1, 2, 3] as Boolean[]","[1, 2, 3] as Character[]"],"code":["{DataConverter.Utility.objFloatsToPrimFloats(it)}","{DataConverter.Utility.objDoublesToPrimDoubles(it)}","{DataConverter.Utility.objIntsToPrimInts(it)}","{DataConverter.Utility.objLongsToPrimLongs(it)}","{DataConverter.Utility.objShortsToPrimShorts(it)}","{DataConverter.Utility.objBytesToPrimBytes(it)}","{DataConverter.Utility.objBooleansToPrimBooleans(it)}","{DataConverter.Utility.objCharsToPrimChars(it)}"],"expectedType":["float[]","double[]","int[]","long[]","short[]","byte[]","boolean[]","char[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Object arrays can be converted to primitive arrays. [1]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["def result = code(input)"]},
+
+        {"kind":"then","text":"","code":["result == input"]},
+
+        {"kind":"and","text":"","code":["result.class != input.class"]},
+
+        {"kind":"and","text":"","code":["result.class == expectedType"]},
+
+        {"kind":"where","text":"","code":{"input":["[1, 2, 3] as Float[]","[1, 2, 3] as Double[]","[1, 2, 3] as Integer[]","[1, 2, 3] as Long[]","[1, 2, 3] as Short[]","[1, 2, 3] as Byte[]","[1, 2, 3] as Boolean[]","[1, 2, 3] as Character[]"],"code":["{DataConverter.Utility.objFloatsToPrimFloats(it)}","{DataConverter.Utility.objDoublesToPrimDoubles(it)}","{DataConverter.Utility.objIntsToPrimInts(it)}","{DataConverter.Utility.objLongsToPrimLongs(it)}","{DataConverter.Utility.objShortsToPrimShorts(it)}","{DataConverter.Utility.objBytesToPrimBytes(it)}","{DataConverter.Utility.objBooleansToPrimBooleans(it)}","{DataConverter.Utility.objCharsToPrimChars(it)}"],"expectedType":["float[]","double[]","int[]","long[]","short[]","byte[]","boolean[]","char[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Object arrays can be converted to primitive arrays. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["def result = code(input)"]},
+
+        {"kind":"then","text":"","code":["result == input"]},
+
+        {"kind":"and","text":"","code":["result.class != input.class"]},
+
+        {"kind":"and","text":"","code":["result.class == expectedType"]},
+
+        {"kind":"where","text":"","code":{"input":["[1, 2, 3] as Float[]","[1, 2, 3] as Double[]","[1, 2, 3] as Integer[]","[1, 2, 3] as Long[]","[1, 2, 3] as Short[]","[1, 2, 3] as Byte[]","[1, 2, 3] as Boolean[]","[1, 2, 3] as Character[]"],"code":["{DataConverter.Utility.objFloatsToPrimFloats(it)}","{DataConverter.Utility.objDoublesToPrimDoubles(it)}","{DataConverter.Utility.objIntsToPrimInts(it)}","{DataConverter.Utility.objLongsToPrimLongs(it)}","{DataConverter.Utility.objShortsToPrimShorts(it)}","{DataConverter.Utility.objBytesToPrimBytes(it)}","{DataConverter.Utility.objBooleansToPrimBooleans(it)}","{DataConverter.Utility.objCharsToPrimChars(it)}"],"expectedType":["float[]","double[]","int[]","long[]","short[]","byte[]","boolean[]","char[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Object arrays can be converted to primitive arrays. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["def result = code(input)"]},
+
+        {"kind":"then","text":"","code":["result == input"]},
+
+        {"kind":"and","text":"","code":["result.class != input.class"]},
+
+        {"kind":"and","text":"","code":["result.class == expectedType"]},
+
+        {"kind":"where","text":"","code":{"input":["[1, 2, 3] as Float[]","[1, 2, 3] as Double[]","[1, 2, 3] as Integer[]","[1, 2, 3] as Long[]","[1, 2, 3] as Short[]","[1, 2, 3] as Byte[]","[1, 2, 3] as Boolean[]","[1, 2, 3] as Character[]"],"code":["{DataConverter.Utility.objFloatsToPrimFloats(it)}","{DataConverter.Utility.objDoublesToPrimDoubles(it)}","{DataConverter.Utility.objIntsToPrimInts(it)}","{DataConverter.Utility.objLongsToPrimLongs(it)}","{DataConverter.Utility.objShortsToPrimShorts(it)}","{DataConverter.Utility.objBytesToPrimBytes(it)}","{DataConverter.Utility.objBooleansToPrimBooleans(it)}","{DataConverter.Utility.objCharsToPrimChars(it)}"],"expectedType":["float[]","double[]","int[]","long[]","short[]","byte[]","boolean[]","char[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Object arrays can be converted to primitive arrays. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["def result = code(input)"]},
+
+        {"kind":"then","text":"","code":["result == input"]},
+
+        {"kind":"and","text":"","code":["result.class != input.class"]},
+
+        {"kind":"and","text":"","code":["result.class == expectedType"]},
+
+        {"kind":"where","text":"","code":{"input":["[1, 2, 3] as Float[]","[1, 2, 3] as Double[]","[1, 2, 3] as Integer[]","[1, 2, 3] as Long[]","[1, 2, 3] as Short[]","[1, 2, 3] as Byte[]","[1, 2, 3] as Boolean[]","[1, 2, 3] as Character[]"],"code":["{DataConverter.Utility.objFloatsToPrimFloats(it)}","{DataConverter.Utility.objDoublesToPrimDoubles(it)}","{DataConverter.Utility.objIntsToPrimInts(it)}","{DataConverter.Utility.objLongsToPrimLongs(it)}","{DataConverter.Utility.objShortsToPrimShorts(it)}","{DataConverter.Utility.objBytesToPrimBytes(it)}","{DataConverter.Utility.objBooleansToPrimBooleans(it)}","{DataConverter.Utility.objCharsToPrimChars(it)}"],"expectedType":["float[]","double[]","int[]","long[]","short[]","byte[]","boolean[]","char[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Object arrays can be converted to primitive arrays. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["def result = code(input)"]},
+
+        {"kind":"then","text":"","code":["result == input"]},
+
+        {"kind":"and","text":"","code":["result.class != input.class"]},
+
+        {"kind":"and","text":"","code":["result.class == expectedType"]},
+
+        {"kind":"where","text":"","code":{"input":["[1, 2, 3] as Float[]","[1, 2, 3] as Double[]","[1, 2, 3] as Integer[]","[1, 2, 3] as Long[]","[1, 2, 3] as Short[]","[1, 2, 3] as Byte[]","[1, 2, 3] as Boolean[]","[1, 2, 3] as Character[]"],"code":["{DataConverter.Utility.objFloatsToPrimFloats(it)}","{DataConverter.Utility.objDoublesToPrimDoubles(it)}","{DataConverter.Utility.objIntsToPrimInts(it)}","{DataConverter.Utility.objLongsToPrimLongs(it)}","{DataConverter.Utility.objShortsToPrimShorts(it)}","{DataConverter.Utility.objBytesToPrimBytes(it)}","{DataConverter.Utility.objBooleansToPrimBooleans(it)}","{DataConverter.Utility.objCharsToPrimChars(it)}"],"expectedType":["float[]","double[]","int[]","long[]","short[]","byte[]","boolean[]","char[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Object arrays can be converted to primitive arrays. [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"when","text":"","code":["def result = code(input)"]},
+
+        {"kind":"then","text":"","code":["result == input"]},
+
+        {"kind":"and","text":"","code":["result.class != input.class"]},
+
+        {"kind":"and","text":"","code":["result.class == expectedType"]},
+
+        {"kind":"where","text":"","code":{"input":["[1, 2, 3] as Float[]","[1, 2, 3] as Double[]","[1, 2, 3] as Integer[]","[1, 2, 3] as Long[]","[1, 2, 3] as Short[]","[1, 2, 3] as Byte[]","[1, 2, 3] as Boolean[]","[1, 2, 3] as Character[]"],"code":["{DataConverter.Utility.objFloatsToPrimFloats(it)}","{DataConverter.Utility.objDoublesToPrimDoubles(it)}","{DataConverter.Utility.objIntsToPrimInts(it)}","{DataConverter.Utility.objLongsToPrimLongs(it)}","{DataConverter.Utility.objShortsToPrimShorts(it)}","{DataConverter.Utility.objBytesToPrimBytes(it)}","{DataConverter.Utility.objBooleansToPrimBooleans(it)}","{DataConverter.Utility.objCharsToPrimChars(it)}"],"expectedType":["float[]","double[]","int[]","long[]","short[]","byte[]","boolean[]","char[]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Object arrays can be converted to primitive arrays. [7]",
       "result":"PASS",
       "duration":"0",
       "iterations":{

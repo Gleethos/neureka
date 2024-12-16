@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.004 seconds"
+    "duration":"0.008 seconds"
   },
   "headers":["\n            <h2> GraphNode Tensor Exceptions </h2>\n            <p>\n                Specified below are strict tests covering the exception behavior\n                of the GraphNode class interacting with Tensor instances.\n            </p>\n        "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"A tensor cannot be deleted if it is part of a graph and the tensor is used as derivative.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.006 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

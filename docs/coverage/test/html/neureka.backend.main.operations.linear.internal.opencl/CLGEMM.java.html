@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 <span class="pc bpc" id="L34" title="1 of 2 branches missed.">            for ( int s : new int[]{16,8,4,2,1} )</span>
 <span class="fc bfc" id="L35" title="All 2 branches covered.">            if ( M % s == 0 ) { MW = s; break; }</span>
 <span class="pc bpc" id="L36" title="1 of 2 branches missed.">            for ( int s : new int[]{8,4,2,1} )</span>
-<span class="fc bfc" id="L37" title="All 4 branches covered.">            if ( N % s == 0 &amp;&amp; K % s == 0 ) { KW = s; break; }</span>
+<span class="pc bpc" id="L37" title="1 of 4 branches missed.">            if ( N % s == 0 &amp;&amp; K % s == 0 ) { KW = s; break; }</span>
 
 <span class="fc" id="L39">            int NW = KW;</span>
 
@@ -49,8 +49,8 @@ import java.util.function.Supplier;
                     &quot;   #define KW &quot;+ finalKW +&quot;     // K tile Width                                                    \n&quot; +
 <span class="fc" id="L50">                    &quot;   #define MT &quot;+(int)Math.floor(M/ finalMW)+&quot;   // MT is max for 'mt' (M tile count)               \n&quot; +</span>
 <span class="fc" id="L51">                    &quot;   #define KT &quot;+(int)Math.floor(K/ finalKW)+&quot;   // KT is max for 'kt' (K tile count)               \n&quot; +</span>
-<span class="fc bfc" id="L52" title="All 2 branches covered.">                    &quot;   #define floatMW &quot;+(finalMW != 1 ? &quot;float&quot;+ finalMW : &quot;float&quot;)+&quot;                                 \n&quot; +</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">                    &quot;   #define floatKW &quot;+(finalKW != 1 ? &quot;float&quot;+ finalKW : &quot;float&quot;)+&quot;                                 \n&quot; +</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">                    &quot;   #define floatMW &quot;+(finalMW != 1 ? &quot;float&quot;+ finalMW : &quot;float&quot;)+&quot;                                 \n&quot; +</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                    &quot;   #define floatKW &quot;+(finalKW != 1 ? &quot;float&quot;+ finalKW : &quot;float&quot;)+&quot;                                 \n&quot; +</span>
                     &quot;   __kernel void &quot;+kernelName+&quot;(                                                                   \n&quot; +
                     &quot;               const __global floatMW* restrict A,                                                 \n&quot; +
                     &quot;               const __global floatKW* restrict B,                                                 \n&quot; +
@@ -100,4 +100,4 @@ import java.util.function.Supplier;
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -4,17 +4,40 @@
   "narrative":"Tensors are complicated data structures with a wide range of different possible states.\n    They can host elements of different types residing on many kinds of different devices.\n    Here we want to show how a tensor can be instantiated in different ways.",
   "subjects":["neureka.Tensor"],
   "statistics":{
-    "runs":"7",
+    "runs":"25",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.011 seconds"
+    "duration":"0.027 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
-      "id":"Vector tensors can be instantiated via factory methods.",
+      "id":"Vector tensors can be instantiated via factory methods. [0]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a vector tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == shape"]},
+
+        {"kind":"and","text":"The tensor contains the expected items.","code":["t.items == data"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.get() == data // This exposes the internal data array"]},
+
+        {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["new double[]{1.1, 2.2, 3.3}","new float[]{-0.21, 543.3}","new boolean[]{true, false}","new short[]{1, 2, 99, -123}","new long[]{3, 8, 4, 2, 3, 0}","new int[]{66, 1, 4, 42, -40}"],"type":["Double","Float","Boolean","Short","Long","Integer"],"shape":["[ 3 ]","[ 2 ]","[ 2 ]","[ 4 ]","[ 6 ]","[ 5 ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Vector tensors can be instantiated via factory methods. [1]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -37,7 +60,424 @@
     },
   
     {
-      "id":"Scalar tensors can be created via static factory methods",
+      "id":"Vector tensors can be instantiated via factory methods. [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a vector tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == shape"]},
+
+        {"kind":"and","text":"The tensor contains the expected items.","code":["t.items == data"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.get() == data // This exposes the internal data array"]},
+
+        {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["new double[]{1.1, 2.2, 3.3}","new float[]{-0.21, 543.3}","new boolean[]{true, false}","new short[]{1, 2, 99, -123}","new long[]{3, 8, 4, 2, 3, 0}","new int[]{66, 1, 4, 42, -40}"],"type":["Double","Float","Boolean","Short","Long","Integer"],"shape":["[ 3 ]","[ 2 ]","[ 2 ]","[ 4 ]","[ 6 ]","[ 5 ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Vector tensors can be instantiated via factory methods. [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a vector tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == shape"]},
+
+        {"kind":"and","text":"The tensor contains the expected items.","code":["t.items == data"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.get() == data // This exposes the internal data array"]},
+
+        {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["new double[]{1.1, 2.2, 3.3}","new float[]{-0.21, 543.3}","new boolean[]{true, false}","new short[]{1, 2, 99, -123}","new long[]{3, 8, 4, 2, 3, 0}","new int[]{66, 1, 4, 42, -40}"],"type":["Double","Float","Boolean","Short","Long","Integer"],"shape":["[ 3 ]","[ 2 ]","[ 2 ]","[ 4 ]","[ 6 ]","[ 5 ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Vector tensors can be instantiated via factory methods. [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a vector tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == shape"]},
+
+        {"kind":"and","text":"The tensor contains the expected items.","code":["t.items == data"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.get() == data // This exposes the internal data array"]},
+
+        {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["new double[]{1.1, 2.2, 3.3}","new float[]{-0.21, 543.3}","new boolean[]{true, false}","new short[]{1, 2, 99, -123}","new long[]{3, 8, 4, 2, 3, 0}","new int[]{66, 1, 4, 42, -40}"],"type":["Double","Float","Boolean","Short","Long","Integer"],"shape":["[ 3 ]","[ 2 ]","[ 2 ]","[ 4 ]","[ 6 ]","[ 5 ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Vector tensors can be instantiated via factory methods. [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We create a vector tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == shape"]},
+
+        {"kind":"and","text":"The tensor contains the expected items.","code":["t.items == data"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the underlying data is also as expected.","code":["t.rawData == data","t.mut.data.get() == data // This exposes the internal data array"]},
+
+        {"kind":"where","text":"The following data arrays will lead to the tensor having the expected type and shape.","code":{"data":["new double[]{1.1, 2.2, 3.3}","new float[]{-0.21, 543.3}","new boolean[]{true, false}","new short[]{1, 2, 99, -123}","new long[]{3, 8, 4, 2, 3, 0}","new int[]{66, 1, 4, 42, -40}"],"type":["Double","Float","Boolean","Short","Long","Integer"],"shape":["[ 3 ]","[ 2 ]","[ 2 ]","[ 4 ]","[ 6 ]","[ 5 ]"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [0]",
+      "result":"PASS",
+      "duration":"0.001 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [1]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [3]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [4]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [5]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [6]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [7]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [8]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [9]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [10]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [11]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [12]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"We make sure that the data is of the right type (based on the data table):","code":["data = data.asType(type)"]},
+
+        {"kind":"and","text":"We create a scalar tensor using the \"of\" factory method.","code":["Tensor<?> t = Tensor.of(data)"]},
+
+        {"kind":"expect","text":"The resulting tensor has the expected item type class.","code":["t.itemType == type"]},
+
+        {"kind":"and","text":"Also the expected shape.","code":["t.shape() == [ 1 ]"]},
+
+        {"kind":"and","text":"The tensor has the expected data array.","code":["t.mut.data.get() == [data] // Internal data","t.rawData == [data]"]},
+
+        {"kind":"and","text":"The tensor is not virtual nor is it a slice... so the item array and data array contain the same values.","code":["t.items == [data]"]},
+
+        {"kind":"where","text":"","code":{"data":["1.1","-0.21","0.1f","-42.9","true","false","99","-123","3L","8L","1","2","-12","3"],"type":["Double","Double","Float","Float","Boolean","Boolean","Integer","Integer","Long","Long","Short","Short","Byte","Byte"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Scalar tensors can be created via static factory methods [13]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -64,7 +504,7 @@
     {
       "id":"A matrix tensor can be instantiated using lists for it's shape and values.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note that the following example of tensor instantiation is \n            best suited for when Neureka is used in a scripting environment\n            like Groovy or Jython which support square bracket list notation.\n            In Java code it is recommended to use the fluent API.\n        "]
       },
@@ -85,7 +525,7 @@
     {
       "id":"A simple 2D vector can be instantiated using lists for it's shape and values.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":["\n            Note that the following example of tensor instantiation is \n            best suited for when Neureka is used in a scripting environment\n            like Groovy or Jython which support square bracket list notation.\n            In Java code it is recommended to use the fluent API.\n        "]
       },
@@ -104,7 +544,7 @@
     {
       "id":"Tensors can be instantiated based on arrays for both shapes and values.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -123,7 +563,7 @@
     {
       "id":"Tensors can be instantiated with String seed.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -138,7 +578,7 @@
     {
       "id":"Passing a seed in the form of a String to a tensor produces pseudo random items.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.001 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

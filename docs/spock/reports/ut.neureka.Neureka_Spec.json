@@ -1,22 +1,22 @@
 {
   "className":"ut.neureka.Neureka_Spec",
   "title":"The Neureka context can be used and configured as expected.",
-  "narrative":"This specification covers the behavior of the Neureka class which\n    exposes a global API for configuring thread local contexts and library settings.\n    The purpose of this is to assert that the API exposed by the Neureka class\n    is both thread local and configurable.\n    This specification also exists to cover standards for the Neureka library in general.",
+  "narrative":"This specification covers the behavior of the Neureka class which\n    exposes a global API for configuring thread local contexts and library settings.\n    The purpose of this is to assert that the API exposed by the Neureka class \n    is both thread local and configurable.\n    This specification also exists to cover standards for the Neureka library in general.",
   "subjects":["neureka.Neureka"],
   "statistics":{
-    "runs":"6",
+    "runs":"82",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
-    "skipped":"0",
-    "duration":"8.598 seconds"
+    "skipped":"1",
+    "duration":"4.898 seconds"
   },
   "headers":["\n                    This specification defines what types of settings are exposed by\n                    Neureka as well as more general things like how string representations\n                    of various library types should look like... \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"Neureka class instance has expected behaviour.",
       "result":"PASS",
-      "duration":"0.049 seconds",
+      "duration":"0.084 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -27,15 +27,294 @@
 
         {"kind":"then","text":"This setting change applies!","code":["Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()","!Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()"]},
 
-        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"1.0.0\"//version"]}
+        {"kind":"and","text":"The version number is as expected!","code":["Neureka.version()==\"1.0.1\"//version"]}
       ],
       "problems":{"dataValues":[], "errors":[]}
     },
   
     {
-      "id":"Neureka settings class can be locked causing its properties to be immutable.",
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [0]",
       "result":"PASS",
-      "duration":"0.337 seconds",
+      "duration":"0.057 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [1]",
+      "result":"PASS",
+      "duration":"0.077 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [2]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [3]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [4]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [5]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [6]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [7]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [8]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"given","text":"Something used to set a property and something to get the property.","code":["def set = { it -> setter(Neureka.get().settings(), it) }","def get = { getter(Neureka.get().settings()) }"]},
+
+        {"kind":"expect","text":"Initially the property has the expected value.","code":["get() == value"]},
+
+        {"kind":"when","text":"We lock the settings object...","code":["Neureka.get().settings().setIsLocked(true)"]},
+
+        {"kind":"and","text":"We try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is not changed!","code":["get() == value"]},
+
+        {"kind":"when","text":"We unlock the settings object...","code":["Neureka.get().settings().setIsLocked(false)"]},
+
+        {"kind":"and","text":"Again we try to set the property to another value...","code":["set(!value)"]},
+
+        {"kind":"then","text":"The property is changed!","code":["get() != value"]},
+
+        {"kind":"cleanup","text":"We reset the settings object to its original state.","code":["set(value)"]},
+
+        {"kind":"where","text":"The properties used are boolean types.","code":{"value":["false","true","false","true","false","false","true","false","false","false"],"getter":["{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsLegacy()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasGradient()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getHasSlimNumbers()}","{ Neureka.Settings it -> it.view().getNDPrintSettings().getIsScientific()}","{ Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}","{ Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}","{ Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}","{ Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()}","{ Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}"],"setter":["{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsLegacy(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasGradient(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setHasSlimNumbers(v)}","{ Neureka.Settings s, v -> s.view().getNDPrintSettings().setIsScientific(v)}","{ Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}","{ Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}","{ Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}","{ Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}","{ Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Neureka settings class can be locked causing its properties to be immutable. [9]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -66,7 +345,7 @@
     {
       "id":"Every Thread instance has their own Neureka instance.",
       "result":"PASS",
-      "duration":"5.725 seconds",
+      "duration":"0.067 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -85,9 +364,339 @@
     },
   
     {
-      "id":"Various library objects adhere to the same toString formatting convention!",
+      "id":"Various library objects adhere to the same toString formatting convention! [0]",
       "result":"PASS",
-      "duration":"0.746 seconds",
+      "duration":"0.059 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [1]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [2]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [3]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [4]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [5]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [6]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [7]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [8]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [9]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [10]",
+      "result":"PASS",
+      "duration":"0.051 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [11]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [12]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [13]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [14]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [15]",
+      "result":"PASS",
+      "duration":"0.091 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [16]",
+      "result":"PASS",
+      "duration":"0.051 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [17]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [18]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [19]",
+      "result":"PASS",
+      "duration":"0.051 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [20]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [21]",
+      "result":"PASS",
+      "duration":"0.050 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(neurekaObject.toString()).matches()"]},
+
+        {"kind":"where","text":"The following objects are being used..","code":{"neurekaObject":["CPU.get()","DataType.of(String)","Relation.newParentToChildren()","new JITProp<>(] as Set)","Neureka.get()","Neureka.get().settings()","Neureka.get().settings().autograd()","Neureka.get().settings().debug()","Neureka.get().settings().dtype()","Neureka.get().settings().ndim()","Neureka.get().settings().view()","Neureka.get().backend().getAutogradFunction()","Neureka.get().backend().getFunction()","Neureka.get().backend()","Neureka.get().backend().getFunctionCache()","ExecutionCall.of(Tensor.of(3d)).running(Neureka.get().backend().getOperation(\"+\")).on(CPU.get())","new CustomDeviceCleaner()","(Tensor.of(2d).setRqsGradient(true)* Tensor.of(-2d)).graphNode.get()","FileDevice.at('.')","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 200, 8, 1],(int])96, 32, 4, 1],(int])1,1,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8,4],(int])96, 32, 4, 1],(int])96, 92, 4, 1],(int])1,4,1,1],(int])0,0,0,0])","NDConfiguration.of((int])2,3,8],(int])24,8,1],(int])24,8,1],(int])1, 1, 1],(int])0,0,0])"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Various library objects adhere to the same toString formatting convention! [22]",
+      "result":"PASS",
+      "duration":"0.051 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -101,8 +710,8 @@
   
     {
       "id":"OpenCL related library objects adhere to the same toString formatting convention!",
-      "result":"PASS",
-      "duration":"0.090 seconds",
+      "result":"IGNORED",
+      "duration":"0",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -115,9 +724,791 @@
     },
   
     {
-      "id":"Backend related library objects adhere to the same toString formatting convention!",
+      "id":"Backend related library objects adhere to the same toString formatting convention! [0]",
       "result":"PASS",
-      "duration":"1.571 seconds",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [1]",
+      "result":"PASS",
+      "duration":"0.051 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [2]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [3]",
+      "result":"PASS",
+      "duration":"0.056 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [4]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [5]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [6]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [7]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [8]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [9]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [10]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [11]",
+      "result":"PASS",
+      "duration":"0.051 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [12]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [13]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [14]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [15]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [16]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [17]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [18]",
+      "result":"PASS",
+      "duration":"0.057 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [19]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [20]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [21]",
+      "result":"PASS",
+      "duration":"0.078 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [22]",
+      "result":"PASS",
+      "duration":"0.059 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [23]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [24]",
+      "result":"PASS",
+      "duration":"0.094 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [25]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [26]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [27]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [28]",
+      "result":"PASS",
+      "duration":"0.053 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [29]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [30]",
+      "result":"PASS",
+      "duration":"0.057 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [31]",
+      "result":"PASS",
+      "duration":"0.058 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [32]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [33]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [34]",
+      "result":"PASS",
+      "duration":"0.056 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [35]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [36]",
+      "result":"PASS",
+      "duration":"0.054 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [37]",
+      "result":"PASS",
+      "duration":"0.051 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [38]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [39]",
+      "result":"PASS",
+      "duration":"0.057 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [40]",
+      "result":"PASS",
+      "duration":"0.055 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [41]",
+      "result":"PASS",
+      "duration":"0.275 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [42]",
+      "result":"PASS",
+      "duration":"0.061 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [43]",
+      "result":"PASS",
+      "duration":"0.052 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [44]",
+      "result":"PASS",
+      "duration":"0.051 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [45]",
+      "result":"PASS",
+      "duration":"0.051 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"The provided object matches the following pattern defining a common standard!","code":["toStringStandard.matcher(operation.toString()).matches()"]},
+
+        {"kind":"and","text":"The same criteria should also be met for every algorithm within the current operation.","code":["operation.getAllAlgorithms().every {","    toStringStandard.matcher(it.toString()).matches()","}"]},
+
+        {"kind":"where","text":"The following operations are being used..","code":{"operation":[]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Backend related library objects adhere to the same toString formatting convention! [46]",
+      "result":"PASS",
+      "duration":"0.065 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

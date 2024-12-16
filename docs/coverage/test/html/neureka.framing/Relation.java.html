@@ -228,7 +228,7 @@ public class Relation&lt;V&gt; implements Component&lt;Tensor&lt;V&gt;&gt;
      */
     public Optional&lt;Tensor&lt;V&gt;&gt; findRootTensor()
     {
-<span class="fc bfc" id="L231" title="All 2 branches covered.">        if ( _parent == null ) return Optional.empty();</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">        if ( _parent == null ) return Optional.empty();</span>
 <span class="pc bpc" id="L232" title="1 of 2 branches missed.">        else if ( !_parent.has( Relation.class ) ) return Optional.empty();</span>
 <span class="fc bfc" id="L233" title="All 2 branches covered.">        else if ( !_parent.get( Relation.class ).hasParent() ) return Optional.of(_parent);</span>
 <span class="fc" id="L234">        else return _parent.get( Relation.class ).findRootTensor();</span>
@@ -285,4 +285,4 @@ public class Relation&lt;V&gt; implements Component&lt;Tensor&lt;V&gt;&gt;
 <span class="fc" id="L285">        return Optional.ofNullable( _parent );</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

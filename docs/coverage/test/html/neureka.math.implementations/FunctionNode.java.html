@@ -112,7 +112,7 @@ public final class FunctionNode implements Function
 <span class="fc" id="L112">        Device&lt;?&gt; device = inputs[ 0 ].get( Device.class );</span>
 <span class="fc" id="L113">        boolean onSameDevice = _shareGuestDevice( inputs );</span>
 <span class="fc bfc" id="L114" title="All 4 branches covered.">        boolean doAccel = !_operation.getOperator().equals(&quot;,&quot;) &amp;&amp; onSameDevice;</span>
-<span class="fc bfc" id="L115" title="All 4 branches covered.">        return ( doAccel &amp;&amp; device != null ? device : inputs[ 0 ].getDevice() );</span>
+<span class="pc bpc" id="L115" title="1 of 4 branches missed.">        return ( doAccel &amp;&amp; device != null ? device : inputs[ 0 ].getDevice() );</span>
     }
 
     /**
@@ -127,12 +127,12 @@ public final class FunctionNode implements Function
 
 <span class="fc bfc" id="L128" title="All 2 branches covered.">        if ( device != null ) {</span>
 <span class="fc bfc" id="L129" title="All 2 branches covered.">            for ( Tensor&lt;?&gt; tensor : tensors ) {</span>
-<span class="fc bfc" id="L130" title="All 6 branches covered.">                onSameGuestDevice = ( !tensor.isVirtual() &amp;&amp; device == tensor.get(Device.class) ) &amp;&amp; onSameGuestDevice;</span>
+<span class="pc bpc" id="L130" title="3 of 6 branches missed.">                onSameGuestDevice = ( !tensor.isVirtual() &amp;&amp; device == tensor.get(Device.class) ) &amp;&amp; onSameGuestDevice;</span>
             }
         }
 <span class="fc" id="L133">        else onSameGuestDevice = false;</span>
 
-<span class="fc bfc" id="L135" title="All 6 branches covered.">        if ( device != null &amp;&amp; tensors.length == 2 &amp;&amp; tensors[ 1 ].size() == 1 ) onSameGuestDevice = true;</span>
+<span class="pc bpc" id="L135" title="3 of 6 branches missed.">        if ( device != null &amp;&amp; tensors.length == 2 &amp;&amp; tensors[ 1 ].size() == 1 ) onSameGuestDevice = true;</span>
 <span class="fc" id="L136">        return onSameGuestDevice;</span>
     }
 
@@ -161,4 +161,4 @@ public final class FunctionNode implements Function
 <span class="fc" id="L161">    public boolean isDoingAD() { return _isDoingAD; }</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

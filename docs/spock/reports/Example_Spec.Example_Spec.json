@@ -1,22 +1,22 @@
 {
   "className":"Example_Spec.Example_Spec",
   "title":"An Introduction to writing Spock Specifications",
-  "narrative":"Hello and welcome to the example / template specification of this project.\n    This is a simple introduction as to how to get started writing Spock specifications.\n\n    Spock works on top of Groovy which is in essence a syntactic super-set of Java.\n    That means that one can write Java code in Groovy, and 99% of the time it will\n    work the exact same way.",
+  "narrative":"Hello and welcome to the example / template specification of this project.\n    This is a simple introduction as to how to get started writing Spock specifications.\n\n    Spock works on top of Groovy which is in essence a syntactic super-set of Java.\n    That means that one can write Java code in Groovy, and 99% of the time it will \n    work the exact same way.",
   "subjects":[],
   "statistics":{
-    "runs":"5",
+    "runs":"7",
     "successRate":"100.0%",
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.005 seconds"
+    "duration":"0.068 seconds"
   },
   "headers":[],"tags":{},"see":[],
   "features":[ 
     {
       "id":"iAmNotSoReadable",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -55,7 +55,7 @@
     {
       "id":"Should be able to remove from list",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.005 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -70,7 +70,22 @@
     },
   
     {
-      "id":"Numbers to the power of two with a fancy data table!",
+      "id":"Numbers to the power of two with a fancy data table! [0]",
+      "result":"PASS",
+      "duration":"0.002 seconds",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Math works!","code":[]},
+
+        {"kind":"where","text":"We use the following data:","code":{"a":["1"],"b":["2"],"c":["1"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Numbers to the power of two with a fancy data table! [1]",
       "result":"PASS",
       "duration":"0",
       "iterations":{
@@ -79,7 +94,22 @@
       "blocks":[
         {"kind":"expect","text":"Math works!","code":[]},
 
-        {"kind":"where","text":"We use the following data:","code":{"a":["1","2","3"],"b":["2","2","2"],"c":["1","4","9"]}}
+        {"kind":"where","text":"We use the following data:","code":{"a":["2"],"b":["2"],"c":["4"]}}
+      ],
+      "problems":{"dataValues":[], "errors":[]}
+    },
+  
+    {
+      "id":"Numbers to the power of two with a fancy data table! [2]",
+      "result":"PASS",
+      "duration":"0",
+      "iterations":{
+      "tags":{},"see":[],"extraInfo":[]
+      },
+      "blocks":[
+        {"kind":"expect","text":"Math works!","code":[]},
+
+        {"kind":"where","text":"We use the following data:","code":{"a":["3"],"b":["2"],"c":["9"]}}
       ],
       "problems":{"dataValues":[], "errors":[]}
     }

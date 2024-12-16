@@ -1,7 +1,7 @@
 {
   "className":"ut.framing.Tensor_Framing_Spec",
   "title":"Naming Tensors and their Dimensions.",
-  "narrative":"A powerful concept in the data science as well as machine learning\n    world is something usually referred to as \"Data Frames\".\n    These are highly flexible 2D data structures\n    used to load and store CSV, CRV, etc... files for\n    data exploration and further processing.\n    Data frames are so powerful because\n    their indices are labeled and therefore human readable.\n    Neureka's tensors are general purpose data containers\n    which may also stored data in 2 dimensions whose\n    indices may also be something other than integers.",
+  "narrative":"A powerful concept in the data science as well as machine learning\n    world is something usually referred to as \"Data Frames\".\n    These are highly flexible 2D data structures\n    used to load and store CSV, CRV, etc... files for \n    data exploration and further processing.\n    Data frames are so powerful because\n    their indices are labeled and therefore human readable.\n    Neureka's tensors are general purpose data containers\n    which may also stored data in 2 dimensions whose\n    indices may also be something other than integers.",
   "subjects":["neureka.Tensor","neureka.framing.NDFrame"],
   "statistics":{
     "runs":"4",
@@ -9,14 +9,14 @@
     "failures":"0",
     "errors":"0",
     "skipped":"0",
-    "duration":"0.014 seconds"
+    "duration":"0.035 seconds"
   },
   "headers":["\n                    This specification covers the behavior\n                    of tensors with respect to specifying aliases for\n                    indices and then using them for slicing.     \n            "],"tags":{},"see":[],
   "features":[ 
     {
       "id":"We can add labels to tensors through lists or maps passed to the \"label()\" method.",
       "result":"PASS",
-      "duration":"0.004 seconds",
+      "duration":"0.012 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -43,7 +43,7 @@
     {
       "id":"A matrix (rank 2 tensor) can be labeled and their labels can be used to extract slices / subsets.",
       "result":"PASS",
-      "duration":"0.002 seconds",
+      "duration":"0.007 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -84,7 +84,7 @@
     {
       "id":"Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.",
       "result":"PASS",
-      "duration":"0.003 seconds",
+      "duration":"0.009 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },
@@ -129,7 +129,7 @@
     {
       "id":"A tensor can be labeled partially.",
       "result":"PASS",
-      "duration":"0",
+      "duration":"0.002 seconds",
       "iterations":{
       "tags":{},"see":[],"extraInfo":[]
       },

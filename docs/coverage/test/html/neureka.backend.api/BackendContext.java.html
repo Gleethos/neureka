@@ -186,7 +186,7 @@ public final class BackendContext implements Cloneable
      * @return The truth value determining if the provided {@link Operation} is part of this {@link BackendContext}.
      */
     public boolean hasOperation( Operation operation ) {
-<span class="fc" id="L189">        return _lookup.containsKey( operation.getIdentifier() );</span>
+<span class="nc" id="L189">        return _lookup.containsKey( operation.getIdentifier() );</span>
     }
 
     /**
@@ -333,7 +333,7 @@ public final class BackendContext implements Cloneable
                                 registered.deviceType,
 <span class="fc" id="L334">                                registered.function.apply(new LoadingContext() {</span>
 <span class="nc" id="L335">                                    @Override public String getAlgorithmName() { return da.getName(); }</span>
-<span class="fc" id="L336">                                    @Override public String getOperationIdentidier() { return o.getIdentifier(); }</span>
+<span class="nc" id="L336">                                    @Override public String getOperationIdentidier() { return o.getIdentifier(); }</span>
                                 })
                             );
 <span class="fc" id="L339">                            return true;</span>
@@ -445,4 +445,4 @@ public final class BackendContext implements Cloneable
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

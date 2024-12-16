@@ -57,8 +57,8 @@ public class Reshape extends AbstractOperation
 <span class="fc" id="L57">                    parent.addChild( reshaped );</span>
 <span class="fc" id="L58">                    input.set( parent );</span>
 
-<span class="fc bfc" id="L60" title="All 2 branches covered.">                    if ( input.isOutsourced() )</span>
-<span class="fc" id="L61">                        input.getDevice().store( reshaped );</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                    if ( input.isOutsourced() )</span>
+<span class="nc" id="L61">                        input.getDevice().store( reshaped );</span>
 
 <span class="fc" id="L63">                    NDConfiguration originalConfig = input.getNDConf();</span>
 
@@ -120,4 +120,4 @@ public class Reshape extends AbstractOperation
 <span class="nc" id="L120">        return src[ 0 ].call( inputs, j );</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
